@@ -810,6 +810,10 @@ SOURCE=.\source\newships\shpqlore.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpquasi.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpquawr.cpp
 # End Source File
 # Begin Source File
@@ -887,6 +891,10 @@ SOURCE=.\source\newships\shptaust.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shptautu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shptougr.cpp
 # End Source File
 # Begin Source File
 
