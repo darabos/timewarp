@@ -28,7 +28,7 @@ class AyronShipPart : public BigShipPart
 
 public:
 
-	double	crewmax, crew, batt, dynamo, turning, thrusting;
+	//double	crewmax, crew, batt, dynamo, turning, thrusting;
 
 	AyronShipPart(AyronBS *aowner, Vector2 orelpos, int otype, AyronShipPartInfo **info);
 	
@@ -277,9 +277,9 @@ void AyronBS::calculate()
 			crew += ayronparts[i]->crew;
 			batt_max += ayronparts[i]->batt;
 			//recharge_rate += ayronparts[i]->dynamo * recharge_rate_ref;
-			Nrecharge += ayronparts[i]->dynamo;
-			turn_rate += ayronparts[i]->turning * turn_rate_ref;
-			accel_rate += ayronparts[i]->thrusting * accel_rate_ref;
+			Nrecharge += ayronparts[i]->recharge_rate;
+			turn_rate += ayronparts[i]->turn_rate * turn_rate_ref;
+			accel_rate += ayronparts[i]->accel_rate * accel_rate_ref;
 		}
 	}
 
@@ -313,12 +313,21 @@ AyronShipPart::AyronShipPart(AyronBS *aowner, Vector2 orelpos, int otype, AyronS
 BigShipPart(aowner, orelpos, 0.0, info[otype-1]->spr_crewed, info[otype-1]->spr_uncrewed)
 {
 
-	crew      = info[otype-1]->crew;
-	crewmax   = info[otype-1]->crew;
-	batt      = info[otype-1]->batt;
-	dynamo    = info[otype-1]->dynamo;
-	turning   = info[otype-1]->turning;
-	thrusting = info[otype-1]->thrusting;
+	//crew      = info[otype-1]->crew;
+	//crewmax   = info[otype-1]->crew;
+	//batt      = info[otype-1]->batt;
+	//dynamo    = info[otype-1]->dynamo;
+	//turning   = info[otype-1]->turning;
+	//thrusting = info[otype-1]->thrusting;
+
+	crew = info[otype-1]->crew;;
+	crew_max = crew;
+	batt = info[otype-1]->batt;
+	batt_max = batt;
+	recharge_rate = info[otype-1]->dynamo;
+	recharge_amount = 1;
+	turn_rate = info[otype-1]->turning;
+	accel_rate = info[otype-1]->thrusting;
 }
 	
 
@@ -327,6 +336,7 @@ BigShipPart(aowner, orelpos, 0.0, info[otype-1]->spr_crewed, info[otype-1]->spr_
 
 int AyronShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+
 	// transmit damage to the ship owner ...
 	//return owner->handle_damage(source, normal, direct);
 	// no ...
@@ -399,8 +409,8 @@ void AyronShipPart::recrew(int howmany)
 	}
 
 	crew += howmany;
-	if (crew > crewmax)
-		crew = crewmax;
+	if (crew > crew_max)
+		crew = crew_max;
 }
 
 
@@ -616,7 +626,7 @@ int AyronBS::activate_special()
 
 	Ndead = 0;
 	for ( i = 0; i < Nparts; ++i )
-		if (ayronparts[i] && ayronparts[i]->crew < ayronparts[i]->crewmax)
+		if (ayronparts[i] && ayronparts[i]->crew < ayronparts[i]->crew_max)
 			++Ndead;
 
 	if (!Ndead)
@@ -629,7 +639,7 @@ int AyronBS::activate_special()
 
 	for ( i = 0; i < Nparts; ++i )
 	{
-		if (ayronparts[i] && ayronparts[i]->crew < ayronparts[i]->crewmax)
+		if (ayronparts[i] && ayronparts[i]->crew < ayronparts[i]->crew_max)
 		{
 			--k;
 			if (k <= 0)
