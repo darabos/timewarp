@@ -438,6 +438,12 @@ void GameProject::init()
 	// exactly the "global" screen ...
 	game_screen1 = create_video_bitmap(screen->w, screen->h);
 	game_screen2 = create_video_bitmap(screen->w, screen->h);
+
+	// hack to avoid possible crash?
+	if (!game_screen2)
+		game_screen2 = game_screen1;
+
+
 	// game_screen2 can also be used to store stuff, which is then blitted at once
 	// onto the game screen.
 	if (!(game_screen1 && game_screen2))
