@@ -46,6 +46,7 @@ class GobPlayer {
   void new_ship(ShipType *type);
   int charge (char *name, int price_starbucks, int price_buckazoids) ;
   Upgrade **upgrade_list;
+  //std::list<Upgrade_Listade*> upgrade_list;
 } ;
 
 class GobEnemy {
@@ -79,7 +80,9 @@ class GobGame : public Game, public EventHandler {
   virtual void play_sound (SAMPLE *sample, SpaceLocation *source, int vol = 256, int freq = 1000);
   
   int gobplayers;
-  GobPlayer **gobplayer;
+  //  GobPlayer **gobplayer;
+  std::list<GobPlayer*> gobplayer;
+
   virtual void add_gobplayer(Control *control);
   virtual GobPlayer* get_player(SpaceLocation *what);
   unsigned int max_enemies;
@@ -102,11 +105,11 @@ class GobGame : public Game, public EventHandler {
  public:
   int num_planets;
   
-  void save_game();
-  void load_game();
-  void config(bool option);
+  //  void save_game();
+  //  void load_game();
+  //  void config(bool option);
 
-  virtual void quit(const char *message);
+  //  virtual void quit(const char *message);
 };
 
 class GobStation : public Orbiter {

@@ -39,125 +39,130 @@ REGISTER_FILE
 #include "other/gconfig.h"
 #include "ais/ext_ai.h"
 
-void GobGame::config(bool option)
-{
-  config_read = option;
 
-  GobPlayer *gp = gobplayer[0];
-  Ship *s = 0;
+/* 
+   Using ini files is absolutly wrong approch for SAVING game, since it cant be used for saving planets, suns, enemy ships.
+   It is hard to impruve and hard to maintain
 
-  // store ship properties (includes its upgrades)
-  section = "ship";
+   void GobGame::config(bool option)
+   {
+   config_read = option;
 
-  if (option == CONFIG_READ)
-	{
-	  Vector2 P;
-	  double a;
+   GobPlayer *gp = gobplayer[0];
+   Ship *s = 0;
 
-	  char shipid[64];
-	  conf("name", shipid, "supbl");
-	  conf("x", P.x, 0);
-	  conf("y", P.y, 0);
-	  conf("a", a, 0);
+   // store ship properties (includes its upgrades)
+   section = "ship";
 
-	  // needed, cause the ship initialization overwrites the config file used now
-	  push_config_state();
+   if (option == CONFIG_READ)
+   {
+   Vector2 P;
+   double a;
+
+   char shipid[64];
+   conf("name", shipid, "supbl");
+   conf("x", P.x, 0);
+   conf("y", P.y, 0);
+   conf("a", a, 0);
+
+   // needed, cause the ship initialization overwrites the config file used now
+   push_config_state();
 		
-	  //s = create_ship(shipid, gp->control, P, 0.0, 0);
-	  gp->new_ship(shiptype(shipid));
+   //s = create_ship(shipid, gp->control, P, 0.0, 0);
+   gp->new_ship(shiptype(shipid));
 
-	  pop_config_state();
-	  s = gp->ship;
+   pop_config_state();
+   s = gp->ship;
 
-	  gp->ship = s;
-	  gp->ship->pos = P;
-	  gp->ship->angle = a;
+   gp->ship = s;
+   gp->ship->pos = P;
+   gp->ship->angle = a;
 
-	} else {
-	  s = gp->ship;
-	  conf("name", (char*)s->type->id, "supbl");
-	  conf("x", s->pos.x, 0);
-	  conf("y", s->pos.y, 0);
-	  conf("a", s->angle, 0);
-	}
+   } else {
+   s = gp->ship;
+   conf("name", (char*)s->type->id, "supbl");
+   conf("x", s->pos.x, 0);
+   conf("y", s->pos.y, 0);
+   conf("a", s->angle, 0);
+   }
 
-  conf("crew", s->crew, 1);
-  conf("crewm", s->crew_max, 1);
-  conf("batt", s->batt, 1);
-  conf("battm", s->batt_max, 1);
-  conf("accr", s->accel_rate, 1);
-  conf("speedmax", s->speed_max, 1);
-  conf("turnr", s->turn_rate, 1);
-  conf("mass", s->mass, 1);
-  conf("rechamount", s->recharge_amount, 1);
-  conf("rechrate", s->recharge_rate, 1);
-  conf("specrate", s->special_rate, 1);
-  conf("specdrain", s->special_drain, 1);
-  conf("weaprate", s->weapon_rate, 1);
-  conf("weapdrain", s->weapon_drain, 1);
-  conf("damfac", s->damage_factor, 1);
-  //	conf("", s-, 1);
+   conf("crew", s->crew, 1);
+   conf("crewm", s->crew_max, 1);
+   conf("batt", s->batt, 1);
+   conf("battm", s->batt_max, 1);
+   conf("accr", s->accel_rate, 1);
+   conf("speedmax", s->speed_max, 1);
+   conf("turnr", s->turn_rate, 1);
+   conf("mass", s->mass, 1);
+   conf("rechamount", s->recharge_amount, 1);
+   conf("rechrate", s->recharge_rate, 1);
+   conf("specrate", s->special_rate, 1);
+   conf("specdrain", s->special_drain, 1);
+   conf("weaprate", s->weapon_rate, 1);
+   conf("weapdrain", s->weapon_drain, 1);
+   conf("damfac", s->damage_factor, 1);
+   //	conf("", s-, 1);
 
-  section = "props";
-  conf("kills", gp->kills, 0);
-  conf("bucka", gp->buckazoids, 0);
-  conf("starb", gp->starbucks, 0);
-  conf("vbucka", gp->value_buckazoids, 0);
-  conf("vstarb", gp->value_starbucks, 0);
+   section = "props";
+   conf("kills", gp->kills, 0);
+   conf("bucka", gp->buckazoids, 0);
+   conf("starb", gp->starbucks, 0);
+   conf("vbucka", gp->value_buckazoids, 0);
+   conf("vstarb", gp->value_starbucks, 0);
 
-  section = "special";
-  if (strcmp("supbl", s->type->id))
-	{		
-	  conf("damage", ((SupoxBlade*)s)->weaponDamage, 1);
-	  conf("drain", ((SupoxBlade*)s)->weapon_drain, 1);
-	  conf("armour", ((SupoxBlade*)s)->weaponArmour, 1);
-	}
-
-
-  // hmm .. well .. there are lots of special ships and devices, so
-  // this is not all, by far, yet !!
-
-  //	conf("", s-, 1);
-  //	conf("", s-, 1);
-  //	conf("", s-, 1);
-
-  s->vel = 0;
+   section = "special";
+   if (strcmp("supbl", s->type->id))
+   {		
+   conf("damage", ((SupoxBlade*)s)->weaponDamage, 1);
+   conf("drain", ((SupoxBlade*)s)->weapon_drain, 1);
+   conf("armour", ((SupoxBlade*)s)->weaponArmour, 1);
+   }
 
 
-  section = "upgrades";
+   // hmm .. well .. there are lots of special ships and devices, so
+   // this is not all, by far, yet !!
 
-  // each player keeps track of its own set of upgrades.
-  // hmm, and what if one of the upgrades gets deleted ?
-  int i;
-  for (i = 0; gp->upgrade_list[i]; i += 1)
-	{
-	  confnum("num", i, gp->upgrade_list[i]->num);
-	}
-}
+   //	conf("", s-, 1);
+   //	conf("", s-, 1);
+   //	conf("", s-, 1);
+
+   s->vel = 0;
 
 
-void GobGame::save_game()
-{
-  // write player settings to some config file ?
-  set_config_file("gamedata/gob/player.ini");
-  config(CONFIG_WRITE);
-  flush_config_file();
-}
+   section = "upgrades";
 
-void GobGame::load_game()
-{
-  set_config_file("gamedata/gob/player.ini");
-  config(CONFIG_READ);
-}
+   // each player keeps track of its own set of upgrades.
+   // hmm, and what if one of the upgrades gets deleted ?
+   int i;
+   for (i = 0; gp->upgrade_list[i]; i += 1)
+   {
+   confnum("num", i, gp->upgrade_list[i]->num);
+   }
+   }
 
 
-void GobGame::quit(const char *message)
-{
-  //save_game();
-  Game::quit(message);
-}
+   void GobGame::save_game()
+   {
+   // write player settings to some config file ?
+   set_config_file("gamedata/gob/player.ini");
+   config(CONFIG_WRITE);
+   flush_config_file();
+   }
+
+   void GobGame::load_game()
+   {
+   set_config_file("gamedata/gob/player.ini");
+   config(CONFIG_READ);
+   }
 
 
+   void GobGame::quit(const char *message)
+   {
+   //save_game();
+   Game::quit(message);
+   }
+
+*/
 
 #define gobgame ((GobGame*)game)
 
@@ -216,8 +221,8 @@ void GobGame::preinit()
 
   Game::preinit();
 
-  gobplayers = 0;
-  gobplayer = NULL;
+  //  gobplayers = 0;
+  //gobplayer = NULL;
   max_enemies = 0;
   //gobenemy = NULL;
 
@@ -231,11 +236,10 @@ void GobGame::add_gobplayer(Control *control)
 {
   STACKTRACE;
 
-  int i = gobplayers;
-  gobplayers += 1;
-  gobplayer = (GobPlayer**) realloc(gobplayer, sizeof(GobPlayer*) * gobplayers);
-  gobplayer[i] = new GobPlayer();
-  gobplayer[i]->init(control, new_team(), this);
+  GobPlayer * p = new GobPlayer();
+  p->init(control, new_team(), this);
+  gobplayer.push_back(p);
+
   add_focus(control, control->channel);
   return;
 }
@@ -287,7 +291,7 @@ void GobGame::init(Log *_log)
 {
   STACKTRACE;
 
-  int i;
+  unsigned int i;
   Game::init(_log);
 
   log_file("server.ini");
@@ -320,75 +324,79 @@ void GobGame::init(Log *_log)
   for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 
 
-  int ichoice = 2;	// default, "no" 'don't load a game
+  //  int ichoice = 2;	// default, "no" 'don't load a game
 
-  if (!lag_frames)
+  /*
+	if (!lag_frames)
 	{
-	  // check a menu to see what the player wants ...
-	  // (but only if it's not a networked game)
-	  ichoice = tw_alert("Continue saved game?", "&YES", "&NO");
+	// check a menu to see what the player wants ...
+	// (but only if it's not a networked game)
+	ichoice = tw_alert("Continue saved game?", "&YES", "&NO");
 	}
 
-  if (ichoice == 2)
+	if (ichoice == 2)
 	{
-	
-	  int console_players;
-	  set_config_file("client.ini");
-	  console_players = get_config_int("Gob", "NumPlayers", 1);
+  */
+  int console_players;
+  set_config_file("client.ini");
+  console_players = get_config_int("Gob", "NumPlayers", 1);
 
-	  int p;
-	  int k = 0;
-	  for ( p = 0; p < num_network; ++p )
+  int p;
+  int k = 0;
+  for ( p = 0; p < num_network; ++p )
+	{
+	  //log_int(channel_network[p], server_players);
+	  log_int(console_players, channel_network[p]);
+
+	  // several console players, who share a "human" channel
+	  for (i = 0; i < (unsigned int)console_players; i += 1)
 		{
-		  //log_int(channel_network[p], server_players);
-		  log_int(console_players, channel_network[p]);
-
-		  // several console players, who share a "human" channel
-		  for (i = 0; i < console_players; i += 1)
-			{
 				
-			  char buffy[256];
-			  sprintf(buffy, "Config%d", i);
+		  char buffy[256];
+		  sprintf(buffy, "Config%d", i);
 
-			  add_gobplayer(create_control(channel_network[p], "Human", buffy));
-			  ++k;
-			}
+		  add_gobplayer(create_control(channel_network[p], "Human", buffy));
+		  ++k;
 		}
-
-	  num_players = k;
-
-	  for ( i = 0; i < k; ++i )
-		{
-		  gobplayer[i]->new_ship(shiptype("supbl"));
-
-		  Ship *s = gobplayer[i]->ship;
-		  s->translate( size/2 - s->normal_pos() );
-
-		  double angle = (PI2 * i) / k;
-		  s->translate(rotate(Vector2(260, 120), angle));
-
-		  s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);	
-		}
-
-	} else if (ichoice == 1) {
-
-	  // just supports ONE player.
-
-	  set_config_file("client.ini");
-
-	  for (i = 0; i < 1; i += 1) {
-		char buffy[256];
-		sprintf(buffy, "Config%d", i);
-		add_gobplayer(create_control(channel_server, "Human", buffy));
-	  }
-	  num_players = 1;
-		
-	  load_game();
-	} else {
-	  tw_error("Strange, this option is not supported");
 	}
 
-  for (i = 0; i < gobplayers; i += 1) add ( new RainbowRift() );
+  num_players = k;
+	  
+  for (std::list<GobPlayer*>::iterator ip = gobplayer.begin(); 
+	   ip != gobplayer.end(); ip++)
+	{
+	  (*ip)->new_ship(shiptype("supbl"));
+	  Ship *s = (*ip)->ship;
+	  s->translate( size/2 - s->normal_pos() );
+
+	  double angle = (PI2 * i) / k;
+	  s->translate(rotate(Vector2(260, 120), angle));
+	  s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);	
+	}
+
+  //	} 
+
+  /*
+	else if (ichoice == 1) {
+
+	// just supports ONE player.
+
+	set_config_file("client.ini");
+
+	for (i = 0; i < 1; i += 1) {
+	char buffy[256];
+	sprintf(buffy, "Config%d", i);
+	add_gobplayer(create_control(channel_server, "Human", buffy));
+	}
+	num_players = 1;
+		
+	load_game();
+	} else {
+	tw_error("Strange, this option is not supported");
+	}
+  */
+
+  for (i = 0; i < gobplayer.size(); i += 1) add ( new RainbowRift() );
 
   next_add_new_enemy_time = 1000;
   add_new_enemy();
@@ -403,7 +411,7 @@ void GobGame::init(Log *_log)
 
   quest_source = new QuestSource();
   quest_source->LoadQuestList( "gamedata/TestQuestSource.lua" );
-  quest_source->GetQuest("gamedata/SecretPlanet.lua", gobplayer[0]);
+  quest_source->GetQuest("gamedata/SecretPlanet.lua", *(gobplayer.begin()));
   return;
 }
 
@@ -411,11 +419,12 @@ void GobGame::init(Log *_log)
 GobGame::~GobGame() 
 {
   delete defenderSprite;
-  int i;
-  for (i = 0; i < gobplayers; i += 1) {
-	delete gobplayer[i];
-  }
-  free(gobplayer);
+
+  for (std::list<GobPlayer*>::iterator ip = gobplayer.begin();
+	   ip != gobplayer.end(); ip++)
+	{
+	  delete *ip;
+	}
 	
   for (std::list<GobEnemy*>::iterator ie = gobenemy.begin();
 	   ie != gobenemy.end(); ie++)
@@ -439,18 +448,21 @@ void GobGame::fps()
   message.print((int)msecs_per_fps, 15, "time: %d", game_time / 1000);
 
   int i = 0;
-  for (i = 0; i < gobplayers; i += 1) {
-	if (!is_local(gobplayer[i]->channel)) continue;
 
-	if (gobplayer[i]->ship) {
-	  message.print((int)msecs_per_fps, 15-i, "coordinates: %d x %d", 
-					iround(gobplayer[i]->ship->normal_pos().x), 
-					iround(gobplayer[i]->ship->normal_pos().y));
+  for (std::list<GobPlayer*>::iterator ip = gobplayer.begin();
+	   ip != gobplayer.end(); ip++)
+	{
+	  if (!is_local((*ip)->channel)) continue;
+
+	  if ((*ip)->ship) {
+		message.print((int)msecs_per_fps, 15-i, "coordinates: %d x %d", 
+					  iround((*ip)->ship->normal_pos().x), 
+					  iround((*ip)->ship->normal_pos().y));
+	  }
+	  message.print((int)msecs_per_fps, 15-i, "starbucks: %d", (*ip)->starbucks);
+	  message.print((int)msecs_per_fps, 15-i, "buckazoids: %d", (*ip)->buckazoids);
+	  message.print((int)msecs_per_fps, 15-i, "kills: %d", (*ip)->kills);
 	}
-	message.print((int)msecs_per_fps, 15-i, "starbucks: %d", gobplayer[i]->starbucks);
-	message.print((int)msecs_per_fps, 15-i, "buckazoids: %d", gobplayer[i]->buckazoids);
-	message.print((int)msecs_per_fps, 15-i, "kills: %d", gobplayer[i]->kills);
-  }
   return;
 }
 
@@ -544,12 +556,14 @@ GobPlayer *GobGame::get_player(SpaceLocation *what)
   if ( what == NULL )
 	return NULL;
 
-  int i;
-  for (i = 0; i < gobplayers; i += 1) {		
-	if (what->get_team() == gobplayer[i]->team) return gobplayer[i];
-  }
+  for (std::list<GobPlayer*>::iterator ip = gobplayer.begin();
+	   ip != gobplayer.end(); ip++)
+	{
+	  if (what->get_team() == (*ip)->team) return *ip;
+	}
   return NULL;
 }
+
 /*! \brief Create enemy ship
   Create random enemy ship if enemy limit is not riched. Also it patch some of the ships.
 */
@@ -879,7 +893,7 @@ enum {
   STATION_DIALOG_NEWSHIP, 
   STATION_DIALOG_REPAIR,  
   STATION_DIALOG_COMMANDER, 
-  STATION_DIALOG_SAVE,    
+  //  STATION_DIALOG_SAVE,    
 };
 
 static DIALOG station_dialog[] =
@@ -889,7 +903,7 @@ static DIALOG station_dialog[] =
 	{ my_d_button_proc,  385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },//STATION_DIALOG_NEWSHIP
 	{ my_d_button_proc,  385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },//STATION_DIALOG_REPAIR
 	{ my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Commander" , NULL, NULL },//STATION_DIALOG_COMMANDER
-	{ my_d_button_proc,  385,  250,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Save Game" , NULL, NULL },//STATION_DIALOG_SAVE
+	//{ my_d_button_proc,  385,  250,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Save Game" , NULL, NULL },//STATION_DIALOG_SAVE
 	{ d_text_proc,       185,  420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
 	{ d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
 	{ NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
@@ -983,11 +997,14 @@ void GobStation::station_screen(GobPlayer *s)
 		  ext_ai->Dialog(s->ship);
 		break;
 
-	  case STATION_DIALOG_SAVE:
-		{
+		/*
+		  case STATION_DIALOG_SAVE:
+		  {
 		  // saves the last game.
 		  gobgame->save_game();
-		}
+		  }
+		*/
+
 		break;
 
 	}
@@ -1260,4 +1277,5 @@ void RainbowRift::calculate()
 
 REGISTER_GAME(GobGame, "GOB")
 
+  
   
