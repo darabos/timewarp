@@ -1116,6 +1116,7 @@ enum {
     //FLEET_DIALOG_CLEAR_SCREEN=0,
     FLEET_DIALOG_AVAILABLE_SHIPS_TEXT=0,
     FLEET_DIALOG_SHIP_CATAGORIES_TEXT,
+    //TEMP,
     FLEET_DIALOG_SC1_TOGGLE,
     FLEET_DIALOG_SC2_TOGGLE,
     FLEET_DIALOG_SC3_TOGGLE,
@@ -1143,7 +1144,7 @@ enum {
 	FLEET_DIALOG_CLEAR,
     FLEET_DIALOG_CLEARALL,
     FLEET_DIALOG_SHIP_PICTURE_BITMAP,
-    FLEET_DIALOG_SHIP_STATS_BITMAP,
+    //FLEET_DIALOG_SHIP_STATS_BITMAP,
     FLEET_DIALOG_SHIP_SUMMARY_TEXT,
     FLEET_DIALOG_BACK_BUTTON,
     FLEET_DIALOG_HELP_TEXT/**/
@@ -1203,7 +1204,7 @@ DIALOG fleetDialog[] = {
   //{ d_clear_proc,       0,    0,    0,    0,   255,  0,    0,    0,       0,    0,    NULL },//FLEET_DIALOG_CLEAR_SCREEN
   { d_textbox_proc,     10,  10,   240,  20,   255,  0,    0,     0,       0,    0,    (void *)"Available Ships", NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_TEXT TODO specify font here in d2 I think
   { d_textbox_proc,     10,  35,   128,  17,   255,  0,    0,     0,       0,    0,    (void *)"Ship Catagories:", NULL, NULL },//FLEET_DIALOG_SHIP_CATAGORIES_TEXT
-
+  
   { d_check_proc_fleeteditor,	// x=30-->x=10
                         10,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
   { d_check_proc_fleeteditor,		
@@ -1224,12 +1225,13 @@ DIALOG fleetDialog[] = {
   { d_button_proc,      69, 121,   128,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON1
   { d_button_proc,     197, 121,    16,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING1
 
-  { d_list_proc,       10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
+  { scp_fleet_dialog_text_list_proc,
+                       10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
   { d_list_proc2,      390, 141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEET_SHIPS_LIST
 
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { d_button_proc,     390,  10,   240,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Player 1 Fleet", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON
-  { d_textbox_proc,    390,  40,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Fleet Title", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_TITLE
+  { d_button_proc,     390,  40,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Fleet Title", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_TITLE
   { d_button_proc,     518,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE_BUTTON
   { d_button_proc,     574,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Load", NULL, NULL },//FLEET_DIALOG_LOAD_BUTTON
   { d_textbox_proc,    390,  60,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Point Limit", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_TEXT
@@ -1246,8 +1248,11 @@ DIALOG fleetDialog[] = {
   { d_button_proc,     270, 265,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
   { d_button_proc,     270, 290,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove All", NULL, NULL },//FLEET_DIALOG_CLEARALL
   { scp_fleet_dialog_bitmap_proc,
-                       256,  10,  128,  200,   255,  0,    0,    0,       0,    0,    (void *)NULL, NULL, NULL },//FLEET_DIALOG_SHIP_PICTURE_BITMAP
-  { d_textbox_proc,     10, 372,  310,   85,   255,  0,    0,     0,       0,    0,    (void *)"SHIP PICTURE TODO", NULL, NULL },//FLEET_DIALOG_SHIP_STATS_BITMAP
+                        10, 372,   85,   85,   255,  0,    0,    0,       0,    0,    (void *)NULL, NULL, NULL },//FLEET_DIALOG_SHIP_PICTURE_BITMAP
+
+  //{ d_textbox_proc,     10, 372,  310,   85,   255,  0,    0,     0,       0,    0,    (void *)"SHIP PICTURE TODO", NULL, NULL },//FLEET_DIALOG_SHIP_STATS_BITMAP
+
+
   { d_textbox_proc,    325, 372,  305,   85,   255,  0,    0,     0,       0,    0,    (void *)"Summary Text\0                                                                  ", NULL, NULL },//FLEET_DIALOG_SHIP_SUMMARY_TEXT
   { d_button_proc,      10, 460,   64,   20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Back", NULL, NULL },//FLEET_DIALOG_BACK_BUTTON
   { d_textbox_proc,     74, 460,  556,   20,   255,  0,    0,     0,       0,    0,    (void *)"Help Text\0                                                                     ", NULL, NULL },//FLEET_DIALOG_HELP_TEXT
@@ -1402,10 +1407,17 @@ void edit_fleet(int player) {STACKTRACE
                break;
 
            case FLEET_DIALOG_PLAYER_FLEET_BUTTON: break;
-           case FLEET_DIALOG_PLAYER_FLEET_TITLE: break;
+
+           case FLEET_DIALOG_PLAYER_FLEET_TITLE:               
+               if(do_dialog(fleet_titleDialog, FLEET_TITLE_DIALOG_BOX) == FLEET_TITLE_DIALOG_OK)
+                   sprintf(fleet->getTitle(), title_str);
+               showTitle();
+               break;
+
            case FLEET_DIALOG_SAVE_BUTTON: break;
            case FLEET_DIALOG_LOAD_BUTTON: break;
            case FLEET_DIALOG_POINT_LIMIT_TEXT: break;
+
            case FLEET_DIALOG_POINT_LIMIT_BUTTON:
                fleet->cycleMaxFleetCost();
                break;
@@ -1433,7 +1445,7 @@ void edit_fleet(int player) {STACKTRACE
 	       case FLEET_DIALOG_CLEAR: break;
            case FLEET_DIALOG_CLEARALL: break;
            case FLEET_DIALOG_SHIP_PICTURE_BITMAP: break;
-           case FLEET_DIALOG_SHIP_STATS_BITMAP: break;
+           //case FLEET_DIALOG_SHIP_STATS_BITMAP: break;
            case FLEET_DIALOG_SHIP_SUMMARY_TEXT: break;
            case FLEET_DIALOG_BACK_BUTTON: break;
            case FLEET_DIALOG_HELP_TEXT:/**/
@@ -1497,11 +1509,6 @@ void edit_fleet(int player) {STACKTRACE
             reference_fleet->Sort(Fleet::SORTING_METHOD_CODERS_DESCENDING);
 		}*/
 
-		/*if(fleetRet == FLEET_DIALOG_PLAYER_FLEET_TITLE) {
-			if(do_dialog(fleet_titleDialog, FLEET_TITLE_DIALOG_BOX) == FLEET_TITLE_DIALOG_OK)
-				sprintf(fleet->getTitle(), title_str);
-			showTitle();
-		}*/
 
 	} while((fleetRet != FLEET_DIALOG_BACK_BUTTON) && (fleetRet != -1));
 
@@ -1517,40 +1524,101 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 	int old_d1 = d->d1;
 	int ret = d_text_list_proc( msg, d, c );
 
+    static BITMAP* panel = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
+                                         fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
+    fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp = panel;
+
+    static BITMAP * sprite = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
+                                           fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
+    static int rotationFrame = 0;
+
+    //selection has changed
+    if (d->d1 != old_d1) {
+        {ShipType* type = reference_fleet->getShipType(old_d1);
+        if (type && type->data)
+            type->data->unlock();}
+
+        {ShipType* type = reference_fleet->getShipType(d->d1);
+        if (type && type->data)
+            type->data->lock();}
+
+        rotationFrame = 0;
+    }
+
 	if ( d->d1 != old_d1 || msg == MSG_START || (msg == MSG_IDLE && next_anim_time < get_time()) ) {
-        next_anim_time = get_time() + 50 + rand() % 200;		
-        //next_anim_time = get_time() + 500 + rand() % 3500;
+        //next_anim_time = get_time() + 50 + rand() % 200;
+        next_anim_time = get_time() + 20;
+        
 		ShipType* type = reference_fleet->getShipType(d->d1);
+        
+        clear_to_color(sprite, 0);
 
-		BITMAP* panel = NULL;
-		DATAFILE* data = NULL;
-		if (type && type->data) 
-			data = load_datafile_object(type->data->file, "SHIP_P00_PCX");
+        if (type && type->data && type->data->spriteShip) {
+            
+            type->data->spriteShip->draw(
+                Vector2(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w/2,
+                        fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h/2) - type->data->spriteShip->size()/2, 
+                type->data->spriteShip->size(), 
+                rotationFrame, sprite 
+                );
 
-		if(data) {
+            rotationFrame++;
+            if (rotationFrame >= type->data->spriteShip->frames())
+                rotationFrame = 0;
+        }
+        stretch_blit(sprite, panel, 0, 0, sprite->w, sprite->h, 0, 0, panel->w, panel->h);
+        
+        
+
+
+		//if(data) {
+
+
+		//static DATAFILE* data = NULL;
+		//if (type && type->data) 
+		//	data = load_datafile_object(type->data->file, "SHIP_P00_PCX");
+
+/*
 			BITMAP* bmp = (BITMAP*)data->dat;
-			BITMAP* tmp = create_bitmap(bmp->w, bmp->h);
-//			BITMAP* tmp = create_bitmap_ex( color_depth, bmp->w, bmp->h );
-			blit(bmp, tmp, 0, 0, 0, 0, bmp->w, bmp->h);
-			unload_datafile_object(data);
 
-			char obj[32];
+			BITMAP* tmp = create_bitmap(bmp->w, bmp->h);
+            //BITMAP* tmp = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
+              //                          fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
+
+			//blit(bmp, tmp, 0, 0, 0, 0, bmp->w, bmp->h);
+
+            stretch_blit(bmp, tmp, 
+                         0, 0, bmp->w, bmp->h,
+                         0, 0, fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
+                                        fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);/**/
+			//unload_datafile_object(data);
+
+			/*char obj[32];
 			sprintf(obj, "SHIP_P0%d_PCX", 1 + rand() % 4);
 			data = load_datafile_object(type->data->file, obj);
 			bmp = (BITMAP*)data->dat;
 			blit(bmp, tmp, 0, 0, 4, 65, bmp->w, bmp->h);
-			unload_datafile_object(data);
+            //blit(bmp, tmp, 0, 0, 4, 65, bmp->w, bmp->h);
+
+			unload_datafile_object(data);*/
 //			gamma_correct_bitmap( tmp, gamma_correction, 0 );
 
-			panel = create_bitmap(128, 200);
-//			panel = create_bitmap_ex( color_depth, 128, 200 );
-			stretch_blit(tmp, panel, 0, 0, tmp->w, tmp->h, 0, 0, panel->w, panel->h);
-			destroy_bitmap(tmp);
-		}
+			//panel = create_bitmap(128, 200);
+            
 
-		if(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp)
-			destroy_bitmap( (BITMAP*)fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp );
-		fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp = panel;
+            
+			//destroy_bitmap(sprite);
+
+			//stretch_blit(tmp, panel, 0, 0, tmp->w, tmp->h, 0, 0, panel->w, panel->h);
+			//destroy_bitmap(tmp);
+		//}
+
+		//if(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp)
+		//	destroy_bitmap( (BITMAP*)fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp );
+
+		//fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp = panel;
+
+
         //TODO decide if these next 3 lines should be here
 		scare_mouse();
         SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP], MSG_DRAW, 0);
@@ -1561,10 +1629,11 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 }
 
 int scp_fleet_dialog_bitmap_proc(int msg, DIALOG* d, int c) {
-	if (msg == MSG_END && d->dp) {
+	//TODO address this: bitmap has to be deleted, but MSG_END does not mean the dialog isn't coming back
+    /*if (msg == MSG_END && d->dp) {
 		destroy_bitmap( (BITMAP*)d->dp );
 		d->dp = NULL;
-	}
+	}*/
 
 	if (msg != MSG_DRAW || d->dp)
 		return d_bitmap_proc(msg, d, c);
