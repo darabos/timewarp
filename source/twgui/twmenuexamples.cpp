@@ -340,7 +340,7 @@ void FileBrowser::reset_dirlist()
 	
 	while (!err)
 	{
-		if (info.name[0] != '.')
+		if (strcmp(info.name, ".") != 0 && strcmp(info.name, "..") != 0)
 		{
 			char tmp[512];
 			strcpy(tmp, info.name);

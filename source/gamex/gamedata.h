@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 //#include "gamedata_map.h"
-
+bool isevildir(char *name);
 
 const bool hascontent(char *t);
 

@@ -659,6 +659,24 @@ void RaceManager::add(RaceInfo *ri)
 
 
 
+char **evildir = (".", "..", "CVS", 0);
+
+bool isevildir(char *name)
+{
+	if (!name)
+		return false;
+
+	int i = 0;
+	while (evildir[i] != 0)
+	{
+		if (strcmp(name, evildir[i]) == 0)
+			return true;
+	}
+
+	return false;
+}
+
+
 void RaceManager::readracelist()
 {
 	al_ffblk info;
@@ -674,7 +692,7 @@ void RaceManager::readracelist()
 		char *racename;
 		racename = info.name;
 
-		if (racename && racename[0] != '.')
+		if (!isevildir(racename))
 		{
 			
 			char fname[512];

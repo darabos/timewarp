@@ -8,6 +8,7 @@ REGISTER_FILE
 #include "../melee/mview.h"
 #include "../frame.h"
 
+#include "gamedata.h"
 #include "gamegeneral.h"
 
 #include "gameproject.h"
@@ -711,7 +712,7 @@ void createfilelist(char ***List, int *N, char *scanname, int remext)
 	err = al_findfirst(scanname, &info, FA_ARCH);		
 	while (!err)
 	{
-		if (info.name[0] != '.')
+		if (!isevildir(info.name))
 			++(*N);
 		err = al_findnext(&info);
 	}	
@@ -729,7 +730,7 @@ void createfilelist(char ***List, int *N, char *scanname, int remext)
 	
 	while (!err)
 	{
-		if (info.name[0] != '.')
+		if (!isevildir(info.name))
 		{
 			if (!remext)
 			{
