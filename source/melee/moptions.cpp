@@ -291,27 +291,34 @@ void video_menu (Game *game) {STACKTRACE
              (startfs != fs) )
         {
             set_gamma(video_dialog[DIALOG_VIDEO_GAMMA_SLIDER].d2);
-            videosystem.set_resolution(x2, y2, bpp2, fs);
-            
-            if (confirmVideoChanges()) {
-                set_config_file("client.ini");
-                set_config_int("Video", "BitsPerPixel", bpp2);
-                set_config_int("Video", "ScreenWidth", x2);
-                set_config_int("Video", "ScreenHeight", y2);
-                set_config_int("Video", "FullScreen", fs);
-                set_config_int("Video", "Gamma", get_gamma());
-                return;
+
+            //try to set video mode.  If it does not work, back out, and do not confirm
+            //the changes.
+            if ( ! videosystem.set_resolution(x2, y2, bpp2, fs))  {
+                done = false;
             }
             else {
-                set_config_file("client.ini");
-                bpp2   = get_config_int("Video", "BitsPerPixel", 16);
-                x2     = get_config_int("Video", "ScreenWidth", 640);
-                y2     = get_config_int("Video", "ScreenHeight", 480);
-                fs     = get_config_int("Video", "FullScreen", false);
-                set_gamma(get_config_int("Video", "Gamma", 128));
-
-                i = videosystem.set_resolution(x2, y2, bpp2, fs);
-                done = false;
+                //if the video mode was actually set, confirm the changes
+                if (confirmVideoChanges()) {
+                    set_config_file("client.ini");
+                    set_config_int("Video", "BitsPerPixel", bpp2);
+                    set_config_int("Video", "ScreenWidth", x2);
+                    set_config_int("Video", "ScreenHeight", y2);
+                    set_config_int("Video", "FullScreen", fs);
+                    set_config_int("Video", "Gamma", get_gamma());
+                    return;
+                }
+                else {
+                    set_config_file("client.ini");
+                    bpp2   = get_config_int("Video", "BitsPerPixel", 16);
+                    x2     = get_config_int("Video", "ScreenWidth", 640);
+                    y2     = get_config_int("Video", "ScreenHeight", 480);
+                    fs     = get_config_int("Video", "FullScreen", false);
+                    set_gamma(get_config_int("Video", "Gamma", 128));
+                    
+                    i = videosystem.set_resolution(x2, y2, bpp2, fs);
+                    done = false;
+                }
             }
         }
         
