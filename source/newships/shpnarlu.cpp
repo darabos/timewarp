@@ -40,7 +40,7 @@ class NaroolLurker : public Ship {
 	virtual void animate(Frame *space);
 
 	void calc_lightning();
-	double maxsparktime, sparktime;
+	double maxsparktime, sparktime, Rmax;
 	Vector2 sparkpos;
 	virtual void inflict_damage(SpaceObject *other);
 
@@ -97,9 +97,12 @@ NaroolLurker::NaroolLurker(Vector2 opos, double shipAngle,
 	int bpp = bitmap_color_depth(shpbmp);
 	lightningbmp = create_bitmap_ex(bpp, shpbmp->w, shpbmp->h);
 	clear_to_color(lightningbmp, makeacol(0,0,0,255));
-	maxsparktime = 2000;
+	//maxsparktime = 2000;
+	maxsparktime = get_config_float("Quirk", "maxsparktime", 2000);
 	sparktime = maxsparktime;
 	sparkpos = 0.5 * Vector2(lightningbmp->w,lightningbmp->h);
+
+	Rmax = get_config_float("Quirk", "Rmax", 1);
 }
 
 NaroolLurker::~NaroolLurker()
@@ -110,7 +113,7 @@ NaroolLurker::~NaroolLurker()
 
 double NaroolLurker::isInvisible() const {
 	if (cloak_frame >= 300
-		&& sparktime == 0) return(1);
+		&& sparktime <= 0) return(1);
 	return 0;
 	}
 
@@ -172,6 +175,12 @@ void NaroolLurker::calculate()
 		cloak_frame-= frame_time;
 
 	Ship::calculate();
+
+
+	if (sparktime > 0)
+		sparktime -= frame_time;
+	else
+		sparktime = 0;
 }
 
 void NaroolLurker::animate(Frame *space)
@@ -395,12 +404,20 @@ void NaroolLurker::calc_lightning()
 		int i, N;
 		
 		N = 5 + random(5);
+
+		double ang, R;
+		ang = random(PI2);
 		
 		for ( i = 0; i < N; ++i )
 		{
 			double dx, dy;
-			dx = (random(double(iw)) - 0.5*iw) / N;
-			dy = (random(double(ih)) - 0.5*ih) / N;
+			//dx = (random(double(iw)) - 0.5*iw) / N;
+			//dy = (random(double(ih)) - 0.5*ih) / N;
+
+			ang += random(PI/2) - PI/4;
+			R = random(double(Rmax)) / N;
+			dx = R * cos(ang);
+			dy = R * sin(ang);
 			
 			
 			int j, M;
@@ -424,22 +441,28 @@ void NaroolLurker::calc_lightning()
 					int k;
 					k = 128*(0.5 + 0.5*sparktime/maxsparktime);
 					
-					re = 0;
-					bl = 0;
-					if ( k > 96)
-						re = k + 127 / (i+1);
-					else
-						bl = k + 127 / (i+1);
+				//	re = 0;
+				//	bl = 0;
+				//	if ( k > 96)
+				//		re = k + 127 / (i+1);
+				//	else
+				//		bl = k + 127 / (i+1);
+
+					double c, f;
+					//f = (0.5 + (0.5*sparktime)/maxsparktime);
+					f = sparktime / maxsparktime;
+					c = 255;// / (i+1);
+					re = f * c;
+					bl = (1-f) * c;
 					
 					putpixel(b, P.x, P.y, makeacol(re,0,bl,255));
 				}
 			}
 			
 		}
+	}
 		
-		sparktime -= frame_time;
-	} else
-		sparktime = 0;
+
 
 }
 
