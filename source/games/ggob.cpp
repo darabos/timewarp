@@ -422,7 +422,7 @@ GobGame::~GobGame() {
 void GobGame::fps() {
 	STACKTRACE;
 
-		Game::fps();
+	Game::fps();
 
 	message.print((int)msecs_per_fps, 15, "enemies: %d", gobenemies);
 	message.print((int)msecs_per_fps, 15, "time: %d", game_time / 1000);
@@ -449,6 +449,7 @@ This function called once per frame of physics, used to add new enemys to the ga
 void GobGame::calculate() {
 	STACKTRACE;
 
+	if (!lag_frames)	// if it's not networked?
 		quest_source->ProcessQuests();
 
 	if (next_add_new_enemy_time <= game_time) {

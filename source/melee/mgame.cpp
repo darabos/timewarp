@@ -2009,7 +2009,7 @@ void Game::remove_player(int i)
 	k = channel_conn_recv[ ch ];
 	message.print(1500, 14, "REMOVE channel[%i] conn[%i]", ch, k );
 	message.animate(0);
-	if (p_local == 0) readkey();
+	//if (p_local == 0) readkey();
 
 	if (k >= 0)
 		((NetLog*)glog)->rem_conn(k);
