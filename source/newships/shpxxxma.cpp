@@ -220,7 +220,7 @@ int XXXMangler::activate_special()
     int i;
     for (i = 0; i < specialNumber; i++)
     {
-	game->add( new IlwrathSpiderMine( this, ox, oy, beta + alpha * i, specialVelocity, specialLifeTime, specialRandomness, specialStopTime, data->spriteSpecial ));
+		game->add( new IlwrathSpiderMine( this, ox, oy, beta + alpha * i, specialVelocity, specialLifeTime, specialRandomness, specialStopTime, data->spriteSpecial ));
     }
   
     return i;
