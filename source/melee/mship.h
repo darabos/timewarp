@@ -127,7 +127,7 @@ class Ship : public SpaceObject {
 	int    special_rate;
 	int    special_sample;
 	int    hotspot_rate;
-	char   captain_name[13];
+	char   captain_name[16];
 
 	SpaceSprite *spritePanel;
 

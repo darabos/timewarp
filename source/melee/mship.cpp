@@ -369,13 +369,14 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 
 	int i;
 	i = get_config_int("Names", "NumNames", 0);
+	int L = sizeof(captain_name);
 	if (i) {
 		char buffy[16];
 		sprintf(buffy, "CaptName%d", 1+(rand() % i));
 		const char *tmp = get_config_string("Names", buffy, "");
 		i = strlen(tmp);
-		strncpy(captain_name, tmp, 16);
-		if (i >= 16) i = 15;
+		strncpy(captain_name, tmp, L);
+		if (i >= L) i = L-1;
 		captain_name[i] = '\0';
 	}
 	else captain_name[0] = '\0';
