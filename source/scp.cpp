@@ -22,7 +22,10 @@
 #include <string.h>
 #include <errno.h>
 #include <allegro.h>
-#include <assert.h>
+
+#ifdef WIN32
+	#include <allegro/platform/aintwin.h>
+#endif
 
 #ifdef ALLEGRO_MSVC
 	#include <winalleg.h>
@@ -686,6 +689,13 @@ int main(int argc, char *argv[]) { STACKTRACE
 END_OF_MAIN();
 
 int tw_main(int argc, char *argv[]) { STACKTRACE
+#ifdef WIN32
+	char szPath[MAX_PATH];
+	GetModuleFileName(NULL, szPath, sizeof(szPath));
+	if (strrchr(szPath, '\\')) *strrchr(szPath, '\\') = '\0';
+	SetCurrentDirectory(szPath);
+#endif
+
 	int i;
 	int auto_port = -1;
 	const char *auto_play = NULL, *auto_param = NULL;

@@ -87,7 +87,7 @@ endif
 ifdef win32
 	OBJDIR := ${addsuffix -win32,$(OBJDIR)}
 	NAME := ${addsuffix .exe,$(NAME)}
-	CFLAGS += -DWIN32
+	CFLAGS += -DWIN32 -Wl,--subsystem=windows
 	LIBS += -lalleg -lws2_32 -lwinmm
 else
 	CFLAGS += -DLINUX
