@@ -92,7 +92,7 @@ class LeagueGame : public NormalGame {
 	Ball* ball;
 
 	public:
-	int score[2];
+	int score[100];
 	virtual void calculate();
 	virtual void init(Log *_log);
 	virtual void set_resolution (int screen_x, int screen_y);
@@ -102,7 +102,7 @@ class LeagueGame : public NormalGame {
 };
 
 void LeagueGame::init_objects() {
-	STACKTRACE
+	STACKTRACE;
 
 	add( new Stars() );
 	add( new Boundary( Vector2(LEAGUE_BORDER, LEAGUE_BORDER), Vector2(size.x/2, LEAGUE_BORDER) ));
@@ -138,9 +138,8 @@ void LeagueGame::init_objects() {
 }
 
 void LeagueGame::init( Log *_log ){
-	STACKTRACE
+	STACKTRACE;
 
-	score[0] = score[1] = 0;
 	// changed GEO. The data-file of this game is outdated. It works with
 	// the default melee data file.
 //	old_melee = melee;
@@ -148,7 +147,16 @@ void LeagueGame::init( Log *_log ){
 //	if( !melee ) error( "Error loading league data\n" );
 	NormalGame::init( _log );
 	turbo *= 1.414;
-	player_team[2] = player_team[0];
+
+	int i;
+	int team = player[0]->team;
+	for ( i = 0; i < num_players; ++i )
+	{
+		player[i]->team = team;
+	}
+
+	score[0] = 0;
+	score[1] = 0;
 }
 
 LeagueGame::~LeagueGame(){
@@ -162,12 +170,31 @@ void LeagueGame::set_resolution( int screen_x, int screen_y ){
 	view->frame->set_background( 0, 32, 0 );
 }
 
+
+static void bound(double xmin, double *x, double xmax)
+{
+	if (*x < xmin) *x = xmin;
+	if (*x > xmax) *x = xmax;
+}
+
 void LeagueGame::calculate(){
 	NormalGame::calculate();
+
+	// check if all objects are within the borders
+	int i;
+	for ( i = 0; i < num_items; ++i )
+	{
+		SpaceLocation *o = item[i];
+		if (!o->detectable()) continue;
+
+		o->pos = o->normal_pos();
+		bound(LEAGUE_BORDER, &(o->pos.x), map_size.x/2 - LEAGUE_BORDER);
+		bound(LEAGUE_BORDER, &(o->pos.y), map_size.y/2 - LEAGUE_BORDER);
+	}
 }
 
 void LeagueGame::animate( Frame* frame ){
-	STACKTRACE
+	STACKTRACE;
 
 	NormalGame::animate( frame );
 	meleedata.panelSprite->draw( 0, Vector2(PANEL_WIDTH, PANEL_HEIGHT), 0, frame );
@@ -189,10 +216,11 @@ apamuti( 0 ){
 	collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;
 	mass = LEAGUE_BALL_MASS;
 	id = ID_BALL;
+	layer = LAYER_SHIPS;
 }
 
 void Ball::inflict_damage( SpaceObject* other ){
-	STACKTRACE
+	STACKTRACE;
 
 	if( !other->isShip() || apamuti ) return;
 	apamuti = LEAGUE_BALL_APAMUTI;
@@ -205,7 +233,7 @@ void Ball::inflict_damage( SpaceObject* other ){
 }
 
 void Ball::calculate(){
-	STACKTRACE
+	STACKTRACE;
 
 	if( apamuti ){
 		apamuti -= frame_time;
@@ -239,7 +267,7 @@ void Ball::calculate(){
 				sprite_index--;
 				disassembling = false;
 				assembling = true;
-				pos = map_size / 2;
+				pos = map_size / 4;		// the width/height of the game-area is half the map-size
 			}
 		}
 		else step -= frame_time;
@@ -269,10 +297,13 @@ void Ball::calculate(){
 		double v = sqrt( vv );
 		accelerate( this, alpha, -v * LEAGUE_BALL_SLOWDOWN * frame_time, v );
 	}
+
+
+
 }
 
 void Ball::kick(){
-	STACKTRACE
+	STACKTRACE;
 
 	if( latched ){
 		vel = LEAGUE_BALL_KICK_SPEED * unit_vector( latched->get_angle() );
@@ -284,7 +315,7 @@ void Ball::kick(){
 }
 
 void Ball::reassemble(){
-	STACKTRACE
+	STACKTRACE;
 
 	if( latched ){
 		latched = NULL;
@@ -314,7 +345,7 @@ residualDamage( ores ){
 }
 
 void GoalLine::calculate(){
-	STACKTRACE
+	STACKTRACE;
 
 	length += _length * frame_time * LEAGUE_GOAL_LINE_REGEN;
 	if( length > _length ) length = _length;
@@ -327,7 +358,7 @@ void GoalLine::calculate(){
 }
 
 void GoalLine::inflict_damage( SpaceObject* other ){
-	STACKTRACE
+	STACKTRACE;
 
 	Laser::inflict_damage( other );
 	collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;
@@ -373,7 +404,7 @@ SpaceLocation( oship, 0, 0 ), time( otime ){
 void DisableFire::animate( Frame* space ){}
 
 void DisableFire::calculate(){
-	STACKTRACE
+	STACKTRACE;
 
 	if( !ship ){
 		state = 0;
@@ -391,7 +422,7 @@ SpaceLine( NULL, point1, atan3(point2-point1), distance_from( point1, point2 ),
 }
 
 void Boundary::collide( SpaceObject* other ){
-	STACKTRACE
+	STACKTRACE;
 
 
 	if((!canCollide(other)) || (!other->canCollide(this))) return;

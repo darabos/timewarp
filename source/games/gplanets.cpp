@@ -1,14 +1,6 @@
 /*hacked version of the solar system melee by UAF and Corona688. This one is
 done by rump and geoman.*/
 
-/*
-
-TO DO
-
-networking
-	synchronizing the menu
-
-*/
 
 
 #include <allegro.h>
@@ -30,6 +22,7 @@ REGISTER_FILE
 #include "../melee/mshppan.h"  //ship panels...
 #include "../melee/mitems.h"
 #include "../melee/mfleet.h"   //fleets...
+#include "../scp.h"
 
 #include "../other/orbit.h"
 #include "../id.h"
@@ -130,13 +123,16 @@ OrbitHandler_PLSY::OrbitHandler_PLSY(SpaceLocation *creator,
 	angle_orientation = langle_orientation;
 
 	// helper
-	angle_linear = random(PI2);
+	angle_linear = tw_random(PI2);
 
 	update_xyv();
 	//orbiter->x = center->x + xoffset + a * cos(angle);
 	//orbiter->y = center->y + b * sin(angle);
 
 	vel = 0;
+
+//	message.print(1500, 14, "ORBIT: [%5.2f] [%5.2f] [%5.2f] [%5.2f]",
+//		a, b, angvel, angle_linear);
 
 }
 
@@ -1467,9 +1463,7 @@ void Planets::init_objects()
 
 	//opening your .ini file.
 
-	//log_file("planets.ini");
-	set_config_file("planets.ini");
-	//set_config_file("planet.ini");
+	log_file("planets.ini");
 //	int GasGrav = get_config_int(NULL, "Gasgravity",0);
 //	double MoonGrav = get_config_float(NULL, "Moongravity", 0);
 
@@ -1544,7 +1538,12 @@ void Planets::init_objects()
 			PlanetStarbaseEllipsAngvel[100], PlanetStarbaseEllipsOrientation[100],
 			PlanetPlGrav, PlanetPlGravRange;
 
-	ChoosePlanetSystem(i, NPlanets, iplanetpic,
+	if (p_local == 0)
+	{
+		// the host can choose the planet system ; the rest has to wait a short while.
+
+		ChoosePlanetSystem(i, NPlanets,
+			iplanetpic,
 			NumMoons, MapSize,
 			PlanetPlGrav, PlanetPlGravRange,
 			PlanetMoonPic,
@@ -1559,12 +1558,45 @@ void Planets::init_objects()
 			PlanetStarbaseEllipsW, PlanetStarbaseEllipsE,
 			PlanetStarbaseEllipsAngvel,
 			PlanetStarbaseEllipsOrientation);
+	}
+
+	// you've to re-define the random numbers now, cause the host has used them ...
+	rand_resync();
+
+	// share the data (with/from player 0).
+	// first share single values and array-size.
+//	log_test();
+	share(0, &iplanetpic);
+	share(0, &NumMoons);
+	share(0, &PlanetPlGrav);
+	share(0, &PlanetPlGravRange);
+	share(0, &NumStarbases);
+//	log_test();
+
+	share_update();
+
+	// then share arrays
+	share(0, PlanetMoonPic, NumMoons);
+	share(0, PlanetMoonEllipsW, NumMoons);
+	share(0, PlanetMoonEllipsE, NumMoons);
+	share(0, PlanetMoonEllipsAngvel, NumMoons);
+	share(0, PlanetMoonEllipsOrientation, NumMoons);
+	share(0, PlanetMoonGrav, NumMoons);
+
+	share(0, PlanetStarbaseEllipsW, NumStarbases);
+	share(0, PlanetStarbaseEllipsE, NumStarbases);
+	share(0, PlanetStarbaseEllipsAngvel, NumStarbases);
+	share(0, PlanetStarbaseEllipsOrientation, NumStarbases);
+
+	share_update();
 
 
+	message.print(1500, 15, "mapsize [%i] nummoons[%i] numbases[%i]",
+		MapSize, NumMoons, NumStarbases);
+	message.animate(0);
 
 
-
-	iMessage("HI !!!!   = %d *PRESET*",(int)size.x);
+	//iMessage("HI !!!!   = %d *PRESET*",(int)size.x);
 
 
 	//Select planet
@@ -1592,10 +1624,12 @@ void Planets::init_objects()
 	game->add(Centre);
 	game->add(new WedgeIndicator(Centre, 50, 4));	// this shows the direction/distance of the planet.
 
+	item_sum("sum1");
 
 	// moons creating loop
 	int kind;
 	int num;
+	iMessage("NumMoons=%i", NumMoons);
 	for ( num = 0; num < NumMoons; num++)
 	{
 		//iMessage("treating num   = %d *PRESET*",num);
@@ -1604,14 +1638,17 @@ void Planets::init_objects()
 		int k = PlanetMoonPic[num];
 		if (k == -1)	// this should not occur
 			k = random() % Num_Moon_Pics;
+		//iMessage("k=%i", k);
 		
 		//iMessage("moonpic num   = %d *Preset*", k);
 
 		Satellite = new Planet(size/2,MoonPics[k],0);
+
 		handler = new OrbitHandler_PLSY ( Centre,
 			(SpaceLocation *)Centre, (SpaceLocation *)Satellite,
 			PlanetMoonEllipsW[num], PlanetMoonEllipsE[num],
 			PlanetMoonEllipsAngvel[num], PlanetMoonEllipsOrientation[num]);
+
 		Satellite->gravity_force *= PlanetMoonGrav[num]; // should be changed also
 
 		//iMessage("Grav = %d *PRESET*", int(100*MoonGrav[k]));
@@ -1622,8 +1659,10 @@ void Planets::init_objects()
 		// this shows the location of the moons by grey lines (very messy when there are many moons).
 		//game->add(new WedgeIndicator(Satellite, 50, 8));
 	}
-	iMessage("Done %i", 1);
+	//iMessage("Done %i", 1);
 
+
+	//item_sum("sum2");
 	
 //	OrbitHandler_PLSY(SpaceLocation *creator,
 //	SpaceLocation *p_center, SpaceLocation *p_orbiter,
@@ -1647,22 +1686,27 @@ void Planets::init_objects()
 		add (c);
 	}
 
+	//item_sum("sum3");
+
 	//asteroids code
 	//Asteroids = get_config_int(NULL, "Asteroids", 0);
 	Asteroid *astero;
 	if (Asteroids > 0)
+	{
 		for (int num = 0; num < Asteroids; num += 1)
 		{
 			add(astero = new(Asteroid));
 		}
-		else {
-			NumMoons = get_config_int(NULL, "NPlanets", 2);
-			Radius = get_config_int(NULL, "Radius", 2);
-			if ((NumMoons*Radius+200)*2>3840) for (int i = 0; i < ((NumMoons*Radius+200)*2)/900; i += 1) add(new Asteroid());
-			else for (int i = 0; i < 4; i += 1) add(new Asteroid());
-		}
-		
+	}
+	else {
+		NumMoons = get_config_int(NULL, "NPlanets", 2);
+		Radius = get_config_int(NULL, "Radius", 2);
+		if ((NumMoons*Radius+200)*2>3840) for (int i = 0; i < ((NumMoons*Radius+200)*2)/900; i += 1) add(new Asteroid());
+		else for (int i = 0; i < 4; i += 1) add(new Asteroid());
+	}
+	
 
+	//item_sum("sum4");
 
 	// How to add a new (enemy) ship (no ship panel).
 	// Create a new enemy player.
@@ -1681,6 +1725,8 @@ void Planets::init_objects()
 			PlanetStarbaseEllipsAngvel[num], PlanetStarbaseEllipsOrientation[num]);
 		game->add(handler);
 	}
+
+	//item_sum("sum5");
 
 
 	// hmm, and what about a background !!! A nebula or so ?!

@@ -4,6 +4,7 @@
 #include "../melee.h"          //used by all TW source files.  well, mostly.
 REGISTER_FILE                  //done immediately after #including melee.h, just because I said so
 #include "../melee/mgame.h"    //Game stuff
+#include "../melee/mmain.h"    //Game stuff
 #include "../melee/mcbodies.h" //asteroids & planets
 #include "../melee/mship.h"    //ships
 #include "../melee/mlog.h"     //networking / demo recording / demo playback
@@ -107,7 +108,7 @@ HyperJammer::HyperJammer(Ship *target, int rate)
 
 void HyperJammer::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	if(Target==NULL) return;
 	if(!Target->exists())
@@ -169,7 +170,7 @@ public:
 
 void VanRadar::addTeam(TeamCode team, int color)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	if(Coded_Teams<(MAX_TEAMS-1))
 	{
@@ -188,7 +189,7 @@ VanRadar::VanRadar(BITMAP *BlankSlate, SpaceLocation *target, double size):ZRada
 //I have overriden ZRadar::Paint() with a more complicated radar painter.
 void VanRadar::Paint(BITMAP *Slate, double Tx, double Ty)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	for(int num=0; num<physics->num_items; num++)
 	{
@@ -256,13 +257,13 @@ void VanRadar::Paint(BITMAP *Slate, double Tx, double Ty)
 
 /********************************Game code!*****************************************************/
 
-class Vanguard : public Game { //declaring our game type
+class Vanguard : public NormalGame { //declaring our game type
 public:
 	BITMAP *blankRadar;						//Image of the blank RADAR screen
 	VanRadar *vradar;							//Pointer to the VanRadar object
 	double RadarZoom;						//Size of the area seen by VanRadar
 
-	HyperJammer *jammer;
+	HyperJammer *jammer[100];
 
 	SpaceSprite *PlanetPics[Num_Planet_Pics];			//Sprites for Solar System Melee
 	SpaceSprite *GiantPics[Num_Giant_Pics];				//...
@@ -271,12 +272,12 @@ public:
 
 	BITMAP *background;						//Titlescreen picture
 
-	ShipPanel *human_panel[2];  					//we need to keep track of the ship panels, in case
+//	ShipPanel *human_panel[2];  					//we need to keep track of the ship panels, in case
 									//we have to move them around because the player
 									//changes screen resolutions
-	Control *human_control[2];
+//	Control *human_control[2];
 	TeamCode human_team, enemy_team;				 //the two teams
-	Ship *HumanPlayer1, *HumanPlayer2;
+//	Ship *HumanPlayer1, *HumanPlayer2;
 
 
 	bool	GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr, int numSprites);	//Read a list of sprites
@@ -302,12 +303,12 @@ public:
 	void pick_new_ships();						//restarts the game
 	int search_key(int key);					//Searches through keylist
 
-	~Vanguard();							//Destructor:  Deletes all sprites and bitmaps
+	virtual ~Vanguard();						//Destructor:  Deletes all sprites and bitmaps
 };
 
 int Vanguard::search_key(int key)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	for(int num=0; num<Num_Van_Keys; num++)
 			if(key==Van_Keys[num]) return num;
@@ -328,7 +329,7 @@ Vanguard::~Vanguard()
 
 DATAFILE *Vanguard::FindDat(DATAFILE *datarray, char *name)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	for(int num=0; num<NUM_ENTRIES; num++)
 		if(strcmp(name,datarray[num].prop[1].dat)==0) return &datarray[num];
@@ -338,31 +339,18 @@ DATAFILE *Vanguard::FindDat(DATAFILE *datarray, char *name)
 
 bool Vanguard::handle_key(int k)
 {
-	STACKTRACE
+	STACKTRACE;
 
-	char buffy[256];
-	message.print(1000,12,"Key:  %s",key_to_name(k>>8, buffy));
+	//message.print(1000,12,"Key:  %s",key_to_name(k>>8, buffy));
 	switch(search_key(k>>8))
 	{
-	case KEY_HYPERSPACE:
-		if(jammer->is_in_hyperspace())
-		{
-			jammer->set_target(NULL);
-			message.out("Exiting hyperspace.");
-		}
-		else if(HumanPlayer1->batt==HumanPlayer1->batt_max)
-		{
-			jammer->set_target(HumanPlayer1);
-			message.out("Entering hyperspace.");
-		}
-
-		break;
 
 	case KEY_HIDE_RADAR:			//Toggle on/off radar
 
 		vradar->toggleActive();
 		break;
 
+		/*
 	case KEY_SWITCH_RADAR:			//Switch between "everything" view and "hero" view
 		if(vradar->t==NULL)
 		{
@@ -371,6 +359,7 @@ bool Vanguard::handle_key(int k)
 		}
 		else	vradar->t=NULL;
 		//Notice that there is no break here.  I want it to fall thru to the KEY_SLASH_PAD code.
+		*/
 
 	case KEY_ZOOM_ALL:		//Zoom out full
 //		RadarZoom = width/2.;
@@ -402,7 +391,7 @@ bool Vanguard::handle_key(int k)
 
 BITMAP *Vanguard::GetBitmap(DATAFILE *datArray, char *bitmapName)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	DATAFILE *tmpdata;		//The object that the data gets tossed into
 	BITMAP *src,*bmp;		//Two bitmaps:  One direct from tmpdata, and the copy of it that will be returned.
@@ -434,7 +423,7 @@ BITMAP *Vanguard::GetBitmap(DATAFILE *datArray, char *bitmapName)
 
 SpaceSprite *Vanguard::GetSprite(DATAFILE *datArray, char *spriteName)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	DATAFILE *tmpdata;		//Temporary holder for data
 
@@ -450,7 +439,7 @@ SpaceSprite *Vanguard::GetSprite(DATAFILE *datArray, char *spriteName)
 
 bool Vanguard::GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr, int numSprites)
 {
-	STACKTRACE
+	STACKTRACE;
 
 
 	//Example to load 10 sprites into an empty array, do:
@@ -475,11 +464,11 @@ bool Vanguard::GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr,
 }
 
 void Vanguard::calculate() {
-	STACKTRACE
+	STACKTRACE;
 
-	Game::calculate();
-	if (human_panel[0] && !human_panel[0]->exists()) human_panel[0] = NULL;
-	if (human_panel[1] && !human_panel[1]->exists()) human_panel[1] = NULL;
+	Game::calculate();	// NOTE: skip normalgame calculate, is that ok ?
+//	if (human_panel[0] && !human_panel[0]->exists()) human_panel[0] = NULL;
+//	if (human_panel[1] && !human_panel[1]->exists()) human_panel[1] = NULL;
 	if (respawn_time == -1) {
 		int i, humans = 0, enemies = 0;
 		for (i = 0; i < gametargets.N; i += 1) {
@@ -489,9 +478,53 @@ void Vanguard::calculate() {
 		//if either team has no targetable items remaining (generally ships), pick new ships
 		if (!humans || !enemies) respawn_time = game_time + 5000; //5000 milliseconds is 10 seconds
 		}
-	else if (respawn_time <= game_time) pick_new_ships();
+	else if (respawn_time <= game_time)
+		pick_new_ships();
 
 //	vradar->setTarget(HumanPlayer1);
+
+
+
+	// player commands.
+	int i;
+	for ( i = 0; i < num_players; ++i )
+	{
+		Ship *s;
+		s = player[i]->control->ship;
+		if (s && s->fire_altweapon)
+		{
+			if (jammer[i]->is_in_hyperspace())
+			{
+				jammer[i]->set_target(0);
+				message.out("Exiting hyperspace.");
+			}
+			else if(s->batt == s->batt_max)
+			{
+				jammer[i]->set_target(s);
+				message.out("Entering hyperspace.");
+			}
+		}
+
+		// WATCH MODE ??
+		if (!s)
+		{
+			int key;
+			key = player[i]->control->keys;
+
+			double v;
+			v = 10 / space_zoom;
+			if (key & keyflag::thrust)  view->camera.pos += Vector2(0, -v);
+			if (key & keyflag::back)    view->camera.pos += Vector2(0,  v);
+			if (key & keyflag::left)    view->camera.pos += Vector2(-v, 0);
+			if (key & keyflag::right)   view->camera.pos += Vector2( v, 0);
+/*
+			space_center = normalize2(view->camera.pos, map_size);
+	::space_center = normalize2(view->camera.pos, map_size);
+	::space_vel = view->camera.vel;
+	::space_center_nowrap = view->camera.pos;
+	*/
+		}
+	}
 
 	return;
 	}
@@ -506,23 +539,33 @@ void Vanguard::set_resolution(int screen_x, int screen_y) {
 	redraw();
 	}
 
-void Vanguard::pick_new_ships() {
-	STACKTRACE
+void Vanguard::pick_new_ships()
+{
+	STACKTRACE;
 
 	int i;
 	acquire_screen();
 	clear_to_color(screen, pallete_color[4]);
 	release_screen();
-	for (i = 0; i < num_items; i += 1)	if (item[i]->exists()) item[i]->die();
+	item_sum("1");
 
-//	if (human_panel[0]) human_panel[0]->hide();
-//	if (human_panel[1]) human_panel[1]->hide();
+	for (i = 0; i < num_items; i += 1)
+	{
+		if (item[i]->exists())
+			item[i]->die();
+	}
+	// also tell all player-controls that all ships have gone, otherwise not all
+	// choose a new ship here, which would give a problem
 
-
+	for ( i = 0; i < num_players; ++i )
+	{
+		player[i]->control->ship = 0;
+	}
 
 	//Probably a good idea to get all your variables immediately after
 	//opening your .ini file.
 	log_file("vanguard.ini");
+
 	int GasGrav = get_config_int(NULL, "Gasgravity",0);
 	double MoonGrav = get_config_float(NULL, "Moongravity", 0);
 	int NSuns = get_config_int(NULL, "NSuns", 0);
@@ -542,11 +585,20 @@ void Vanguard::pick_new_ships() {
 	double PlanetVel = get_config_float(NULL,"PlanetVel",0) * ANGLE_RATIO;
 	double MoonVel = get_config_float(NULL,"MoonVel",0) * ANGLE_RATIO;
 
-//	width = Size1*Size2;			//Set the size BEFORE putting in the ships
-//	height = Size1*Size2;
 	size = Vector2(SizeX, SizeY);
 
+	// reset your fleets first ...
+	log_file("fleets/all.scf");
+	for ( i = 0; i < num_players; ++i )
+		((NPI*)player[i])->fleet->load(NULL, "Fleet");
 
+	// use the default mechanism for choosing ships.
+	NormalGame::choose_new_ships();
+
+
+	item_sum("2");
+
+	/*
 	//player 1 selects a new ship
 	Fleet fleet;
 
@@ -569,12 +621,12 @@ void Vanguard::pick_new_ships() {
 	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) {
 		LOAD_FLEET
 		i = human_control[1]->choose_ship(window, "Hey You Player!\nPick a ship!", &fleet);
-		log_int(i, channel_player[1]);
+		log_int(i, channel_network[1]);
 		if (i == -1) i = random() % fleet.getSize();
 //		Ship *s = create_ship(fleet.getShipType(i)->id, human_control[1], width/2 + 100, height/2, PI, human_team);
 		Ship *s = create_ship(fleet.getShipType(i)->id, human_control[1], size/2 + Vector2(100,0), PI, human_team);
 		add(s->get_ship_phaser());
-		add_focus(s, channel_player[1]);
+		add_focus(s, channel_network[1]);
 		human_panel[1] = new ShipPanel(s);
 		human_panel[1]->window->init(window);
 		human_panel[1]->window->locate(0,0.9, 0,0.25, 0,0.1, 0,0.25);
@@ -639,6 +691,7 @@ void Vanguard::pick_new_ships() {
 //	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", random()%(int)width, random()%(int)height, random(PI2), enemy_team);
 	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
 	add(e->get_ship_phaser());
+	*/
 
 //Solar system object code
 	Sun *Centre[1000];
@@ -659,7 +712,7 @@ void Vanguard::pick_new_ships() {
 	{
 		ok = 0;
 		int n=0;
-		int Dir = ((rand()%2)*2)-1;
+		int Dir = ((random()%2)*2)-1;
 
 		while (ok!=1)
 		{
@@ -686,21 +739,21 @@ void Vanguard::pick_new_ships() {
 		}
 
 
-		add(Centre[iSuns] = new Sun(Vector2(w, h), StarPics[rand()%Num_Star_Pics],0));
+		add(Centre[iSuns] = new Sun(Vector2(w, h), StarPics[random()%Num_Star_Pics],0));
 
 		Centre[iSuns]->id=SUN_ID;
 
 		// planets creating loop
-		NumPlanets=MinPlanets+rand()%(MaxPlanets-MinPlanets);
+		NumPlanets=MinPlanets+random()%(MaxPlanets-MinPlanets);
 
 		for(int num=0; num<NumPlanets; num++)
 		{
-			kind = rand()%3;
-			moons = rand()%(NumMoons+1);
+			kind = random()%3;
+			moons = random()%(NumMoons+1);
 			if ((kind == 0) && (((num+1)*Radius)> 1600))
 			{	// gas giant
 //				Satellite = new Planet(width/2,height/2,GiantPics[rand()%Num_Giant_Pics],0);
-				Satellite = new Planet(size/2, GiantPics[rand()%Num_Giant_Pics],0);
+				Satellite = new Planet(size/2, GiantPics[random()%Num_Giant_Pics],0);
 				Satellite->gravity_force *= GasGrav;
 
 //				handler = new OrbitHandler(Centre[j],width/2,height/2,random(PI2), (SpaceLocation *)Centre[j],
@@ -711,7 +764,7 @@ void Vanguard::pick_new_ships() {
 			else
 			{	// normal planet
 //				Satellite = new Planet(width/2,height/2,PlanetPics[rand()%Num_Planet_Pics],0);
-				Satellite = new Planet(size/2,PlanetPics[rand()%Num_Planet_Pics],0);
+				Satellite = new Planet(size/2,PlanetPics[random()%Num_Planet_Pics],0);
 
 //				handler = new OrbitHandler(Centre[j],width/2,height/2,random(PI2), (SpaceLocation *)Centre[j],
 //					(SpaceLocation *)Satellite, (num+1)*Radius, PlanetVel*Dir,0);
@@ -725,7 +778,7 @@ void Vanguard::pick_new_ships() {
 			for (int i=0; i<moons; i+=1)
 			{
 //				Moon = new Planet(width/2,height/2,MoonPics[rand()%Num_Moon_Pics],0);
-				Moon = new Planet(size/2,MoonPics[rand()%Num_Moon_Pics],0);
+				Moon = new Planet(size/2,MoonPics[random()%Num_Moon_Pics],0);
 				Moon->gravity_force *= MoonGrav;
 				Moon->gravity_range = 8;
 				Moon->id=MOON_ID;
@@ -745,6 +798,8 @@ void Vanguard::pick_new_ships() {
 
 	}
 done:
+
+	item_sum("3");
 	//comet code
 	for (int num = 0; num < Comets; num++)
 	{
@@ -759,6 +814,8 @@ done:
 		add (c);
 	}
 
+	item_sum("4");
+
 //End solar system object code
 
 
@@ -772,9 +829,30 @@ done:
 
 
 void Vanguard::init(Log *_log) {
-	STACKTRACE
+	STACKTRACE;
 
-	Game::init(_log);
+	int minbots = 1;
+	if (num_bots < minbots)		// require a minimum number of bots
+	{
+		int k;
+		k = minbots - num_bots;
+		num_bots = minbots;
+
+		int i;
+		for ( i = 0; i < 5; ++i )
+		{
+			message.print(1500, 14, "Adding bots to your game !! You need at least 4 bots.");
+			message.animate(0);
+		}
+		idle(500);	// wait half a second.
+
+
+		// you've to adjust the num_players as well if this is the case ...
+		// otherwise the extra bots will be skipped (=safeguard).
+		num_players += k;
+	}
+
+	NormalGame::init(_log);
 
 	prepare();
 
@@ -800,8 +878,13 @@ void Vanguard::init(Log *_log) {
 	blankRadar=GetBitmap(VanDat,"Scope");		//Load blank RADAR image
 	if(!blankRadar) error("Can't load scope image.");
 
-	jammer = new HyperJammer(NULL,150);
-	game->add(jammer);
+	// create a jammer for each player (to enter hyperspace)
+	int i;
+	for ( i = 0; i < num_players; ++i )
+	{
+		jammer[i] = new HyperJammer(NULL,150);
+		game->add(jammer[i]);
+	}
 
 //Solar System Melee code
 
@@ -836,6 +919,15 @@ void Vanguard::init(Log *_log) {
 	human_team = new_team();
 	enemy_team = new_team();
 
+	// reset default team settings for all players
+	for ( i = 0; i < num_players; ++i )
+	{
+		if (player[i]->channel == channel_none)
+			player[i]->team = enemy_team;
+		else
+			player[i]->team = human_team;
+	}
+
 //	vradar = new VanRadar(blankRadar,NULL,RadarZoom = width);
 	vradar = new VanRadar(blankRadar,NULL,RadarZoom = size.x);
 
@@ -843,22 +935,17 @@ void Vanguard::init(Log *_log) {
 	vradar->addTeam(enemy_team,makecol(255,65,0));		//A violent red
 	add(vradar);
 
-	human_control[0] = create_control(channel_server, "Human");
 
-	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client))
-		human_control[1] = create_control(channel_player[1], "Human");
-
-	else human_control[1] = NULL;
-
-	log_file("vanguard.ini");
+//	log_file("vanguard.ini");
 //	int Size1 = get_config_int(NULL, "Size1", 0);
 //	int Size2 = get_config_int(NULL, "Size2", 0);
 	int Asteroids = get_config_int(NULL,"Asteroids",0);
 
-	int i;
-	for(i=0; i<Asteroids; i++) add(new Asteroid());
+	
+	for(i=0; i<Asteroids; i++)
+		add(new Asteroid());
 
-	human_panel[0] = human_panel[1] = NULL;
+//	human_panel[0] = human_panel[1] = NULL;
 
 	change_view("Hero");		//sets it to Hero view mode
 
@@ -866,7 +953,7 @@ void Vanguard::init(Log *_log) {
 
 	view_locked = true;			//prevents the view mode from being changed through the menu
 
-	respawn_time = 500;
+	respawn_time = 500;			// so that ships will be picked.
 
 	message.out("<Vanguard>", 3000, 15);
 

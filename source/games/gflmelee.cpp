@@ -56,7 +56,7 @@ REGISTER_FILE
 
 void copy_sprite2bmp(SpaceSprite* src, BITMAP *bmp)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	src->lock();
 	
@@ -81,6 +81,7 @@ public:
 	void newtarget(SpaceLocation *o);
 	int ImIndicator::colortype(SpaceLocation *o);
 	void animate(Frame *frame);
+	virtual void calculate();
 };
 
 
@@ -168,9 +169,21 @@ class StatsManager
 
 
 
-static const int Nradarmodes = 3;	// off, all, and medium
+class FlPlayer : public NPI
+{
+public:
+	Control *oldcontrol;
+	// remember the original control when you take possession of a ship
+	
+	ShipPanelBmp *panel;
+	int lastkey_playership;
+};
 
-class FlMelee : public Game
+
+static const int Nradarmodes = 3;	// off, all, and medium
+static const int max_fleet_ships = 64;
+
+class FlMelee : public NormalGame
 {
 public:
 
@@ -187,15 +200,17 @@ public:
 	int healthbartoggle;
 	char alliancename[2][512];
 	TeamCode alliance[2];
-	Control *playercontrols[2];
-	Control *oldcontrol[2];	// remember the original control when you take possession of a ship
-	ShipPanelBmp *player_panel[2];
+	//Control *oldcontrol[100];	// remember the original control when you take possession of a ship
+	//ShipPanelBmp *player_panel[2];
+	//int lastkey_playership[100]
 
-	int		localplayer, remoteplayer;
+	Ship *fleet_ships[max_fleet_ships][2];
+
+	//int		localplayer, remoteplayer;
 	// which player number is "local" ... is this needed at all ?
 
 	int		toggle_showstats, toggle_playership, toggle_healthbars, toggle_fleetlist, toggle_radar, toggle_panel, toggle_radarpos;
-	int		lastkey_playership[2], lastkey_healthbars, lastkey_fleetlist, lastkey_radar, lastkey_panel, lastkey_radarpos, lastkey_radarlayout;
+	int		lastkey_healthbars, lastkey_fleetlist, lastkey_radar, lastkey_panel, lastkey_radarpos, lastkey_radarlayout;
 	StatsManager	*statsmanager;
 
 	int radar_pos_id;
@@ -222,6 +237,12 @@ public:
 	virtual void quit(const char *message);
 
 	void start_menu(int *select);
+
+	
+	void take_control(int i, Ship *s);
+	bool underplayercontrol(SpaceObject *o);
+
+	virtual PlayerInformation *new_player();	// should return a pointer to a new player-class
 };
 
 
@@ -229,7 +250,7 @@ public:
 
 SpaceSprite *FlMelee::GetSprite(char *fileName, char *spriteName, int attribs)
 {
-	STACKTRACE
+	STACKTRACE;
 
 
 	DATAFILE *tmpdata;
@@ -258,7 +279,7 @@ SpaceSprite *FlMelee::GetSprite(char *fileName, char *spriteName, int attribs)
 bool FlMelee::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, 
 int numSprites, int attribs)
 {
-	STACKTRACE
+	STACKTRACE;
 
 
 	SpaceSprite *spr;
@@ -279,12 +300,63 @@ int numSprites, int attribs)
 	return TRUE;
 }
 
+
+void FlMelee::take_control(int i, Ship *s)
+{
+	FlPlayer *p = (FlPlayer*)player[i];
+
+	// restore old control, if the ship still exists that is.
+	Ship *oldship;
+	oldship = p->control->ship;
+	if (oldship && oldship->exists())
+		p->oldcontrol->select_ship(oldship, "none");
+
+	// remember the control that's disabled by you :)
+	p->oldcontrol = s->control;
+
+	// take control over the disabled ship.
+	p->control->select_ship(s, "none");
+	p->control->set_target(-1);
+}
+
+
+
+bool FlMelee::underplayercontrol(SpaceObject *o)
+{
+	int i;
+	for ( i = 0; i < num_players; ++i )
+	{
+		if (player[i]->channel != channel_none &&
+			player[i]->control->ship == o)
+			break;
+	}
+
+	if (i < num_players)
+		return true;
+	else
+		return false;
+}
+
+
+PlayerInformation *FlMelee::new_player()	// should return a pointer to a new player-class
+{
+	FlPlayer *p = new FlPlayer();
+	p->lastkey_playership = 0;
+	p->panel = 0;
+	return p;
+}
+
+
 void FlMelee::init(Log *_log)
 {
-	STACKTRACE;
+	STACKTRACE;;
 
+	// disable "bots", cause it's humans first, bots are the rest of the ships by default
+	num_players -= num_bots;
+	num_bots = 0;
 
-	Game::init(_log);
+	// this also initializes the players
+	NormalGame::init(_log);
 
 	//prepare needs to be called before you add items, or do physics or graphics or anything like that.  Don't ask why.  
 	prepare(); 
@@ -381,7 +453,7 @@ void FlMelee::init(Log *_log)
 		c->gravity_force *= 0;
 		c->gravity_whip = 0;
 		c->accelerate(NULL, random(PI2), get_config_int(NULL, "Comet_acc", 2), 
-		get_config_int(NULL, "Comet_max", 2));
+						get_config_int(NULL, "Comet_max", 2));
 		add (c);
 	}
 
@@ -404,7 +476,7 @@ void FlMelee::init(Log *_log)
 	// initialize the teams and the fleets :)
 
 //	int Nfleets;
-	int allyfleet[2], iplayer;		// there are 2 players
+	int allyfleet[2], ifleet;		// there are 2 player fleets (can each fleet have >1 humans inside??)
 
 //	Nfleets = get_config_int("FleetInit", "Nalliances", 0);
 
@@ -432,49 +504,17 @@ void FlMelee::init(Log *_log)
 	log_int(allyfleet[0]);
 	log_int(allyfleet[1]);
 
+
 	// team-numbers are fixed : fleet 0 vs fleet 1.
 	alliance[0] = new_team();
 	alliance[1] = new_team();
 
+	// players are distributed over the fleets
+	int i;
+	for ( i = 0; i < num_players; ++i )
+		player[i]->team = alliance[i % 2];
 
-	// initialize server/client controls.
-	// this is not fixed, game-host should have fleet 0, game-client fleet 1
-	// note that channel_server/ channel_client are always local vs. remote,
-	// log->type is host vs client.
-	if (glog->type == Log::log_net1server || glog->type == Log::log_normal)
-	{
-		localplayer = 0;
-		remoteplayer = 1;
-	} else {
-		localplayer = 0;
-		remoteplayer = 1;
-	}
-	// it is ... identical !! WHY should it be this way ??
 
-	Control *c;
-	
-	// create the local player
-	c = create_control(channel_server, "Human");
-	playercontrols[localplayer] = c;
-	add_focus(c, c->channel);
-	
-	
-	// create the remote player
-	if (glog->type == Log::log_net1server || glog->type == Log::log_net1client)
-	{
-		// it's "client" from local perspective ???
-		c  = create_control(channel_player[1], "Human");
-		playercontrols[remoteplayer] = c;
-		add_focus(c, c->channel);
-	} else
-		playercontrols[remoteplayer] = 0;	// computer player.
-
-	// add a focus ?
-//	if (playercontrols[localplayer])
-//		add_focus(playercontrols[localplayer], playercontrols[localplayer]->channel);
-
-	// player 0 = local ?
-	// player 1 = remote ?
 	
 	
 
@@ -489,19 +529,23 @@ void FlMelee::init(Log *_log)
 
 	//Ship *takeovership = 0;
 
-	for ( iplayer = 0; iplayer < 2; ++iplayer )
+	int Nships;
+
+	for ( ifleet = 0; ifleet < 2; ++ifleet )
 	{
 
 		char ident[512];
-		int Nships;
 
-		sprintf(&ident[0], "Alliance%02i", allyfleet[iplayer]+1);	// >= 1
+		sprintf(&ident[0], "Alliance%02i", allyfleet[ifleet]+1);	// >= 1
 		message.out(ident);
 
 		Nships = get_config_int(ident, "Nships", 0);
 		iMessage("Nships = %i", Nships);
 
-		strcpy(alliancename[iplayer], get_config_string(ident, "Name", 0) );
+		if (Nships > max_fleet_ships)
+			tw_error("Too many ships in this fleet");
+
+		strcpy(alliancename[ifleet], get_config_string(ident, "Name", 0) );
 
 		int iship;
 		for ( iship = 0; iship < Nships; ++iship )
@@ -542,17 +586,20 @@ void FlMelee::init(Log *_log)
 			a = iship * PI2 / Nships;
 			R = 1500.0;
 
-			if ( iplayer == 0 )
-				P = Planets[iplayer]->pos + R * unit_vector(a-PI/2);
+			if ( ifleet == 0 )
+				P = Planets[ifleet]->pos + R * unit_vector(a-PI/2);
 			else
-				P = Planets[iplayer]->pos + R * unit_vector(a+PI/2);
+				P = Planets[ifleet]->pos + R * unit_vector(a+PI/2);
 
 			Ship *s;
 
 			
 			//s = create_ship(shipname, "Wussiebot", P, a, alliance[iplayer]);
-			s = create_ship(channel_none, shipname, "WussieBot", P, a, alliance[iplayer]);
+			s = create_ship(channel_none, shipname, "WussieBot", P, a, alliance[ifleet]);
 			add(s->get_ship_phaser());
+			
+			// check the ship.
+			fleet_ships[iship][ifleet] = s;
 
 			add(new HealthBar(s, &healthbartoggle));
 
@@ -560,27 +607,33 @@ void FlMelee::init(Log *_log)
 			// do not add this to the game:
 			statsmanager->addship(s, 1);
 
-			if ( iship == 0 && playercontrols[iplayer] )
-			{
-				// take over a ship with the human controls (overriding the AI)
-				//takeovership = s;
-				oldcontrol[iplayer] = s->control;	// remember :)
-				playercontrols[iplayer]->select_ship(s, "none");
-			}
-			
-			
 
 			// have to do this, since the ship-init loads different ini files.
 			// and it's best placed here, right after the last call to a different ini.
 			log_file("gflmelee.ini");
-
-
 		}
 
-		if (playercontrols[iplayer])
-			playercontrols[iplayer]->set_target(-1);
+
 	}
 
+	int iship[2];
+	iship[0] = 0;
+	iship[1] = 0;
+	for ( i = 0; i < num_players; ++i )
+	{
+		// the players should take over a ship
+		int ifleet;
+		if (player[i]->team == alliance[0])
+			ifleet = 0;
+		else
+			ifleet = 1;
+
+		take_control(i, fleet_ships[iship[ifleet]][ifleet]);
+		++iship[ifleet];
+
+		if (iship[ifleet] == 0)
+			tw_error("No ships left for this player !!");
+	}
 	
 	//if(	takeovership == NULL )		
 	//	tw_error("takeovership is used without initialization");
@@ -601,8 +654,6 @@ void FlMelee::init(Log *_log)
 
 	toggle_showstats = 0;
 	toggle_playership = 0;
-	lastkey_playership[0] = 0;
-	lastkey_playership[1] = 0;
 	lastkey_healthbars = 0;
 	lastkey_fleetlist = 0;
 	lastkey_radar = 0;
@@ -636,13 +687,12 @@ void FlMelee::init(Log *_log)
 	char txt[512];
 	sprintf(txt, "gflmelee%02i.dat", radarlayout+1);
 
-	if (glog->type == Log::log_net1client)
-		iplayer = remoteplayer;
-	else
-		iplayer = localplayer;
-	c = playercontrols[iplayer];
 
-	radar = new YRadar(c, radar_sizes[radar_mode], alliance[iplayer], txt, 0, 2);
+	int lp = local_player();
+	Control *c;
+	c = player[lp]->control;
+
+	radar = new YRadar(c, radar_sizes[radar_mode], player[lp]->team, txt, 0, 2);
 	game->add(radar);
 	radar->location = Vector2(0, 0.5*window->surface->h - 100);
 	//unload_datafile(FlmeleeData);
@@ -651,8 +701,6 @@ void FlMelee::init(Log *_log)
 //	vradar->addTeam(enemy_team,makecol(255,65,0));		//A violent red
 //	add(vradar);
 
-	player_panel[0] = 0;
-	player_panel[1] = 0;
 
 }
 
@@ -660,7 +708,7 @@ void FlMelee::init(Log *_log)
 
 void FlMelee::quit(const char *message)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	// save the game settings.
 	set_config_file("gflmelee.ini");
@@ -677,7 +725,7 @@ void FlMelee::quit(const char *message)
 
 int FlMelee::is_in_team(SpaceLocation *o, TeamCode team)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	if (!(o && o->exists() ))
 		return 0;
@@ -689,7 +737,7 @@ int FlMelee::is_in_team(SpaceLocation *o, TeamCode team)
 
 void FlMelee::animate_onscreen_shiplist( Frame* frame )
 {
-	STACKTRACE
+	STACKTRACE;
 
 	// info about the fleets
 
@@ -745,7 +793,7 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 						
 						spos = Vector2(cnt[iall]*50,yoffs[iall]);
 						
-						Control *c = playercontrols[0];	// you check from perspective of the human player = 0
+						Control *c = player[local_player()]->control;
 						if (!( c && c->target && shp == c->target ))
 						{
 							int a;
@@ -795,24 +843,27 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 		// show the ship panel(s)
 		Ship		*s;
 		SpaceObject	*t;
-		int		i;
+		int i;
 
-		i = 0;
-		s = playercontrols[i]->ship;
+		i = local_player();
+		FlPlayer *p = (FlPlayer*) player[i];
+
+		s = p->control->ship;
+
 		
 		if (s)
 		{
-			if (!player_panel[i])
-				player_panel[i] = new ShipPanelBmp(s);
+			if (!p->panel)
+				p->panel = new ShipPanelBmp(s);
 			
-			if (player_panel[i]->ship != s)
-				player_panel[i]->ship = s;
+			if (p->panel->ship != s)
+				p->panel->ship = s;
 			
 			
-			player_panel[i]->animate_panel();
+			p->panel->animate_panel();
 		}
 
-		src = player_panel[i]->panel;
+		src = p->panel->panel;
 
 		ix = dest->w - src->w;
 		iy = 0;
@@ -822,23 +873,23 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 		blit(src, dest, 0, 0 , ix, iy, iw, ih);
 		frame->add_box(ix, iy, iw, ih);
 
-		i = 0;
-		t = playercontrols[i]->target;
+		//i = local_player();	already initialized?
+		t = p->control->target;
 		
 		i = 1;
 		if (t && t->exists() && t->isShip() )
 		{
-			if (!player_panel[i])
-				player_panel[i] = new ShipPanelBmp((Ship*) t);
+			if (!p->panel)
+				p->panel = new ShipPanelBmp((Ship*) t);
 			
-			if (player_panel[i]->ship != t)
-				player_panel[i]->ship = (Ship*) t;
+			if (p->panel->ship != t)
+				p->panel->ship = (Ship*) t;
 			
 			
 			
-			player_panel[i]->animate_panel();
+			p->panel->animate_panel();
 			
-			src = player_panel[i]->panel;
+			src = p->panel->panel;
 
 			ix = dest->w - src->w;
 			iy = dest->h - src->h;
@@ -855,7 +906,7 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 
 void FlMelee::animate_predict(Frame *frame, int time)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	Game::animate_predict(frame, time);
 
@@ -866,7 +917,7 @@ void FlMelee::animate_predict(Frame *frame, int time)
 
 void FlMelee::animate( Frame* frame )
 {
-	STACKTRACE
+	STACKTRACE;
 
 	
 	Game::animate( frame );
@@ -875,9 +926,10 @@ void FlMelee::animate( Frame* frame )
 }
 
 
+
 void FlMelee::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	Game::calculate();
 
@@ -886,9 +938,14 @@ void FlMelee::calculate()
 	
 	int iplayer;
 	
-	for ( iplayer = 0; iplayer < 2; ++iplayer )
+	for ( iplayer = 0; iplayer < num_players; ++iplayer )
 	{
-		c = playercontrols[iplayer];
+		
+		if (player[iplayer]->channel == channel_none)
+			continue;	// a bot.
+
+		c = player[iplayer]->control;
+
 
 		if (!c)
 			continue;
@@ -906,27 +963,52 @@ void FlMelee::calculate()
 			{
 				SpaceObject *o = gametargets.item[itarget];
 				
-				if ( o->isShip() && o != c->ship && is_in_team(o, alliance[iplayer]) )
+				if ( o->isShip() && o != c->ship && is_in_team(o, player[iplayer]->team)
+					&& !underplayercontrol(o))
 				{
 					Ship *shp = (Ship*) o;
 					
-					// the name doesn't really matter
-					oldcontrol[iplayer] = shp->control;
-					c->select_ship(shp, "none");	// also takes care of the ship's pointer :)
+					take_control(iplayer, shp);
 					
 					break;
 				}
 			}
 		}
+		
+
 		// if you're still dead after this check, the game ends
-		if ( !(c->exists() && c->ship && c->ship->exists()) )
+		//this should be refined: only if all players on one team are dead ...
+		int n[2];
+		
+		n[0] = 0;
+		n[1] = 0;
+
+		int iplayer = local_player();
+
+		for ( int itarget = 0; itarget < gametargets.N; ++itarget )
+		{
+			SpaceObject *o = gametargets.item[itarget];
+			
+
+			if (o->isShip())
+			{
+				if (is_in_team(o, alliance[iplayer]))
+					++n[0];
+				else
+					++n[1];
+			}
+		}
+
+		if ( !(n[0] && n[1]))
 		{
 			// but only if you're the local player
-			if (iplayer == localplayer)
+			if (n[0])
 				show_ending(0);
 			else
 				show_ending(1);	// cause if the local player loses, the remote player wins.
 		}
+		
+		
 		
 		// check if the target has changed:
 		
@@ -967,6 +1049,7 @@ void FlMelee::calculate()
 				target_indicator->newtarget(c->target);
 			}
 		}
+		/*
 		if ( !c->target)
 		{
 			//		{tw_error("what the ...?! We won! Hurray !");}
@@ -977,35 +1060,41 @@ void FlMelee::calculate()
 			else
 				show_ending(0);	// cause if the local player wins, the remote player loses.
 		}
+		*/
 	}
 
 	// player control of the ships... jumping to another ship, or not ...
 
-	for ( iplayer = 0; iplayer < 2; ++iplayer )
+	for ( iplayer = 0; iplayer < num_players; ++iplayer )
 	{
-		if (!playercontrols[iplayer])
+		FlPlayer *p = (FlPlayer*) player[iplayer];
+
+		if (p->channel == channel_none)
 			continue;
 
-		int k = playercontrols[iplayer]->keys;
+		Control *c = p->control;
+
+		if (!c)
+			continue;
+
+		int k = c->keys;
 		
 		// next player ship
-		if (!lastkey_playership[iplayer] && (k & keyflag::extra1) )
+		if (!p->lastkey_playership && (k & keyflag::extra1) )
 			toggle_playership = 1;
 
 		// previous player ship
-		else if (!lastkey_playership[iplayer] && (k & keyflag::extra2) )
+		else if (!p->lastkey_playership && (k & keyflag::extra2) )
 			toggle_playership = -1;
 
 		else
 			toggle_playership = 0;
 
-		lastkey_playership[iplayer] = k & (keyflag::extra1 | keyflag::extra2);
+		p->lastkey_playership = k & (keyflag::extra1 | keyflag::extra2);
 		
 		
-		if ( playercontrols[iplayer]->ship && toggle_playership )
+		if ( c->ship && toggle_playership )
 		{
-			c = playercontrols[iplayer];
-
 			// jump to the ship in this list:
 			int itarget, lastitarget;
 			
@@ -1029,22 +1118,26 @@ void FlMelee::calculate()
 				
 				//			Control *c = playercontrols[0];	// is already done earlier
 				
-				if ( o->isShip() && is_in_team(o, alliance[iplayer]) )
+				if ( o->isShip() && is_in_team(o, alliance[iplayer])
+					&& !underplayercontrol(o))
 				{
 					Ship *shp = (Ship*) o;
 					
+					/*
 					Control *c1, *c2;
 					Ship *s1, *s2;
 					
 					c1 = shp->control;
 					s1 = shp;
 					
-					c2 = playercontrols[iplayer];
+					c2 = c;
 					s2 = c2->ship;
 					
 					oldcontrol[iplayer]->select_ship(s2, "none");	// re-assign original control ai.
 					oldcontrol[iplayer] = s1->control;		// remember control ai of the new ship
 					playercontrols[iplayer]->select_ship(s1, "none");	// take over the new ship
+					*/
+					take_control(iplayer, shp);
 					
 					
 					break;
@@ -1178,10 +1271,12 @@ void FlMelee::calculate()
 	// check if the player panel(s) still exist (shouldn't be needed, since
 	// the panel's calculate function isn't called):
 	int i;
-	for ( i = 0; i < 2; ++i )
+	for ( i = 0; i < num_players; ++i )
 	{
-		if ( !(player_panel[i] && player_panel[i]->exists()) )
-			player_panel[i] = 0;
+		FlPlayer *p = (FlPlayer*) player[i];
+
+		if ( !(p->panel && p->panel->exists()) )
+			p->panel = 0;
 	}
 
 }
@@ -1189,7 +1284,7 @@ void FlMelee::calculate()
 
 void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	Game::ship_died(who, source);
 
@@ -1219,7 +1314,7 @@ void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 
 void FlMelee::show_ending(int didwewin)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	// show some bmp
 
@@ -1235,22 +1330,27 @@ void FlMelee::show_ending(int didwewin)
 	rectfill(dest, 0, 0, dest->w, dest->h, makecol(50,40,30));
 
 	// show the player ship
-	if (playercontrols[localplayer]->ship)
+	Control *c = player[local_player()]->control;
+	if (c->ship)
 	{
-		SpaceSprite *s = playercontrols[localplayer]->ship->data->spriteShip;
+		SpaceSprite *s = c->ship->data->spriteShip;
 		s->draw(Vector2(0,0), Vector2(dest->w, dest->h), 0, view->frame);
 	}
+
+	// quick hack, not correct though...
+	int localfleet = 0;
+	int remotefleet = 1;
 
 	// show some text
 	if ( didwewin )
 	{
-		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[localplayer]);
+		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[localfleet]);
 		textprintf( dest, font, 50, 25, pallete_color[14], "CRUSHED");
-		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[remoteplayer]);
+		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[remotefleet]);
 	} else {
-		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[remoteplayer]);
+		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[remotefleet]);
 		textprintf( dest, font, 50, 25, pallete_color[14], "CRUSHED");
-		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[localplayer]);
+		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[localfleet]);
 	}
 
 	// display stats of the ships
@@ -1287,7 +1387,7 @@ StatsManager::StatsManager()
 
 void StatsManager::addship ( Ship *statship, int ofordisplay )
 {
-	STACKTRACE
+	STACKTRACE;
 
 	SpaceSprite *spr = statship->data->spriteShip;
 	BITMAP *tmp = create_bitmap(40, 40);
@@ -1324,7 +1424,7 @@ void StatsManager::addship ( Ship *statship, int ofordisplay )
 
 void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 {
-	STACKTRACE
+	STACKTRACE;
 
 
 	if ( !(killer && victim) )
@@ -1383,7 +1483,7 @@ void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 
 void StatsManager::showstats(Frame *frame)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	// well ... show the graphics of all the victims ?
 	int i;
@@ -1439,7 +1539,7 @@ void StatsManager::showstats(Frame *frame)
 
 int StatsManager::list_item(unsigned int flag)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	int i;
 
@@ -1476,7 +1576,7 @@ StatsManager::~StatsManager()
 
 BITMAP* copybmp( BITMAP* src )
 {
-	STACKTRACE
+	STACKTRACE;
 
 	BITMAP *dest;
 
@@ -1493,7 +1593,7 @@ BITMAP* copybmp( BITMAP* src )
 
 Vector2 YRadar::shiftscale(Vector2 r_center, Vector2 v_center, double scale, Vector2 n)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	//Used to scale game coordinates onto RADAR screen coordinates
 	return  scale * min_delta(n - r_center, map_size) + v_center;
@@ -1501,7 +1601,7 @@ Vector2 YRadar::shiftscale(Vector2 r_center, Vector2 v_center, double scale, Vec
 
 void YRadar::PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	Vector2 pos;
 
@@ -1558,7 +1658,7 @@ void YRadar::PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale)
 
 void YRadar::Paint(BITMAP *Slate, Vector2 T)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	double Scale = Slate->w/(2.*size);
 
@@ -1574,7 +1674,7 @@ void YRadar::Paint(BITMAP *Slate, Vector2 T)
 
 void YRadar::initbmp(char *datafilename)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	DATAFILE *dat;
 	dat = load_datafile(datafilename);
@@ -1643,7 +1743,7 @@ YRadar::YRadar(Control *ocontroller, double Size, TeamCode hteam, char *datafile
 
 void YRadar::animate(Frame *space)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	//If the radar is disabled, don't do anything.
 	if(active==FALSE) return;
@@ -1707,7 +1807,7 @@ Same as mshppan.cpp, except the panel is NOT drawn onto a new window
 (gives me more control), but only the (panel) bitmap is being updated.
 */
 
-ShipPanelBmp::ShipPanelBmp(Ship *_ship) {STACKTRACE
+ShipPanelBmp::ShipPanelBmp(Ship *_ship) {STACKTRACE;
 	id |= ID_SHIP_PANEL;
 
 	panel   = create_bitmap_ex(bitmap_color_depth(screen), 64, 100);
@@ -1734,14 +1834,14 @@ ShipPanelBmp::ShipPanelBmp(Ship *_ship) {STACKTRACE
 	}
 
 ShipPanelBmp::~ShipPanelBmp()
-{STACKTRACE
+{STACKTRACE;
   destroy_bitmap(captain);
   destroy_bitmap(panel);
 }
 
 
 void ShipPanelBmp::animate_panel() {
-	STACKTRACE
+	STACKTRACE;
 	if (!ship) {
 		double w, h;
 
@@ -1821,7 +1921,7 @@ void ShipPanelBmp::animate_panel() {
 	}
 
 void ShipPanelBmp::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int color, int bcolor) {
-	STACKTRACE
+	STACKTRACE;
 	int i;
 	w -= 1;
 	h -= 1;
@@ -1843,22 +1943,13 @@ void ShipPanelBmp::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m
 
 ImIndicator::ImIndicator(SpaceLocation *o)
 {
-	showme = o;
-
 	bmp = create_bitmap_ex( bitmap_color_depth(screen), ImIndicatorSize, ImIndicatorSize);
 //void SpaceSprite::draw_character(int x, int y, int index, int color, BITMAP *bmp) 
 
 	clear_to_color(bmp, makecol(255,0,255));
 	// also, turn this into some "character" of the sprite ?!
 
-	if (o->isObject())
-	{
-		SpaceSprite *src;
-		src = ((SpaceObject*)o)->get_sprite();
-		src->draw_character(0, 0, bmp->w, bmp->h, 0, colortype(o), bmp);
-	} else {
-		clear_to_color(bmp, 0x0408090);
-	}
+	newtarget(o);
 }
 
 
@@ -1869,25 +1960,25 @@ ImIndicator::~ImIndicator()
 
 int ImIndicator::colortype(SpaceLocation *o)
 {
-	STACKTRACE
+	STACKTRACE;
 
-	if (o->isPlanet())
+	if (o && o->isPlanet())
 		return makecol(150,100,25);
-
-	else if (o->isShip())
+	
+	else if (o && o->isShip())
 		return makecol(100,150,25);
-
+	
 	else
 		return makecol(150,50,50);
 }
 
 void ImIndicator::newtarget(SpaceLocation *o)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	showme = o;
 
-	if (o->isObject())
+	if (o && o->isObject())
 	{
 		SpaceSprite *src;
 		src = ((SpaceObject*)o)->get_sprite();
@@ -1900,8 +1991,10 @@ void ImIndicator::newtarget(SpaceLocation *o)
 
 void ImIndicator::animate(Frame *frame)
 {
-	STACKTRACE
+	STACKTRACE;
 
+	if (!showme)
+		return;
 
 	// do not draw always -- uhm, is either irritating if too fast, and useless if too slow
 	//if ( (game->game_time/1024) & 1 )
@@ -1973,9 +2066,18 @@ void ImIndicator::animate(Frame *frame)
 }
 
 
+void ImIndicator::calculate()
+{
+	Presence::calculate();
+
+	if ( !(showme && showme->exists()) )
+		showme = 0;
+}
+
+
 void FlMelee::start_menu(int *select)
 {
-	STACKTRACE;
+	STACKTRACE;;
 ///*
 
 	unscare_mouse();

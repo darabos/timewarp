@@ -103,6 +103,9 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 	void ldata(char *data, int N, int ch = channel_current);
 	char *Log::create_buffer(int *size, int ch = channel_current);
 
+	virtual void force_update() {};
+
+	void _null_log(int channel, void *data, int size);
 };
 
 class PlaybackLog : public Log { //Logging system, usefull for networking & demo recording/playback
@@ -114,10 +117,17 @@ class PlaybackLog : public Log { //Logging system, usefull for networking & demo
 
 /** \brief Share memory values accross player channels.
 */
-void share(int player, int *value, int num = 1);
-void share(int player, short *value, int num = 1);
-void share(int player, char *value, int num = 1);
+void share(int netnum, int *value, int num = 1);
+void share(int netnum, short *value, int num = 1);
+void share(int netnum, char *value, int num = 1);
+void share(int player, double *value, int num = 1);
 void share_update();
 
+/** \brief Helper to synch random numbers between networked computers - this is
+useful in case that the host initialization requires random numbers, which aren't
+synched ... although you could also use "rand()" in that case, which doesn't affect
+the random numbers but well...
+*/
+void rand_resync();
 
 #endif  // __MLOG_H__

@@ -177,7 +177,7 @@ void save_samples(SpaceSprite *ss, const char *spritename, const char *destinati
 }
 
 void ShipData::lock() {
-	if (references == 0) {
+	if (!islocked()) {
 		push_config_state();//can screw up badly if an error occurs while loading...
 		load();
 		pop_config_state();
@@ -187,9 +187,14 @@ void ShipData::lock() {
 
 void ShipData::unlock() {
 	references -= 1;
-	if ((references == 0) && auto_unload) {
+	if (!islocked() && auto_unload) {
 		unload();
 	}
+}
+
+bool ShipData::islocked()
+{
+	return references > 0;
 }
 
 void unload_all_ship_data() {

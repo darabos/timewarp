@@ -77,6 +77,9 @@ Planet::Planet(Vector2 loc, SpaceSprite *sprite, int index)
 	id         |= ID_PLANET;
 	mass        = 9999999.0;
 //use remote .ini file
+
+	push_config_state();
+	
 	game->log_file ("server.ini");
 	sprite_index = index;
 	gravity_mindist = scale_range(get_config_float("Planet", "GravityMinDist", 0));
@@ -87,6 +90,7 @@ Planet::Planet(Vector2 loc, SpaceSprite *sprite, int index)
 	gravity_whip = get_config_float("Planet", "GravityWhip", 0);
 	gravity_whip2 = get_config_float("Planet", "GravityWhip2", 0);
 
+	pop_config_state();
 	}
 
 void Planet::inflict_damage(SpaceObject *other) {STACKTRACE

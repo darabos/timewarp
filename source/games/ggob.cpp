@@ -331,10 +331,10 @@ void GobGame::init(Log *_log) {
 
 		int p;
 		int k = 0;
-		for ( p = 0; p < num_humans; ++p )
+		for ( p = 0; p < num_network; ++p )
 		{
-			//log_int(channel_player[p], server_players);
-			log_int(console_players, channel_player[p]);
+			//log_int(channel_network[p], server_players);
+			log_int(console_players, channel_network[p]);
 
 			// several console players, who share a "human" channel
 			for (i = 0; i < console_players; i += 1)
@@ -343,7 +343,7 @@ void GobGame::init(Log *_log) {
 				char buffy[256];
 				sprintf(buffy, "Config%d", i);
 
-				add_gobplayer(create_control(channel_player[p], "Human", buffy));
+				add_gobplayer(create_control(channel_network[p], "Human", buffy));
 				++k;
 			}
 		}

@@ -586,6 +586,7 @@ class ShipData {
 	void unlock();
 	void load();
 	void unload();
+	bool islocked();
 	DATAFILE    *data;
 //	int num_panel_bitmaps;
 //	Surface     **bitmapPanel;

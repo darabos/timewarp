@@ -519,13 +519,13 @@ void test_net()
 	message.animate(0);
 
 	int i;
-	for ( i = 0; i < num_humans; ++i )
+	for ( i = 0; i < num_network; ++i )
 	{
 		test1 = 100*rand();
 		test2 = 100*rand();
-		log_int(test1, channel_player[i]);
+		log_int(test1, channel_network[i]);
 
-		log_int(test2, channel_player[i] + _channel_buffered);
+		log_int(test2, channel_network[i] + _channel_buffered);
 		// note, that the unbuffered data are not physics, i.e., they can appear later in time.
 
 		//glog->flush();
@@ -675,7 +675,7 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 	b_human = new ButtonValue(T, "humans_", usefont1);
 	b_human->set_value(1, Nhumans, 8);
 	b_bot   = new ButtonValue(T, "bots_", usefont1);
-	b_bot->set_value(0, Nbots, 7);
+	b_bot->set_value(0, Nbots, 99);
 
 	TextButton *game_choice;
 	game_choice = new TextButton(T, "type_", usefont1);
@@ -706,13 +706,6 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 
 		T->tree_calculate();
 
-
-		// extra check:
-		if (b_human->value + b_bot->value > max_player)
-		{
-			int k = max_player - b_human->value;
-			b_bot->set_value(0, k, 7);
-		}
 
 		if (b_cancel->flag.left_mouse_press)
 			CCstatus = -1;
@@ -751,13 +744,9 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 
 
 //void play_net ( const char *_address, int _port )
-void play_net (bool ishost)
+void play_net( bool ishost )
 {
 	STACKTRACE;
-
-	// resets the channels to their default values ; that's needed, cause if there are
-	// bots in the game, channel values can be set to non-human values (-1)
-	init_channels();
 
 
 	// STEP ONE, SETTING / RETRIEVING DATA
@@ -765,6 +754,10 @@ void play_net (bool ishost)
 	NetLog *log = new NetLog();
 	log->init();
 	set_global(log);	// this sets glog
+
+	// resets the channels to their default values ; that's needed, cause if there are
+	// bots in the game, channel values can be set to non-human values (-1)
+	init_channels();
 
 	set_config_file("client.ini");
 
@@ -820,13 +813,13 @@ void play_net (bool ishost)
 
 		// the remote players are always read-only (local player is always write, of course)
 		int p;
-		for ( p = 0; p < max_player; ++p)
+		for ( p = 0; p < max_network; ++p)
 		{
 			if (p != p_local)
 			{
-				//log->set_direction(channel_player[p] , Log::direction_read);
-				//log->set_direction(channel_player[p] + _channel_buffered, Log::direction_read);
-				log->set_r(channel_player[p]);
+				//log->set_direction(channel_network[p] , Log::direction_read);
+				//log->set_direction(channel_network[p] + _channel_buffered, Log::direction_read);
+				log->set_r(channel_network[p]);
 			}
 		}
 	
@@ -913,20 +906,19 @@ void play_net (bool ishost)
 		int i;
 		for ( i = 0; i <= channel_playback; ++i )
 			log->set_direction(i, Log::direction_read);
-		//	log->set_r(i);
 
 		//log->set_r(channel_none);
-		for ( p = 0; p < max_player; ++p)
+		for ( p = 0; p < max_network; ++p)
 		{
-			log->set_r(channel_player[p]);
+			log->set_r(channel_network[p]);
 		}
 
 		char *tmp = address;
 		// note, that tmp can be changed by the menu, so that it points to a different string?!
 
 		// user menu: enter adress and port number
-		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
-			return;
+//		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
+//			return;
 
 		// saving address
 		set_config_string("Network", "Address", tmp);
@@ -1004,24 +996,113 @@ void play_net (bool ishost)
 		//gname = detect_gametype(log);
 	}
 
+	log_test();
+
+	log_resetmode();
+
+	log->reset();
+
+	log_test();
+
+	// find out, how many hotseat players there are on this computer
+	// this is done by checking the local player-settings.
+	// these are stored in scp.ini
+	// (that's the way it used to be done - ideally you've an interface option for this).
+	num_hotseats[p_local] = 0;
+
+	set_config_file("scp.ini");
+	int i;
+	for ( i = 0; true; ++i)
+	{
+		char buffy[64];
+		sprintf(buffy, "Player%d", i + 1);
+		
+		const char *type = get_config_string(buffy, "Type", NULL);
+		if (!type)
+			break;
+
+		if (strcmp(type, "Human") == 0)		// a human player found.
+			++num_hotseats[p_local];
+	}
+	if (num_hotseats[p_local] == 0)		// there should be at least 1 local player.
+		++num_hotseats[p_local];
+
+
+
+
+
 	// quick hack for testing.
 	// note that the server has "local" settings which overwrite other players' setting
-	num_humans = Nplayers;
+	num_network = Nplayers;
 	num_bots = Nbots;
 
-	share(-1, &num_humans);
+	share(-1, &num_network);
 	share(-1, &num_bots);
 	share_update();
-	
-	set_numplayers(num_humans + num_bots);
 
+
+	message.print(1500, 13, "numnet [%i]  numhotseat [%i][%i]", num_network, num_hotseats[0], num_hotseats[1]);
+
+	// next, share how many hotseat-players there are, on each computer.
+	
+	int p;
+	for ( p = 0; p < num_network; ++p )
+	{
+		log_int(num_hotseats[p], channel_network[p]);
+	}
+	//share_update();
+
+
+	for ( p = 0; p < num_network; ++p )
+		message.print(1500,15, "Nhotseats [%i]", num_hotseats[p]);
+	
+	// no controls (ships) added yet -> should be handled by the game
+	// but, based on the information provided here, we can already calculate the
+	// number of players that will enter the game ..
+	num_players = 0;
+	for ( p = 0; p < num_network; ++p )
+	{
+		int i;
+		for ( i = 0; i < num_hotseats[p]; ++i )
+		{
+//			player_connection_num[num_players] = p; THIS is not guaranteed to work ..
+			++num_players;
+		}
+	}
+	num_players += num_bots;
+	// this value can be used for game initialization already...
+
+	
+
+	
 	share_string(gname);
 
+	log_test();
+
+	message.print(1500,15, "gname [%s]", gname);
+	message.animate(0);
+	//log_test();
+	//readkey();
 
 	log->optimize4latency();
 	//message.out("connection established");
 	
+	log_test();
+
+	// NOTE
+	// that it's possible that, just before a reset, a remote computer is already
+	// transmitting data, which've been received by coincidence while you're resetting
+	// the data. You shouldn't reset those data of course, cause they're needed for
+	// subsequent actions ... so,
+	// first you've to log-int a dummy value, to make sure that the two games
+	// are in synch. After that it's ok to clear them, cause there are NO lingering
+	// data then ...
+	// hmm
+	// however, in >2 player environment, simple sharing of a variable doesn't
+	// work. Utter chaos I think ...
 	log->reset();
+
+	log_test();
 
 	play_game(gname, log);
 
@@ -1038,10 +1119,10 @@ void play_net1client ( const char *_address, int _port )
 
 	log->set_all_directions(Log::direction_read);
 	int p;
-	for ( p = 0; p < max_player; ++p )	// note, 0==server.
+	for ( p = 0; p < max_network; ++p )	// note, 0==server.
 	{
-		log->set_direction(channel_player[p] , Log::direction_write | Log::direction_read | NetLog::direction_immediate);
-		log->set_direction(channel_player[p] + _channel_buffered, Log::direction_write | Log::direction_read);
+		log->set_direction(channel_network[p] , Log::direction_write | Log::direction_read | NetLog::direction_immediate);
+		log->set_direction(channel_network[p] + _channel_buffered, Log::direction_write | Log::direction_read);
 	}
 	
 	set_config_file("client.ini");
@@ -1086,10 +1167,10 @@ void play_net1server(const char *_gametype_name, int _port) {STACKTRACE
 	log->type = Log::log_net1server;
 	log->set_all_directions(Log::direction_write | Log::direction_read | NetLog::direction_immediate);
 	int p;
-	for ( p = 1; p < max_player; ++p )	// note, 0==server.
+	for ( p = 1; p < max_network; ++p )	// note, 0==server.
 	{
-		log->set_direction(channel_player[p] , Log::direction_read);
-		log->set_direction(channel_player[p] + _channel_buffered, Log::direction_read);
+		log->set_direction(channel_network[p] , Log::direction_read);
+		log->set_direction(channel_network[p] + _channel_buffered, Log::direction_read);
 	}
 	log->set_direction(channel_server + _channel_buffered, Log::direction_write | Log::direction_read);
 	
@@ -1150,16 +1231,16 @@ void play_single(const char *_gametype_name, Log *_log)
 	
 	// the remote players are always read-only (local player is always write, of course)
 	int p;
-	for ( p = 0; p < max_player; ++p)
+	for ( p = 0; p < max_network; ++p)
 	{
 		if (p != p_local)
-			glog->set_r(channel_player[p]);
+			glog->set_r(channel_network[p]);
 	}
 
 	// well, you're in single-player mode.
-	num_humans = 1;
+	num_network = 1;
 	num_bots = 0;
-	num_players = num_humans + num_bots;
+	num_players = 1;
 	
 	
 	play_game(_gametype_name, _log);
@@ -1249,7 +1330,7 @@ void play_game(const char *_gametype_name, Log *_log)
 
 char dialog_string[20][128];
 
-int MAX_PLAYERS = 1;
+int max_networkS = 1;
 int MAX_CONFIGURATIONS = 1;
 int MAX_TEAMS = 1;
 
@@ -1342,14 +1423,14 @@ void MainMenu::doit() {STACKTRACE
 
 	set_config_file("scp.ini");
 	if (!player_type) {		
-		MAX_PLAYERS        = get_config_int("Limits", "MaxPlayers", 12);
+		max_networkS        = get_config_int("Limits", "MaxPlayers", 12);
 		MAX_CONFIGURATIONS = get_config_int("Limits", "MaxConfigurations", 4);
 		MAX_TEAMS          = get_config_int("Limits", "MaxTeams", 6);
-		player_type = new char*[MAX_PLAYERS];
-		player_config = new int[MAX_PLAYERS];
-		player_team   = new int[MAX_PLAYERS];
+		player_type = new char*[max_networkS];
+		player_config = new int[max_networkS];
+		player_team   = new int[max_networkS];
 	}
-	for (i = 0; i < MAX_PLAYERS; i += 1) {
+	for (i = 0; i < max_networkS; i += 1) {
 		sprintf(tmp, "Player%d", i+1);
 		player_type[i] = strdup(get_config_string(tmp, "Type", "Human"));
 		player_config[i] = get_config_int (tmp, "Config", i % MAX_CONFIGURATIONS);
@@ -1908,7 +1989,7 @@ void change_teams() {STACKTRACE
 	}
 
 	set_config_file("scp.ini");
-	for (i = 0; i < MAX_PLAYERS; i += 1) {
+	for (i = 0; i < max_networkS; i += 1) {
 		sprintf(dialog_string[0], "Player%d", i+1);
 		set_config_string (dialog_string[0], "Type", player_type[i]);
 		set_config_int (dialog_string[0], "Config", player_config[i]);
@@ -2898,7 +2979,7 @@ char *playerListboxGetter(int index, int *list_size) {
 
 	tmp[0] = 0;
 	if(index < 0) {
-		*list_size = MAX_PLAYERS;
+		*list_size = max_networkS;
 		return NULL;
 	} else {
 		tmp += sprintf(tmp, "Player%d", index + 1);

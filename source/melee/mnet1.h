@@ -81,6 +81,7 @@ class NetLog : public Log { //Logging system, useful for networking & demo recor
 	bool need_to_transmit;
 	int num_connections;
 	NetTCP net[max_connections];       // the TCP network connection to the opponent player
+	bool net_status[max_connections];
 
 	int conn(int channel) { return channel / 4; };
 
@@ -120,6 +121,13 @@ class NetLog : public Log { //Logging system, useful for networking & demo recor
 	void recv_noblock();
 	bool ready2send();
 	void send_packet_noblock(int conn);
+
+	virtual void force_update();
+
+	virtual void reset();
+
+	void rem_conn(int conn);
+
 	};
 
 #endif // __MNET1_H__

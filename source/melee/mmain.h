@@ -4,6 +4,17 @@
 #include "../melee.h"
 #include "mgame.h"
 
+int log_size_pl(int netnum);
+int log_totalsize();
+void log_test();
+
+// normal player information.
+class NPI : public PlayerInformation
+{
+public:
+	Fleet *fleet;
+};
+
 class NormalGame : public Game {
 	public:
 	enum { 
@@ -36,14 +47,15 @@ class NormalGame : public Game {
 
 	virtual int add_player (int num, Control *c, int team_index, const char *name, const char *fleet, const char *fleet_file = "fleets.ini") ;
 	//int num_players;		should be global, for networking (which should also be global)
-	Control **player_control;
+//	Control **player_control;
 //	ShipPanel **player_panel;
-	Fleet **player_fleet;
-	char **player_name;
+//	Fleet **player_fleet;
+//	char **player_name;
 	char *player_attributes;
-	TeamCode *player_team;
+//	TeamCode *player_team;
 	TeamCode *team_table;
 	int team_table_size;
+//	int *player_color;
 //	virtual void player_said(int who, const char *what);
 
 	protected:
@@ -58,10 +70,12 @@ class NormalGame : public Game {
 	void handle_end();
 	bool player_isalive(int i);
 	int local_player();
-	int log_size_pl(int iplayer);
-	int log_totalsize();
-	void log_test();
 
+
+	void check_file(const char *id);
+	void download_file(char *filename);
+
+	virtual PlayerInformation *new_player();	// should return a pointer to a new player-class
 	};
 
 

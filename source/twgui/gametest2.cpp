@@ -1,3 +1,5 @@
+/*
+Geo: I DISABLED THIS CAUSE it's served its use - it can be removed I think.
 
 #include <allegro.h>
 //#include <winalleg.h>
@@ -40,34 +42,7 @@ REGISTER_FILE
 #include "../other/configrw.h"
 
 
-/*
-class ShipPanelToggeable : public ShipPanel
-{
-protected:
-	int *toggle;
-public:
-	ShipPanelToggeable(Ship *s, int *t, Game *g);
-	virtual void animate(Frame *space);
-};
 
-
-ShipPanelToggeable::ShipPanelToggeable(Ship *s, int *t, Game *g)
-:
-ShipPanel(s)
-{
-	toggle = t;
-
-	// a bit weird ... now you got a buffer writing to a buffer before it's finally
-	// written to the screen... I think ;)
-	this->window->surface = g->view->frame->surface;
-}
-
-void ShipPanelToggeable::animate(Frame *space)
-{
-	if (*toggle)
-		ShipPanel::animate(space);
-}
-*/
 
 
 class WedgeIndicatorToggable : public WedgeIndicator
@@ -111,11 +86,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 	DATAFILE	*data;//, *data_cached;
 
 	// create the cache/ directory (if needed ?)
-	/*#ifdef LINUX
-	mkdir("cache", 0755); 
-	#else
-	mkdir("cache");
-	#endif*/
+
 	makedir("cache");
 
 	
@@ -487,15 +458,7 @@ void TWgui::calculate()
 
 	meleemenu->tree_calculate();
 
-	/*
-	if (zoomin->flag.left_mouse_hold)
-	{
-		// copied this from view_hero :
-		//if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
-		//if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
-		view->camera.z /= 1 + 0.002 * frame_time;
-	}
-	*/
+
 
 	if (zoomout->flag.left_mouse_hold)
 	{
@@ -525,16 +488,6 @@ void TWgui::calculate()
 	}
 
 
-	/*
-	if (abort->flag.left_mouse_press)
-	{
-		//meleemenu->focus2other(alertmenu);
-	//	meleemenu->disable();
-	//	alertmenu->show();
-	//	alertmenu->focus();
-		alert_text->set_text("Quit game?", makecol(50,50,50));
-	}
-	*/
 
 	option.healthbar = healthbarswitch->state;
 	option.wedge = wedgeindicatorswitch->state;
@@ -581,14 +534,7 @@ void TWgui::calculate()
 
 void TWgui::animate(Frame *frame)
 {
-	/*
-	BITMAP *tmp;
-	tmp = create_bitmap_ex(bitmap_color_depth(screen), screen->w, screen->h);
-	//clear_to_color(tmp, makecol(50,100,150));		// this takes about 2 ms.
-	//blit(tmp, screen, 0, 0, 0, 0, tmp->w, tmp->h);	// this takes a long time !!
-	memcpy(screen->dat, tmp->dat, tmp->w * tmp->h);
-	destroy_bitmap(tmp);
-	*/
+
 //	clear_to_color(screen, makecol(50,100,150));		// this takes 1 to 2 ms.
 
 	NormalGame::animate(frame);
@@ -863,117 +809,6 @@ void TWgui::choose_new_ships()
 
 
 
-
-
-/*
-
-
-//char cliptext[128];
-
-void TWgui2::init(Log *_log)
-{
-	NormalGame::init(_log);
-
-	view->window->locate(		// 1=in pixels, a fixed amount; 2=in screen width
-			0, 0,		//double x1, double x2
-			0, 0,		//double y1, double y2
-			0, 1,		//double w1, double w2
-			0, 1		//double h1, double h2
-			);
-
-	// ------- add the menu items ---------
-
-	unscare_mouse();
-	show_mouse(window->surface);
-
-
-	// which font to use ... that depends on the screen resolution:
-	int i = 2;
-	if (screen->w == 640)
-		i = 2;
-	if (screen->w == 800)
-		i = 3;
-	if (screen->w == 1024)
-		i = 4;					// more pixels available for the same "real-life" size.
-
-	FONT *usefont = videosystem.get_font(i);
-
-	this->view->frame->prepare();
-
-
-	char menu_filename[512];
-	set_config_file("client.ini");
-	strcpy(menu_filename, get_config_string("Menu", "skin", "none"));
-
-
-	meleemenu = new TWindow("interfaces/twgui2/melee", 50, 450, this->view->frame->surface);
-
-
-
-
-	zoomin = new Button(meleemenu, "zoomin_", KEY_EQUALS, 1);
-
-	zoomout = new Button(meleemenu, "zoomout_", KEY_MINUS, 1);
-
-	abort = new Button(meleemenu, "abort_", mapkey(KEY_A, KEY_LCONTROL));
-
-
-	
-	Test: this can show contents of the clipboard ...
-
-	HWND w;
-	w = win_get_window();
-
-	OpenClipboard(w);
-
-	char *txt = (char*) ::GetClipboardData(CF_TEXT);
-	strncpy(cliptext, txt, 128);
-	
-	CloseClipboard();
-	
-	
-
-
-}
-
-
-
-
-void TWgui2::calculate()
-{
-
-	NormalGame::calculate();
-
-
-
-	// ------------ INTERPRET RESULTS FROM THE MELEE WINDOW ---------------
-
-
-	FULL_REDRAW = true;
-	// only a full_redraw draws the whole frame-surface onto the physical screen.
-	// (otherwise only the small sprites are drawn there ... I think)
-	// I guess this can be a bit slow, but, I don't know why it's slow... perhaps simply
-	// because it's a big screen, or is it because of conversion between color depths?
-	// or something else?
-
-	meleemenu->tree_calculate();
-}
-
-
-void TWgui2::animate(Frame *frame)
-{
-
-	NormalGame::animate(frame);
-
-	show_mouse(window->surface);
-	meleemenu->tree_setscreen(view->frame->surface);
-	meleemenu->tree_animate();
-
-	//message.out(cliptext);
-
-}
-*/
-
-
 REGISTER_GAME(TWgui, "TWgui")
 
+*/

@@ -50,7 +50,7 @@ public:
 };
 
 
-const int max_player = 8;
+const int max_network = 100;
 
 extern const int channel_none;    //not a valid channel
 extern const int _channel_buffered;
@@ -63,11 +63,37 @@ extern const int channel_server;  //data originating on the server
 // the local channel is always read/write, while remote channels are always read-only.
 // each guy who logs in to a game (defined by the server) receives a local-channel number from the server.
 // (eg. player 1, player 2 .. player 7).
-extern int channel_player[max_player];  //data originating on the client
-extern int p_local, num_players, num_humans, num_bots;
+extern int channel_network[max_network];  //data originating on the client
+extern int p_local, num_network, num_hotseats[max_network], num_bots, num_players;
+
+extern int channel_conn_recv[100];
+// The connection id, where a channel last received data from
+// This can be used to check which channel belongs to which physical connection.
+
+class PlayerInformation
+{
+public:
+	int channel;
+// channels used by players in the game.
+// note, that, while channel_network has unique values, the player_channel can have
+// duplicate values, because different (hotseat) players share the same
+// network channel.
+
+	char name[64];
+	Control *control;
+	TeamCode team;
+	int color;
+	bool status;	// true=alive, false=disconnected/dead
+
+	bool haschannel(int ch);	// checks for channel and the buffered channel
+	void die();
+};
+extern PlayerInformation *player[100];
+
+
 int channel_local();
 void init_channels();
-void set_numplayers(int n);
+
 
 
 class GameEvent2
@@ -274,9 +300,19 @@ public:
 	void chat();
 	void test_event1();
 
+	void disconnect();
+
 
 	// "extreme" desynch testing.
 	void heavy_compare();
+
+
+	void item_sum(char *comment);
+
+	void remove_player(int i);
+
+
+	virtual PlayerInformation *new_player();	// should return a pointer to a new player-class
 };
 
 

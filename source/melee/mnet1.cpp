@@ -126,6 +126,8 @@ void NetLog::init()
 
 		remote_time[i] = 0;
 		ping[i] = -1;
+
+		net_status[i] = true;
 	}
 
 	num_connections = 0;	// number of active connections.
@@ -142,8 +144,14 @@ void NetLog::init()
 void NetLog::deinit()
 {
 	STACKTRACE;
-
 	int i;
+
+	Log::deinit();
+
+	// set all channelinfo to 0
+	for ( i = 0; i < log_num; ++i )
+		log_transmitted[i] = 0;
+
 	for ( i = 0; i < max_connections; ++i )
 		net[i].deinit();
 
@@ -234,6 +242,8 @@ void NetLog::prepare_packet()
 		int conn;
 		for ( conn = 0; conn < num_connections; ++conn )
 		{
+			if (!net_status[conn]) continue;
+
 			// maintain some connection-dependent control parameter (namely,
 			// the remote time ? This is the time-value that's sent here, and
 			// is bounced back without being changed.
@@ -252,6 +262,7 @@ void NetLog::prepare_packet()
 void NetLog::send_packet_block(int conn)
 {
 	STACKTRACE;
+	if (!net_status[conn]) return;
 
 	if (!net[conn].isConnected()) { tw_error("NetLog::send_packet() - no connection!"); }
 	net[conn].sendall();	// note, the data are buffered in prepare_packet()
@@ -263,6 +274,7 @@ If it doesn't succeed, it'll keep data in a memory buffer until the next attempt
 void NetLog::send_packet_noblock(int conn)
 {
 	STACKTRACE;
+	if (!net_status[conn]) return;
 
 	if (!net[conn].isConnected()) { tw_error("NetLog::send_packet() - no connection!"); }
 	net[conn].sendattempt();	// note, the data are buffered in prepare_packet()
@@ -299,6 +311,9 @@ void NetLog::send_packets()
 void NetLog::recv_packet(int conn)
 {
 	STACKTRACE;
+
+	if (!net_status[conn]) return;
+
 	int pos, len;
 	int i, j, k, l;
 	
@@ -325,30 +340,37 @@ void NetLog::recv_packet(int conn)
 	if (len == 0)
 		tw_error("Unexpected: receiving packet with overhead, but zero content!");
 
-	//if (len != net[conn].recv(len, len, &buffy))
-	if (len != net[conn].recv(len, len, buffy))
+	check_bufsize(len);
+	int nrecv = net[conn].recv(len, len, buffy);
+
+	if (len != nrecv)
 		tw_error( "NetLog::recv_packet -- net.recv error (2)");
 	
 	// data've been received, now put them into the log structure.
+	// you just analyze the buffer here.
 	
 	pos = 0;
-	while (pos < len) {
+	while (pos < len)
+	{
+		// the channel identifier
 		i = buffy[pos];
 		if (i < 0) { tw_error("NegLog::recv_packet - data came in on a negative channel %d", i); }
 		if (i >= log_num) expand_logs(i+1);
 		if (!(log_dir[i] & direction_read)) { tw_error("NetLog::recv_packet -- data on wrong channel %d", i); }
 		pos += 1;
 		
-		check_bufsize(pos+8);
+		// the #data for this channel, stored in a temporary buffer
 		l = read_length_code(len-pos, &j, &k, &buffy[pos]);
 		if (l < 0) { tw_error ("NetLog::recv_packet -- read_length_code failed"); }
 		pos += j;
 		if (i >= log_num) expand_logs(i+1);
-		if (!(log_dir[i] & direction_read)) { tw_error( "recieved data on wrong channel"); }
 
-		check_bufsize(pos+k);
+		// write the buffer into the channel
 		Log::_log(i, &buffy[pos], k);
 		pos += k;
+
+		// record from which connection a channel last received its data
+		channel_conn_recv[i] = conn;
 	}
 	if (pos != len)
 	{
@@ -516,6 +538,8 @@ bool NetLog::listen()
 	
 	for ( conn = 0; conn < num_connections; ++conn )
 	{
+		if (!net_status[conn]) continue;
+
 		while (net[conn].ready2recv())
 		{
 			recv_packet(conn);
@@ -536,6 +560,8 @@ void NetLog::recv_noblock()
 	
 	for ( conn = 0; conn < num_connections; ++conn )
 	{
+		if (!net_status[conn]) continue;
+
 		if (net[conn].ready2recv()) recv_packet(conn);
 	}
 }
@@ -558,6 +584,8 @@ bool NetLog::ready2send()
 	int conn;
 	for ( conn = 0; conn < num_connections; ++conn )
 	{
+		if (!net_status[conn]) continue;
+
 		if (!net[conn].ready2send())
 			return false;
 	}
@@ -621,6 +649,8 @@ void NetLog::optimize4latency()
 	
 	for ( conn = 0; conn < num_connections; ++conn )
 	{
+		if (!net_status[conn]) continue;
+
 		net[conn].optimize4latency();
 	}
 }
@@ -663,4 +693,37 @@ void NetLog::use_idle(int time)
 
 
 
+
+void NetLog::force_update()
+{
+	need_to_transmit = true;
+}
+
+
+
+void NetLog::reset()
+{
+	int i;
+	for ( i = 0; i < log_num; ++i )
+	{
+		if (writeable(i) && log_transmitted[i] != log_len[i])
+			tw_error("NetLog::reset - resetting before all data could be sent in channel [%i] , pos[%i] transm[%i] len[%i]",
+			i, log_pos[i], log_transmitted[i], log_len[i]);
+		log_transmitted[i] = 0;	// no problem, when calling a reset, all data IS sent.
+	}
+
+	Log::reset();
+
+}
+
+
+
+
+
+
+
+void NetLog::rem_conn(int conn)
+{
+	net_status[conn] = false;
+}
 

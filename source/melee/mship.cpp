@@ -551,6 +551,10 @@ void Ship::calculate()
 //added by Tau - end
 
 	if (control) {
+
+		// it makes most sense, to place this in FRONT of these commands here ...
+		this->nextkeys = control->keys;
+
 		this->thrust           = 1&&(nextkeys & keyflag::thrust);
 		this->thrust_backwards = 1&&(nextkeys & keyflag::back);
 		this->turn_left        = 1&&(nextkeys & keyflag::left);
@@ -580,7 +584,6 @@ void Ship::calculate()
                 attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
             }
         }
-		this->nextkeys = control->keys;
 
 
         

@@ -34,7 +34,11 @@ void TrugControl::next_order() {
 	return;
 }
 
-int TrugControl::think() {
+int TrugControl::think()
+{
+	if (!ship)
+		return 0;
+
 	int k = ControlWussie::think();
 	switch (order.type) {
 		case ORDER_FREELANCE: {
@@ -222,7 +226,7 @@ void TrugGame::init(Log *_log) {
 	view_locked = true;
 
 	TrugPlayer *sp = add_player ( channel_server );
-	TrugPlayer *cp = add_player ( channel_player[1] );
+	TrugPlayer *cp = add_player ( channel_network[1] );
 
 	add(create_ship("kzedr", sp, random(size), random(PI2)));
 	add(create_ship("chebr", cp, random(size), random(PI2)));

@@ -41,7 +41,7 @@ char **control_name = gcc_sucks_dick;
 
 
 void animate_target(Frame *frame, SpaceLocation *t, int dx, int dy, int r, int c) {
-	STACKTRACE
+	STACKTRACE;
 /*	double x, y;
 	r = int( r * space_zoom/2);
 	x = t->normal_x() - space_x;
@@ -70,7 +70,7 @@ void animate_target(Frame *frame, SpaceLocation *t, int dx, int dy, int r, int c
 
 
 
-int control2number(const char *name) {STACKTRACE
+int control2number(const char *name) {STACKTRACE;
 	if (!name) return 0;
 	for (int i = 0; i < num_controls+1; i += 1) {
 		if (!strcmp(name, control_name[i])) return i;
@@ -78,7 +78,7 @@ int control2number(const char *name) {STACKTRACE
 	return 0;
 	}
 
-Control *getController(const char *type, const char *name, int channel) {STACKTRACE
+Control *getController(const char *type, const char *name, int channel) {STACKTRACE;
 	if ((channel != -1) && (channel & _channel_buffered)) {
 		error("getController - invalid channel # %d", channel);
 	}
@@ -97,7 +97,7 @@ int Control::rand() {
 	return (::rand() ^ ((::rand() << 12) + (::rand() <<24))) & 0x7fffffff;
 	}
 void Control::setup() {}
-void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE
+void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE;
 	ship = ship_pointer;
 	if (ship) {
 		ship->control = this;
@@ -113,7 +113,7 @@ void Control::load(const char* inifile, const char* inisection) {
 void Control::save(const char* inifile, const char* inisection) {
 	return;
 	}
-SpaceLocation *Control::get_focus() {STACKTRACE
+SpaceLocation *Control::get_focus() {STACKTRACE;
 	if (ship) return ship->get_focus();
 	else return NULL;
 	}
@@ -197,7 +197,7 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 	return ret;
 }
 int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
-	STACKTRACE;
+	STACKTRACE;;
 	int ret = -1, slot = 0;
 	if (fleet->getSize() == 0) {tw_error ("Empty fleet! (prompt:%s)", prompt);}
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
@@ -226,7 +226,7 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
 	return(slot);
 }
 void Control::set_target(int i) {
-	STACKTRACE;
+	STACKTRACE;;
 	if (i >= targets->N) {tw_error("oscar hamburger!!!!!!!!!");}
 	if (i == -1) {
 		index = i;
@@ -238,7 +238,7 @@ void Control::set_target(int i) {
 	target = targets->item[index];
 	return;
 	}
-void Control::target_stuff() {STACKTRACE
+void Control::target_stuff() {STACKTRACE;
 	if (index == -1) {
 		if (targets->N) {
 			index = random() % targets->N;
@@ -309,10 +309,10 @@ lag / already state:
 
 void Control::gen_buffered_data()
 {
-	if (ship && ship->exists())
+	//if (ship && ship->exists())		// well ... you also need it for watch-mode.
 		keys = think();
-	else
-		keys = 0;
+	//else
+	//	keys = 0;
 
 	if (channel != channel_none)
 		log_short(keys, channel + _channel_buffered);
@@ -323,7 +323,7 @@ void Control::gen_buffered_data()
 
 
 
-void Control::calculate() {STACKTRACE
+void Control::calculate() {STACKTRACE;
 
 	if (!exists()) return;
 
@@ -397,20 +397,22 @@ void Control::calculate() {STACKTRACE
 
 	return;
 	}
-int Control::think() {STACKTRACE
+int Control::think()
+{
+	STACKTRACE;
 	return 0;
 	}
-char *Control::getDescription() {STACKTRACE
+char *Control::getDescription() {STACKTRACE;
 	return iname;
 	}
-void Control::_event(Event *e) {STACKTRACE
+void Control::_event(Event *e) {STACKTRACE;
 	//add code for lag increase / decrease here
 	return;
 }
 Control::Control(const char *name, int _channel) : temporary(false), target_sign_color(255), 
 	already(0), channel(_channel), ship(NULL), 
 	target(NULL), index(-1), always_random(0), keys(0), _prediction_keys(NULL) 
-	{STACKTRACE
+	{STACKTRACE;
 	id |= ID_CONTROL;
 	attributes |= ATTRIB_SYNCHED;
 	if (channel != channel_none) {
@@ -423,10 +425,14 @@ Control::Control(const char *name, int _channel) : temporary(false), target_sign
 	}
 	iname = strdup(name);
 	}
-Control::~Control() { STACKTRACE
+Control::~Control() { STACKTRACE;
 	if (_prediction_keys) delete[] _prediction_keys;
 	}
-bool Control::die() {
+bool Control::die()
+{
+	return Presence::die();
+
+	/*
 	if (channel == channel_none) return Presence::die();
 	// controls CANNOT arbitrarily be killed off, because the deal with networking directly
 	error("controls cannot be killed");
@@ -434,6 +440,7 @@ bool Control::die() {
 	//I just want to find out if anything is actually calling this
 	//because before this function was added, that would have resulted in a desynch
 	return false;
+	*/
 	}
 bool Control::valid_target(SpaceObject *t) {
 	// GEO: this error sometimes occur, unknown why.
@@ -446,7 +453,7 @@ bool Control::valid_target(SpaceObject *t) {
 	if (!t->exists()) return false;
 	return true;
 	}
-void Control::animate(Frame *space) {STACKTRACE
+void Control::animate(Frame *space) {STACKTRACE;
 	if (!ship) return;
 	if (!target || target->isInvisible()) return;
 	if (!(attributes & ATTRIB_ACTIVE_FOCUS)) return;

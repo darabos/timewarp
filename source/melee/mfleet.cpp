@@ -90,7 +90,8 @@ void init_fleet() {STACKTRACE
         unsigned char buffy[65536];
         int s = 0;
         int j;
-        j = intel_ordering(getSize());
+		j = getSize();
+        j = intel_ordering(j);
         memcpy(&buffy[s], &j, sizeof(j)); s += sizeof(j);
 
         MyFleetListType::iterator iter;

@@ -28,6 +28,11 @@ REGISTER_FILE
 
 
 
+PlayerInformation *NormalGame::new_player()
+{
+	return new NPI();
+}
+
 /*void Game::player_said(int who, const char *what) {
 	if ((who < 0) || (who >= num_players)) tw_error ("Who said that?!?");
 	message.print(8000, 15, "%s: %s", name[who], what);
@@ -38,22 +43,31 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 {
 	STACKTRACE;
 
-	if (num >= max_player)
-		tw_error("trying to add more players than max allowed");
+	NPI *p = (NPI*) new_player();
+	player[num] = p;
 
-	//int i = num_players;
-	//num_players += 1;
-	player_control = (Control**) realloc(player_control,   sizeof(Control*)   * (num+1));
-	player_name    =    (char**) realloc(player_name,      sizeof(char*)      * (num+1));
-//	player_panel = (ShipPanel**) realloc(player_panel,     sizeof(ShipPanel*) * (num+1));
-	player_fleet =     (Fleet**) realloc(player_fleet,     sizeof(Fleet *)    * (num+1));
-	player_team =    (TeamCode*) realloc(player_team,      sizeof(TeamCode)   * (num+1));
-	player_control[num] = c;
+	p->channel = c->channel;
+
+					
+
+	//player_control =   (Control**) realloc(player_control,   sizeof(Control*)   * (num+1));
+	//player_name    =      (char**) realloc(player_name,      sizeof(char*)      * (num+1));
+//	player_panel   = (ShipPanel**) realloc(player_panel,     sizeof(ShipPanel*) * (num+1));
+	//player_fleet   =     (Fleet**) realloc(player_fleet,     sizeof(Fleet *)    * (num+1));
+	//player_team    =   (TeamCode*) realloc(player_team,      sizeof(TeamCode)   * (num+1));
+	//player_color   =        (int*) realloc(player_color,      sizeof(char*)      * (num+1));
+	
+	p->control = c;
+	
 	add_focus(c, c->channel);
 //	player_panel[num] = NULL;
-	player_fleet[num] = new Fleet();
-	player_fleet[num]->reset();
-	player_name[num] = strdup(name);
+	
+	p->fleet = new Fleet();
+	p->fleet->reset();
+	p->color = num + 1;
+	strncpy(p->name, name, sizeof(p->name));
+	strdup(p->name);
+
 	if (team_index >= team_table_size) {
 		int i = team_table_size;
 		team_table_size = team_index + 1;
@@ -63,8 +77,10 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 			else team_table[i] = 0;
 		}
 	}
-	if (team_index) player_team[num] = team_table[team_index];
-	else player_team[num] = new_team();
+	
+	if (team_index) p->team = team_table[team_index];
+	else p->team = new_team();
+
 	char sect[40];
 	sprintf(sect, "Player%d", num+1);
 	if (c->channel == channel_none)
@@ -76,20 +92,20 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 		// change GEO:
 		// bot ships are defined by the server only (!)
 		if (glog->writeable(channel_server))	// the server...
-			player_fleet[num]->load(fleet_file, fleet_section);
+			p->fleet->load(fleet_file, fleet_section);
 
-		log_fleet(channel_server, player_fleet[num]);
+		log_fleet(channel_server, p->fleet);
 		c->target_sign_color = ((3+num) % 7) + 1;
 
 		}
 	else if (glog->get_direction(c->channel) & Log::direction_write)
 	{
-		player_fleet[num]->load(fleet_file, fleet_section);
-		log_fleet(c->channel, player_fleet[num]);
+		p->fleet->load(fleet_file, fleet_section);
+		log_fleet(c->channel, p->fleet);
 		c->target_sign_color = ((3+num) % 7) + 1;
 		}
 	else {
-		log_fleet(c->channel, player_fleet[num]);
+		log_fleet(c->channel, p->fleet);
 		}
 
 	set_config_file("tmp.ini");
@@ -97,10 +113,10 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 	set_config_string(sect, "Type", c->getTypeName());
 	set_config_int(sect, "Team", team_index);
 	set_config_int(sect, "Channel", c->channel);
-	set_config_int(sect, "StartingFleetCost", player_fleet[num]->getCost());
-	set_config_int(sect, "StartingFleetSize", player_fleet[num]->getSize());
-	player_fleet[num]->save(NULL, sect);
-	player_fleet[num]->save("fleets.tmp", sect);
+	set_config_int(sect, "StartingFleetCost", p->fleet->getCost());
+	set_config_int(sect, "StartingFleetSize", p->fleet->getSize());
+	p->fleet->save(NULL, sect);
+	p->fleet->save("fleets.tmp", sect);
 	return num;
 	}
 
@@ -124,6 +140,7 @@ void NormalGame::init_objects()
 void NormalGame::init_players()
 {
 	STACKTRACE;
+
 
 	switch (glog->type)
 	{
@@ -151,174 +168,126 @@ void NormalGame::init_players()
 
 				// you have to override the default settings, so that all multi-player aimed stuff
 				// is channeled into a single player channel, which is handled locally.
-				channel_player[count] = channel_server;
 				++count;
 			}
 
 			num_players = count;
-			num_humans = 1;		// --> you should have just one human CHANNEL (note that there can be more humans, sharing this channel)
+			num_network = 1;		// --> you should have just one human CHANNEL (note that there can be more humans, sharing this channel)
 			num_bots = 0;
 		}
 		break;
 		case Log::log_net1client:
 		case Log::log_net1server: {
-			log_file("server.ini");
 
-			// the human players
+			//log_file("server.ini");
+			// isn't needed yet ?!
+
+			log_test();
+
+			int count = 0;
 
 			int j;
-			for (j = 0; j < num_humans; j += 1)
+			for (j = 0; j < num_network; j += 1)
 			{
 				int ch;
-				ch = channel_player[j];
+				ch = channel_network[j];
 
 				int team;
 				char buffy[64];
 				char config[64];
 				char name[512];
-				const char *playertype;
-				
-				if (is_local(ch))
-				{	// put no networking stuff in this block
-					// if you're local, you've to define stuff, of course...
-					
-					set_config_file("client.ini");//each side determines whether they are using manually specified teams
-					//int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
-					
-					const char *simple_config = 
-						"[Player1]\nType=Human\nConfig=0\nTeam=0\n";
-					set_config_data(simple_config, strlen(simple_config));
-					
-					sprintf(buffy, "Player1");
-					playertype = get_config_string(buffy, "Type", NULL);
-					
-					if (strcmp(playertype, "none") == 0)
-						tw_error("Human player is a bot!");
-					
-					//strcpy(name, get_config_string(buffy, "Name", buffy));
-					sprintf(name, "player__%i", j);
-					
-					sprintf(config, "Config%d", get_config_int(buffy, "Config", 0));
-					
-					team = get_config_int(buffy, "Team", 0);
-				}
-				
-				//int tmp = 1;
-				//log_int(ch, tmp);	// this is only a signal for a variable # of bots.
-				// which we shouldn't use, cause channel_none players should be treated in
-				// another loop, imo ...
-				
-				channel_current = ch;
 
-				log_int(team);
-				
-				int name_length = strlen(name)+1;
-				log_int(name_length);
-				log_data(name, name_length);
-				
-				if (is_local(ch))
+				int iseat;
+				for ( iseat = 0; iseat < num_hotseats[j]; ++iseat )
 				{
-					add_player(j, create_control(ch, playertype, config), team, name, buffy);
+					if (count >= num_players)
+						break;
 
-				} else {
-					add_player(j, create_control(ch, "Whatever"), team, name, NULL);	
+					if (iseat > 3)
+						break;		// there are at most 4 hotseat-players allowed.
+					
+					int name_length = -1;
+
+					if (is_local(ch))
+					{	// put no networking stuff in this block
+						// if you're local, you've to define stuff, of course...
+						
+						set_config_file("scp.ini");//each side determines whether they are using manually specified teams
+						// these are local settings.
+						
+						sprintf(name, "player__%i", count+1);
+						name_length = strlen(name)+1;
+						
+						sprintf(buffy, "Player%i", iseat+1);
+						sprintf(config, "Config%d", iseat);
+						
+						team = get_config_int(buffy, "Team", 0);
+					}
+
+					//int tmp = 1;
+					//log_int(ch, tmp);	// this is only a signal for a variable # of bots.
+					// which we shouldn't use, cause channel_none players should be treated in
+					// another loop, imo ...
+					
+					channel_current = ch;
+					
+					log_int(team);						// this uses channel_current
+					
+					log_int(name_length);				// this uses channel_current
+					log_data(name, name_length);		// this uses channel_current
+
+					message.print(1500, 15, "[%i] [%i] [%s]",
+						team, name_length, name);
+					message.animate(0);
+
+					if (is_local(ch))
+					{
+						add_player(count, create_control(ch, "Human", config), team, name, buffy);
+						
+					} else {
+
+						add_player(count, create_control(ch, "Whatever"), team, name, NULL);	
+					}
+
+					++count;
 				}
 				
 			}
 
+
+			/*
 			// give overview about the players?
 			message.print(1500, 14, "local channel = [%i]", channel_local());
-			for (j = 0; j < num_humans; j += 1)
+			for (j = 0; j < num_network; j += 1)
 			{
 				message.print(1500, 14, "[%s] [%s] [%i]", player_name[j], player_control[j]->getTypeName(), player_control[j]->channel);
 				message.animate(0);
 			}
+			*/
 
-			//if (p_local == 0) readkey();
-
-			// YOU SHOULD ADD BOTS HERE ?!
+			// adding bots
 			int team = new_team();
-			for (j = num_humans; j < num_players; j += 1)
+			for (j = 0; j < num_bots; j += 1)
 			{
+				if (count >= num_players)
+					break;
+
 				char name[512], fleetid[512];
-				sprintf(name, "Bot_%i", j-num_humans+1);
-				sprintf(fleetid, "Player%i", j);
-//int NormalGame::add_player (int num, Control *c, int team_index, const char *name, const char *fleet_section,
-//							const char *fleet_file)
+				sprintf(name, "Bot_%i", j+1);
+				sprintf(fleetid, "Player%i", j+1);
+
 				int ch;
 				ch = channel_none;
-				channel_player[j] = ch;
-				add_player(j, create_control(ch, "WussieBot"), team, name, fleetid);
-				//channel_player[j] = channel_none;
+				add_player(count, create_control(ch, "WussieBot"), team, name, fleetid);
+
+				++count;
 			}
 
-			/*
-			//int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
-			//if (use_teams_menu) {
-			if (1) {
-				int j;
+			// so, the total number of controls in use by human or bot players is ...
+			if (num_players != count)
+				tw_error("count mismatch, should not occur");
+			
 
-				for (j = 0; j < num_players; j += 1)
-				{
-					
-					int ch;
-					//if (j == 0) ch = channel_server;
-					//else ch = channel_client;
-					ch = channel_player[j];
-
-					if (is_local(ch)) {
-						set_config_file("client.ini");//each side determines whether they are using manually specified teams
-						int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
-						const char *simple_config = 
-							"[Player1]\nType=Human\nConfig=0\nTeam=0\n";
-						for (int i = 0; true; i += 1) {
-							char buffy[64];
-							sprintf(buffy, "Player%d", i + 1);
-							if (use_teams_menu) set_config_file("scp.ini");
-							else set_config_data(simple_config, strlen(simple_config));
-							const char *type = get_config_string(buffy, "Type", NULL);
-							if (!type) {
-								int tmp = 0;
-								log_int(ch, tmp);
-								break;
-							}
-							if (strcmp(type, "none") == 0) continue;
-							const char *name = get_config_string(buffy, "Name", buffy);
-							char config[64];
-							sprintf(config, "Config%d", get_config_int(buffy, "Config", 0));
-							//int channel = channel_server;
-							//if (strcmp(type, "WussieBot") == 0) channel = channel_none;
-							//if (strcmp(type, "MoronBot") == 0) channel = channel_none;
-							int ti = get_config_int(buffy, "Team", 0);
-							{int tmp = 1; log_int(ch, tmp);}
-							log_int(ch, ti);
-
-							int name_length = strlen(name);
-							log_int(ch, name_length);
-							log_data(ch, (char*)name, name_length);
-
-							add_player(j, create_control(ch, type, config), ti, name, buffy);
-						}
-					}
-					else {
-						for (int i = 0; true; i += 1) {
-							int tmp;
-							log_int(ch, tmp);
-							if (tmp == 0) break;
-							int team;
-							char *name;
-							log_int(ch, team);
-							int name_length;
-							log_int(ch, name_length);
-							name = (char*)malloc((name_length+1)*sizeof(char));
-							log_data(ch, name, name_length);
-							name[name_length] = 0;
-							add_player(i, create_control(ch, "Whatever"), team, name, NULL);
-						}
-					}
-				}
-			}
-			*/
 
 		}
 		break;
@@ -341,12 +310,13 @@ void NormalGame::set_resolution(int screen_x, int screen_y) {
 
 void NormalGame::preinit() {
 	Game::preinit();
-	player_control = NULL;
-	player_name = NULL;
+	//player_control = NULL;
+	//player_name = NULL;
 //	player_panel = NULL;
-	player_fleet = NULL;
+	//player_fleet = NULL;
+	//player_color = NULL;
 
-	player_team = NULL;
+	//player_team = NULL;
 	team_table = NULL;
 	num_kills = 0;
 	kills = NULL;
@@ -399,8 +369,9 @@ void NormalGame::init(Log *_log)
 
 			add_player(i, create_control(channel, type), ti, name, buffy);
 
-			player_fleet[i]->load(NULL, buffy);
-			player_fleet[i]->save("fleets.tmp", buffy);
+			NPI* p = (NPI*)player[i];
+			p->fleet->load(NULL, buffy);
+			p->fleet->save("fleets.tmp", buffy);
 		}
 	}
 
@@ -420,18 +391,21 @@ void NormalGame::init(Log *_log)
 	return;
 	}
 
-NormalGame::~NormalGame() {STACKTRACE
-	if (player_control) free (player_control);
-	int i;
-	if (player_name) {
-		for (i = 0; i < num_players; i += 1) {
-			free(player_name[i]);
-			}
-		free(player_name);
-		}
+NormalGame::~NormalGame()
+{
+	STACKTRACE;
+
+	//if (player_control) free (player_control);
+//	int i;
+	//if (player_name) {
+	//	for (i = 0; i < num_players; i += 1) {
+	//		free(player_name[i]);
+	//		}
+	//	free(player_name);
+	//	}
 //	if (player_panel) free (player_panel);
 
-	if (player_team) free(player_team);
+	//if (player_team) free(player_team);
 	if (kills) free(kills);
 	}
 
@@ -533,19 +507,22 @@ void NormalGame::display_stats()
 
 	pause();
 	int i;
-	for (i = 0; i < num_humans; i += 1) {
-		Fleet *fleet = player_fleet[i];
+	for (i = 0; i < num_players; i += 1)
+	{
+		NPI* p = (NPI*)player[i];
+
+		Fleet *fleet = p->fleet;
 		switch (glog->type) {
 			case Log::log_net1client:
 			case Log::log_net1server: {
 //				if (log->get_direction(player_control[i]->channel) & Log::direction_write) 
-					message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", player_name[i], fleet->getSize(), fleet->getCost());
+					message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", p->name, fleet->getSize(), fleet->getCost());
 //				else
 //					message.print(6000, 15, "%s status: : %d / %d points", buffy, fleet->cost, player_total_fleet[i]);
 			}
 			break;
 			default: {
-				message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", player_name[i], fleet->getSize(), fleet->getCost());
+				message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", p->name, fleet->getSize(), fleet->getCost());
 			}
 			break;
 		}
@@ -606,6 +583,120 @@ public:
 
 
 
+// NOTENOTENOTE
+// if there are >1 clients, then the server will send data to all clients...
+// so...
+// the clients who don't need it, should discard the data,
+// or..
+// should you use a specific channel perhaps ?? No - just a specific socket !!
+// so, you should connect to a specific socket - and you've to make sure, that
+// the remote socket you connect to, is synched for these data (ie. isn't sending
+// other crap ;) )
+
+void NormalGame::download_file(char *filename)
+{
+	FILE *f;
+	int L;
+	const int N = 1024;
+	char fdata[N];
+
+	int count = 0;
+
+	// first you've to check if you're synched
+	int k = 0;
+	log_int(k, channel_server);
+	// this is probably enough --> the server has sent all data to you.
+	// there's nothing you've to send to the server, so it's ok.
+
+	// also, check which socket-connection you should use...
+
+	if (p_local == 0)	// the host
+	{
+		// how does the server determine, who needs the data ?
+		// each should send a value to the server, telling whether
+		// the data are ok, or not ...
+
+		// duh, this is getting complicated 
+		
+		f = fopen(filename, "rb");
+
+		for (;;)
+		{
+			L = fread(fdata, N, 1, f);
+
+			log_int(L);
+
+			if (L == 0)
+				break;
+			else
+				// this is wrong
+				log_data(fdata, L, channel_file_data);
+	//		glog->net.conn[..]->send(); <-- should be something like this
+
+			count += L;
+			message.print(1500, 15, "sent %i bytes", count);
+			message.animate(0);
+		}
+	}
+	else 
+	{
+		f = fopen(filename, "wb");
+
+		for (;;)
+		{
+			log_int(L);
+
+			if (L == 0)
+				break;
+			else
+				// this is wrong
+				log_data(fdata, L, channel_file_data);
+
+			fwrite(fdata, L, 1, f);
+
+			count += L;
+			message.print(1500, 15, "received %i bytes", count);
+			message.animate(0);
+		}
+	}
+
+	fclose(f);
+
+}
+
+
+void NormalGame::check_file(const char *id)
+{
+	ShipType *type = shiptype(id);
+
+	if (type->data->islocked())
+		return;		// it is already loaded, doesn't make sense to compare anymore
+
+	
+	int myfsize, otherfsize;
+	myfsize = file_size(type->data->file);
+	otherfsize = myfsize;
+
+	// compare to the value on the host computer
+	// (assumption here is, that the host has the most recent version)
+
+	log_int(otherfsize, channel_file_data);
+	
+	// so ... if your local version differes from the host version, then ...
+	if (otherfsize != myfsize)
+	{
+	//	int i = tw_alert("File mismatch; download file from server?", "&Ok", "&Abort");
+	//	if ( i == 2)
+	//	{
+			tw_error("DAT files have different size! This may cause a desynch");
+	//	} else {
+	//		download_file(type->data->file);
+	//	}
+		
+	}
+}
+
+
 void NormalGame::choose_new_ships()
 {
 	STACKTRACE;
@@ -616,33 +707,35 @@ void NormalGame::choose_new_ships()
 
 	
 	message.out("Selecting ships...", 1000);
-	int slot[max_player];
+	int *slot = new int [num_players];
 	//choose ships and send them across network
 	
 //	log_test();
 
 	for (i = 0; i < num_players; i += 1)
 	{
+		NPI* p = (NPI*)player[i];
+
 		slot[i] = -2;
-		if (player_control[i]->ship) {
+		if (p->control->ship) {
 			}
 		else {
 //			if (player_panel[i]) player_panel[i]->window->hide();
 //			player_panel[i] = NULL;
 			sprintf (tmp, "Player%d", i+1);
-			Fleet *fleet = player_fleet[i];
+			Fleet *fleet = p->fleet;
 			if (fleet->getSize() == 0) continue;
 			char buffy[512];
 
             if (strlen(fleet->getTitle()) != 0) 
-                sprintf(buffy, "%s\n%s\n", player_name[i], fleet->getTitle());
+                sprintf(buffy, "%s\n%s\n", p->name, fleet->getTitle());
             else
-                sprintf(buffy, "%s\n", player_name[i]);
+                sprintf(buffy, "%s\n", p->name);
 
 			// humans can choose ships
-			if ( i < num_humans )
-				slot[i] = player_control[i]->choose_ship(window, buffy, fleet);
-			else
+//			if (p->channel != channel_none)
+//				slot[i] = p->control->choose_ship(window, buffy, fleet);
+//			else
 				// bots choose "randomly" (but synched randomly so don't use rand() !!).
 				// this is needed, otherwise a bot would need its own channel, while this way,
 				// they can use channel_none.
@@ -671,11 +764,14 @@ void NormalGame::choose_new_ships()
 	*/
 
 	//create the ships that were chosen
-	for (i = 0; i < num_players; i += 1) {
+	for (i = 0; i < num_players; i += 1)
+	{
+		NPI* p = (NPI*)player[i];
+
 		if (slot[i] == -2) continue;
 		sprintf (tmp, "Player%d", i+1);
 		//fleet->load("./fleets.tmp", tmp);
-		Fleet *fleet = player_fleet[i];
+		Fleet *fleet = p->fleet;
 
 		if (slot[i] == -1)
 			slot[i] = random() % fleet->getSize();
@@ -685,13 +781,17 @@ void NormalGame::choose_new_ships()
 			tw_error("trying to load invalid ship");
 		}
 
-		Ship *s = create_ship(fleet->getShipType(slot[i])->id, player_control[i], random(size), random(PI2), player_team[i]);
+
+		check_file(fleet->getShipType(slot[i])->id);
+		
+
+		Ship *s = create_ship(fleet->getShipType(slot[i])->id, p->control, random(size), random(PI2), p->team);
 		if (!s) {tw_error("unable to create ship");}
 		fleet->clear_slot(slot[i]);
 		fleet->Sort();
 		//fleet->save("./fleets.tmp", tmp);
 		s->locate();
-		add ( new WedgeIndicator ( s, 30, i+1 ) );
+		add ( new WedgeIndicator ( s, 30, p->color ) );
 		ShipPanel *panel = new ShipPanel(s);
 		panel->window->init(window);
 		panel->window->locate(
@@ -708,24 +808,6 @@ void NormalGame::choose_new_ships()
 		add(new TeamIndicator(s, &indteamtoggle));
 
 		
-		// CHECK FILE SIZES !! to intercept desynch before they happen.
-		int myfsize, otherfsize;
-
-		// CRASH : client can't send packet to server
-		myfsize = file_size(s->type->data->file);
-		otherfsize = myfsize;
-		if (player_control[i]->channel != channel_none) {
-			log_int(otherfsize, player_control[i]->channel);
-		}
-
-		if (otherfsize != myfsize)
-		{
-			// the player who loads the ship doesn't get this message, cause his own file is identical by default
-			tw_error("DAT files have different size! This may cause a desynch. Press Retry to continue");
-		}
-		
-
-		
 	}
 
 //	log_test();
@@ -737,6 +819,8 @@ void NormalGame::choose_new_ships()
 	// check if the file-share-channel is still "ök"
 	if (log_size_ch(channel_file_data) != 0)
 		tw_error("The file channel should be empty. Contains %i chars", log_size_ch(channel_current));
+
+	delete[] slot;
 
 	return;
 }
@@ -798,7 +882,8 @@ void TeamIndicator::animate_predict(Frame *space, int time)
 
 bool NormalGame::player_isalive(int i)
 {
-	return (player_control[i]->ship || player_fleet[i]->getSize() > 0);
+	NPI* p = (NPI*)player[i];
+	return (p->control->ship || p->fleet->getSize() > 0);
 }
 
 bool NormalGame::check_end()
@@ -823,27 +908,12 @@ int NormalGame::local_player()
 {
 	int i;
 	for ( i = 0; i < num_players; ++i )
-		if (is_local(player_control[i]->channel))
+		if (is_local(player[i]->channel))
 			return i;
 	return -1;
 }
 
 
-int NormalGame::log_size_pl(int iplayer)
-{
-	int k = player_control[iplayer]->channel;
-	return log_size_ch(k);
-}
-
-int NormalGame::log_totalsize()
-{
-	int test = 0;
-	int i;
-	for ( i = 0; i < num_players; ++i )
-		test += log_size_pl(i);
-
-	return test;
-}
 
 
 void NormalGame::handle_end()
@@ -861,12 +931,12 @@ void NormalGame::handle_end()
 	int choices[32];
 	int k;
 	int local_choice = 0;	// only 1 local player needs to make a choice; the rest can be copied for local players
-	for ( k = 0; k < num_humans; ++k )
+	for ( k = 0; k < num_players; ++k )
 	{
 		// zero indicates an invalid choice (note that valid choices as 1 and 2 --> see the tw_alert menu below
 		int ichoice = 0;
-		
-		if (is_local(player_control[k]->channel))
+
+		if (is_local(player[k]->channel))
 		{
 			// note, that a "local" player can also be an AI ship, but that doesn't matter,
 			// what matters is that all players on one computer (AI or human) submit the
@@ -874,13 +944,10 @@ void NormalGame::handle_end()
 			if (!local_choice)
 			{
 				char *endmessage;
-				if (player_isalive(k))
-					endmessage = "Victory";
-				else
-					endmessage = "Game Over";
+				endmessage = "The End";
 				
 				char tmp[512];
-				sprintf(tmp, "%s  num = %i  channel = %i framenum = %i", endmessage, k, player_control[k]->channel, frame_number);
+				sprintf(tmp, "%s  num = %i  channel = %i framenum = %i", endmessage, k, player[k]->channel, frame_number);
 				
 				ichoice = tw_alert(tmp, "&QUIT", "&RESTART");
 				
@@ -908,7 +975,7 @@ void NormalGame::handle_end()
 //	log_test();
 
 	// extra test, check if all choices are "valid" (ie non-zero)
-	for ( i = 0; i < num_humans; ++i )
+	for ( i = 0; i < num_players; ++i )
 	{
 		if (!choices[i])
 			tw_error("an invalid choice was encountered at end of the game");
@@ -917,11 +984,11 @@ void NormalGame::handle_end()
 
 	// check if all the players want to restart, or quit, if not, give a warning and quit
 	k = 0;
-	for ( i = 0; i < num_humans; ++i )
+	for ( i = 0; i < num_players; ++i )
 		k += choices[i];
 
 	// disagreement
-	if ( k != 1*num_humans && k != 2*num_humans )
+	if ( k != 1*num_players && k != 2*num_players )
 	{
 		// give a warning to the local player
 		if (choices[ local_player() ] == 2)
@@ -930,7 +997,7 @@ void NormalGame::handle_end()
 		quit("none");		// THIS IS DESYNCHED ?!
 	}
 	// agreement on quitting
-	else if ( k == 1*num_humans )
+	else if ( k == 1*num_players )
 	{
 		quit("none");		// THIS IS DESYNCHED ?!
 	}
@@ -938,18 +1005,21 @@ void NormalGame::handle_end()
 	else
 	{
 		char buffy[512];
-		for ( i = 0; i < num_humans; ++i )
+		for ( i = 0; i < num_players; ++i )
 		{
+			NPI* p = (NPI*)player[i];
+
 			// first, kill remaining ship(s)
-			if (player_control[i]->ship)
-				player_control[i]->ship->die();
+			if (p->control->ship)
+				p->control->ship->die();
 
 			// then, load the fleet
 			log_file("tmp.ini");
 			sprintf(buffy, "Player%d", i + 1);
-			player_fleet[i]->reset();
-			player_fleet[i]->load(NULL, buffy);
-			player_fleet[i]->save("fleets.tmp", buffy);
+			
+			p->fleet->reset();
+			p->fleet->load(NULL, buffy);
+			p->fleet->save("fleets.tmp", buffy);
 		}
 	}
 
@@ -966,7 +1036,7 @@ different network actions. This only applies to the "unbuffered channels", which
 have routines that synchronize the two games explicitly in the code (ie synchronized
 halts). This buffer should be empty most of the time, except in special situations.
 */
-void NormalGame::log_test()
+void log_test()
 {
 #ifdef _DEBUG
 	// synch the 2 games, which should assure that all data are read/written in the meantime
@@ -975,19 +1045,37 @@ void NormalGame::log_test()
 	m = k;
 	
 	int i;
-	for ( i = 0; i < num_humans; ++i )
+	for ( i = 0; i < num_network; ++i )
 	{
-		log_int(k, player_control[i]->channel);
+		log_int(k, channel_network[i]);
 		if ( k != m )
-			tw_error("weird, log stack is probably mixed up");
+			tw_error("log stack is probably mixed up on computer [%i] channel [%i]",
+						i, channel_network[i]);
 	}
 
 	// check if the "log stack" of data is empty
-	if (log_totalsize() > 0)
-		tw_error("Log isn't empty  %i %i", log_size_pl(0), log_size_pl(1));
+//	if (log_totalsize() > 0)
+//		tw_error("Log isn't empty  %i %i", log_size_pl(0), log_size_pl(1));
+// this is not necessarily an error, is it ? Namely, remote computer can still add
+// data while this one is waiting?
 #endif
 // otherwise, it's just an empty routine.
 }
 
 
+int log_size_pl(int netnum)
+{
+	int k = channel_network[netnum];
+	return log_size_ch(k);
+}
+
+int log_totalsize()
+{
+	int test = 0;
+	int i;
+	for ( i = 0; i < num_players; ++i )
+		test += log_size_pl(i);
+
+	return test;
+}
 REGISTER_GAME(NormalGame, "Melee")

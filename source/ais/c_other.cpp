@@ -57,9 +57,13 @@ int stupid_bot(Ship *ship) {
 	}
 
 /*! \brief Summon stupid_bot() */
-int ControlMoron::think() {
-	return stupid_bot(ship);
-	}
+int ControlMoron::think()
+{
+	if (ship)
+		return stupid_bot(ship);
+	else
+		return 0;
+}
 
 ControlMoron::ControlMoron(const char *name, int channel) : Control(name, channel) {}
 

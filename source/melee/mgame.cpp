@@ -50,15 +50,25 @@ for internet play, and non-testing compilations.
 bool detailed_network_check = false;
 
 
+bool PlayerInformation::haschannel(int ch)
+{
+	return (channel == ch  ||  channel + _channel_buffered == ch );
+}
+
+// destroy stuff that belongs to the player.
+void PlayerInformation::die()
+{
+	control->die();
+}
 
 
 
 void display_channel_info(char *txt = "")
 {
 	int p;
-	for ( p = 0; p < num_humans; ++p )
+	for ( p = 0; p < num_network; ++p )
 	{
-		int ch = channel_player[p];
+		int ch = channel_network[p];
 		message.print(1500, 15, "[%s] player[%i]  (direct) [%i]  (buffered) [%i]", txt, p,
 			glog->log_len[ch] - glog->log_pos[ch],
 			glog->log_len[ch+1] - glog->log_pos[ch+1]);
@@ -126,7 +136,8 @@ void Game::gen_buffered_data()
 		log_set_nofake();
 	log_set_default();
 
-	
+
+
 	// there must be at least one "next frame" otherwise nothing happens.
 
 	//log_show_data = true;
@@ -289,25 +300,32 @@ void __checksync( const char *fname, int line) {
 }
 
 
-const int channel_none = -1;
-const int _channel_buffered = 1;
-const int channel_init = 4;     // game type, version, length, etc.. things that need to read by a reader independant of a particular game type
-const int channel_playback = 8; // used for demo playbacks only
-const int channel_server = 12;  //data originating on the server
-int channel_player[max_player];  //data originating on the client
-int p_local;				// this defines the local player.
-int num_players = 0;		// the number of players in the game.
-int num_humans = 0;
-int num_bots = 0;
+static const int channel_none = -1;
+static const int _channel_buffered = 1;
+static const int channel_init = 4;     // game type, version, length, etc.. things that need to read by a reader independant of a particular game type
+static const int channel_playback = 8; // used for demo playbacks only
+static const int channel_server = 12;  //data originating on the server
+int channel_network[max_network];  //data originating on the client
+int num_hotseats[max_network];		// number of hotseat-players per connected computer
+int channel_conn_recv[100];
 
-void set_numplayers(int n)
-{
-	num_players = n;
-}
+int p_local;				// this defines the local player.
+//int num_players = 0;		// the number of players in the game.
+int num_network = 0;
+int num_bots = 0, num_players = 0;
+
+
+PlayerInformation *player[100];
+
+
+//void set_numplayers(int n)
+//{
+//	num_players = n;
+//}
 
 int channel_local()
 {
-	return channel_player[p_local];
+	return channel_network[p_local];
 }
 
 void init_channels()
@@ -315,13 +333,24 @@ void init_channels()
 	p_local = -1;
 
 	// default values for the available channels
-	channel_player[0] = channel_server; //data originating on the server (=player 0)
+	channel_network[0] = channel_server; //data originating on the server (=player 0)
 	int i;
-	for ( i = 1; i < max_player; ++i )
-		channel_player[i] = channel_player[i-1] + 4; //data originating on the client
+	for ( i = 1; i < max_network; ++i )
+	{
+		channel_network[i] = channel_network[i-1] + 4; //data originating on the client
 
-	// actual number of players that use these channels...
-	num_players = 0;
+		channel_conn_recv[i] = -1;
+	}
+
+	// actual number of connected computers that use these channels...
+	num_network = 0;
+
+	// initialize the log also, if possible
+	if (glog)
+	{
+		glog->expand_logs(channel_network[max_network-1] + 4);
+	} /* else
+		tw_error("Warning:it's best to initialize log channels here !!"); */
 };
 
 
@@ -432,19 +461,28 @@ Ship *Game::create_ship(int channel, const char *id, const char *control, Vector
 
 
 
-void Game::log_fleet(int channel, Fleet *fleet) {STACKTRACE
+void Game::log_fleet(int channel, Fleet *fleet)
+{
+	STACKTRACE;
+
 	int fl;
-	void *tmpdata = fleet->serialize(&fl);
 	char buffer[16384];
 
 	channel_current = channel;
 
-	if (fl > 16000)	{tw_error("blah");}
-	memcpy(buffer, tmpdata, fl);
-	free(tmpdata);
+	if (log_writable())	// if channel_current is open for writing.
+	{
+		void *tmpdata = fleet->serialize(&fl);
+		
+		if (fl > 16000)	{tw_error("blah");}
+		memcpy(buffer, tmpdata, fl);
+		free(tmpdata);
+	}
+
 	log_int(fl);
 	if (fl > 16000)	{tw_error("blah");}
 	log_data(buffer, fl);
+
 	fleet->deserialize(buffer, fl);
 }
 
@@ -512,8 +550,8 @@ bool Game::game_ready() {STACKTRACE
 		case Log::log_net1client: {
 			int i;
 			bool result = true;
-			for ( i = 0; i < num_humans; ++i )
-				if (!glog->ready(channel_player[i] + _channel_buffered))
+			for ( i = 0; i < num_network; ++i )
+				if (!glog->ready(channel_network[i] + _channel_buffered))
 					result = false;
 			//if (!log->ready(channel_server + Game::_channel_buffered)) return false;
 			return result;	// if one or more channels aren't ready yet, it returns false.
@@ -640,7 +678,7 @@ void Game::compare_checksums()
 	heavy_compare();	// compare all "live" items
 
 	unsigned char local_checksum = checksum() & 255;
-	unsigned char client_checksum[max_player];
+	unsigned char client_checksum[max_network];
 	unsigned char server_checksum = local_checksum;
 	bool desync = false;
 
@@ -648,10 +686,10 @@ void Game::compare_checksums()
 	if (lag_frames)
 	{
 		int i;
-		for ( i = 1; i < num_humans; ++i )	// note, 0==server.
+		for ( i = 1; i < num_network; ++i )	// note, 0==server.
 		{
 			client_checksum[i] = local_checksum;
-			log_char(client_checksum[i], channel_player[i] + CHECKSUM_CHANNEL);
+			log_char(client_checksum[i], channel_network[i] + CHECKSUM_CHANNEL);
 
 			if (server_checksum != client_checksum[i])
 				desync = true;
@@ -696,18 +734,18 @@ void Game::compare_checksums()
 void Game::do_game_events() {_STACKTRACE("Game::do_game_events()")
 
 	int i, p;
-	for ( p = 0; p < num_humans; ++p )	// note, 0==server.
+	for ( p = 0; p < num_network; ++p )	// note, 0==server.
 	{
-		if ((glog->get_direction(channel_player[p]) & Log::direction_write) != 0)
+		if ((glog->get_direction(channel_network[p] + _channel_buffered) & Log::direction_write) != 0)
 		{
 			COMPILE_TIME_ASSERT(sizeof(events_waiting) == sizeof(char));
 
 			// you _always_ transmit the # of events (can be null)
-			glog->buffer( channel_player[p] + _channel_buffered, &events_waiting, sizeof(events_waiting) );
+			glog->buffer( channel_network[p] + _channel_buffered, &events_waiting, sizeof(events_waiting) );
 
 			for (i = 0; i < events_waiting; i += 1)
 			{
-				glog->buffer ( channel_player[p] + _channel_buffered, waiting_events[i], waiting_events[i]->size );
+				glog->buffer ( channel_network[p] + _channel_buffered, waiting_events[i], waiting_events[i]->size );
 			}
 			//deallocate transmitted events
 			for (i = 0; i < events_waiting; i += 1)
@@ -729,22 +767,22 @@ void Game::do_game_events() {_STACKTRACE("Game::do_game_events()")
 	COMPILE_TIME_ASSERT(sizeof(events_waiting) == sizeof(ne));
 	char buffy[1024];
 
-	for ( p = 0; p < num_humans; ++p )	// note, 0==server.
+	for ( p = 0; p < num_network; ++p )	// note, 0==server.
 	{
 		// you _always_ read the # of events.
-		glog->unbuffer(channel_player[p] + _channel_buffered, &ne, sizeof(ne));
+		glog->unbuffer(channel_network[p] + _channel_buffered, &ne, sizeof(ne));
 
 		for (i = 0; i < ne; i += 1) {
 			char *tmp = buffy;
-			//glog->unbuffer(channel_player[p] + _channel_buffered, &buffy, sizeof(GameEvent));
-			glog->unbuffer(channel_player[p] + _channel_buffered, buffy, sizeof(GameEvent));
+			//glog->unbuffer(channel_network[p] + _channel_buffered, &buffy, sizeof(GameEvent));
+			glog->unbuffer(channel_network[p] + _channel_buffered, buffy, sizeof(GameEvent));
 			int s = ((GameEvent*)tmp)->size;
 			if (s > 1024) {
 				tmp = (char *)malloc(s);
 				memcpy(tmp, buffy, sizeof(GameEvent));
 			}
-			glog->unbuffer(channel_player[p] + _channel_buffered, tmp + sizeof(GameEvent), s - sizeof(GameEvent));
-			handle_game_event ( channel_player[p], ((GameEvent*)tmp));
+			glog->unbuffer(channel_network[p] + _channel_buffered, tmp + sizeof(GameEvent), s - sizeof(GameEvent));
+			handle_game_event ( channel_network[p], ((GameEvent*)tmp));
 			if (tmp != buffy) free(tmp);
 		}
 	}
@@ -786,18 +824,22 @@ void Game::net_expect(int val)
 	int k;
 	int p;
 	bool result = true;
-	for ( p = 0; p < num_humans; ++p )
+	for ( p = 0; p < num_network; ++p )
 	{
 		k= val;
 
-		log_int(k, channel_player[p] + _channel_buffered);
+		log_int(k, channel_network[p] + _channel_buffered);
 
 		if (k != val)
 			result = false;
 	}
 
 	if (!result)
+	{
+		message.print(1500, 14, "frame[%i] time[%i]", frame_number, game_time);
+		message.animate(0);
 		tw_error("error in buffered data");
+	}
 }
 
 void Game::calculate() {_STACKTRACE("Game::calculate")
@@ -1052,8 +1094,9 @@ void Game::preinit() {STACKTRACE
 }
 
 
-void Game::init(Log *_log) {_STACKTRACE("Game::init");
-	int i;
+void Game::init(Log *_log)
+{
+	_STACKTRACE("Game::init");
 
 	//display_channel_info("game::init");
 
@@ -1134,6 +1177,8 @@ offset	size	format		data
 
 	//display_channel_info("game - log_int");
 
+	rand_resync();
+	/*
 	channel_current = channel_server;
 
 	i = rand();
@@ -1146,6 +1191,7 @@ offset	size	format		data
 	log_int(i);
 	random_seed[1] = i;
 	rng.seed_more(i);
+	*/
 
 	if (!is_paused()) pause();
 
@@ -1222,10 +1268,10 @@ void Game::init_lag()
 		for ( itry = 0; itry < Ntry; ++itry )
 		{
 			int p;
-			for ( p = 0; p < num_humans; ++p )
+			for ( p = 0; p < num_network; ++p )
 			{
 				// server-side lag-test ?
-				log_int(blah, channel_player[p]);
+				log_int(blah, channel_network[p]);
 			}
 				
 			if (itry > 0)
@@ -1421,8 +1467,10 @@ bool Game::handle_key(int k) {STACKTRACE
 		case KEY_ESC: {
 //(*((int*)NULL)) = 0;
  			pause();
-			if (tw_alert("Game is paused", "&Abort game", "&Resume playing") == 1) {
-				game->quit("quit - Game aborted from keyboard");
+			if (tw_alert("Game is paused", "&Abort game", "&Resume playing") == 1)
+			{
+				//game->quit("quit - Game aborted from keyboard");
+				CALL(disconnect);
 			}
 			unpause();
 			return true;
@@ -1588,6 +1636,10 @@ void EventClass::reg(GameEvent2 *g, char *id)
 	event[N].call = g;
 	strncpy(event[N].name, id, 64);
 
+	// check if there's a ( or ) character in there (indicates a mistake in the naming)
+	if (strchr(id, '(') || strchr(id, ')') )
+		tw_error("An event name with ( or ) is probably a typo");
+
 	++N;
 
 	if (N > max_events)
@@ -1628,21 +1680,21 @@ void EventClass::handle()
 	int i;
 	int p;
 
-	int Ne[max_player];	// the number of events per player.
+	int Ne[max_network];	// the number of events per computer(-channel)
 
-	for ( p = 0; p < num_humans; ++p )
+	for ( p = 0; p < num_network; ++p )
 		Ne[p] = 0;
 
 	Ne[p_local] = Nreq;
 	Nreq = 0;
 
 
-	for ( p = 0; p < num_humans; ++p )
+	for ( p = 0; p < num_network; ++p )
 	{
 		// note, you can send+receive on your own channel, cause it's already buffered; the
 		// receive reads from the start, and the send adds to the end of the log buffer.
 		
-		channel_current = channel_player[p] + _channel_buffered;
+		channel_current = channel_network[p] + _channel_buffered;
 
 		log_resetmode();
 
@@ -1681,9 +1733,10 @@ EventClass events;
 //static bool has_registered = false;
 void Game::register_events()
 {
-	EVENT(Game, &Game::chat);
-	EVENT(Game, &Game::change_lag);
-	EVENT(Game, &Game::test_event1);
+	EVENT(Game, chat);
+	EVENT(Game, change_lag);
+	EVENT(Game, test_event1);
+	EVENT(Game, disconnect);
 }
 
 
@@ -1758,21 +1811,42 @@ void Game::test_event1()
 
 
 
+void Game::item_sum(char *comment)
+{
+	int i, sumpos, sumvel;
+	
+	sumpos = 0;
+	sumvel = 0;
+
+	for ( i = 0; i < num_items; ++i )
+	{
+		SpaceLocation *o = item[i];
+		sumpos += o->pos.x + o->pos.y;
+		sumvel += o->vel.x + o->vel.y;
+	}
+
+	message.print(1500, 15, "[%s] num[%i] pos[%i] vel[%i]", comment, num_items, sumpos, sumvel);
+	message.animate(0);
+}
+
 
 void Game::heavy_compare()
 {
 	if (!detailed_network_check)
 		return;
 
+	//message.print(1500, 13, "num_items = %i", num_items);
+	//message.animate(0);
+
 	int p;
 	
 	const int max_comp = 512;
 	int val[max_comp];
 
-	int N, Nprev = -1;
-	for ( p = 0; p < num_humans; ++p )
+	int N, Nprev;
+	for ( p = 0; p < num_network; ++p )
 	{
-		channel_current = channel_player[p] + _channel_buffered;
+		channel_current = channel_network[p] + _channel_buffered;
 
 		log_resetmode();
 
@@ -1811,8 +1885,8 @@ void Game::heavy_compare()
 				{
 					// only generate in true-time
 					// otherwise, N may differ from the true number of items in the game.
-					test = iround(item[i]->pos.x + item[i]->pos.y +
-								item[i]->vel.x + item[i]->vel.y);
+					test = item[i]->pos.x + item[i]->pos.y +
+								item[i]->vel.x + item[i]->vel.y;
 					id = item[i]->debug_id;
 				}
 
@@ -1845,4 +1919,94 @@ void Game::heavy_compare()
 	// leave the logs in default mode for subsequent operations !!
 	log_resetmode();
 }
+
+
+
+// THIS NEEDS WORK,
+// cause it desynchronizes or freezes the game !!
+void Game::disconnect()
+{
+	// THIS IS (more or less) THE OLD STUFF
+	// it'll stop all connected games as well...
+	if (log_synched)
+	{
+		game->quit("none");
+		tw_alert("Stopped", "&Ok");
+	}
+	// that's because the stuff below isn't good enough yet, it desynches the game
+	// I need to remove a net connection, but how ?
+
+
+	// you are in channel_current, so the channel_current player disconnects...
+
+	if (log_synched)	// in receiving mode.
+	{
+		// check which players are to be removed
+		int i;
+		for ( i = 0; i < num_players; ++i )
+		{
+			if (player[i]->haschannel(channel_current))
+			{
+				remove_player(i);
+				--i;	// repeat player i
+			}
+		}
+	}
+}
+
+
+PlayerInformation *Game::new_player()
+{
+	PlayerInformation *p;
+	p = new PlayerInformation();
+	
+	p->status = true;
+	p->control = 0;
+	p->color = 1;
+	strcpy(p->name, "default");
+	p->team = 0;
+
+	return p;
+}
+
+
+
+void Game::remove_player(int i)
+{
+	// THIS DESYNCHES THE GAME !!
+
+	message.print(1500, 15, "removing player[%i]", i);
+	message.animate(0);
+	// if you're the local player, simply quit the game
+	if (is_local(player[i]->channel))
+	{
+		//game->quit("quit - Game aborted from keyboard");
+//		player[i]->control->select_ship(0, "none");
+	}
+
+	player[i]->status = 0;	// tell the game, that this player is gone ?!
+	// not really used.
+
+//	player[i]->die();
+	message.print(1500, 14, "frame[%i] time[%i]", frame_number, game_time);
+	
+	// Disable that players buffered channel ... (but keep the direct channel)
+	int ch = player[i]->channel + _channel_buffered;
+	glog->log_dir[ch] = 0;
+
+	// remove the players network-connection from the network... which network conn.
+	// goes to that player... ?
+	int k;
+	k = channel_conn_recv[ player[i]->channel + _channel_buffered ];
+	((NetLog*)glog)->rem_conn(k);
+	//-- num_network;
+	//channel_network[k] = channel_network[num_network];
+
+	// remove the player from the player-list, so that its data won't be used anymore...
+	-- num_players;
+	player[i] = player[num_players];
+
+}
+
+
 

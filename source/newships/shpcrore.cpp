@@ -275,5 +275,5 @@ void CromeShot::inflict_damage(SpaceObject *other)
 }
 
 
-//REGISTER_SHIP(Crome)
+REGISTER_SHIP(Crome)
 

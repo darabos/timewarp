@@ -49,7 +49,7 @@
 */
 double ControlWussie::check_danger ()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	double d = 0;
 	Query q;
@@ -88,7 +88,7 @@ const char *ControlWussie::getTypeName ()
 
 double ControlWussie::evasion (Ship * ship)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	double closetime = 500;
 	double angle, dodgeangle = -1;
@@ -170,7 +170,10 @@ double ControlWussie::evasion (Ship * ship)
 
 int ControlWussie::think ()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	if (!ship)
+		return 0;
 
 	int action = 0;
 	float velocity, distance;
@@ -596,7 +599,7 @@ ControlWussie::ControlWussie (const char *name, int channel):Control (name,
 
 void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 {
-	STACKTRACE;
+	STACKTRACE;;
 
 	char tmp[20];
 	int i, j, k;

@@ -12,8 +12,9 @@
 
 int channel_current = -1;
 
-int channel_file_names = 0;
+int channel_file_names = 0;		// ISN'T USED ...
 int channel_file_data = 1; //direction for file channels must be the same
+
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -197,18 +198,36 @@ Log::~Log() {STACKTRACE
 	log_num = 0;
 }
 
-void Log::log ( int channel, void *data, int size) {STACKTRACE
+void Log::log ( int channel, void *data, int size)
+{
+	STACKTRACE;
+
+	if (channel == 0)
+		tw_error("attempting to write to a forbidden channel");
+
 	if (!size) return;
 	if (channel < 0) {tw_error ("Log::log - negative channel!");}
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
 
+	if (!log_dir[channel]) _null_log(channel, data, size);
 	if ((log_dir[channel] & direction_write) && !log_write_disable) _log ( channel, data, size);
 	if ((log_dir[channel] & direction_read ) && !log_read_disable && !log_fake ) _unlog ( channel, data, size);
 	return;
 }
-void Log::_log(int channel, const void *data, int size) {STACKTRACE
+
+
+void Log::_null_log(int channel, void *data, int size)
+{
+	memset(data, 0, size);	// the channel doesn't matter in this case.
+	// just set requested data to a predictable size of 0.
+}
+
+void Log::_log(int channel, const void *data, int size)
+{
+	STACKTRACE;
+
 	log_len[channel] += size;
 	while (log_len[channel] > log_size[channel]) {
 		if (log_size[channel]) log_size[channel] = log_size[channel] * 2;
@@ -299,7 +318,19 @@ int Log::ready(int channel) {
 
 
 
-void Log::deinit() {STACKTRACE
+void Log::deinit()
+{
+	STACKTRACE;
+
+	// set all channelinfo to 0
+
+	int i;
+	for ( i = 0; i < log_num; ++i )
+	{
+		log_len[i] = 0;
+		log_pos[i] = 0;
+	}
+
 	return;
 }
 
@@ -361,11 +392,43 @@ void Log::use_idle(int time)
 	// nothing by default.
 }
 
-void Log::reset() {
+/*
+Well, there can be a problem here, if you reset a log, while one of the remote
+computers has already passed the reset() line, and has already sent new data to
+this computer. In that case, there's still data to be read, and the reset should
+not delete those data - those data belong to the program-part that comes AFTER the
+reset call, so it's ok to keep them in store.
+*/
+void Log::reset()
+{
 	int i;
-	for (i = 0 ; i < this->log_num; i += 1) {
-		log_pos[i] = 0;
+	for (i = 0 ; i < log_num; i += 1)
+	{
+		// added GEO:
+		if (log_len[i] - log_pos[i] > 0)
+		{
+	//		tw_error("Resetting a non-empty log  channel[%i] pos[%i] len[%i] !!",
+	//			i, log_pos[i], log_len[i]);
+			// actually, the line above doesn't adress a real error, but it can be
+			// caused by a remote computer, who's executing actions slightly earlier than
+			// this computer, and who could've already sent some data to this computer,
+			// which this computer has happily accepted. Since these data belong to
+			// actions *after* the reset point, you've to keep them for later use,
+
+			int k = log_len[i] - log_pos[i];
+
+			memcpy(log_data[i], log_data[i] + log_pos[i], k);
+
+			log_len[i] = k;	// keep the lingering data, since those belong to subsequent actions,
+			//originating from too-early actions by remote computers in the game
+			log_pos[i] = 0;
+		} else {
+
+			log_len[i] = 0;
+			log_pos[i] = 0;
 		}
+	}
+	
 	return;
 }
 
@@ -395,7 +458,7 @@ void PlaybackLog::set_all_directions( char direction ) {
 
 
 
-enum share_types {TYPE_CHAR, TYPE_SHORT, TYPE_INT};
+enum share_types {TYPE_CHAR, TYPE_SHORT, TYPE_INT, TYPE_DOUBLE};
 static const int max_share = 512;
 static int Nshare = 0;
 static int share_channel[max_share];
@@ -427,19 +490,21 @@ void share_intel_order(int n, int i)
 }
 
 
-static int chann(int player)
+static int chann(int iplayer)
 {
-	if (player == -1)
+	if (iplayer == -1)
 		return channel_init;
 
 	else
-		return channel_player[player];
+		return player[iplayer]->channel;
 }
 
 void share_buffer(int player, void *value, int num, int size, share_types st)
 {
 	if (chann(player) == channel_none)
 		return;
+	if (player > num_players)
+		tw_error("player [%i] exceeds max allowed value [%i] -- perhaps you use share(channel) instead of share(player)", player, num_players);
 
 	share_channel[Nshare] = chann(player);
 	share_address[Nshare] = value;
@@ -491,6 +556,11 @@ void share(int player, char *value, int num)
 	share_buffer(player, value, num, sizeof(char), TYPE_CHAR);
 }
 
+void share(int player, double *value, int num)
+{
+	share_buffer(player, value, num, sizeof(double), TYPE_DOUBLE);
+}
+
 
 
 
@@ -500,14 +570,19 @@ void share(int player, char *value, int num)
 /** \brief Retrieves the values that were sent for sharing, and writes the values
 to the proper memory locations.
 */
+#include "mmain.h"
 void share_update()
 {
-	// do it here, cause why would you want to wait for each little packet till it
-	// can be sent onto the net ?
+	// test the network, whether the log channels are still ok.
+	// by using a call to log_test();
+	// but NOT here, cause at this moment, you can have mixing of data. You've to
+	// wait till the (delayed) buffered data (from calls to share()) are received,
+	// since those are already on their way on the net..
+	// you've to test at the end of this subroutine.
 
-	
-//	glog->need_to_transmit = true;
-	glog->flush_block();
+	glog->force_update();
+	glog->flush_block();	// this only blocks, if need_to_tranmit == true.
+	// so, for that I call force_update()
 
 	// superfluous, cause this is already used inside the unbuffer routine.
 	//game->log->listen();
@@ -526,6 +601,11 @@ void share_update()
 	}
 
 	Nshare = 0;
+
+	// test the network, whether the log channels are still ok.
+	// it's safe to do here, cause all lingering requests should've
+	// been updated by now !!
+//	log_test();
 }
 
 
@@ -641,4 +721,25 @@ int log_size_ch(int channel)
 		return glog->log_len[channel] - glog->log_pos[channel];
 	else
 		return 0;
+}
+
+
+
+void rand_resync()
+{
+	int k;
+	k = channel_current;
+	channel_current = channel_server;
+	
+	int i;
+
+	i = rand();
+	log_int(i);
+	rng.seed(i);
+
+	i = rand();
+	log_int(i);
+	rng.seed_more(i);
+
+	channel_current = k;
 }
