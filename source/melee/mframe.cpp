@@ -900,7 +900,7 @@ void Physics::destroy_all() {
 
 Physics::~Physics() {STACKTRACE
 	destroy_all();
-	if (quadrant) delete quadrant;
+	if (quadrant) delete[] quadrant;
 	quadrant = NULL;
 }
 

@@ -1085,7 +1085,7 @@ Game::~Game() {STACKTRACE
 	message.out("deleteing GameEvents");
 	int i;
 	for (i = 0; i < events_waiting; i += 1) free(waiting_events[i]);
-	delete waiting_events;
+	delete[] waiting_events;
 
 	message.out("deleteing histographs");
 	delete tic_history; tic_history = NULL;

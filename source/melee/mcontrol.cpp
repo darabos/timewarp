@@ -466,7 +466,7 @@ Control::Control(const char *name, int _channel) : temporary(false), target_sign
 	iname = strdup(name);
 	}
 Control::~Control() { STACKTRACE
-	if (_prediction_keys) delete _prediction_keys;
+	if (_prediction_keys) delete[] _prediction_keys;
 	}
 bool Control::die() {
 	if (channel == Game::channel_none) return Presence::die();

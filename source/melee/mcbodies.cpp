@@ -346,7 +346,7 @@ void Stars2::load_next ( const char *sect, const StarLayer *old ) {STACKTRACE
 }
 
 Stars2::~Stars2() {STACKTRACE
-	if (layer) delete layer;
+	if (layer) free ( layer );
 }
 
 void Stars2::animate ( Frame * space ) 
@@ -473,7 +473,7 @@ Stars::Stars() {
 Stars::~Stars() {STACKTRACE
 	int i;
 	for(i = 0; i < num_pics; i++) delete pic[i];
-	delete pic;
+	delete[] pic;
 	}
 
 

@@ -561,7 +561,7 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		
 
 		}
-	delete slot;
+	delete[] slot;
 	message.out("Finished selecting ships...", 1500);
 	unpause();
 	return;

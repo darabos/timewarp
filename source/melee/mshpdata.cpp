@@ -234,7 +234,7 @@ void ShipData::unload() {
 	if (num_more_sprites) {
 		int i;
 		for (i = 0; i < num_more_sprites; i += 1) delete more_sprites[i];
-		delete more_sprites;
+		delete[] more_sprites;
 		more_sprites = NULL;
 		num_more_sprites = 0;
 	}
@@ -464,7 +464,8 @@ void ShipData::load() {
 
 ShipData::~ShipData()
 {
-	if(spriteShip)
+	unload();
+/*	if(spriteShip)
     delete spriteShip;
 	if(spriteWeapon)
 		delete spriteWeapon;
@@ -480,7 +481,7 @@ ShipData::~ShipData()
 	if (spritePanel)
     delete spritePanel;
 
-	unload_datafile(data);
+	unload_datafile(data);*/
 
 	free(file);
 }

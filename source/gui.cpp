@@ -146,7 +146,7 @@ void TW_Dialog_Player::deinit() {
 		dialog[i].fg = old_sizes[i*6+4];
 		dialog[i].bg = old_sizes[i*6+5];
 	}
-	delete old_sizes;
+	delete[] old_sizes;
 	if (player) i = shutdown_dialog ( player );
 	else i = -1;
 	destroy_bitmap(subscreen);

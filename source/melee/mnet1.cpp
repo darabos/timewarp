@@ -1,14 +1,14 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <allegro.h>
 #include "../melee.h"
 REGISTER_FILE
 #include "mnet1.h"
 #include "mview.h"
 #include "mcontrol.h"
-#include "mcbodies.h"
+//#include "mcbodies.h"
 #include "../scp.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 GameEventMessage::GameEventMessage (const char *text)
 {STACKTRACE

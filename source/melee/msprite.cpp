@@ -350,7 +350,7 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 			b[mip][i] = tmp[i];
 		}
 	}
-	delete tmp;
+	delete[] tmp;
 
 	PMASK **tmp2 = new PMASK*[count];
 	while (phase < 0) phase += count;
@@ -362,7 +362,7 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 			m[i] = tmp2[i];
 		}
 	}
-	delete tmp2;
+	delete[] tmp2;
 	return;
 }
 
@@ -765,7 +765,7 @@ SpaceSprite::~SpaceSprite() {
 	for(i = 0; i < count; i++) {
 		if (attributes[i] & DEALLOCATE_MASK) destroy_pmask(m[i]);
 		}
-	delete m;
+	delete[] m;
 	m = NULL;
 
 	for (l = 0; l <= highest_mip; l += 1) {
@@ -776,7 +776,7 @@ SpaceSprite::~SpaceSprite() {
 		b[l] = NULL;
 	}
 
-	delete attributes;
+	delete[] attributes;
 	attributes = NULL;
 	return;
 }
