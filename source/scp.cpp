@@ -63,7 +63,11 @@ REGISTER_FILE
 #include "melee/mship.h" //remove
 #include "melee/mfleet.h"
 
+#include "jgmod.h"
 
+
+//deprecated.  This mode of using dat files is terrible, I can't believe
+//this technique was ever created.
 #define SCPGUI_MUSIC   0
 #define SCPGUI_TITLE   1
 
@@ -201,6 +205,24 @@ char *detect_gametype( Log *_log ) { STACKTRACE
 	buffy[gnamelength] = 0;
 	_log->reset();
 	return strdup(buffy);
+}
+
+/** 
+  loads up the title screen and music, and starts playing the background menu music. 
+*/
+void prepareTitleScreenAssets() {
+  scp = load_datafile("scpgui.dat");
+  if (!scp)
+      tw_error("Couldnt load title music");
+        
+  Music * mymusic = load_mod("TitleScreen.dat#TITLEMUSIC");
+
+  //Music * mymusic = load_mod("scpgui.dat#SCPMUSIC");
+
+  if (!mymusic)
+     tw_error("Couldnt load title music");
+
+  sound.play_music( mymusic, TRUE);
 }
 
 
@@ -446,8 +468,16 @@ void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 	}
 
 	if (gui_stuff) {
-		scp = load_datafile("scpgui.dat");
-		sound.play_music((Music *)(scp[SCPGUI_MUSIC].dat), TRUE);
+        prepareTitleScreenAssets();
+		/*scp = load_datafile("scpgui.dat");
+        
+        Music * mymusic = load_mod("test.dat#MYMUSIC");
+        //Music * mymusic = load_mod("scpgui.dat#SCPMUSIC");
+        if (!mymusic)
+            tw_error("Couldnt load title music");*/
+        
+        
+		//sound.play_music((Music *)(scp[SCPGUI_MUSIC].dat), TRUE);
 		showTitle();
 	}
 	return;
@@ -563,10 +593,20 @@ void MainMenu::doit() {STACKTRACE
 		player_team[i] = get_config_int (tmp, "Team", 0);
 	}
 
-	scp = load_datafile("scpgui.dat");
+	
+    prepareTitleScreenAssets();
+    
+    /*scp = load_datafile("scpgui.dat");
 	if (!scp)
 		tw_error("Couldn't load scpgui.dat");
-	sound.play_music((Music *)(scp[SCPGUI_MUSIC].dat), TRUE);
+	//sound.play_music((Music *)(scp[SCPGUI_MUSIC].dat), TRUE);
+
+        Music * mymusic = load_mod("TitleScreen.dat#MYMUSIC");
+        //Music * mymusic = load_mod("scpgui.dat#MYMUSIC");
+        if (!mymusic)
+            tw_error("Couldnt load title music");
+        sound.play_music( mymusic, TRUE);*/
+
 
 	showTitle();
 	enable();
