@@ -15,6 +15,7 @@ REGISTER_FILE
 #include "gamemelee.h"
 #include "edit/edit_dialogue.h"
 #include "gamedialogue.h"
+#include "../other/configrw.h"
 
 
 
@@ -50,7 +51,7 @@ void ProjectX::init()
 {
 	GameProject::init();
 
-	playerinfo.init("gamex/player/playerinfo.ini");
+	playerinfo.config("gamex/player/playerinfo.ini", CONFIG_READ);
 
 	// initialize races info
 	racelist.readracelist();
@@ -95,7 +96,8 @@ void ProjectX::init()
 
 void ProjectX::quit()
 {
-	playerinfo.write();
+	//playerinfo.write();
+	playerinfo.config("gamex/player/playerinfo.ini", CONFIG_WRITE);
 
 	// save edited races info (only saves changes)
 	racelist.writeracelist();

@@ -55,7 +55,7 @@ class GameAliendialog : public GameBare
 
 	bool eol(char c);
 
-	void exec_commands();
+	void exec_commands(Dialo *d);
 
 public:
 	GameAliendialog();

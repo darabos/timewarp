@@ -25,7 +25,8 @@ static const int BlistLen = 128;
 
 
 
-
+/** \brief add a ship to the player fleet
+*/
 
 lua_func(addship)
 {
@@ -357,6 +358,8 @@ void GameAliendialog::calculate()
 		// hmm, no, only do this if all sub-questions are "done"
 		
 		dialo->check_state();
+
+		Dialo *dialo_done = dialo;
 		
 		if (!dialo->state)
 		{
@@ -386,7 +389,7 @@ void GameAliendialog::calculate()
 
 					// and there is other stuff to do ... if the dialog has some
 					// commands, then we'll need to execute those ...
-					exec_commands();
+					exec_commands(dialo_done);
 				}
 			}
 		}
@@ -570,16 +573,21 @@ which have to be executed after the record is read by the player.
 
 */
 
-void GameAliendialog::exec_commands()
+void GameAliendialog::exec_commands(Dialo *d)
 {
-	// the dialog text
-	char *txt = dialo->T;
 
 	// find the start of commands
+	char *txt = strstr(d->T, "<lua>");
 
+	if (!txt)
+		return;
 
-	char *com = "addship(\"spael\");";
+	// all lines following <lua> are assumed to be lua-commands.
 
-	lua_dochunk(L, &com);
+	//char *com = "addship(\"spael\");";
+
+	txt += strlen("<lua>");
+
+	lua_dochunk(L, &txt);
 }
 
