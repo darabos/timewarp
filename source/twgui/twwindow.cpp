@@ -140,6 +140,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 	menu_time = menu_starttime;
 
 	exclusive = false;
+	layer = 0;
 }
 // ok, this provides a working space
 
@@ -257,6 +258,13 @@ void TWindow::focus()
 
 	TWindow *root;
 	root = tree_root();
+
+	// check layers, you're not allowed to focus in a "lower" layer
+	while (root && root->layer < layer)
+		root = root->next;
+
+	if (!root || root == this)		// apparently you're alone/ already focus in your own layer ...
+		return;
 
 	// remove "this" from the list
 	if (prev)
@@ -674,7 +682,7 @@ void TWindow::animate()
 		// draw the background
 		// also copy transparent color!
 
-		// this takes about 1 ms
+		// this takes about 1 ms on geo's comp if it's in video mem
 		blit(backgr, drawarea, 0, 0, 0, 0, W, H);
 
 		// draw the buttons
@@ -682,8 +690,6 @@ void TWindow::animate()
 		button = button_first;
 		while (button)
 		{
-			// "hyperspace" --> this takes 10 ms !! That's a lot for just that bitmap ...
-			// it's slow cause it goes from RAM to video-memory.
 			button->animate();
 			button = button->next;
 		}
@@ -693,7 +699,7 @@ void TWindow::animate()
 		// ignore transparent color
 		if (screen)
 		{
-			// this takes about 2 ms.
+			// this takes about 2 ms on geo's comp if it's in video mem
 			masked_blit(drawarea, screen, 0, 0, x, y, W, H);
 		}
 

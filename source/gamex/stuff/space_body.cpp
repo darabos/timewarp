@@ -21,7 +21,10 @@ void drawellips(Frame *f, Vector2 center, double R, double b, int col)
 
 	R *= space_zoom;
 	//center = (center - space_center) * space_zoom + space_view_size/2;
-	center = corner(center);
+//	center = corner(center);
+	// the "corner" goes wrong, if you have very large ellipses (eg of a sun far away)
+	// therefore, use the unwrapped version like this:
+	center = (center - space_center) * space_zoom + space_view_size/2;
 
 	int xref, yref, jbest;
 	int lastxref, lastyref, lastjbest;
@@ -229,11 +232,273 @@ void shadowpaintcircle(SpaceSprite *spr, double fi_s)
 
 
 
-SolarBody::SolarBody(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite, Vector2 sunpos,
+
+
+
+
+
+
+/*
+mapeditor:
+
+  +/- zoom in/out on the map
+
+  right-click = navigate on the map (becomes the new focus)
+
+  left-click = select another star (stays fixed)
+  ctrl = press, make the star follow the cursor, press again to fix it to the new position
+
+  use the menu to replace star-type, or create a new star.
+
+*/
+
+
+
+MapEditor::MapEditor()
+{
+	maphaschanged = false;
+
+	objmap = 0;
+	selection = 0;
+	//lastselection = 0;
+
+	Tedit = 0;
+	bnew = 0;
+	breplace = 0;
+
+	maplevel = 0;
+
+	scalepos = 0;
+
+	moveselection = false;
+}
+
+MapEditor::~MapEditor()
+{
+}
+
+
+
+void MapEditor::set_game(GameBare *agame, MousePtr *aptr)
+{
+	g = agame;
+	ptr = aptr;
+}
+
+
+
+void MapEditor::set_interface( IconTV *aTedit, Button *abreplace, Button *abnew )
+{
+	Tedit = aTedit;
+	breplace = abreplace;
+	bnew = abnew;
+}
+
+void MapEditor::set_mapinfo( MapSpacebody *aobjmap, int amaplevel, double ascalepos)
+{
+	objmap = aobjmap;
+	maplevel = amaplevel;
+	scalepos = ascalepos;
+}
+
+
+MapObj *MapEditor::create_mapobj(Vector2 pos)
+{
+	return new MapObj(0, pos, 0, Tedit->showspr());
+}
+
+
+void MapEditor::calculate()
+{
+	// keep track of the last star that was clicked on by the mouse
+//	if (ptr->selection && (ptr->selection->id == MAPOBJ_ID))
+//		lastselection = (MapObj*) ptr->selection;
+
+
+	// move a star (only if CTRL is pressed)
+	if ( keyhandler.keyhit[KEY_LCONTROL] )
+		moveselection = !moveselection;
+
+	if (selection && moveselection)
+	{
+		selection->pos = ptr->pos;
+		staywithin(0, &(selection->pos), map_size);
+
+	
+		int k;
+		k = selection->starnum;
+		objmap->sub[k]->position = selection->pos / scalepos;
+		
+		maphaschanged = true;
+	}
+
+
+	// delete a star
+	if (selection && keyhandler.keyhit[KEY_DEL])
+	{
+		// remove from game physics
+		g->remove(selection);
+
+		// remove from the map
+		objmap->rem(selection->starnum);
+
+
+		// remove from memory
+		delete selection;
+
+		selection = 0;
+	}
+
+	// select a star for movement (or so ...)
+	// using left-click of the mouse on the starmap area of the menu
+	// but only select map-objects that you can edit...
+	if ( g->maparea->flag.left_mouse_press && !moveselection &&
+			ptr->selection && ptr->selection->id == MAPOBJ_ID)
+	{
+		selection = (MapObj*) ptr->selection;
+
+		g->maparea->flag.left_mouse_press = false;
+	}
+
+
+
+	if (breplace->flag.left_mouse_press && !moveselection)
+	{
+
+		// change the picture of the selected star
+		if (selection)
+		{
+			int k;
+			k = selection->starnum;
+			objmap->sub[k]->type = Tedit->isel;
+			selection->set_sprite(Tedit->showspr());
+		}
+	}
+
+	if (bnew->flag.left_mouse_press && !moveselection)
+	{
+		// just make a new selection
+		selection = create_mapobj(ptr->pos);
+		g->add(selection);
+		
+		moveselection = true;
+		
+		// also ... add it to the map ?? with default settings ..
+		selection->starnum = objmap->add(maplevel);	// level 1 = stars
+
+		int k;
+		k = selection->starnum;
+		objmap->sub[k]->type = Tedit->isel;
+		selection->set_sprite(Tedit->showspr());
+	}
+
+}
+
+
+
+
+IconTV::IconTV(char *ident, int xcenter, int ycenter, BITMAP *outputscreen)
+:
+Popup(ident, xcenter, ycenter, outputscreen)
+{
+	tv = new Area(this, "plot_");
+	bdec = new Button(this, "dec_");
+	binc = new Button(this, "inc_");
+
+	sprlist = 0;
+	N = 0;
+	isel = 0;
+}
+
+IconTV::~IconTV()
+{
+}
+
+
+void IconTV::setsprites(SpaceSprite **asprlist, int aN)
+{
+	sprlist = asprlist;
+	N = aN;
+
+	isel = 0;
+	
+	tv->changebackgr(sprlist[0]->get_bitmap(0));
+}
+
+
+void IconTV::calculate()
+{
+	if (disabled)
+		return;
+
+	Popup::calculate();
+
+	if (bdec->flag.left_mouse_press || binc->flag.left_mouse_press)
+	{
+		if (binc->flag.left_mouse_press)
+			++isel;
+
+		if (bdec->flag.left_mouse_press)
+			--isel;
+
+		if (isel < 0 )
+			isel = N-1;
+		
+		if (isel >= N)
+			isel = 0;
+
+		tv->changebackgr(sprlist[isel]->get_bitmap(0));
+
+	}
+}
+
+SpaceSprite *IconTV::showspr()
+{
+	return sprlist[isel];
+}
+
+
+
+
+
+
+// should be something like "star" perhaps ... it doesn't matter much, it's just a
+// sprite.
+
+MapObj::MapObj(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite)
+:
+SpaceObject(creator, opos, oangle, osprite)
+{
+	id = MAPOBJ_ID;
+	layer = LAYER_SHOTS;
+}
+
+void MapObj::animate(Frame *f)
+{
+	//SpaceObject::animate(f);
+	//sprite->animate(pos, sprite_index, f);
+	Vector2 s = sprite->size(sprite_index);
+	double scale = space_zoom;
+	if (scale < 0.25)
+		scale = 0.25;
+	sprite->draw(corner(pos, s ), s * scale, sprite_index, f);
+}
+
+void MapObj::calculate()
+{
+	SpaceObject::calculate();
+}
+
+
+
+
+
+
+SolarBody::SolarBody(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite, Vector2 osunpos,
 					 int bodynum,
 					 Vector2 Ec, double ER, double Eb, int Ecol)
 :
-SpaceObject(creator, opos, oangle, osprite)
+MapObj(creator, opos, oangle, osprite)
 {
 	layer = LAYER_SHOTS;
 
@@ -245,20 +510,25 @@ SpaceObject(creator, opos, oangle, osprite)
 	layer = LAYER_SHIPS;
 
 	stayhere = pos;
+	sunpos = osunpos;
 
-	if (pos != sunpos)
-	{
-		sunangle = (pos - sunpos).atan();
-		shadowpaintcircle(sprite, sunangle);
-	}
+	// copy the original sprite, cause it's going to be altered.
+	sprite = 0;
+	set_sprite(osprite);
 
-	id = ID_SOLAR_BODY;
-	solar_body_num = bodynum;
+	//id = ID_SOLAR_BODY;
+	starnum = bodynum;
 
 	ellipscenter = Ec;
 	ellipsR = ER;
 	ellipsb = Eb;
 	ellipscol = Ecol;
+}
+
+SolarBody::~SolarBody()
+{
+	if (sprite)
+		delete sprite;
 }
 
 void SolarBody::animate(Frame *f)
@@ -277,6 +547,33 @@ void SolarBody::calculate()
 	SpaceObject::calculate();
 }
 
+void SolarBody::set_sprite(SpaceSprite *new_sprite)
+{
+	if (sprite)
+		delete sprite;
+
+	origsprite = new_sprite;
+	sprite = new SpaceSprite( *new_sprite );
+	size = new_sprite->size();
+
+	drawshadow();
+}
+
+
+void SolarBody::drawshadow()
+{
+	BITMAP *dest, *src;
+	src = origsprite->get_bitmap(0);
+	dest = sprite->get_bitmap(0);
+	blit(src, dest, 0, 0, 0, 0, src->w, src->h);
+
+	if (pos != sunpos)
+	{
+		sunangle = (pos - sunpos).atan();
+		shadowpaintcircle(sprite, sunangle);
+	}
+
+}
 
 
 

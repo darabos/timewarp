@@ -3,7 +3,7 @@
 
 #include "../melee/mframe.h"
 
-
+#include <stdio.h>
 
 
 class RaceInfo

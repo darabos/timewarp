@@ -20,6 +20,124 @@ REGISTER_FILE
 
 
 
+
+
+void ellipsparams(Vector2 relpos, double ellb,
+				  double &R, Vector2 &Poffs, int &col)
+{
+	//double R;
+	double b_sqrt;
+	
+	
+	b_sqrt = sqrt(ellb);
+	
+	// pure ellips that hits the point has radius R
+//	Vector2 relpos;
+//	relpos = pos - 0.5*map_size;
+	relpos.y *= b_sqrt;
+
+	double offs = 0.5;	// offset of the ellips
+	double a;
+	a = offs * offs - 1;
+
+	double b;
+	b = -2 * offs * relpos.y;
+
+	double c;
+	c = magnitude_sqr(relpos);
+
+	// solve quadr. eq.
+	double det;
+	det = b*b - 4*a*c;
+	if (det < 0)
+	{
+		tw_error("negative value for ellips root");
+	}
+	det = sqrt(det);
+
+	// two solutions:
+	double r1, r2;
+	r1 = (-b + det) / (2*a);
+	r2 = (-b - det) / (2*a);
+
+	if (r1 > 0)
+		R = r1;
+	else
+		R = r2;
+
+	// shift the ellips down (so, scale y-size down, hence R is scaled linearly cause y~Rsin(a))
+	Poffs = Vector2(0, offs * R / b_sqrt);
+	//R *= 0.75;
+	
+	
+	//int col;
+	if (R < 500.0)
+		col = makecol(115,0,0);
+	else if (R < 1000.0)
+		col = makecol(0,85,0);
+	else if (R < 1500.0)
+		col = makecol(0,44,66);
+	else
+		col = makecol(0,0,115);
+}
+
+
+
+
+MapObj *MapEditor2::create_mapobj(Vector2 pos)
+{
+	
+
+	Vector2 Poffs;
+	int col;
+	double R;
+	
+	double b = b_default;
+	ellipsparams(pos - mapcenter, b,
+				  R, Poffs, col);
+
+	SolarBody	*s;
+
+	s = new SolarBody(0, pos, 0.0, Tedit->showspr(), mapcenter, Tedit->isel,
+		mapcenter+Poffs, R, b, col	// ellips information
+		);
+
+	return s;
+}
+
+
+void MapEditor2::calculate()
+{
+	MapEditor::calculate();
+
+	if (selection && moveselection)
+	{
+
+
+		SolarBody	*s;
+		s = (SolarBody*) selection;
+
+		s->stayhere = s->pos;	// in this case, movement is allowed ...
+
+		Vector2 Poffs;
+		int col;
+		double R;
+
+		ellipsparams(s->pos - mapcenter, s->ellipsb,
+				  R, Poffs, col);
+
+		s->ellipsR = R;
+		s->ellipscol = col;
+		s->ellipscenter = mapcenter + Poffs;
+
+		s->drawshadow();
+	}
+}
+
+
+
+
+
 void GameSolarview::init_menu()
 {
 	// place the menu into video-memory, cause we're using this as basis for
@@ -66,7 +184,7 @@ void GameSolarview::init()
 	//SpaceSprite *spr;
 
 	Vector2 sunpos;
-	sunpos = 0.5 * size;
+	sunpos = Vector2(0.5, 0.25) * size;
 
 	// load the star data
 	char txt[512];
@@ -78,6 +196,7 @@ void GameSolarview::init()
 	// solarmap->o = solarbody;	don't do this, or the hyperspace map may go crazy ...
 	// since the stars are already referenced (and edited?) therein...
 	add(solarbody);
+	solarbody->id = 0;	// cause it's not a editable map object...
 
 	// the star is untouchable.
 	solarbody->collide_flag_anyone = 0;
@@ -96,35 +215,18 @@ void GameSolarview::init()
 	// load the planet data
 	for ( i = 0; i < solarmap->Nsub; ++i )
 	{
-		// "position" is in this case, the angular position, x=angle, y=r (in percentage of map size).
-
-		double R, angle, b, b_sqrt;
-
-		R = solarmap->sub[i]->position.y * 0.5*size.x;
-		angle = (PI/180) * solarmap->sub[i]->position.x;
-
-		b = 2.0;
-		b_sqrt = sqrt(b);
-
 		Vector2 Poffs;
-		Poffs = Vector2(0, 0.25 * R/b_sqrt);
-
-		Vector2 P;
-		P = sunpos + Poffs + R*Vector2(cos(angle), (1/b_sqrt)*sin(angle));
-
 		int col;
-		if (R < 500.0)
-			col = makecol(115,0,0);
-		else if (R < 1000.0)
-			col = makecol(0,85,0);
-		else if (R < 1500.0)
-			col = makecol(0,44,66);
-		else
-			col = makecol(0,0,115);
+		double R;
+		
+		double b = b_default;
+		ellipsparams(solarmap->sub[i]->position - sunpos, b,
+			R, Poffs, col);
 
 		int k;
 		k = solarmap->sub[i]->type;
-		solarbody = new SolarBody(0, P, 0.0, planetspr[k], sunpos, i,
+
+		solarbody = new SolarBody(0, solarmap->sub[i]->position, 0.0, planetspr[k], sunpos, k,
 									sunpos+Poffs, R, b, col	// ellips information
 									);
 		solarmap->sub[i]->o = solarbody;
@@ -145,6 +247,35 @@ void GameSolarview::init()
 	b = new StarBackgr();
 	b->init(100, view->frame);
 	add(b);
+
+
+	// stuff for the map editor
+
+	SpaceSprite *mousespr;
+	mousespr = create_sprite( "gamex/mouse/pointer_starmap.bmp", SpaceSprite::MASKED );
+	ptr = new MousePtr (mousespr);
+	add(ptr);
+
+	Tedit = new IconTV("gamex/interface/starmap/edit", 400, 200, game_screen);
+	Tedit->exclusive = false;
+	bnew = new Button(Tedit, "new_");
+	breplace = new Button(Tedit, "replace_");
+	Tedit->setsprites(planetspr, planettypelist->N);
+
+	T->add(Tedit);
+	T->tree_doneinit();
+
+	Tedit->show();
+	Tedit->focus();
+	Tedit->layer = 1;	// shown first
+	T->layer = 2;		// always shown later
+
+	mapeditor = new MapEditor2();
+	mapeditor->set_game(this, ptr);
+	mapeditor->set_interface( Tedit, breplace, bnew );
+	mapeditor->set_mapinfo( solarmap, 2, 1.0);
+
+	mapeditor->mapcenter = sunpos;
 }
 
 
@@ -165,6 +296,13 @@ void GameSolarview::quit()
 	else
 		playerinfo.sync(player);
 
+
+	if (mapeditor->maphaschanged)
+	{
+		// write the map to disk
+		mapeverything.save("gamex/mapinfo.txt");
+	}
+
 	GameBare::quit();
 }
 
@@ -184,7 +322,13 @@ void GameSolarview::calculate()
 	if (next)
 		return;
 
+	double q;
+	wininfo.center(player->pos);
+	wininfo.edgecorrect();
+
 	GameBare::calculate();
+
+	q = space_zoom;
 
 	if (!(player && player->exists()))
 	{
@@ -210,8 +354,11 @@ void GameSolarview::calculate()
 	if (key[KEY_MINUS])
 		wininfo.zoom(1 / (1 + 1*dt));
 
-	wininfo.center(player->pos);
-	wininfo.edgecorrect();
+
+	// editor stuff
+
+	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
+	mapeditor->calculate();
 
 }
 
@@ -225,14 +372,14 @@ void GameSolarview::checknewgame()
 	{
 
 		// only activate planet view mode, if you've hit a planet.
-		if (player->collisionwith->id == ID_SOLAR_BODY)
+		if (player->collisionwith->id == MAPOBJ_ID)
 		{
 
 			// playerinfo:
 			// istar and iplanet should be known for this subgame.
 
 			// which planet did you collide with ?!
-			playerinfo.iplanet = ((SolarBody*) player->collisionwith)->solar_body_num;
+			playerinfo.iplanet = ((SolarBody*) player->collisionwith)->starnum;
 			playerinfo.angle = player->angle;
 	
 			player->vel = 0;
@@ -252,12 +399,6 @@ void GameSolarview::animate(Frame *frame)
 {
 	if (next)
 		return;
-
-//	FULL_REDRAW = 1;
-
-//	::space_zoom = wininfo.zoomlevel;
-//	::space_center = wininfo.mapcenter;
-
 
 	GameBare::animate(frame);
 

@@ -35,11 +35,13 @@ protected:
 
 public:
 	BITMAP *backgr;
+	bool markfordeletion;
 
 	Area(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
 	virtual ~Area();
 
 	virtual void changebackgr(char *fname);
+	virtual void changebackgr(BITMAP *newb);
 
 	virtual void animate();		// shouldn't be changed.
 

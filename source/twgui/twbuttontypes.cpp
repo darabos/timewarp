@@ -80,12 +80,14 @@ Area::Area(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
 GraphicButton(menu, identbranch, asciicode, akeepkey)
 {
 	init_pos_size(&backgr, "backgr");
+
+	markfordeletion = true;
 }
 
 
 Area::~Area()
 {
-	if (backgr)
+	if (markfordeletion && backgr)
 		destroy_bitmap(backgr);
 }
 
@@ -96,8 +98,24 @@ void Area::changebackgr(char *fname)
 
 	if (newb)
 	{
-		destroy_bitmap(backgr);
+		if (markfordeletion && backgr)
+			destroy_bitmap(backgr);
+
 		backgr = newb;
+		markfordeletion = true;	// locally initialized, hence locally destroyed...
+	}
+}
+
+
+void Area::changebackgr(BITMAP *newb)
+{
+	if (newb)
+	{
+		if (markfordeletion && backgr)
+			destroy_bitmap(backgr);		// hmm, well, don't do this, leave that to the program that created it !!
+		
+		backgr = newb;
+		markfordeletion = false;	// not locally initialized, hence not locally destroyed...
 	}
 }
 

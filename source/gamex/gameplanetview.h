@@ -23,10 +23,15 @@ public:
 
 class GamePlanetview : public GameBare
 {
-	TWindow *Tedit;
-
+	IconTV *Tedit;
 	// contents of Tedit
-	Button *bdec, *binc, *bselect, *bcancel, *bplot;
+	Button *bnew, *breplace;
+	//int istarselect;
+
+	MapEditor2	*mapeditor;
+
+	MousePtr *ptr;
+
 
 	//WindowInfo wininfo;
 

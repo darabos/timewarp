@@ -78,6 +78,7 @@ public:
 	View *view;
 	VideoWindow *window;
 
+	bool	hideallegromouse;
 	virtual void animate();
 	virtual void animate(Frame *frame);
 	

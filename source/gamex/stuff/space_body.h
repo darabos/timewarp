@@ -8,9 +8,94 @@ void drawellips(Frame *f, Vector2 center, double R, double b, int col);
 // planet shading
 void shadowpaintcircle(SpaceSprite *spr, double fi_s);
 
-const int ID_SOLAR_BODY = 0x098a398f5;
+#include "../../twgui/twpopup.h"
+#include "../../twgui/twbuttontypes.h"
+#include "../gameproject.h"
+#include "../gamedata.h"
 
-class SolarBody : public SpaceObject
+
+class IconTV : public Popup
+{
+	SpaceSprite **sprlist;
+	int N;
+
+	Area *tv;
+	Button *bdec, *binc;
+public:
+
+	int isel;
+
+	IconTV(char *ident, int xcenter, int ycenter, BITMAP *outputscreen);
+	virtual ~IconTV();
+
+	virtual void calculate();
+
+	void setsprites(SpaceSprite **asprlist, int aN);
+
+	SpaceSprite *showspr();
+};
+
+
+
+
+const int MAPOBJ_ID = 0x08fa51d3;
+
+class MapObj : public SpaceObject
+{
+public:
+
+	int starnum;
+
+	MapObj(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite);
+
+	virtual void animate(Frame *f);
+	virtual void calculate();
+};
+
+
+
+
+class MapEditor
+{
+protected:
+	MapObj *selection;//*lastselection, 
+
+	GameBare *g;
+	MousePtr *ptr;
+
+	MapSpacebody	*objmap;
+	int				maplevel;
+
+
+	IconTV	*Tedit;
+	Button	*breplace, *bnew;
+
+	double	scalepos;
+
+	bool	moveselection;
+
+public:
+	bool	maphaschanged;
+
+	MapEditor();
+	virtual ~MapEditor();
+
+	virtual void calculate();
+
+	void set_game(GameBare *agame, MousePtr *aptr);
+	void set_interface( IconTV *aTedit, Button *abreplace, Button *abnew );
+	void set_mapinfo( MapSpacebody *aobjmap, int amaplevel, double ascalepos);
+
+	virtual MapObj *create_mapobj(Vector2 pos);
+};
+
+
+
+
+
+//const int ID_SOLAR_BODY = 0x098a398f5;
+
+class SolarBody : public MapObj
 {
 public:
 	Vector2 stayhere;
@@ -18,15 +103,25 @@ public:
 	SolarBody(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite, Vector2 sunpos,
 					int bodynum,
 					Vector2 Ec, double ER, double Eb, int Ecol);
+	virtual ~SolarBody();
 	virtual void animate(Frame *f);
 	virtual void calculate();
 
-	int solar_body_num;
+//	int solar_body_num;
+
+	SpaceSprite *origsprite;
+	Vector2	sunpos;
 
 	Vector2 ellipscenter;
 	double ellipsR, ellipsb;
 	int ellipscol;
+
+	virtual void set_sprite ( SpaceSprite *sprite );
+	void drawshadow();
 };
+
+
+
 
 
 #endif

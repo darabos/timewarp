@@ -9,6 +9,11 @@ LSHIFT+TAB = navigates in the opposite direction.
 LCONTROL+TAB = navigates between windows.
 
 
+  exclusive = when focused, all other windows are disabled. Default=false.
+  layer = you can only change focus within your own layer. Default=0. In this way you can cause a set of windows to always appear above another set of windows.
+  disabled = that window does no calculate (use ... to do this ?)
+  hidden = that window does not animate (use hide() to stop activity, or show() to restore activity)
+
 */
 
 
@@ -133,6 +138,7 @@ public:
 	bool search_bmp_location(BITMAP *bmp_default, Vector2 *apos);
 
 	bool exclusive;
+	int layer;		// you can only switch focus within a layer...
 };
 
 

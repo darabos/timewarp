@@ -7,20 +7,15 @@
 #include "gamedata.h"
 #include "gamegeneral.h"
 
+#include "../twgui/twbuttontypes.h"
+#include "../twgui/twpopup.h"
 
-const int STAR_ID = 0x08fa51d3;
+#include "stuff/space_body.h"
 
-class Star : public SpaceObject
-{
-public:
 
-	int starnum;
 
-	Star(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite);
 
-	virtual void animate(Frame *f);
-	virtual void calculate();
-};
+
 
 
 
@@ -28,13 +23,15 @@ class GameStarmap : public GameBare
 {
 public:
 
-	TWindow *Tedit;
+	IconTV *Tedit;
 	// contents of Tedit
-	Button *bdec, *binc, *bnew, *breplace, *bplot;
-	int istarselect;
+	Button *bnew, *breplace;
+	//int istarselect;
+
+	MapEditor	*mapeditor;
 
 	double scalepos;
-	Star *selectionstar, *lastselectionstar;
+	//MapObj *selectionstar, *lastselectionstar;
 
 	Periodics *mouseper, *keyper;
 
@@ -61,10 +58,10 @@ public:
 	virtual void animate(Frame *frame);
 
 	SpaceSprite *starspr[32], *playerspr;
-	bool maphaschanged;
+	//bool maphaschanged;
 
-	void update_bplot();
-	void mapeditor_stuff();
+//	void update_bplot();
+	//void mapeditor_stuff();
 };
 
 

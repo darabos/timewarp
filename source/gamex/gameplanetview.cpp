@@ -88,39 +88,16 @@ void GamePlanetview::init()
 	// (on exit, you should copy the (edited) name to the star/planet structure.
 
 
-	// from this, you know the planet position, relative to the sun - we use it
-	// the other way around this time: the sun position, relative to the planet !!
-	Vector2 sunpos;
-	double R, angle, b, b_sqrt;
-	
-	R = planetmap->position.y * 0.5*size.x;
-	angle = (PI/180) * planetmap->position.x;
-	
-	b = 1.0;
-	b_sqrt = sqrt(b);
-	
-	double c;
-	c = 10;
-	R *= c;
 
-	// there is no extra offset; that's already in the planet pos ... you only need the
-	// distance to the center, not the center+offset, of the ellips.
-
-	Vector2 P;
-	P = R*Vector2(cos(angle), (1/b_sqrt)*sin(angle));
-
-	sunpos = -P;		// increase the distance .. as if you've zoomed in 10 times.
-	// ok, this is the sun's position relative to the planet.
-	
+	// position of the planet relative to the sun
+	Vector2 relplanetpos;
+	relplanetpos = planetmap->position;
 	
 
 	Vector2 centerpos;
 
-	centerpos = 0.5 * size;
+	centerpos = Vector2(0.5, 0.25) * size;
 
-	//Vector2 offs;
-	//offs = Vector2(3E3, 2E3);
-	//sunpos = centerpos + offs;	// temp value.
 
 	SpaceObject *solarbody;
 
@@ -128,15 +105,24 @@ void GamePlanetview::init()
 
 	char txt[512];
 	sprintf(txt, "gamex/planetview/planet_%s_01.bmp",
-					//startypelist->type[planetmap->type].type_string);
 					planettypelist->type[planetmap->type].type_string);
 	planetspr = create_sprite( txt, SpaceSprite::MASKED );
-	//double b = 1.0;
-	//double R = (sunpos - centerpos).length();
-	solarbody = new SolarBody(0, centerpos, 0.0, planetspr, centerpos+sunpos, iplanet,
-								centerpos+sunpos, R, b, makecol(115,0,0));
+
+	Vector2 Poffs;
+	int col;
+	double R;
+	
+	double b = b_default;
+	ellipsparams(relplanetpos, b, R, Poffs, col);
+
+	Vector2 sunpos;
+	sunpos = centerpos - relplanetpos;	// "offset center" of the ellips.
+	solarbody = new SolarBody(0, centerpos, 0.0, planetspr, sunpos, iplanet,
+								sunpos+Poffs, R, b, makecol(115,0,0));
+	
 	planetmap->o = solarbody;
 	add(solarbody);
+	solarbody->id = 0;	// so that it's not editable by the mapeditor
 
 	// load moon sprites
 	int i;
@@ -150,33 +136,19 @@ void GamePlanetview::init()
 	// load the star data
 	for ( i = 0; i < planetmap->Nsub; ++i )
 	{
-//		char txt[512];
-//		sprintf(txt, "gamex/planetview/moon_%s_01.bmp", planetmap->sub[i]->type);
-//		spr = create_sprite( txt, SpaceSprite::MASKED );
-
-
-		// ellips info ... similar to solar_view.cpp
-		double R, angle, b, b_sqrt;
-
-		R = planetmap->sub[i]->position.y * 0.5*size.x;
-		angle = (PI/180) * planetmap->sub[i]->position.x;
-
-		b = 2.0;
-		b_sqrt = sqrt(b);
-
 		Vector2 Poffs;
-		Poffs = Vector2(0, 0.25 * R/b_sqrt);
-
-		Vector2 P;
-		P = centerpos + Poffs + R*Vector2(cos(angle), (1/b_sqrt)*sin(angle));
-
-
 		int col;
-		col = makecol(115,0,0);
+		double R;
+		
+		double b = b_default;
+		Vector2 P;
+		P = planetmap->sub[i]->position;
+		ellipsparams(P - centerpos, b,
+			R, Poffs, col);
 
 		int k;
 		k = planetmap->sub[i]->type;
-		solarbody = new SolarBody(0, P, 0.0, moonspr[k], sunpos, i,
+		solarbody = new SolarBody(0, P, 0.0, moonspr[k], centerpos+relplanetpos, i,
 								centerpos+Poffs, R, b, col);
 
 		planetmap->sub[i]->o = solarbody;
@@ -216,25 +188,33 @@ void GamePlanetview::init()
 	add(sb);
 
 
+	// stuff for the map editor
 
-	// define another (sub)menu
+	SpaceSprite *mousespr;
+	mousespr = create_sprite( "gamex/mouse/pointer_starmap.bmp", SpaceSprite::MASKED );
+	ptr = new MousePtr (mousespr);
+	add(ptr);
 
-	Tedit = new Popup("gamex/interface/planetview/edit", 400, 200, game_screen);
-
-	bdec = new Button(Tedit, "dec_");
-	binc = new Button(Tedit, "inc_");
-	bselect = new Button(Tedit, "select_");
-	bcancel = new Button(Tedit, "cancel_");
-	bplot = new Button(Tedit, "plot_");
-
+	Tedit = new IconTV("gamex/interface/starmap/edit", 400, 200, game_screen);
+	Tedit->exclusive = false;
+	bnew = new Button(Tedit, "new_");
+	breplace = new Button(Tedit, "replace_");
+	Tedit->setsprites(moonspr, moontypelist->N);
 
 	T->add(Tedit);
 	T->tree_doneinit();
 
-	Tedit->hide();
+	Tedit->show();
+	Tedit->focus();
+	Tedit->layer = 1;	// shown first
+	T->layer = 2;		// always shown later
 
-	unscare_mouse();
-	show_mouse(game_screen);
+	mapeditor = new MapEditor2();
+	mapeditor->set_game(this, ptr);
+	mapeditor->set_interface( Tedit, breplace, bnew );
+	mapeditor->set_mapinfo( planetmap, 3, 1.0);
+
+	mapeditor->mapcenter = centerpos;
 }
 
 
@@ -256,6 +236,12 @@ void GamePlanetview::quit()
 	else
 		playerinfo.sync(player);
 
+	if (mapeditor->maphaschanged)
+	{
+		// write the map to disk
+		mapeverything.save("gamex/mapinfo.txt");
+	}
+
 	GameBare::quit();
 }
 
@@ -273,8 +259,6 @@ void GamePlanetview::calculate()
 {
 	if (next)
 		return;
-
-	double t = get_time2();
 
 	GameBare::calculate();
 
@@ -312,8 +296,12 @@ void GamePlanetview::calculate()
 	}
 	*/
 
-	t = get_time2() - t;// - paused_time;
-	tic_history->add_element(pow(t, 4.0));
+
+	// editor stuff
+
+	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
+	mapeditor->calculate();
+
 }
 
 

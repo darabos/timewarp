@@ -218,10 +218,13 @@ Vector2 uncorner ( Vector2 pos )
 	pos /= space_zoom;
 	pos += space_center;
 
+	/*
 	while (pos.x < -map_size.x/2) pos.x += map_size.x;
 	while (pos.x >  map_size.x/2) pos.x -= map_size.x;
 	while (pos.y < -map_size.y/2) pos.y += map_size.x;
 	while (pos.y >  map_size.y/2) pos.y -= map_size.x;
+	*/
+	normalize(pos);
 
 	return pos;
 }

@@ -178,6 +178,9 @@ void GameBare::init()
 	tic_history = new Histograph(128);
 	render_history = new Histograph(128);
 	ti = true;
+
+	// enable mouse drawing using the allegro pointer.
+	hideallegromouse = false;
 }
 
 
@@ -256,10 +259,6 @@ void GameBare::animate()
 
 	double t = get_time2();
 
-	::space_zoom = wininfo.zoomlevel;
-	::space_center = wininfo.mapcenter;
-	::space_view_size = wininfo.framesize;
-
 	tempframe->full_redraw = true;
 	FULL_REDRAW = true;
 	tempframe->erase();
@@ -270,14 +269,28 @@ void GameBare::animate()
 	release_bitmap(tempframe->surface);
 
 	acquire_bitmap(game_screen);
+	acquire_bitmap(game_screen2);
 	if (T && !next)
 	{
-		T->tree_setscreen(game_screen);		// game_screen can change value...
+		if (usepageflip)
+			T->tree_setscreen(game_screen);		// game_screen can change value...
+		else
+			T->tree_setscreen(game_screen2);	// use a temp video area
+
 		T->tree_animate();
 	}
+
+	// extra action: draw the temp bitmap into the screen area
+	if (!usepageflip)
+		blit(game_screen2, game_screen, 0, 0, 0, 0, game_screen->w, game_screen->h);
+
+	release_bitmap(game_screen2);
 	release_bitmap(game_screen);
 
-	show_mouse(game_screen);
+	if (!hideallegromouse)
+		show_mouse(game_screen);
+	else
+		show_mouse(0);
 
 	// when drawing is finished, you could do a page flip to the new screen.
 	// but this can take as much as 8 ms, which is a long time ... cause it has to
@@ -598,6 +611,10 @@ void GameBare::handle_edge(SpaceLocation *s)
 
 void GameBare::calculate()
 {
+	::space_zoom = wininfo.zoomlevel;
+	::space_center = wininfo.mapcenter;
+	::space_view_size = wininfo.framesize;
+
 	int i;
 	for (i = 0; i < num_items; i += 1) {
 		if (!item[i]->exists()) continue;
