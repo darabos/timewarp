@@ -6,7 +6,7 @@
 --------------------Configuration: twwin - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSP118.tmp" with contents
+Creating temporary file "C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSPCFA.tmp" with contents
 [
 /nologo /MDd /W3 /Gm /GX /ZI /Od /I "./include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR"Debug/" /Fp"Debug/twwin.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
 "C:\Games\ten\source\melee\manim.cpp"
@@ -209,8 +209,8 @@ Creating temporary file "C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSP118.tmp" with con
 "C:\Games\ten\source\input.cpp"
 "C:\Games\ten\source\scp.cpp"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSP118.tmp" 
-Creating temporary file "C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSP119.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSPCFA.tmp" 
+Creating temporary file "C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSPCFB.tmp" with contents
 [
 ./lib/alld.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ./lib/libjgmod.lib wsock32.lib winmm.lib opengl32.lib glu32.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/twwin.pdb" /debug /machine:I386 /nodefaultlib:"LIBCMT" /out:"Debug/twwin.exe" /pdbtype:sept 
 .\Debug\manim.obj
@@ -413,7 +413,7 @@ Creating temporary file "C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSP119.tmp" with con
 .\Debug\input.obj
 .\Debug\scp.obj
 ]
-Creating command line "link.exe @C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSP119.tmp"
+Creating command line "link.exe @C:\DOCUME~1\CAPTAI~1\LOCALS~1\Temp\RSPCFB.tmp"
 <h3>Output Window</h3>
 Compiling...
 manim.cpp
@@ -468,10 +468,10 @@ c:\games\ten\source\games\ggob.cpp(121) : warning C4065: switch statement contai
 ghyper.cpp
 gleague.cpp
 gmissions.cpp
-c:\games\ten\source\games\gmissions.cpp(517) : warning C4101: 'infotext' : unreferenced local variable
-c:\games\ten\source\games\gmissions.cpp(518) : warning C4101: 'L' : unreferenced local variable
-c:\games\ten\source\games\gmissions.cpp(956) : warning C4101: 'i' : unreferenced local variable
-c:\games\ten\source\games\gmissions.cpp(1148) : warning C4101: 's' : unreferenced local variable
+c:\games\ten\source\games\gmissions.cpp(521) : warning C4101: 'infotext' : unreferenced local variable
+c:\games\ten\source\games\gmissions.cpp(522) : warning C4101: 'L' : unreferenced local variable
+c:\games\ten\source\games\gmissions.cpp(960) : warning C4101: 'i' : unreferenced local variable
+c:\games\ten\source\games\gmissions.cpp(1152) : warning C4101: 's' : unreferenced local variable
 gmissions_objects.cpp
 gplanets.cpp
 gplexplr.cpp

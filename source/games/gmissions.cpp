@@ -27,8 +27,10 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include <stdio.h>
 
 
-static const titlesize = 64;
-static const briefingsize = 2048;
+//static const titlesize = 64;
+//static const briefingsize = 2048;
+static const int titlesize = 64;      //added int 7/1/2003 Culture20
+static const int briefingsize = 2048; //added int 7/1/2003 Culture20
 
 
 enum UpgradeCode
@@ -339,7 +341,8 @@ public:
 		int		event_counter;
 		double	minutes;
 		
-		mission_protect_chenjesu();
+	  //mission_protect_chenjesu();
+	  void mission_protect_chenjesu(); //added void 7/1/2003 Culture20
 		
 		virtual void init(Log *_log);
 		virtual void calculate();
@@ -365,7 +368,8 @@ public:
 		SpecialArea *specialarea;
 		Ship *playership;
 		
-		mission_escape_from_alcatraz();
+	  //mission_escape_from_alcatraz(); 
+		void mission_escape_from_alcatraz(); //added void 7/1/2003 Culture20
 		
 		virtual void init(Log *_log);
 		virtual int quit_condition();

@@ -356,14 +356,16 @@ void TauArchonShot::inflict_damage(SpaceObject *other)
 		DATAFILE* image = new DATAFILE;
 		image->type = DAT_RLE_SPRITE;
 		tmp = create_bitmap_ex( bitmap_color_depth( bmp ), bmp->w, bmp->h );
-		void* old_color_effects = videosystem.color_effects;
+		//void* old_color_effects = videosystem.color_effects;
+		void* old_color_effects = (void *)videosystem.color_effects; //added (void *) 7/1/2003 Culture20
 		videosystem.color_effects = TauArchonFreezeColorEffects;
 	//	videosystem.update_colors();
 		blit( bmp, tmp, 0, 0, 0, 0, bmp->w, bmp->h );
 		image->dat = get_rle_sprite( tmp );
 		SpaceSprite* frozen_sprite = new SpaceSprite( image, 1 );
 		destroy_bitmap( tmp );
-		videosystem.color_effects = (void (__cdecl *)(struct RGB *))old_color_effects;
+		//videosystem.color_effects = (void (__cdecl *)(struct RGB *))old_color_effects;
+		videosystem.color_effects = (void (*)(struct RGB *))old_color_effects; //removed __cdecl 7/1/2003 Culture20
 	//	videosystem.update_colors();
 		delete image;
 		game->add(new TauArchonFrozen(this, other, frozen_sprite));

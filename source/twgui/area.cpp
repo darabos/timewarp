@@ -741,7 +741,8 @@ AreaGeneral::flag_struct::flag_struct()
 }
 
 
-AreaGeneral::flag_struct::reset()
+//AreaGeneral::flag_struct::reset() 
+void AreaGeneral::flag_struct::reset() //added void 7/1/2003 Culture20
 {
 	// these flags are updated by the area's calculate function.
 	focus = 0;

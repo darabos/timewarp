@@ -32,7 +32,8 @@ public:
 		bool focus, lastfocus;
 		bool left_mouse_press, left_mouse_release, left_mouse_hold;
 		bool right_mouse_press, right_mouse_release, right_mouse_hold;
-		reset();
+	        //reset();
+	        void reset();  //added void 7/1/2003 Culture20
 		flag_struct();
 	} flag;
 

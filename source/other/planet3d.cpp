@@ -746,7 +746,8 @@ void Planet3D::animate( Frame* space )
 
 	unsigned int *base_sorted = base_map_and_shade_resorted;
 
-	unsigned int d_shift = unsigned int(dl);
+	//unsigned int d_shift = unsigned int(dl);
+	unsigned int d_shift = (unsigned int)dl; //changed 7/1/2003 Culture20
 
 	unsigned char *color_map_linear2 = &color_map_linear[d_shift << 2];	// a shift by dl int's
 	unsigned char *spec_map_linear2 = &spec_map_linear[d_shift << 2];	// a shift by dl int's
