@@ -290,9 +290,12 @@ void MapEditor::set_game(GameBare *agame, MousePtr *aptr)
 
 void MapEditor::set_interface( IconTV *aTedit, Button *abreplace, Button *abnew )
 {
-	Tedit = aTedit;
-	breplace = abreplace;
-	bnew = abnew;
+	if (aTedit)
+		Tedit = aTedit;
+	if (abreplace)
+		breplace = abreplace;
+	if (abnew)
+		bnew = abnew;
 }
 
 void MapEditor::set_mapinfo( MapSpacebody *aobjmap, int amaplevel, double ascalepos)

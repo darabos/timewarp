@@ -542,6 +542,7 @@ SurfaceInfo::SurfaceInfo()
 
 void SurfaceInfo::write(MapSpacebody *planet)
 {
+	/* CHANGED: this is edited/written only in solarview/planetview mode !!
 	char tmp[16];
 	sprintf(tmp, "%X", planet->id);
 
@@ -567,6 +568,7 @@ void SurfaceInfo::write(MapSpacebody *planet)
 
 	set_config_int("stats", "weather", weatherclass);
 	set_config_int("stats", "tectonics", tectonicsclass);
+	*/
 }
 
 

@@ -20,11 +20,16 @@ const double b_default = 4.0;
 // derive ellips R from position
 extern void ellipsparams(Vector2 relpos, double ellb, double &R, Vector2 &Poffs, int &col);
 
+extern void load_planettypes(SpaceSprite ***planettypespr);
+extern void load_surfacetypes(BITMAP ***surfacebmp);
 
 class MapEditor2 : public MapEditor
 {
 public:
+	//MapSpacebody *editmap;	same as objmap
 	int isurfacetype;	// surfacetype of the selected object
+	ValueEdit *ved;
+	TVarea	*tvsurf;
 
 	Vector2 mapcenter;
 
@@ -35,6 +40,11 @@ public:
 	virtual void replace();
 
 	virtual void colorizeobj(SolarBody *s);
+
+	void init_interface(TWindow *T, FONT *usefont, SpaceSprite **planettypespr, BITMAP **surfacebmp);
+	void save_surface();
+	void init_surface();
+	void check_radius();
 };
 
 
@@ -46,10 +56,10 @@ public:
 	char oldstarname[128];
 
 	//IconTV
-	TVarea	*tv2;
-	IconTV *Tedit;
+//	TVarea	*tv2;
+//	IconTV *Tedit;
 	// contents of Tedit
-	Button *bnew, *breplace;
+//	Button *bnew, *breplace;
 	//int istarselect;
 
 	MapEditor2	*mapeditor;
@@ -89,9 +99,6 @@ public:
 
 	virtual void init_menu();
 
-	void save_surface();
-	void init_surface();
-	void check_radius();
 };
 
 

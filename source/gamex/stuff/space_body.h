@@ -75,14 +75,13 @@ public:
 
 class MapEditor
 {
-protected:
+public:
 
 	GameBare *g;
 	MousePtr *ptr;
 
 	MapSpacebody	*objmap;
 	int				maplevel;
-
 
 	IconTV	*Tedit;
 	Button	*breplace, *bnew;
@@ -91,7 +90,6 @@ protected:
 
 	bool	moveselection;
 
-public:
 	MapObj *selection;
 
 	bool	maphaschanged;

@@ -248,6 +248,8 @@ public:
 	virtual void save(FILE *f, int level);
 	virtual int add(int level);
 	virtual int rem(int k);
+
+	bool check_id(int id2);
 };
 
 
@@ -261,6 +263,8 @@ public:
 
 	void init(char *filename);
 	void save(char *filename);
+
+	int gen_id();
 };
 
 extern MapEverything mapeverything;

@@ -168,6 +168,30 @@ void MapEverything::save(char *filename)
 }
 
 
+// generate a unique (random) id for a map item
+int MapEverything::gen_id()
+{
+	int id;
+
+	for (;;)
+	{
+		id = random();
+
+		int i;
+		for ( i = 0; i < Nregions; ++i )
+		{
+			if (region[i]->check_id(id))
+				break;
+		}
+
+		if (i == Nregions)	// id not found
+			break;
+	}
+
+	return id;
+}
+
+
 const bool hascontent(char *t)
 {
 	int i;
@@ -319,6 +343,24 @@ int MapSpacebody::rem(int k)
 	--Nsub;
 
 	return Nsub-1;
+}
+
+
+bool MapSpacebody::check_id(int id2)
+{
+	if (id == id2)
+		return true;
+
+	// check if one of the sub-items have identical id
+	int i;
+	for ( i = 0; i < Nsub; ++i )
+	{
+		if (sub[i]->check_id(id2))
+			return true;
+	}
+
+	// neither this nor any subitem has this id.
+	return false;
 }
 
 

@@ -28,6 +28,33 @@ REGISTER_FILE
 static GameSolarview *gsolar;
 
 
+void load_planettypes(SpaceSprite ***planettypespr)
+{
+	// load planet sprites
+	(*planettypespr) = new SpaceSprite* [planettypelist->N];
+	int i;
+	for ( i = 0; i < planettypelist->N; ++i )
+	{
+		char tmp[512];
+		sprintf(tmp, "gamex/solarview/planet_%s_01.bmp", planettypelist->type[i].type_string);
+		(*planettypespr)[i] = create_sprite( tmp, SpaceSprite::MASKED );
+	}
+}
+
+void load_surfacetypes(BITMAP ***surfacebmp)
+{
+	// load surface bitmaps
+	(*surfacebmp) = new BITMAP* [surfacetypelist->N];
+	int i;
+	for ( i = 0; i < surfacetypelist->N; ++i )
+	{
+		char tmp[512];
+		sprintf(tmp, "gamex/planetscan/surface_%s_01.bmp", surfacetypelist->type[i].type_string);
+		load_bitmap32(&(*surfacebmp)[i], tmp);
+		scale_bitmap32(&(*surfacebmp)[i], 0.2);
+	}
+}
+
 
 // scan the normal files:
 
@@ -115,6 +142,41 @@ void ellipsparams(Vector2 relpos, double ellb,
 }
 
 
+void MapEditor2::init_interface(TWindow *T,
+								FONT *usefont, SpaceSprite **planettypespr,
+								BITMAP **surfacebmp)
+{
+	Tedit = new IconTV("gamex/interface/planetview/edit", 1400, 900, game_screen);
+	Tedit->exclusive = false;
+	bnew = new Button(Tedit, "new_");
+	breplace = new Button(Tedit, "replace_");
+	Tedit->tv->set(planettypespr, planettypelist->N);
+
+	tvsurf = new TVarea(Tedit, "plot2_");
+	tvsurf->set(surfacebmp, surfacetypelist->N);
+
+	ved = new ValueEdit(Tedit, "values_", usefont, 64);
+
+	ved->info->text_color = makecol(200,200,200);
+	ved->edit->text_color = makecol(200,200,200);
+
+	ved->values[0]->set(vtype_float, "atmospheric pressure", 0.0, 100.0);
+	ved->values[1]->set(vtype_float, "radius (es)", 0.1, 100.0);
+	ved->values[2]->set(vtype_float, "density (kg/m3)", 0.5, 6.0);
+	ved->values[3]->set(vtype_float, "day (es))", 0.0, 100.0);
+	ved->values[4]->set(vtype_float, "tilt (degr)", 0.0, 90.0);
+	ved->values[5]->set(vtype_float, "albedo", 0.0, 1.0);
+	ved->values[6]->set(vtype_float, "greenhouse", 0.0, 1.0);
+	ved->values[7]->set(vtype_int, "weather", 0, 9);
+	ved->values[8]->set(vtype_int, "tectonics", 0, 9);
+
+	T->add(Tedit);
+
+	Tedit->show();
+	Tedit->focus();
+
+	Tedit->layer = 1;
+}
 
 
 MapObj *MapEditor2::create_mapobj(Vector2 pos)
@@ -161,7 +223,8 @@ void MapEditor2::move()
 	s->ellipscol = col;
 	s->ellipscenter = mapcenter + Poffs;
 	
-	s->drawshadow();
+//	s->drawshadow();
+	colorizeobj(s);	// well ... to mimic changing shadows wrt the sun
 }
 
 
@@ -169,11 +232,11 @@ void MapEditor2::replace()
 {
 	MapEditor::replace();
 
-	isurfacetype = gsolar->tv2->isel;
+	isurfacetype = tvsurf->isel;
 
 	colorizeobj((SolarBody*) selection);
 
-	gsolar->save_surface();
+	save_surface();
 }
 
 
@@ -182,14 +245,14 @@ void MapEditor2::newselection()
 	// if a new planet is selected, read its info from the star file !
 	MapEditor::newselection();
 
-	gsolar->init_surface();
+	init_surface();
 
-	isurfacetype = gsolar->tv2->isel;
+	isurfacetype = tvsurf->isel;
 
 	// also ... the planet picture is ...
 	int k;
 	k = selection->starnum;
-	Tedit->tv->set_sel( gsolar->solarmap->sub[k]->type );
+	Tedit->tv->set_sel( objmap->sub[k]->type );
 }
 
 
@@ -228,26 +291,140 @@ void MapEditor2::add()
 	MapEditor::add();
 	
 	// you need a new random number (plus check it doesn't exist yet)
-	int id;
-	for (;;)
-	{
-		id = random();
-		// check all things in the list ... but you've to start at the root ?!
-	}
+	objmap->sub[selection->starnum]->id = mapeverything.gen_id();
 
 
 	// set other stuff as well ... the surface parameter, eg... and color
 	// the sprite based on this thingy !!
 
-	isurfacetype = gsolar->tv2->isel;
+	isurfacetype = tvsurf->isel;
 
 	colorizeobj((SolarBody*) selection);
 
 
 	// write stuff to a .ini file ...
 
-	gsolar->save_surface();
+	save_surface();
 }
+
+
+
+
+
+
+void MapEditor2::save_surface()
+{
+	if (!selection)
+		return;
+
+	int id;
+	id = objmap->sub[ selection->starnum ]->id;
+
+	char tmp[512];
+	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
+	set_config_file(tmp);
+
+	set_config_float(0, "atmo",    ved->values[0]->value);
+	set_config_float(0, "radius",  ved->values[1]->value);
+	set_config_float(0, "density", ved->values[2]->value);
+	set_config_float(0, "day",     ved->values[3]->value);
+	set_config_float(0, "tilt",    ved->values[4]->value);
+	set_config_float(0, "albedo",  ved->values[5]->value);
+	set_config_float(0, "greenhouse",    ved->values[6]->value);
+	set_config_int(0, "weather",   (int) ved->values[7]->value);
+	set_config_int(0, "tectonics", (int) ved->values[8]->value);
+
+	// and the surface type string ?
+	char *t;
+	t = surfacetypelist->type[tvsurf->isel].type_string;
+	set_config_string(0, "surface", t);
+
+
+	flush_config_file();
+}
+
+
+
+
+void MapEditor2::init_surface()
+{
+	if (!selection)
+		return;
+
+	int id;
+	id = objmap->sub[ selection->starnum ]->id;
+
+	char tmp[512];
+	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
+	set_config_file(tmp);
+
+	ved->values[0]->value = get_config_float(0, "atmo", 0);
+	ved->values[1]->value = get_config_float(0, "radius", 0);
+	ved->values[2]->value = get_config_float(0, "density", 0);
+	ved->values[3]->value = get_config_float(0, "day", 0);
+	ved->values[4]->value = get_config_float(0, "tilt", 0);
+	ved->values[5]->value = get_config_float(0, "albedo", 0);
+	ved->values[6]->value = get_config_float(0, "greenhouse", 0);
+	ved->values[7]->value = get_config_int(0, "weather", 0);
+	ved->values[8]->value = get_config_int(0, "tectonics", 0);
+
+	ved->edit_update();
+
+	// and the surface type ?
+	strcpy(tmp, get_config_string(0, "surface", "default"));
+	tvsurf->set_sel ( surfacetypelist->get_index(tmp, 0) );
+
+}
+
+
+void MapEditor2::check_radius()
+{
+	if (!selection)
+		return;
+
+	char *t;
+	t = planettypelist->type[ objmap->sub[ selection->starnum ]->type ].type_string;
+
+	// check if the planet's radius was changed; if so, check validity
+	double Rmin, Rmax;
+
+	if (strcmp(t, "dwarf") == 0)
+	{
+		Rmin = 0.01;
+		Rmax = 0.1;
+	}
+	if (strcmp(t, "small") == 0)
+	{
+		Rmin = 0.1;
+		Rmax = 0.5;
+	}
+	if (strcmp(t, "medium") == 0)
+	{
+		Rmin = 0.5;
+		Rmax = 2.0;
+	}
+	if (strcmp(t, "big") == 0)
+	{
+		Rmin = 2.0;
+		Rmax = 10.0;
+	}
+	if (strcmp(t, "giant") == 0)
+	{
+		Rmin = 10.0;
+		Rmax = 20.0;
+	}
+
+	double R;
+	R = get_config_float(0, "radius", 0);
+
+	if (R < Rmin || R > Rmax)
+	{
+		R = random(Rmin, Rmax);
+	}
+
+	ved->values[1]->value = R;
+}
+
 
 
 
@@ -323,6 +500,9 @@ void GameSolarview::init()
 	solarbody->collide_flag_sameship = 0;
 
 	// load planet sprites
+	load_planettypes(&planettypespr);
+	load_surfacetypes(&surfacebmp);
+	/*
 	planettypespr = new SpaceSprite* [planettypelist->N];
 	int i;
 	for ( i = 0; i < planettypelist->N; ++i )
@@ -341,10 +521,12 @@ void GameSolarview::init()
 		load_bitmap32(&surfacebmp[i], tmp);
 		scale_bitmap32(&surfacebmp[i], 0.2);
 	}
+	*/
 
 	// load the planet data
 
 
+	int i;
 	for ( i = 0; i < solarmap->Nsub; ++i )
 	{
 		Vector2 Poffs;
@@ -369,6 +551,8 @@ void GameSolarview::init()
 		
 		double rc, gc, bc, r_ref, g_ref, b_ref;
 		avcolor(surfacebmp[k], &r_ref, &g_ref, &b_ref);
+
+		// WOOPS - should CHANGE!!
 		double temperature = 5500.0;
 
 		double rat, gat, bat;	// extra atmospheric weight.
@@ -426,45 +610,24 @@ void GameSolarview::init()
 	starname->set_textcolor(makecol(255,255,0));
 	strcpy(oldstarname, solarmap->name);
 
-	
-	Tedit = new IconTV("gamex/interface/planetview/edit", 1400, 900, game_screen);
-	Tedit->exclusive = false;
-	bnew = new Button(Tedit, "new_");
-	breplace = new Button(Tedit, "replace_");
-	Tedit->tv->set(planettypespr, planettypelist->N);
-
-	tv2 = new TVarea(Tedit, "plot2_");
-	tv2->set(surfacebmp, surfacetypelist->N);
-
-	ve = new ValueEdit(Tedit, "values_", usefont, 64);
-
-	ve->info->text_color = makecol(200,200,200);
-	ve->edit->text_color = makecol(200,200,200);
-
-	ve->values[0]->set(vtype_float, "atmospheric pressure", 0.0, 100.0);
-	ve->values[1]->set(vtype_float, "radius (es)", 0.1, 100.0);
-	ve->values[2]->set(vtype_float, "density (kg/m3)", 0.5, 6.0);
-	ve->values[3]->set(vtype_float, "day (es))", 0.0, 100.0);
-	ve->values[4]->set(vtype_float, "tilt (degr)", 0.0, 90.0);
-	ve->values[5]->set(vtype_float, "albedo", 0.0, 1.0);
-	ve->values[6]->set(vtype_float, "greenhouse", 0.0, 1.0);
-	ve->values[7]->set(vtype_int, "weather", 0, 9);
-	ve->values[8]->set(vtype_int, "tectonics", 0, 9);
-
-	T->add(Tedit);
-	T->tree_doneinit();
-
-	Tedit->show();
-	Tedit->focus();
 
 
 	mapeditor = new MapEditor2();
 	mapeditor->set_game(this, ptr);
-	mapeditor->set_interface( Tedit, breplace, bnew );
+
+	mapeditor->init_interface(T, usefont, planettypespr, surfacebmp);
+
 	mapeditor->set_mapinfo( solarmap, 2, 1.0);
 
 	mapeditor->mapcenter = sunpos;
 
+	//mapeditor->editmap = solarmap;
+
+
+	T->tree_doneinit();
+
+	mapeditor->Tedit->show();
+	mapeditor->Tedit->focus();
 
 	// initialize the colony placer/editor
 
@@ -526,7 +689,7 @@ void GameSolarview::init()
 	T->add(dpopup);
 
 
-	Tedit->layer = 1;	// shown first
+//	Tedit->layer = 1;	// shown first
 	cedit->layer = 1;	// shown first
 	rpopup->layer = 1;
 	dpopup->layer = 1;
@@ -802,130 +965,4 @@ LocalPlayerInfo(osprite, playinf)
 }
 
 
-
-
-
-void GameSolarview::save_surface()
-{
-	if (!mapeditor->selection)
-		return;
-
-	int id;
-	id = solarmap->sub[ mapeditor->selection->starnum ]->id;
-
-	char tmp[512];
-	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
-	set_config_file(tmp);
-
-	/*
-	ve->values[0]->set(vtype_float, "atmospheric pressure", 0.0, 100.0);
-	ve->values[1]->set(vtype_float, "radius (es)", 0.1, 100.0);
-	ve->values[2]->set(vtype_float, "density (kg/m3)", 1.0, 6.0);
-	ve->values[3]->set(vtype_float, "day (es))", 0.0, 100.0);
-	ve->values[4]->set(vtype_float, "tilt (degr)", 0.0, 90.0);
-	ve->values[5]->set(vtype_float, "albedo", 0.0, 1.0);
-	ve->values[6]->set(vtype_float, "greenhouse", 0.0, 1.0);
-	ve->values[7]->set(vtype_int, "weather", 0, 9);
-	ve->values[8]->set(vtype_int, "tectonics", 0, 9);
-	*/
-	set_config_float(0, "atmo",    ve->values[0]->value);
-	set_config_float(0, "radius",  ve->values[1]->value);
-	set_config_float(0, "density", ve->values[2]->value);
-	set_config_float(0, "day",     ve->values[3]->value);
-	set_config_float(0, "tilt",    ve->values[4]->value);
-	set_config_float(0, "albedo",  ve->values[5]->value);
-	set_config_float(0, "greenhouse",    ve->values[6]->value);
-	set_config_int(0, "weather",   (int) ve->values[7]->value);
-	set_config_int(0, "tectonics", (int) ve->values[8]->value);
-
-	// and the surface type string ?
-	char *t;
-	t = surfacetypelist->type[gsolar->tv2->isel].type_string;
-	set_config_string(0, "surface", t);
-
-
-	flush_config_file();
-}
-
-
-
-
-void GameSolarview::init_surface()
-{
-	if (!mapeditor->selection)
-		return;
-
-	int id;
-	id = solarmap->sub[ mapeditor->selection->starnum ]->id;
-
-	char tmp[512];
-	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
-	set_config_file(tmp);
-
-	ve->values[0]->value = get_config_float(0, "atmo", 0);
-	ve->values[1]->value = get_config_float(0, "radius", 0);
-	ve->values[2]->value = get_config_float(0, "density", 0);
-	ve->values[3]->value = get_config_float(0, "day", 0);
-	ve->values[4]->value = get_config_float(0, "tilt", 0);
-	ve->values[5]->value = get_config_float(0, "albedo", 0);
-	ve->values[6]->value = get_config_float(0, "greenhouse", 0);
-	ve->values[7]->value = get_config_int(0, "weather", 0);
-	ve->values[8]->value = get_config_int(0, "tectonics", 0);
-
-	ve->edit_update();
-
-	// and the surface type ?
-	strcpy(tmp, get_config_string(0, "surface", "default"));
-	gsolar->tv2->set_sel ( surfacetypelist->get_index(tmp, 0) );
-
-}
-
-
-void GameSolarview::check_radius()
-{
-	if (!mapeditor->selection)
-		return;
-
-	char *t;
-	t = planettypelist->type[ solarmap->sub[ mapeditor->selection->starnum ]->type ].type_string;
-
-	// check if the planet's radius was changed; if so, check validity
-	double Rmin, Rmax;
-
-	if (strcmp(t, "dwarf") == 0)
-	{
-		Rmin = 0.01;
-		Rmax = 0.1;
-	}
-	if (strcmp(t, "small") == 0)
-	{
-		Rmin = 0.1;
-		Rmax = 0.5;
-	}
-	if (strcmp(t, "medium") == 0)
-	{
-		Rmin = 0.5;
-		Rmax = 2.0;
-	}
-	if (strcmp(t, "big") == 0)
-	{
-		Rmin = 2.0;
-		Rmax = 10.0;
-	}
-	if (strcmp(t, "giant") == 0)
-	{
-		Rmin = 10.0;
-		Rmax = 20.0;
-	}
-
-	double R;
-	R = get_config_float(0, "radius", 0);
-
-	if (R < Rmin || R > Rmax)
-	{
-		R = random(Rmin, Rmax);
-	}
-
-	ve->values[1]->value = R;
-}
 

@@ -104,12 +104,15 @@ void avcolor(BITMAP *bmp, double *r, double *g, double *b)
 }
 
 
+
 void colorize(SpaceSprite *spr, double mr, double mg, double mb)
 {
-	BITMAP *bmp;
+	colorize(spr->get_bitmap(0), mr, mg, mb);
+}
 
-	bmp = spr->get_bitmap(0);
-	
+void colorize(BITMAP *bmp, double mr, double mg, double mb)
+{
+
 	int ix, iy;
 	
 	for ( iy = 0; iy < bmp->h; ++iy)
@@ -145,10 +148,12 @@ void colorize(SpaceSprite *spr, double mr, double mg, double mb)
 
 void brighten(SpaceSprite *spr)
 {
-	BITMAP *bmp;
+	brighten(spr->get_bitmap(0));
+}
 
-	bmp = spr->get_bitmap(0);
-	
+void brighten(BITMAP *bmp)
+{
+
 	int ix, iy;
 
 	int max = 0;
@@ -174,7 +179,7 @@ void brighten(SpaceSprite *spr)
 	double scale;
 	scale = double(255) / double(max);
 
-	colorize(spr, scale, scale, scale);
+	colorize(bmp, scale, scale, scale);
 }
 
 

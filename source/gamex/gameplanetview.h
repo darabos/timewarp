@@ -12,31 +12,68 @@
 
 const int ID_FLEETICON = 0x08235497;
 
-class FleetIcon : public SpaceObject
+
+
+class Surface3D
 {
 public:
-	XFleet	fleet;
-	FleetIcon(Vector2 opos, SpaceSprite *osprite, char *oidname);
+	BITMAP *image32bit, *dummy;
+	int mapW, mapH;
+
+	int image_size, visual_size;
+	int PlanetUsespec;
+	double theta, fi, rad;
+
+	struct base_map_type {double lat, lon, diff, spec;} *base_map;
+	
+	unsigned int	*base_map_linear;		// mapping of coordinates
+	unsigned int	*base_shade_linear, *base_spec_linear;		// shades ?
+	unsigned char	*color_map_linear, *spec_map_linear;
+	
+	unsigned int	*base_map_and_shade_resorted;
+	// linear means in this case, a linear array
+
+	int jmin[1000], jmax[1000];
+
+
+	Surface3D();
+	~Surface3D();
+
+	void reset(int planet_diameter, BITMAP *color_map,
+					  BITMAP *spec_map, bool invcolor,
+					  double sun_r, double sun_g, double sun_b);
+
+	void plot();
+	void plot(BITMAP *trg);
+	void clear();
 };
 
+
+class MapEditor3 : public MapEditor2
+{
+public:
+	virtual void colorizeobj(SolarBody *s);
+};
 
 
 class GamePlanetview : public GameBare
 {
-	IconTV *Tedit;
+public:
+//	IconTV *Tedit;
 	// contents of Tedit
-	Button *bnew, *breplace;
+//	Button *bnew, *breplace;
 	TextEditBox *starname;
 	char oldstarname[128];
 	//int istarselect;
 	MapSpacebody *starmap, *solarmap, *planetmap;
 
-	MapEditor2	*mapeditor;
+	MapEditor3	*mapeditor;
 
 	MousePtr *ptr;
 
 
-	//WindowInfo wininfo;
+	SpaceSprite **planettypespr;
+	BITMAP **surfacebmp;
 
 	virtual ~GamePlanetview();
 
@@ -48,7 +85,7 @@ class GamePlanetview : public GameBare
 
 	ThePlaya *player;
 
-	FleetIcon *fleeticon;
+//	FleetIcon *fleeticon;
 
 	TeamCode	team_player, team_aliens;
 
@@ -63,7 +100,7 @@ class GamePlanetview : public GameBare
 
 	virtual void checknewgame();
 
-	SpaceSprite **planetspr, *playerspr, *fleetspr;
+	SpaceSprite *planetspr, *playerspr;
 
 	virtual void init_menu();
 

@@ -1,8 +1,10 @@
 #ifndef __GAMEX_SPRITES__
 #define __GAMEX_SPRITES__
 
+void colorize(BITMAP *bmp, double mr, double mg, double mb);
 void colorize(SpaceSprite *spr, double mr, double mg, double mb);
 
+void brighten(BITMAP *bmp);
 void brighten(SpaceSprite *spr);
 
 void balance(double *r, double *g, double *b);

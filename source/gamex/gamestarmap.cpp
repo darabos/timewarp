@@ -176,7 +176,7 @@ void GameStarmap::init()
 	Tedit->exclusive = false;
 	bnew = new Button(Tedit, "new_");
 	breplace = new Button(Tedit, "replace_");
-	Tedit->tv->set(starspr, startypelist->N);
+	Tedit->tv->set(startypespr, startypelist->N);
 
 
 
