@@ -504,7 +504,16 @@ int WasxClone::handle_damage(SpaceLocation *source, double normal, double direct
  
 void WasxClone::calculate() {
 
-	//SpaceObject::calculate();
+	// first check for a dead mother; otherwise the control access in the ship::calculate
+	// function may freak out (since the control depends on the mother and if the mother
+	// is dead then ...
+
+	if (!(MotherShip && MotherShip->exists()))
+	{
+		MotherShip = 0;
+		state = 0;
+		return;
+	}
 
 	Ship::calculate();
 

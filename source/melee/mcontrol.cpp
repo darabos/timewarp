@@ -427,6 +427,11 @@ Control::~Control() { STACKTRACE
 	if (_prediction_keys) delete _prediction_keys;
 	}
 bool Control::valid_target(SpaceObject *t) {
+	// GEO: this error sometimes occur, unknown why.
+	// speculation: it happened with a wasx clone; perhaps its mother died before
+	// and since it shared control, and didn't check for a dead mother before the
+	// ship::calculate function, it may've crashed.
+	// This kinda thing may occur more often in case control is shared among objects
 	if (!ship) tw_error("Control::valid_target - !ship");
 	if (t->sameTeam(ship)) return false;
 	if (!t->exists()) return false;
