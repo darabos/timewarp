@@ -619,7 +619,7 @@ void ArkanoidPincer::collide(SpaceObject *other) {
 void ArkanoidPincer::inflict_damage(SpaceObject *other) {
 	STACKTRACE
   int i;
-	i = damage_factor / 2;
+	i = iround(damage_factor / 2);
   //double oldMass;
   //oldMass = mass;
   //message.print(1500,15,"ArkanoidPincerInflictDamage1");
@@ -656,7 +656,7 @@ int ArkanoidPincer::handle_damage (SpaceLocation *source, double normal, double 
   {
 	  state = 1;
 	  normal = armour / 3;
-	  armour -= normal;
+	  armour -= iround(normal);
   }
   // sometimes, the planet makes the state=0. This corrects for that, since the damage()
   // call is done _after_ the statement state=0 by the planet damage function.
@@ -683,12 +683,12 @@ int ArkanoidPincer::handle_damage (SpaceLocation *source, double normal, double 
     }
     else {
       //message.print(1500,12,"Fall-Through");
-      armour -= (normal + direct);
+      armour -= iround(normal + direct);
     }
   }
   else {
     //message.print(1500,12,"No Creator -- Doing the subtraction!");
-    armour -= (normal + direct);
+    armour -= iround(normal + direct);
   }
   if(armour<=0) {
     //tw_error("Pincer took damage!");
@@ -699,7 +699,7 @@ int ArkanoidPincer::handle_damage (SpaceLocation *source, double normal, double 
     collide_flag_sameteam = 0;
   }
   //message.print(1500,15,"ArkanoidPincerHandleDamage2 armour=%d normal=%d", armour, normal);
-  return(normal + direct);
+  return iround(normal + direct);
 }
 
 REGISTER_SHIP ( ArkanoidPincerShip )

@@ -122,7 +122,7 @@ ANGLE_RATIO;
   specialDamage = get_config_int("Special", "Damage", 0);
   specialSustain = get_config_int("Special", "Sustain", 0);
 
-  currentSweepTime = specialTime + 1;
+  currentSweepTime = (int)specialTime + 1;
   sweepIsOn = FALSE;
   //justBorn = TRUE;
 }
@@ -223,7 +223,7 @@ void AlhordianDreadnought::calculate_laser_sweep(void) {
 	STACKTRACE
   double fractionDone;
   double X, Y, Angle, Length;
-  if(currentSweepTime>specialTime) currentSweepTime = specialTime;
+  if(currentSweepTime>specialTime) currentSweepTime = (int)specialTime;
   if(currentSweepTime>specialTime) {sweepIsOn = FALSE; return;}
   fractionDone = currentSweepTime / specialTime;
   X = specialStartX * (1-fractionDone) + specialEndX * fractionDone;

@@ -5,34 +5,25 @@ REGISTER_FILE
 
 class AlaryBCTurret;
 
-
 class AlaryBC : public Ship
 {
 public:
-
 	int			death_frame, exp_frame;
-
 	bool		dying;
-
 	int			engine_phase;
-
 	double		weaponProximity, weaponVelocity, weaponAccel, weaponTR;
 	double		weaponArmour;
 	int			weaponLifetime;
 
-
 	double		warheadRange, warheadVelocity, warheadTR;
 	double		warheadDamage, warheadArmour;
-
 	double		specialDamage, specialArmour, turretArmour, specialDamThr;
 	double		specialRange, specialVelocity, specialTurnRate;
 	double		specialMaxShots;
-
 	bool		turrets_on, turrets_old;
 	int			can_switch;
 
 	double		specialRelativity;
-
 	int			side;
 	
 	double		engines_armour;
@@ -500,7 +491,7 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 		recharge_amount = 0;
 		crew = 0; }
 
-	return total;
+	return iround(total);
 }
 
 int AlaryBC::handle_fuel_sap(SpaceLocation *source, double normal)
@@ -523,9 +514,10 @@ AlaryBCTorpedo::AlaryBCTorpedo(SpaceLocation *creator, double ox, double oy, dou
 		SpaceSprite *osprite, double wdamage, double wrange, double warmour, double wv,
 		double wtr) :
 	SpaceObject(creator, 0, oangle, osprite),
-	armour(oarmour), lifetime(olifetime), proximity(oproximity), accel(oaccel),
-	maxspeed(omaxspeed), turn_rate(otr), inactive(oinactive),
-	wh_damage(wdamage), wh_armour(warmour), wh_v(wv),
+	armour(iround(oarmour)), lifetime(olifetime), inactive(oinactive),
+	proximity(oproximity), accel(oaccel),
+	maxspeed(omaxspeed), turn_rate(otr),
+	wh_damage(iround(wdamage)), wh_armour(iround(warmour)), wh_v(wv),
 	wh_turn_rate(wtr), wh_range(wrange)
 {
 	target = otarget;
@@ -626,11 +618,11 @@ void AlaryBCTorpedo::inflict_damage(SpaceObject *other)
 int AlaryBCTorpedo::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 	STACKTRACE
-	if (direct+normal > 0) armour -= direct+normal;
+	if (direct+normal > 0) armour -= iround(direct+normal);
 	if (armour <= 0) {
 		game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 10, 50, DEPTH_EXPLOSIONS));
 		state = 0; }
-	return direct+normal;
+	return iround(direct+normal);
 }
 
 
@@ -666,8 +658,8 @@ void AlaryBCWarhead::calculate()
 void AlaryBCTurret::sinc_it()
 {
 	STACKTRACE
-	double tx = cos(ship->angle);
-	double ty = sin(ship->angle);
+//	double tx = cos(ship->angle);
+//	double ty = sin(ship->angle);
 
 //	x = ship->x + rel_y*tx - rel_x*ty;
 //	y = ship->y + rel_y*ty + rel_x*tx;
@@ -931,8 +923,8 @@ AlaryBCTShot::AlaryBCTShot(double ox, double oy, double oangle, double ov, doubl
 	explosionFrameCount = 10;
 	explosionFrameSize  = 50;
 	explosionSample = data->sampleSpecial[1];
-	double tx = cos(angle);
-	double ty = sin(angle);
+//	double tx = cos(angle);
+//	double ty = sin(angle);
 //	x = opos->normal_x() + oy*tx - ox*ty;
 //	y = opos->normal_y() + oy*ty + ox*tx;
 	pos = normalize(opos->normal_pos() + rotate(Vector2(-ox, oy), -PI/2+angle));

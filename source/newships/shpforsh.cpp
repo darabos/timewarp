@@ -60,11 +60,11 @@ ForevianShocker::ForevianShocker(Vector2 opos, double shipAngle, ShipData *shipD
 	shockVar		= 0; 
 	
 	new_special		= (get_config_int("Special", "NewGFX", 0) != 0);
-	weapon_frame_size	= (weaponRange/weaponVelocity)/32;
+	weapon_frame_size	= iround(weaponRange/weaponVelocity/32);
 
 	if (new_special) {
 		special_sprite= data->spriteExtraExplosion;
-		special_frame_size = (specialRange/specialVelocity)/32;	
+		special_frame_size = iround(specialRange/specialVelocity/32);	
 		special_frame_num = 32; }	
 	else {	
 		special_sprite = data->spriteSpecial;	

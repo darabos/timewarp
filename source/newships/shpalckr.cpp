@@ -195,7 +195,7 @@ int AlcheroKronos::activate_special(){
 		t = specialMinTime;
 	}
 	game->set_turbo( t );
-	game->set_frame_time( t / fps_orig );
+	game->set_frame_time( iround(t / fps_orig) );
 
 	if ( up ) {
 		sound.stop( data->sampleSpecial[1] );
@@ -220,7 +220,7 @@ int AlcheroKronos::deactivate_special(){
     turbo_change = 0;
   }
   game->set_turbo( t );
-  game->set_frame_time( t / fps_orig );
+  game->set_frame_time( iround(t / fps_orig) );
 
   if( !up ){
     sound.stop( copy_of_sampleSpecial );
@@ -327,7 +327,7 @@ void AlcheroKronos::death(){
     t -= turbo_change;
     turbo_change = 0;
     game->set_turbo( t );
-    game->set_frame_time( t / fps_orig );
+    game->set_frame_time( iround(t / fps_orig) );
   }
 }
 
