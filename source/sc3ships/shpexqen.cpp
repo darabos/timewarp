@@ -38,9 +38,12 @@ class ExquivanBarrier : public Missile {
   double veloc;
   double brange;
 
+  ExquivanEnigma	*exqship;
+  int				remembernumber;
+
   public:
   ExquivanBarrier(Vector2 opos, double oangle, double ov,
-    int odamage, double orange, int oarmour, Ship *oship,
+    int odamage, double orange, int oarmour, ExquivanEnigma *oship,
     SpaceSprite *osprite, double osrange, double omass);
 
   virtual void calculate();
@@ -124,7 +127,7 @@ return (-1);
 }
 
 ExquivanBarrier::ExquivanBarrier(Vector2 opos, double oangle,
-  double ov, int odamage, double orange, int oarmour,Ship *oship,
+  double ov, int odamage, double orange, int oarmour,ExquivanEnigma *oship,
   SpaceSprite *osprite,double osrange, double omass) :
   Missile(oship, opos, oangle, ov, odamage, -1 , oarmour, oship,
 		osprite),
@@ -134,6 +137,8 @@ ExquivanBarrier::ExquivanBarrier(Vector2 opos, double oangle,
 {
   layer = LAYER_SPECIAL;
   mass = omass;
+  exqship = oship;
+  remembernumber = 0;
 }
 
 void ExquivanBarrier::calculate()
@@ -141,13 +146,31 @@ void ExquivanBarrier::calculate()
   Missile::calculate();
   SpaceLocation *R;
   double final_angle = 0;
-  if (!ship || !ship->exists())
-    return;
-  int number = ((ExquivanEnigma *)ship)->get_barrier_number(this);
-  if (number == -1) {
-    state = 0;
-    return;
-    }
+
+  if (!(ship && ship->exists()))
+  {
+	  ship = 0;
+	return;
+  }
+
+  if (!(exqship && exqship->exists()))
+  {
+	  exqship = 0;
+  }
+
+  //int number = ((ExquivanEnigma *)ship)->get_barrier_number(this);
+  int number = -1;
+  if (exqship)
+  {
+	  number = exqship->get_barrier_number(this);
+	  remembernumber = number;
+	  if (number == -1) {
+		  state = 0;
+		  return;
+	  }
+  } else
+	  number = remembernumber;
+
   if ((ship->target) && (ship->target->exists()) &&
     !(ship->target->isInvisible()) && !(ship->target->sameTeam(this)))
     {

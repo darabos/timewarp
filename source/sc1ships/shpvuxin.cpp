@@ -184,6 +184,8 @@ class VuxPhaser : public Phaser {
 			SpaceSprite *sprite, int osprite_index, int *ocolors, 
 			int onum_colors, int ofsize, int steps, int step_time) ;
 
+	VuxIntruder *vuxship;
+
 	virtual void calculate();
 	};
 
@@ -191,13 +193,17 @@ class VuxPhaser : public Phaser {
 
 VuxPhaser::VuxPhaser(Vector2 opos, Vector2 _n, VuxIntruder *ship, 
 							 SpaceSprite *sprite, int osprite_index, int *ocolors, 
-							 int onum_colors, int ofsize, int steps, int step_size) :
-		Phaser(ship, opos, _n, ship, sprite, osprite_index, ocolors, onum_colors, ofsize, 
-			steps, step_size) {}
+							 int onum_colors, int ofsize, int steps, int step_size)
+:
+Phaser(ship, opos, _n, ship, sprite, osprite_index, ocolors, onum_colors, ofsize, steps, step_size)
+{
+	vuxship = ship;
+}
+
 void VuxPhaser::calculate() {
 	Phaser::calculate();
 	if (!ship) return;
-	if( !(ship->attributes & ATTRIB_INGAME )) ((VuxIntruder*)ship)->relocate();
+	if( !(ship->attributes & ATTRIB_INGAME )) vuxship->relocate();//((VuxIntruder*)ship)->relocate();
 	angle = ship->get_angle();
 	sprite_index = get_index(angle);
 	rel_pos = unit_vector(angle) * rel_pos.length();

@@ -624,40 +624,26 @@ void WasxClone::death() {
 	|| ship == NULL 
 	|| !ship->exists()
 	|| MotherShip == NULL 
-	|| !MotherShip->exists()) {
+	|| !MotherShip->exists())
+	{
 		MotherShip = 0;
-	state = 0;
-	return;
+		state = 0;
+		return;
 	}
-/*
-	for (int i = 0; i < ((WasxSuperposition*)ship)->num_Clone; i += 1) {
-		if (((WasxSuperposition*)ship)->Clone[i] == this) {
 
-			((WasxSuperposition*)ship)->Clone[i] = NULL;
-			delete ((WasxSuperposition*)ship)->Clone[i];
-			((WasxSuperposition*)ship)->num_Clone -= 1;
 
-			memmove(&((WasxSuperposition*)ship)->Clone[i], &((WasxSuperposition*)ship)->Clone[i+1], 
-				(((WasxSuperposition*)ship)->num_Clone-i) * sizeof(WasxClone*));
+	for (int i = 1; i <= MotherShip->num_Clone; i += 1) {
+		if (MotherShip->Clone[i] == this)
+		{
 
-			((WasxSuperposition*)ship)->Clone[i]->CloneIndex = i;
+			MotherShip->Clone[i] = NULL;
+			delete MotherShip->Clone[i];
+			MotherShip->num_Clone -= 1;
 
-			return;
-			}
-		}
-	*/
+			memmove(&MotherShip->Clone[i], &MotherShip->Clone[i+1], 
+				(MotherShip->num_Clone-i) * sizeof(WasxClone*));
 
-	for (int i = 1; i <= ((WasxSuperposition*)ship)->num_Clone; i += 1) {
-		if (((WasxSuperposition*)ship)->Clone[i] == this) {
-
-			((WasxSuperposition*)ship)->Clone[i] = NULL;
-			delete ((WasxSuperposition*)ship)->Clone[i];
-			((WasxSuperposition*)ship)->num_Clone -= 1;
-
-			memmove(&((WasxSuperposition*)ship)->Clone[i], &((WasxSuperposition*)ship)->Clone[i+1], 
-				(((WasxSuperposition*)ship)->num_Clone-i) * sizeof(WasxClone*));
-
-			((WasxSuperposition*)ship)->Clone[i]->CloneIndex = i;
+			MotherShip->Clone[i]->CloneIndex = i;
 
 			return;
 			}

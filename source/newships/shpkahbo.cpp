@@ -79,7 +79,7 @@ class KahrSmall : public Shot {
 class KahrMedium : public Shot {
   public:
   KahrMedium(double ox,double oy,double oangle, double ov, double oturn,
-    int odamage, double orange, int oarmour, Ship *oship,
+    int odamage, double orange, int oarmour, KahrBoomerang *oship,
     SpaceSprite *osprite, int ofcount, int ofsize);
   virtual void death();
 
@@ -92,6 +92,8 @@ class KahrMedium : public Shot {
   int returning;
   double turning;
   int turned;
+
+  KahrBoomerang		*kahrship;
 
   virtual void calculate();
   virtual void inflict_damage(SpaceObject *other);
@@ -330,7 +332,7 @@ void KahrSmall::inflict_damage(SpaceObject *other)
 }
 
 KahrMedium::KahrMedium(double ox,double oy,double oangle, double ov,
-    double oturn, int odamage, double orange, int oarmour, Ship *oship,
+    double oturn, int odamage, double orange, int oarmour, KahrBoomerang *oship,
     SpaceSprite *osprite, int ofcount, int ofsize) :
 	Shot(oship, Vector2(ox,oy), oangle, ov, odamage, -1.0 , oarmour, oship, osprite)
 
@@ -345,11 +347,13 @@ KahrMedium::KahrMedium(double ox,double oy,double oangle, double ov,
   returning = FALSE;
   turning = oturn;
   turned = FALSE;
+
+  kahrship = oship;
 }
 
 void KahrMedium::death() {
-	STACKTRACE
-	if (ship) ((KahrBoomerang*)ship)->num_medium_boomerangs -= 1;
+	STACKTRACE;
+	if (kahrship) (kahrship)->num_medium_boomerangs -= 1;
 	Shot::death();
 	}
 
@@ -361,6 +365,9 @@ void KahrMedium::calculate() {
 		ship = 0;
 		return;
 		}
+	if (!(kahrship && kahrship->exists()))
+		kahrship = 0;
+
   if (distance(ship) > srange)
     returning = TRUE;
   if (returning) {

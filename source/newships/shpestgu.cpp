@@ -110,7 +110,7 @@ void EstionPlatform::calculate() {
 	}
 void EstionPlatform::death() {
 	STACKTRACE
-	if (!ship) return; //ship is already dead; don't remove platform from list
+	if (!(ship && ship->exists())) return; //ship is already dead; don't remove platform from list
 	if (ship->data != data) return; //ship is somehow not an Estion; perhaps we've been stolen
 	for (int i = 0; i < ((EstionGunner*)ship)->num_platforms; i += 1) {
 		if (((EstionGunner*)ship)->platform[i] == this) {

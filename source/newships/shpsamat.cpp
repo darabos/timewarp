@@ -495,11 +495,6 @@ void SaMatraPhaser::calculate()
 	
 	if (!ship) return;
 
-
-
-	//if( !(ship->attributes & ATTRIB_INGAME )) ((SaMatra*)ship)->relocate();
-
-
 	angle = ship->get_angle();
 	sprite_index = get_index(angle);
 	rel_pos = unit_vector(angle) * rel_pos.length();

@@ -23,8 +23,10 @@ class OrzMarine : public SpaceObject {
 	int    slot;
 	int    damage_frame;
 
+	OrzNemesis *orzship;
+
 	public:
-	OrzMarine(Vector2 opos, Ship *oship, double oAccelRate,
+	OrzMarine(Vector2 opos, OrzNemesis *oship, double oAccelRate,
 		double oSpeedMax, int oArmour, int oHotspotRate, int oSlot,
 		SpaceSprite *osprite);
 
@@ -188,7 +190,7 @@ OrzMissile::OrzMissile(double oangle, double ov, int odamage, double orange,
     data->spriteExtraExplosion, 0, 10, 30, DEPTH_EXPLOSIONS));
 }
 
-OrzMarine::OrzMarine(Vector2 opos, Ship *oship, double oAccelRate,
+OrzMarine::OrzMarine(Vector2 opos, OrzNemesis *oship, double oAccelRate,
   double oSpeedMax, int oHotspotRate, int oArmour, int oSlot,
   SpaceSprite *osprite) :
   SpaceObject(oship, opos, 0.0, osprite),
@@ -207,10 +209,18 @@ OrzMarine::OrzMarine(Vector2 opos, Ship *oship, double oAccelRate,
         mass = 0.001;
 
 		isblockingweapons = true;
+
+		orzship = oship;
 }
 
 void OrzMarine::calculate() {
 	int    chance;
+
+    if (!(orzship && orzship->exists()))
+	{
+		orzship = 0;
+		// just this ... in case owner is changed, "ship" can still be used to do something
+	}
 
 	if (invading) {
         
@@ -232,10 +242,15 @@ void OrzMarine::calculate() {
 				return; }
 
 			chance = random() % 10000;
-			if (chance < 9 * frame_time) {
-				if (ship && ((random() & 255) < (((OrzNemesis*)ship)->absorption))) {
-					damage(ship, 0, -1);
-					}
+			if (chance < 9 * frame_time)
+			{
+				// the following is dangerous if eg a ploxis changes the owner (=ship pointer)
+				//if (ship && ((random() & 255) < (((OrzNemesis*)ship)->absorption))) {
+				if (orzship && orzship->exists() && (random() & 255) < orzship->absorption)
+				{
+					damage(orzship, 0, -1);
+				}
+
 				play_sound(data->sampleExtra[0]);
 				damage(invading, 0, 1);
 				damage_frame = 50;
@@ -278,7 +293,7 @@ void OrzMarine::calculate() {
                 if (returning)
                         angle = trajectory_angle(ship);
                 else {
-		        if((ship->target) && (!ship->target->isInvisible()))
+		        if(ship->target && ship->target->exists() && (!ship->target->isInvisible()))
                                 angle = trajectory_angle(ship->target);
                         else {  returning = true;
 		                collide_flag_sameship = bit(LAYER_SHIPS);

@@ -10,6 +10,8 @@ class UmgahCone : public SpaceObject {
   double residual_damage;
   int damage_type;
 
+  UmgahDrone *umgahship;
+
   public:
   UmgahCone(double odist, int odamage, UmgahDrone *oship, SpaceSprite *osprite);
 
@@ -87,6 +89,8 @@ UmgahCone::UmgahCone(double odist, int odamage, UmgahDrone *oship,
 	collide_flag_sameship = 0;
 
 	isblockingweapons = false;
+
+	umgahship = oship;
 }
 
 bool UmgahCone::change_owner(SpaceLocation *new_owner) {
@@ -102,6 +106,10 @@ void UmgahCone::calculate()
 		state = 0; 
 		return; 
 	}
+
+	if (!(umgahship && umgahship->exists()))
+		umgahship = 0;
+
 	pos = ship->normal_pos() + (unit_vector(ship->get_angle()) * dist);
 	vel = ship->get_vel();
 	angle = ship->get_angle();
@@ -145,12 +153,15 @@ void UmgahCone::inflict_damage(SpaceObject *other)
 
 int UmgahCone::canCollide(SpaceLocation* other) {
 //  calc_base();
-  return (((UmgahDrone*)ship)->firing & !other->isPlanet());
+  if (umgahship && umgahship->exists())
+	return (umgahship->firing & !other->isPlanet());
+  else
+	  return false;
 }
 
 void UmgahCone::animate(Frame* space) {
 //  calc_base();
-  if (!((UmgahDrone*)ship)->firing) return;
+  if (umgahship && umgahship->exists() && !umgahship->firing) return;
   int si = sprite_index;
   sprite_index += ((rand()%6) << 6);
   SpaceObject::animate(space);
