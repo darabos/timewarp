@@ -162,7 +162,12 @@ int KatPoly::activate_special()
 		morph->state = 0;                         // kill last morph
 		morph->crew = 0;
 
-		game->remove(morph);
+		// dangerous, this is a memory leak.
+		//game->remove(morph);
+
+		// the following prevents that a new ship will be "selected" based on this "empty" ship
+		morph->attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
+		morph->control = 0;
 
 	} else {                                      // if we have never yet morphed
 

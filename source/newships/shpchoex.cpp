@@ -441,7 +441,10 @@ void ChoraliExtractor::death()
 {
 	STACKTRACE
   Ship::death();
-  game->remove(asteroid_center);
+
+  // dangerous, this is a memory leak:
+  //game->remove(asteroid_center);
+	asteroid_center->state = 0;
 }
 void ChoraliExtractor::materialize()
 {
