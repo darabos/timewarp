@@ -344,8 +344,13 @@ void BipoleKatamaran::materialize(){
 }
 
 void BipoleKatamaran::death(){
-  if( left ) left->die();
-  if( right ) right->die();
+	// bug fix Geo.
+	// added exists(), because I *think* that the "invisible" ships can be destroyed
+	// by some field weapon ? At the same time, this field weapon can destroy the
+	// "left" or "right". Then, it's possible that both ships die without each knowing
+	// it...
+  if( left && left->exists() ) left->die();
+  if( right && right->exists() ) right->die();
 }
 
 BipoleShip::BipoleShip(Vector2 opos, double shipAngle,

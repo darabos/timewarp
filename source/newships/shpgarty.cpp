@@ -178,12 +178,21 @@ if (repulse)
 		Query q;
 		for (q.begin(this, OBJECT_LAYERS, specialRange); q.currento; q.next()) {
 
+			// bugfix Geo
+			// Space-locations have mass, but can be included in this search. So, add an extra
+			// check for that. Otherwise the "mass" has a "value" that's not defined (its the value
+			// of some other variable).
+
 			stun_ship(q.currento);
 
-			if (q.currento->mass)
-				q.currento->accelerate (q.currento, trajectory_angle(q.currento), 
-specialRepulse / q.currento->mass, MAX_SPEED);
-			damage(q.currento, 0, specialDamage);
+			if (q.currento->isObject())
+			{
+				if (q.currento->mass)
+					q.currento->accelerate (q.currento, trajectory_angle(q.currento), 
+					specialRepulse / q.currento->mass, MAX_SPEED);
+
+				damage(q.currento, 0, specialDamage);
+			}
 
 
 

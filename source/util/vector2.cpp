@@ -73,3 +73,19 @@ Vector2 unit_vector ( double angle ) {
 	return r;
 }
 
+
+Vector2 unit_vector( Vector2 vec )
+{
+
+	double L;
+	L = vec.length();
+
+	if (L > 0)
+		return vec / L;
+
+	else
+		return Vector2(1,0);
+	// GEO: added default (1,0) vector returned if vec=0, ie, if the
+	// result is undetermined.
+}
+

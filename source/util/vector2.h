@@ -63,7 +63,7 @@ inline double atan (Vector2 a) {return a.angle();}
 
 Vector2 unit_vector       ( double angle );
 //returns a unit vector at a particular angle
-inline Vector2 unit_vector( Vector2 vec ) {return vec / vec.length();}
+Vector2 unit_vector( Vector2 vec );
 //returns a unit vector with the same angle as vec
 
 

@@ -266,6 +266,12 @@ void View::track (const CameraPosition &target, CameraPosition *origin) {
 	d = normalize2(d + map_size/2, map_size) - map_size/2;
 
 	origin->pos += d;
+	// debug GEO.
+	// origin isn't normalized, this can grow very big. When a normalization
+	// is used, this normalization must then handle a very large value; it
+	// then encounters the limit 999. So, add a normalization ?
+	normalize(origin->pos, map_size);
+
 	origin->vel = d / frame_time;
 	origin->z = target.z;
 }
@@ -299,6 +305,12 @@ void View::track (const CameraPosition &target, double smooth_time, CameraPositi
 
 	origin->vel = d / frame_time;
 	origin->pos += d;
+
+	// debug GEO.
+	// origin isn't normalized, this can grow very big. When a normalization
+	// is used, this normalization must then handle a very large value; it
+	// then encounters the limit 999. So, add a normalization ?
+	normalize(origin->pos, map_size);
 
 	return;
 }
@@ -373,7 +385,9 @@ void message_type::out(char *string, int dur, int c) {STACKTRACE
 	else messages[num_messages].end_time = 0 + dur;
 	messages[num_messages].color = palette_color[c];
 	num_messages += 1;
-	//animate(NULL);clean();return;
+	// added GEO (uncommented that one line just below)
+	// cause such a basic thing shouldn't depend on one Game type.
+	animate(NULL);clean();return;
 	if (!game) animate(NULL);
 	else if (game->is_paused()) animate(NULL);
 	clean();

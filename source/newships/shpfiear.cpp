@@ -173,6 +173,13 @@ void FierasArbiter::calculate()
 			if (!o->sameShip(this)){
 				ta = trajectory_angle(o);
 				r = distance(o);
+
+				// fix GEO.
+				// narool poison has the same location as the ship, resulting in 0 distance
+				// note: new fix in the unit-vector routine ...
+				if (pos == o->pos)
+					continue;
+
 				tv = unit_vector(min_delta(o->pos, pos));
 				ov = o->get_vel();
 				nv = dot_product(ov, tv);
