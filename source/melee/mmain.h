@@ -54,7 +54,7 @@ class NormalGame : public Game {
 	virtual bool handle_key(int k);
 
 	int next_choose_new_ships_time;
-	void choose_new_ships() ;
+	virtual void choose_new_ships() ;
 
 	int indhealthtoggle, indteamtoggle;
 
