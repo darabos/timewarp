@@ -57,8 +57,8 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Desc=move release\twwin.exe twwin.exe
-PostBuild_Cmds=move release\twwin.exe twwin.exe
+PostBuild_Desc=copy /B /Y release\twwin.exe twwin.exe
+PostBuild_Cmds=copy /B /Y release\twwin.exe twwin.exe
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "twwin - Win32 Debug"
@@ -89,8 +89,8 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Desc=move debug\twwin.exe twwinDEBUG.exe
-PostBuild_Cmds=move debug\twwin.exe twwinDEBUG.exe
+PostBuild_Desc=copy /B /Y debug\twwin.exe twwinDEBUG.exe
+PostBuild_Cmds=copy /B /Y debug\twwin.exe twwinDEBUG.exe
 # End Special Build Tool
 
 !ENDIF 
