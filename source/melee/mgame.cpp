@@ -459,6 +459,8 @@ void game_create_errorlog(const char *exitmessage = 0)
 	//fprintf(f, "-------- showing in-game objects --------\n");
 	fprintf(f, "timewarp version = %s\n", tw_version());
 
+	fprintf(f, "lag_frames = %i", game->lag_frames);
+
 	time_t t;
 	tm *td;
 	t = ::time(0);
@@ -486,7 +488,7 @@ void game_create_errorlog(const char *exitmessage = 0)
 			
 			// set "enable run-type information" for this feature
 			// (rebuild all after changing that option)
-			fprintf(f, "%030s %09.1e %09.1e %09.1e %09.1e %03i 0x%08X 0x%08X 0x%08X\n",
+			fprintf(f, "%030s %011.3e %011.3e %011.3e %011.3e %03i 0x%08X 0x%08X 0x%08X\n",
 				typeid(*s).name(), p.x, p.y, v.x, v.y, is, (unsigned int)s, (unsigned int)s->ship, (unsigned int)s->target );
 		}
 	} else {

@@ -34,6 +34,8 @@ class JnkdwoLazel : public Ship {
   virtual void calculate_fire_special();
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
   virtual void materialize();
+
+  virtual void calculate();
 };
 
 
@@ -74,57 +76,60 @@ class JnkdwoLazelLaser : public Laser {
   virtual void inflict_damage(SpaceObject *other);
 };
 
-JnkdwoLazel::JnkdwoLazel(Vector2 opos, double angle, ShipData *data, unsigned int code) :
-        Ship(opos, angle, data, code)
+JnkdwoLazel::JnkdwoLazel(Vector2 opos, double angle, ShipData *data, unsigned int code)
+:
+Ship(opos, angle, data, code)
 {
-        weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
-        weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
-        weaponDamage   = get_config_int("Weapon", "Damage", 0);
-        weaponArmour   = get_config_int("Weapon", "Armour", 0);
-
-        specialDamage  = get_config_int("Special", "Damage", 0);
-        specialRange   = scale_range(get_config_float("Special", "Range", 0));
-        specialAngle   = get_config_float("Special", "Angle", 90) * ANGLE_RATIO;
-        specialFrames  = get_config_int("Special", "Frames", 100);
-        specialAim     = get_config_float("Special", "Aim", 0) * ANGLE_RATIO / 1000.0;
-        specialSpread  = get_config_float("Special", "Spread", 0) * ANGLE_RATIO;
-
-        extraVisibility   = get_config_float("Extra", "VisibilityPoints", 0);
-        extraInvisibility = get_config_float("Extra", "InvisibilityFactor", 0);
-        extraRangeFactor  = get_config_float("Extra", "RangeFactor", 0);
-        extraShipsOnly    = !(get_config_int("Extra", "ShipsOnly", 0) == 0);
-
-        special_low    = false;
+	weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
+	weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
+	weaponDamage   = get_config_int("Weapon", "Damage", 0);
+	weaponArmour   = get_config_int("Weapon", "Armour", 0);
+	
+	specialDamage  = get_config_int("Special", "Damage", 0);
+	specialRange   = scale_range(get_config_float("Special", "Range", 0));
+	specialAngle   = get_config_float("Special", "Angle", 90) * ANGLE_RATIO;
+	specialFrames  = get_config_int("Special", "Frames", 100);
+	specialAim     = get_config_float("Special", "Aim", 0) * ANGLE_RATIO / 1000.0;
+	specialSpread  = get_config_float("Special", "Spread", 0) * ANGLE_RATIO;
+	
+	extraVisibility   = get_config_float("Extra", "VisibilityPoints", 0);
+	extraInvisibility = get_config_float("Extra", "InvisibilityFactor", 0);
+	extraRangeFactor  = get_config_float("Extra", "RangeFactor", 0);
+	extraShipsOnly    = !(get_config_int("Extra", "ShipsOnly", 0) == 0);
+	
+	special_low    = false;
 
 }
 
 int JnkdwoLazel::activate_weapon()
 {
-	STACKTRACE
-        add(new JnkdwoLazelMissile(this, -6.0, 45.0, angle , weaponVelocity,
-                          weaponDamage, weaponRange, weaponArmour, data->spriteWeapon));
-        add(new JnkdwoLazelMissile(this, +6.0, 45.0, angle , weaponVelocity,
-                          weaponDamage, weaponRange, weaponArmour, data->spriteWeapon));
-        return(TRUE);
+	STACKTRACE;
+
+	add(new JnkdwoLazelMissile(this, -6.0, 45.0, angle , weaponVelocity,
+		weaponDamage, weaponRange, weaponArmour, data->spriteWeapon));
+	add(new JnkdwoLazelMissile(this, +6.0, 45.0, angle , weaponVelocity,
+		weaponDamage, weaponRange, weaponArmour, data->spriteWeapon));
+	return(TRUE);
 }
 
 void JnkdwoLazel::calculate_fire_special()
 {
-	STACKTRACE
-        if ((!fire_special) || (batt >= special_drain)) special_low = false;
+	STACKTRACE;
+
+	if ((!fire_special) || (batt >= special_drain)) special_low = false;
 }
 
 void JnkdwoLazel::materialize() {
-	STACKTRACE
-        Ship::materialize();
-        for (int i = 0; i <4; i++) {
-                crystal[i]=new JnkdwoLazelCrystal(this,-16.0, 1+(i-1.5)*12, -PI/2);
-                add(crystal[i]);
-                crystal[i+4]=new JnkdwoLazelCrystal(this,+16.0, 1+(i-1.5)*12, +PI/2);
-                add(crystal[i+4]);
-//                game->addItem(new JnkdwoLazelCrystal(this,-16.0, 1+(i-1.5)*12, -PI/2));
-//                game->addItem(new JnkdwoLazelCrystal(this,+16.0, 1+(i-1.5)*12, +PI/2));
-        }
+	STACKTRACE;
+	Ship::materialize();
+	for (int i = 0; i <4; i++) {
+		crystal[i]=new JnkdwoLazelCrystal(this,-16.0, 1+(i-1.5)*12, -PI/2);
+		add(crystal[i]);
+		crystal[i+4]=new JnkdwoLazelCrystal(this,+16.0, 1+(i-1.5)*12, +PI/2);
+		add(crystal[i+4]);
+		//                game->addItem(new JnkdwoLazelCrystal(this,-16.0, 1+(i-1.5)*12, -PI/2));
+		//                game->addItem(new JnkdwoLazelCrystal(this,+16.0, 1+(i-1.5)*12, +PI/2));
+	}
 }
 
 JnkdwoLazelCrystal::JnkdwoLazelCrystal (JnkdwoLazel *oship, double ox, double oy, double ora) :
@@ -137,81 +142,106 @@ JnkdwoLazelCrystal::JnkdwoLazelCrystal (JnkdwoLazel *oship, double ox, double oy
         calculate();
 }
 
-void JnkdwoLazelCrystal::calculate() {
-	STACKTRACE
+void JnkdwoLazelCrystal::calculate()
+{
+	STACKTRACE;
+	
+	if (state == 0) return;
 
-        if (state == 0) return;
-        if (!(ship && ship->exists())) {
-                state = 0;
-				return; 
-		}
-
-        angle = normalize(ship->angle + ra, PI2);
-
-        double alpha = ship->angle ;
-        double tx = cos(alpha);
-        double ty = sin(alpha);
-
-        pos.x = normalize(ship->pos.x + ry * tx - rx * ty, map_size.x);
-        pos.y = normalize(ship->pos.y + ry * ty + rx * tx, map_size.y);
-
-        if (recharge > 0) recharge -= frame_time;
-        else if (ship->fire_special) {
-
-                if (ship->batt < ship->special_drain) {
-                        ship->special_low = true;
-                        return; };
-
-                Query q;
-                SpaceObject *t = NULL;
-                double r1, r = 0;
-                double marks;
-                for (q.begin(this, OBJECT_LAYERS, ship->specialRange); q.currento; q.next())
-                        if ((!q.currento->sameTeam(this)) && (q.currento->collide_flag_anyone & bit(LAYER_LINES)) && (!q.currento->isPlanet())) {
-                                if (ship->extraShipsOnly && q.currento->isShip()) continue;
-                                alpha = trajectory_angle(q.currento);
-                                double d_a = normalize(alpha - angle, PI2);
-                                if (d_a > PI) d_a -= PI2;
-                                if (fabs(d_a) > ship->specialAngle) continue;
-                                marks = 0;
-                                Query qm;
-                                for (qm.begin(q.currento, bit(LAYER_SPECIAL), 10); qm.current; qm.next())
-                                        if (qm.current->getID() == jnk_marker_id)
-                                                if (((JnkdwoLazelMarker*)qm.current)->o == q.currento)
-                                                        marks += 1;
-                                if (!q.currento->isInvisible())
-                                        marks += ship->extraVisibility;
-                                else    marks *= ship->extraInvisibility;
-
-                                r1 = distance(q.currento);
-
-                                if (r1 >= 10.0)
-                                        marks *= (1 + ship->extraRangeFactor * 10.0 / r1);
-                                
-                                if (marks > r) {
-                                        r = marks;  t = q.currento; } }
-                        
+	if (!(ship && ship->exists())) {
+		ship = 0;
+		state = 0;
+		return; 
+	}
+	
+	angle = normalize(ship->angle + ra, PI2);
+	
+	double alpha = ship->angle ;
+	double tx = cos(alpha);
+	double ty = sin(alpha);
+	
+	pos.x = normalize(ship->pos.x + ry * tx - rx * ty, map_size.x);
+	pos.y = normalize(ship->pos.y + ry * ty + rx * tx, map_size.y);
+	
+	if (recharge > 0) recharge -= frame_time;
+	else if (ship->fire_special) {
+		
+		if (ship->batt < ship->special_drain) {
+			ship->special_low = true;
+			return; };
+			
+			Query q;
+			SpaceObject *t = NULL;
+			double r1, r = 0;
+			double marks;
+			for (q.begin(this, OBJECT_LAYERS, ship->specialRange); q.currento; q.next())
+				if ((!q.currento->sameTeam(this)) && (q.currento->collide_flag_anyone & bit(LAYER_LINES)) && (!q.currento->isPlanet())) {
+					if (ship->extraShipsOnly && q.currento->isShip()) continue;
+					alpha = trajectory_angle(q.currento);
+					double d_a = normalize(alpha - angle, PI2);
+					if (d_a > PI) d_a -= PI2;
+					if (fabs(d_a) > ship->specialAngle) continue;
+					marks = 0;
+					Query qm;
+					for (qm.begin(q.currento, bit(LAYER_SPECIAL), 10); qm.current; qm.next())
+						if (qm.current->getID() == jnk_marker_id)
+							if (((JnkdwoLazelMarker*)qm.current)->o == q.currento)
+								marks += 1;
+							if (!q.currento->isInvisible())
+								marks += ship->extraVisibility;
+							else    marks *= ship->extraInvisibility;
+							
+							r1 = distance(q.currento);
+							
+							if (r1 >= 10.0)
+								marks *= (1 + ship->extraRangeFactor * 10.0 / r1);
+							
+							if (marks > r) {
+								r = marks;  t = q.currento; } }
+				
                 if (t) {
-                        int c = random()%80;
-                        c = makecol(160+c, 120+c, 175+c);
-//                        game->addItem(new PointLaser(c, ship->specialDamage, ship->specialRange, ship->specialFrames, this, t, 0, 0));
-                        add(new JnkdwoLazelLaser (this, trajectory_angle(t), ship->specialAngle, c, ship->specialRange, ship->specialDamage,
-                                          ship->specialFrames, this, t, ship->specialAim * r, ship->specialSpread));
-                        //play_sound(ship->data->sampleSpecial[0]);
-						play_sound(data->sampleSpecial[0]);
-                        recharge += ship->special_rate;
-                        ship->batt -= ship->special_drain; }
-        }
+					int c = random()%80;
+					c = makecol(160+c, 120+c, 175+c);
+					//                        game->addItem(new PointLaser(c, ship->specialDamage, ship->specialRange, ship->specialFrames, this, t, 0, 0));
+					add(new JnkdwoLazelLaser (this, trajectory_angle(t), ship->specialAngle, c, ship->specialRange, ship->specialDamage,
+						ship->specialFrames, this, t, ship->specialAim * r, ship->specialSpread));
+					//play_sound(ship->data->sampleSpecial[0]);
+					play_sound(data->sampleSpecial[0]);
+					recharge += ship->special_rate;
+					ship->batt -= ship->special_drain; }
+	}
 }
 
 int JnkdwoLazel::handle_damage (SpaceLocation *source, double normal, double direct) {
-	STACKTRACE
-        int d = Ship::handle_damage(source, normal, direct);
-        if (state == 0)
-                for (int i =0; i < 8; i++)
-                        crystal[i]->state = 0;
-		return d;
+	STACKTRACE;
+
+	int d = Ship::handle_damage(source, normal, direct);
+
+	if (state == 0)
+		for (int i =0; i < 8; i++)
+			crystal[i]->state = 0;
+	
+	return d;
 }
+
+
+void JnkdwoLazel::calculate()
+{
+	STACKTRACE;
+
+	Ship::calculate();
+
+	// just to be sure I guess .. check if the crystal aren't dead.
+	// dunno if this can ever happen (geo)?
+	for (int i =0; i < 8; i++)
+	{
+		if (!crystal[i]->exists())
+		{
+			tw_error("A crystal died - should not happen !!");
+		}
+	}
+}
+
 
 
 JnkdwoLazelMissile::JnkdwoLazelMissile(SpaceLocation *creator, double ox, double oy, double oangle, double ov, int odamage, double orange,
@@ -224,10 +254,12 @@ JnkdwoLazelMissile::JnkdwoLazelMissile(SpaceLocation *creator, double ox, double
 }
 
 void JnkdwoLazelMissile::inflict_damage(SpaceObject *other) {
-	STACKTRACE
-        Missile::inflict_damage(other);
-        if (other->exists())
-                add(new JnkdwoLazelMarker(this, other));
+	STACKTRACE;
+	
+	Missile::inflict_damage(other);
+
+	if (other && other->exists())
+		add(new JnkdwoLazelMarker(this, other));
 }
 
 JnkdwoLazelMarker::JnkdwoLazelMarker(SpaceLocation *creator, SpaceObject *oo) :
@@ -241,51 +273,59 @@ JnkdwoLazelMarker::JnkdwoLazelMarker(SpaceLocation *creator, SpaceObject *oo) :
 }
 
 void JnkdwoLazelMarker::calculate() {
-	STACKTRACE
-        if (state == 0) return;
-        if (!(o && o->exists()))
-		{
-			o = 0;
-			state = 0;
-			return;
-		}
+	STACKTRACE;
 
-		pos = o->normal_pos();
+	if (state == 0) return;
+
+	if (!(o && o->exists()))
+	{
+		o = 0;
+		state = 0;
+		return;
+	}
+	
+	pos = o->normal_pos();
+
+	// dunno if the absence of this could cause something strange ... perhaps it does?
+	// maybe "some" routine needs to access its "ship" pointer sometime ?
+	SpaceLocation::calculate();
 }
 
 JnkdwoLazelLaser::JnkdwoLazelLaser (SpaceLocation *creator, double langle, double mangle, int lcolor, double lrange, int ldamage, int lfcount,
-                                    SpaceLocation *opos, SpaceObject *otgt, double oaim, double spread) :
-                  Laser(creator, langle, lcolor, lrange, 1, lfcount/ldamage, opos, 0, 0) {
+                                    SpaceLocation *opos, SpaceObject *otgt, double oaim, double spread)
+:
+Laser(creator, langle, lcolor, lrange, 1, lfcount/ldamage, opos, 0, 0) {
 //        collide_flag_sameteam = 0;
 //        collide_flag_sameship = 0;
 
-        target = NULL; ship = NULL;
-        power_left = ldamage-1;
-        tgt = otgt; aim = oaim;
-        max_angle = mangle; lng = length;
-        base_length = length;
-        angle = normalize(angle + spread * (1000 - (random()%2001))/1000.0, PI2);
+	target = NULL; ship = NULL;
+	power_left = ldamage-1;
+	tgt = otgt; aim = oaim;
+	max_angle = mangle; lng = length;
+	base_length = length;
+	angle = normalize(angle + spread * (1000 - (random()%2001))/1000.0, PI2);
 }
 
 void JnkdwoLazelLaser::calculate() {
-	STACKTRACE
-        if (!(lpos && lpos->exists()))
-		{
-			lpos = 0;
+	STACKTRACE;
+
+	if (!(lpos && lpos->exists()))
+	{
+		lpos = 0;
+		state = 0;
+	}
+	if (state == 0) return;
+	if (frame < frame_count) frame += frame_time;
+	else {
+		if (!(tgt && tgt->exists())) {
+			tgt = 0;
 			state = 0;
+			return;
 		}
-        if (state == 0) return;
-        if (frame < frame_count) frame += frame_time;
-        else {
-                if (!(tgt && tgt->exists())) {
-					tgt = 0;
-                     state = 0;
-					 return;
-				}
-                frame = 0;
-                if (power_left > 0) {
-                        damage_factor = 1; power_left--; }
-                else    tgt = NULL; }
+		frame = 0;
+		if (power_left > 0) {
+			damage_factor = 1; power_left--; }
+		else    tgt = NULL; }
 
     double alpha;
 
@@ -294,38 +334,38 @@ void JnkdwoLazelLaser::calculate() {
     vel = lpos->get_vel();
 
 	if (sinc_angle) angle = normalize(lpos->get_angle() + relative_angle, PI2);
-
-        if (tgt) { if (!tgt->exists()) tgt = NULL;}
-        else tgt = NULL;
-
-        double d_a;
-        if (tgt)
-                d_a = normalize(trajectory_angle(tgt) - angle, PI2);
-        else {  //d_a = pos->get_angle();
-                base_length = lng * (frame_count - frame) / frame_count; }
-        length = base_length;
-//        state = 0; return;
+	
+	if (tgt) { if (!tgt->exists()) tgt = NULL;}
+	else tgt = NULL;
+	
+	double d_a;
+	if (tgt)
+		d_a = normalize(trajectory_angle(tgt) - angle, PI2);
+	else {  //d_a = pos->get_angle();
+		base_length = lng * (frame_count - frame) / frame_count; }
+	length = base_length;
+	//        state = 0; return;
 	SpaceLine::calculate();
-        
-        if (d_a > PI) d_a -= PI2;
-        alpha = aim * frame_time;
-        if (fabs(d_a) < alpha) alpha = fabs(d_a);
-        if (d_a > 0) angle += alpha;
-        else         angle -= alpha;
-
-        d_a = normalize(lpos->get_angle() - angle, PI2);
-        if (d_a > PI) d_a -= PI2;
-        if (fabs(d_a) > max_angle)
-                tgt = NULL;
+	
+	if (d_a > PI) d_a -= PI2;
+	alpha = aim * frame_time;
+	if (fabs(d_a) < alpha) alpha = fabs(d_a);
+	if (d_a > 0) angle += alpha;
+	else         angle -= alpha;
+	
+	d_a = normalize(lpos->get_angle() - angle, PI2);
+	if (d_a > PI) d_a -= PI2;
+	if (fabs(d_a) > max_angle)
+		tgt = NULL;
 //                angle = pos->get_angle() - max_angle * d_a / fabs(d_a);
 }
 
 void JnkdwoLazelLaser::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	STACKTRACE;
 
-//        return;
+//  return;
 
-        if (damage_factor < 0) return;
+    if (damage_factor < 0) return;
 	int i;
 	i = damage_factor / 2;
 	if(i >= BOOM_SAMPLES)
