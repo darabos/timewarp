@@ -32,7 +32,7 @@ void INI_File::set_float (const char *section, const char *value, double new_val
 	_prepare(); set_config_float(section, value, new_value);
 }
 const char *INI_File::get_string (const char *section, const char *value, const char *default_value) const {
-	_prepare(); return get_string(section, value, default_value);
+	_prepare(); return get_config_string(section, value, default_value);
 }
 void INI_File::set_string (const char *section, const char *value, const char *new_value) {
 	_prepare(); set_config_string(section, value, new_value);
