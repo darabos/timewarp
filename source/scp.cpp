@@ -17,7 +17,7 @@
  * - Comments added.
  */
 
-#define INCLUDE_GAMEX
+//#define INCLUDE_GAMEX
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -155,15 +155,15 @@ enum {
 
 DIALOG mainDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_shadow_box_proc, 40,   40,   180,  215,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_shadow_box_proc, 40,   40,   180,  285,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { my_d_button_proc,  45,   45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Melee" , NULL, NULL },
-  { my_d_button_proc,  250,  45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Join" , NULL, NULL }, //MAIN_DIALOG_NET_JOIN
-  { my_d_button_proc,  250,  80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Host" , NULL, NULL }, //MAIN_DIALOG_NET_HOST
-  { my_d_button_proc,  45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
-  { my_d_button_proc,  45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
-  { my_d_button_proc,  45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
-  { my_d_button_proc,  45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
-  { my_d_button_proc,  45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
+  { my_d_button_proc,  45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Join" , NULL, NULL }, //MAIN_DIALOG_NET_JOIN
+  { my_d_button_proc,  45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Host" , NULL, NULL }, //MAIN_DIALOG_NET_HOST
+  { my_d_button_proc,  45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
+  { my_d_button_proc,  45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
+  { my_d_button_proc,  45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
+  { my_d_button_proc,  45,   255,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
+  { my_d_button_proc,  45,   290,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
 #ifdef INCLUDE_GAMEX
   { my_d_button_proc, 550,   440,   50,  30,   255,  0,    0,    D_EXIT | D_SPECIAL_BUTTON,
                                                                              0,    0,    (void *)"FG" , NULL, NULL },

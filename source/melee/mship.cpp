@@ -553,8 +553,10 @@ void Ship::calculate()
 
 	if (control) {
 
-		// it makes most sense, to place this in FRONT of these commands here ...
-		this->nextkeys = control->keys;
+		// it makes most sense, to place this in FRONT of these commands here cause it'll give you 1 frame faster control
+		// however, it'll be impossible to override the control of the ship in this way...
+		//this->nextkeys = control->keys;
+		// so .. I'll just put it back for now.
 
 		this->thrust           = 1&&(nextkeys & keyflag::thrust);
 		this->thrust_backwards = 1&&(nextkeys & keyflag::back);
@@ -586,6 +588,7 @@ void Ship::calculate()
             }
         }
 
+		this->nextkeys = control->keys;
 
         
 
