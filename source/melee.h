@@ -7,8 +7,8 @@
 #include <allegro.h>
 
 #ifndef PI
-//#	define PI 3.14159265358979323846
-#define PI AL_PI
+#	define PI 3.14159265358979323846
+//#define PI AL_PI
 #endif
 #ifdef PI2
 #	undef PI2

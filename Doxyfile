@@ -4,7 +4,7 @@
 # General configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = StarControl:Timewarp
-PROJECT_NUMBER         = 0.05u7
+PROJECT_NUMBER         = 0.05u8
 OUTPUT_DIRECTORY       = ./docs/generated
 OUTPUT_LANGUAGE        = English
 EXTRACT_ALL            = YES
@@ -127,7 +127,7 @@ MAN_LINKS              = NO
 #---------------------------------------------------------------------------
 # configuration options related to the XML output
 #---------------------------------------------------------------------------
-GENERATE_XML           = YES
+GENERATE_XML           = NO
 #---------------------------------------------------------------------------
 # configuration options for the AutoGen Definitions output
 #---------------------------------------------------------------------------
@@ -160,7 +160,7 @@ HAVE_DOT               = YES
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = YES
 TEMPLATE_RELATIONS     = YES
-HIDE_UNDOC_RELATIONS   = YES
+HIDE_UNDOC_RELATIONS   = NO
 INCLUDE_GRAPH          = YES
 INCLUDED_BY_GRAPH      = YES
 GRAPHICAL_HIERARCHY    = YES
