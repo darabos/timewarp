@@ -1,0 +1,10 @@
+This is an alpha version of Star Control: TimeWarp that
+comes after version 0.05u5 (tw05u5.zip) and before
+version 0.05u6 (which does not yet exist at the time
+of this writting).  This alpha version was finalized at
+
+17:46 5/2/2003 (month/day/year).  
+
+The size of the compressed full game is aproximately: 67328743
+This is build number: 
+3

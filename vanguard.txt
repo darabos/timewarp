@@ -1,0 +1,19 @@
+ Presently Vanguard (VG) is just a "Hunt down the enemy team" kinda game. 
+ Far more is planned but no coders are enlisted to the project at this moment..   
+ (For more information on the intended scope of VG contact "Morthotos@dd-tech.org") 
+  
+  
+ How to play VG thus far..  Well to aid you in your hunt you get 2 nice little toys... 
+  
+ -A Primative Hyper Space drive: (Press * when your batt is full and then start driving).   It will increase your speed by about 75 velocity units. (at least I think so, also I think it boosts your accel rate) 
+  
+ -You also get an ultra accurate real-time Radar, enabling you to see EVERYTHING from a moons around an orbiting planet, to the shots your opponent fired at you.   
+  
+ Keys:  
+ - Tab = toggle focus map center / focus player (default is map center for some reason) 
+ - Page up and down (not on the keypad) zoom you in and out, (it's a press and press again, not press and hold system, again don't know why.) 
+  
+ That's it..  The key bindings can be found in Vanguard.ini 
+  
+  
+ ENJOY!
