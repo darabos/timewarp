@@ -167,6 +167,7 @@ IlwrathSpiderMine::IlwrathSpiderMine( SpaceLocation *creator, double ox, double 
   step( 0 ), life( olife ), inc( 1 ),
   randomness( orandomness ), stoptime( ostoptime )
 {
+	  layer = LAYER_SPECIAL;
 	vel = unit_vector(angle) * v;
 }
 

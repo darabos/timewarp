@@ -266,7 +266,9 @@ ImperialRadioactivity::ImperialRadioactivity( SpaceLocation* creator, Vector2 op
     double ov, double oangle, SpaceSprite* osprite, double orange, double orate, int odamage ):
 SpaceObject( creator, opos, oangle, osprite ), latched( NULL ), v( ov ), range( orange ),
   d( 0 ), damage_rate( orate ), damage_step( orate ), damage_amount( odamage ),
-  sprite_step( time_ratio * 3 ), sprite_dir( 1 ){
+  sprite_step( time_ratio * 3 ), sprite_dir( 1 )
+{
+	layer = LAYER_SPECIAL;
 
   collide_flag_sameship = 0;
   collide_flag_sameteam = collide_flag_anyone = bit(LAYER_SHIPS);
@@ -527,7 +529,8 @@ void ImperialBlade::inflict_damage( SpaceObject *other ){
 
 ImperialHalfObject::ImperialHalfObject( SpaceLocation* creator, Vector2 opos,
     double ovx, double ovy, double oangle, int omass, SpaceSprite* osprite, int olife ):
-SpaceObject( creator, opos, oangle, osprite ), life( olife ){
+SpaceObject( creator, opos, oangle, osprite ), life( olife )
+{
   collide_flag_sameship = collide_flag_sameteam = collide_flag_anyone = ALL_LAYERS;
   vel = Vector2(ovx,ovy);
   mass = omass;

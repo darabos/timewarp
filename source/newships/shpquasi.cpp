@@ -114,10 +114,10 @@ QuaiEngine::QuaiEngine(Quai *creator, Vector2 opos, double oangle, SpaceSprite *
 :
 SpaceObject(creator, opos, oangle, osprite)
 {
+	layer = LAYER_SPECIAL;
+
 	mother = creator;
-
 	vel = mother->vel;
-
 }
 
 void QuaiEngine::calculate()

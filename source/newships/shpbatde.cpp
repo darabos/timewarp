@@ -490,6 +490,7 @@ BathaCloud::BathaCloud(SpaceLocation *creator, Vector2 opos, double oangle,
 :
 SpaceObject(creator, opos, oangle, osprite)
 {
+	layer = LAYER_SHOTS;
 	vel = 0;
 
 	lifetime = olifetime;

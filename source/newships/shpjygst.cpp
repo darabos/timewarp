@@ -202,6 +202,7 @@ SpaceObject( creator,
   creator->normal_pos() + odist * unit_vector( (creator->get_angle() + odangle) ),
   creator->get_angle() + odangle, osprite )
 {
+	layer = LAYER_SPECIAL;
   mass = omass;
   dist = odist;
   dangle = odangle;

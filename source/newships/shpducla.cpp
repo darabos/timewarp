@@ -279,6 +279,8 @@ SpaceObject(creator, creator->pos, oangle, osprite),
 mother(creator)
 {
 
+	layer = LAYER_SHIPS;
+
 	// angle relative to the mother ship (sprite angle = mother angle + rel. angle)
 	offset_angle = oangle;
 

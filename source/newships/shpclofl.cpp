@@ -283,6 +283,8 @@ MassShot::MassShot(ClowanFlurry *creator, Vector2 rpos, double oangle, double ov
 :
 SpaceObject( creator, opos->pos+rpos, oangle, osprite)
 {
+	layer = LAYER_SHOTS;
+
 	target = otarget;
 
 	mass = 1.0;

@@ -256,6 +256,7 @@ VezlagariBulkhead::VezlagariBulkhead(VezlagariBarge* ocreator):
 {
 //SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos, 
 //	double oangle, SpaceSprite *osprite) 
+	  layer = LAYER_SPECIAL;
   creator = ocreator;
   sprite = (creator->data)->spriteExtra;
   sprite_index = 0;

@@ -238,7 +238,9 @@ TulkonDevice::TulkonDevice( Ship* creator, SpaceSprite* osprite, double
 odist,
   int odamage, double oforce ):
 SpaceObject( creator, creator->normal_pos(), creator->get_angle(),
-  osprite ), dist( odist ), ramming( false ), force( oforce ){
+  osprite ), dist( odist ), ramming( false ), force( oforce )
+{
+	layer = LAYER_SPECIAL;
   collide_flag_sameship = collide_flag_sameteam = ALL_LAYERS;
 
 //  vx = ship->get_vx();
