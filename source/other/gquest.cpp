@@ -441,16 +441,19 @@ int QuestSource::QuestFailed( Quest* q )
 
 void QuestSource::RemoveTrash(GobPlayer* pl)
 {
-	for (std::list<Quest*>::iterator i = questList.begin();
-		i != questList.end(); ++i)
+	std::list<Quest*>::iterator i = questList.begin();
+	while( i != questList.end() )
 	{
 		GobPlayer * p = (*i)->GetPlayer();
 		if ( !((*i)->exist()) || p == pl )
 		{
-			delete *i;
+			Quest * q = *i;
 			questList.erase(i);
+			delete q;
 			i = questList.begin();
+			continue;
 		}
+		i++;
 	}
 }
 

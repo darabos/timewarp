@@ -25,6 +25,8 @@
 #include <errno.h>
 #include <allegro.h>
 
+#include "jpgalleg/jpgalleg.h"
+
 #ifdef ALLEGRO_MSVC
 	#pragma warning (disable:4786)
 #endif
@@ -863,6 +865,8 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		set_color_conversion(COLORCONV_NONE);
 
 		videosystem.set_resolution(screen_width, screen_height, screen_bpp, fullscreen);
+		register_bitmap_file_type("jpg", load_jpg, NULL);
+
 		enable_input(inputs);
 		sound.init();
 		sound.load();

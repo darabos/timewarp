@@ -115,6 +115,7 @@ int l_DialogSetAlienImage(lua_State* ls)
 
    aa_set_mode(AA_DITHER);
    clear_bitmap ( game->window->surface );
+
    BITMAP *temp = load_bitmap( text, NULL);
    
    ASSERT(temp);

@@ -461,7 +461,7 @@ void LeviathanSlimeBall::inflict_damage(SpaceObject *other)
 
 		c -= iround(((Ship*)other)->getCrew());
 
-		RGB col = ((Ship*)other)->crewPanelColor();
+		///RGB col = ((Ship*)other)->crewPanelColor();
 
 			int i;
 

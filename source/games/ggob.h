@@ -2,6 +2,8 @@
 #define __GGOB_H__
 
 #include <list>
+#include <string>
+#include <map>
 
 #include "../melee.h"
 #include "../melee/mframe.h"
@@ -26,16 +28,9 @@ class GobPlayer {
   Ship *ship;
   Control *control;
   ShipPanel *panel;
-  struct pair {
-    char *id;
-    int value;
-  };
-  pair *pair_list;
-  int num_pairs;
-  void _add_pair(const char *id, int value);
-  pair *_get_pair(const char *id);
-  void write_pair(const char *id, int value);
-  int read_pair(const char *id);
+  
+  std::map<std::string, int> pair;
+
   int total;         //total upgrades purchased, used in calculating price of future upgrades
   int starbucks;
   int buckazoids;

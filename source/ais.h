@@ -23,7 +23,7 @@ class ControlHuman : public Control {
 	int next;
 	int prev;
 	int closest;
-	int extra1, extra2, extra3, extra4, extra5;
+	int extra1, extra2, communicate, extra4, extra5;
 	int suicide;
 	public:
 	virtual void load(const char* inifile, const char* inisection);

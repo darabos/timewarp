@@ -316,7 +316,7 @@ void PlaybackLog::set_all_directions( char direction ) {
 
 
 
-static enum share_types {TYPE_CHAR, TYPE_SHORT, TYPE_INT};
+enum share_types {TYPE_CHAR, TYPE_SHORT, TYPE_INT};
 static const int max_share = 512;
 static int Nshare = 0;
 static int share_channel[max_share];

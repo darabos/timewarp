@@ -27,6 +27,8 @@ REGISTER_FILE
 #include "manim.h"
 #include "mview.h"
 
+#include "ais/ext_ai.h"
+
 
 /*------------------------------*
  *		Ship Class Registration *
@@ -339,6 +341,7 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	sprite_index = get_index(angle);
 
 	hashotspots = true;
+	ext_ai = NULL;
 }
 
 Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally_flag) :
@@ -436,6 +439,7 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	sprite_index = get_index(angle);
 
 	hashotspots = true;
+	ext_ai = NULL;
 }
 
 void Ship::death() {STACKTRACE
@@ -448,6 +452,7 @@ void Ship::death() {STACKTRACE
 
 Ship::~Ship() {STACKTRACE
 	delete spritePanel;
+	destroy_external_ai();
 }
 
 double Ship::getCrew()
@@ -560,6 +565,7 @@ void Ship::calculate()
 		this->target_next      = 1&&(nextkeys & keyflag::next);
 		this->target_prev      = 1&&(nextkeys & keyflag::prev);
 		this->target_closest   = 1&&(nextkeys & keyflag::closest);
+
         if (nextkeys & keyflag::suicide) {
             crew  = 0;
             play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
@@ -667,6 +673,15 @@ void Ship::calculate()
 	target_pressed = target_next | target_prev | target_closest;
 	if (control)
 		target = control->target;
+
+	// communication code
+	if (  (nextkeys & keyflag::communicate) && (target->exists ()) && (target->isShip()))
+	{
+		Ship * s = (Ship*)target;
+		if( s->ext_ai != NULL )
+			s->ext_ai->Dialog(this);
+	}
+	
 
 	calculate_turn_left();
 	calculate_turn_right();
@@ -945,6 +960,28 @@ double Ship::get_angle_ex() const
 ShipType *Ship::get_shiptype()
 {
 	return type;
+}
+
+/*! \brief add external ai script to ship 
+	\param script - script file
+*/
+void Ship::install_external_ai(const char* script)
+{
+	if (ext_ai != NULL)
+	{
+		delete ext_ai;
+	}
+	if (script == NULL) 
+		return;
+	ext_ai = new ExternalAI(this, script );
+}
+
+/*! \brief destroy_external ai */
+void Ship::destroy_external_ai()
+{
+	if (ext_ai != NULL)
+		delete ext_ai;
+	ext_ai = NULL;
 }
 
 

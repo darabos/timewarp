@@ -23,7 +23,7 @@ VPATH = source source/ais source/games source/games/triggers source/melee \
         source/newships source/other source/sc1ships source/sc2ships \
         source/sc3ships source/twgui source/util source/gamex \
         source/gamex/edit source/gamex/general source/gamex/stuff \
-        source/gamex/dialogs
+        source/gamex/dialogs source/jpgalleg
 
 FILELIST= ${shell find source -type f "(" -name "*.c" -o -name "*.cpp" ")"}
 BASE_NAMES = $(basename $(notdir $(FILELIST)))

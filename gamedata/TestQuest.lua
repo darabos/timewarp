@@ -18,7 +18,7 @@ function GAME_EVENT_ENTER_STATION( location, x, y )
 end
 
 function Reward()
-DialogStart "gamedata/pkunk-standing.bmp"
+DialogStart "gamedata/dialogs/pkunk.jpg"
 	DialogWrite "Congratulations, those bastards are all dead now! Take 20 bucks"
 	answer = DialogAnswer ( "Thanks!" )
 	AddBuckazoids(20);
@@ -27,14 +27,14 @@ DialogEnd()
 end
 
 function HurryLazyPlayer()
-DialogStart "gamedata/pkunk-standing.bmp"
+DialogStart "gamedata/dialogs/pkunk.jpg"
 	DialogWrite "Hurry, they are criminals!"
 	answer = DialogAnswer ( "I am off!!!" )
 DialogEnd()
 end
 
 
-DialogStart "gamedata/pkunk-standing.bmp"
+DialogStart "gamedata/dialogs/pkunk.jpg"
 function question1()
 	DialogWrite "Hello, my spiritual child. Kill Shofixti Scout for me."
 	answer = DialogAnswer("Why?", 

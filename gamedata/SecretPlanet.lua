@@ -26,7 +26,8 @@ function StrangeMessage()
 end
 
 function FirstDialog()
-	DialogStart "gamedata/human.bmp"
+	DialogStart "gamedata/dialogs/human.jpg"
+	DialogSetMusic "gamedata/dialogs/human.mod"
 		DialogWrite "We have intercepted hyperwave radio transmissions using old Hierarchy frequencies..."
 		DialogKeyPressed();
 		DialogWrite "... which are coming from the planet's located in this region of space.  Please investigate the matter"
@@ -50,8 +51,8 @@ function GAME_EVENT_ENTER_STATION( location, x, y )
 	
 		if matter_investigated == 0 then
 			-- Big Fun dialog
-		DialogStart "gamedata/spathi.bmp";
-			DialogSetMusic "gamedata/spathi.mod";
+		DialogStart "gamedata/dialogs/spathi.jpg";
+			DialogSetMusic "gamedata/dialogs/spathi.mod";
 			function Question1() -- STARTCONVERSATION
 				DialogWrite "What are you doing here? This planet is strictly off limits to -- I mean -- Hi, how would like to avoid killing me today?";
 				local answer = DialogAnswer ("We heard your transmissions and thought you might be Ur-Quans",
@@ -206,7 +207,7 @@ function GAME_EVENT_ENTER_STATION( location, x, y )
 			end
 			function Question13() -- LEING2
 				DialogWrite "I can't take it anymore!  I can't stand lieing to you, hunam!";
-				DialogSetMusic "gamedata/ur-quan.mod";
+				DialogSetMusic "gamedata/dialogs/urquan.mod";
 				DialogKeyPressed();
 				DialogWrite "We've been taken captive by the Ur-Quan!";
 				DialogKeyPressed();
@@ -214,7 +215,7 @@ function GAME_EVENT_ENTER_STATION( location, x, y )
 				DialogKeyPressed();
 				DialogWrite "Oh no!  .... are jamming ... can't ...";
 				DialogKeyPressed();
-				DialogSetAlienImage "gamedata/ur-quan.bmp"
+				DialogSetAlienImage "gamedata/dialogs/urquan.jpg"
 				DialogWrite "This transmission cannot be allowed.";
 				DialogKeyPressed();
 				DialogWrite "You are not welcome here.";
@@ -254,12 +255,12 @@ function GAME_EVENT_ENTER_STATION( location, x, y )
 				DialogKeyPressed();
 				DialogWrite "then we would not have this conflict.";
 				DialogKeyPressed();
-				DialogSetAlienImage "gamedata/spathi.bmp";
+				DialogSetAlienImage "gamedata/dialogs/spathi.jpg";
 				DialogWrite "I'm swtiching to another frequency, can you hear me hunam?";
 				DialogKeyPressed();
 				DialogWrite "Please don't let me die!  Tomorrow would be much better!";
 				DialogKeyPressed();
-				DialogSetAlienImage "gamedata/ur-quan.bmp";
+				DialogSetAlienImage "gamedata/dialogs/urquan.jpg";
 				DialogWrite "Be silent, Spathi.";
 				DialogKeyPressed();
 				DialogWrite "Your death will come soon enough.";
@@ -278,12 +279,12 @@ function GAME_EVENT_ENTER_STATION( location, x, y )
 				DialogKeyPressed();
 				DialogWrite "on which to train a vast army."
 				DialogKeyPressed();
-				DialogSetAlienImage "gamedata/spathi.bmp";
+				DialogSetAlienImage "gamedata/dialogs/spathi.jpg";
 				DialogWrite "Nooo!  Fwinda!"
 				DialogKeyPressed();
 				DialogWrite "I'll probably lose my pr0n collection too!";
 				DialogKeyPressed();
-				DialogSetAlienImage "gamedata/ur-quan.bmp";
+				DialogSetAlienImage "gamedata/dialogs/urquan.jpg";
 				DialogAnswer ("Hey creepy-looking slimey thing, um, the evil one of the two: you forgot that the Spathi are wimps!");
 				DialogWrite "While this is true,";
 				DialogKeyPressed();
@@ -362,16 +363,16 @@ function GAME_EVENT_ENTER_STATION( location, x, y )
 		end
 		if Complited == 0 then
 			-- Ur-quan boasting
-		DialogStart "gamedata/ur-quan.bmp"
-			DialogSetMusic "gamedata/ur-quan.mod";
+		DialogStart "gamedata/dialogs/urquan.jpg"
+			DialogSetMusic "gamedata/dialogs/urquan.mod";
 			DialogWrite ("We will destroy you our ships already on they way!!!");
 			DialogAnswer ("Ha");
 		DialogEnd();
 		end 
 		if Complited == 1 and Exist == 1 then
 		-- Dialog about capturing kohr-ah factory
-		DialogStart "gamedata/spathi.bmp"
-			DialogSetMusic "gamedata/spathi.mod";
+		DialogStart "gamedata/dialogs/spathi.jpg"
+			DialogSetMusic "gamedata/dialogs/spathi.mod";
 			DialogWrite ("Savior!!! We have Ur-quan ship factory here and now we leave it to you. It can produce Kohr-Ah Marauders!!!");
 			DialogKeyPressed();
 			DialogWrite ("We are off to Spathiwa, we will send you bill for factory from there");

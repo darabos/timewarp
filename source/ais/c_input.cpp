@@ -110,22 +110,22 @@ void calibrate_joysticks() {
 */
 void ControlHuman::load (const char *inifile, const char *inisection) {
 	set_config_file (inifile);
-	thrust  = get_config_int(inisection, "Thrust",      0);
-	back    = get_config_int(inisection, "Backwards",   0);
-	left    = get_config_int(inisection, "Left",        0);
-	right   = get_config_int(inisection, "Right",       0);
-	fire    = get_config_int(inisection, "Fire",        0);
-	altfire = get_config_int(inisection, "AltFire",     0);
-	special = get_config_int(inisection, "Special",     0);
-	next    = get_config_int(inisection, "Next_Target", 0);
-	prev    = get_config_int(inisection, "Prev_Target", 0);
-	closest = get_config_int(inisection, "Closest_Target", 0);
-	extra1  = get_config_int(inisection, "Extra1", 0);
-	extra2  = get_config_int(inisection, "Extra2", 0);
-	extra3  = get_config_int(inisection, "Extra3", 0);
-	extra4  = get_config_int(inisection, "Extra4", 0);
-	extra5  = get_config_int(inisection, "Extra5", 0);
-	suicide = get_config_int(inisection, "Extra6", 0);
+	thrust      = get_config_int(inisection, "Thrust",      0);
+	back        = get_config_int(inisection, "Backwards",   0);
+	left        = get_config_int(inisection, "Left",        0);
+	right       = get_config_int(inisection, "Right",       0);
+	fire        = get_config_int(inisection, "Fire",        0);
+	altfire     = get_config_int(inisection, "AltFire",     0);
+	special     = get_config_int(inisection, "Special",     0);
+	next        = get_config_int(inisection, "Next_Target", 0);
+	prev        = get_config_int(inisection, "Prev_Target", 0);
+	closest     = get_config_int(inisection, "Closest_Target", 0);
+	extra1      = get_config_int(inisection, "Extra1", 0);
+	extra2      = get_config_int(inisection, "Extra2", 0);
+	communicate = get_config_int(inisection, "Communicate", 0);
+	extra4      = get_config_int(inisection, "Extra4", 0);
+	extra5      = get_config_int(inisection, "Extra5", 0);
+	suicide     = get_config_int(inisection, "Extra6", 0);
 	return;
 }
 /*! \brief Save players key
@@ -146,7 +146,7 @@ void ControlHuman::save (const char *inifile, const char *inisection) {
 	set_config_int(inisection, "Closest_Target", closest);
 	set_config_int(inisection, "Extra1", extra1);
 	set_config_int(inisection, "Extra2", extra2);
-	set_config_int(inisection, "Extra3", extra3);
+	set_config_int(inisection, "Communicate", communicate);
 	set_config_int(inisection, "Extra4", extra4);
 	set_config_int(inisection, "Extra5", extra5);
 	set_config_int(inisection, "Extra6", suicide);
@@ -174,7 +174,7 @@ int ControlHuman::think() {
 	if (key_pressed(extra1)) r |= keyflag::extra1;
 	if (key_pressed(extra2))
 		r |= keyflag::extra2;
-	if (key_pressed(extra3)) r |= keyflag::extra3;
+	if (key_pressed(communicate)) r |= keyflag::communicate;
 	if (key_pressed(extra4)) r |= keyflag::extra4;
 	if (key_pressed(extra5)) r |= keyflag::extra5;
 	if (key_pressed(suicide)) r |= keyflag::suicide;
@@ -265,8 +265,8 @@ void ControlHuman::setup() {
 		s += sprintf ( s, "Extra2: ");
 		key_to_description ( extra2, s );
 		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Extra3: ");
-		key_to_description ( extra3, s );
+		s += sprintf ( s, "Communicate: ");
+		key_to_description ( communicate, s );
 		s = dialog_string[index]; index += 1;
 		s += sprintf ( s, "Extra4: ");
 		key_to_description ( extra4, s );
@@ -299,22 +299,22 @@ void ControlHuman::setup() {
 		}
 		if (t == KEY_ESC) i = KEY_DIALOG_CANCEL;
 		switch (i) {
-			case 1:  left    = t; break;
-			case 2:  right   = t; break;
-			case 3:  thrust  = t; break;
-			case 4:  back    = t; break;
-			case 5:  fire    = t; break;
-			case 6:  special = t; break;
-			case 7:  altfire = t; break;
-			case 8:  next    = t; break;
-			case 9:  prev    = t; break;
-			case 10: closest = t; break;
-			case 11: extra1 = t; break;
-			case 12: extra2 = t; break;
-			case 13: extra3 = t; break;
-			case 14: extra4 = t; break;
-			case 15: extra5 = t; break;
-			case 16: suicide = t; break;
+			case 1:  left        = t; break;
+			case 2:  right       = t; break;
+			case 3:  thrust      = t; break;
+			case 4:  back	     = t; break;
+			case 5:  fire        = t; break;
+			case 6:  special     = t; break;
+			case 7:  altfire     = t; break;
+			case 8:  next        = t; break;
+			case 9:  prev        = t; break;
+			case 10: closest     = t; break;
+			case 11: extra1      = t; break;
+			case 12: extra2      = t; break;
+			case 13: communicate = t; break;
+			case 14: extra4      = t; break;
+			case 15: extra5      = t; break;
+			case 16: suicide     = t; break;
 			case KEY_DIALOG_OK:  save("scp.ini", getDescription()); return;
 			case KEY_DIALOG_CANCEL: load("scp.ini", getDescription()); return;
 			case KEY_DIALOG_CALIBRATE: calibrate_joysticks(); break;

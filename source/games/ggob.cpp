@@ -164,6 +164,17 @@ void GobGame::quit(const char *message)
 //				Gob stuff
 ////////////////////////////////////////////////////////////////////////
 
+/*! \brief save game */
+/*
+void GobGame::save_game2()
+{
+  // this is very hard task and unfortunatly it does not support by program architecture
+
+}
+*/
+
+
+
 /*! \brief Player who kill asteroid get his bukazoid.
 \param source ??????
 \param normal normal damage 
@@ -173,7 +184,7 @@ void GobGame::quit(const char *message)
 int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double direct) {
 	STACKTRACE;
 
-		if (!exists()) return 0;
+	if (!exists()) return 0;
 	int i = Asteroid::handle_damage(source, normal, direct);
 	if (!exists()) {
 		GobPlayer *p = gobgame->get_player(source);
@@ -186,9 +197,8 @@ int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double dir
 void GobAsteroid::death () {
 	STACKTRACE;
 
-
-		Animation *a = new Animation(this, pos,
-		explosion, 0, explosion->frames(), time_ratio, get_depth());
+	Animation *a = new Animation(this, pos,
+	explosion, 0, explosion->frames(), time_ratio, get_depth());
 	a->match_velocity(this);
 	game->add(a);
 
@@ -200,7 +210,7 @@ void GobAsteroid::death () {
 void GobGame::preinit() {
 	STACKTRACE;
 
-		Game::preinit();
+	Game::preinit();
 
 	gobplayers = 0;
 	gobplayer = NULL;
@@ -225,7 +235,7 @@ void GobGame::preinit() {
 void GobGame::add_gobplayer(Control *control) {
 	STACKTRACE;
 
-		int i = gobplayers;
+	int i = gobplayers;
 	gobplayers += 1;
 	gobplayer = (GobPlayer**) realloc(gobplayer, sizeof(GobPlayer*) * gobplayers);
 	gobplayer[i] = new GobPlayer();
@@ -233,6 +243,7 @@ void GobGame::add_gobplayer(Control *control) {
 	add_focus(control, control->channel);
 	return;
 }
+
 /*! \brief Handle player death
 At this point divinefavor upgrade can save player from such fate
 \param killer ???
@@ -277,17 +288,7 @@ play
 void GobGame::init(Log *_log) {
 	STACKTRACE;
 
-		int i;
-	/*	switch(_log->type) {
-	//		case Log::log_net1server:
-	//		case Log::log_net1client: {
-	//			error("unsupported game/log type");
-	//		}
-	//		break;
-	default: {
-	}
-	break;
-	}*/
+	int i;
 	Game::init(_log);
 
 	log_file("server.ini");
@@ -297,8 +298,6 @@ void GobGame::init(Log *_log) {
 	size = Vector2(24000, 24000);
 
 	enemy_team = new_team();
-
-	//	set_resolution(videosystem.width, videosystem.height);
 
 
 	DATAFILE *tmpdata; 
@@ -425,7 +424,6 @@ void GobGame::init(Log *_log) {
 	next_add_new_enemy_time = 1000;
 	add_new_enemy();
 	this->change_view("Hero");
-	//view = get_view ( "Hero", NULL );
 	view_locked = true;
 	view->window->locate(
 		0,0,
@@ -439,6 +437,7 @@ void GobGame::init(Log *_log) {
 	quest_source->GetQuest("gamedata/SecretPlanet.lua", gobplayer[0]);
 	return;
 }
+
 /*! \brief Free game resources */
 GobGame::~GobGame() {
 	delete stationSprite[0];
@@ -613,7 +612,7 @@ void GobGame::add_new_enemy (std::string type, Vector2* pos )
 	STACKTRACE;
 
 	
-	static char *enemy_types[] = {
+	static const char *enemy_types[] = {
 		"thrto", "zfpst", "shosc", "dragr", 
 			"ktesa", "kahbo", "ilwsp", 
 			"syrpe", "kzedr", "mmrxf", 
@@ -623,6 +622,26 @@ void GobGame::add_new_enemy (std::string type, Vector2* pos )
 	};
 	const int num_enemy_types = sizeof(enemy_types)/sizeof(enemy_types[0]);
 
+	std::map <std::string, const char *> dialogMap;
+	dialogMap["thrto"] = "gamedata/thraddash.lua";
+	dialogMap["zfpst"] = "gamedata/zoqfot.lua";
+	dialogMap["shosc"] = "gamedata/shofixty.lua";
+	dialogMap["dragr"] = NULL;
+	dialogMap["ktesa"] = NULL;
+	dialogMap["kahbo"] = NULL;
+	dialogMap["ilwsp"] = "gamedata/ilwrath.lua";
+	dialogMap["syrpe"] = "gamedata/syreen.lua";
+	dialogMap["kzedr"] = "gamedata/urquan.lua";
+	dialogMap["mmrxf"] = NULL;
+	dialogMap["lk_sa"] = NULL;
+	dialogMap["druma"] = "gamedata/druuge.lua";
+	dialogMap["earcr"] = "gamedata/human.lua";
+	dialogMap["yehte"] = "gamedata/yehat.lua";
+	dialogMap["herex"] = NULL;
+	dialogMap["virli"] = NULL;
+	dialogMap["chmav"] = "gamedata/chmmr.lua"; 
+	dialogMap["plopl"] = NULL;
+	dialogMap["narlu"] = NULL;
 
 	if (gobenemies == max_enemies) return;
 	GobEnemy *ge = new GobEnemy();
@@ -636,16 +655,6 @@ void GobGame::add_new_enemy (std::string type, Vector2* pos )
 	base = iround(base / 1.5);
 	int e = 99999;
 	while (e >= num_enemy_types) {
-		/*
-		base	time	low		high
-
-		1		.5		-0.1	3.7
-		10	5		2.62	7.47
-		50	25		5.89	14.24
-		100	50		8.1	17.3
-		200	100		11.01	26.49
-
-		*/
 		e = base;
 		e = random() % (e + 2);
 		e = random() % (e + 3);
@@ -653,7 +662,6 @@ void GobGame::add_new_enemy (std::string type, Vector2* pos )
 			e = random() % num_enemy_types;
 		if (e > sqrt( 3.0*base) + 2) 
 			e = random() % (e + 1);
-		//if (e > num_enemy_types * 2) e = e % num_enemy_types;
 		e = e;
 	}
 
@@ -675,10 +683,24 @@ void GobGame::add_new_enemy (std::string type, Vector2* pos )
 	else
 		ship = create_ship(channel_server, enemy_types[e], "WussieBot", *pos, random(PI2), enemy_team);
 
-	if (!strcmp(enemy_types[e], "shosc")) ((ShofixtiScout*)ship)->specialDamage /= 4;
-	if (!strcmp(enemy_types[e], "zfpst")) ((ZoqFotPikStinger*)ship)->specialDamage /= 2;
-	if (!strcmp(enemy_types[e], "syrpe")) ((SyreenPenetrator*)ship)->specialDamage /= 2;
-	if (!strcmp(enemy_types[e], "dragr")) ship->special_drain *= 2;
+	ship->install_external_ai(dialogMap[std::string(enemy_types[e])]);
+
+	if (!strcmp(enemy_types[e], "shosc")) 
+	{
+		((ShofixtiScout*)ship)->specialDamage /= 4;
+	}
+	if (!strcmp(enemy_types[e], "zfpst")) 
+	{
+		((ZoqFotPikStinger*)ship)->specialDamage /= 2;
+	}
+	if (!strcmp(enemy_types[e], "syrpe")) 
+	{
+		((SyreenPenetrator*)ship)->specialDamage /= 2;
+	}
+	if (!strcmp(enemy_types[e], "dragr")) 
+	{
+		ship->special_drain *= 2;
+	}
 	if (!strcmp(enemy_types[e], "chmav")) {
 		((ChmmrAvatar*)ship)->weaponDamage += 1;
 		((ChmmrAvatar*)ship)->weaponDamage /= 2;
@@ -727,7 +749,6 @@ void GobEnemy::died(SpaceLocation *what) {
 
 /*! \brief Free player resources */
 GobPlayer::~GobPlayer() {
-	free (pair_list);
 }
 
 /*! brief Init player 
@@ -743,8 +764,6 @@ void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 	kills = 0;
 	value_starbucks = 0;
 	value_buckazoids = 0;
-	num_pairs = 0;
-	pair_list = NULL;
 	ship = NULL;
 	panel = NULL;
 	control = c;
@@ -761,52 +780,6 @@ void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 	return;
 }
 
-/*! \brief Part of map<const char *, int> implementation, to be removed */
-GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
-	STACKTRACE;
-
-	if (!pair_list) return NULL;
-	int i;
-	for (i = 0; i < num_pairs; i += 1) {
-		if (!strcmp(pair_list[i].id, id)) 
-			return &pair_list[i];
-	}
-	return NULL;
-}
-
-/*! \brief Part of map<const char *, int> implementation, to be removed */
-void GobPlayer::_add_pair(const char *id, int value) {
-	STACKTRACE;
-	
-	if (_get_pair(id)) {
-		error("GobPlayer::_add_pair - \"%s\" already exists", id);
-		return;
-	}
-	pair_list = (pair*)realloc(pair_list, sizeof(pair) * (num_pairs+1));
-	pair_list[num_pairs].id = strdup(id);
-	pair_list[num_pairs].value = value;
-	num_pairs += 1;
-	return;
-}
-
-/*! \brief Part of map<const char *, int> implementation, to be removed */
-int GobPlayer::read_pair(const char *id) {
-	STACKTRACE;
-
-	pair *p = _get_pair(id);
-	if (p) return p->value;
-	return -1;
-}
-
-/*! \brief Part of map<const char *, int> implementation, to be removed */
-void GobPlayer::write_pair(const char *id, int value) {
-	STACKTRACE;
-
-	pair *p = _get_pair(id);
-	if (p) p->value = value;
-	else _add_pair(id, value);
-	return;
-}
 
 /*! \brief Conform purch, take charge for purch upgrade
 \param name upgrade name
@@ -1079,15 +1052,6 @@ void GobStation::inflict_damage(SpaceObject *other) {
 	if (!p) return;
 
 	gobgame->pause();
-	char buffy[256];
-	int a;
-	sprintf(buffy, "First visited station %s at time", build_type);
-	a = p->read_pair(buffy);
-	if (a == -1) p->write_pair(buffy, game->game_time);
-	sprintf(buffy, "Visited station %s N times", build_type);
-	a = p->read_pair(buffy);
-	if (a == -1) a = 0;
-	p->write_pair(buffy, a+1);
 
 	EventEnterStation e;
 	e.player  = p;
@@ -1100,8 +1064,6 @@ void GobStation::inflict_damage(SpaceObject *other) {
 	gobgame->unpause();
 	return;
 }
-
-
 
 int num_upgrade_indexes;
 int upgrade_index[999];
@@ -1335,21 +1297,3 @@ void RainbowRift::calculate() {
 
 REGISTER_GAME(GobGame, "GOB")
 
-
-
-/* intended upgrades:
-
-faster marines       == faster Orz Marines, cost 4s
-upgrade battle armor == tougher Orz Marines, cost 4s/4b
-improve range        == long range Orz cannons, cost 3s
-regeneration         == crew regeneration for Orz, cost 10s/25b, only purchasable once
-sharper shurikens    == +1 damage for Kohr-Ah blades, cost 5s
-faster shurikens     == higher velocity for Kohr-Ah blades, cost 4s
-larger corona        == longer range for Kohr-Ah FRIED, cost 15s, only purchasable once
-hotter corona        == double damage for Kohr-Ah FRIED, cost 10s, only purchasable once
-divine favor         == pkunk respawn, only available from one base, cost 48s/0b, only purchasable once, kept when ship is sold
-sentinel system      == Chmmr ZapSats, only available from one base, cost 30s/30b
-
-long range scanners  == can zoom farther out, gives radar, only available from one base, cost 8s/20b
-
-*/

@@ -339,6 +339,14 @@ SOURCE=.\source\ais\c_other.cpp
 
 SOURCE=.\source\ais\c_wussie.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\source\ais\ext_ai.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ais\ext_ai.h
+# End Source File
 # End Group
 # Begin Group "Games"
 
@@ -1290,6 +1298,34 @@ SOURCE=.\source\twgui\utils.cpp
 # Begin Source File
 
 SOURCE=.\source\twgui\utils.h
+# End Source File
+# End Group
+# Begin Group "jpgalleg"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\jpgalleg\decode.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jpgalleg\encode.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jpgalleg\internal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jpgalleg\io.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jpgalleg\jpgalleg.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jpgalleg\jpgalleg.h
 # End Source File
 # End Group
 # Begin Source File

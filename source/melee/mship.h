@@ -3,27 +3,27 @@
 
 #include "mframe.h"
 
-
+class ExternalAI;
 typedef short KeyCode;
 
 struct keyflag {
 	enum { 
-		left       =	(1<<0),
-		right      =	(1<<1),
-		thrust     =	(1<<2),
-		back       =	(1<<3),
-		fire       =	(1<<4),
-		special    =	(1<<5),
-		altfire    =	(1<<6),
-		next       =	(1<<7),
-		prev       =	(1<<8),
-		closest    =	(1<<9),
-		extra1     =   (1<<10),
-		extra2     =   (1<<11),
-		extra3     =   (1<<12),
-		extra4     =   (1<<13),
-		extra5     =   (1<<14),
-		suicide    =   (1<<15),
+		left            =	(1<<0),
+		right           =	(1<<1),
+		thrust          =	(1<<2),
+		back            =	(1<<3),
+		fire            =	(1<<4),
+		special         =	(1<<5),
+		altfire         =	(1<<6),
+		next            =	(1<<7),
+		prev            =	(1<<8),
+		closest         =	(1<<9),
+		extra1          =   (1<<10),
+		extra2	        =   (1<<11),
+		communicate     =   (1<<12),
+		extra4          =   (1<<13),
+		extra5          =   (1<<14),
+		suicide         =   (1<<15),
 		};
 	};
 
@@ -118,6 +118,8 @@ class Ship : public SpaceObject {
 
 	SpaceSprite *spritePanel;
 
+	ExternalAI * ext_ai;
+
 	int update_panel;
 
 	KeyCode nextkeys;
@@ -132,6 +134,7 @@ class Ship : public SpaceObject {
 	char target_next;
 	char target_prev;
 	char target_closest;
+	char communicate;
 
 	char target_pressed;
 	Control *control;
@@ -139,7 +142,7 @@ class Ship : public SpaceObject {
 	friend class ShipPanel;
 
 	Ship(SpaceLocation *creator, Vector2 opos, double shipAngle, 
-			SpaceSprite *osprite) ;
+		SpaceSprite *osprite) ;
 	Ship(Vector2 opos, double shipAngle, ShipData *shipData, 
 			unsigned int code);
 	virtual SpaceLocation *get_ship_phaser() ;
@@ -164,6 +167,9 @@ class Ship : public SpaceObject {
 
 	virtual void animate(Frame *frame);
 	virtual void animate_predict(Frame *frame, int time);
+
+	virtual void install_external_ai(const char* script);
+	virtual void destroy_external_ai();
 };
 
 
