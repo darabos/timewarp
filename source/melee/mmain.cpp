@@ -808,6 +808,9 @@ void NormalGame::check_file(const char *id, int iplayer)
 
 	ShipType *type = shiptype(id);
 
+	// THIS CAN CAUSE A CRASH, cause this is a local value !!
+	// this should be under direct.set ... and should be shared ...
+	// actually, perhaps this should be checked for all players ...
 	if (type->data->islocked())
 		return;		// it is already loaded, doesn't make sense to compare anymore
 
@@ -876,6 +879,8 @@ void NormalGame::choose_new_ships()
 	char tmp[40];
 	int i;
 	pause();
+
+	showshademaps = true;
 
 	
 	message.out("Selecting ships...", 1000);
@@ -955,7 +960,11 @@ void NormalGame::choose_new_ships()
 
 
 		const char *id = fleet->getShipType(slot[i])->id;
-		check_file(id, i);
+
+		// there's a desynch, caused by the locked() check which is a local property
+		// also, it assumes 2 players, doesn't check all clients I think...
+		// so, I'll just disable it for now (geo).
+//		check_file(id, i);
 		
 
 		Ship *s = create_ship(fleet->getShipType(slot[i])->id, p->control, random(size), random(PI2), p->team);
