@@ -71,9 +71,9 @@ TimedShot::TimedShot(SpaceLocation *creator, Vector2 orelpos, double orelangle, 
 		double ovel, double otime, double oarmour, double odamage)
 :
 SpaceObject(creator, 0, 0, osprite),
+armour(oarmour),
 existtime(0),
-maxtime(otime),
-armour(oarmour)
+maxtime(otime)
 {
 	angle = creator->angle + orelangle;
 	pos = creator->pos + rotate(orelpos, creator->angle - PI/2);

@@ -659,7 +659,7 @@ void RaceManager::add(RaceInfo *ri)
 
 
 
-char **evildir = (".", "..", "CVS", 0);
+const char * evildir[] = {".", "..", "CVS", NULL};
 
 bool isevildir(char *name)
 {

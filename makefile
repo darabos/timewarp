@@ -16,7 +16,7 @@
 
 CC = g++
 LD = g++
-CFLAGS = -fsigned-char -Wall 
+CFLAGS = -fsigned-char -Wall -Wno-deprecated-declarations
 OBJDIR = obj
 NAME = TimeWarp
 

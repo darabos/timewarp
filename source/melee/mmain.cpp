@@ -604,7 +604,7 @@ void NormalGame::download_file(char *filename)
 
 
 	// first you've to check if you're synched
-	int k = 0;
+	//	int k = 0;
 
 	// this is probably enough --> the server has sent all data to you.
 	// there's nothing you've to send to the server, so it's ok.

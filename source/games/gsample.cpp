@@ -374,7 +374,8 @@ void SampleGame3::calculate()
 {
 	Game::calculate();
 	if (respawn_time == -1) {
-		int i, humans = 0, enemies = 0;
+	  int i;
+		unsigned int humans = 0, enemies = 0;
 		for (i = 0; i < gametargets.N; i += 1) {
 			if (gametargets.item[i]->get_team() == humans) humans += 1;
 			if (gametargets.item[i]->get_team() == enemies) enemies += 1;
@@ -481,7 +482,7 @@ void SampleGame3::init(Log *_log) {
 	int i;
 	for (i = 0; i < 7; i += 1) add(new Asteroid());
 
-	if (p_local = 0) fleet.load("fleets/all.scf", "Fleet");
+	if (p_local == 0) fleet.load("fleets/all.scf", "Fleet");
 	log_fleet(channel_server, &fleet);
 	//this time, instead of transmitting the fleet file over the network and then loading 
 	//it on both sides

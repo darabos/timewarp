@@ -484,7 +484,7 @@ void TextInfoArea::subanimate()
 		int k;
 		for ( k = 0; k < L; ++k )
 		{
-			if (txt[k] < 20 || txt[k] > 127 )
+			if ((unsigned char)txt[k] < 20 || (unsigned char)txt[k] > 127 )
 				txt[k] = ' ';
 		}
 
@@ -835,7 +835,7 @@ void TextEditBox::subanimate()
 		int k;
 		for ( k = 0; k < L; ++k )
 		{
-			if (txt[k] < 20 || txt[k] > 127 )
+			if ((unsigned char)txt[k] < 20 || (unsigned char)txt[k] > 127 )
 				txt[k] = ' ';
 		}
 
@@ -848,7 +848,6 @@ void TextEditBox::subanimate()
 	int xc, yc;
 	textinfo->getxy(charpos, &xc, &yc);
 	yc /= textinfo->Htxt;
-	//yc = scroll.yselect;
 	
 	int h;
 	h = textinfo->Htxt;

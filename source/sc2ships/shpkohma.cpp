@@ -125,9 +125,9 @@ KohrAhBlade::KohrAhBlade(Vector2 opos, double oangle, double ov,
   SpaceSprite *osprite, int ofcount, int ofsize, bool _persists) :
   AnimatedShot(oship, opos, oangle, ov, odamage, -1.0, oarmour, oship,
     osprite, ofcount, ofsize),
+  persist(_persists),
   passive(FALSE),
-  passiveRange(orange),
-  persist(_persists)
+  passiveRange(orange)
 {
   explosionSprite     = data->spriteWeaponExplosion;
   explosionFrameCount = 20;

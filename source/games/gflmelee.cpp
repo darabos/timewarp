@@ -494,7 +494,7 @@ void FlMelee::init(Log *_log)
 	}
 	*/
 
-	if (p_local = 0)
+	if (p_local == 0)
 	{
 		start_menu(allyfleet);
 	}

@@ -409,17 +409,18 @@ void Control::_event(Event *e) {STACKTRACE;
 	//add code for lag increase / decrease here
 	return;
 }
-Control::Control(const char *name, int _channel) : temporary(false), target_sign_color(255), 
-	already(0), channel(_channel), ship(NULL), 
-	target(NULL), index(-1), always_random(0), keys(0), _prediction_keys(NULL) 
-	{STACKTRACE;
+
+Control::Control(const char *name, int _channel) : temporary(false), target_sign_color(255), already(0), channel(_channel), 
+	  ship(NULL), keys(0),
+	target(NULL), index(-1), always_random(0),  _prediction_keys(NULL) 
+	{STACKTRACE
 	id |= ID_CONTROL;
 	attributes |= ATTRIB_SYNCHED;
 	if (channel != channel_none) {
 		attributes |= ATTRIB_LOGGED;
 		_prediction_keys = new KeyCode[_prediction_keys_size];
 		_prediction_keys_index = 0;
-		if (channel & _channel_buffered) {						// ????????????
+		if (channel & _channel_buffered) {
 			error("Control::Control - invalid channel!");
 		}
 	}

@@ -661,9 +661,9 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 	T = new TWindow("interfaces/multiplayer", 50,50, screen);
 
 	int psize;
-	psize = 40 * T->scale;
+	psize = iround(40 * T->scale);
 	FONT *usefont1 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0);
-	psize = 20 * T->scale;
+	psize = iround(20 * T->scale);
 	FONT *usefont2 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0);
 	
 	Button *b_accept, *b_cancel;
