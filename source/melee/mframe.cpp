@@ -1346,7 +1346,8 @@ int Physics::checksum() {STACKTRACE
 	//prepare();
 	for (i = 0; i < num_items; i += 1)
 	{
-		if (!item[i]->detectable()) continue;
+		//if (!item[i]->detectable()) continue;
+		if (!(item[i]->attributes & ATTRIB_SYNCHED)) continue;
 
 		Vector2 n = item[i]->normal_pos();
 		g += iround(n.x * sqrt(47+i+g));
