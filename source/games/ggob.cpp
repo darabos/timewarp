@@ -33,10 +33,12 @@ REGISTER_FILE
 #include "../sc1ships.h"
 #include "../sc2ships.h"
 
-#include "../other/gup.h"
+#include "other/gup.h"
 
-#include "../other/configrw.h"
+#include "other/configrw.h"
 
+
+#include "ais/ext_ai.h"
 
 void GobGame::config(bool option)
 {
@@ -339,13 +341,13 @@ void GobGame::init(Log *_log) {
 
 	num_planets = 0;
 	i = 0;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Supox");
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Supox", "gamedata/supox_station.lua");
 	i = 1;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Orz");
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Orz", "gamedata/orz_station.lua");
 	i = 2;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Kohr-Ah");
-	i = random() % 3;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i], "Utwig");
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Kohr-Ah", "gamedata/korah_station.lua");
+	i = random(3);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i], "Utwig","gamedata/utwig_station.lua");
 
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 
@@ -466,7 +468,13 @@ GobGame::~GobGame() {
 \param background ???
 \param sname station name (used for station identification )
 */
-void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background, std::string sname) {
+void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, 
+									  int planet_index, 
+									  SpaceSprite *station_sprite, 
+									  const char *builds, 
+									  const char *background, 
+									  std::string sname,
+									  std::string commander ) {
 	STACKTRACE;
 
 		Planet *p = new Planet (size/2, planet_sprite, planet_index);
@@ -480,6 +488,8 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 
 	GobStation *gs = new GobStation(station_sprite, p, builds, 
 		background, sname );
+	gs->install_external_ai(commander.c_str());
+
 	gs->collide_flag_sameship = ALL_LAYERS;
 	gs->collide_flag_sameteam = ALL_LAYERS;
 	gs->collide_flag_anyone = ALL_LAYERS;
@@ -572,8 +582,12 @@ void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 
 	GobPlayer *p = this->get_player(who);
 	if (p && (p->ship == who)) { //Player died
+		EventPlayerDied esd;
+		esd.player = p;
+		gobgame->GenerateEvent(&esd);
 		p->died(source);
 	}
+
 	int i = get_enemy_index(who);
 	if ((i != -1) && (gobenemy[i]->ship == who)) {
 		GobEnemy *e = gobenemy[i];
@@ -922,19 +936,22 @@ GobStation::~GobStation()
 {
 }
 
-#define STATION_DIALOG_DEPART  0
-#define STATION_DIALOG_UPGRADE 1
-#define STATION_DIALOG_NEWSHIP 2
-#define STATION_DIALOG_REPAIR  3
-#define STATION_DIALOG_QUEST   4
-#define STATION_DIALOG_SAVE    5
+enum {
+ STATION_DIALOG_DEPART = 0,
+ STATION_DIALOG_UPGRADE, 
+ STATION_DIALOG_NEWSHIP, 
+ STATION_DIALOG_REPAIR,  
+ STATION_DIALOG_COMMANDER, 
+ STATION_DIALOG_SAVE,    
+};
+
 static DIALOG station_dialog[] =
 {// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
 	{ d_button_proc,     385,  50,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Depart Station" , NULL, NULL },//STATION_DIALOG_DEPART
 	{ my_d_button_proc,  385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },//STATION_DIALOG_UPGRADE
 	{ my_d_button_proc,  385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },//STATION_DIALOG_NEWSHIP
 	{ my_d_button_proc,  385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },//STATION_DIALOG_REPAIR
-	{ my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },//STATION_DIALOG_QUEST
+	{ my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Commander" , NULL, NULL },//STATION_DIALOG_COMMANDER
 	{ my_d_button_proc,  385,  250,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Save Game" , NULL, NULL },//STATION_DIALOG_SAVE
 	{ d_text_proc,       185,  420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
 	{ d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
@@ -979,7 +996,7 @@ void GobStation::station_screen(GobPlayer *s) {
 		buy_new_ship_menu(s);
 								 }
 								 break;
-	case STATION_DIALOG_REPAIR: {
+	case STATION_DIALOG_REPAIR: { 
 		if (s->ship->crew == s->ship->crew_max) {
 			if (game->is_local(s->channel)) 
 				alert("You don't need repairs", "", "", "Oh, okay", "I knew that", 0, 0);
@@ -990,36 +1007,43 @@ void GobStation::station_screen(GobPlayer *s) {
 		if (game->is_local(s->channel)) 
 			p = alert3("Which would you prefer", "to pay for your repairs", "", "1 &Starbuck", "1 &Buckazoid", "&Nothing!", 's', 'b', 'n');
 		game->log_int(s->channel, p);
-		switch (p) {
-	case 1: {
-		if (s->starbucks) {
-			s->starbucks -= 1;
-			s->ship->crew = s->ship->crew_max;
-		}
-		else {
-			if (game->is_local(s->channel)) 
-				alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
-		}
-			}
+		switch (p) 
+		{
+			case 1:
+				if (s->starbucks) 
+				{
+					s->starbucks -= 1;
+					s->ship->crew = s->ship->crew_max;
+				}
+				else 
+				{
+					if (game->is_local(s->channel)) 
+						alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
+				}
+				break;
+			case 2: 
+				if (s->buckazoids) 
+				{
+					s->buckazoids -= 1;
+					s->ship->crew = s->ship->crew_max;
+				}
+				else 
+				{
+					if (game->is_local(s->channel)) 
+						alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
+				}
 			break;
-	case 2: {
-		if (s->buckazoids) {
-			s->buckazoids -= 1;
-			s->ship->crew = s->ship->crew_max;
+			case 3: 
+				r = STATION_DIALOG_DEPART;
+				break;
 		}
-		else {
-			if (game->is_local(s->channel)) 
-				alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
 		}
-			}
-			break;
-	case 3: {
-		r = STATION_DIALOG_DEPART;
-			}
-			break;
-		}
-								}
-								break;
+		break;
+
+	case STATION_DIALOG_COMMANDER:
+		if (ext_ai)
+			ext_ai->Dialog(s->ship);
+		break;
 
 	case STATION_DIALOG_SAVE:
 		{
@@ -1027,13 +1051,7 @@ void GobStation::station_screen(GobPlayer *s) {
 			gobgame->save_game();
 		}
 		break;
-	
-	case STATION_DIALOG_QUEST:
-		// experiment code
-		EventAskForQuest e;
-		e.player = s;
-		gobgame->GenerateEvent(&e);
-		break;
+
 		}
 		if (r == STATION_DIALOG_DEPART) break;
 	}

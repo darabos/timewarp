@@ -16,6 +16,8 @@ REGISTER_FILE
 #include "mship.h"
 #include "mcbodies.h"
 
+#include "ais/ext_ai.h"
+
 int total_presences;
 
 #define ANIMATE_BUFFER_SIZE 2048
@@ -660,7 +662,12 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	id = SPACE_OBJECT;
 
 	isblockingweapons = true;
+	ext_ai = NULL;
 	}
+SpaceObject::~SpaceObject()
+{
+	destroy_external_ai();
+}
 
 void SpaceObject::animate(Frame *space) {STACKTRACE
 	sprite->animate(pos, sprite_index, space);
@@ -795,6 +802,28 @@ void SpaceObject::death() {STACKTRACE
 		physics->object_died(this, NULL);
 		attributes &= ~ ATTRIB_NOTIFY_ON_DEATH;
 	}
+}
+
+/*! \brief add external ai script to ship 
+	\param script - script file
+*/
+void SpaceObject::install_external_ai(const char* script)
+{
+	if (ext_ai != NULL)
+	{
+		delete ext_ai;
+	}
+	if (script == NULL) 
+		return;
+	ext_ai = new ExternalAI(this, script );
+}
+
+/*! \brief destroy_external ai */
+void SpaceObject::destroy_external_ai()
+{
+	if (ext_ai != NULL)
+		delete ext_ai;
+	ext_ai = NULL;
 }
 
 SpaceLine::SpaceLine(SpaceLocation *creator, Vector2 lpos, double langle, 

@@ -3,7 +3,6 @@
 
 #include "mframe.h"
 
-class ExternalAI;
 typedef short KeyCode;
 
 struct keyflag {
@@ -118,7 +117,6 @@ class Ship : public SpaceObject {
 
 	SpaceSprite *spritePanel;
 
-	ExternalAI * ext_ai;
 
 	int update_panel;
 
@@ -167,9 +165,6 @@ class Ship : public SpaceObject {
 
 	virtual void animate(Frame *frame);
 	virtual void animate_predict(Frame *frame, int time);
-
-	virtual void install_external_ai(const char* script);
-	virtual void destroy_external_ai();
 };
 
 

@@ -54,6 +54,10 @@ unsigned int EventAskForQuest::GetEventType()
 	return GAME_EVENT_ASKFORQUEST;
 }
 
+unsigned int EventPlayerDied::GetEventType()
+{
+	return GAME_EVENT_PLAYER_DIED;
+}
 
 EventListner::EventListner()
 {

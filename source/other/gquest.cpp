@@ -91,6 +91,8 @@ void Quest::Process()
 	if( random()%50 )
 		return;
 
+	ASSERT(gob_player->ship);
+
 	// dirty hack, only for experiment
 	g_player = gob_player;
 
@@ -313,6 +315,7 @@ QuestSource::QuestSource()
 	RegisterEvent (GAME_EVENT_QUESTFAILED, gobgame );
 	RegisterEvent (GAME_EVENT_ASKFORQUEST, gobgame );
 	RegisterEvent (GAME_EVENT_SHIP_DIE, gobgame );
+	RegisterEvent (GAME_EVENT_PLAYER_DIED, gobgame);
 }
 
 QuestSource::~QuestSource()
@@ -467,9 +470,6 @@ void QuestSource::ProcessEvent ( IEvent* event )
 		{tw_error ("Process Event failed");}
 		break;
 	case GAME_EVENT_SHIP_DIE:
-		p = gobgame->get_player(((EventShipDie*)event)->victim);
-		if ( p ) //Player died
-			RemoveTrash( p );
 		break;
 	case GAME_EVENT_CLEANQUESTTRASH:
 		RemoveTrash();
@@ -482,6 +482,11 @@ void QuestSource::ProcessEvent ( IEvent* event )
 		break;
 	case GAME_EVENT_ASKFORQUEST:
 		GetNextQuest( ((EventAskForQuest*)event)->player );
+		break;
+	case GAME_EVENT_PLAYER_DIED:
+		p = (((EventPlayerDied*)event)->player);
+		if ( p ) //Player died
+			RemoveTrash( p );
 		break;
 	default:
 		break;

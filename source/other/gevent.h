@@ -27,6 +27,7 @@ enum EventTypes
     GAME_EVENT_QUESTSUCCESS,
     GAME_EVENT_QUESTFAILED,
     GAME_EVENT_ASKFORQUEST,
+	GAME_EVENT_PLAYER_DIED
   };
 
 class IEvent
@@ -84,6 +85,13 @@ class EventQuestFailed: public IEvent
 };
 
 class EventAskForQuest: public IEvent
+{
+ public:
+  GobPlayer* player;
+  virtual unsigned int GetEventType();
+};
+
+class EventPlayerDied: public IEvent
 {
  public:
   GobPlayer* player;

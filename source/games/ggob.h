@@ -105,7 +105,8 @@ class GobGame : public Game, public EventHandler {
 								SpaceSprite *station_sprite, 
 								const char *builds, 
 								const char *background,
-								std::string sname);
+								std::string sname,
+								std::string commander);
 
   void save_game();
   void load_game();

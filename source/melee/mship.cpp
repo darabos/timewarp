@@ -29,7 +29,6 @@ REGISTER_FILE
 
 #include "ais/ext_ai.h"
 
-
 /*------------------------------*
  *		Ship Class Registration *
  *------------------------------*/
@@ -341,7 +340,6 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	sprite_index = get_index(angle);
 
 	hashotspots = true;
-	ext_ai = NULL;
 }
 
 Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally_flag) :
@@ -439,7 +437,6 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	sprite_index = get_index(angle);
 
 	hashotspots = true;
-	ext_ai = NULL;
 }
 
 void Ship::death() {STACKTRACE
@@ -452,7 +449,6 @@ void Ship::death() {STACKTRACE
 
 Ship::~Ship() {STACKTRACE
 	delete spritePanel;
-	destroy_external_ai();
 }
 
 double Ship::getCrew()
@@ -961,29 +957,6 @@ ShipType *Ship::get_shiptype()
 {
 	return type;
 }
-
-/*! \brief add external ai script to ship 
-	\param script - script file
-*/
-void Ship::install_external_ai(const char* script)
-{
-	if (ext_ai != NULL)
-	{
-		delete ext_ai;
-	}
-	if (script == NULL) 
-		return;
-	ext_ai = new ExternalAI(this, script );
-}
-
-/*! \brief destroy_external ai */
-void Ship::destroy_external_ai()
-{
-	if (ext_ai != NULL)
-		delete ext_ai;
-	ext_ai = NULL;
-}
-
 
 Phaser::Phaser(
 	SpaceLocation *creator, Vector2 opos, Vector2 _rpos, 

@@ -9,7 +9,7 @@ extern "C" {
 #include <lauxlib.h>
 }
 
-class Ship;
+class SpaceObject;
 class SpaceLocation;
 
 
@@ -17,9 +17,9 @@ class SpaceLocation;
 class ExternalAI
 {
 	lua_State * L;
-	Ship * ship;
+	SpaceObject * space_object;
 public:
-	ExternalAI(Ship * ship, std::string script);
+	ExternalAI(SpaceObject * ship, std::string script);
 	int Dialog(SpaceLocation* who);
 };
 

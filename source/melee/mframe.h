@@ -16,6 +16,7 @@ typedef unsigned int TeamCode;
 struct Query;
 class Planet;
 class Presence;
+class ExternalAI;
 
 enum {
 	ATTRIB_SYNCHED =            0x00000001, 
@@ -295,6 +296,7 @@ class SpaceObject : public SpaceLocation {
 	Vector2 size;      //size of sprite
 	double  mass; //mass of object
 	bool isblockingweapons;	// this object blocks weaponry (shots)
+	ExternalAI * ext_ai; // AI of the object
 	protected:
 	SpaceSprite *sprite; //the pictures that this object looks like
 	int          sprite_index; //which one of those pictures is active at the moment
@@ -302,6 +304,8 @@ class SpaceObject : public SpaceLocation {
 	public:
 	SpaceObject(SpaceLocation *creator, Vector2 opos, double oangle, 
 			SpaceSprite *osprite);
+	virtual ~SpaceObject();
+
 	virtual void death();      // called after an item is killed
 
 	SpaceSprite *get_sprite() const {return sprite;}
@@ -317,6 +321,9 @@ class SpaceObject : public SpaceLocation {
 	virtual void inflict_damage(SpaceObject *other);
 
 	virtual void set_sprite ( SpaceSprite *sprite );
+
+	virtual void install_external_ai(const char* script);
+	virtual void destroy_external_ai();
 };
 
 

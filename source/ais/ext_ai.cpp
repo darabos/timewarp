@@ -19,10 +19,10 @@ REGISTER_FILE
 #include "ext_ai.h"
 #include "other/gdialog.h"
 
-ExternalAI::ExternalAI(Ship * shp, std::string script)
+ExternalAI::ExternalAI(SpaceObject * so, std::string script)
 {
 	ASSERT(shp!=NULL);
-	ship = shp;
+	space_object = so;
 	L = lua_open();
 	InitConversationModule( L );
 
