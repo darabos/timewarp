@@ -246,22 +246,22 @@ void prepareTitleScreenAssets() {
   sound.play_music( mymusic, TRUE);
 #endif
   {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUACCEPT");
-  if (data != null && data->type==DAT_SAMPLE) {
+  if (data != NULL && data->type==DAT_SAMPLE) {
       menuAccept = (SAMPLE*) data->dat;
   }}
 
   {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUFOCUS");
-  if (data != null && data->type==DAT_SAMPLE) {
+  if (data != NULL && data->type==DAT_SAMPLE) {
       menuFocus = (SAMPLE*) data->dat;
   }}
 
   {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUDISABLED");
-  if (data != null && data->type==DAT_SAMPLE) {
+  if (data != NULL && data->type==DAT_SAMPLE) {
       menuDisabled = (SAMPLE*) data->dat;
   }}
 
   {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUSPECIAL");
-  if (data != null && data->type==DAT_SAMPLE) {
+  if (data != NULL && data->type==DAT_SAMPLE) {
       menuSpecial = (SAMPLE*) data->dat;
   }}
   
@@ -289,7 +289,7 @@ void showLoadingScreen() {
         }
     }
 
-    if (logo!=null) {
+    if (logo != NULL ) {
         if (screen->w/2 >= logo->w) {
             draw_sprite(screen, logo, screen->w/2 - logo->w/2, screen->h/2 - logo->h/2);
         }
