@@ -72,7 +72,7 @@ void set_filelist(TextList *tl, char *scanname)
 	
 	while (!err)
 	{
-		if (strcmp(info.name, ".") && strcmp(info.name, "..") )
+		if (info.name[0] != '.')
 			tl->add_optionlist(info.name);
 		
 		err = al_findnext(&info);
