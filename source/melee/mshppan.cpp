@@ -120,8 +120,10 @@ void ShipPanel::animate(Frame *space) {
 			acquire_screen();
 //			blit(panel, screen, 0, 0, panel_x, panel_y, 64, 100);
 //			blit(captain, screen, 0, 0, captain_x, captain_y, CAPTAIN_WIDTH, CAPTAIN_HEIGHT);
-			aa_set_mode(AA_NO_AA);
+//			int a = aa_get_mode();
+//			aa_set_mode(AA_NO_AA);
 			aa_stretch_blit(panel, screen, 0, 0, panel->w, panel->h, panel_x, panel_y, panel_width, panel_height);
+//			aa_set_mode(a);
 			release_screen();
 			}
 		if (deathframe < 0) return;
@@ -139,8 +141,10 @@ void ShipPanel::animate(Frame *space) {
 		blit (captain, panel, 0, 0, CAPTAIN_X, CAPTAIN_Y, captain->w, captain->h);
 		acquire_screen();
 //		blit(captain, screen, 0, 0, captain_x, captain_y, CAPTAIN_WIDTH, CAPTAIN_HEIGHT);
-		aa_set_mode(AA_NO_AA);
+//			int a = aa_get_mode();
+//		aa_set_mode(AA_NO_AA);
 		aa_stretch_blit(panel, screen, 0, 0, panel->w, panel->h, panel_x, panel_y, panel_width, panel_height);
+//			aa_set_mode(a);
 		release_screen();
 		return;
 		}
