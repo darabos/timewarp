@@ -20,7 +20,7 @@ protected:
 public:
 	// x, y, W, H are inside the draw area
 	Button(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool keepkey = 0);
-	~Button();
+	virtual ~Button();
 
 //	virtual void init(AreaReserve *menu, char *identbranch, int ax, int ay, unsigned char asciicode);
 
@@ -114,6 +114,7 @@ class GhostButton : public AreaGeneral
 {
 public:
 	GhostButton(AreaReserve *menu);
+	virtual ~GhostButton();
 };
 
 // a text on top of a button.
@@ -123,6 +124,7 @@ class TextButton : public AreaTablet
 {
 public:
 	TextButton(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
+	virtual ~TextButton();
 
 	FONT		*usefont;
 
@@ -185,7 +187,7 @@ protected:
 
 public:
 	TextEditBox(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont, char *atext, int amaxtext);
-	~TextEditBox();
+	virtual ~TextEditBox();
 
 	FONT		*usefont;
 
@@ -260,7 +262,7 @@ public:
 	bool	state;	// true=on, false=off
 	// x, y, W, H are inside the draw area
 	SwitchButton(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode);
-	~SwitchButton();
+	virtual ~SwitchButton();
 
 	virtual void calculate();
 
@@ -284,7 +286,7 @@ class TextButtonList : public AreaTablet
 public:
 	TextButtonList(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont,
 					scrollpos_str *ascroll);
-	~TextButtonList();
+	virtual ~TextButtonList();
 
 	char	**optionlist;
 	int		N;				// number of options
@@ -327,7 +329,7 @@ class TextInfoArea : public AreaTabletScrolled
 	//scrollpos_str	*scroll;
 public:
 	TextInfoArea(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
-	~TextInfoArea();
+	virtual ~TextInfoArea();
 
 	char	*textinfo;
 
@@ -411,7 +413,7 @@ public:
 
 	PopupTextInfo(AreaGeneral *creator, char *ident, int axshift, int ayshift,
 					FONT *afont, char *atext, int aNchar);
-	~PopupTextInfo();
+	virtual ~PopupTextInfo();
 };
 
 
@@ -456,7 +458,7 @@ public:
 	// origin relative to the creators' position
 	PopupList(AreaGeneral *creator, char *ident, int axshift, int ayshift,
 				FONT *afont, char **aaoptionslist);
-	~PopupList();
+	virtual ~PopupList();
 
 	virtual void check_end();
 	//virtual void calculate();
@@ -494,7 +496,7 @@ public:
 
 	MatrixIcons(AreaReserve *menu, char *identbranch, int ax, int ay,
 						scrollpos_str *ascroll, int akey);
-	~MatrixIcons();
+	virtual ~MatrixIcons();
 
 	void set_iconinfo(BITMAP **alistIcon, double ascale);
 
@@ -524,7 +526,7 @@ public:
 								char *datafilename, BITMAP *outputscreen,
 								BITMAP **alistIcon, double ascale, FONT *afont );
 
-	~PopupFleetSelection();
+	virtual ~PopupFleetSelection();
 
 	//virtual void close(int areturnstatus);
 	virtual void check_end();
@@ -548,6 +550,7 @@ class Popup : public AreaReserve
 public:
 	Popup(char *ident, int xcenter, int ycenter, BITMAP *outputscreen,
 		bool inherited = false);
+	virtual ~Popup();
 
 	bool returnvalueready;
 
@@ -570,7 +573,7 @@ public:
 						//char *datafilename,
 						BITMAP *outputscreen,
 							bool inherited = false);
-
+	virtual ~PopupOk();
 	virtual void check_end();
 };
 
@@ -583,7 +586,7 @@ public:
 						//char *datafilename,
 						BITMAP *outputscreen,
 							bool inherited = false);
-
+	virtual ~PopupYN();
 	virtual void check_end();
 
 };

@@ -19,11 +19,11 @@ CFLAGS = -fsigned-char -Wall
 OBJDIR = obj
 NAME = timewarp
 
-VPATH = source source/ais source/games source/melee source/newships   \
-        source/other source/sc1ships source/sc2ships source/sc3ships  \
-        source/twgui source/util
+VPATH = source source/ais source/games source/games/triggers source/melee \
+        source/newships source/other source/sc1ships source/sc2ships \
+        source/sc3ships source/twgui source/util
 
-SRCS = ${shell ls -R -w 15000 -C source/*/*.c source/*/*.cpp source/*.cpp | sed s/source[/]//g | sed s/ais[/]//g | sed s/games[/]//g | sed s/melee[/]//g | sed s/newships[/]//g | sed s/other[/]//g | sed s/sc1ships[/]//g | sed s/sc2ships[/]//g | sed s/sc3ships[/]//g | sed s/twgui[/]//g | sed s/util[/]//g } 
+SRCS = ${shell ls -R -w 15000 -C  source/*/triggers/*.cpp source/*/*.c source/*/*.cpp source/*.cpp | sed s/source[/]//g | sed s/ais[/]//g | sed s/games[/]//g | sed s/triggers[/]//g | sed s/melee[/]//g | sed s/newships[/]//g | sed s/other[/]//g | sed s/sc1ships[/]//g | sed s/sc2ships[/]//g | sed s/sc3ships[/]//g | sed s/twgui[/]//g | sed s/util[/]//g } 
 
 #SRCS = c_input.cpp c_other.cpp c_wussie.cpp frame.cpp gamehierarchy.cpp \
 #       gastroid.cpp gdebugonly.cpp gflmelee.cpp ggob.cpp ghyper.cpp     \
@@ -87,7 +87,7 @@ endif
 ifdef win32
 	OBJDIR := ${addsuffix -win32,$(OBJDIR)}
 	NAME := ${addsuffix .exe,$(NAME)}
-	CFLAGS += -DWIN32 -Wl,--subsystem=windows
+	CFLAGS += -DWIN32 
 	LIBS += -lalleg -lws2_32 -lwinmm
 else
 	CFLAGS += -DLINUX
@@ -99,6 +99,11 @@ endif
 PREP = $(SRCS:.c=.cpp))
 OBJS = $(addprefix $(OBJDIR)/,$(PREP:.cpp=.o))
 DEPS = $(addprefix $(OBJDIR)/,$(PREP:.cpp=.d))
+
+ifdef win32
+SUBSYSTEM=-Wl,--subsystem=windows
+OBJS += $(OBJDIR)/winicon.o
+endif
 
 ##############################################################################
 
@@ -117,9 +122,11 @@ $(OBJDIR)/%.o: %.cpp
 $(OBJDIR)/%.o: %.c
 	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
+$(OBJDIR)/winicon.o: scpwin.rc scpwin.ico
+	windres scpwin.rc -o $(OBJDIR)/winicon.o
 
 $(NAME):
-	$(LD) $(CFLAGS) -o $@ $(OBJDIR)/*.o $(LIBS) 
+	$(LD) $(CFLAGS) $(SUBSYSTEM) -o $@ $(OBJDIR)/*.o $(LIBS) 
 
 clean:
 	$(RM) $(OBJDIR)/*.o

@@ -78,6 +78,8 @@ MissionObject(opos, datafilename, "OBJUPGRADE_DAT")
 
 int MSupgrade::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
+
 	if (source->isShip())
 	{
 		Ship *s = (Ship*) source;
@@ -105,6 +107,8 @@ int MSupgrade::handle_damage(SpaceLocation *source, double normal, double direct
 
 void MSupgrade::calculate()
 {
+	STACKTRACE
+
 	if (waittimer > 0)
 	{
 		waittimer -= frame_time * 1E-3;
@@ -118,6 +122,8 @@ void MSupgrade::calculate()
 
 void MSupgrade::animate(Frame *space)
 {
+	STACKTRACE
+
 	if (waittimer <= 0)			// disable drawing
 		SpaceObject::animate(space);
 }
@@ -148,6 +154,8 @@ MissionShip(opos, datafilename, "SHPFACTORY_DAT", ininame, "shpfactory", team)
 
 void MSFactory::missioncontrol()
 {
+	STACKTRACE
+
 
 	// simple, always turn around
 	turn_left = TRUE;
@@ -167,6 +175,8 @@ void MSFactory::missioncontrol()
 
 int MSFactory::activate_weapon()
 {
+	STACKTRACE
+
 	double A;
 	Vector2 P;
 

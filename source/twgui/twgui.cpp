@@ -408,7 +408,9 @@ GhostButton::GhostButton(AreaReserve *menu)
 AreaGeneral(menu)
 {
 }
-
+GhostButton::~GhostButton()
+{
+}
 
 
 TextButton::TextButton(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont)
@@ -418,6 +420,9 @@ AreaTablet(menu, identbranch, ax, ay, 255)
 	usefont = afont;
 }
 
+TextButton::~TextButton()
+{
+}
 
 void TextButton::set_text(char *txt, int color)
 {
@@ -1317,8 +1322,8 @@ AreaTablet(menu, identbranch, ax, ay, 255)
 
 	if (button)
 	{
-		bwhalf = 0.5*button->w; 
-		bhhalf = 0.5*button->h;
+		bwhalf = button->w/2; 
+		bhhalf = button->h/2;
 	} else {
 		bwhalf = 0;
 		bhhalf = 0;
@@ -1568,8 +1573,8 @@ AreaReserve(identbranch,
 
 	init_components(identbranch);
 
-	xshift = axshift * scale;
-	yshift = ayshift * scale;
+	xshift = iround(axshift * scale);
+	yshift = iround(ayshift * scale);
 }
 
 
@@ -1584,8 +1589,8 @@ AreaReserve(identbranch,
 
 	init_components(identbranch);
 
-	xshift = axshift * scale;
-	yshift = ayshift * scale;
+	xshift = iround(axshift * scale);
+	yshift = iround(ayshift * scale);
 }
 
 
@@ -1855,6 +1860,8 @@ PopupTextInfo(creator, ident, axshift, ayshift, afont, atext, aNchar)
 {
 };
 
+
+
 void PopupTextInfo_toggle::calculate()
 {
 	PopupTextInfo::calculate();
@@ -2103,12 +2110,12 @@ void MatrixIcons::subanimate()
 			yoverlay = (iy - scroll->y) * Hicon;
 
 			int w0, h0;
-			w0 = listIcon[k]->w * areareserve->scale * extrascale;
-			h0 = listIcon[k]->h * areareserve->scale * extrascale;
+			w0 = iround(listIcon[k]->w * areareserve->scale * extrascale);
+			h0 = iround(listIcon[k]->h * areareserve->scale * extrascale);
 
 			// create a intermediate icon
-			xicon = 0.5 * (Wicon - w0);
-			yicon = 0.5 * (Hicon - h0);
+			xicon =  (Wicon - w0) / 2;
+			yicon =  (Hicon - h0) / 2;
 
 			clear_to_color(tmp, makecol(255,0,255));
 
@@ -2144,8 +2151,8 @@ void MatrixIcons::handle_rpress()
 	int mx, my;
 	
 	// mouse position relative to the center of the item window:
-	mx = mouse.xpos() - x - 0.5 * W;
-	my = mouse.ypos() - y - 0.5 * H;
+	mx = mouse.xpos() - x - W / 2;
+	my = mouse.ypos() - y - H / 2;
 
 	// velocity depends on how far you're away from the center.
 	scroll->add(mx / (W/8), my / (H/8));
@@ -2203,6 +2210,9 @@ AreaReserve(ident, xcenter, ycenter, outputscreen)
 	}
 }
 
+Popup::~Popup()
+{
+}
 
 // this calls close with return value
 // (the general close is ok, it closes and hides the menu).
@@ -2275,6 +2285,9 @@ Popup(ident,
 	}
 }
 
+PopupYN::~PopupYN()
+{
+}
 
 void PopupYN::check_end()
 {
@@ -2309,6 +2322,9 @@ Popup(ident,
 	}
 }
 
+PopupOk::~PopupOk()
+{
+}
 
 void PopupOk::check_end()
 {
