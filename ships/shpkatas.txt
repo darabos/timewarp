@@ -1,0 +1,16 @@
+Kat Assim
+
+Primary Weapon:
+  None at first. Later it is the same as that assimilated from any other ship.
+  
+Special:
+  If the ship is hit while the special fire button is pressed the ship
+  assimilates the shot.
+
+Notes:
+  The ship assimilates the primary weapon of the ship that hit it even if it was
+  hit by the secondary.
+
+  This ship is just an experiment, not intended to be included in the full game.
+
+ * created by: cyhawk@sch.bme.hu

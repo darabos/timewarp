@@ -1,0 +1,17 @@
+******Melee in solar system*******
+
+A normal melee fight inside a complete solar system with sun, planets 
+and moons!
+
+to play it just enter the extended menu and choose 
+"Melee in solar system (INI)"
+
+the (INI) for those who wonder symbolize that the game come with an 
+.ini file for you to change!
+Through the ini you can change the number of planets, their radius and
+more, explanations are added to the ini file.
+Enjoy!
+
+
+Solar system melee was coded by Corona688 and UAF, all right reserved
+to Crimson cooperation(TM).

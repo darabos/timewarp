@@ -1,0 +1,9 @@
+
+Iceci Confusion
+
+This ship is poor in regular combat, but can gain an advantage by firing its special.
+
+Weapon: a pair of powerful shots from the sides. They are difficult to aim, have very short range, and gobble up fuel.
+
+Special: a short range homing sphere which, when it hits the enemy, mixes up all controls of the opponent for about 5 seconds.
+
