@@ -55,6 +55,11 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 ./lib/alleg.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ./lib/libjgmod.lib wsock32.lib winmm.lib glu32.lib opengl32.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"LIBCMT"
 # SUBTRACT LINK32 /pdb:none
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=move release\twwin.exe twwin.exe
+PostBuild_Cmds=move release\twwin.exe twwin.exe
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "twwin - Win32 Debug"
 
@@ -82,6 +87,11 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 ./lib/alld.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ./lib/libjgmod.lib wsock32.lib winmm.lib opengl32.lib glu32.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=move debug\twwin.exe twwinDEBUG.exe
+PostBuild_Cmds=move debug\twwin.exe twwinDEBUG.exe
+# End Special Build Tool
 
 !ENDIF 
 
