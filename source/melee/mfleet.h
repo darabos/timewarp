@@ -39,12 +39,10 @@ public:
         SORTING_METHOD_NAME2, /**< Ship name (not including species) */
         SORTING_METHOD_CODERS, /**<  */
         SORTING_METHOD_ORIGIN, /**< SC1-3, TW, or the group that made the ship */
+	SORTING_METHOD_DEFAULT = SORTING_METHOD_NAME, /**< Currently does the same thing as SORTING_METHOD_NAME_DESCENDING */
+	MAX_SORTING_METHODS = SORTING_METHOD_ORIGIN
     };
 
-    enum { SORTING_METHOD_DEFAULT = SORTING_METHOD_NAME }; /**< Currently does the same thing as SORTING_METHOD_NAME_DESCENDING */
-    enum { MAX_SORTING_METHODS = SORTING_METHOD_ORIGIN };
-
-    
     /**
     */
     static SortingMethod cycleSortingMethod(SortingMethod method) {
