@@ -857,9 +857,14 @@ Vector2 SpaceLine::edge() const
   return unit_vector(angle) * length;
 }
 
- double SpaceLine::get_length() const
+double SpaceLine::get_length() const
 {
   return(length);
+}
+
+void SpaceLine::set_length(double d)
+{
+	length = d;
 }
 
 void SpaceLine::inflict_damage(SpaceObject *other) {STACKTRACE
@@ -884,15 +889,34 @@ void SpaceLine::animate(Frame *space) {STACKTRACE
 	line(space, p1, p2, color);
 	}
 
+double SpaceLine::collide_testdistance(SpaceObject *o)
+{
+	STACKTRACE;
+	//double testlength;
+  
+	if((!canCollide(o)) || (!o->canCollide(this)))
+		return length;
+
+	return o->collide_ray(normal_pos(), normal_pos() + edge(), length);
+
+	//if(length != old_length)
+	//	inflict_damage(o);
+	//return;
+}
+
 void SpaceLine::collide(SpaceObject *o)
-{STACKTRACE
+{
+	STACKTRACE;
 	double old_length = length;
+	/*
   
 	if((!canCollide(o)) || (!o->canCollide(this)))
 		return;
 
 	length = o->collide_ray(normal_pos(), normal_pos() + edge(), length);
-	if(length != old_length)
+	*/
+	length = collide_testdistance(o);
+	if (length != old_length)
 		inflict_damage(o);
 	return;
 }
@@ -1331,6 +1355,45 @@ void Physics::animate_predict(Frame *frame, int time) {STACKTRACE
 	return;
 }
 
+/** \brief Check all objects within range (length) of a line, and damage only the
+one that has a point of impact that is closest to the line origin (ie reduces line
+length most).
+*/
+void Physics::check_linecollision(SpaceLine *l)
+{
+	// not very efficient, ideally you'd just check the quadrants that the line traverses,
+	// not all of them in a circle, but it'll do fine for short lines.
+
+	double distance = l->get_length();
+	SpaceObject *o = 0;
+
+	Query q;
+	for (q.begin(l, l->normal_pos()+l->edge()/2, OBJECT_LAYERS, 96 + l->get_length()/2); q.current && l->exists(); q.next())
+	{
+		double d;
+		d = l->collide_testdistance(q.currento);
+		// this is the distance to the point of impact
+
+		// for long lines (eg chmmr laser), and several objects closeby, there can be >1 points of impact.
+		// the point that's closest by makes most sense.s
+		if (d < distance)
+		{
+			o = q.currento;
+			distance = d;
+		}
+	}
+	q.end();
+
+	// note that o==null, in case that distance==length, meaning that there are no
+	// colliding objects within range.
+	if (o)
+	{
+		l->set_length(distance);
+		l->inflict_damage(o);
+	}
+
+}
+
 #include "../util/pmask.h"
 void Physics::collide() {_STACKTRACE("Physics::collide()")
 	int i;
@@ -1375,12 +1438,17 @@ void Physics::collide() {_STACKTRACE("Physics::collide()")
 				}
 				q.end();//*/
 			}
-			else if (item[i]->isLine()) {
+			else if (item[i]->isLine())
+			{
+				check_linecollision((SpaceLine*)item[i]);
+				/*
 				SpaceLine *l = (SpaceLine*)item[i];
-				for (q.begin(l, l->normal_pos()+l->edge()/2, OBJECT_LAYERS, 96 + l->get_length()/2); q.current && l->exists(); q.next()) {
+				for (q.begin(l, l->normal_pos()+l->edge()/2, OBJECT_LAYERS, 96 + l->get_length()/2); q.current && l->exists(); q.next())
+				{
 					((SpaceLine*)item[i])->collide(q.currento);
 				}
 				q.end();
+				*/
 			}
 		}
 	}

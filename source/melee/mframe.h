@@ -136,6 +136,8 @@ class Physics : public BaseClass {
 	// to handle the death of objects in the game ...
 	virtual void object_died(SpaceObject *who, SpaceLocation *source);
 	virtual void ship_died(Ship *who, SpaceLocation *source);
+
+	void check_linecollision(SpaceLine *l);
 };
 
 
@@ -340,10 +342,13 @@ class SpaceLine : public SpaceLocation {
 	double edge_x() const;
 	double edge_y() const;
 	double get_length() const;
+	void set_length(double d);
 
 	virtual void animate(Frame *space);
 	virtual void collide(SpaceObject *o);
 	virtual void inflict_damage(SpaceObject *other);
+
+	double collide_testdistance(SpaceObject *o);
 };
 
 struct Query {
