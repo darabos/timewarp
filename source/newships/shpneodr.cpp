@@ -11,6 +11,7 @@ class NeoDrain : public Ship
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange, specialDamage;
 	int		specialColor;
+	double	weapon_drain_ref;
 	
 	bool shipmode;
 	
@@ -21,6 +22,7 @@ protected:
 	
 	virtual int activate_weapon();
 	virtual int activate_special();
+	virtual void calculate();
 	
 };
 
@@ -50,6 +52,7 @@ Ship(opos,  shipAngle, shipData, code)
 	specialRange  = scale_range(get_config_float("Special", "Range", 0));
 	specialDamage = get_config_int("Special", "Damage", 0);
 	
+	weapon_drain_ref = weapon_drain;
 }
 
 
@@ -72,6 +75,17 @@ int NeoDrain::activate_special()
 		this, Vector2(-10,42), true));
 	
 	return TRUE;
+}
+
+void NeoDrain::calculate()
+{
+	Ship::calculate();
+
+	if (special_recharge > 0)
+		// special is being used
+		weapon_drain = 2 * weapon_drain_ref;
+	else
+		weapon_drain = weapon_drain_ref;
 }
 
 
