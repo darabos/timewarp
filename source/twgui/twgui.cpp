@@ -271,18 +271,18 @@ void ScrollControl::hor(AreaReserve *A, char *id, scrollpos_str *scr)
 
 
 	strcpy(id2, id);
-	strcat(id2, "/left");
+	strcat(id2, "left/");
 	left	= new Button(A, id2, -1, -1, 0);
 	if (!left->W) {	delete left;	left = 0;	}
 
 	strcpy(id2, id);
-	strcat(id2, "/right");
+	strcat(id2, "right/");
 	right	= new Button(A, id2, -1, -1, 0);
 	if (!right->W)	{	delete right;	right = 0;	}
 
 	// add a scroll bar
 	strcpy(id2, id);
-	strcat(id2, "/scrollbar_hor");
+	strcat(id2, "scrollbar_hor/");
 	scrollhor = new ScrollBar(A, id2, -1, -1);
 	if (!scrollhor->W)	{	delete scrollhor;	scrollhor = 0;	}
 
@@ -296,17 +296,17 @@ void ScrollControl::ver(AreaReserve *A, char *id, scrollpos_str *scr)
 	char id2[128];
 
 	strcpy(id2, id);
-	strcat(id2, "/up");
+	strcat(id2, "up/");
 	up		= new Button(A, id2, -1, -1, 0);
 	if (!up->W)	{	delete up;	up = 0;	}
 
 	strcpy(id2, id);
-	strcat(id2, "/down");
+	strcat(id2, "down/");
 	down	= new Button(A, id2, -1, -1, 0);
 	if (!down->W)	{	delete down;	down = 0;	}
 
 	strcpy(id2, id);
-	strcat(id2, "/scrollbar_vert");
+	strcat(id2, "scrollbar_vert/");
 	scrollvert = new ScrollBar(A, id2, -1, -1);
 	if (!scrollvert->W)	{	delete scrollvert;	scrollvert = 0;	}
 
@@ -355,9 +355,9 @@ AreaBox(menu, identbranch, ax, ay, asciicode, akeepkey)
 	strcpy(strfocus,    ident);
 	strcpy(strselected, ident);
 
-	strcat(strdefault,  "/default");
-	strcat(strfocus,    "/focus");
-	strcat(strselected, "/selected");
+	strcat(strdefault,  "default");
+	strcat(strfocus,    "focus");
+	strcat(strselected, "selected");
 
 	
 	bmp_default = areareserve->bmp(strdefault);
@@ -1087,8 +1087,8 @@ AreaBox(menu, identbranch, ax, ay, asciicode)
 	strcpy(stron,  ident);
 	strcpy(stroff, ident);
 
-	strcat(stron, "/on");
-	strcat(stroff,"/off");
+	strcat(stron, "on");
+	strcat(stroff,"off");
 
 
 	// both of these bitmaps must be present !!
@@ -1380,7 +1380,7 @@ AreaTablet(menu, identbranch, ax, ay, 255)
 {
 	relpos = 0.0;	// between 0 and 1
 
-	button = getbmp("/button");
+	button = getbmp("button");
 
 	if (button)
 	{
@@ -1669,8 +1669,8 @@ void PopupGeneral::init_components(char *id)
 	// graphics in the datafile.
 
 	//scroll_control = new scrollpos_str();
-	scrollcontrol.hor(this, "scroll", &scroll);
-	scrollcontrol.ver(this, "scroll", &scroll);
+	scrollcontrol.hor(this, "scroll/", &scroll);
+	scrollcontrol.ver(this, "scroll/", &scroll);
 
 	/*
 	left = 0;
@@ -1896,7 +1896,7 @@ PopupTextInfo::PopupTextInfo(AreaGeneral *creator, char *ident, int axshift, int
 PopupGeneral(creator, ident, axshift, ayshift)
 {
 	// add a text list box
-	tia = new TextInfoArea(this, "text", -1, -1, afont);//, &scroll);
+	tia = new TextInfoArea(this, "text/", -1, -1, afont);//, &scroll);
 	tia->set_textinfo(atext, aNchar);
 
 	doneinit();	// closes the datafile
@@ -1950,7 +1950,7 @@ PopupGeneral(atrigger, ident, axshift, ayshift)
 	//optionslist = aoptionslist;
 
 	// add a text list box
-	tbl = new TextButtonList(this, "TEXT", -1, -1, afont, &scroll);
+	tbl = new TextButtonList(this, "TEXT/", -1, -1, afont, &scroll);
 	tbl->set_optionlist(aoptionslist, makecol(0,0,0));
 
 	doneinit();	// closes the datafile
@@ -1991,14 +1991,14 @@ PopupFleetSelection::PopupFleetSelection(char *ident, int axshift, int ayshift,
 PopupGeneral(ident, axshift, ayshift, outputscreen)
 {
 
-	icons = new MatrixIcons(this, "ICON", -1, -1, &scroll, KEY_ENTER);
+	icons = new MatrixIcons(this, "ICON/", -1, -1, &scroll, KEY_ENTER);
 
 	// this auto-configures the data as well ...
 	icons->set_iconinfo(alistIcon, ascale);
 
-	info = new TextButton(this, "INFO", -1, -1, afont);
-	oncerandom = new Button(this, "RANDOM", -1, -1, KEY_R);
-	alwaysrandom = new Button(this, "ALWAYSRANDOM", -1, -1, KEY_A);
+	info = new TextButton(this, "INFO/", -1, -1, afont);
+	oncerandom = new Button(this, "RANDOM/", -1, -1, KEY_R);
+	alwaysrandom = new Button(this, "ALWAYSRANDOM/", -1, -1, KEY_A);
 
 	doneinit();	// closes the datafile
 	hide();		// cause it needs a trigger to activate
@@ -2055,7 +2055,7 @@ AreaTablet(menu, identbranch, ax, ay, akey)
 
 	// obtain the overlay ... this defines the width/height of each matrix area
 
-	overlay = getbmp("/overlay");
+	overlay = getbmp("overlay");
 	if (!overlay)
 	{
 		tw_error("MatrixIcons : overlay is missing");
@@ -2336,9 +2336,9 @@ Popup(ident,
 			outputscreen,
 			true)	// it has got a child
 {
-	yes = new Button(this, "YES", -1, -1, KEY_Y);
+	yes = new Button(this, "YES/", -1, -1, KEY_Y);
 
-	no = new Button(this, "NO", -1, -1, KEY_N);
+	no = new Button(this, "NO/", -1, -1, KEY_N);
 
 	if (!inherited)
 	{
@@ -2375,7 +2375,7 @@ Popup(ident,
 			outputscreen,
 			true)	// it has got a child
 {
-	ok = new Button(this, "OK", -1, -1, KEY_ENTER);
+	ok = new Button(this, "OK/", -1, -1, KEY_ENTER);
 
 	if (!inherited)
 	{
@@ -2443,7 +2443,7 @@ AreaTablet::~AreaTablet()
 
 void AreaTablet::initbackgr(bool autoplace)
 {
-	backgr = getbmp("/backgr");
+	backgr = getbmp("backgr");
 	
 	if (backgr)
 	{
@@ -2459,7 +2459,7 @@ void AreaTablet::initbackgr(bool autoplace)
 	{
 		char streditbox[128];
 		strcpy(streditbox,  ident);
-		strcat(streditbox,  "/backgr");
+		strcat(streditbox,  "backgr");
 
 		locate_by_backgr(streditbox);
 	}
