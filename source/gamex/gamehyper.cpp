@@ -336,6 +336,10 @@ void StarHyper::animate(Frame *f)
 		//bmpcache[sprite_index] = create_bitmap_ex(bpp, s.x, s.y);
 		bmpcache[sprite_index] = create_video_bitmap(iround(s.x), iround(s.y));		// for faster drawing.
 
+		if (!bmpcache[sprite_index])
+			bmpcache[sprite_index] = create_bitmap_ex(bpp, iround(s.x), iround(s.y));
+
+
 		stretch_blit(bmp, bmpcache[sprite_index],
 			0, 0,  bmp->w, bmp->h,
 			0, 0,  bmpcache[sprite_index]->w, bmpcache[sprite_index]->h);

@@ -671,6 +671,7 @@ bool isevildir(char *name)
 	{
 		if (strcmp(name, evildir[i]) == 0)
 			return true;
+		++i;
 	}
 
 	return false;
