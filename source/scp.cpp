@@ -55,6 +55,7 @@ REGISTER_FILE
 #include "frame.h"
 
 #include "util/get_time.h"
+#include "util/profile2.h"
 
 #include "melee/mview.h"
 #include "melee/mcontrol.h"
@@ -72,9 +73,6 @@ REGISTER_FILE
 
 #include "util/sounds.h"
 
-#ifndef NO_JGMOD
-#include "jgmod.h"
-#endif
 
 //deprecated.  This mode of using dat files is terrible, I can't believe
 //this technique was ever created.
@@ -237,14 +235,16 @@ void prepareTitleScreenAssets() {
   scp = load_datafile("scpgui.dat");
   if (!scp)
       tw_error("Couldnt load title music");
-        
-#ifndef NO_JGMOD
-  Music * mymusic = load_mod("TitleScreen.dat#TITLEMUSIC");
+  
+  Music * mymusic = sound.load_music("TitleScreen.dat#TITLEMUSIC");
+
+  //Music * mymusic = load_mod("scpgui.dat#SCPMUSIC");
+
   if (!mymusic)
      tw_error("Couldnt load title music");
 
   sound.play_music( mymusic, TRUE);
-#endif
+
   {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUACCEPT");
   if (data != NULL && data->type==DAT_SAMPLE) {
       menuAccept = (SAMPLE*) data->dat;
@@ -772,9 +772,8 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		set_window_title("Star Control : TimeWarp");
 		set_config_file("client.ini");
 
-		#ifdef DO_STACKTRACE
-			usestacktrace = get_config_int("System", "UseStack", 0);
-		#endif
+		init_time();
+		init_profiling();
 
 		int screen_width = 640, screen_height = 480, screen_bpp = 32;
 		int fullscreen = 0;
@@ -876,7 +875,6 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 
 		init_ships();
 		init_fleet();
-		init_time();
 		meleedata.init();//mainmain
 
 		if (auto_play) {// FIX ME

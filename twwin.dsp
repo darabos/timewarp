@@ -79,7 +79,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ./lib/alld.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/luad.lib /nologo /subsystem:windows /debug /machine:I386 /out:"twwin_DEBUG.exe" /pdbtype:sept
+# ADD LINK32 ./lib/alld.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/luad.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin_DEBUG.exe" /pdbtype:sept
+# SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
 
@@ -223,15 +224,15 @@ SOURCE=.\source\util\pmask.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\util\profile.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\util\random.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\source\util\round.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\util\sintable.cpp
 # End Source File
 # Begin Source File
 
@@ -1316,6 +1317,14 @@ SOURCE=.\source\util\net_tcp.h
 # Begin Source File
 
 SOURCE=.\source\util\pmask.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\util\profile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\util\profile2.h
 # End Source File
 # Begin Source File
 

@@ -53,8 +53,8 @@ class NetLog : public Log { //Logging system, usefull for networking & demo reco
 	int *log_transmitted;      //the number of bytes transmitted in each channel
 	void expand_logs(int num_channels) ; //intializes these extensions to the logging
 	unsigned char buffy[4096]; //a buffer for sending and recieving packets
-	void handle_code(unsigned int code) ;
-	void send_code(unsigned int code) ;
+//	void handle_code(unsigned int code) ;
+//	void send_code(unsigned int code) ;
 	enum code {
 		NET1_CODE_QUIT    = 0x80000001,
 		NET1_CODE_PAUSE   = 0x80000002,
@@ -63,7 +63,7 @@ class NetLog : public Log { //Logging system, usefull for networking & demo reco
 		NET1_CODE_DECREASE_LAG = 0x80000005,
 		NET1_CODE_MESSAGE = 0x90000000
 		};
-	void send_message(char *string) ;
+//	void send_message(char *string) ;
 
 	void send_packet(); //sends a packet
 

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <allegro.h>
+#include <stdarg.h>
 
 #include "errors.h"
 

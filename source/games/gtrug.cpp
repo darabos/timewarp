@@ -120,14 +120,10 @@ TrugPlayer::TrugPlayer(int channel) {
 	team = game->new_team();
 	overriden = NULL;
 	this->channel = channel;
-	ship_roots.preinit();
-	ship_codes.preinit();
 }
 void TrugPlayer::calculate() {
 }
 TrugPlayer::~TrugPlayer() {
-	ship_roots.deinit();
-	ship_codes.deinit();
 }
 
 
@@ -164,20 +160,18 @@ void TrugGame::prepare() {
 void TrugGame::preinit() {
 	Game::preinit();
 	gui = NULL;
-	players.preinit();
 }
 
 TrugGame::~TrugGame() {
 	int i;
-	for (i = 0; i < players.num; i += 1) delete players[i];
-	players.deinit();
+	for (i = 0; i < players.size(); i += 1) delete players[i];
 	if (gui) delete gui;
 	gui = NULL;
 }
 
 TrugPlayer* TrugGame::add_player ( int channel ) {
-	int i = players.num;
-	players.add(new TrugPlayer(channel));
+	int i = players.size();
+	players.push_back( players[i] = new TrugPlayer(channel) );
 	return players[i];
 }
 

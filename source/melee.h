@@ -508,7 +508,7 @@ class SpaceSprite {
 	int collide_ray(int lx1, int ly1, int *lx2, int *ly2, int sx, int sy,
 			int sindex);
 
-	inline int frames() const {return count;}
+	INLINE int frames() const {return count;}
 	// changed Rob.
 	Vector2  size(int i = 0) const;//   const {return Vector2(b[0][i]->w, b[0][i]->h);}
 	int      width()  const {return w;}

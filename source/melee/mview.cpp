@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <allegro.h>
+#include <stdarg.h>
 
 
 #include "../melee.h"

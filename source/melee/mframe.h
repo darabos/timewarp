@@ -300,6 +300,7 @@ class SpaceObject : public SpaceLocation {
 	public:
 	SpaceObject(SpaceLocation *creator, Vector2 opos, double oangle, 
 			SpaceSprite *osprite);
+	virtual void death();      // called after an item is killed
 
 	SpaceSprite *get_sprite() const {return sprite;}
 	int get_sprite_index() const {return sprite_index;}

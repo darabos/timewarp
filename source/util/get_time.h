@@ -8,6 +8,8 @@ extern "C" {
 void init_time();      //to initialize time stuff
 void deinit_time();    //to de-initialize time stuff
 
+int is_time_initialized(); //returns non-zero if init_time() has been called, otherwise 0
+
 volatile int    get_time();     //to get the current time in milliseconds
 volatile double get_time2();    //to get the current time in milliseconds at high precision
 volatile Sint64 get_time3();    //to get the current time in unspecified units

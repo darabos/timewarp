@@ -15,7 +15,7 @@
 
 
 #ifndef _DEBUG
-#	define NO_RDTSC
+//#	define NO_RDTSC
 #endif
 
 #ifdef NO_ALLEGRO_TIME
@@ -269,6 +269,10 @@ volatile Sint64 get_time3() {
 }
 
 static unsigned char timer_attributes = 0;
+
+int is_time_initialized() {
+	return (timer_attributes & 1);
+}
 
 void init_time() {
 	int ms;

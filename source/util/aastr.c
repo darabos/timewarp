@@ -111,6 +111,8 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 		dh &= (dh + bit(aa_BITS-1)) &~bitn(aa_BITS);
 	}
 
+	if ((sw < (1 << (aa_BITS/2))) || (sh < (1 << (aa_BITS/2)))) 
+		return;
 	if ((dw < (1 << (aa_BITS/2))) || (dh < (1 << (aa_BITS/2)))) 
 		return;
 

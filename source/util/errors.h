@@ -30,20 +30,34 @@ bool get_stacktrace_info(int N, const char **filename, int **linenum, int **leve
 //used for catastrophic errors
 void tw_error_exit(const char* message) ;
 
-#ifdef DO_STACKTRACE
-	extern bool usestacktrace;
+
+//stacktrace and profiling stuff:
+
+#include "get_time.h"
+
+struct SOURCE_LINE {
+	int line;         // __LINE__
+	const char *file; // __FILE__
+	const char *name; // NULL or a descriptor string
+};
+
+#include "profile.h"
+
+#if defined  DO_STACKTRACE
 	class UserStackTraceHelper { public:
-		UserStackTraceHelper(const char *file, int line);
+		UserStackTraceHelper( SOURCE_LINE *srcline);
 		~UserStackTraceHelper();
 	};
-#	define STACKTRACE if (usestacktrace != 0) { UserStackTraceHelper _stacktrace_ ## __LINE__ (__FILE__,__LINE__); }
-//#	define STACKTRACE UserStackTraceHelper _stacktrace_ ## __LINE__ (__FILE__,__LINE__);
+#	define STACKTRACE static SOURCE_LINE _srcline = { __LINE__, __FILE__, 0 }; UserStackTraceHelper _stacktrace_ ( &_srcline );
+//#	define STACKTRACE     static DIRECT_PROFILE_DATUM _profiler_data_ = { __LINE__, __FILE__, NULL, 0, 0 }; const Profiler _profiler_ ( _profiler_data_ ); UserStackTraceHelper _stacktrace_ ( (SOURCE_LINE*) &_profiler_data_ );
+#	define _STACKTRACE(A) static SOURCE_LINE _srcline = { __LINE__, __FILE__, A }; UserStackTraceHelper _stacktrace_ ( &_srcline ); static DIRECT_PROFILE_DATUM _profiler_data_ = { &_srcline, 0, 0 }; const Profiler _profiler_ ( _profiler_data_ );
+//#	define _STACKTRACE(A) static const SOURCE_LINE _srcline = { __LINE__, __FILE__, A }; UserStackTraceHelper _stacktrace_ ( &_srcline );
 	// this is defined locally in subroutines, so it's de-allocated on exit of the subroutine.
-//#	define STACKTRACE
+	char *get_stack_trace_string(int max);
 #else
 #	define STACKTRACE
+#	define _STACKTRACE(A)
 #endif
-
 
 #ifdef DO_STACKTRACE
 char *get_stack_trace_string(int max);

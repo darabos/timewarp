@@ -108,7 +108,7 @@ void UmgahCone::calculate()
 	}
 
 	if (!(umgahship && umgahship->exists()))
-		umgahship = 0;
+		umgahship = NULL;
 
 	pos = ship->normal_pos() + (unit_vector(ship->get_angle()) * dist);
 	vel = ship->get_vel();
@@ -161,7 +161,7 @@ int UmgahCone::canCollide(SpaceLocation* other) {
 
 void UmgahCone::animate(Frame* space) {
 //  calc_base();
-  if (umgahship && umgahship->exists() && !umgahship->firing) return;
+  if (!umgahship || !umgahship->exists() || !umgahship->firing) return;
   int si = sprite_index;
   sprite_index += ((rand()%6) << 6);
   SpaceObject::animate(space);

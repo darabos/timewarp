@@ -298,7 +298,7 @@ void Game::decrease_latency() {
 	lag_frames -= 1;
 }
 
-int Game::is_local (int channel) {STACKTRACE
+int Game::is_local (int channel) {
 	return (log->get_direction (channel) & Log::direction_write);
 }
 void Game::log_file (const char *fname) {STACKTRACE
@@ -336,13 +336,13 @@ Control *Game::create_control (int channel, const char *type, char *config, char
 	return c;
 }
 
-void Game::log_char(int channel, char &data) {STACKTRACE
+void Game::log_char(int channel, char &data) {
 	if (!log) return;
 	log->log  (channel, &data, 1);
 	return;
 }
 
-void Game::log_short(int channel, short &data) {STACKTRACE
+void Game::log_short(int channel, short &data) {
 	if (!log) return;
 	data = intel_ordering_short(data);	
 	log->log  (channel, &data, sizeof(short));
@@ -350,7 +350,7 @@ void Game::log_short(int channel, short &data) {STACKTRACE
 	return;
 }
 
-void Game::log_int(int channel, int &data) {STACKTRACE
+void Game::log_int(int channel, int &data) {
 	if (!log) return;
 	data = intel_ordering(data);
 	log->log  (channel, &data, sizeof(int));
@@ -370,11 +370,11 @@ void Game::idle(int time) {STACKTRACE
 	return;
 }
 
-void Game::animate(Frame *frame) {STACKTRACE
+void Game::animate(Frame *frame) {_STACKTRACE("Game::animate(Frame*)")
 	Physics::animate(frame);
 }
 
-void Game::animate() {STACKTRACE
+void Game::animate() {_STACKTRACE("Game::animate(void)")
 	double t = get_time2();
 	paused_time = 0;
 	int prediction_time = 0;
@@ -425,6 +425,7 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 
 void game_create_errorlog(const char *exitmessage = 0)
 {
+/*
 	STACKTRACE;
 	FILE *f;
 
@@ -512,7 +513,7 @@ void game_create_errorlog(const char *exitmessage = 0)
 	fprintf(f, "----------------- end error log ---------------------\n");
 
 	fclose(f);
-
+*/
 }
 
 
@@ -545,7 +546,7 @@ void Game::compare_checksums() {STACKTRACE
 	}
 }
 
-void Game::do_game_events() {STACKTRACE
+void Game::do_game_events() {_STACKTRACE("Game::do_game_events()")
 	int i;
 
 	//transmit from server
@@ -639,7 +640,7 @@ void Game::send_game_event ( class GameEvent *event ) {STACKTRACE
 }
 
 
-void Game::calculate() {STACKTRACE
+void Game::calculate() {_STACKTRACE("Game::calculate")
 	int i;
 	double t = get_time2();
 	int active_focus_destroyed = false;
@@ -682,7 +683,7 @@ void Game::calculate() {STACKTRACE
 	return;
 }
 
-void Game::play() {STACKTRACE
+void Game::play() {_STACKTRACE("Game::play")
 	set_resolution(window->w, window->h);
 	prepare();
 	if (is_paused()) unpause();
@@ -695,8 +696,9 @@ void Game::play() {STACKTRACE
 				play_music();
 			}
 			if ((next_tic_time <= time) && (next_render_time > game_time) && game_ready()) {
+				_STACKTRACE("Game::play - Game physics")
 				calculate();
-				if (auto_unload) unload_unused_ship_data();//expiremental
+				if (auto_unload) unload_unused_ship_data();
 				log->flush();
 				log->listen();
 				if (key[KEY_F4])
@@ -712,6 +714,7 @@ void Game::play() {STACKTRACE
 				}
 			}
 			else if (interpolate_frames || (game_time > next_render_time - msecs_per_render)) {
+				_STACKTRACE("Game::play - Game rendering")
 				animate();
 				next_render_time = game_time + msecs_per_render;
 			}
@@ -770,7 +773,7 @@ void Game::object_died(SpaceObject *who, SpaceLocation *source)
 	}
 }
 
-//#include "mcbodies.h"
+#include "../util/profile2.h"
 void Game::fps() {STACKTRACE
 	if ((!log->playback) && ((log->type == Log::log_net1server) || (log->type == Log::log_net1client))) {
 		int ping = ((NetLog*)log)->ping;
@@ -846,7 +849,7 @@ void Game::preinit() {STACKTRACE
 	music = NULL;
 }
 
-void Game::init(Log *_log) {STACKTRACE
+void Game::init(Log *_log) {_STACKTRACE("Game::init")
 	int i;
 
 	game_done = false;

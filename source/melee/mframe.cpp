@@ -394,7 +394,7 @@ bool SpaceLocation::change_owner(SpaceLocation *new_owner) {STACKTRACE
 	}
 
 void SpaceLocation::death() {STACKTRACE
-	}
+}
 
 double SpaceLocation::get_angle_ex() const
 {
@@ -499,11 +499,11 @@ double SpaceLocation::isInvisible() const {
 	return 0;
 }
 
-void Presence::set_depth(double d) {STACKTRACE
+void Presence::set_depth(double d) {
 	_depth = int(floor(ldexp(d, 8)));
 }
 
-double Presence::get_depth() {STACKTRACE
+double Presence::get_depth() {
 	return ldexp((double)_depth, -8);
 }
 
@@ -773,6 +773,13 @@ void SpaceObject::inflict_damage(SpaceObject *other) {STACKTRACE
 	else damage(other, 0);
 	return;
 	}
+
+void SpaceObject::death() {STACKTRACE
+	if (attributes & ATTRIB_NOTIFY_ON_DEATH) {
+		physics->object_died(this, NULL);
+		attributes &= ~ ATTRIB_NOTIFY_ON_DEATH;
+	}
+}
 
 SpaceLine::SpaceLine(SpaceLocation *creator, Vector2 lpos, double langle, 
 	double llength, int lcolor) 
@@ -1071,7 +1078,7 @@ bool Physics::remove(Presence *o) {
 	return false;
 	}
 
-void Physics::calculate() {STACKTRACE
+void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 	int i;
 
 	//adjust time
@@ -1085,7 +1092,7 @@ void Physics::calculate() {STACKTRACE
 
 
 checksync();
-{STACKTRACE
+{_STACKTRACE("Physics::calculate() - item movement")
 	//move objects
 	for (i = 0; i < num_items; i += 1) {
 		if (!item[i]->exists()) continue;
@@ -1096,7 +1103,7 @@ checksync();
 checksync();
 
 
-{STACKTRACE
+{_STACKTRACE("Physics::calculate() - presence calculation")
 	//call Presence calculate functions
 	for (i = 0; i < num_presences; i += 1) {
 		if (presence[i]->exists()) presence[i]->calculate();
@@ -1105,7 +1112,7 @@ checksync();
 }
 
 	//call objects calculate functions
-{STACKTRACE
+{_STACKTRACE("Physics::calculate() - item calculation")
 	for (i = 0; i < num_items; i += 1) {
 		if (item[i]->exists()) item[i]->calculate();
 checksync();
@@ -1113,7 +1120,7 @@ checksync();
 }
 
 	//prepare quadrants stuff
-{STACKTRACE
+{_STACKTRACE("Physics::calculate() - quadrants stuff")
 	for(i = 0; i < QUADS_TOTAL; i += 1) {
 		quadrant[i] = NULL;
 		}
@@ -1132,12 +1139,13 @@ checksync();
 
 checksync();
 	//check for collisions
+{_STACKTRACE("Physics::calculate() - collisions")
 	collide();
-
+}
 
 checksync();
 
-{STACKTRACE
+{_STACKTRACE("Physics::calculate() - presence destruction")
 	//remove presences that have been dead long enough
 	int deleted = 0;
 	for(i = 0; i < num_presences; i ++) {
@@ -1163,7 +1171,7 @@ checksync();
 checksync();
 
 	//remove objects that have been dead long enough
-{STACKTRACE
+{_STACKTRACE("Physics::calculate() - item destruction")
 	int deleted = 0;
 	for(i = 0; i < num_items; i ++) {
 		item[i] = item[i+deleted];
@@ -1279,7 +1287,7 @@ void Physics::animate_predict(Frame *frame, int time) {STACKTRACE
 }
 
 #include "../util/pmask.h"
-void Physics::collide() {STACKTRACE
+void Physics::collide() {_STACKTRACE("Physics::collide()")
 	int i;
 	PMASKDATA_FLOAT *tmp;
 	int l = 0;
@@ -1342,7 +1350,7 @@ void Physics::prepare() {STACKTRACE
 	::MAX_SPEED  = this->max_speed;
 	return;
 }
-int Physics::checksum() {STACKTRACE
+int Physics::checksum() {_STACKTRACE("Physics::checksum")
 	int i;
 	Uint32 g = 0;
 	//prepare();

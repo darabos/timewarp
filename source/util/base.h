@@ -3,11 +3,21 @@
 
 #include "types.h"
 
+#ifdef _MSC_VER
+	#define for  if (0) ; else for
+	#ifndef INLINE
+		#define INLINE __inline
+	#endif
+#else
+	#ifndef INLINE
+		#define INLINE inline
+	#endif
+#endif
 
 #ifndef __i386__
-#	if defined(__I386__) || defined(__IA32__) || defined(__ia32__)
-#		define __i386__
-#	endif
+	#if defined(__I386__) || defined(__IA32__) || defined(__ia32__)
+		#define __i386__
+	#endif
 #endif
 
 //char *tw_strdup(const char *str);

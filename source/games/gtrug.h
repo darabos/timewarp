@@ -1,7 +1,7 @@
 #ifndef __GTRUG_H__
 #define __GTRUG_H__
 
-#include "../util/t_rarray.h"
+#include <vector>
 
 struct MouseState;
 struct TrugOrder;
@@ -70,8 +70,8 @@ class TrugPlayer : public Presence {
 	TrugControl *overriden;
 	TeamCode team;
 	virtual void calculate();
-	R_Array<int> ship_roots;
-	R_Array<int> ship_codes;
+	std::vector<int> ship_roots;
+	std::vector<int> ship_codes;
 };
 
 enum {
@@ -123,7 +123,7 @@ class TrugGame : public Game {
 	virtual TrugPlayer* add_player ( int channel );
 
 
-	R_Ref_Array<TrugPlayer*> players;
+	std::vector<TrugPlayer*> players;
 
 	TrugGUI *gui;
 };

@@ -1,171 +1,55 @@
 #include <string.h>
 #include <stdio.h>
 #include <allegro.h>
+#include <stdarg.h>
 
 #include "../melee.h"
 REGISTER_FILE
 
 
 
-// test GEO.
-// creating a looping list of the ## most recent STACKTRACE encounters
 #if defined DO_STACKTRACE
-	static const int max_stacklist = 16;	// I guess 16 is more than enough.
-	static const int max_stacktrace = 32;	// I guess 32 is more than enough.
-	static int stacklist_level = 0;	// for TRACES in the same subr., the level is inverted cause cleaning-up is inverted... (looks like that anyway)
-	static int stacklist_current = 0;
-	static bool stacklist_freeze = false;		// this is set to TRUE after a crash by caught_error
-	static int stacktrace_level = 0;	// for TRACES in the same subr., the level is inverted cause cleaning-up is inverted... (looks like that anyway)
 
-	struct StackList {
-		const char *file;
-		int line;
+#	define MAX_STACK_LEVELS 64
+#	define MAX_STACK_LEVELS_MASK (MAX_STACK_LEVELS - 1)
+#	define MAX_TRACE_LENGTH 64
+#	define MAX_TRACE_LENGTH_MASK (MAX_TRACE_LENGTH - 1)
+
+	struct TraceData {
+		SOURCE_LINE *srcline;
 		int level;
-		StackList();
 	};
 
-	StackList::StackList()
-	{
-		file = 0;
-		line = 0;
-		level = 0;
+	static int _stack_level = 0;
+	static int _trace_calls = 0;
+
+	static SOURCE_LINE *_stack_data[MAX_STACK_LEVELS];
+	static TraceData    _trace_data[MAX_TRACE_LENGTH];
+
+	static void _usth_error() {
+		tw_error("Exceeded maximum stacktrace level");
 	}
-
-	static StackList stacklist_data[max_stacklist];
-	static StackList stacktrace_data[max_stacklist];
-
-	void add2stacklist(const char *file, int line)
-	{
-		if (stacklist_freeze)
-			return;
-
-		stacklist_data[stacklist_current].file = file;
-		stacklist_data[stacklist_current].line = line;
-		stacklist_data[stacklist_current].level = stacklist_level;
-
-		++stacklist_current;
-		if (stacklist_current >= max_stacklist)
-			stacklist_current = 0;
-
-		++stacklist_level;
-	}
-
-	void add2stacktrace(const char *file, int line)
-	{
-		if (stacklist_freeze)
-			return;
-
-		stacktrace_data[stacktrace_level].file = file;
-		stacktrace_data[stacktrace_level].line = line;
-		stacktrace_data[stacktrace_level].level = stacktrace_level;
-
-		++stacktrace_level;
-		if (stacktrace_level >= max_stacktrace)
-			stacktrace_level = max_stacktrace-1;
-		// not neat, just to prevent catastrophy
-
-	}
-
-	void sub4stacklist()
-	{
-		if (stacklist_freeze)
-			return;
-
-		--stacklist_level;
-	}
-
-	void sub4stacktrace()
-	{
-		if (stacklist_freeze)
-			return;
-
-		--stacktrace_level;
-		if (stacktrace_level < 0)
-			stacktrace_level = 0;
-	}
-
-	bool get_stacklist_info(int N, const char **filename, int **linenum, int **level)
-	{
-		int i, k;
-		i = stacklist_current;
-		k = 0;
-		for(;;)
-		{
-			++k;
-			if (k > N)	// find the Nth item (0 = the first)
-				break;
-
-			--i;	// count back to ever older traces
-			if (i < 0)
-				i = max_stacklist-1;	// loop around
-
-			if (i == stacklist_current)
-				return false;	// full loop
-		}
-
-		// treat this item...
-		StackList *s;
-		s = &stacklist_data[i];
-		*filename = s->file;
-		*linenum = &(s->line);
-		*level = &(s->level);
-
-		return true;
-	}
-
-	bool get_stacktrace_info(int N, const char **filename, int **linenum, int **level)
-	{
-		if ( N >= stacktrace_level)
-			return false;
-
-		StackList *s;
-		s = &stacktrace_data[N];
-		*filename = s->file;
-		*linenum = &(s->line);
-		*level = &(s->level);
-
-		return true;
-	}
-
-#endif
-
-
-
-#if defined DO_STACKTRACE
-	bool usestacktrace = 0;
-	struct StackTraceData {
-		const char *file;
-		int line;
-	};
-	#define MAX_STACKTRACE_LEVELS 64
-	#define MAX_STACKTRACE_LEVELS_MASK (MAX_STACKTRACE_LEVELS-1)
-	int _stacktrace_level = 0;
-	static StackTraceData _stacktrace_data[MAX_STACKTRACE_LEVELS];
-	UserStackTraceHelper::UserStackTraceHelper(const char *file, int line) {
-		_stacktrace_data[_stacktrace_level & MAX_STACKTRACE_LEVELS_MASK].file = file;
-		_stacktrace_data[_stacktrace_level & MAX_STACKTRACE_LEVELS_MASK].line = line;
-		_stacktrace_level += 1;
-
-		// somewhat different info as well:
-		add2stacklist(file, line);
-		add2stacktrace(file, line);
+	UserStackTraceHelper::UserStackTraceHelper ( SOURCE_LINE *srcline ) {
+		int i = (_trace_calls++) & MAX_TRACE_LENGTH_MASK;
+		_trace_data[i].srcline = srcline;
+		_trace_data[i].level = _stack_level;
+		_stack_data[_stack_level++] = srcline;
+		if (_stack_level >= MAX_STACK_LEVELS) _usth_error();
 	}
 	UserStackTraceHelper::~UserStackTraceHelper() {
-		_stacktrace_level -= 1;
-		sub4stacklist();
-		sub4stacktrace();
+		_stack_level --;
 	}
 	// why use a class: because it places a count-down automatically at the end
 	// of the subroutine where you place the STACKTRACE.
 	char *get_stack_trace_string(int max) {
 		int l = 30;
 		int i = 0;
-		if (_stacktrace_level < 0) return "\nError in stack trace\n";
+		if (_stack_level < 0) return "\nError in stack trace\n";
 //		if (_stacktrace_level > 256) return "\n
-		if (max > MAX_STACKTRACE_LEVELS) max = MAX_STACKTRACE_LEVELS;
-		if (max > _stacktrace_level) max = _stacktrace_level;
+		if (max > MAX_STACK_LEVELS) max = MAX_STACK_LEVELS;
+		if (max > _stack_level) max = _stack_level;
 		for (i = 0; i < max; i += 1) {
-			l += strlen(_stacktrace_data[(_stacktrace_level-i-1) & MAX_STACKTRACE_LEVELS_MASK].file);
+			l += strlen(_stack_data[(_stack_level-i-1) & MAX_STACK_LEVELS_MASK]->file);
 			l += 25;
 		}
 		char *buf = (char*)malloc(l);
@@ -173,10 +57,10 @@ REGISTER_FILE
 		tmp += sprintf(tmp, "\nStack Trace:\n");
 		for (i = 0; i < max; i += 1) {
 			if (i != 0) tmp += sprintf(tmp, "called from");
-			const char *str = _stacktrace_data[(_stacktrace_level-i-1) & MAX_STACKTRACE_LEVELS_MASK].file;
+			const char *str = _stack_data[(_stack_level-i-1) & MAX_STACK_LEVELS_MASK]->file;
 			const char *tmp2 = strstr(str, "source");
 			if (tmp2 && tmp2[6]) str = tmp2 + 7;
-			int line = _stacktrace_data[(_stacktrace_level-i-1) & MAX_STACKTRACE_LEVELS_MASK].line;
+			int line = _stack_data[(_stack_level-i-1) & MAX_STACK_LEVELS_MASK]->line;
 			tmp += sprintf(tmp, "  %s : %d\n", str, line);
 		}
 		return buf;
@@ -288,9 +172,6 @@ static void tw_error_handler (const char *file, int line, const char *message) {
 #ifdef DO_STACKTRACE
 	// add GEO:
 	extern void game_create_errorlog(const char *exitmessage = 0);
-	add2stacklist(file, line);
-	add2stacktrace(file, line);
-	stacklist_freeze = true;
 #endif
 
 	if (!strncmp(message, "quit", 4)) throw 0;
@@ -387,7 +268,6 @@ void caught_error(const char *format, ...) {
 #endif
 	// the following makes calls to subroutines that are monitored; I'll disable
 	// further monitoring by ...
-	stacklist_freeze = true;
 	int i = tw_alert(error_string, "Okay", "Debug");
 	if (i == 2) __error_flag |= 1;
 

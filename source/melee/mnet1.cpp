@@ -153,7 +153,8 @@ void NetLog::recv_packet() {
 	if (len != 4) { tw_error ("NetLog::recv_packet -- net.recv error (1)"); }
 	len = buffy[0] + (buffy[1] << 8) + (buffy[2] << 16) + (buffy[3] << 24);
 	if (len & 0x80000000) {
-		handle_code(len);
+		//handle_code(len);
+		tw_error("NetLog::recv_packet - this shouldn't happen");
 		return;
 		}
 	net.recv(4, 4, &buffy[4]);
@@ -181,47 +182,7 @@ void NetLog::recv_packet() {
 	return;
 	}
 
-void NetLog::send_code(unsigned int code) {
-	STACKTRACE;
-	if (!(code & 0x80000000)) { tw_error ("NetLog::send_special -- bade code!"); }
-	net.send(sizeof(unsigned int), &code);
-	return;
-	}
-void NetLog::send_message(char *string) {STACKTRACE;
-	int i;
-	i = sprintf((char*)&buffy[4], "remote: %s", string);
-	if (i > 1000) { tw_error ("net1_send_message -- message length exceeds maximum"); }
-	buffy[0] = i & 255;
-	buffy[1] = (i >> 8) & 255;
-	buffy[2] = (NET1_CODE_MESSAGE >> 16) & 255;
-	buffy[3] = (NET1_CODE_MESSAGE >> 24) & 255;
-	net.send(i+4, &buffy);
-	message.out((char*)&buffy[4], 5000, 9);
-	return;
-	}
-void NetLog::handle_code(unsigned int code) {STACKTRACE
-	switch (code & 0xF0000000) {
-		case NET1_CODE_QUIT & 0xF0000000: {
-			switch (code) {
-				case NET1_CODE_QUIT: {
-					message.out("Quitting");
-					tw_error ("Quit: recieved quit signal over network");
-					}
-				break;
-				}
-			}
-		break;
-		case NET1_CODE_MESSAGE: {
-			int len = code - NET1_CODE_MESSAGE;
-			if (len > 1000) { tw_error ("net1_handle_code -- message length exceeds maximum"); }
-			net.recv(len, len, &buffy);
-			buffy[len] = 0;
-			message.out((char*)buffy, 5000, 10);
-			}
-		break;
-		}
-	return;
-	}
+
 
 void NetLog::expand_logs(int num_channels) {STACKTRACE
 	int old_log_num = log_num;
