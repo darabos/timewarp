@@ -11,9 +11,33 @@ REGISTER_FILE
 #include "gamedialogue.h"
 #include "edit/edit_dialogue.h"
 
+//#include "allegttf.h"
+//#include "allegro/internal/aintern.h"
+
+#include "../other/ttf.h"
+#include "../other/fontmorph.h"
+
+#include "general/sprites.h"
 
 static const int BlistLen = 128;
 
+
+GameAliendialog::GameAliendialog()
+:
+GameBare()
+{
+	dialo = 0;
+	racefile[0] = 0;
+}
+
+
+bool GameAliendialog::eol(char c)
+{
+	if (c == '\n' || c == 0)
+		return true;
+	else
+		return false;
+}
 
 int GameAliendialog::Nlines(char *text)
 {
@@ -24,13 +48,16 @@ int GameAliendialog::Nlines(char *text)
 
 	while (text[i] != 0 )
 	{
-		if (text[i] == '\n')
+		if (eol(text[i]))
 		{
-			++n;
+			if (!eol(text[i+1]))	// skip empty lines ?
+				++n;
 		}
 
 		++i;
 	}
+
+	++n;	// 0 also marks the end of a line.
 
 	return n;
 }
@@ -44,9 +71,10 @@ char *GameAliendialog::showline(char *text, int num)
 
 	while (text[i] != 0 && n < num )
 	{
-		if (text[i] == '\n')
+		if (eol(text[i]))
 		{
-			++n;
+			if (!eol(text[i+1]))	// skip empty lines ?
+				++n;
 		}
 
 		++i;
@@ -54,7 +82,7 @@ char *GameAliendialog::showline(char *text, int num)
 
 	int k;
 	k = i;
-	while ( text[k] != 0 && text[k] != '\n')
+	while ( !eol(text[k]))
 		++k;
 
 	if (k > 127)
@@ -76,6 +104,30 @@ void GameAliendialog::init_menu()
 
 void GameAliendialog::init()
 {
+	// the TTF library
+//	antialias_init(0);
+
+
+	// ttf font loading test
+	FONT *ttf;
+
+	int p;
+	p = 24;
+	char *fname;
+	//fname = "fonts/jobbernole.ttf";
+	fname = "fonts/lynx.ttf";
+	ttf = load_ttf_font(fname, p, 0);
+
+	if (!ttf)
+	{
+		tw_error("font isn't loaded");
+	}
+	
+
+	// end of ttf test
+
+	morph_font(ttf);
+
 	if (!window) {
 		window = new VideoWindow();
 		window->preinit();
@@ -105,6 +157,12 @@ void GameAliendialog::init()
 	ti = false;	// no render/tic time info needed...
 
 
+	if (!dialo)
+	{
+		set_dialog("gamex/gamedata/races/earthling/colony.dialog");
+		race_id = "earthling";
+	}
+
 
 	// initialize menu system.
 
@@ -121,7 +179,9 @@ void GameAliendialog::init()
 	if (screen->w == 1024)
 		i = 6;					// more pixels available for the same "real-life" size.
 
-	FONT *usefont = videosystem.get_font(i);
+	FONT *usefont;
+	//usefont = videosystem.get_font(i);
+	usefont = ttf;
 
 
 
@@ -152,6 +212,10 @@ void GameAliendialog::quit()
 	show_mouse(screen);
 
 	GameBare::quit();
+
+	// stop the ttf
+//	antialias_exit();
+	//destroy_font(ttf);
 }
 
 
@@ -196,18 +260,24 @@ void GameAliendialog::initBlist(Dialo *dialo)
 		Blist[0][0] = 0;
 
 	Nactivebranches = k;
-	B->set_optionlist(Blist, Nactivebranches, makecol(255,255,255));
+	int col;
+	//col = makecol(255,255,255);
+	col = -1;	// for color-fonts.
+	B->set_optionlist(Blist, Nactivebranches, col);
+	//set_palette(default_palette);
 
 //	A->text_reset();
 	showline_num = 0;
 	char *txt = showline(dialo->T, showline_num);
 	A->set_textinfo( txt, strlen(txt) );
+	A->text_color = -1;	// so that font-colors are used.
 
 	showline_Nlines = Nlines(dialo->T);
 
 
 	char tmp[128];
-	strcpy(tmp, "gamex/dialogue/");
+	strcpy(tmp, "gamex/gamedata/races/");
+	//strcpy(tmp, race_id);
 	strcat(tmp, dialo->racepic);
 	if (strcmp(tmp, racefile) != 0)
 	{
@@ -255,39 +325,36 @@ void GameAliendialog::calculate()
 		
 		// change state, and go back to parent
 		// hmm, no, only do this if all sub-questions are "done"
-		int i;
-		for ( i = 0; i < dialo->Nbranches; ++i )
-			if (dialo->branch[i]->state)
-				break;
+		
+		dialo->check_state();
+		
+		if (!dialo->state)
+		{
 			
-			if (i == dialo->Nbranches)
+			if (dialo->mother)
 			{
-				dialo->state = 0;
-				
+				dialo = dialo->mother;
+				// the parent's parent is the real on you've to get (since doing once
+				// goes back to the question node, going back one further goes to
+				// the alien-talk node.
 				if (dialo->mother)
 				{
+					// disable the question node, and go back
+					// (a bit simple ... should really only be done after checking that
+					// all sub-questions are disabled already - but this is a simple
+					// test case).
+					dialo->check_state();
+					
 					dialo = dialo->mother;
-					// the parent's parent is the real on you've to get (since doing once
-					// goes back to the question node, going back one further goes to
-					// the alien-talk node.
-					if (dialo->mother)
-					{
-						// disable the question node, and go back
-						// (a bit simple ... should really only be done after checking that
-						// all sub-questions are disabled already - but this is a simple
-						// test case).
-						dialo->state = 0;
-						
-						dialo = dialo->mother;
-						
-						initBlist(dialo);
-						
-						// since you return, that means that the previous
-						// node has already been "done"
-						showline_num = showline_Nlines;
-					}
+					
+					initBlist(dialo);
+					
+					// since you return, that means that the previous
+					// node has already been "done"
+					showline_num = showline_Nlines;
 				}
 			}
+		}
 	}
 
 
@@ -314,13 +381,25 @@ void GameAliendialog::calculate()
 				// namely the alien answer.
 				if (dialo->Nbranches > 0)
 				{
-					int i = 0;
+					//int i = 0;
 
 					// For now, it defaults to branch 0
-					dialo = dialo->branch[i];
+					dialo = dialo->branch[dialo->get_branch()];
+				} else {
+
+					// generate a default "answer" which tells you there's a missing link
+					Dialo *d;
+					d = new Dialo();
+					d->init_default();	// this also sets mother=0
+					d->mother = dialo;
+
+
+					dialo = d;
 				}
 
 				initBlist(dialo);
+
+				showline_num = 0;
 			}
 		}
 	}
@@ -360,6 +439,14 @@ void GameAliendialog::set_colony(RaceColony *rc)
 	strcat(fname, rc->dialogname);
 
 
+	set_dialog(fname);
+
+	race_id = rc->race->id;
+}
+
+
+void GameAliendialog::set_dialog(char *fname)
+{
 	// read the root branch !!
 	fs = new FileStore(fname);
 	firstdialo = new Dialo();
@@ -367,8 +454,6 @@ void GameAliendialog::set_colony(RaceColony *rc)
 	firstdialo->read(fs);
 
 	dialo = firstdialo;
-
-
 }
 
 
@@ -441,6 +526,224 @@ void GameAliendialog::preptext(char *t)
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+#include "freetype/freetype.h"
+
+
+void cleanup (FT_Library engine, FT_Face face)
+{
+	if (engine)
+		FT_Done_FreeType(engine);
+}
+
+
+// copy ttf bitmap onto an allegro bitmap
+void my_draw_bitmap( FT_Bitmap *src, BITMAP *dest, int dx, int dy )
+{
+	if (src->rows == 0 || src->width == 0)
+		return;
+
+	int ix, iy;
+
+	if (src->pixel_mode == ft_pixel_mode_mono)
+	{
+
+		// dunno if this actually works ?
+		int ix, iy;
+		for ( iy = 0; iy < src->rows; ++iy )
+		{
+			unsigned char *p = src->buffer + iy * src->pitch;
+			
+			for ( ix = 0; ix < src->width; ++ix )
+			{
+				unsigned char v;
+				v = p[ix >> 8];
+				
+				unsigned char mask;
+				mask = 1 << (ix & 0x0F);
+				
+				if (v & mask)
+					putpixel(dest, ix+dx, iy+dy, 255);
+			}
+		}
+		
+	} else if ( src->pixel_mode == ft_pixel_mode_grays )
+	{
+		for ( iy = 0; iy < src->rows; ++iy )
+		{
+			unsigned char *p = src->buffer + iy * src->pitch;
+			
+			for ( ix = 0; ix < src->width; ++ix )
+			{
+				unsigned char v;
+				v = p[ix];
+				
+				//if (v != 0)
+				if (v > 128)
+					putpixel(dest, ix+dx, iy+dy, 255);
+			}
+		}
+		
+	} else {
+		tw_error("unsupported bitmap format");
+	}
+
+
+}
+
+
+
+FONT* load_ttf_font (AL_CONST char* filename,
+                     AL_CONST int points,
+                     AL_CONST int smooth)
+{
+
+	int points_w, points_h, begin, end;
+	begin = 32;	// space
+	end = 128;	// ?
+	points_w = points;
+	points_h = points;
+
+
+	FT_Library           engine = 0;
+	FT_Face              face = 0;
+	
+	
+	FT_Error error;
+
+	// initialize the library
+	error = FT_Init_FreeType(&engine);
+	if(error)
+		return 0;
+		
+	// load a font
+	error = FT_New_Face(engine, filename, 0, &face);
+	if(error)
+	{
+		cleanup(engine, face);
+		return 0;
+	}
+
+	// set font size in pixels
+	error = FT_Set_Pixel_Sizes(face, points_w, points_h);
+	if(error)
+	{
+		cleanup(engine, face);
+		return 0;
+	}
+
+
+	// in case there's no unicode (ascii) charmap
+	if (!face->charmap)
+	{
+		if (!face->num_charmaps)
+		{
+			cleanup(engine, face);
+			return 0;
+		}
+
+		FT_Set_Charmap(face, face->charmaps[0]);	// just pick the first one .
+	}
+
+	if (!face->charmap)
+	{
+		cleanup(engine, face);
+		return 0;
+	}
+	
+	
+	int c;
+	
+	AL_CONST int num = end - begin + 1;
+	
+	struct FONT *f;
+	struct FONT_COLOR_DATA *fcd;
+	
+	// Allocate and setup the Allegro font
+	// (copied from allegttf)
+	f = (struct FONT*)calloc(1,sizeof(struct FONT));
+	fcd = (struct FONT_COLOR_DATA*)calloc(1,sizeof(struct FONT_COLOR_DATA));
+	fcd->begin = begin;
+	fcd->end = end;
+	fcd->bitmaps = (BITMAP**)calloc(num,sizeof(BITMAP*));
+	fcd->next = NULL;
+	f->data = (void*)fcd;
+	f->vtable = font_vtable_color;
+	
+
+
+	FT_GlyphSlot  slot = face->glyph;  // a small shortcut
+	int           pen_x, pen_y;
+	
+	pen_x = 0;
+	pen_y = 0;
+
+	int ymin, ymax, yorigin;
+	
+	ymin = face->bbox.yMin;		// the bounding box for all chars in this font.
+	ymax = face->bbox.yMax;		// this actually defines the origin position...
+	yorigin = points_h * double(ymax) / double(ymax - ymin);
+	
+	//char c;
+	for ( c = begin; c <= end; ++c )
+	{
+		// load glyph image into the slot (erase previous one)
+		
+		error = FT_Load_Char( face, c, FT_LOAD_RENDER );
+		if (error)
+			continue;
+		
+		// now, draw to our target surface
+		BITMAP *bmp = 0;
+		int w, h;
+
+		w = slot->metrics.horiAdvance / 64;
+		if (!w)
+			w = 1;
+
+		h = points_h;
+		
+		int dx, dy;
+
+		dx = slot->bitmap_left;
+		dy = yorigin - slot->bitmap_top;
+
+		if (w && h)
+		{
+			bmp = create_bitmap_ex(8, w, h);
+			clear_to_color(bmp, 0);
+			
+			my_draw_bitmap( &slot->bitmap, bmp, dx, dy );
+		}
+
+		fcd->bitmaps[c-begin] = bmp;
+	}
+
+	
+	// set the font height
+	f->height = points_h;
+	
+	// clean up the font stuff
+	cleanup(engine, face);
+	
+	return f;
+   }
+   
+   */
 
 
 

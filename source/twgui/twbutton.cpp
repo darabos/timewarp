@@ -623,6 +623,15 @@ BITMAP *GraphicButton::getbmp(char *name)
 }
 
 
+// obtain a bitmap using "absolute" path, so that it can come from anywhere...
+BITMAP *GraphicButton::getbmp_nobutton(char *name)
+{
+	// a background image is needed of course.
+	return mainwindow->bmp(name);
+}
+
+
+
 
 void GraphicButton::init_pos_size(BITMAP **bmp_default, char *idstr)
 {

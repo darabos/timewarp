@@ -64,6 +64,11 @@ public:
 
 	void handle_ranmin();
 
+	SpaceSprite *spr[10];
+
+	void handle_env();	// firestorm, quake, lightning
+
+	TeamCode team_player, team_enemy;
 };
 
 

@@ -3,6 +3,7 @@
 
 #include "../melee.h"
 
+
 Vector2 uncorner ( Vector2 pos );
 void replace_color(BITMAP *bmp, int col1, int col2);
 
@@ -24,15 +25,17 @@ public:
 	void newpos(int x, int y);
 };
 
+class GameBare;
 
 class WindowInfo
 {
 public:
+	GameBare *g;
 	Vector2	maparea,	// the part of the map that's mapped onto the visual screen; can be used to "zoom" if necessary
 			mapcenter;
 	Vector2 framesize;
 	double	refscreenw;	// extra zoom factor to correct for different resolutions (?)
-	double	zoomlevel;	// zoom level required by the game.
+	double	zoomlevel, zoomlevel_abs;	// zoom level required by the game.
 	double	minzoom, maxzoom;	// zoom limits.
 
 	void init(Vector2 maparea, double refscreenw, Frame *frame);
@@ -46,6 +49,7 @@ public:
 	void scaletowidth(double W);	// zoom out to this width.
 	void testzoom();
 	void edgecorrect();
+	void set_game(GameBare *ag);
 };
 
 /*
@@ -64,6 +68,7 @@ public:
 //SpaceSprite *create_sprite(char *bmpfilename, int _attributes);
 SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations = 1, int bpp=32, double scale = 1, bool vidmem = false);
 
+SpaceSprite *create_sprite_old(char *bmpfilename, int _attributes, int rotations = 1, int bpp=32, double scale = 1, bool vidmem = false);
 
 
 

@@ -386,7 +386,11 @@ BITMAP* TWindow::bmp(char *bmpname, bool vidmem)
 	}
 
 	strcpy(objname, bmpname);
-	strcat(objname, ".bmp");	// default extension for .bmp files.
+
+	char *tmp;
+	tmp = &objname[strlen(objname)-4];
+	if (strcmp(tmp, ".bmp"))	// if the extension isn't already .bmp
+		strcat(objname, ".bmp");	// default extension for .bmp files.
 
 	tmpbmp = load_bitmap(objname, 0);
 	bmp = clone_bitmap(bpp, tmpbmp, scale, vidmem);

@@ -47,8 +47,14 @@ class GameAliendialog : public GameBare
 
 	void preptext(char *t);
 
+	bool eol(char c);
+
 public:
+	GameAliendialog();
+
+	char *race_id;
 	void set_colony(RaceColony *rc);
+	void set_dialog(char *fname);
 };
 
 

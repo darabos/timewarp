@@ -140,6 +140,9 @@ public:
 	virtual void set_sprite ( SpaceSprite *sprite );
 	virtual void rem_sprite();
 	void drawshadow();
+
+	virtual void change_pos(Vector2 dpos);
+	virtual void change_pos(double scale);
 };
 
 

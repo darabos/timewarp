@@ -91,7 +91,8 @@ Area::~Area()
 void Area::changebackgr(char *fname)
 {
 	BITMAP *newb;
-	newb = getbmp(fname);
+	//newb = getbmp(fname);
+	newb = getbmp_nobutton(fname);
 
 	if (newb)
 	{

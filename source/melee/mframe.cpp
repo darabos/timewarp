@@ -448,9 +448,18 @@ void SpaceLocation::change_vel(Vector2 dvel)
 	vel += dvel;
 }
 
+/*** Change a location by translation
+*/
 void SpaceLocation::change_pos(Vector2 dpos)
 {
 	pos = normalize(pos + dpos);
+}
+
+/*** Change a location by scaling
+*/
+void SpaceLocation::change_pos(double scale)
+{
+	pos *= scale;
 }
 
 void SpaceLocation::ship_died() {STACKTRACE
@@ -483,8 +492,15 @@ int SpaceLocation::canCollide(SpaceLocation *other) {
 	return ((1 << other->layer) & collide_flag_anyone);
 }
 
-TeamCode SpaceLocation::get_team() const {
+TeamCode SpaceLocation::get_team() const
+{
 	return (ally_flag & team_mask) >> team_shift;
+}
+
+void SpaceLocation::set_team(TeamCode k)
+{
+	ally_flag &= ~team_mask;
+	ally_flag |= k << team_shift;
 }
 
 bool SpaceLocation::sameTeam(const SpaceLocation *other) const {

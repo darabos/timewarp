@@ -1,0 +1,7 @@
+gamex/interface/planetscan/edit/ranl_default_y = 11
+gamex/interface/planetscan/edit/ranl_default_x = 168
+gamex/interface/planetscan/edit/ranm_default_y = 10
+gamex/interface/planetscan/edit/ranm_default_x = 14
+res = 1600
+autoplace = 1
+

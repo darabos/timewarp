@@ -150,6 +150,7 @@ public:
 	// should be a function of the main window, really ...
 
 	BITMAP *getbmp(char *name);
+	BITMAP *getbmp_nobutton(char *name);
 
 	virtual void animate();
 	virtual void draw_default();

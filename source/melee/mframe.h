@@ -215,6 +215,7 @@ protected: public://aught to be protected, but we're lazy
 	inline  bool sameShip (const SpaceLocation *other) {return ally_flag == other->ally_flag;}
 	virtual bool sameTeam (const SpaceLocation *other) const;
 	TeamCode get_team() const;
+	void set_team(TeamCode k);
 
 	virtual void ship_died();
 	virtual void target_died();
@@ -242,6 +243,7 @@ protected: public://aught to be protected, but we're lazy
 
 	virtual void change_vel(Vector2 dvel);
 	virtual void change_pos(Vector2 dpos);
+	virtual void change_pos(double scale);
 
 	SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle);
 	virtual void death();      // called after an item is killed

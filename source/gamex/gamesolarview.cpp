@@ -478,15 +478,16 @@ void GameSolarview::init()
 
 	GameBare::init();
 
-	double H = 4000;
+	H = 4000;
+	
 	size = Vector2(H, H*tempframe->ratio);
-
 	prepare();
 
 //	mapwrap = false;
 	//wininfo.init( Vector2(200,200), 1024.0, tempframe );
 	wininfo.zoomlimit(size.x);
 	wininfo.scaletowidth(size.x);	// zoom out to this width.
+	wininfo.set_game(this);
 
 
 	// create star objects ?!
@@ -725,6 +726,12 @@ void GameSolarview::init()
 	rpopup->layer = 1;
 	dpopup->layer = 1;
 	T->layer = 2;		// always shown later
+
+
+	if (!player->isObject())
+	{
+		tw_error("not an object");
+	}
 }
 
 
@@ -790,13 +797,25 @@ void GameSolarview::calculate()
 	if (next)
 		return;
 
-	double q;
+
+
+	double dt = frame_time * 1E-3;
+
+	if (key[KEY_EQUALS])
+		wininfo.zoom(1 + 1*dt);
+
+	if (key[KEY_MINUS])
+		wininfo.zoom(1 / (1 + 1*dt));
+
+
+
 	wininfo.center(player->pos);
 	wininfo.edgecorrect();
 
-	GameBare::calculate();
+	wininfo.maxzoom = 0.5;
 
-	q = space_zoom;
+
+	GameBare::calculate();
 
 	if (!(player && player->exists()))
 	{
@@ -805,7 +824,6 @@ void GameSolarview::calculate()
 		return;
 	}
 
-	double dt = frame_time * 1E-3;
 
 	if (key[KEY_UP])
 		player->accelerate(0, player->angle, 0.1*dt, 1.0);
@@ -815,12 +833,6 @@ void GameSolarview::calculate()
 
 	if (key[KEY_RIGHT])
 		player->angle += 0.5*PI2 * dt;
-
-	if (key[KEY_EQUALS])
-		wininfo.zoom(1 + 1*dt);
-
-	if (key[KEY_MINUS])
-		wininfo.zoom(1 / (1 + 1*dt));
 
 
 	// editor stuff

@@ -123,6 +123,10 @@ void colorize(BITMAP *bmp, double mr, double mg, double mb)
 			int col, r, g, b;
 
 			col = getpixel(bmp, ix, iy);
+
+			if (!col)
+				continue;
+
 			r = getr32(col);
 			g = getg32(col);
 			b = getb32(col);

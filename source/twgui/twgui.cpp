@@ -226,6 +226,8 @@ void TextList::set_optionlist(char **aoptionlist, int aN, int color)
 	}
 
 	scroll.set(0, 0, 1, N , 1, Nshow);
+
+	text_color = color;
 }
 
 
@@ -345,7 +347,8 @@ void TextList::subanimate()
 			c = text_color;
 		} else {
 			text_mode( makecol(0,0,0) );
-			c = makecol(255,255,255);
+			//c = makecol(255,255,255);
+			c = text_color;
 		}
 
 		if (optionlist[i])// && strlen(optionlist[i]) < 20)

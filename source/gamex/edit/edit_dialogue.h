@@ -25,9 +25,12 @@ struct Dialo
 
 	char racepic[128];
 
+	void init_default();
 	void read(FileStore *fs);
 	void write(FileStore *fs);
 
+	bool check_state();		// checks/changes state based on whether there are live branches or not
+	int get_branch();		// retrieves the first "live" branch
 
 	void enable();
 	void disable();
@@ -70,7 +73,7 @@ class GameDialogue : public GameBare
 	Dialo *dialo, *firstdialo;
 	char *Blist[maxbranches];
 
-	FileBrowser *fb;
+	FileBrowser *fb, *popupraceselect;
 
 	virtual void init();
 	virtual void quit();
@@ -85,8 +88,8 @@ class GameDialogue : public GameBare
 	void init_dialog(char *fname);
 	void save_dialog();
 
-	int Nracepiclist;
-	char *racepiclist[maxracepiclist];
+	//int Nracepiclist;
+	//char *racepiclist[maxracepiclist];
 	
 
 	TextEditBox *Tedit, *nodeid;
@@ -97,7 +100,7 @@ class GameDialogue : public GameBare
 	SwitchButton *dialostatus;
 
 	TextButton *raceselect;
-	PopupList *popupraceselect;
+	//PopupList *popupraceselect;
 };
 
 

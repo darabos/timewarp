@@ -14,6 +14,19 @@ REGISTER_FILE
 
 static int current_dialog_version = 0;
 
+
+char *skiproot(char *ref, char *root)
+{
+	if (!(ref  && root))
+		return 0;
+
+	int i = 0;
+	while (ref[i] == root[i] && root[i] != 0)
+		++i;
+
+	return &ref[i];
+}
+
 // create a dialogue structure
 
 Dialo::Dialo()
@@ -30,22 +43,28 @@ Dialo::~Dialo()
 	discard_branches();
 }
 
+
+void Dialo::init_default()
+{
+	strcpy(T, "no convo yet");
+	
+	strcpy(racepic, "noraceyet");
+	version = 1;
+	mother = 0;
+	// branches of text (= new question list) spawned by the answer.
+	Nbranches = 0;
+	Ntriggers = 0;
+	// initial state
+	state = 1;
+}
+
 void Dialo::read(FileStore *fs)
 {
 
 	// in case it's a new file, then start with some basic information
 	if (!mother && fs->size() == 0)
 	{
-		strcpy(T, "noconvoyet");
-		
-		strcpy(racepic, "noraceyet");
-		version = 1;
-		mother = 0;
-		// branches of text (= new question list) spawned by the answer.
-		Nbranches = 0;
-		Ntriggers = 0;
-		// initial state
-		state = 1;
+		init_default();
 
 		return;
 	}
@@ -233,6 +252,7 @@ void GameDialogue::init()
 
 	// find somewhere a list of all the available race-dialogue bitmaps
 
+	/*
 	FILE *f;
 	char txt[128];
 
@@ -252,6 +272,7 @@ void GameDialogue::init()
 		strcpy(racepiclist[Nracepiclist], txt);
 		++Nracepiclist;
 	}
+	*/
 
 
 	for ( i = 0; i < maxbranches; ++i )
@@ -308,15 +329,23 @@ void GameDialogue::init()
 	nodeid = new TextEditBox(T, "nodeid_", usefont, 0, 0);
 	nodeid->set_textcolor(tcol);
 
+	/*
 	popupraceselect = new PopupList(raceselect, "gamex/interface/dialogeditor/raceselect",
 		"text/", -20, -20, usefont, 0);
 	popupraceselect->tbl->set_optionlist(racepiclist, Nracepiclist, makecol(255,255,128));
 	popupraceselect->hide();
+	*/
 
 	fb = new FileBrowser(bload, "gamex/interface/filebrowser", 0, 0, usefont);
 	fb->tbl->text_color = makecol(255,255,0);
 	fb->set_dir("gamex/gamedata/races");
 	fb->set_ext("dialog");
+
+	
+	popupraceselect = new FileBrowser(raceselect, "gamex/interface/filebrowser", 0, 0, usefont);
+	popupraceselect->tbl->text_color = makecol(255,255,0);
+	popupraceselect->set_dir("gamex/gamedata/races");
+	popupraceselect->set_ext("bmp");
 
 
 	T->add(popupraceselect);
@@ -356,10 +385,12 @@ void GameDialogue::quit()
 	for ( i = 0; i < maxbranches; ++i )
 		delete Blist[i];
 
+	/*
 	for ( i = 0; i < Nracepiclist; ++i)
 	{
 		delete racepiclist[i];
 	}
+	*/
 
 	scare_mouse();
 	set_mouse_sprite(0);	// the default mouse sprite.
@@ -477,6 +508,7 @@ void GameDialogue::calculate()
 	}
 
 
+	/*
 	if (popupraceselect->returnvalueready)
 	{
 		int k = popupraceselect->getvalue();
@@ -486,6 +518,14 @@ void GameDialogue::calculate()
 			strcpy(dialo->racepic, racepiclist[k]);
 			raceselect->set_text(dialo->racepic, makecol(255,255,128));
 		}
+	}
+	*/
+	if (popupraceselect->ready())
+	{
+		char *tmp;
+		tmp = skiproot(popupraceselect->fname, "gamex/gamedata/races/");
+		strcpy(dialo->racepic, tmp);
+		raceselect->set_text(dialo->racepic, makecol(255,255,128));
 	}
 
 
@@ -514,3 +554,45 @@ void GameDialogue::animate(Frame *frame)
 
 
 
+
+
+
+
+
+
+
+bool Dialo::check_state()
+{
+	if (!state)
+		return false;
+	else
+	{
+		int i;
+		for ( i = 0; i < Nbranches; ++i )
+		{
+			if (branch[i]->state)
+				break;
+		}
+
+		if (i == Nbranches)
+			state = 0;
+
+		return state;
+	}
+}
+
+
+int Dialo::get_branch()
+{
+	int i;
+	for ( i = 0; i < Nbranches; ++i )
+	{
+		if (branch[i]->state)
+			break;
+	}
+
+	if (i != Nbranches)
+		return i;
+	else
+		return 0;
+}

@@ -677,6 +677,21 @@ void SolarBody::calculate()
 	SpaceObject::calculate();
 }
 
+void SolarBody::change_pos(Vector2 dpos)
+{
+	stayhere += dpos;
+	pos = stayhere;
+	ellipscenter += dpos;
+}
+
+void SolarBody::change_pos(double scale)
+{
+	stayhere *= scale;
+	pos = stayhere;
+	ellipscenter *= scale;
+	ellipsR *= scale;
+}
+
 void SolarBody::set_sprite(SpaceSprite *new_sprite)
 {
 	if (sprite)

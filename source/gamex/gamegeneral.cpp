@@ -10,6 +10,8 @@ REGISTER_FILE
 
 #include "gamegeneral.h"
 
+#include "gameproject.h"
+
 
 void makevideobmp(BITMAP *&bmp)
 {
@@ -87,7 +89,7 @@ char *replace01(char *txt, int newnum)
 // to be used by the game: it's a preprocessing operation
 
 
-SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, int bpp, double scale, bool vidmem )
+SpaceSprite *create_sprite_old(char *bmpfilename, int _attributes, int rotations, int bpp, double scale, bool vidmem )
 {
 	RGB pal[256];
 	BITMAP **bmplist;
@@ -148,6 +150,76 @@ SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, in
 	s = new SpaceSprite(bmplist, sprite_count, rotations, _attributes);
 
 	for ( i = 0; i < Nbmp; ++i )
+		destroy_bitmap(bmplist[i]);
+	delete[] bmplist;
+
+	return s;
+}
+
+
+
+
+SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, int bpp, double scale, bool vidmem )
+{
+	BITMAP **bmplist;
+	int maxframes = 1024;
+	bmplist = new BITMAP* [maxframes];
+
+	char *tmp;
+
+	int i = 0;
+	for ( ; ; )
+	{
+		if (i >= maxframes)
+		{
+			tw_error("too many frames");
+			break;
+		}
+		tmp = replace01(bmpfilename,i+1);
+
+		// if the filename is not numbered
+		if (i > 0 && strcmp(tmp, bmpfilename) == 0)
+			break;
+
+		BITMAP *tmpbmp = load_bitmap(tmp, 0);
+		if (tmpbmp == 0)
+			break;		// the file does not exist
+
+		// load the bitmap data in the correct color depth (since then you
+		// can use the masked_blit operation without problems).
+		bmplist[i] = 0;
+		if (vidmem)
+			create_video_bitmap(tmpbmp->w, tmpbmp->h);
+		if (!bmplist[i])
+			bmplist[i] = create_bitmap_ex(bpp, tmpbmp->w, tmpbmp->h);
+
+		blit(tmpbmp, bmplist[i], 0, 0,  0, 0,  tmpbmp->w, tmpbmp->h);
+		destroy_bitmap(tmpbmp);
+
+		if (scale != 1)
+		{
+			if (vidmem)
+				tmpbmp = create_video_bitmap(bmplist[i]->w * scale, bmplist[i]->h * scale);
+			else
+				tmpbmp = create_bitmap_ex(bpp, bmplist[i]->w * scale, bmplist[i]->h * scale);
+
+			stretch_blit(bmplist[i], tmpbmp, 0, 0, bmplist[i]->w, bmplist[i]->h,
+				0, 0, tmpbmp->w, tmpbmp->h);
+
+			destroy_bitmap(bmplist[i]);
+			bmplist[i] = tmpbmp;		// point to the scaled one.
+		}
+
+		++i;
+	}
+
+	int sprite_count;
+	sprite_count = i;
+
+	SpaceSprite *s;
+	s = new SpaceSprite(bmplist, sprite_count, rotations, _attributes);
+
+	for ( i = 0; i < sprite_count; ++i )
 		destroy_bitmap(bmplist[i]);
 	delete[] bmplist;
 
@@ -368,7 +440,7 @@ void WindowInfo::init(Vector2 omaparea, double orefscreenw, Frame *frame)
 	maparea = omaparea;
 	refscreenw = orefscreenw;
 	mapcenter = 0;
-	zoomlevel = 1;
+	zoomlevel_abs = 1;
 	minzoom = 0.5;
 
 	// the drawing area (needed to calculate zoom)
@@ -377,7 +449,8 @@ void WindowInfo::init(Vector2 omaparea, double orefscreenw, Frame *frame)
 	else
 		framesize = Vector2(frame->window->w, frame->window->h);
 
-	zoomlevel = framesize.x / maparea.x;
+	zoomlevel_abs = framesize.x / maparea.x;
+	zoomlevel = zoomlevel_abs;
 	// in this way, a single maparea fits exactly into a single window (at least
 	// in the x-direction).
 
@@ -386,6 +459,14 @@ void WindowInfo::init(Vector2 omaparea, double orefscreenw, Frame *frame)
 
 	// correction applied to the y-size of the maparea:
 	maparea.y = framesize.y / zoomlevel;
+
+	g = 0;
+}
+
+
+void WindowInfo::set_game(GameBare *ag)
+{
+	g = ag;
 }
 
 
@@ -414,14 +495,41 @@ void WindowInfo::testzoom()
 
 void WindowInfo::zoom(double z)
 {
-	zoomlevel *= z;
-	testzoom();
+	zoomlevel_abs *= z;
+
+	if (zoomlevel_abs < maxzoom || !g)
+	{
+		zoomlevel = zoomlevel_abs;
+		testzoom();
+
+	} else if(g)	// zoom continues, in terms of physical inflation of space
+	{
+		int i;
+		double scale;
+
+		scale = z;
+
+		for ( i = 0; i < g->num_items; ++i )
+		{
+			if (g->item[i]->isLocation())
+			{
+				g->item[i]->change_pos(scale);	// the change in position.
+			}
+		}
+
+		mapcenter *= scale;
+
+		g->size *= scale;
+
+		g->prepare();
+	}
 }
 
 
 void WindowInfo::set_zoom(double z)
 {
-	zoomlevel = z;
+	zoomlevel_abs = z;
+	zoomlevel = zoomlevel_abs;
 	testzoom();
 }
 
@@ -441,7 +549,8 @@ void WindowInfo::zoomlimit(double min, double max)
 
 void WindowInfo::scaletowidth(double W)
 {
-	zoomlevel = framesize.x / W;
+	zoomlevel_abs = framesize.x / W;
+	zoomlevel = zoomlevel_abs;
 	testzoom();
 }
 

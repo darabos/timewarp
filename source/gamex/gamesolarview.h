@@ -57,6 +57,8 @@ public:
 class GameSolarview : public GameBare
 {
 public:
+	double H;
+
 	MapSpacebody *starmap, *solarmap;
 	TextEditBox *starname;
 	char oldstarname[128];
