@@ -17,7 +17,9 @@ Melee:  Starts a battle.  In battle the following keys do stuff:
         F12 displays framerates / performance data
         - zooms out on some viewing modes.
         + (or =) zooms in on some viewing modes.
-        0 and 9 also effect the camera in some viewing modes.  
+        0 and 9 also effect the camera in some viewing modes.
+        ctrl+T = toggle team indicators on/off
+        ctrl+H = toggle healthbar indicators on/off
         Also, if some controllers are set to keyboard, customizable
         buttons may cause ship actions.  Be default these are:
         Config 0:
