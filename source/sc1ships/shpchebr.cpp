@@ -184,9 +184,9 @@ void ChenjesuDOGI::calculate()
 
 void ChenjesuDOGI::inflict_damage(SpaceObject *other)
 {
-	play_sound(data->sampleExtra[1]);
-
 	if(sameTeam(other)) return;
+	if ( !other->isShip()) return;
+	play_sound(data->sampleExtra[1]);
 
 	other->handle_fuel_sap(this, sap_factor);
 	double a = trajectory_angle(other);
