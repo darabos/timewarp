@@ -86,6 +86,9 @@ class Ship : public SpaceObject {
 	int death_counter;
 	int death_explosion_counter;
 
+	bool hashotspots;
+	virtual void assigntarget(SpaceObject *otarget);
+
 	virtual void materialize();
 	float    crew;
 	float    crew_max;

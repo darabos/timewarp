@@ -100,9 +100,11 @@ public:
 	virtual void redraw();
 
 	bool game_done;
-	void quit(const char *message) {game_done = true;}
-	bool friendly_fire;
-	double shot_relativity;
+	virtual void quit(const char *message) {game_done = true;}
+
+	// Rob: moved to the physics class
+//	bool friendly_fire;
+//	double shot_relativity;
 
 	int hiccup_margin;
 

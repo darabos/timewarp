@@ -629,7 +629,9 @@ void Ship::calculate()
 
 	sprite_index = get_index(angle);
 
-	calculate_hotspots();
+	// hotspots are too much a luxury to include in massive games (lots of objects)
+	if (hashotspots)
+		calculate_hotspots();
 
 	SpaceObject::calculate();
 }
@@ -722,6 +724,13 @@ int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {ST
 
 void Ship::materialize() {
 }
+
+
+void Ship::assigntarget(SpaceObject *otarget)
+{
+	target = otarget;
+}
+
 
 void Ship::calculate_thrust() {STACKTRACE
 	if (thrust)
@@ -893,6 +902,9 @@ Phaser::Phaser(
 	set_depth(DEPTH_HOTSPOTS);
 	collide_flag_anyone = 0;
 	mass = 0;
+
+	attributes |= ATTRIB_UNDETECTABLE;
+
 	return;
 }
 

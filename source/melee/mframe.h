@@ -45,7 +45,10 @@ enum {
 	ATTRIB_OBJECT =             0x02000000, 
 	ATTRIB_LINE =               0x04000000,
 	ATTRIB_SHOT =               0x08000000, 
-	ATTRIB_SHIP =               0x10000000
+	ATTRIB_SHIP =               0x10000000,
+
+	// this hides objects from queries = important in case there are many objects (hide hotspots!!)!
+	ATTRIB_UNDETECTABLE =       0x20000000
 
 };
 
@@ -120,7 +123,10 @@ class Physics : public BaseClass {
 
 	virtual int checksum();
 	virtual void dump_state ( const char *file_name );
-};
+
+	// moved ROB - from mgame to here.
+	bool friendly_fire;
+	double shot_relativity;};
 
 
 class Presence : public BaseClass { 
@@ -242,6 +248,9 @@ protected: public://aught to be protected, but we're lazy
 
 	virtual double isProtected() const;  // returns 0 normally, or a positive number if shielded
 	virtual double isInvisible() const;  // returns 0 normally, or a positive number if cloaked
+	
+	// this is used in queries, to see if it's detectable and should be examined.
+	virtual inline bool detectable();
 
 	Planet *nearest_planet(); //returns the nearest planet, or NULL if no planets are nearby
 

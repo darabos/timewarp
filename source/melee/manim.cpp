@@ -26,7 +26,11 @@ Animation::Animation(SpaceLocation *creator, Vector2 opos,
 	set_depth(depth);
 	collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = 0;
 	mass = 0;
-	}
+
+	// it's got no physical interaction with the rest of the world, so, remove it
+	// from the query list:
+	attributes |= ATTRIB_UNDETECTABLE;
+}
 
 void Animation::calculate() {STACKTRACE
 	frame_step -= frame_time;

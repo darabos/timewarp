@@ -63,7 +63,7 @@ class ControlWussie : public Control {
 	//virtual void set_target(int i) ;
   virtual void select_ship(Ship* ship_pointer, const char* ship_name);
 	virtual double check_danger();
-	double evasion(Ship* ship) ;
+	virtual double evasion(Ship* ship) ;
 
 	double option_range[MAX_STATES][2];
 	double option_velocity[MAX_STATES][2];

@@ -458,7 +458,20 @@ double SpaceLocation::trajectory_angle(SpaceLocation *l) {STACKTRACE
 	return ::trajectory_angle(pos, l->normal_pos());
 }
 
+
+bool inline SpaceLocation::detectable()
+{
+	int i;
+	i = attributes & ATTRIB_UNDETECTABLE;
+
+	// it's detectable if the undetectable flag isn't set
+	return (i == 0);
+};
+
+
+
 int SpaceLocation::canCollide(SpaceLocation *other) {
+	if (!detectable()) return 0;
 	if (sameShip(other)) return ((1 << other->layer) & collide_flag_sameship);
 	else if (sameTeam(other)) return ((1 << other->layer) & collide_flag_sameteam);
 	return ((1 << other->layer) & collide_flag_anyone);
@@ -619,7 +632,7 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	sprite_index(0)
 	{STACKTRACE
 	attributes |= ATTRIB_OBJECT;
-	if (game->friendly_fire) collide_flag_sameteam = ALL_LAYERS;
+	if (game && game->friendly_fire) collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = 0;
 	collide_flag_anyone = ALL_LAYERS;
 	id = SPACE_OBJECT;
@@ -981,12 +994,15 @@ void Physics::add(SpaceLocation *o) {STACKTRACE
 	item[num_items] = o;
 	num_items += 1;
 
-	Vector2 n = o->normal_pos();
-	int q = int(n.x * QUADI_X) + 
+	if (o->detectable())
+	{
+		Vector2 n = o->normal_pos();
+		int q = int(n.x * QUADI_X) + 
 			int(n.y * QUADI_Y) * QUADS_X;
-	if ((q < 0) || (q > QUADS_TOTAL)) {tw_error("bad quadrant");}
-	o->qnext = quadrant[q];
-	quadrant[q] = o;
+		if ((q < 0) || (q > QUADS_TOTAL)) {tw_error("bad quadrant");}
+		o->qnext = quadrant[q];
+		quadrant[q] = o;
+	}
 
 	return;
 	}
@@ -1086,7 +1102,7 @@ checksync();
 		quadrant[i] = NULL;
 		}
 	for(i = 0; i < num_items; i += 1) {
-		if (item[i]->exists()) {
+		if (item[i]->exists() && item[i]->detectable()) {
 			Vector2 n = item[i]->normal_pos();
 			int q = iround_down(n.x * QUADI_X) + 
 					iround_down(n.y * QUADI_Y) * QUADS_X;
@@ -1244,7 +1260,8 @@ void Physics::collide() {STACKTRACE
 	int l = 0;
 	tmp = new PMASKDATA_FLOAT[num_items];
 	for (i = 0; i < num_items; i += 1) {
-		if (item[i] && item[i]->exists() && item[i]->isObject()) {
+		if (item[i] && item[i]->exists() && item[i]->isObject()
+				&& item[i]->detectable() ) {
 			SpaceObject *o = (SpaceObject *) item[i];
 			Vector2 p = o->pos - o->size / 2;
 			tmp[l].x = p.x;
@@ -1264,7 +1281,7 @@ void Physics::collide() {STACKTRACE
 	}//*/
 	Query q;
 	for (i = 0; i < num_items; i += 1) {
-		if (item[i]->exists() && 
+		if (item[i]->exists() && item[i]->detectable() &&
 			(item[i]->collide_flag_sameship | item[i]->collide_flag_sameteam | item[i]->collide_flag_anyone) && 
 			!(item[i]->attributes & ATTRIB_COLLIDE_STATIC)) {
 			if (item[i]->isObject()) {
@@ -1304,7 +1321,10 @@ int Physics::checksum() {STACKTRACE
 	int i;
 	Uint32 g = 0;
 	//prepare();
-	for (i = 0; i < num_items; i += 1) {
+	for (i = 0; i < num_items; i += 1)
+	{
+		if (!item[i]->detectable()) continue;
+
 		Vector2 n = item[i]->normal_pos();
 		g += iround(n.x * sqrt(47+i+g));
 		g += iround(n.y * sqrt(71+i+g));

@@ -56,6 +56,8 @@ class NormalGame : public Game {
 	int next_choose_new_ships_time;
 	void choose_new_ships() ;
 
+	int indhealthtoggle, indteamtoggle;
+
 	};
 
 

@@ -160,7 +160,13 @@ void AndrosynthBubble::calculate()
 		int i;
 		double r = 99999;
 		newAngle = 99999;
-		if (ship && ship->exists() && ship->control) {
+		
+		// ship->control->ship == 0 (can happen ?!)
+		// ... yeah ... look at control->select_ship. There you can see
+		// that control->ship=0 if the ship does not exist. Perhaps there's
+		// a de-synch between the two calculations (!exists() lags the control->ship) ?
+
+		if (ship && ship->exists() && ship->control && ship->control->ship) {
 			for (i = 0; i < game->num_targets; i += 1) {
 				SpaceObject *s = game->target[i];
 				if (ship->control->valid_target(s) && (distance(s) < r) && !s->isInvisible()) {

@@ -21,6 +21,8 @@ REGISTER_FILE
 #include "mitems.h"
 #include "mfleet.h"
 
+#include "../games/gflmelee.h"
+
 
 /*void Game::player_said(int who, const char *what) {
 	if ((who < 0) || (who >= num_players)) tw_error ("Who said that?!?");
@@ -296,6 +298,10 @@ void NormalGame::init(Log *_log) {STACKTRACE
 
 	next_choose_new_ships_time = game_time + 200;
 
+	// team and health indicators.
+	indteamtoggle = 0;
+	indhealthtoggle = 0;
+
 	return;
 	}
 
@@ -409,9 +415,32 @@ bool NormalGame::handle_key(int k) {STACKTRACE
 			return true;
 			}
 		break;
+		case KEY_H:
+			indhealthtoggle = ~indhealthtoggle;
+			break;
+		case KEY_T:
+			indteamtoggle = ~indteamtoggle;
+			break;
 		}
 	return false;
 	}
+
+
+
+// added ROB
+class TeamIndicator : public Presence
+{
+public:
+	int		*indtoggle;
+	Ship	*mother;
+	TeamIndicator(Ship *creator, int *toggle);
+
+	virtual void calculate();
+	virtual void animate(Frame *space);
+};
+
+
+
 void NormalGame::choose_new_ships() {STACKTRACE
 	char tmp[40];
 	int i;
@@ -472,11 +501,64 @@ void NormalGame::choose_new_ships() {STACKTRACE
 			);
 		add(panel);
 		add(s->get_ship_phaser());
+
+		// add a healthbar for the ship, and also a team indicator.
+		add(new HealthBar(s, &indhealthtoggle));
+		add(new TeamIndicator(s, &indteamtoggle));
 		}
 	delete slot;
 	message.out("Finished selecting ships...", 1500);
 	unpause();
 	return;
 	}
+
+
+
+// this should be places elsewhere I think ...
+TeamIndicator::TeamIndicator(Ship *s, int *atoggle)
+{
+	indtoggle = atoggle;
+	mother = s;
+}
+
+void TeamIndicator::calculate()
+{
+	if ( !(mother && mother->exists()) )
+	{
+		mother = 0;
+		state = 0;
+		return;
+	}
+
+}
+
+void TeamIndicator::animate(Frame *space)
+{
+	if (!*indtoggle)
+		return;
+
+	if (mother->isInvisible())
+		return;
+
+	Vector2 co1, co2, D;
+
+	co1 = corner(mother->pos - 0.5 * mother->size);
+	//co2 = corner(mother->pos + Vector2(d2, -mother->size.y * 0.6));
+
+	D = mother->size * space_zoom;
+	co2 = co1 + D;
+
+	if (co2.x < 0) return;
+	if (co2.y < 0) return;
+	if (co1.x >= space->surface->w) return;
+	if (co1.y >= space->surface->h) return;
+
+	int col;
+	col = palette_color[mother->get_team() + 1];	// team 0 is black ...
+
+	rect(space->surface, co1.x, co1.y, co2.x, co2.y, col);
+	space->add_box(co1.x, co1.y, co2.x, co2.y);
+}
+
 
 REGISTER_GAME(NormalGame, "Melee")
