@@ -547,7 +547,7 @@ BITMAP* get_data_bmp(DATAFILE *data, char *objname, double scale)
 	STACKTRACE
 
 	DATAFILE *dataobj;
-	BITMAP *r, *old;
+	BITMAP *r, *old, *tmp;
 
 	dataobj = find_datafile_object(data, objname);
 	if (!dataobj)
@@ -555,8 +555,15 @@ BITMAP* get_data_bmp(DATAFILE *data, char *objname, double scale)
 	
 	// copied from mshipdata.cpp:
 	old = (BITMAP*)dataobj->dat;
-	r = create_bitmap(iround(old->w*scale), iround(old->h*scale));
-	stretch_blit (old, r, 0, 0, old->w, old->h, 0, 0, r->w, r->h);
+	
+	tmp = create_bitmap(old->w, old->h);
+	blit(old, tmp, 0, 0,  0, 0,  old->w, old->h);
+	//color_correct_bitmap(bmp, general_attributes & MASKED);
+
+	r = create_bitmap(iround(tmp->w*scale), iround(tmp->h*scale));
+	stretch_blit (tmp, r, 0, 0, tmp->w, tmp->h, 0, 0, r->w, r->h);
+
+	destroy_bitmap(tmp);
 	
 	return r;
 }
@@ -589,12 +596,14 @@ void add_dialog_icon_proc( DIALOG *Dialog_star, int *k, DATAFILE *tmpdata,
 
 void init_dialog_PLSY (double dialog_scale)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	
 	// read the graphics:
 
-	set_color_conversion(COLORCONV_TOTAL);
+//	set_color_conversion(COLORCONV_TOTAL);
+//	This causes a graphics crash ... cause allegro uses a different default ALPHA setting
+//	than timewarp color routines; thus, loading bitmaps with the wrong correction causes an error
 
 
 	Dialog_star = new DIALOG [10];
@@ -968,7 +977,7 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 					double *PlanetStarbaseEllipsAngvel,
 					double *PlanetStarbaseEllipsOrientation)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	int iupdate = 1;
 	int iredraw = 0;
@@ -1391,7 +1400,7 @@ bool general_GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char
 
 void Planets::init_objects()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	int		i;
 

@@ -685,7 +685,9 @@ void Game::play() {STACKTRACE
 void Game::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
 	if (source && source->data) {
 		Music *tmp = NULL;
-		if (source && source->ship && source->ship->data) tmp = source->ship->data->moduleVictory;
+		//if (source && source->ship && source->ship->data) tmp = source->ship->data->moduleVictory;
+		// note: it's not guaranteed that a ship exists longer than its weapon, while data keep existing, right ?
+		if (source && source->exists()) tmp = source->data->moduleVictory;
 		if (tmp) sound.play_music(tmp);
 	}
 	return;
