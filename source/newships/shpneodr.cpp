@@ -6,7 +6,7 @@ REGISTER_FILE
 #include "../frame.h"
 
 
-class NeoggDrain : public Ship
+class NeoDrain : public Ship
 {
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange, specialDamage;
@@ -15,7 +15,7 @@ class NeoggDrain : public Ship
 	bool shipmode;
 	
 public:
-	NeoggDrain(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
+	NeoDrain(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
 	
 protected:
 	
@@ -35,7 +35,7 @@ public:
 
 
 
-NeoggDrain::NeoggDrain(Vector2 opos, double shipAngle,
+NeoDrain::NeoDrain(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code)
 :
 Ship(opos,  shipAngle, shipData, code)
@@ -53,7 +53,7 @@ Ship(opos,  shipAngle, shipData, code)
 }
 
 
-int NeoggDrain::activate_weapon()
+int NeoDrain::activate_weapon()
 {	
 
 	add(new Missile(this, Vector2(36,20), angle,
@@ -64,7 +64,7 @@ int NeoggDrain::activate_weapon()
 }
 
 
-int NeoggDrain::activate_special()
+int NeoDrain::activate_special()
 {
 
 	add(new LaserDrain(this, angle,
@@ -94,5 +94,5 @@ void LaserDrain::inflict_damage(SpaceObject *other)
 
 
 
-REGISTER_SHIP(NeoggDrain)
+REGISTER_SHIP(NeoDrain)
 

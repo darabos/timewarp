@@ -6,6 +6,9 @@ REGISTER_FILE
 #include <string.h>
 #include <stdio.h>
 
+#include "../melee/mview.h"
+
+
 /*
 rogsc
 
@@ -38,7 +41,7 @@ public:
 	int		weaponColor;
 	double	weaponVelocity;
 
-	double	fighterCrew, fighterVel, fighterVelMax, fighterVelMin;
+	double	fighterCrew, fighterVel, fighterVelMax, fighterVelMin, fighterDamage;
 	int		fighterAsteroidsKill;
 	double	fighterAvoidanceRange, fighterEvadeRotationPerSec;
 	
@@ -137,6 +140,7 @@ Ship(opos, angle, data, code)
 	fighterVel		= scale_velocity(get_config_float("Fighter", "Velocity", 0));
 	fighterVelMax	= scale_velocity(get_config_float("Fighter", "VelocityMax", 0));
 	fighterVelMin	= scale_velocity(get_config_float("Fighter", "VelocityMin", 0));
+	fighterDamage	= get_config_float("Fighter", "SuicideDamage", 1);
 
 
 	fighterAsteroidsKill = get_config_int("Fighter", "AsteroidsKill", 0);
@@ -147,6 +151,7 @@ Ship(opos, angle, data, code)
 	collide_flag_anyone = 0;
 	collide_flag_sameteam = 0;
 	collide_flag_sameship = 0;
+	mass = 0;
 
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
@@ -233,6 +238,13 @@ void RogueSquadron::materialize()
 	// remove the virtual ship from the target list:
 	// HOW ??
 	
+// copied from tauhu code.
+	for(i=0; game->target[i] != this; i++);
+	game->num_targets--;
+	game->target[i] = game->target[game->num_targets];
+
+	// not used in queries
+	attributes |= ATTRIB_UNDETECTABLE;
 }
 
 
@@ -453,8 +465,8 @@ Ship(creator, creator->pos, creator->angle, osprite)
 	set_depth(DEPTH_SHIPS);
 
 	collide_flag_anyone = ALL_LAYERS;
-	collide_flag_sameteam = 0;	//ALL_LAYERS;
-	collide_flag_sameship = 0;	//ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = 0;
 
 	mass = 4.0;
 
@@ -628,7 +640,7 @@ int RogueFighter::handle_damage(SpaceLocation* source, double normal, double dir
 		{
 			state = 0;
 			// it also inflicts some damage on it's target :)
-			damage(source, 2, 0);
+			damage(source, mother->fighterDamage, 0);
 		}
 	}
 
