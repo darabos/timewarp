@@ -253,6 +253,10 @@ SOURCE=.\source\util\vector2.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\source\other\fontmorph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\other\gdialog.cpp
 # End Source File
 # Begin Source File
@@ -290,6 +294,10 @@ SOURCE=.\source\other\radar.cpp
 # Begin Source File
 
 SOURCE=.\source\other\shippart.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\ttf.cpp
 # End Source File
 # Begin Source File
 
@@ -840,6 +848,10 @@ SOURCE=.\source\newships\shpilwsp.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpilwsp.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpimpka.cpp
 # End Source File
 # Begin Source File
@@ -1361,6 +1373,10 @@ SOURCE=.\source\util\vector2.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\source\other\fontmorph.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\other\gdialog.h
 # End Source File
 # Begin Source File
@@ -1398,6 +1414,10 @@ SOURCE=.\source\other\radar.h
 # Begin Source File
 
 SOURCE=.\source\other\shippart.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\ttf.h
 # End Source File
 # Begin Source File
 
