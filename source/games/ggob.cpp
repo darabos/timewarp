@@ -811,6 +811,12 @@ void GobStation::station_screen(GobPlayer *s) {
 		0,0,background->w,background->h, 
 		game->window->x,game->window->y,game->window->w, game->window->h);
 	game->window->unlock();
+
+	EventEnterStation e;
+	e.player  = s;
+	e.station = this;
+	gobgame->GenerateEvent(&e);
+
 	while (true) {
 		sprintf(dialog_string[0], "%03d Starbucks  %03d Buckazoids", s->starbucks, s->buckazoids);
 		int r = 0;
@@ -893,6 +899,7 @@ void GobStation::inflict_damage(SpaceObject *other) {
 	if (!other->isShip()) return;
 	GobPlayer *p = gobgame->get_player(other);
 	if (!p) return;
+
 	gobgame->pause();
 	char buffy[256];
 	int a;

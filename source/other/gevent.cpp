@@ -28,6 +28,12 @@ unsigned int EventShipGetDamage::GetEventType()
 {
 	return GAME_EVENT_SHIP_GET_DAMAGE;
 }
+
+unsigned int EventEnterStation::GetEventType()
+{
+	return GAME_EVENT_ENTER_STATION;
+}
+
 EventListner::EventListner()
 {
 }

@@ -38,6 +38,8 @@ class Quest: public EventListner
   static int l_AddObject(lua_State* ls);
   /*! \brief Remove quest object ( ship, starbase ... ) */
   static int l_RemoveObject(lua_State*ls);  
+  /*! \brief Add buckazoids */
+  static int l_AddBuckazoids(lua_State*ls);
 };
 
 

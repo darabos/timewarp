@@ -25,14 +25,34 @@ Quest::Quest( const char * szLuaFile, GobPlayer * player )
   InitConversationModule( L );
 
   // Register C function
-  lua_register(L, "Dialog", l_Dialog);
-  lua_register(L, "AddObject", l_AddObject);
-  lua_register(L, "RemoveObject", l_RemoveObject);
+  lua_register(L, "Dialog",        l_Dialog);
+  lua_register(L, "AddObject",     l_AddObject);
+  lua_register(L, "RemoveObject",  l_RemoveObject);
+  lua_register(L, "AddBuckazoids", l_AddBuckazoids);
+
   // Load Quest
   lua_dofile(L, szLuaFile);
-  // Register Events
 
-  RegisterEvent(GAME_EVENT_SHIP_DIE, gobgame);
+  // Register Events
+  int top = lua_gettop(L);
+
+  lua_pushstring(L, "GAME_EVENT_SHIP_DIE");
+  lua_gettable   ( L, LUA_GLOBALSINDEX );
+  if ( lua_isfunction(L, -1) )
+	RegisterEvent(GAME_EVENT_SHIP_DIE, gobgame);
+  lua_settop(L, top);
+
+  lua_pushstring(L, "GAME_EVENT_SHIP_GET_DAMAGE");
+  lua_gettable   ( L, LUA_GLOBALSINDEX );
+  if ( lua_isfunction(L, -1) )
+	RegisterEvent(GAME_EVENT_SHIP_GET_DAMAGE, gobgame);
+  lua_settop(L, top);
+
+  lua_pushstring(L, "GAME_EVENT_ENTER_STATION");
+  lua_gettable   ( L, LUA_GLOBALSINDEX );
+  if ( lua_isfunction(L, -1) )
+	RegisterEvent(GAME_EVENT_ENTER_STATION, gobgame);
+  lua_settop(L, top);
 }
 
 Quest::~Quest()
@@ -95,13 +115,16 @@ void Quest::Process()
     }
   lua_settop(L, top);
 
+  g_player = NULL;
   return;
 }
 
 void Quest::ProcessEvent ( IEvent* event )
 {
+  g_player = gob_player;
   int type = event->GetEventType();
   int top;
+  const char * temp;
   switch ( type )
     {
     case GAME_EVENT_ALL:
@@ -118,7 +141,7 @@ void Quest::ProcessEvent ( IEvent* event )
 		{
 			tw_error("Quest script is not contain GAME_EVENT_SHIP_DIE function");
 		};
-
+		temp = ((EventShipDie*)event)->victim->get_shiptype() -> id;
 		lua_pushstring( L, ((EventShipDie*)event)->victim->get_shiptype() -> id ); //reserved
 		
 		lua_call(L, 1, 0 );
@@ -126,25 +149,54 @@ void Quest::ProcessEvent ( IEvent* event )
       break;
     case GAME_EVENT_SHIP_GET_DAMAGE:
       break;
+	case GAME_EVENT_ENTER_STATION:
+		// Test Implementation
+		top = lua_gettop(L);
+		lua_pushstring ( L, "GAME_EVENT_ENTER_STATION" );
+		lua_gettable   ( L, LUA_GLOBALSINDEX );
+
+		if ( !lua_isfunction(L, -1) )
+		{
+			tw_error("Quest script is not contain GAME_EVENT_ENTER_STATION function");
+		};
+
+		lua_pushnumber( L, 1 ); //need to be implemented
+		
+		lua_call(L, 1, 0 );
+		lua_settop(L, top);
+
+		break;
     default:
       break;
     }
+	g_player = NULL;
 }
 
 int Quest::l_Dialog(lua_State* ls)
 {
-  return 0;
+  return NOT_IMPLEMENTED;
 }
 
 int Quest::l_AddObject(lua_State* ls)
 {
   gobgame->add_new_enemy();
-  return 0;
+  return NOT_IMPLEMENTED;
 }
 
 int Quest::l_RemoveObject(lua_State* ls)
 {
-  return 0;
+  return NOT_IMPLEMENTED;
+}
+int Quest::l_AddBuckazoids(lua_State*ls)
+{
+	int top = lua_gettop(ls);
+	if ( top != 1 )
+	{
+		tw_error ("Wrong argument count for AddBuckazoids");
+	}
+	int money = lua_tonumber(ls, -1);
+	g_player->buckazoids += money;
+	return 0;
 }
 
 int QuestSource::LoadQuestList ( const char* qlist )

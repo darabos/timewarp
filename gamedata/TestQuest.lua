@@ -7,20 +7,23 @@ end
 
 function GAME_EVENT_SHIP_DIE( Type )
 	if Type == "shosc" then shoscKilled = shoscKilled - 1 end
-	if shoscLilled == 0 then Complited = 1 end
+	if shoscKilled == 0 then Complited = 1 end
 end
 
-function GAME_EVENT_VISIT_LOCATION( locationID )
-	if locationID == QuestSourceLocationID then
+function GAME_EVENT_ENTER_STATION( locationID )
+	if allready_get_reward == 1 then return end
+--	if locationID == QuestSourceLocationID then
 		if Complited == 1 then return Reward() end
 		return HurryLazyPlayer()
-	end
+--	end
 end
 
 function Reward()
 DialogStart "gamedata/pkunk-standing.bmp"
 	DialogWrite "Congratulations, those bastards are all dead now! Take 20 bucks"
 	answer = DialogAnswer ( "Thanks!" )
+	AddBuckazoids(20);
+	allready_get_reward = 1;
 DialogEnd()
 end
 
@@ -34,27 +37,23 @@ end
 
 DialogStart "gamedata/pkunk-standing.bmp"
 function question1()
-	DialogWrite "Hello, my spiritual child. I have no quest for you yet"
-	answer = DialogAnswer("But I am realy need one!", 
-			"Lets just talk a bit!!!",
-			 "bye")
+	DialogWrite "Hello, my spiritual child. I kill Shofixti Scout for me."
+	answer = DialogAnswer("Why?", 
+			      "I agree")
 	if answer == 1 then return question2() end
 	if answer == 2 then return question3() end
-	if answer == 3 then return DialogWrite "Bye" end
 end
 
 function question2()
-	DialogWrite "Sorry, this part of game is on very early development stage. But don't lose hope :)"
-	answer = DialogAnswer("Ok, lets just talk then", "Bye")
+	DialogWrite "They influence badly on our Ye-hat brothers"
+	answer = DialogAnswer("I agree")
 	if answer == 1 then return question3() end
-	if answer == 2 then return DialogWrite "Bye" end 
 end
 
 function question3()
-	DialogWrite "And what are we doing now?"
-	answer = DialogAnswer ("Testing!!!", "Bye")
-	if answer == 1 then return DialogWrite ("Booring..."); end
-	if answer == 2 then return question1() end
+	DialogWrite "What are you waiting for?"
+	answer = DialogAnswer ("Bye")
+	if answer == 1 then return DialogWrite ("Bye"); end
 end
 
 question1()

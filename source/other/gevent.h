@@ -14,12 +14,14 @@
 
 class Ship;
 class GobPlayer;
+class GobStation;
 
 enum EventTypes
   {
     GAME_EVENT_ALL = 0,
     GAME_EVENT_SHIP_DIE,
     GAME_EVENT_SHIP_GET_DAMAGE,
+	GAME_EVENT_ENTER_STATION,
   };
 
 class IEvent
@@ -40,10 +42,20 @@ class EventShipDie : public IEvent
 
 class EventShipGetDamage: public IEvent
 {
-  Ship * s;
-  int total;
- public:
-	 virtual unsigned int GetEventType();
+public:
+	Ship * ship;
+	int total;
+
+	virtual unsigned int GetEventType();
+};
+
+class EventEnterStation: public IEvent
+{	
+public:
+	GobStation* station;
+	GobPlayer* player;
+	
+	virtual unsigned int GetEventType();
 };
 
 class EventHandler;
