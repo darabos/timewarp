@@ -35,6 +35,117 @@ REGISTER_FILE
 
 #include "../other/gup.h"
 
+#include "../other/configrw.h"
+
+
+void GobGame::config(bool option)
+{
+	config_read = option;
+
+	GobPlayer *gp = gobplayer[0];
+	Ship *s = 0;
+
+	// store ship properties (includes its upgrades)
+	section = "ship";
+
+	if (option == CONFIG_READ)
+	{
+		Vector2 P;
+		double a;
+
+		char shipid[64];
+		conf("name", shipid, "supbl");
+		conf("x", P.x, 0);
+		conf("y", P.y, 0);
+		conf("a", a, 0);
+
+		// needed, cause the ship initialization overwrites the config file used now
+		push_config_state();
+		
+		//s = create_ship(shipid, gp->control, P, 0.0, 0);
+		gp->new_ship(shiptype(shipid));
+
+		pop_config_state();
+		s = gp->ship;
+
+		gp->ship = s;
+		gp->ship->pos = P;
+		gp->ship->angle = a;
+
+	} else {
+		s = gp->ship;
+		conf("name", (char*)s->type->id, "supbl");
+		conf("x", s->pos.x, 0);
+		conf("y", s->pos.y, 0);
+		conf("a", s->angle, 0);
+	}
+
+	conf("crew", s->crew, 1);
+	conf("crewm", s->crew_max, 1);
+	conf("batt", s->batt, 1);
+	conf("battm", s->batt_max, 1);
+	conf("accr", s->accel_rate, 1);
+	conf("speedmax", s->speed_max, 1);
+	conf("turnr", s->turn_rate, 1);
+	conf("mass", s->mass, 1);
+	conf("rechamount", s->recharge_amount, 1);
+	conf("rechrate", s->recharge_rate, 1);
+	conf("specrate", s->special_rate, 1);
+	conf("specdrain", s->special_drain, 1);
+	conf("weaprate", s->weapon_rate, 1);
+	conf("weapdrain", s->weapon_drain, 1);
+	conf("damfac", s->damage_factor, 1);
+//	conf("", s-, 1);
+
+	section = "props";
+	conf("kills", gp->kills, 0);
+	conf("bucka", gp->buckazoids, 0);
+	conf("starb", gp->starbucks, 0);
+	conf("vbucka", gp->value_buckazoids, 0);
+	conf("vstarb", gp->value_starbucks, 0);
+
+	section = "special";
+	if (strcmp("supbl", s->type->id))
+	{		
+		conf("damage", ((SupoxBlade*)s)->weaponDamage, 1);
+		conf("drain", ((SupoxBlade*)s)->weapon_drain, 1);
+		conf("armour", ((SupoxBlade*)s)->weaponArmour, 1);
+	}
+
+
+	// hmm .. well .. there are lots of special ships and devices, so
+	// this is not all, by far, yet !!
+
+//	conf("", s-, 1);
+//	conf("", s-, 1);
+//	conf("", s-, 1);
+
+	s->vel = 0;
+}
+
+
+void GobGame::save_game()
+{
+	// write player settings to some config file ?
+	set_config_file("gamedata/gob/player.ini");
+	config(CONFIG_WRITE);
+	flush_config_file();
+}
+
+void GobGame::load_game()
+{
+	set_config_file("gamedata/gob/player.ini");
+	config(CONFIG_READ);
+}
+
+
+void GobGame::quit(const char *message)
+{
+	//save_game();
+	Game::quit(message);
+}
+
+
 
 #define gobgame ((GobGame*)game)
 
@@ -49,7 +160,7 @@ REGISTER_FILE
 \return total damage to asteroid
 */
 int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double direct) {
-	STACKTRACE
+	STACKTRACE;
 
 		if (!exists()) return 0;
 	int i = Asteroid::handle_damage(source, normal, direct);
@@ -62,7 +173,7 @@ int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double dir
 
 /*! \brief After asteroid death show explosion and generate new asteroid */
 void GobAsteroid::death () {
-	STACKTRACE
+	STACKTRACE;
 
 
 		Animation *a = new Animation(this, pos,
@@ -76,7 +187,7 @@ void GobAsteroid::death () {
 
 /*! \brief Init various gob variables and stations sprites to NULL */ 
 void GobGame::preinit() {
-	STACKTRACE
+	STACKTRACE;
 
 		Game::preinit();
 
@@ -101,7 +212,7 @@ void GobGame::preinit() {
 \param control Player control
 */
 void GobGame::add_gobplayer(Control *control) {
-	STACKTRACE
+	STACKTRACE;
 
 		int i = gobplayers;
 	gobplayers += 1;
@@ -116,7 +227,7 @@ At this point divinefavor upgrade can save player from such fate
 \param killer ???
 */
 void GobPlayer::died(SpaceLocation *killer) {
-	STACKTRACE
+	STACKTRACE;
 
 		if (upgrade_list[UpgradeIndex::divinefavor]->num && (random()&1)) { //divine favor
 			ship->crew = ship->crew_max;
@@ -135,7 +246,7 @@ void GobPlayer::died(SpaceLocation *killer) {
 \param freq ???
 */
 void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {
-	STACKTRACE
+	STACKTRACE;
 
 		double v;
 	Vector2 d = source->normal_pos() - space_center;
@@ -153,7 +264,7 @@ play
 \param _log Game log I think
 */
 void GobGame::init(Log *_log) {
-	STACKTRACE
+	STACKTRACE;
 
 		int i;
 	/*	switch(_log->type) {
@@ -228,33 +339,70 @@ void GobGame::init(Log *_log) {
 
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 
-	int server_players, client_players;
-	set_config_file("client.ini");
-	server_players = client_players = get_config_int("Gob", "NumPlayers", 1);
-	if (!lag_frames) client_players = 0;
-	log_int(channel_server, server_players);
-	log_int(channel_client, client_players);
-	for (i = 0; i < server_players; i += 1) {
-		char buffy[256];
-		sprintf(buffy, "Config%d", i);
-		add_gobplayer(create_control(channel_server, "Human", buffy));
-		gobplayer[i]->new_ship(shiptype("supbl"));
-		Ship *s = gobplayer[i]->ship;
-		s->translate(size/2-s->normal_pos());
-		double angle = PI2 * i / (client_players + server_players);
-		s->translate(rotate(Vector2(260, 120), angle));
-		s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
-	}
-	for (i = server_players; i < client_players + server_players; i += 1) {
-		char buffy[256];
-		sprintf(buffy, "Config%d", i - server_players);
-		add_gobplayer(create_control(channel_client, "Human", buffy));
-		gobplayer[i]->new_ship(shiptype("supbl"));
-		Ship *s = gobplayer[i]->ship;
-		s->translate(size/2-s->normal_pos());
-		double angle = PI2 * i / (client_players + server_players);
-		s->translate(rotate(Vector2(260, 120), angle));
-		s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
+	int ichoice = 1;
+	ichoice = tw_alert("Continue game?", "&YES", "&NO");
+	// check a menu to see what the player wants ... how ??
+
+	if (ichoice == 2)
+	{
+	
+		int server_players, client_players;
+		set_config_file("client.ini");
+		server_players = client_players = get_config_int("Gob", "NumPlayers", 1);
+		if (!lag_frames) client_players = 0;
+		log_int(channel_server, server_players);
+		log_int(channel_client, client_players);
+		for (i = 0; i < server_players; i += 1) {
+			char buffy[256];
+			sprintf(buffy, "Config%d", i);
+			add_gobplayer(create_control(channel_server, "Human", buffy));
+			gobplayer[i]->new_ship(shiptype("supbl"));
+			Ship *s = gobplayer[i]->ship;
+			s->translate(size/2-s->normal_pos());
+			double angle = PI2 * i / (client_players + server_players);
+			s->translate(rotate(Vector2(260, 120), angle));
+			s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
+		}
+		for (i = server_players; i < client_players + server_players; i += 1) {
+			char buffy[256];
+			sprintf(buffy, "Config%d", i - server_players);
+			add_gobplayer(create_control(channel_client, "Human", buffy));
+			gobplayer[i]->new_ship(shiptype("supbl"));
+			Ship *s = gobplayer[i]->ship;
+			s->translate(size/2-s->normal_pos());
+			double angle = PI2 * i / (client_players + server_players);
+			s->translate(rotate(Vector2(260, 120), angle));
+			s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
+		}
+
+	} else if (ichoice == 1) {
+
+		// just supports ONE player.
+
+		int server_players = 1;
+		int client_players = 0;
+		set_config_file("client.ini");
+
+		if (!lag_frames) client_players = 0;
+
+		log_int(channel_server, server_players);
+		log_int(channel_client, client_players);
+
+		for (i = 0; i < server_players; i += 1) {
+			char buffy[256];
+			sprintf(buffy, "Config%d", i);
+			add_gobplayer(create_control(channel_server, "Human", buffy));
+		//	gobplayer[i]->new_ship(shiptype("supbl"));
+		//	Ship *s = gobplayer[i]->ship;
+		//	s->translate(size/2-s->normal_pos());
+		//	double angle = PI2 * i / (client_players + server_players);
+		//	s->translate(rotate(Vector2(260, 120), angle));
+		//	s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
+		}
+		
+		load_game();
+	} else {
+		tw_error("Strange, this option is not supported");
 	}
 
 	for (i = 0; i < gobplayers; i += 1) add ( new RainbowRift() );
@@ -303,7 +451,7 @@ GobGame::~GobGame() {
 \param background ???
 */
 void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background) {
-	STACKTRACE
+	STACKTRACE;
 
 		Planet *p = new Planet (size/2, planet_sprite, planet_index);
 	if (num_planets) while (true) {
@@ -328,7 +476,7 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 
 /*! \brief Print game information: enemies count, time, cordinates, money */
 void GobGame::fps() {
-	STACKTRACE
+	STACKTRACE;
 
 		Game::fps();
 
@@ -355,7 +503,7 @@ void GobGame::fps() {
 This function called once per frame of physics, used to add new enemys to the game
 */
 void GobGame::calculate() {
-	STACKTRACE
+	STACKTRACE;
 
 		quest_source->ProcessQuests();
 
@@ -382,7 +530,7 @@ void GobGame::calculate() {
 \return enemy ship index, -1 if not found
 */
 int GobGame::get_enemy_index(SpaceLocation *what) {
-	STACKTRACE
+	STACKTRACE;
 
 		int i;
 	Ship *s = what->ship;
@@ -398,9 +546,9 @@ int GobGame::get_enemy_index(SpaceLocation *what) {
 \param source loacation that killed?
 */
 void GobGame::ship_died(Ship *who, SpaceLocation *source) {
-	STACKTRACE
+	STACKTRACE;
 
-		EventShipDie esd;
+	EventShipDie esd;
 	esd.victim        = who;
 	esd.player_killer = get_player(source);
 	gobgame->GenerateEvent(&esd);
@@ -429,10 +577,10 @@ void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 \return player, NULL if no player
 */
 GobPlayer *GobGame::get_player(SpaceLocation *what) {
-	STACKTRACE
+	STACKTRACE;
 
-		if ( what == NULL )
-			return NULL;
+	if ( what == NULL )
+		return NULL;
 
 	int i;
 	for (i = 0; i < gobplayers; i += 1) {		
@@ -444,7 +592,7 @@ GobPlayer *GobGame::get_player(SpaceLocation *what) {
 Create random enemy ship if enemy limit is not riched. Also it patch some of the ships.
 */
 void GobGame::add_new_enemy () {
-	STACKTRACE
+	STACKTRACE;
 
 		const int num_enemy_types = 19;
 	static char *enemy_types[num_enemy_types] = {
@@ -517,9 +665,9 @@ void GobGame::add_new_enemy () {
 \param kill_buckazoids amount buckazoids
 */
 void GobEnemy::init(Ship *ship, int kill_starbucks, int kill_buckazoids) {
-	STACKTRACE
+	STACKTRACE;
 
-		this->ship = ship;
+	this->ship = ship;
 	this->starbucks = kill_starbucks;
 	this->buckazoids = kill_buckazoids;
 	return;
@@ -528,9 +676,9 @@ void GobEnemy::init(Ship *ship, int kill_starbucks, int kill_buckazoids) {
 \param what location of player
 */
 void GobEnemy::died(SpaceLocation *what) {
-	STACKTRACE
+	STACKTRACE;
 
-		GobPlayer *p = gobgame->get_player(what);
+	GobPlayer *p = gobgame->get_player(what);
 	if (p) {
 		p->starbucks += starbucks;
 		p->buckazoids += buckazoids;
@@ -549,9 +697,9 @@ GobPlayer::~GobPlayer() {
 \param team player team
 */
 void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
-	STACKTRACE
+	STACKTRACE;
 
-		channel = c->channel;
+	channel = c->channel;
 	starbucks = 0;
 	buckazoids = 0;
 	kills = 0;
@@ -577,9 +725,9 @@ void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 
 /*! \brief Part of map<const char *, int> implementation, to be removed */
 GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
-	STACKTRACE
+	STACKTRACE;
 
-		if (!pair_list) return NULL;
+	if (!pair_list) return NULL;
 	int i;
 	for (i = 0; i < num_pairs; i += 1) {
 		if (!strcmp(pair_list[i].id, id)) 
@@ -590,33 +738,33 @@ GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
 
 /*! \brief Part of map<const char *, int> implementation, to be removed */
 void GobPlayer::_add_pair(const char *id, int value) {
-	STACKTRACE
-
-		if (_get_pair(id)) {
-			error("GobPlayer::_add_pair - \"%s\" already exists", id);
-			return;
-		}
-		pair_list = (pair*)realloc(pair_list, sizeof(pair) * (num_pairs+1));
-		pair_list[num_pairs].id = strdup(id);
-		pair_list[num_pairs].value = value;
-		num_pairs += 1;
+	STACKTRACE;
+	
+	if (_get_pair(id)) {
+		error("GobPlayer::_add_pair - \"%s\" already exists", id);
 		return;
+	}
+	pair_list = (pair*)realloc(pair_list, sizeof(pair) * (num_pairs+1));
+	pair_list[num_pairs].id = strdup(id);
+	pair_list[num_pairs].value = value;
+	num_pairs += 1;
+	return;
 }
 
 /*! \brief Part of map<const char *, int> implementation, to be removed */
 int GobPlayer::read_pair(const char *id) {
-	STACKTRACE
+	STACKTRACE;
 
-		pair *p = _get_pair(id);
+	pair *p = _get_pair(id);
 	if (p) return p->value;
 	return -1;
 }
 
 /*! \brief Part of map<const char *, int> implementation, to be removed */
 void GobPlayer::write_pair(const char *id, int value) {
-	STACKTRACE
+	STACKTRACE;
 
-		pair *p = _get_pair(id);
+	pair *p = _get_pair(id);
 	if (p) p->value = value;
 	else _add_pair(id, value);
 	return;
@@ -628,9 +776,9 @@ void GobPlayer::write_pair(const char *id, int value) {
 \param price_buckazoids price
 */
 int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
-	STACKTRACE
+	STACKTRACE;
 
-		char buffy1[512];
+	char buffy1[512];
 	sprintf(buffy1, "Price: %d starbucks plus %d buckazoids", price_starbucks, price_buckazoids);
 	if ((starbucks < price_starbucks) || (buckazoids < price_buckazoids)) {
 		if (game->is_local(channel)) 
@@ -653,9 +801,9 @@ int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
 \param type type of new ship
 */
 void GobPlayer::new_ship(ShipType *type) {
-	STACKTRACE
+	STACKTRACE;
 
-		Ship *old = ship;
+	Ship *old = ship;
 	Vector2 pos = 0;
 	double a = 0;
 	int i;
@@ -705,9 +853,9 @@ void GobPlayer::new_ship(ShipType *type) {
 \param s player
 */
 void GobStation::buy_new_ship_menu(GobPlayer *s) {
-	STACKTRACE
+	STACKTRACE;
 
-		char buffy1[512], buffy2[512];
+	char buffy1[512], buffy2[512];
 	ShipType *otype = s->ship->type;
 	ShipType *ntype = shiptype(build_type);
 	if (otype == ntype) {
@@ -765,13 +913,15 @@ GobStation::~GobStation()
 #define STATION_DIALOG_NEWSHIP 2
 #define STATION_DIALOG_REPAIR  3
 #define STATION_DIALOG_QUEST   4
+#define STATION_DIALOG_SAVE    5
 static DIALOG station_dialog[] =
 {// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
-	{ d_button_proc,     385,  50,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Depart Station" , NULL, NULL },
-	{ my_d_button_proc,  385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },
-	{ my_d_button_proc,  385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },
-	{ my_d_button_proc,  385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },
-	{ my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },
+	{ d_button_proc,     385,  50,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Depart Station" , NULL, NULL },//STATION_DIALOG_DEPART
+	{ my_d_button_proc,  385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },//STATION_DIALOG_UPGRADE
+	{ my_d_button_proc,  385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },//STATION_DIALOG_NEWSHIP
+	{ my_d_button_proc,  385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },//STATION_DIALOG_REPAIR
+	{ my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },//STATION_DIALOG_QUEST
+	{ my_d_button_proc,  385,  250,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Save Game" , NULL, NULL },//STATION_DIALOG_SAVE
 	{ d_text_proc,       185,  420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
 	{ d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
 	{ NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
@@ -781,7 +931,7 @@ static DIALOG station_dialog[] =
 \param s Player at the station
 */
 void GobStation::station_screen(GobPlayer *s) {
-	STACKTRACE
+	STACKTRACE;
 
 		BITMAP *background = load_bitmap(background_pic, NULL);
 	if (!background) {
@@ -861,6 +1011,14 @@ void GobStation::station_screen(GobPlayer *s) {
 		}
 								}
 								break;
+
+	case STATION_DIALOG_SAVE:
+		{
+			// saves the last game.
+			gobgame->save_game();
+		}
+		break;
+	
 	case STATION_DIALOG_QUEST:
 		// experiment code
 		EventAskForQuest e;
@@ -877,7 +1035,7 @@ void GobStation::station_screen(GobPlayer *s) {
 \param other location of object that colide with station
 */
 void GobStation::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	STACKTRACE;
 
 		SpaceObject::inflict_damage(other);
 	if (!other->isShip()) return;
@@ -910,7 +1068,7 @@ GobPlayer *upgrade_list_for;
 \param list_size ???
 */
 char *upgradeListboxGetter(int index, int *list_size) {
-	STACKTRACE
+	STACKTRACE;
 
 		static char tmp[150];
 	if(index < 0) {
@@ -940,7 +1098,7 @@ static DIALOG upgrade_dialog[] =
 \param gs Player
 */
 void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
-	STACKTRACE
+	STACKTRACE;
 
 		int i;
 	upgrade_list_for = gs;
@@ -990,7 +1148,7 @@ GobDefender::GobDefender ( Ship *ship)
 Called once per physics frame
 */
 void GobDefender::calculate() {
-	STACKTRACE
+	STACKTRACE;
 
 		SpaceObject::calculate();
 	if (!ship) {
@@ -1043,7 +1201,7 @@ RainbowRift::RainbowRift ()
 \param frame ???
 */
 void RainbowRift::animate( Frame *frame ) {
-	STACKTRACE
+	STACKTRACE;
 
 		Vector2 s;
 	s = corner(pos, Vector2(300,300));
@@ -1069,7 +1227,7 @@ void RainbowRift::animate( Frame *frame ) {
 }
 /*! \brief ??? */
 void RainbowRift::squiggle() {
-	STACKTRACE
+	STACKTRACE;
 
 		int i;
 	int m = n*6+2;
@@ -1096,7 +1254,7 @@ void RainbowRift::squiggle() {
 
 /*! \brief ??? */
 void RainbowRift::calculate() {
-	STACKTRACE
+	STACKTRACE;
 
 		while (game->game_time > next_time) {
 			next_time += 25;

@@ -106,6 +106,12 @@ class GobGame : public Game, public EventHandler {
   Planet *planet[16];
   GobStation *station[16];
   void add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background);
+
+  void save_game();
+  void load_game();
+  void config(bool option);
+
+  virtual void quit(const char *message);
 };
 
 class GobStation : public Orbiter {
