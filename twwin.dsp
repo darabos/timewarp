@@ -906,6 +906,10 @@ SOURCE=.\source\newships\shptautu.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shptelno.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shptougr.cpp
 # End Source File
 # Begin Source File
