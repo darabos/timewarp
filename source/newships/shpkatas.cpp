@@ -37,7 +37,7 @@ void KatAssim::inflict_damage( SpaceObject* other ){
   recharge_amount = morph->recharge_amount;
   if( batt > morph->batt_max ) batt = morph->batt_max;
   morph->recharge_amount = 0;
-  int i;
+//  int i;
 //  for( i = 0; game->target[i] != morph; i++ );
 //  game->num_targets--;
 //  game->target[i] = game->target[game->num_targets];

@@ -1172,14 +1172,17 @@ checksync();
 			i -= 1;
 			delete tmp;
 		}
+	}
 
+	for(i = 0; i < num_items; i ++)
+	{
 		// checking if this can happen? (curious ; GEO)
 		if (item[i]->state < -DEATH_FRAMES)
 		{
 			tw_error("too many death-frames - should not happen !!");
 		}
-
 	}
+
 	for(i = 0; i < num_items; i ++) {
 		if (!item[i]->exists()) {
 			if (item[i]->state == 0) {
