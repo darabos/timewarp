@@ -48,8 +48,8 @@ ShipPanel::ShipPanel(Ship *_ship) {STACKTRACE
 
 	ship->spritePanel->draw(0, 0, 0, panel);
 	ship->spritePanel->draw(0, 0, 1, captain);
-	draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, iround_up(ship->crew), iround_up(ship->crew_max), tw_color(ship->crewPanelColor()), 0);
-	draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, iround_up(ship->batt), iround_up(ship->batt_max), tw_color(ship->battPanelColor()), 0);
+	draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, iround_up(ship->crew), iround_up(ship->crew_max), 1, 0);
+	draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, iround_up(ship->batt), iround_up(ship->batt_max), 2, 0);
 
 	window = new VideoWindow();
 	window->preinit();
@@ -164,15 +164,15 @@ void ShipPanel::animate(Frame *space) {STACKTRACE
 		panel_needs_update = true;
 		}
 
-	if (iround_up(ship->crew) != crew_old) {		
+	if (iround_up(ship->crew) != crew_old || panel_needs_update) {		
 		crew_old = iround_up(ship->crew);
-		draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, crew_old, iround_up(ship->crew_max), tw_color(ship->crewPanelColor()), 0);
+		draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, crew_old, iround_up(ship->crew_max), 1, 0);
 		panel_needs_update = true;
 		}
 
-	if (iround_up(ship->batt) != batt_old) {
+	if (iround_up(ship->batt) != batt_old || panel_needs_update) {
 		batt_old = iround_up(ship->batt);
-		draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, batt_old, iround_up(ship->batt_max), tw_color(ship->battPanelColor()), 0);
+		draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, batt_old, iround_up(ship->batt_max), 2, 0);
 		panel_needs_update = true;
 		}
 
@@ -200,19 +200,32 @@ void ShipPanel::animate(Frame *space) {STACKTRACE
 	return;
 	}
 
-void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int color, int bcolor) {STACKTRACE
-	int i;
+void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int display_type, int bcolor) {STACKTRACE
+	int i, color;
 	w -= 1;
 	h -= 1;
 	if (value > max) value = max;
 	for (i = 0; i < value; i += 1) {
 		int _x = x + dx * (i % m);
 		int _y = y + dy * (i / m);
+
+		if (display_type == 1)
+			color = tw_color(ship->crewPanelColor(i));
+		else
+			color = tw_color(ship->battPanelColor(i));
+
 		rectfill(panel, _x, _y, _x+w, _y+h, color);
 		}
+
 	for (i = value; i < max; i += 1) {
 		int _x = x + dx * (i % m);
 		int _y = y + dy * (i / m);
+
+		if (display_type == 1)
+			color = tw_color(ship->crewPanelColor(i));
+		else
+			color = tw_color(ship->battPanelColor(i));
+
 		rectfill(panel, _x, _y, _x+w, _y+h, bcolor);
 		}
 	return;

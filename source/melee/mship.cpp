@@ -436,13 +436,13 @@ double Ship::getBatt()
   return(batt);
 }
 
-RGB Ship::crewPanelColor()
+RGB Ship::crewPanelColor(int k)
 {
 	RGB c = {0,225,0};
 	return c;
 }
 
-RGB Ship::battPanelColor()
+RGB Ship::battPanelColor(int k)
 {
 	RGB c = {225,0,0};
 	return c;

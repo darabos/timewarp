@@ -44,8 +44,8 @@ public:
 	virtual void calculate_fire_weapon();
 	virtual void calculate_fire_special();
 	virtual void animate(Frame *space);
-	virtual RGB crewPanelColor();
-	virtual RGB battPanelColor();
+	virtual RGB crewPanelColor(int k = 0);
+	virtual RGB battPanelColor(int k = 0);
 	virtual void calculate_hotspots();
 
 };
@@ -210,14 +210,14 @@ void TauArchon::animate(Frame *space)
 }
 
 
-RGB TauArchon::crewPanelColor()
+RGB TauArchon::crewPanelColor(int k)
 {
 	RGB c = {255, 255, 255};
 	return c;
 }
 
 
-RGB TauArchon::battPanelColor()
+RGB TauArchon::battPanelColor(int k)
 {
 	RGB c = {85, 85, 255};
 	return c;

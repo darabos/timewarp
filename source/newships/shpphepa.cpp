@@ -28,7 +28,7 @@ public:
 	PhedarPatrolShip(Vector2 opos, double angle, ShipData *data, unsigned int code);
 	
 	virtual void calculate();
-	virtual RGB crewPanelColor();
+	virtual RGB crewPanelColor(int k = 0);
 	virtual int activate_weapon();
 	virtual int activate_special();
 	virtual int handle_damage(SpaceLocation *src, double normal, double direct=0);
@@ -88,7 +88,7 @@ Ship(opos, angle, data, code)
 }
 
 
-RGB PhedarPatrolShip::crewPanelColor()
+RGB PhedarPatrolShip::crewPanelColor(int k)
 {
   	// change the crew color, if needed
 	if ( energizepersonalarmour )
@@ -96,7 +96,7 @@ RGB PhedarPatrolShip::crewPanelColor()
 		RGB c = {255,200,200};
 		return c;
 	} else {
-		return Ship::crewPanelColor();
+		return Ship::crewPanelColor(k);
 	}
 }
 

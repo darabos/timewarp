@@ -32,8 +32,8 @@ class KatPoly : public Ship {
   virtual void calculate_turn_right();    // not turning when morphed
   virtual void calculate_fire_weapon();   // not firing when morphed
   virtual void calculate_fire_special();  // set proper cost of morphing
-  virtual RGB crewPanelColor();           // display stats in the current form's color
-  virtual RGB battPanelColor();           // display stats in the current form's color
+  virtual RGB crewPanelColor(int k = 0);           // display stats in the current form's color
+  virtual RGB battPanelColor(int k = 0);           // display stats in the current form's color
   virtual int  activate_weapon();         // shoot
   virtual int  activate_special();        // morph
 };
@@ -101,14 +101,14 @@ void KatPoly::calculate_fire_special(){
   special_drain -= specialDrain;
 }
 
-RGB KatPoly::crewPanelColor(){
-  if( morph ) return morph->crewPanelColor();
-  return Ship::crewPanelColor();
+RGB KatPoly::crewPanelColor(int k){
+  if( morph ) return morph->crewPanelColor(k);
+  return Ship::crewPanelColor(k);
 }
 
-RGB KatPoly::battPanelColor(){
-  if( morph ) return morph->battPanelColor();
-  return Ship::battPanelColor();
+RGB KatPoly::battPanelColor(int k){
+  if( morph ) return morph->battPanelColor(k);
+  return Ship::battPanelColor(k);
 }
 
 int KatPoly::activate_special(){

@@ -68,7 +68,7 @@ thrustForward(TRUE)
 	last_turn_right = turn_right;
 }
 
-RGB SlylandroProbe::crewPanelColor()
+RGB SlylandroProbe::crewPanelColor(int k)
 {
 	RGB c = {64,64,64};
 	return c;

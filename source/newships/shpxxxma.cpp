@@ -47,7 +47,7 @@ class XXXMangler : public Ship {
   XXXMangler(Vector2 opos, double shipAngle,
 		ShipData *shipData, unsigned int code);
 
-  RGB crewPanelColor();
+  RGB crewPanelColor(int k = 0);
 
   virtual int activate_weapon();
   virtual int activate_special();
@@ -146,7 +146,7 @@ XXXMangler::XXXMangler(Vector2 opos, double shipAngle,
 
 }
 
-RGB XXXMangler::crewPanelColor()
+RGB XXXMangler::crewPanelColor(int k)
 {
 	RGB c = {64,64,64};
 	return c;

@@ -29,7 +29,7 @@ public:
 
 	virtual int activate_weapon();
 	virtual int activate_special();
-	virtual RGB crewPanelColor();
+	virtual RGB crewPanelColor(int k = 0);
 //  virtual int battPanelColor();
 
 	virtual void calculate();
@@ -199,7 +199,7 @@ void TauLeviathan::calculate_hotspots()
 	if (!fire_special) Ship::calculate_hotspots();
 }
 
-RGB TauLeviathan::crewPanelColor()
+RGB TauLeviathan::crewPanelColor(int k)
 {
 	RGB c = {159, 79, 0};
 	return c;

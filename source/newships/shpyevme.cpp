@@ -32,7 +32,7 @@ class YevMech : public Ship {
 
   YevMech(Vector2 opos, double shipAngle,
 			ShipData *shipData, unsigned int code) ;
-	RGB crewPanelColor();
+	RGB crewPanelColor(int k = 0);
 
 
 	virtual void calculate_turn_left();
@@ -58,7 +58,7 @@ class YevShield : public SpaceObject {
 
 };
 
-RGB YevMech::crewPanelColor()
+RGB YevMech::crewPanelColor(int k)
 {
 	RGB c = {64,64,64};
 	return c;

@@ -35,7 +35,7 @@ class QuarKathWraith : public Ship {
 	QuarKathWraith(Vector2 opos, double shipAngle,
   ShipData *shipData, unsigned int code);
 
-  RGB crewPanelColor();
+  RGB crewPanelColor(int k = 0);
 
 	virtual double isInvisible() const;
 	virtual void calculate_hotspots();
@@ -110,7 +110,7 @@ QuarKathWraith::QuarKathWraith(Vector2 opos, double shipAngle,
 	extraChanceToHit    = get_config_int("Extra", "ChanceToHit", 0);
 }
 
-RGB QuarKathWraith::crewPanelColor()
+RGB QuarKathWraith::crewPanelColor(int k)
 {
 	RGB c = {64,64,64};
 	return c;

@@ -189,7 +189,7 @@ public:
 	SlylandroProbe(Vector2 opos, double shipAngle,
 		ShipData *shipData, unsigned int code);
 	
-	RGB crewPanelColor();
+	RGB crewPanelColor(int k = 0);
 	
 	virtual void calculate_thrust();
 	virtual void calculate_turn_left();

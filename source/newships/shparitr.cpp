@@ -194,7 +194,7 @@ class ArilouTrapper : public Ship
 
  public:
   static int cloak_color[3];
-  RGB crewPanelColor();
+  RGB crewPanelColor(int k = 0);
   ArilouTrapper(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
   virtual double isInvisible() const;
 
@@ -213,7 +213,7 @@ class ArilouTrapper : public Ship
 };
 
 int ArilouTrapper::cloak_color[3] = { 15, 10, 2 };
-RGB ArilouTrapper::crewPanelColor()
+RGB ArilouTrapper::crewPanelColor(int k)
   {
     RGB c = { 66,66,255 }
    ;

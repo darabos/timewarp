@@ -141,8 +141,8 @@ class Ship : public SpaceObject {
 
 	virtual double getCrew();
 	virtual double getBatt();
-	virtual RGB crewPanelColor();
-	virtual RGB battPanelColor();
+	virtual RGB crewPanelColor(int k = 0);
+	virtual RGB battPanelColor(int k = 0);
 
 	void locate();
   

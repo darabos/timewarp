@@ -638,6 +638,10 @@ SOURCE=.\source\newships\shpdajem.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpdjila.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpdragr.cpp
 # End Source File
 # Begin Source File

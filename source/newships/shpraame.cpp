@@ -45,7 +45,7 @@ class RaalrithMenacer : public Ship {
   virtual void animate(Frame *space);
   virtual void inflict_damage(SpaceObject *other);
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
-  virtual RGB crewPanelColor();
+  virtual RGB crewPanelColor(int k = 0);
   
 };
 
@@ -260,7 +260,7 @@ int RaalrithMenacer::handle_damage(SpaceLocation *source, double normal, double 
 
 
 
-RGB RaalrithMenacer::crewPanelColor()
+RGB RaalrithMenacer::crewPanelColor(int k)
 {
   	// change the crew color, if needed
 	if ( phase < 30.0 )
@@ -268,7 +268,7 @@ RGB RaalrithMenacer::crewPanelColor()
 		RGB c = {200,200,200};	// some dark greyish color.
 		return c;
 	} else {
-		return Ship::crewPanelColor();
+		return Ship::crewPanelColor(k);
 	}
 }
 
