@@ -53,8 +53,8 @@ private:
 	
 	TextArea descriptionText;
 	
-	SettingsPage * currentPage;
-	vector <SettingsPage *> pages;
+	GameSettingsPage * currentPage;
+	vector <GameSettingsPage *> pages;
 
 public:
 

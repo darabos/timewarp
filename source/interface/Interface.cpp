@@ -171,8 +171,8 @@ void doMainMenu() {
 	Settings::Load("allegro.cfg");
 	Settings::antialiasing = false;
 	Settings::mouseShadow = false;
-	strcpy(Settings::skinPath, "skins/Dinks.ini");
-	//strcpy(Settings::skinPath, "skins/Selenium.ini");
+	//strcpy(Settings::skinPath, "skins/Dinks.ini");
+	strcpy(Settings::skinPath, "skins/Selenium.ini");
 	
 	Color::OnColorDepthChange();
 	alfont_init();

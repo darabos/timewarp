@@ -116,7 +116,7 @@ void PlayLocalMenu::init() {
 			pages.insert( pages.begin(), new MeleeSettingsPage(game_names[i]) );
 		}
 		else {
-            pages.insert( pages.begin(), new SettingsPage(game_names[i]) );
+            pages.insert( pages.begin(), new GameSettingsPage(game_names[i]) );
 		}
 	}
 	
@@ -148,7 +148,7 @@ void PlayLocalMenu::setSettingsPage(int page) {
 	//check if the page is different, if it's the same one that's already
 	// shown, return.
 	int counter = 0;
-	for (vector <SettingsPage *>::iterator i=pages.begin(); i!=pages.end(); i++) {
+	for (vector <GameSettingsPage *>::iterator i=pages.begin(); i!=pages.end(); i++) {
 		if ( (currentPage == *i) &&
 			 (counter == page) )
 		{

@@ -26,7 +26,7 @@ $Id$
 #include "SettingsPage.h"
 #include "GameSessionConfiguration.h"
 
-void SettingsPage::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
+void GameSettingsPage::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 	switch (msg) {
 		case MSG_ACTIVATE: 
 			break;
@@ -34,7 +34,7 @@ void SettingsPage::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 }
 
 
-void SettingsPage::init()
+void GameSettingsPage::init()
 {
   rightPanel.Shape( 44,11,55,76, true);
 
@@ -50,25 +50,25 @@ void SettingsPage::init()
  
 
 
-void SettingsPage::populate(Dialog * dialog) {
+void GameSettingsPage::populate(Dialog * dialog) {
   dialog->Add(rightPanel);
   dialog->Add(labelBackground3);
   dialog->Add(label3);
 }
 
-void SettingsPage::unpopulate(Dialog * dialog) {
+void GameSettingsPage::unpopulate(Dialog * dialog) {
   dialog->Remove(rightPanel);
   dialog->Remove(labelBackground3);
   dialog->Remove(label3);
 }
 
-GameSessionConfiguration * SettingsPage::getConfigInstance() {
+GameSessionConfiguration * GameSettingsPage::getConfigInstance() {
 	return new GameSessionConfiguration(gametypeName);
 }
 
 
 void MeleeSettingsPage::init() {
-	SettingsPage::init();
+	GameSettingsPage::init();
 
 	lMaxPlayers.Shape(46,17,25,5,true);
 	lMaxPlayers.SetText("Max players");
@@ -86,7 +86,7 @@ void MeleeSettingsPage::init() {
 
 
 void MeleeSettingsPage::populate(Dialog * dialog) {
-	SettingsPage::populate(dialog);
+	GameSettingsPage::populate(dialog);
 
 	dialog->Add(lMaxPlayers);
 	dialog->Add(maxPlayers);
@@ -98,7 +98,7 @@ void MeleeSettingsPage::populate(Dialog * dialog) {
 }
 
 void MeleeSettingsPage::unpopulate(Dialog * dialog) {
-	SettingsPage::unpopulate(dialog);
+	GameSettingsPage::unpopulate(dialog);
 	
 	dialog->Remove(lMaxPlayers);
 	dialog->Remove(maxPlayers);
@@ -111,7 +111,7 @@ void MeleeSettingsPage::unpopulate(Dialog * dialog) {
 
 
 void MeleeSettingsPage::HandleEvent(Widget &w, int msg, int arg1, int arg2) {
-	SettingsPage::HandleEvent(w,msg,arg1,arg2);
+	GameSettingsPage::HandleEvent(w,msg,arg1,arg2);
 
     switch (msg) {
 		case MSG_SCROLL: 

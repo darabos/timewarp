@@ -41,13 +41,13 @@ enum { MAX_TITLE_STRING_SIZE=100 };
 
 
 /** Defines how a page should be laid out to configure a particular gametype. */
-class SettingsPage {
+class GameSettingsPage {
 
 public:
 	
 	/** Constructor.  Creates a new page to configure a gametype.
 	    @param gametype the name of the gametype. */
-	SettingsPage(const char * gametype)
+	GameSettingsPage(const char * gametype)
 	{
 		strcpy(gametypeName, gametype);
         init();
@@ -82,7 +82,7 @@ protected:
 
 
 /** Settings for the Melee gametype.  */
-class MeleeSettingsPage : public SettingsPage { 
+class MeleeSettingsPage : public GameSettingsPage { 
 
 protected:
 	Label lMaxPlayers, lNumberOfHumans, lPadSlotsWithBots;
@@ -95,7 +95,7 @@ protected:
 public:
 
 	MeleeSettingsPage(const char * gametype) :
-	  SettingsPage(gametype)
+	  GameSettingsPage(gametype)
 	{
         this->init();
 	}

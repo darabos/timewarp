@@ -38,18 +38,19 @@ using namespace std;
 using namespace Interface;
 
 #include "../melee/mgame.h"
-#include "SettingsPage.h" //remove
+#include "SettingsPage.h"
 
 
 class VideoOptions; class AudioOptions; class ControlOptions; class GameplayOptions;
 
+class EnvironmentSettings;
 
 class OptionsMenu : public OverlayDialog {
 
 private:
 	PanelRaised leftPanel;
 
-	Button bQuit;
+	Button bQuit, bAccept;
 
 	Button video, audio, gameplay, controls;
 
@@ -61,8 +62,8 @@ private:
 	PanelRaised rightPanel;
 	TabPanel tabPanel;
 
-	SettingsPage * currentPage;
-	vector <SettingsPage *> pages;
+	GameSettingsPage * currentPage;
+	vector <GameSettingsPage *> pages;
 
 	VideoOptions * videoOptions;
 	AudioOptions * audioOptions;
@@ -95,80 +96,41 @@ public:
 };
 
 
-class VideoOptions : public SettingsPage {
+class EnvironmentSettings { 
+
 public:
-	VideoOptions() :
-	  SettingsPage("Video Options")
-	{ this->init(); }
+	EnvironmentSettings() : 
+	  _screenResolutionWidth( DEFAULT_SCREEN_WIDTH ),
+	  _screenResolutionHeight( DEFAULT_SCREEN_HEIGHT ),
+	  _screenBitDepth( DEFAULT_SCREEN_BITDEPTH ),
+	  _fullScreen( DEFAULT_FULLSCREEN ),
+	  _gammaCorrection( DEFAULT_GAMMACORRECTION )
+	{
+	}
 
-	void init() 
-	{ SettingsPage::init(); }
+    /** reads in settings from a config file*/
+	void load(const char * filename = "config.ini")
+	{
+	}
 
-	virtual void populate(Dialog * dialog) 
-	{ SettingsPage::populate(dialog); }
+	/** saves settings to a config file*/
+	void save(const char * filename = "config.ini")
+	{
+	}
 
-	virtual void unpopulate(Dialog * dialog) 
-	{ SettingsPage::unpopulate(dialog); }
+	enum { DEFAULT_SCREEN_WIDTH=640 };
+	enum { DEFAULT_SCREEN_HEIGHT=480 };
+	enum { DEFAULT_SCREEN_BITDEPTH=32 };
+	enum { DEFAULT_FULLSCREEN=0 };
+	enum { DEFAULT_GAMMACORRECTION=128 };
 
 private:
-	//Label title;
+	unsigned _screenResolutionWidth, _screenResolutionHeight;
+	unsigned _screenBitDepth;
+	bool _fullScreen;
+	unsigned short _gammaCorrection;
+
 };
 
 
-class AudioOptions : public SettingsPage {
-public:
-	AudioOptions() :
-	  SettingsPage("Audio Options")
-	{ this->init(); }
-
-	void init() 
-	{ SettingsPage::init(); }
-
-	virtual void populate(Dialog * dialog) 
-	{ SettingsPage::populate(dialog); }
-
-	virtual void unpopulate(Dialog * dialog) 
-	{ SettingsPage::unpopulate(dialog); }
-
-private:
-	//Label title;
-};
-
-class GameplayOptions : public SettingsPage {
-public:
-	GameplayOptions() :
-	  SettingsPage("Gameplay Options")
-	{ this->init(); }
-
-	void init() 
-	{ SettingsPage::init(); }
-
-	virtual void populate(Dialog * dialog) 
-	{ SettingsPage::populate(dialog); }
-
-	virtual void unpopulate(Dialog * dialog) 
-	{ SettingsPage::unpopulate(dialog); }
-
-private:
-	//Label title;
-};
-
-class ControlOptions : public SettingsPage {
-public:
-	ControlOptions() :
-	  SettingsPage("Controls")
-	{ this->init(); }
-
-	void init() 
-	{ SettingsPage::init(); }
-
-	virtual void populate(Dialog * dialog) 
-	{ SettingsPage::populate(dialog); }
-
-	virtual void unpopulate(Dialog * dialog) 
-	{ SettingsPage::unpopulate(dialog); }
-
-private:
-	//Label title;
-};
 #endif
