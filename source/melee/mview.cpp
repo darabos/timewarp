@@ -389,6 +389,8 @@ void message_type::out(char *string, int dur, int c) {STACKTRACE
 //	animate(NULL);clean();return;
 //	if (!game) animate(NULL);
 //	else if (game->is_paused()) animate(NULL);
+	if (!(game && game->view && game->view->frame && game->view->frame->surface))
+		animate(0);	// sometimes you do need uncontrolled animation to reduce overhead?
 	clean();
 	return;
 	}
