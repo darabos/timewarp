@@ -613,7 +613,7 @@ class ShipData {
 	};
 
 //gui.h
-class TW_Dialog_Player {
+class TW_Dialog_Player : public BaseClass {
 public:
 	struct DIALOG_PLAYER *player;
 	struct DIALOG *dialog;
@@ -624,7 +624,9 @@ public:
 	VideoWindow *window;
 	void init ( VideoWindow *window, DIALOG *dialog, int index = 0);
 	int update ();
+	void redraw ();
 	void deinit ();
+	virtual void _event( Event * e);
 };
 struct DIALOG;
 int tw_do_dialog ( VideoWindow *window, DIALOG *d, int index );

@@ -62,12 +62,29 @@ static FONT *tw_gui_get_font ( int c ) {
 	return videosystem.get_font(f);
 }
 
+void TW_Dialog_Player::redraw() {
+	int i;
+	for (i = 0; player->dialog[i].proc; i++) player->dialog[i].flags |= D_DIRTY;
+	update();
+	return;
+}
+
+void TW_Dialog_Player::_event( Event * e) {
+	switch (e->type) {
+		case Event::VIDEO: {
+			if (e->subtype == VideoEvent::REDRAW)
+				this->redraw();
+		} break;
+	}
+}
+
 void TW_Dialog_Player::init(VideoWindow *w, DIALOG *d, int focus) {
 	dialog = d;
 	window = w;
 	ifocus = focus;
 	player = NULL;
 	if (!window) window = &videosystem.window;
+	window->add_callback(this);
 	int i;
 	for (i = 0; d[i].proc; i += 1) ;
 	length = i;
@@ -114,6 +131,7 @@ void TW_Dialog_Player::init(VideoWindow *w, DIALOG *d, int focus) {
 }
 void TW_Dialog_Player::deinit() {
 	int i;
+	window->remove_callback(this);
 	dialog[length].d2 -= 1;
 	if (dialog[length].d2 != level) {
 		tw_error("TW_Dialog_Player::deinit - inconsistent GUI order");
