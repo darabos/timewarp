@@ -316,20 +316,62 @@ void PlaybackLog::set_all_directions( char direction ) {
 
 
 
+static enum share_types {TYPE_CHAR, TYPE_SHORT, TYPE_INT};
+static const int max_share = 512;
 static int Nshare = 0;
-static int share_channel[512];
-static int share_size[512];
-static void *share_address[512];
+static int share_channel[max_share];
+static int share_size[max_share];
+static void *share_address[max_share];
+static int share_type[max_share];
+static int share_num[max_share];
 
 
-void share_buffer(int channel, void *value, int size)
+
+void share_intel_order(int n, int i)
+{
+	switch(share_type[n])
+	{
+	case TYPE_SHORT:
+		{
+			short int &x = *((short int*) (share_address[n]) + i);
+			x = intel_ordering_short(x);
+		}
+		break;
+
+	case TYPE_INT:
+		{
+			int &x = *((int*) (share_address[n]) + i);
+			x = intel_ordering(x);
+		}
+		break;
+	}
+}
+
+void share_buffer(int channel, void *value, int num, int size, share_types st)
 {
 	share_channel[Nshare] = channel;
 	share_address[Nshare] = value;
+
+	share_num[Nshare] = num;
 	share_size[Nshare] = size;
 
-	game->log->buffer(share_channel[Nshare], share_address[Nshare], share_size[Nshare]);
-	game->log->flush();
+	share_type[Nshare] = st;
+
+	// change bit-order of each element in an array
+	int i;
+	for ( i = 0; i < share_num[Nshare]; ++i )
+		share_intel_order(Nshare, i);
+
+	// buffer an array
+	game->log->buffer(share_channel[Nshare],
+							share_address[Nshare],
+							share_num[Nshare] * share_size[Nshare]);
+
+	// restore bit-order of each element in an array
+	for ( i = 0; i < share_num[Nshare]; ++i )
+		share_intel_order(Nshare, i);
+
+	//game->log->flush();
 
 	++Nshare;
 }
@@ -340,24 +382,50 @@ occur between the share and share_update(). It uses the global game->log. NOTE, 
 is no "intel_buffering" done, so it's probably a problem between different machine types.
 */
 
-void share(int channel, int *value)
+void share(int channel, int *value, int num)
 {
-	share_buffer(channel, value, sizeof(int));
+	share_buffer(channel, value, num, sizeof(int), TYPE_INT);
 }
+
+
+void share(int channel, short *value, int num)
+{
+	share_buffer(channel, value, num, sizeof(short), TYPE_SHORT);
+}
+
+
+void share(int channel, char *value, int num)
+{
+	share_buffer(channel, value, num, sizeof(char), TYPE_CHAR);
+}
+
+
+
 
 /** \brief Retrieves the values that were sent for sharing, and writes the values
 to the proper memory locations.
 */
 void share_update()
 {
-	game->log->listen();
+	// do it here, cause why would you want to wait for each little packet till it
+	// can be sent onto the net ?
+	game->log->flush();
 
-	int i;
-	for ( i = 0; i < Nshare; ++i )
+	// superfluous, cause this is already used inside the unbuffer routine.
+	//game->log->listen();
+
+
+	int n;
+	for ( n = 0; n < Nshare; ++n )
 	{
-		game->log->unbuffer(share_channel[i], share_address[i], share_size[i]);
+		// unbuffer an array
+		game->log->unbuffer(share_channel[n], share_address[n], share_size[n] * share_num[n]);
+
+		// sort out bit-ordering for all values in the array
+		int i;
+		for ( i = 0; i < share_num[n]; ++i )
+			share_intel_order(n, i);
 	}
 
 	Nshare = 0;
-
 }

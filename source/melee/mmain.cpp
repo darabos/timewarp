@@ -494,6 +494,10 @@ void NormalGame::choose_new_ships() {STACKTRACE
 	message.out("Selecting ships...", 1000);
 	int *slot = new int[num_players];
 	//choose ships and send them across network
+	
+	if (log_totalsize() > 0)
+		tw_error("Log isn't empty (a)");
+
 	for (i = 0; i < num_players; i += 1) {
 		slot[i] = -2;
 		if (player_control[i]->ship) {
@@ -512,15 +516,20 @@ void NormalGame::choose_new_ships() {STACKTRACE
                 sprintf(buffy, "%s\n", player_name[i]);
 
 			slot[i] = player_control[i]->choose_ship(window, buffy, fleet);
+			/*
 			if (player_control[i]->channel != channel_none) {
 				slot[i] = intel_ordering(slot[i]);
 				log->buffer(player_control[i]->channel, &slot[i], sizeof(int));
 				log->flush();
 				//slot[i] = intel_ordering(slot[i]);
 				}
+				*/
+			share(player_control[i]->channel, &slot[i]);
 			}
 		}
+
 	//recieve the ships that were chosen
+	/*
 	log->listen();
 	for (i = 0; i < num_players; i += 1) {
 		if (slot[i] == -2) continue;
@@ -529,6 +538,13 @@ void NormalGame::choose_new_ships() {STACKTRACE
 			slot[i] = intel_ordering(slot[i]);
 			}
 		}
+		*/
+
+	share_update();
+
+	if (log_totalsize() > 0)
+		tw_error("Log isn't empty (b)");
+
 	//create the ships that were chosen
 	for (i = 0; i < num_players; i += 1) {
 		if (slot[i] == -2) continue;
@@ -724,6 +740,7 @@ void NormalGame::handle_end()
 		// networking
 		share(player_control[k]->channel, &choices[k]);
 	}
+
 
 	// networking
 	share_update();
