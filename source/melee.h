@@ -553,6 +553,7 @@ struct ShipType {
 	ShipData  *data;
 	ShipClass *code;
 	Ship *get_ship(Vector2 pos, double angle, unsigned int team);
+	int origin;
 };
 extern ShipType *shiptypes;
 extern int num_shiptypes;

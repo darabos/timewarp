@@ -1152,6 +1152,40 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c);
 int scp_fleet_dialog_bitmap_proc(int msg, DIALOG* d, int c);
 
 
+
+int d_check_proc_fleeteditor(int msg, DIALOG *d, int c)
+{
+	if (msg == MSG_CLICK)
+	{
+		
+		/* track the mouse until it is released */
+		while (gui_mouse_b()) {
+//			state2 = ((gui_mouse_x() >= d->x) && (gui_mouse_y() >= d->y) &&
+//				(gui_mouse_x() < d->x + d->w) && (gui_mouse_y() < d->y + d->h));
+			
+			/* let other objects continue to animate */
+			broadcast_dialog_message(MSG_IDLE, 0);
+		}
+		
+		/* should we close the dialog? */
+		// imo the following mucho better/ simplere than that messy stuff in the allegro routine
+		// ... check d_button_proc in guiproc.c in the allegro sources...
+
+		if (d->flags & D_SELECTED)
+			d->flags &= ~D_SELECTED;
+		else
+			d->flags |= D_SELECTED;
+
+		if ( d->flags & D_EXIT)
+			return D_CLOSE;
+
+		return D_O_K; 
+	}
+	
+	return d_check_proc(msg, d, 0);
+}
+
+
 // FLEET - dialog structure
 DIALOG fleetDialog[] = {
   // (dialog proc)     (x)  (y)   (w)   (h)   (fg)(bg)(key) (flags)    (d1)   (d2)        (dp)
@@ -1159,11 +1193,16 @@ DIALOG fleetDialog[] = {
   //{ d_clear_proc,       0,    0,    0,    0,   255,  0,    0,    0,       0,    0,    NULL },//FLEET_DIALOG_CLEAR_SCREEN
   { d_textbox_proc,     10,  10,   240,  20,   255,  0,    0,     0,       0,    0,    (void *)"Available Ships", NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_TEXT TODO specify font here in d2 I think
   { d_textbox_proc,     10,  35,   128,  17,   255,  0,    0,     0,       0,    0,    (void *)"Ship Catagories:", NULL, NULL },//FLEET_DIALOG_SHIP_CATAGORIES_TEXT
-  { d_check_proc,       30,  52,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
-  { d_check_proc,       30,  66,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
-  { d_check_proc,       30,  79,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
-  { d_check_proc,       30,  93,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
-  { d_check_proc,       30, 107,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
+  { d_check_proc_fleeteditor,
+						30,  52,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
+  { d_check_proc_fleeteditor,
+						30,  66,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
+  { d_check_proc_fleeteditor,
+						30,  79,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
+  { d_check_proc_fleeteditor,
+						30,  93,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
+  { d_check_proc_fleeteditor,
+						30, 107,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
 
   { d_textbox_proc,     10, 121,    64,  17,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT1
   { d_button_proc,      69, 121,   128,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost TODO fix me", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON1
@@ -1230,6 +1269,13 @@ void edit_fleet(int player) {STACKTRACE
     fleetDialog[FLEET_DIALOG_CURRENT_POINTS_VALUE].dp = fleetCostString;
     fleetDialog[FLEET_DIALOG_POINT_LIMIT_BUTTON].dp = maxFleetCostString;
     
+	// the reference_fleet is used in the list in a hardcoded way, so over"load" it
+	Fleet *old_reference_fleet = reference_fleet;
+
+	Fleet new_ref_fleet(*reference_fleet);	// make a copy
+	reference_fleet = &new_ref_fleet;	// overload it. Now you can mess with it as you like
+
+   fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags |= D_SELECTED;	// don't override the D_EXIT
 
 	do {
 		sprintf(title_str, fleet->getTitle());
@@ -1262,7 +1308,39 @@ void edit_fleet(int player) {STACKTRACE
         switch( fleetRet ) {
            case FLEET_DIALOG_AVAILABLE_SHIPS_TEXT: break;
            case FLEET_DIALOG_SHIP_CATAGORIES_TEXT: break;
-           case FLEET_DIALOG_SC1_TOGGLE: break;
+           case FLEET_DIALOG_SC1_TOGGLE:
+			   {
+			   
+				   int i;
+				   if (fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags & D_SELECTED)
+				   {
+					   // add the ships to the list
+					   i = 0;
+					   while (i < old_reference_fleet->getSize())
+					   {
+						   ShipType *st = old_reference_fleet->getShipType(i);
+						   if (st->origin == 1)
+							   reference_fleet->addShipType(st);
+
+						   ++i;
+					   }
+
+				   } else {
+					   
+					   // remove the ships from the list:
+					   i = 0;
+					   while (i < reference_fleet->getSize())
+					   {
+						   ShipType *st = reference_fleet->getShipType(i);
+						   if (st->origin == 1)
+							   reference_fleet->clear_slot(i);
+						   else
+							   ++i;
+					   }
+				   }
+				   
+			   }
+			   break;
            case FLEET_DIALOG_SC2_TOGGLE: break;
            case FLEET_DIALOG_SC3_TOGGLE: break;
            case FLEET_DIALOG_TW_OFFICIAL_TOGGLE: break;
@@ -1396,6 +1474,8 @@ void edit_fleet(int player) {STACKTRACE
 		}*/
 
 	} while((fleetRet != FLEET_DIALOG_BACK_BUTTON) && (fleetRet != -1));
+
+	reference_fleet = old_reference_fleet;
 
 	fleet->save("fleets.ini", tmp);
 	delete fleet;

@@ -459,7 +459,10 @@ void game_create_errorlog(const char *exitmessage = 0)
 	//fprintf(f, "-------- showing in-game objects --------\n");
 	fprintf(f, "timewarp version = %s\n", tw_version());
 
-	fprintf(f, "lag_frames = %i", game->lag_frames);
+	if (game)
+		fprintf(f, "lag_frames = %i", game->lag_frames);
+	else
+		fprintf(f, "no game defined");
 
 	time_t t;
 	tm *td;
