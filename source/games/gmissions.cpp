@@ -779,15 +779,15 @@ void gmissions::init(Log *_log)
 //	missionselectmenu = new AreaReserve("SELECTMISSION", 50, 400, "gmissiongui.dat", this->view->frame->surface);
 	missionselectmenu = new AreaReserve("interfaces/selectmission/briefing", 50, 400, this->view->frame->surface);
 
-	b_info = new TextButton(missionselectmenu, "info", -1, -1, usefont);
+	b_info = new TextButton(missionselectmenu, "info/", -1, -1, usefont);
 
-	b_accept = new Button(missionselectmenu, "accept", -1, -1, KEY_ENTER);
-	b_quit = new Button(missionselectmenu, "quit", -1, -1, KEY_ESC);
+	b_accept = new Button(missionselectmenu, "accept/", -1, -1, KEY_ENTER);
+	b_quit = new Button(missionselectmenu, "quit/", -1, -1, KEY_ESC);
 
-	b_title = new TextButton(missionselectmenu, "title", -1, -1, usefont);
+	b_title = new TextButton(missionselectmenu, "title/", -1, -1, usefont);
 
-	b_left = new Button(missionselectmenu, "left", -1, -1, KEY_LEFT);
-	b_right = new Button(missionselectmenu, "right", -1, -1, KEY_RIGHT);
+	b_left = new Button(missionselectmenu, "left/", -1, -1, KEY_LEFT);
+	b_right = new Button(missionselectmenu, "right/", -1, -1, KEY_RIGHT);
 
 	b_ghost = new GhostButton(missionselectmenu);
 

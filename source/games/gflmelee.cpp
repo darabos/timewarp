@@ -2012,18 +2012,18 @@ void FlMelee::start_menu(int *select)
 	col[0] = makecol(0,0,0);
 	col[1] = makecol(200,200,200);
 
-	up[0] = new Button(A, "up1", -1, -1, 0);
-	down[0] = new Button(A, "down1", -1, -1, 0);
+	up[0] = new Button(A, "up1/", -1, -1, 0);
+	down[0] = new Button(A, "down1/", -1, -1, 0);
 
-	up[1] = new Button(A, "up2", -1, -1, 0);
-	down[1] = new Button(A, "down2", -1, -1, 0);
+	up[1] = new Button(A, "up2/", -1, -1, 0);
+	down[1] = new Button(A, "down2/", -1, -1, 0);
 
-	ok = new Button(A, "ok", -1, -1, 0);
+	ok = new Button(A, "ok/", -1, -1, 0);
 
-	fl[0] = new TextButton(A, "text1", -1, -1, usefont);		
+	fl[0] = new TextButton(A, "text1/", -1, -1, usefont);		
 	fl[0]->set_text("", col[0]);
 
-	fl[1] = new TextButton(A, "text2", -1, -1, usefont);		
+	fl[1] = new TextButton(A, "text2/", -1, -1, usefont);		
 	fl[1]->set_text("", col[1]);
 
 	// the window manager.
