@@ -56,11 +56,15 @@ void MeasurePeriod::setperiod(double operiod)
 
 void MeasurePeriod::reset()
 {
+	STACKTRACE
+
 	time = game->game_time * 1E-3;
 }
 
 bool MeasurePeriod::ready()
 {
+	STACKTRACE
+
 	return (game->game_time*1E-3 - time > period);
 }
 
@@ -87,6 +91,8 @@ Mountain(surf, opos, oangle, obodysprite, txt, otangible, ohealth)
 
 SpaceObject *find_closest(SpaceLocation *s, int test_attr, double R)
 {
+	STACKTRACE
+
 	Vector2 Dmin;
 	SpaceObject *closest;
 	Query q;
@@ -124,6 +130,8 @@ SpaceObject *find_closest(SpaceLocation *s, int test_attr, double R)
 
 void GunBody::calculate()
 {
+	STACKTRACE
+
 
 	// find the closest target?
 	SpaceObject *o;
@@ -167,6 +175,8 @@ void GunBody::calculate()
 
 int GunBody::handle_damage (SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
+
 	int i;
 	i = Mountain::handle_damage(source, normal, direct);
 	if (!health)
@@ -206,6 +216,8 @@ SpaceObject(creator, opos, oangle, osprite)
 
 void SpaceObjectFrozen::drawpos(Frame *frame, int index, BITMAP **bmp, int *x, int *y)
 {
+	STACKTRACE
+
 	(*bmp) = sprite->get_bitmap(index);
 
 	double xgame, ygame;
@@ -243,6 +255,8 @@ void SpaceObjectFrozen::drawpos(Frame *frame, int index, BITMAP **bmp, int *x, i
 void SpaceObjectFrozen::animate(Frame *frame)
 {
 
+	STACKTRACE
+
 	int ixpos, iypos;
 	BITMAP *bmp;
 
@@ -259,6 +273,8 @@ void SpaceObjectFrozen::animate(Frame *frame)
 
 int SpaceObjectFrozen::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
+
 	double d = normal + direct;
 	health -= d;
 	if (health <= 0)
@@ -303,6 +319,8 @@ SpaceObjectFrozen(0, opos, oangle, osprite, txt, otangible, ohealth)
 
 void Creature::calculate()
 {
+	STACKTRACE
+
 	SpaceObject::calculate();
 
 	// run around aimlessly...
@@ -360,6 +378,8 @@ void Creature::calculate()
 
 void Creature::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
+
 	// only damage shiptype objects, not objects that are on the ground
 	if (other->isShip())
 		other->handle_damage(this, damage);
@@ -368,6 +388,8 @@ void Creature::inflict_damage(SpaceObject *other)
 
 int Creature::handle_damage (SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
+
 	int i;
 	i = SpaceObjectFrozen::handle_damage(source, normal, direct);
 	if (!health)
@@ -398,6 +420,8 @@ SpaceObjectFrozen(0, opos, oangle, osprite, txt, otangible, ohealth)
 
 void Mountain::calculate()
 {
+	STACKTRACE
+
 	// make a decision about which sprite to draw... based on health
 
 	int n;
@@ -424,6 +448,8 @@ void Mountain::calculate()
 
 void View_Frozen::init(View *old)
 {
+	STACKTRACE
+
 	View::init(old);
 	f = 0;
 	min = 120;//480;
@@ -433,6 +459,8 @@ void View_Frozen::init(View *old)
 
 void View_Frozen::prepare ( Frame *frame, int time )
 {
+	STACKTRACE
+
 
 	Vector2 oc = camera.pos;
 	camera.pos += camera.vel * time;
@@ -462,6 +490,8 @@ void View_Frozen::prepare ( Frame *frame, int time )
 
 void View_Frozen::calculate (Game *game)
 {
+	STACKTRACE
+
 	CameraPosition n = camera;
 	/*
 	if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
@@ -496,6 +526,8 @@ REGISTER_VIEW ( View_Frozen, "Frozen" )
 
 void gplexplr::init(Log *_log)
 {
+	STACKTRACE
+
 	//you need to call Game::init very early on, to set stuff up... rarely do you want to do anything before that
 	Game::init(_log);
 
@@ -547,6 +579,8 @@ void gplexplr::init(Log *_log)
 
 void gplexplr::calculate()
 {
+	STACKTRACE
+
 	Game::calculate();
 
 	// this is required, because we only use a terrain bitmap of default pixel-size.
@@ -561,6 +595,8 @@ void gplexplr::calculate()
 
 bool gplexplr::handle_key(int k)
 {
+	STACKTRACE
+
 	Game::handle_key(k);
 
 	switch ( k >> 8 )
@@ -588,6 +624,8 @@ bool gplexplr::handle_key(int k)
 
 BITMAP* get_data_bmp(DATAFILE *data, char *objname)
 {
+	STACKTRACE
+
 	DATAFILE *dataobj;
 	BITMAP *r, *old;
 
@@ -666,6 +704,8 @@ void strgetint(int *val)
 
 void strline(char *t)
 {
+	STACKTRACE
+
 	strskipnonalfa();
 
 	int k;
@@ -858,6 +898,8 @@ int low_int(double d)
 void Plsurface::animate(Frame *frame)
 {
 
+	STACKTRACE
+
 	// draw the surface !!
 	int ix, iy, ix2, iy2, k;
 
@@ -952,6 +994,8 @@ void Plsurface::animate(Frame *frame)
 
 void Plsurface::calculate()
 {
+	STACKTRACE
+
 	
 	// the ground objects aren't added to the game by themselves, for reason that they
 	// can't collide with each other (they don't move), so... that takes away a lot of
@@ -1008,6 +1052,8 @@ void Plsurface::calculate()
 
 void Plsurface::delobj(int i)
 {
+	STACKTRACE
+
 	if (Nobjects <= 0)
 		return;
 
@@ -1017,6 +1063,8 @@ void Plsurface::delobj(int i)
 
 void Plsurface::delunit(int i)
 {
+	STACKTRACE
+
 	if (Nunits <= 0)
 		return;
 
@@ -1026,6 +1074,8 @@ void Plsurface::delunit(int i)
 
 int Plsurface::surf_color(int x, int y)
 {
+	STACKTRACE
+
 	int ix, iy;
 
 	ix = x / BitmapSize;	// the ix-th tile to the right.
@@ -1046,12 +1096,16 @@ int Plsurface::surf_color(int x, int y)
 
 bool Plsurface::edit_test(int i, char *txt)
 {
+	STACKTRACE
+
 	return !strncmp(object_type[i].name, txt, strlen(txt));
 }
 
 // find the number belonging to the object of a certain name
 int Plsurface::finditem(char *txt)
 {
+	STACKTRACE
+
 	int i;
 	for ( i = 0; i < Nobjecttypes; ++i )
 	{
@@ -1064,11 +1118,15 @@ int Plsurface::finditem(char *txt)
 
 void Plsurface::additem(Vector2 P, char *descr)
 {
+	STACKTRACE
+
 	additem(P, finditem(descr));
 }
 
 void Plsurface::addobj(SpaceObjectFrozen *s)
 {
+	STACKTRACE
+
 	if (Nobjects >= Nobjectsmax)
 		return;
 
@@ -1078,6 +1136,8 @@ void Plsurface::addobj(SpaceObjectFrozen *s)
 
 void Plsurface::addunit(SpaceObjectFrozen *u)
 {
+	STACKTRACE
+
 	if (Nunits >= Nunitsmax)
 		return;
 
@@ -1088,6 +1148,8 @@ void Plsurface::addunit(SpaceObjectFrozen *u)
 // add items based on some baseclasses (basenames starting with plant#, tree#, etc);
 void Plsurface::additem(Vector2 P, int i)
 {
+	STACKTRACE
+
 	// planta, plantb, plant...
 	// treea, treeb, tree..
 	if (edit_test(i, "plant") ||
@@ -1136,6 +1198,8 @@ void Plsurface::additem(Vector2 P, int i)
 
 void Plsurface::edit_add()
 {
+	STACKTRACE
+
 	Vector2 P;
 	int i;
 
@@ -1155,6 +1219,8 @@ void Plsurface::edit_add()
 // add all objs/units on the map that are specified on a file on disk
 void Plsurface::edit_read(char *fname)
 {
+	STACKTRACE
+
 
 	FILE *f;
 
@@ -1183,6 +1249,8 @@ void Plsurface::edit_read(char *fname)
 // that's in the file with the information that's in memory.
 void Plsurface::edit_save(char *fname)
 {
+	STACKTRACE
+
 	FILE *f;
 	int i;
 
@@ -1213,6 +1281,8 @@ void Plsurface::edit_save(char *fname)
 
 int Plsurface::countobjects(char *idname)
 {
+	STACKTRACE
+
 	int i, count;
 
 	count = 0;
@@ -1232,6 +1302,8 @@ int Plsurface::countobjects(char *idname)
 
 SpaceObject *Plsurface::findobject(char *idname, int nskip)
 {
+	STACKTRACE
+
 	int i, count;
 
 	count = 0;

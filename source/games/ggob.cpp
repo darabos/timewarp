@@ -38,6 +38,8 @@ REGISTER_FILE
 ////////////////////////////////////////////////////////////////////////
 
 int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
+
 	if (!exists()) return 0;
 	int i = Asteroid::handle_damage(source, normal, direct);
 	if (!exists()) {
@@ -48,6 +50,8 @@ int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double dir
 }
 
 void GobAsteroid::death () {
+	STACKTRACE
+
 
 	Animation *a = new Animation(this, pos,
 			explosion, 0, explosion->frames(), time_ratio, get_depth());
@@ -59,6 +63,8 @@ void GobAsteroid::death () {
 }
 
 void GobGame::preinit() {
+	STACKTRACE
+
 	Game::preinit();
 
 	gobplayers = 0;
@@ -78,6 +84,8 @@ void GobGame::preinit() {
 }
 
 void GobGame::add_gobplayer(Control *control) {
+	STACKTRACE
+
 	int i = gobplayers;
 	gobplayers += 1;
 	gobplayer = (GobPlayer**) realloc(gobplayer, sizeof(GobPlayer*) * gobplayers);
@@ -87,6 +95,8 @@ void GobGame::add_gobplayer(Control *control) {
 	return;
 }
 void GobPlayer::died(SpaceLocation *killer) {
+	STACKTRACE
+
 	if (upgrade_list[UpgradeIndex::divinefavor]->num && (random()&1)) { //divine favor
 		ship->crew = ship->crew_max;
 		ship->batt = ship->batt_max;
@@ -98,6 +108,8 @@ void GobPlayer::died(SpaceLocation *killer) {
 }
 
 void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {
+	STACKTRACE
+
 	double v;
 	Vector2 d = source->normal_pos() - space_center;
 	d = normalize(d + size/2, size) - size/2;
@@ -108,6 +120,8 @@ void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int fr
 }
 
 void GobGame::init(Log *_log) {
+	STACKTRACE
+
 	int i;
 /*	switch(_log->type) {
 //		case Log::log_net1server:
@@ -244,6 +258,8 @@ GobGame::~GobGame() {
 	return;
 }
 void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background) {
+	STACKTRACE
+
 	Planet *p = new Planet (size/2, planet_sprite, planet_index);
 	if (num_planets) while (true) {
 		SpaceLocation *n;
@@ -265,6 +281,8 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 }
 
 void GobGame::fps() {
+	STACKTRACE
+
 	Game::fps();
 
 	message.print((int)msecs_per_fps, 15, "enemies: %d", gobenemies);
@@ -287,6 +305,8 @@ void GobGame::fps() {
 }
 
 void GobGame::calculate() {
+	STACKTRACE
+
 	
 
 	if (next_add_new_enemy_time <= game_time) {
@@ -307,6 +327,8 @@ void GobGame::calculate() {
 	return;
 }
 int GobGame::get_enemy_index(SpaceLocation *what) {
+	STACKTRACE
+
 	int i;
 	Ship *s = what->ship;
 	if (!s) return -1;
@@ -316,6 +338,8 @@ int GobGame::get_enemy_index(SpaceLocation *what) {
 	return -1;
 }
 void GobGame::ship_died(Ship *who, SpaceLocation *source) {
+	STACKTRACE
+
 
 	GobPlayer *p = this->get_player(who);
 	if (p && (p->ship == who)) { //Player died
@@ -335,6 +359,8 @@ void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 	return;
 }
 GobPlayer *GobGame::get_player(SpaceLocation *what) {
+	STACKTRACE
+
 	int i;
 	for (i = 0; i < gobplayers; i += 1) {		
 		if (what->get_team() == gobplayer[i]->team) return gobplayer[i];
@@ -342,6 +368,8 @@ GobPlayer *GobGame::get_player(SpaceLocation *what) {
 	return NULL;
 }
 void GobGame::add_new_enemy() {
+	STACKTRACE
+
 	const int num_enemy_types = 19;
 	static char *enemy_types[num_enemy_types] = {
 		"thrto", "zfpst", "shosc", "dragr", 
@@ -417,12 +445,16 @@ base	time	low		high
 	}
 
 void GobEnemy::init(Ship *ship, int kill_starbucks, int kill_buckazoids) {
+	STACKTRACE
+
 	this->ship = ship;
 	this->starbucks = kill_starbucks;
 	this->buckazoids = kill_buckazoids;
 	return;
 	}
 void GobEnemy::died(SpaceLocation *what) {
+	STACKTRACE
+
 	GobPlayer *p = gobgame->get_player(what);
 	if (p) {
 		p->starbucks += starbucks;
@@ -437,6 +469,8 @@ GobPlayer::~GobPlayer() {
 	free (pair_list);
 }
 void GobPlayer::init(Control *c, TeamCode team) {
+	STACKTRACE
+
 	channel = c->channel;
 	starbucks = 0;
 	buckazoids = 0;
@@ -461,6 +495,8 @@ void GobPlayer::init(Control *c, TeamCode team) {
 	return;
 	}
 GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
+	STACKTRACE
+
 	if (!pair_list) return NULL;
 	int i;
 	for (i = 0; i < num_pairs; i += 1) {
@@ -470,6 +506,8 @@ GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
 	return NULL;
 }
 void GobPlayer::_add_pair(const char *id, int value) {
+	STACKTRACE
+
 	if (_get_pair(id)) {
 		error("GobPlayer::_add_pair - \"%s\" already exists", id);
 		return;
@@ -481,17 +519,23 @@ void GobPlayer::_add_pair(const char *id, int value) {
 	return;
 }
 int GobPlayer::read_pair(const char *id) {
+	STACKTRACE
+
 	pair *p = _get_pair(id);
 	if (p) return p->value;
 	return -1;
 }
 void GobPlayer::write_pair(const char *id, int value) {
+	STACKTRACE
+
 	pair *p = _get_pair(id);
 	if (p) p->value = value;
 	else _add_pair(id, value);
 	return;
 }
 int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
+	STACKTRACE
+
 	char buffy1[512];
 	sprintf(buffy1, "Price: %d starbucks plus %d buckazoids", price_starbucks, price_buckazoids);
 	if ((starbucks < price_starbucks) || (buckazoids < price_buckazoids)) {
@@ -511,6 +555,8 @@ int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
 	return 0;
 	}
 void GobPlayer::new_ship(ShipType *type) {
+	STACKTRACE
+
 	Ship *old = ship;
 	Vector2 pos = 0;
 	double a = 0;
@@ -572,6 +618,8 @@ void GobPlayer::new_ship(ShipType *type) {
 	return;
 	}
 void GobStation::buy_new_ship_menu(GobPlayer *s) {
+	STACKTRACE
+
 	char buffy1[512], buffy2[512];
 	ShipType *otype = s->ship->type;
 	ShipType *ntype = shiptype(build_type);
@@ -629,6 +677,8 @@ static DIALOG station_dialog[] =
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
 void GobStation::station_screen(GobPlayer *s) {
+	STACKTRACE
+
 	BITMAP *background = load_bitmap(background_pic, NULL);
 	if (!background) {
 		message.print(1000, 15, "%s", background_pic);
@@ -707,6 +757,8 @@ void GobStation::station_screen(GobPlayer *s) {
 	return;
 	}
 void GobStation::inflict_damage(SpaceObject *other) {
+	STACKTRACE
+
 	SpaceObject::inflict_damage(other);
 	if (!other->isShip()) return;
 	GobPlayer *p = gobgame->get_player(other);
@@ -732,6 +784,8 @@ int num_upgrade_indexes;
 int upgrade_index[999];
 GobPlayer *upgrade_list_for;
 char *upgradeListboxGetter(int index, int *list_size) {
+	STACKTRACE
+
 	static char tmp[150];
 	if(index < 0) {
 		*list_size = num_upgrade_indexes;
@@ -755,6 +809,8 @@ static DIALOG upgrade_dialog[] =
 };
 
 void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
+	STACKTRACE
+
 	int i;
 	upgrade_list_for = gs;
 	clear_to_color(screen, palette_color[8]);
@@ -797,6 +853,8 @@ GobDefender::GobDefender ( Ship *ship)
 	collide_flag_anyone = 0;
 }
 void GobDefender::calculate() {
+	STACKTRACE
+
 	SpaceObject::calculate();
 	if (!ship) {
 		die();
@@ -845,6 +903,8 @@ RainbowRift::RainbowRift ()
 	next_time2 = game->game_time;
 }
 void RainbowRift::animate( Frame *frame ) {
+	STACKTRACE
+
 	Vector2 s;
 	s = corner(pos, Vector2(300,300));
 	if ((s.x < -500) || (s.x > space_view_size.x + 500) || 
@@ -868,6 +928,8 @@ void RainbowRift::animate( Frame *frame ) {
 	return;
 }
 void RainbowRift::squiggle() {
+	STACKTRACE
+
 	int i;
 	int m = n*6+2;
 	for (i = 0; i < m - 6; i += 1) {
@@ -891,6 +953,8 @@ void RainbowRift::squiggle() {
 	return;
 }
 void RainbowRift::calculate() {
+	STACKTRACE
+
 	while (game->game_time > next_time) {
 		next_time += 25;
 		squiggle();

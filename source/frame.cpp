@@ -229,6 +229,8 @@ void Frame::add_old_line(int x, int y, int a, int b)
 
 void Frame::erase()
 {
+	STACKTRACE
+
 	int c;
 	if (!surface) return;
 	prepare();
@@ -279,6 +281,8 @@ void Frame::erase()
 }
 
 void Frame::prepare () {
+	STACKTRACE
+
 	int w = 0, h = 0;
 	if (surface) {
 		w = surface->w; 
@@ -300,6 +304,8 @@ void Frame::prepare () {
 
 void Frame::draw()
 {
+	STACKTRACE
+
 	int c;
 	BACKGROUND_COLOR = tw_color ( background_red, background_green, background_blue );
 

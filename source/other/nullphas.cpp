@@ -12,6 +12,8 @@ NullPhaser::NullPhaser( Ship* oship ):
 
 void NullPhaser::animate( Frame* space ){}
 void NullPhaser::calculate(){
+	STACKTRACE
+
   if( state > 0 ){
     game->add( ship );
     ship->materialize();

@@ -35,6 +35,8 @@ class Huge : public NormalGame
 
 SpaceSprite *Huge::GetSprite(char *fileName, char *spriteName, int attribs)
 {
+	STACKTRACE
+
 
 	DATAFILE *tmpdata;
 	tmpdata= load_datafile_object(fileName,spriteName);
@@ -59,9 +61,10 @@ SpaceSprite *Huge::GetSprite(char *fileName, char *spriteName, int attribs)
 	return spr;
 }
 
-bool Huge::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, 
-int numSprites, int attribs)
+bool Huge::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites, int attribs)
 {
+	STACKTRACE
+
 
 	SpaceSprite *spr;
 	char dataStr[100];
@@ -83,6 +86,8 @@ int numSprites, int attribs)
 
 void Huge::init_objects()
 {
+	STACKTRACE
+
 	// set the anti-alias to 0:
 	int antia_on =  get_config_int(NULL, "Anti-AliasingOn",0);;
 	set_tw_aa_mode(antia_on);

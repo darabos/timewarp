@@ -59,6 +59,8 @@ REGISTER_FILE
 
 void copy_sprite2bmp(SpaceSprite* src, BITMAP *bmp)
 {
+	STACKTRACE
+
 	src->lock();
 	
 	BITMAP *tmp = src->get_bitmap(0);
@@ -231,6 +233,8 @@ HealthBar::HealthBar(Ship *creator, int *toggle)
 
 void HealthBar::calculate()
 {
+	STACKTRACE
+
 	if ( !(mother && mother->exists()) )
 	{
 		state = 0;
@@ -242,6 +246,8 @@ void HealthBar::calculate()
 
 void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fraction, int col1, int col2, Frame *space)
 {
+	STACKTRACE
+
 	Vector2 center;
 	int d;
 
@@ -276,6 +282,8 @@ void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fracti
 
 void HealthBar::animate(Frame *space)
 {
+	STACKTRACE
+
 	if (!*bartoggle)
 		return;
 
@@ -301,6 +309,8 @@ void HealthBar::animate(Frame *space)
 
 SpaceSprite *FlMelee::GetSprite(char *fileName, char *spriteName, int attribs)
 {
+	STACKTRACE
+
 
 	DATAFILE *tmpdata;
 	tmpdata= load_datafile_object(fileName,spriteName);
@@ -328,6 +338,8 @@ SpaceSprite *FlMelee::GetSprite(char *fileName, char *spriteName, int attribs)
 bool FlMelee::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, 
 int numSprites, int attribs)
 {
+	STACKTRACE
+
 
 	SpaceSprite *spr;
 	char dataStr[100];
@@ -349,6 +361,8 @@ int numSprites, int attribs)
 
 void FlMelee::init(Log *_log)
 {
+	STACKTRACE
+
 
 	Game::init(_log);
 
@@ -664,6 +678,8 @@ void FlMelee::init(Log *_log)
 
 void FlMelee::quit(const char *message)
 {
+	STACKTRACE
+
 	// save the game settings.
 	set_config_file("gflmelee.ini");
 	set_config_int("GameSetting", "RadarLayout", radarlayout);
@@ -679,6 +695,8 @@ void FlMelee::quit(const char *message)
 
 int FlMelee::is_in_team(SpaceLocation *o, TeamCode team)
 {
+	STACKTRACE
+
 	if (!(o && o->exists() ))
 		return 0;
 
@@ -689,6 +707,8 @@ int FlMelee::is_in_team(SpaceLocation *o, TeamCode team)
 
 void FlMelee::animate_onscreen_shiplist( Frame* frame )
 {
+	STACKTRACE
+
 	// info about the fleets
 
 	
@@ -853,6 +873,8 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 
 void FlMelee::animate_predict(Frame *frame, int time)
 {
+	STACKTRACE
+
 	Game::animate_predict(frame, time);
 
 	animate_onscreen_shiplist( frame );
@@ -862,6 +884,8 @@ void FlMelee::animate_predict(Frame *frame, int time)
 
 void FlMelee::animate( Frame* frame )
 {
+	STACKTRACE
+
 	
 	Game::animate( frame );
 
@@ -871,6 +895,8 @@ void FlMelee::animate( Frame* frame )
 
 void FlMelee::calculate()
 {
+	STACKTRACE
+
 	Game::calculate();
 
 	Control *c = playercontrols[0];
@@ -1130,6 +1156,8 @@ void FlMelee::calculate()
 
 void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 {
+	STACKTRACE
+
 	Game::ship_died(who, source);
 
 	//updatestats(Ship *killer, Ship *victim)
@@ -1158,6 +1186,8 @@ void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 
 void FlMelee::show_ending(int didwewin)
 {
+	STACKTRACE
+
 	// show some bmp
 
 	BITMAP *dest = view->frame->surface;
@@ -1224,6 +1254,8 @@ StatsManager::StatsManager()
 
 void StatsManager::addship ( Ship *statship, int ofordisplay )
 {
+	STACKTRACE
+
 	SpaceSprite *spr = statship->data->spriteShip;
 	BITMAP *tmp = create_bitmap(40, 40);
 
@@ -1259,6 +1291,8 @@ void StatsManager::addship ( Ship *statship, int ofordisplay )
 
 void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 {
+	STACKTRACE
+
 
 	if ( !(killer && victim) )
 		return;
@@ -1316,6 +1350,8 @@ void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 
 void StatsManager::showstats(Frame *frame)
 {
+	STACKTRACE
+
 	// well ... show the graphics of all the victims ?
 	int i;
 
@@ -1370,6 +1406,8 @@ void StatsManager::showstats(Frame *frame)
 
 int StatsManager::list_item(unsigned int flag)
 {
+	STACKTRACE
+
 	int i;
 
 	for ( i = 0; i < Nlist; ++i )
@@ -1405,6 +1443,8 @@ StatsManager::~StatsManager()
 
 BITMAP* copybmp( BITMAP* src )
 {
+	STACKTRACE
+
 	BITMAP *dest;
 
 	// copied from vanguard
@@ -1420,12 +1460,16 @@ BITMAP* copybmp( BITMAP* src )
 
 Vector2 YRadar::shiftscale(Vector2 r_center, Vector2 v_center, double scale, Vector2 n)
 {
+	STACKTRACE
+
 	//Used to scale game coordinates onto RADAR screen coordinates
 	return  scale * min_delta(n - r_center, map_size) + v_center;
 }
 
 void YRadar::PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale)
 {
+	STACKTRACE
+
 	Vector2 pos;
 
 	pos = shiftscale(T, Vector2(Slate->w/2,Slate->h/2), Scale, o->pos);
@@ -1481,6 +1525,8 @@ void YRadar::PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale)
 
 void YRadar::Paint(BITMAP *Slate, Vector2 T)
 {
+	STACKTRACE
+
 	double Scale = Slate->w/(2.*size);
 
 	for(int num=0; num<physics->num_items; num++)
@@ -1495,6 +1541,8 @@ void YRadar::Paint(BITMAP *Slate, Vector2 T)
 
 void YRadar::initbmp(char *datafilename)
 {
+	STACKTRACE
+
 	DATAFILE *dat;
 	dat = load_datafile(datafilename);
 
@@ -1562,6 +1610,8 @@ YRadar::YRadar(Control *ocontroller, double Size, TeamCode hteam, char *datafile
 
 void YRadar::animate(Frame *space)
 {
+	STACKTRACE
+
 	//If the radar is disabled, don't do anything.
 	if(active==FALSE) return;
 
@@ -1657,7 +1707,8 @@ ShipPanelBmp::~ShipPanelBmp()
 }
 
 
-void ShipPanelBmp::animate_panel() {STACKTRACE
+void ShipPanelBmp::animate_panel() {
+	STACKTRACE
 	if (!ship) {
 		double w, h;
 
@@ -1736,7 +1787,8 @@ void ShipPanelBmp::animate_panel() {STACKTRACE
 	return;
 	}
 
-void ShipPanelBmp::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int color, int bcolor) {STACKTRACE
+void ShipPanelBmp::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int color, int bcolor) {
+	STACKTRACE
 	int i;
 	w -= 1;
 	h -= 1;
@@ -1784,6 +1836,8 @@ ImIndicator::~ImIndicator()
 
 int ImIndicator::colortype(SpaceLocation *o)
 {
+	STACKTRACE
+
 	if (o->isPlanet())
 		return makecol(150,100,25);
 
@@ -1796,6 +1850,8 @@ int ImIndicator::colortype(SpaceLocation *o)
 
 void ImIndicator::newtarget(SpaceLocation *o)
 {
+	STACKTRACE
+
 	showme = o;
 
 	if (o->isObject())
@@ -1811,6 +1867,8 @@ void ImIndicator::newtarget(SpaceLocation *o)
 
 void ImIndicator::animate(Frame *frame)
 {
+	STACKTRACE
+
 
 	// do not draw always -- uhm, is either irritating if too fast, and useless if too slow
 	//if ( (game->game_time/1024) & 1 )

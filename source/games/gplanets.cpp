@@ -62,6 +62,8 @@ inline double sqr(double x)
 
 void OrbitHandler_PLSY::update_xyv()
 {
+	STACKTRACE
+
 
 	// this is a linear increase in the angle
 	angle_linear += angvel * frame_time;
@@ -140,6 +142,8 @@ OrbitHandler_PLSY::OrbitHandler_PLSY(SpaceLocation *creator,
 
 void OrbitHandler_PLSY::calculate()
 {
+	STACKTRACE
+
 	if((center==NULL)||(orbiter==NULL))
 		return;
 
@@ -195,6 +199,8 @@ BigBackgr::BigBackgr(SpaceSprite *lpic, int lx, int ly, double lapplyscale)
 
 void BigBackgr::animate(Frame *frame)
 {
+	STACKTRACE
+
 	int aa_old = get_tw_aa_mode();
 	set_tw_aa_mode(0);
 
@@ -259,6 +265,8 @@ RadarMap::RadarMap(int MapSize)
 
 void RadarMap::animate(Frame *frame)
 {
+	STACKTRACE
+
 
 
 	int aa_old = get_tw_aa_mode();
@@ -425,6 +433,8 @@ int max(int i, int j)
  */
 int d_icon_proc_PLSY(int msg, DIALOG *d, int c)
 {
+	STACKTRACE
+
 	 BITMAP *butimage = (BITMAP *)d->dp;
 	 int butx;
 	 int buty;
@@ -534,6 +544,8 @@ static char		PlanetSystemText[512];
 
 BITMAP* get_data_bmp(DATAFILE *data, char *objname, double scale)
 {
+	STACKTRACE
+
 	DATAFILE *dataobj;
 	BITMAP *r, *old;
 
@@ -552,6 +564,8 @@ BITMAP* get_data_bmp(DATAFILE *data, char *objname, double scale)
 void add_dialog_icon_proc( DIALOG *Dialog_star, int *k, DATAFILE *tmpdata,
 						      char *name, int x, int y, double scale )
 {
+	STACKTRACE
+
 	BITMAP *bmps[3];
 
 	for ( int i = 0; i < 3; ++i )
@@ -575,6 +589,8 @@ void add_dialog_icon_proc( DIALOG *Dialog_star, int *k, DATAFILE *tmpdata,
 
 void init_dialog_PLSY (double dialog_scale)
 {
+	STACKTRACE
+
 	
 	// read the graphics:
 
@@ -675,6 +691,8 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 						double *PlanetStarbaseEllipsOrientation,
 						char *PlanetSystemText)
 {
+	STACKTRACE
+
 	int	i, j;
 	
 	char	objectname[512];
@@ -950,6 +968,8 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 					double *PlanetStarbaseEllipsAngvel,
 					double *PlanetStarbaseEllipsOrientation)
 {
+	STACKTRACE
+
 	int iupdate = 1;
 	int iredraw = 0;
 	int i;
@@ -1262,6 +1282,8 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 
 SpaceSprite *Planets::GetSprite(DATAFILE *datafile, char *spriteName)
 {
+	STACKTRACE
+
 
 	DATAFILE *tmpdata;
 	tmpdata = find_datafile_object(datafile, spriteName);
@@ -1289,6 +1311,8 @@ SpaceSprite *Planets::GetSprite(DATAFILE *datafile, char *spriteName)
 bool Planets::GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char 
 *cmdStr, int numSprites)
 {
+	STACKTRACE
+
 
 	SpaceSprite *spr;
 	char dataStr[100];
@@ -1312,6 +1336,8 @@ bool Planets::GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char
 
 SpaceSprite *general_GetSprite(DATAFILE *datafile, char *spriteName)
 {
+	STACKTRACE
+
 
 	DATAFILE *tmpdata;
 	tmpdata = find_datafile_object(datafile, spriteName);
@@ -1340,6 +1366,8 @@ bool general_GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char
 *cmdStr, int numSprites)
 {
 
+	STACKTRACE
+
 	SpaceSprite *spr;
 	char dataStr[100];
 
@@ -1363,6 +1391,8 @@ bool general_GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char
 
 void Planets::init_objects()
 {
+	STACKTRACE
+
 	int		i;
 
 	// the information in the dat header file contains information about how many different

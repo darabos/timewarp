@@ -22,6 +22,8 @@ REGISTER_FILE
 
 void IterGame::play_iteration(unsigned int time)
 {
+	STACKTRACE
+
 	// re-initialize screens and game pointers ... very important ...
 	prepare();
 
@@ -67,6 +69,8 @@ void IterGame::play_iteration(unsigned int time)
 
 void MainGame::addsubgame(SubGame *asubgame)
 {
+	STACKTRACE
+
 	asubgame->maingame = this;
 
 	//videosystem.window.lock();
@@ -88,6 +92,8 @@ void MainGame::addsubgame(SubGame *asubgame)
 
 void MainGame::removesubgame(int k)
 {
+	STACKTRACE
+
 	subgame[k]->log->deinit();	// this is empty, dunno why
 
 	DATAFILE *d = melee;	// remember this important pointer.
@@ -110,6 +116,8 @@ void MainGame::removesubgame(int k)
 
 void MainGame::play()
 {
+	STACKTRACE
+
 	set_resolution(window->w, window->h);
 
 	prepare();
@@ -203,6 +211,8 @@ SubGame::~SubGame()
 
 void SubGame::init(Log *_log)
 {
+	STACKTRACE
+
 //	int i;
 
 	game_done = false;

@@ -29,6 +29,8 @@ void iMessage(char *cmdstr, int num)
 
 int SpaceStation::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
+
 	Crew-=(int)(normal+direct);
 	if(Crew<=0) state=0;
 	return SpaceObject::handle_damage(source, normal, direct);
@@ -36,6 +38,8 @@ int SpaceStation::handle_damage(SpaceLocation *source, double normal, double dir
 
 void SpaceStation::calculate()
 {
+	STACKTRACE
+
 	//Healing beam code
 
 	Query a;
@@ -83,6 +87,8 @@ OrbitHandler::OrbitHandler(SpaceLocation *creator, Vector2 lpos,
 
 void OrbitHandler::calculate()
 {
+	STACKTRACE
+
 	if((sun==NULL)||(plan==NULL))
 		return;
 
@@ -153,12 +159,16 @@ Sun::Sun(Vector2 opos, SpaceSprite *sprite, int index)
 
 int Sun::canCollide(SpaceLocation *other)
 {
+	STACKTRACE
+
 	if(other->id==COMET_ID) return FALSE;
 	return(!other->isPlanet());
 }
 
 void Sun::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
+
 	double d = distance(other);
 	if (d >= Range) return;
 	damage_factor = (int)(MaxDam - z*d*d);
@@ -169,6 +179,8 @@ void Sun::inflict_damage(SpaceObject *other)
 }
 
 void Sun::calculate() {
+	STACKTRACE
+
 	SpaceObject::calculate();
 	SpaceObject *o;
 	Query a;

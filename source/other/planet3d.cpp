@@ -166,6 +166,8 @@ void Vector3D::normalize()
 // instead of the creation of a 2D planet.
 Planet *create_planet( Vector2 position )
 {
+	STACKTRACE
+
 	// first, check the server.ini settings to see which type of planet you want
 	// to create: a 2D planet, or a 3D planet ?!
 	//
@@ -717,6 +719,8 @@ filter instead.
 
 void Planet3D::calculate()
 {
+	STACKTRACE
+
 	Planet::calculate();
 
 	sprite_index = 0;
@@ -730,6 +734,8 @@ void Planet3D::calculate()
 
 void Planet3D::animate( Frame* space )
 {
+	STACKTRACE
+
 
 //	if (!space_view->in_view(pos, size)) return;
 	

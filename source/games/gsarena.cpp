@@ -37,6 +37,8 @@ class SuperArena : public Game { //declaring our game type
 	};
 
 void SuperArena::calculate() {
+	STACKTRACE
+
 	Game::calculate();
 	if (human_panel[0] && !human_panel[0]->exists()) human_panel[0] = NULL;
 	if (human_panel[1] && !human_panel[1]->exists()) human_panel[1] = NULL;
@@ -90,6 +92,8 @@ void SuperArena::calculate() {
 	}
 
 void SuperArena::pick_new_ships() {
+	STACKTRACE
+
 	int i,t,p[9],j;
 	log_file("sarena.ini");
 	num_teams = t = get_config_int(NULL, "Teams", 2);
@@ -419,6 +423,8 @@ void SuperArena::pick_new_ships() {
 
 
 void SuperArena::init(Log *_log) {
+	STACKTRACE
+
 	Game::init(_log);
 	int j,i;
 	log_file("sarena.ini");

@@ -52,6 +52,8 @@ double ZRadar::shiftscale(double r_center, double v_center, double scale, double
 
 void ZRadar::animate(Frame *space)
 {
+	STACKTRACE
+
 	//If the radar is disabled, don't do anything.
 	if(active==FALSE) return;
 
@@ -77,6 +79,8 @@ void ZRadar::animate(Frame *space)
 //The default RADAR.  Shows ships, planets, and asteroids.
 void ZRadar::Paint(BITMAP *Slate, Vector2 T)
 {
+	STACKTRACE
+
 	for(int num=0; num<physics->num_items; num++)
 	{
 		int xpos=0,ypos=0;

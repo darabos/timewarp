@@ -37,6 +37,8 @@ void GdebugOnly::init(Log *_log)
 
 void GdebugOnly::animate(Frame *frame)
 {
+	STACKTRACE
+
 	if (animtoggle)
 		NormalGame::animate(frame);
 
@@ -45,6 +47,8 @@ void GdebugOnly::animate(Frame *frame)
 
 bool GdebugOnly::handle_key(int k)
 {
+	STACKTRACE
+
 	switch (k >> 8)
 	{
 	case KEY_A:

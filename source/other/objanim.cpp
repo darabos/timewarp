@@ -16,6 +16,8 @@ Animation( creator, opos, osprite, first_frame, num_frames, frame_size, depth ),
 }
 
 void ObjectAnimation::calculate(){
+	STACKTRACE
+
   sprite_index >>= 6;
   Animation::calculate();
   sprite_index <<= 6;

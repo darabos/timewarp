@@ -102,6 +102,8 @@ class LeagueGame : public NormalGame {
 };
 
 void LeagueGame::init_objects() {
+	STACKTRACE
+
 	add( new Stars() );
 	add( new Boundary( Vector2(LEAGUE_BORDER, LEAGUE_BORDER), Vector2(size.x/2, LEAGUE_BORDER) ));
 	add( new Boundary( Vector2(size.x/2, LEAGUE_BORDER), Vector2(size.x-LEAGUE_BORDER, LEAGUE_BORDER) ));
@@ -136,6 +138,8 @@ void LeagueGame::init_objects() {
 }
 
 void LeagueGame::init( Log *_log ){
+	STACKTRACE
+
 	score[0] = score[1] = 0;
 	// changed GEO. The data-file of this game is outdated. It works with
 	// the default melee data file.
@@ -163,6 +167,8 @@ void LeagueGame::calculate(){
 }
 
 void LeagueGame::animate( Frame* frame ){
+	STACKTRACE
+
 	NormalGame::animate( frame );
 	panelSprite->draw( 0, Vector2(PANEL_WIDTH, PANEL_HEIGHT), 0, frame );
 	int colon_w = text_length( font, ":" );
@@ -186,6 +192,8 @@ apamuti( 0 ){
 }
 
 void Ball::inflict_damage( SpaceObject* other ){
+	STACKTRACE
+
 	if( !other->isShip() || apamuti ) return;
 	apamuti = LEAGUE_BALL_APAMUTI;
 	latched = (Ship*) other;
@@ -197,6 +205,8 @@ void Ball::inflict_damage( SpaceObject* other ){
 }
 
 void Ball::calculate(){
+	STACKTRACE
+
 	if( apamuti ){
 		apamuti -= frame_time;
 		if( apamuti < 0 ) apamuti = 0;
@@ -262,6 +272,8 @@ void Ball::calculate(){
 }
 
 void Ball::kick(){
+	STACKTRACE
+
 	if( latched ){
 		vel = LEAGUE_BALL_KICK_SPEED * unit_vector( latched->get_angle() );
 		pos += vel * frame_time;
@@ -272,6 +284,8 @@ void Ball::kick(){
 }
 
 void Ball::reassemble(){
+	STACKTRACE
+
 	if( latched ){
 		latched = NULL;
 		change_owner( NULL );
@@ -300,6 +314,8 @@ residualDamage( ores ){
 }
 
 void GoalLine::calculate(){
+	STACKTRACE
+
 	length += _length * frame_time * LEAGUE_GOAL_LINE_REGEN;
 	if( length > _length ) length = _length;
 	damage_factor = (int)(_damage * (double)frame_time);
@@ -311,6 +327,8 @@ void GoalLine::calculate(){
 }
 
 void GoalLine::inflict_damage( SpaceObject* other ){
+	STACKTRACE
+
 	Laser::inflict_damage( other );
 	collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;
 	if( other->id == ID_BALL ){
@@ -355,6 +373,8 @@ SpaceLocation( oship, 0, 0 ), time( otime ){
 void DisableFire::animate( Frame* space ){}
 
 void DisableFire::calculate(){
+	STACKTRACE
+
 	if( !ship ){
 		state = 0;
 		return;
@@ -371,6 +391,8 @@ SpaceLine( NULL, point1, atan3(point2-point1), distance_from( point1, point2 ),
 }
 
 void Boundary::collide( SpaceObject* other ){
+	STACKTRACE
+
 
 	if((!canCollide(other)) || (!other->canCollide(this))) return;
 

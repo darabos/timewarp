@@ -107,6 +107,8 @@ HyperJammer::HyperJammer(Ship *target, int rate)
 
 void HyperJammer::calculate()
 {
+	STACKTRACE
+
 	if(Target==NULL) return;
 	if(!Target->exists())
 		Target=NULL;
@@ -167,6 +169,8 @@ public:
 
 void VanRadar::addTeam(TeamCode team, int color)
 {
+	STACKTRACE
+
 	if(Coded_Teams<(MAX_TEAMS-1))
 	{
 		TCodes[Coded_Teams]=team;
@@ -184,6 +188,8 @@ VanRadar::VanRadar(BITMAP *BlankSlate, SpaceLocation *target, double size):ZRada
 //I have overriden ZRadar::Paint() with a more complicated radar painter.
 void VanRadar::Paint(BITMAP *Slate, double Tx, double Ty)
 {
+	STACKTRACE
+
 	for(int num=0; num<physics->num_items; num++)
 	{
 		int xpos,ypos;
@@ -301,6 +307,8 @@ public:
 
 int Vanguard::search_key(int key)
 {
+	STACKTRACE
+
 	for(int num=0; num<Num_Van_Keys; num++)
 			if(key==Van_Keys[num]) return num;
 	return -1;
@@ -320,6 +328,8 @@ Vanguard::~Vanguard()
 
 DATAFILE *Vanguard::FindDat(DATAFILE *datarray, char *name)
 {
+	STACKTRACE
+
 	for(int num=0; num<NUM_ENTRIES; num++)
 		if(strcmp(name,datarray[num].prop[1].dat)==0) return &datarray[num];
 
@@ -328,6 +338,8 @@ DATAFILE *Vanguard::FindDat(DATAFILE *datarray, char *name)
 
 bool Vanguard::handle_key(int k)
 {
+	STACKTRACE
+
 	char buffy[256];
 	message.print(1000,12,"Key:  %s",key_to_name(k>>8, buffy));
 	switch(search_key(k>>8))
@@ -390,6 +402,8 @@ bool Vanguard::handle_key(int k)
 
 BITMAP *Vanguard::GetBitmap(DATAFILE *datArray, char *bitmapName)
 {
+	STACKTRACE
+
 	DATAFILE *tmpdata;		//The object that the data gets tossed into
 	BITMAP *src,*bmp;		//Two bitmaps:  One direct from tmpdata, and the copy of it that will be returned.
 
@@ -420,6 +434,8 @@ BITMAP *Vanguard::GetBitmap(DATAFILE *datArray, char *bitmapName)
 
 SpaceSprite *Vanguard::GetSprite(DATAFILE *datArray, char *spriteName)
 {
+	STACKTRACE
+
 	DATAFILE *tmpdata;		//Temporary holder for data
 
 	tmpdata = FindDat(datArray,spriteName);	//Load sprite into holder
@@ -434,6 +450,8 @@ SpaceSprite *Vanguard::GetSprite(DATAFILE *datArray, char *spriteName)
 
 bool Vanguard::GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr, int numSprites)
 {
+	STACKTRACE
+
 
 	//Example to load 10 sprites into an empty array, do:
 	//	GetSprites(array, "whatever.dat", "SpriteName%03d",9);
@@ -457,6 +475,8 @@ bool Vanguard::GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr,
 }
 
 void Vanguard::calculate() {
+	STACKTRACE
+
 	Game::calculate();
 	if (human_panel[0] && !human_panel[0]->exists()) human_panel[0] = NULL;
 	if (human_panel[1] && !human_panel[1]->exists()) human_panel[1] = NULL;
@@ -487,6 +507,8 @@ void Vanguard::set_resolution(int screen_x, int screen_y) {
 	}
 
 void Vanguard::pick_new_ships() {
+	STACKTRACE
+
 	int i;
 	acquire_screen();
 	clear_to_color(screen, pallete_color[4]);
@@ -750,6 +772,8 @@ done:
 
 
 void Vanguard::init(Log *_log) {
+	STACKTRACE
+
 	Game::init(_log);
 
 	prepare();

@@ -15,6 +15,8 @@ class AsteroidMelee : public NormalGame {
 	};
 
 void AsteroidMelee::init_objects() {
+	STACKTRACE
+
 	int i;
 	size *= 1;
 	prepare();
@@ -29,6 +31,8 @@ class DeepSpaceMelee : public NormalGame {
 	};
 
 void DeepSpaceMelee::init_objects() {
+	STACKTRACE
+
 	add ( new Stars() );
 	add ( new Asteroid() );
 	}
