@@ -345,15 +345,19 @@ void OrzMarine::inflict_damage(SpaceObject *other) {
 	if (other->isShip() && (!returning) && (!other->sameTeam(this)) && (!other->isProtected()))
 	{
 		invading = (Ship *) other;
-        collide_flag_anyone = 0;
-        play_sound(data->sampleExtra[1]);
-		damage(invading, 0, 1);
-		if (invading->spritePanel)
+
+		if (invading->damage_factor < armour)
 		{
-		sprite->draw(14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6), 0, invading->spritePanel->get_bitmap(0) );
-        /*draw_sprite(invading->spritePanel->get_bitmap(0), sprite->get_bitmap(0),
+			collide_flag_anyone = 0;
+			play_sound(data->sampleExtra[1]);
+			damage(invading, 0, 1);
+			if (invading->spritePanel)
+			{
+				sprite->draw(14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6), 0, invading->spritePanel->get_bitmap(0) );
+				/*draw_sprite(invading->spritePanel->get_bitmap(0), sprite->get_bitmap(0),
 				14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6));*/
-		invading->update_panel = TRUE;
+				invading->update_panel = TRUE;
+			}
 	}}
 	if((ship) && (other == ship) && (returning)) {
 		state = 0;
