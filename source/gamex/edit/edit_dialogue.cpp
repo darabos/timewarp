@@ -223,26 +223,26 @@ void GameDialogue::init()
 	int tcol = makecol(255,255,128);
 
 	//strcpy(Qtext, "a\n b\n c\n d\n e\n f\n g\n h\n i");
-	T = new TextEditBox(R, "text", -1, -1, usefont, dialo->T, 256);
+	T = new TextEditBox(R, "text/", -1, -1, usefont, dialo->T, 256);
 	T->set_textcolor(tcol);
 
 
-	B = new TextList(R, "branches", -1, -1, usefont);
+	B = new TextList(R, "branches/", -1, -1, usefont);
 
 	
-	refresh = new Button(R, "refresh", -1, -1, 0);
+	refresh = new Button(R, "refresh/", -1, -1, 0);
 
 	Bplus = new Button(R, "addbranch", -1, -1, 0);
 //	Bmin = new Button(R, "Bmin", -1, -1, 0);
 
-	bprev = new Button(R, "prevbranch", -1, -1, 0);
+	bprev = new Button(R, "prevbranch/", -1, -1, 0);
 //	bnext = new Button(R, "next", -1, -1, 0);
 
-	dialostatus = new SwitchButton(R, "state", -1, -1, 0);
+	dialostatus = new SwitchButton(R, "state/", -1, -1, 0);
 
 	// add a text-button for the race pic, and a popup for the race list selection ?!
 
-	raceselect = new TextButton(R, "race", -1, -1, usefont);
+	raceselect = new TextButton(R, "race/", -1, -1, usefont);
 	raceselect->set_text(dialo->racepic, makecol(255,255,0));
 
 	popupraceselect = new PopupList(raceselect, "gamex/interface/dialogeditor/raceselect", -20, -20, usefont, 0);

@@ -816,9 +816,11 @@ void gmissions::start(int k)
 {
 	// start the mission
 	// ok .. when a mission is played, it's deleted, and can't be played again ... what to do about that ?!
+	/* DISABLED FOR THE RELEASE by Geo.
 	Dialog* dialog = new Dialog;
 	dialog->Conversate("dialog.lua");
 	delete dialog;
+	*/
 	SubGame *g;
 	g = missionlist[k]->initgame();
 	addsubgame(g);

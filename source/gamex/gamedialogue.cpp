@@ -1,9 +1,4 @@
 
-/*
-Problems:
-1. Q/A perturbed. Need way to distinguish between them
-2. how to select another branch ?
-*/
 
 #include <allegro.h>
 #include <stdio.h>
@@ -139,14 +134,14 @@ void GameAliendialog::init()
 	showline_num = 0;
 	showline_Nlines = Nlines(dialo->T);
 	//A = new TextEditBox(R, "A", -1, -1, usefont, showline(dialo.A, showline_num), 0);
-	A = new TextInfoArea(R, "A", -1, -1, usefont);	// all text should fit on 1 window - no scroll needed !!
+	A = new TextInfoArea(R, "A/", -1, -1, usefont);	// all text should fit on 1 window - no scroll needed !!
 	//A->set_textcolor(tcol);
 
 	// ????
 	//A->changebackgr(racefile);
 
 
-	B = new TextList(R, "B", -1, -1, usefont);
+	B = new TextList(R, "B/", -1, -1, usefont);
 
 	
 	winman = new WindowManager;

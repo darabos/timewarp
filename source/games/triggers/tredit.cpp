@@ -194,14 +194,14 @@ void GameTriggerEdit::init(Log *_log)
 
 			int k;
 			k = iy*Nx+ix;
-			b[k] = new TextButton(Amain, "button", (ix+0.5)*dx, (iy+0.5)*dy, usefont);		
+			b[k] = new TextButton(Amain, "button/", (ix+0.5)*dx, (iy+0.5)*dy, usefont);		
 			b[k]->set_text("", makecol(0,0,0));
 		}
 	}
 
-	line_del = new Button(Amain, "linedel", 0, 0, 0);
+	line_del = new Button(Amain, "linedel/", 0, 0, 0);
 
-	run_game = new Button(Amain, "rungame", 750, 0, 0);
+	run_game = new Button(Amain, "rungame/", 750, 0, 0);
 
 
 	// also, define a popup window to display a list of strings:
@@ -215,7 +215,7 @@ void GameTriggerEdit::init(Log *_log)
 	Aedit = new AreaReserve("interfaces/gtriggers/edit_box", 0, 0, view->frame->surface);
 	Aedit->hide();
 	
-	editarea = new TextEditBox(Aedit, "text", 0, 0, usefont, edittxt, maxedittxt);
+	editarea = new TextEditBox(Aedit, "text/", 0, 0, usefont, edittxt, maxedittxt);
 	editarea->set_textcolor(makecol(0,0,0));
 
 
@@ -777,5 +777,5 @@ void GameTriggerEdit::init_game()
 
 
 
-REGISTER_GAME(GameTriggerEdit, "Miaauuuw")
+REGISTER_GAME(GameTriggerEdit, "trigger editor test")
 
