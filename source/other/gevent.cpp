@@ -34,6 +34,27 @@ unsigned int EventEnterStation::GetEventType()
 	return GAME_EVENT_ENTER_STATION;
 }
 
+unsigned int EventCleanQuestTrash::GetEventType()
+{
+	return GAME_EVENT_CLEANQUESTTRASH;
+}
+
+unsigned int EventQuestSuccess::GetEventType()
+{
+	return GAME_EVENT_QUESTSUCCESS;
+}
+
+unsigned int EventQuestFailed::GetEventType()
+{
+	return GAME_EVENT_QUESTFAILED;
+}
+
+unsigned int EventAskForQuest::GetEventType()
+{
+	return GAME_EVENT_ASKFORQUEST;
+}
+
+
 EventListner::EventListner()
 {
 }

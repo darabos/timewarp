@@ -121,7 +121,7 @@ class GobStation : public Orbiter {
 	virtual void station_screen (GobPlayer *s);
 	virtual void upgrade_menu(GobStation *station, GobPlayer *gs) ;
 	
-	StarBaseQuestSource* quest_source;
+	QuestSource* quest_source;
 };
 
 

@@ -15,13 +15,18 @@
 class Ship;
 class GobPlayer;
 class GobStation;
+class Quest;
 
 enum EventTypes
   {
     GAME_EVENT_ALL = 0,
     GAME_EVENT_SHIP_DIE,
     GAME_EVENT_SHIP_GET_DAMAGE,
-	GAME_EVENT_ENTER_STATION,
+    GAME_EVENT_ENTER_STATION,
+    GAME_EVENT_CLEANQUESTTRASH,
+    GAME_EVENT_QUESTSUCCESS,
+    GAME_EVENT_QUESTFAILED,
+    GAME_EVENT_ASKFORQUEST,
   };
 
 class IEvent
@@ -33,29 +38,56 @@ class IEvent
 class EventShipDie : public IEvent
 {
  public:
-	 EventShipDie();
-
+  EventShipDie();
+  
   Ship * victim;
   GobPlayer * player_killer;
-	 virtual unsigned int GetEventType();
+  virtual unsigned int GetEventType();
 };
 
 class EventShipGetDamage: public IEvent
 {
 public:
-	Ship * ship;
-	int total;
-
-	virtual unsigned int GetEventType();
+  Ship * ship;
+  int total;
+  
+  virtual unsigned int GetEventType();
 };
 
 class EventEnterStation: public IEvent
 {	
-public:
-	GobStation* station;
-	GobPlayer* player;
-	
-	virtual unsigned int GetEventType();
+ public:
+  GobStation* station;
+  GobPlayer* player;
+  
+  virtual unsigned int GetEventType();
+};
+
+class EventCleanQuestTrash: IEvent
+{
+ public:
+  virtual unsigned int GetEventType();
+};
+
+class EventQuestSuccess: IEvent
+{
+ public:
+  Quest* quest;
+  virtual unsigned int GetEventType();
+};
+
+class EventQuestFailed: IEvent
+{
+ public:
+  Quest* quest;
+  virtual unsigned int GetEventType();
+};
+
+class EventAskForQuest: IEvent
+{
+ public:
+  GobPlayer* player;
+  virtual unsigned int GetEventType();
 };
 
 class EventHandler;

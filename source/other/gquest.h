@@ -7,7 +7,11 @@ extern "C" {
 #include <lauxlib.h>
 }
 
+#include <string>
+#include <list>
+
 #include "gevent.h"
+
 
 class GobPlayer;
 
@@ -17,7 +21,8 @@ class Quest: public EventListner
   bool bExist;
   lua_State * L;
   GobPlayer * gob_player;
- 
+  std::string strName;
+
  public:
   Quest( const char * szLuaFile, GobPlayer * player );
   virtual ~Quest();
@@ -26,7 +31,8 @@ class Quest: public EventListner
   */
   void Process();
   bool exist();
-  
+  const char * GetName() const;
+
   /*! \brief Process Event */
   virtual void  ProcessEvent( IEvent* event);
   
@@ -43,26 +49,24 @@ class Quest: public EventListner
 };
 
 
-class QuestSource 
+/*! \brief Intend to manage quests */
+class QuestSource : public EventListner
 {
  protected:
+  lua_State * Lquest;
+  std::list<Quest*> questList;
+ public:
+  QuestSource();
+  virtual ~QuestSource();
   virtual int LoadQuestList( const char* qlist );
- public:
-  virtual int GetNextQuest(Quest* q, GobPlayer* p) = 0;
-  virtual int QuestSuccess(Quest* q, GobPlayer* p) = 0;
-  virtual int WhenMeet(GobPlayer* p) = 0;
+  virtual Quest* GetNextQuest( GobPlayer* p );
+  virtual Quest* GetQuest ( const char * name, GobPlayer* p );
+  virtual int QuestSuccess( Quest* q );
+  virtual int QuestFailed( Quest* q );
+  
+  virtual void RemoveTrash();
+  virtual void ProcessEvent(IEvent* event);
 };
 
-class StarBaseQuestSource: public QuestSource
-{
- public:
-  StarBaseQuestSource(const char* qlist);
-  virtual ~StarBaseQuestSource();
-  virtual int GetNextQuest(Quest* q, GobPlayer* p);
-  virtual int QuestSuccess(Quest* q, GobPlayer* p);
-  virtual int QuestFailed(Quest* q, GobPlayer* p);
-  virtual int WhenMeet(GobPlayer* p);
-
-};
 
 #endif // __GQUEST_H__

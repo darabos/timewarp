@@ -769,7 +769,7 @@ GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me,
   layer = LAYER_CBODIES;
   mass = 99;
 
-  quest_source = new StarBaseQuestSource( qlist );
+  quest_source = new QuestSource();
 }
 
 GobStation::~GobStation()
