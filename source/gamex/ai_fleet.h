@@ -11,6 +11,7 @@ class FleetFormation
 
 class FleetAI
 {
+ protected:
 	virtual void attack(Vector2 pos);
 };
 

@@ -144,7 +144,7 @@ void DaktaklakpakVivisector::calculate()
       grabangle = (grabbed->get_angle() - grabshipangle) + grabangle;
       angle=grabangle;
       grabshipangle = grabbed->get_angle();
-      nextkeys &= ~(KEYFLAG_LEFT | KEYFLAG_RIGHT | KEYFLAG_THRUST);
+	  nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
 
       pos = grabbed->normal_pos()-((unit_vector(grabangle )) * grabdistance);
    }

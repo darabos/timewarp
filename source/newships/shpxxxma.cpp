@@ -272,7 +272,7 @@ void XXXMangler::calculate()
       angle=grabangle;
       grabshipangle = normalize(grabbed->get_angle(),PI2);
 
-      nextkeys &= ~(KEYFLAG_LEFT | KEYFLAG_RIGHT | KEYFLAG_THRUST | KEYFLAG_SPECIAL | KEYFLAG_FIRE);
+      nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special | keyflag::fire);
 
 //      x = grabbed->normal_x()- (cos(grabangle ) * grabdistance);
 //      y = grabbed->normal_y()- (sin(grabangle ) * grabdistance);

@@ -194,7 +194,7 @@ void RaalrithMenacer::calculate() {
      grabangle = (grabbed->get_angle() - grabshipangle) + grabangle;
      angle=grabangle;
      grabshipangle = grabbed->get_angle();
-     nextkeys &= ~(KEYFLAG_LEFT | KEYFLAG_RIGHT | KEYFLAG_THRUST);
+     nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
 
 //     x = grabbed->normal_x()-((cos(grabangle )) * grabdistance);
 //     y = grabbed->normal_y()-((sin(grabangle )) * grabdistance);

@@ -49,7 +49,7 @@ int TrugControl::think() {
 		}
 		break;
 		case ORDER_ATTACK: {
-			k &= ~(KEYFLAG_NEXT | KEYFLAG_PREV | KEYFLAG_CLOSEST);
+			k &= ~(keyflag::next | keyflag::prev | keyflag::closest);
             //TODO check following 2 lines
 			//if (!target || (target->get_serial() == target_serial)) 
 			//	break;
@@ -59,7 +59,7 @@ int TrugControl::think() {
 			//	next_order();
             //	break;
 			//}
-			k |= KEYFLAG_NEXT;
+			k |= keyflag::next;
 		}
 		break;
 		case ORDER_MOVE: {
@@ -71,9 +71,9 @@ int TrugControl::think() {
 				break;
 			}
 			double ra = min_delta(m.angle(), ship->get_angle());
-			if (ra < -PI/64) k |= KEYFLAG_LEFT;
-			if (ra >  PI/64) k |= KEYFLAG_RIGHT;
-			k |= KEYFLAG_THRUST;
+			if (ra < -PI/64) k |= keyflag::left;
+			if (ra >  PI/64) k |= keyflag::right;
+			k |= keyflag::thrust;
 		}
 		break;
 	}

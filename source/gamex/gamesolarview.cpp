@@ -797,8 +797,6 @@ void GameSolarview::calculate()
 	if (next)
 		return;
 
-
-
 	double dt = frame_time * 1E-3;
 
 	if (key[KEY_EQUALS])
@@ -823,7 +821,6 @@ void GameSolarview::calculate()
 		quit();
 		return;
 	}
-
 
 	if (key[KEY_UP])
 		player->accelerate(0, player->angle, 0.1*dt, 1.0);

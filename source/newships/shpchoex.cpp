@@ -596,7 +596,7 @@ void ChoraliExtractor::calculate()
 	   ((Ship*)grabbed)->turn_step -= (old_angle - angle);
 
 	   //limit enemy movement
-	   ((Ship*)grabbed)->nextkeys &= ~(KEYFLAG_LEFT | KEYFLAG_RIGHT | KEYFLAG_THRUST);
+	   ((Ship*)grabbed)->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
 
 
 	   //twist the enemy

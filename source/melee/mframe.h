@@ -267,7 +267,7 @@ protected: public://aught to be protected, but we're lazy
 	virtual double isInvisible() const;  // returns 0 normally, or a positive number if cloaked
 	
 	// this is used in queries, to see if it's detectable and should be examined.
-	virtual inline bool detectable();
+	virtual bool detectable();
 
 	Planet *nearest_planet(); //returns the nearest planet, or NULL if no planets are nearby
 
