@@ -320,12 +320,44 @@ NormalGame::~NormalGame() {STACKTRACE
 	if (kills) free(kills);
 	}
 
+static int kill_all_delay_counter = 0;
 void NormalGame::calculate() {STACKTRACE
 	Game::calculate();
 	if (next_choose_new_ships_time <= game_time) {
 		choose_new_ships();
 		next_choose_new_ships_time = game_time + 24*60*60*1000;
 	}
+
+	// specially for play-testers:
+	// kill all ships and ship-objects in the melee-game
+	if (kill_all_delay_counter > 0)
+	{
+		kill_all_delay_counter -= frame_time;
+	} else {
+
+		if (key[KEY_LCONTROL] && key[KEY_ALT] && key[KEY_K])
+		{
+			kill_all_delay_counter += 1000;	// 1 second delay
+
+			int i;
+			for ( i = 0; i < physics->num_items; ++i )
+			{
+				SpaceLocation *o;
+				o = physics->item[i];
+				
+				if (!(o && o->exists()))
+					continue;
+				
+				if (o->isPlanet() || o->isAsteroid())
+					continue;
+				
+				o->die();
+
+			}
+		}
+	}
+
+
 	return;
 	}
 
@@ -392,7 +424,9 @@ void NormalGame::display_stats() {STACKTRACE
 	return;
 }
 #include "../other/radar.h"
-bool NormalGame::handle_key(int k) {STACKTRACE
+bool NormalGame::handle_key(int k)
+{
+	STACKTRACE;
 	switch (k >> 8) {
 		default: {
 			return Game::handle_key(k);
@@ -422,6 +456,7 @@ bool NormalGame::handle_key(int k) {STACKTRACE
 			indteamtoggle = ~indteamtoggle;
 			break;
 		}
+
 	return false;
 	}
 
