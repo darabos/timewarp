@@ -11,11 +11,11 @@ extern Fleet *reference_fleet;
 using namespace std;
 
 
+
 //TODO get rid of global variables used by this function; remove this function
 void init_fleet();	// inits reference_fleet [former shiptype array]
 
-/**	\brief	Contains a list of ships.
-*/
+/**	\brief	Contains a list of ships. */
 class Fleet{
 
 
@@ -25,13 +25,12 @@ protected:
     typedef vector<MyFleetShipType> MyFleetListType;
 
     static char * sortingMethodName[];
+    static char * fleetCostName[];
+
 
 public:
     //the maxiumum length of the fleet title
     enum { MAX_TITLE_LENGTH = 80 };
-
-    //dunno why this doesn't work in VC++ ... ?
-    //const static int MAX_TITLE_LENGTH = 80;
 
     enum SortingMethod { 
         SORTING_METHOD_NAME = 0, /**< combined Specied/ship name */
@@ -59,8 +58,79 @@ public:
     /**
     */
     static char * getSortingMethodName(SortingMethod method) {
+        ASSERT( ! ( (method > MAX_SORTING_METHODS) || (method < 0)) );
+
+        if ( (method > MAX_SORTING_METHODS) || (method < 0))
+            return "";
         return sortingMethodName[method];
     }
+
+    enum FleetCost {
+        FLEET_COST_SMALL = 100,
+        FLEET_COST_MEDIUM = 250,
+        FLEET_COST_LARGE = 500,
+        FLEET_COST_HUGE = 1000,
+        FLEET_COST_MASSIVE = 10000
+    };
+    
+    enum { FLEET_COST_DEFAULT = FLEET_COST_LARGE };
+    enum { FIRST_FLEET_COST = FLEET_COST_SMALL };
+    enum { MAX_FLEET_COSTS = FLEET_COST_MASSIVE };
+
+    /** \brief cycles through each of the available preset maximum fleet sizes.
+        \return the new fleet size */
+    FleetCost cycleMaxFleetCost() {
+        ASSERT (!( (size != FLEET_COST_SMALL) &&
+                 (size != FLEET_COST_MEDIUM) &&
+                 (size != FLEET_COST_LARGE) &&
+                 (size != FLEET_COST_HUGE) &&
+                 (size != FLEET_COST_MASSIVE) ));
+
+        switch (maxFleetCost) {
+        case FLEET_COST_SMALL:
+            maxFleetCost = FLEET_COST_MEDIUM; break;
+        case FLEET_COST_MEDIUM:
+            maxFleetCost = FLEET_COST_LARGE; break; 
+        case FLEET_COST_LARGE:
+            maxFleetCost = FLEET_COST_HUGE; break;
+        case FLEET_COST_HUGE:
+            maxFleetCost = FLEET_COST_MASSIVE; break;
+        case FLEET_COST_MASSIVE:
+            maxFleetCost = FLEET_COST_SMALL; break;
+        default:
+            ASSERT(0);
+        }
+        return maxFleetCost;
+    }
+    
+protected:
+        /** \brief the maximum cost this fleet will allow */
+    FleetCost maxFleetCost;
+
+public:
+
+    static char * getFleetCostName(FleetCost size) {
+    
+        ASSERT (!( (size != FLEET_COST_SMALL) &&
+                 (size != FLEET_COST_MEDIUM) &&
+                 (size != FLEET_COST_LARGE) &&
+                 (size != FLEET_COST_HUGE) &&
+                 (size != FLEET_COST_MASSIVE) ));
+
+        // this has got to be the worst solution ever :)
+        int index = 0;
+        switch (size) {
+        case FLEET_COST_SMALL: index = 0; break;
+        case FLEET_COST_MEDIUM: index = 1; break;
+        case FLEET_COST_LARGE: index = 2; break;
+        case FLEET_COST_HUGE: index = 3; break;
+        case FLEET_COST_MASSIVE: index = 4; break;
+        default:
+            ASSERT(0);
+        }
+        return fleetCostName[index];
+    }
+
     
 
 
@@ -160,10 +230,19 @@ public:
         return getShipType( offset );
     }
 
+    /** @brief returns the maximum number of ships that this fleet can hold */
+    int getMaxNumberOfShips() { return MAX_FLEET_SIZE; }
+
+    /** @brief returns the maximum sum of costs of each ship in the fleet */
+    FleetCost getMaxCost() { return maxFleetCost; }
+
+
+
+
+
 
 
 protected:
-    //STL list
     
 	/** \brief the title of this fleet*/
     char title[MAX_TITLE_LENGTH];
@@ -173,6 +252,7 @@ protected:
 
     /** \brief the list of ships*/
     MyFleetListType ships;
+
 
 
 };

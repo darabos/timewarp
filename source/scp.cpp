@@ -1206,6 +1206,7 @@ void edit_fleet(int player) {STACKTRACE
 	char tmp[40];
 	char path[80];
     char fleetCostString[80] = "";
+    char maxFleetCostString[80] = "";
     
 
     static Fleet::SortingMethod sortMethod1 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT,
@@ -1225,6 +1226,9 @@ void edit_fleet(int player) {STACKTRACE
 
     int fleetRet;
     int selectedSlot;
+
+    fleetDialog[FLEET_DIALOG_CURRENT_POINTS_VALUE].dp = fleetCostString;
+    fleetDialog[FLEET_DIALOG_POINT_LIMIT_BUTTON].dp = maxFleetCostString;
     
 
 	do {
@@ -1235,8 +1239,13 @@ void edit_fleet(int player) {STACKTRACE
         fleetDialog[FLEET_DIALOG_SORTBY_BUTTON1].dp = Fleet::getSortingMethodName(sortMethod1);
         fleetDialog[FLEET_DIALOG_SORTBY_BUTTON2].dp = Fleet::getSortingMethodName(sortMethod2);
 
-        sprintf(fleetCostString,"%d", fleet->getCost());
-        fleetDialog[FLEET_DIALOG_CURRENT_POINTS_VALUE].dp = fleetCostString;
+        if (fleet->getCost() > fleet->getMaxCost())
+            sprintf(fleetCostString,"!! %d !!", fleet->getCost());
+        else
+            sprintf(fleetCostString,"%d", fleet->getCost());
+
+        sprintf(maxFleetCostString,"%d %s", fleet->getMaxCost(), 
+                                            Fleet::getFleetCostName(fleet->getMaxCost()));
 
         if (sortAscending1)
             fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = (void *)"^";
@@ -1289,9 +1298,8 @@ void edit_fleet(int player) {STACKTRACE
            case FLEET_DIALOG_SAVE_BUTTON: break;
            case FLEET_DIALOG_LOAD_BUTTON: break;
            case FLEET_DIALOG_POINT_LIMIT_TEXT: break;
-           case FLEET_DIALOG_POINT_LIMIT_BUTTON: 
-
-
+           case FLEET_DIALOG_POINT_LIMIT_BUTTON:
+               fleet->cycleMaxFleetCost();
                break;
 
            case FLEET_DIALOG_CURRENT_POINTS_TEXT: break;

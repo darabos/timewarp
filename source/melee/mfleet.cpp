@@ -36,15 +36,22 @@ static char _fleetsort_ini_item[80] = "";
 
 
 
-   char * Fleet::sortingMethodName[] = {
-        "Name",
-        "Cost", 
-        "Species",
-        "Ship Name",
-        "Coders",
-        "Origin"
-    };
+char * Fleet::sortingMethodName[] = {
+    "Name",
+    "Cost", 
+    "Species",
+    "Ship Name",
+    "Coders",
+    "Origin"
+};
 
+char * Fleet::fleetCostName[] = {
+    "Small",//FLEET_SIZE_SMALL = 100,
+    "Medium",//FLEET_SIZE_MEDIUM = 250,
+    "Large",//FLEET_SIZE_LARGE = 500,
+    "Huge",//FLEET_SIZE_HUGE = 1000,
+    "Massive"//FLEET_SIZE_MASSIVE = 10000
+};
 
 
 //global variable used in at least 42 places. 
@@ -67,6 +74,7 @@ void init_fleet() {STACKTRACE
 
     Fleet::Fleet() {STACKTRACE
         cost = 0;
+        maxFleetCost = (FleetCost)FLEET_COST_DEFAULT;
         memset(title, '\0', MAX_TITLE_LENGTH);
     };
 
@@ -181,6 +189,7 @@ void init_fleet() {STACKTRACE
         char slot_str[8];
     
         sort(ships.begin(), ships.end());
+
         
         if (filename) 
             set_config_file(filename);
@@ -193,6 +202,7 @@ void init_fleet() {STACKTRACE
 
         set_config_int(section, "Size", count);
         set_config_string(section, "Title", title);
+        set_config_int(section, "MaxFleetCost", getMaxCost());
     }
 
     void Fleet::load(const char *filename, const char *section) {STACKTRACE
@@ -207,6 +217,7 @@ void init_fleet() {STACKTRACE
         int _fleet_size = get_config_int(section, "Size", 0);
         _fleet_title = get_config_string(section, "Title", "");
         sprintf(title, _fleet_title);
+        maxFleetCost = (FleetCost) get_config_int(section, "MaxFleetCost", FLEET_COST_DEFAULT);
     
         count = 0;
         for(i = 0; i < _fleet_size; i++) {
