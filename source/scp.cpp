@@ -730,6 +730,53 @@ void MainMenu::doit() {STACKTRACE
 
 }
 
+
+/** \brief This routine check if a zip filename is supplied to the program; if so, it
+calls pkzipc to extract files to the game root. Under windows this means, you can
+drag a update-zip-file onto the program icon, after which the program makes a call to
+the pkunzip program to install it automatically in the correct location (namely, the
+game-root). pkzipc is part of the pkzip (pkware) package, I think.
+*/
+static void update_check(int argc, char *argv[])
+{
+#ifdef _WINDOWS
+	// first of all, check if someone drags a zip file on top of your icon --> you
+	// may want to unpack it, in the timewarp directory.
+	if (argc == 2)
+	{
+		char *ext;
+		ext = strrchr(argv[1], '.');
+		
+		if (strcmp(ext, ".zip") == 0)
+		{
+			
+			// POSSIBLE:
+			// you could make a system call here, to a pack program (winzip, pkzip, winrar)
+			// which can unpack this file in the game root.
+			
+			char command[512];
+			char targetdir[512];
+			
+			strcpy(targetdir, argv[0]);
+			char *tmp = strrchr(targetdir, '\\');
+			*tmp = 0;
+			
+			char *zipfile = argv[1];
+			sprintf(command, "pkzipc -extract \"%s\" \"%s\"  & pause", zipfile, targetdir);
+			/*
+			clear_to_color(screen, makecol(0,0,255));
+			textout(screen, font, command, 10,10, makecol(255,255,0));
+			readkey();
+			*/
+			system(command);
+			
+		}
+	}
+#endif
+}
+		
+
+
 int tw_main(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) { STACKTRACE
@@ -746,6 +793,8 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 	if (strrchr(szPath, '\\')) *strrchr(szPath, '\\') = '\0';
 	SetCurrentDirectory(szPath);
 #endif
+
+	update_check(argc, argv);
 
 	int i;
 	int auto_port = -1;
@@ -871,6 +920,8 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		sound.init();
 		sound.load();
         
+
+
         showLoadingScreen();
 
 		View *v = NULL;
