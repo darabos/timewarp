@@ -334,6 +334,7 @@ int is_escape_pressed() {
 	return key[KEY_ESC];
 }
 
+
 void play_net1client ( const char *_address, int _port ) {STACKTRACE
 	NetLog *log = new NetLog();
 	log->init();
@@ -1582,9 +1583,7 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
             }
         }
     }
-    else {
-       ret = d_text_list_proc( msg, d, c );
-    }
+    ret = d_text_list_proc( msg, d, c );
     
     if (shouldConsumeChar)
         ret = D_USED_CHAR;
