@@ -127,7 +127,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 
 	int i;
 	ShipType	*type;
-	DATAFILE	*data, *data_cached;
+	DATAFILE	*data; //, *data_cached;
 	
 	
 	fleet_bmp = new BITMAP* [fleet->size+1];

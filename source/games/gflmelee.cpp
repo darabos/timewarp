@@ -1200,9 +1200,9 @@ void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 	int k = 0;
 	for ( i = 0; i < Nlist; ++i )
 	{
-		if ( list_allyflag[i] == killer->ally_flag )
+		if ( list_allyflag[i] == (int)killer->ally_flag )
 			++k;
-		if ( list_allyflag[i] == victim->ally_flag )
+		if ( list_allyflag[i] == (int)victim->ally_flag )
 			++k;
 	}
 

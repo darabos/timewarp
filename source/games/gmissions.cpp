@@ -518,8 +518,8 @@ void gmissions::init(Log *_log)
 
 	FONT *usefont = videosystem.get_font(i);
 
-	char *infotext;
-	int L;
+//	char *infotext;
+//	int L;
 
 	this->view->frame->prepare();
 
@@ -957,7 +957,7 @@ void mission_defeat_alari::P::init(Log *_log)
 
 	// allied ships
 	// (10 is too many, maybe 7 is better?)
-	int i;
+//	int i;
 
 	double a, da;
 
@@ -1149,7 +1149,7 @@ mission_escape_from_alcatraz::B::B()
 
 void mission_escape_from_alcatraz::P::init(Log *_log)
 {
-	Ship *s;
+//	Ship *s;
 
 	Play::init(_log);
 

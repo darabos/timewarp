@@ -453,7 +453,7 @@ void SpriteDrawList::calculate()
 		existtime -= delaytime;
 
 	SpriteDrawListItem *s;
-	Vector2 *P;
+//	Vector2 *P;
 
 	for ( s = firstitem; s != 0; s = s->next)
 		if (s->sprite_array_index < Nsprites-1)

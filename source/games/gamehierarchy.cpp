@@ -203,7 +203,7 @@ SubGame::~SubGame()
 
 void SubGame::init(Log *_log)
 {
-	int i;
+//	int i;
 
 	game_done = false;
 	log = _log;

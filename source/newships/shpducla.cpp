@@ -906,7 +906,7 @@ void Lantern::calculate()
 	if ( intensity < 0 )
 		intensity = 0;
 
-	int i;
+//	int i;
 	if ( tw_random(1.0) < frame_time*1E-3 * density )	// average occurrence per second
 	{
 		double a, L;

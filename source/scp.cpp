@@ -1371,7 +1371,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 			else {
 				ShipType *type = reference_fleet->ship[si];
 				PACKFILE *f;
-				DATAFILE *d;
+				//DATAFILE *d;
 
 				if (sprite)
 					destroy_bitmap(sprite);

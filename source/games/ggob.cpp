@@ -109,16 +109,16 @@ void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int fr
 
 void GobGame::init(Log *_log) {
 	int i;
-	switch(_log->type) {
-/*		case Log::log_net1server:
-		case Log::log_net1client: {
-			error("unsupported game/log type");
-		}
-		break;*/
+/*	switch(_log->type) {
+//		case Log::log_net1server:
+//		case Log::log_net1client: {
+//			error("unsupported game/log type");
+//		}
+//		break;
 		default: {
 		}
 		break;
-	}
+	}/**/
 	Game::init(_log);
 
 	log_file("server.ini");

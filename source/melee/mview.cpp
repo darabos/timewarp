@@ -330,7 +330,7 @@ void View::init(View *old) {STACKTRACE
 		key_alter2   = name_to_key(get_config_string("View", "Key_alter2",  "BACKSLASH"));
 	}
 	window->add_callback(this);
-	if (window->surface) ;
+	//if (window->surface) ;
 	return;
 }
 void View::replace ( View * v ) {STACKTRACE

@@ -586,7 +586,7 @@ ScrollBar::~ScrollBar()
 
 void ScrollBar::handle_lhold()
 {
-	int iy;
+//	int iy;
 
 	if (direction == ver)
 		pbutton = mouse.ypos() - y;		// mouse pos relative in the little bar area
