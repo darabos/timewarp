@@ -5,25 +5,26 @@ REGISTER_FILE
 #include "../sc2ships.h"
 
 class KohrAhBlade : public AnimatedShot {
-  int       passive;
-  double    passiveRange;
-  double    passiveVelocity;
+	bool persist;
+	int       passive;
+	double    passiveRange;
+	double    passiveVelocity;
 
-  public:
-  KohrAhBlade(Vector2 opos, double oangle, double ov, int odamage,
-    double orange, int oarmour, Ship *oship,
-    SpaceSprite *osprite, int ofcount, int ofsize);
+	public:
+	KohrAhBlade(Vector2 opos, double oangle, double ov, int odamage,
+		double orange, int oarmour, Ship *oship,
+		SpaceSprite *osprite, int ofcount, int ofsize, bool persist);
 
-  virtual void calculate();
-  virtual void animateExplosion();
+	virtual void calculate();
+	virtual void animateExplosion();
 
-  void disengage();
+	void disengage();
 };
 
 class KohrAhBladeDecay : public Animation {
-  public:
-  KohrAhBladeDecay(SpaceLocation *creator, Vector2 opos, Vector2 ovel,
-    SpaceSprite *osprite, int ofcount, int ofsize);
+	public:
+	KohrAhBladeDecay(SpaceLocation *creator, Vector2 opos, Vector2 ovel,
+		SpaceSprite *osprite, int ofcount, int ofsize);
 };
 
 class KohrAhFRIED : public Shot {
@@ -51,6 +52,7 @@ KohrAhMarauder::KohrAhMarauder(Vector2 opos, double shipAngle,
 	weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
 	weaponDamage   = get_config_int("Weapon", "Damage", 0);
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
+	bladesPersist = (bool)get_config_int("Weapon", "Persists", 0);
 	weaponFired    = 0;
 
 	specialRange    = scale_range(get_config_float("Special", "Range", 0));
@@ -78,7 +80,7 @@ int KohrAhMarauder::activate_weapon() {
 		}
 	weaponObject[numblades] = new KohrAhBlade(Vector2(0.0, (get_size().y / 2.0)), angle, weaponVelocity,
 			weaponDamage, weaponRange, weaponArmour, this, data->spriteWeapon,
-			10, 40);
+			10, 40, bladesPersist);
 	add(weaponObject[numblades]);
 	numblades += 1;
 	weaponFired = 1;
@@ -120,11 +122,12 @@ void KohrAhMarauder::calculate() {
 
 KohrAhBlade::KohrAhBlade(Vector2 opos, double oangle, double ov,
   int odamage, double orange, int oarmour, Ship *oship,
-  SpaceSprite *osprite, int ofcount, int ofsize) :
+  SpaceSprite *osprite, int ofcount, int ofsize, bool _persists) :
   AnimatedShot(oship, opos, oangle, ov, odamage, -1.0, oarmour, oship,
     osprite, ofcount, ofsize),
   passive(FALSE),
-  passiveRange(orange)
+  passiveRange(orange),
+  persist(_persists)
 {
   explosionSprite     = data->spriteWeaponExplosion;
   explosionFrameCount = 20;
@@ -136,6 +139,8 @@ void KohrAhBlade::calculate() {
 	double oldrange = 999999;
 
 	AnimatedShot::calculate();
+
+	if (!ship && !persist) die();
 
 	if(passive) {
 		Query a;

@@ -157,6 +157,11 @@ void Game::add_target(SpaceObject *new_target) {STACKTRACE
 }
 
 void Game::prepare() {
+#ifdef _MSC_VER
+	_asm { finit }
+#elif defined(__GCC__) && defined(__i386__)
+	asm("finit");
+#endif
 	Physics::prepare();
 	::game = this;
 	return;
@@ -177,7 +182,7 @@ void Game::redraw() {STACKTRACE
 	rectfill(window->surface, window->x, window->y, window->x+window->w-1, window->y+window->h-1, pallete_color[8]);
 	FULL_REDRAW += 1;
 	view->refresh();
-	view->animate(this);
+	view->animate_predict(this, 0);
 	FULL_REDRAW -= 1;
 	window->unlock();
 	unscare_mouse();
@@ -325,7 +330,7 @@ void Game::animate() {STACKTRACE
 		prediction_time += (prediction * lag_frames * frame_time) / 100;
 	}
 	if (prediction_time) view->animate_predict(this, prediction_time);
-	else view->animate(this);
+	else view->animate_predict(this, 0);
 	t = get_time2() - t - paused_time;
 	render_history->add_element(pow(t, HIST_POWER));
 	return;
@@ -531,6 +536,7 @@ void Game::calculate() {STACKTRACE
 
 void Game::play() {STACKTRACE
 	set_resolution(window->w, window->h);
+	prepare();
 	if (is_paused()) unpause();
 	try {
 		while(!game_done) {
@@ -611,7 +617,6 @@ void Game::fps() {STACKTRACE
 		if (ping > 800) tt = "VERY BAD!";
 		message.print(msecs_per_fps, 12, "ping: %dms (that's %s)", ping, tt);
 	}
-	message.print(msecs_per_fps, 12, "interpolation: %d", interpolate_frames);
 
 	if (this->show_fps) {
 /*			double a = 1.0;
@@ -842,13 +847,25 @@ offset	size	format		data
 	if (!melee) tw_error("Error loading melee data\n");
 
 	panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
+	kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
+	asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
+	planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
+	xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+/*	panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
 	kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES);
 	hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES);
 	sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES);
 	asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
 	asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
 	planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
-	xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES);
+	xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES);*/
 	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
 
 	set_config_file("client.ini");
@@ -902,9 +919,9 @@ void Game::init_lag() {STACKTRACE
 		log_int(channel_server, lag_time);
 		int lag_frames = (int) (1.5 + lag_time * normal_turbo / (double) frame_time );
 #		ifdef _DEBUG
-//			lag_frames += 15;
+//			lag_frames += 5;
 #		endif
-//			lag_frames += 4;
+//			lag_frames += 5;
 		message.print(15000, 15, "target ping set to: %d ms (pessimistically: %d ms)", lag_time, iround(lag_frames * frame_time / normal_turbo));
 		for (int i = 0; i < lag_frames; i += 1)
 			increase_latency();
@@ -995,9 +1012,14 @@ Game::~Game() {STACKTRACE
 	message.out("deleteing data file");
 	unload_datafile(melee); melee = NULL;
 
+	message.out("deleteing game objects");
+	destroy_all();
+
 	message.out("other shit");
 	message.flush();
+
 	delete view;
+	window->remove_callback(this);
 	delete window;
 }
 
@@ -1048,11 +1070,6 @@ void Game::save_screenshot() {STACKTRACE
 
 bool Game::handle_key(int k) {STACKTRACE
 	switch (k >> 8) {
-		case KEY_1: {
-			interpolate_frames = !interpolate_frames;
-			return true;
-		}
-		break;
 		#if !defined _DEBUG
 		case KEY_F11: {
 			pause();

@@ -42,8 +42,8 @@ int ThraddashTorch::activate_special() {
   add(new ThraddashFlame(
 //    x ,//- cos(angle) * (width() / 2.0),
 //    y ,//- sin(angle) * (height() / 2.0),
-	pos,
-    specialDamage, specialArmour, this, data->spriteSpecial, 40, 100));
+	pos - unit_vector(angle) * size.x/2.5,
+    specialDamage, specialArmour, this, data->spriteSpecial, 39, 100));
   return(TRUE);
 }
 

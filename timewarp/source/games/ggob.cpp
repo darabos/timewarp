@@ -179,28 +179,40 @@ void GobGame::init(Log *_log) {
 	i = random() % 3;
 	add_planet_and_station(planetSprite, i, stationSprite[i], "utwju", station_pic_name[i]);
 
-	add ( new RainbowRift() );
-
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 
 
 
-	add_gobplayer(create_control(channel_server, "Human"));
-	gobplayer[0]->new_ship(shiptype("supbl"));
-	Ship *s = gobplayer[0]->ship;
-	s->translate(size/2-s->normal_pos());
-	s->translate(260, 120);
-	s->accelerate(s, PI2/3, 0.17, MAX_SPEED);
-
-	if (lag_frames) {
-		add_gobplayer(create_control(channel_client, "Human"));
-		gobplayer[1]->new_ship(shiptype("supbl"));
-		Ship *s = gobplayer[1]->ship;
+	int server_players, client_players;
+	set_config_file("client.ini");
+	server_players = client_players = get_config_int("Gob", "NumPlayers", 1);
+	if (!lag_frames) client_players = 0;
+	log_int(channel_server, server_players);
+	log_int(channel_client, client_players);
+	for (i = 0; i < server_players; i += 1) {
+		char buffy[256];
+		sprintf(buffy, "Config%d", i);
+		add_gobplayer(create_control(channel_server, "Human", buffy));
+		gobplayer[i]->new_ship(shiptype("supbl"));
+		Ship *s = gobplayer[i]->ship;
 		s->translate(size/2-s->normal_pos());
-		s->translate(-260, -120);
-		s->accelerate(s, PI2/3, -0.17, MAX_SPEED);
+		double angle = PI2 * i / (client_players + server_players);
+		s->translate(rotate(Vector2(260, 120), angle));
+		s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
+	}
+	for (i = server_players; i < client_players + server_players; i += 1) {
+		char buffy[256];
+		sprintf(buffy, "Config%d", i - server_players);
+		add_gobplayer(create_control(channel_client, "Human", buffy));
+		gobplayer[i]->new_ship(shiptype("supbl"));
+		Ship *s = gobplayer[i]->ship;
+		s->translate(size/2-s->normal_pos());
+		double angle = PI2 * i / (client_players + server_players);
+		s->translate(rotate(Vector2(260, 120), angle));
+		s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
 	}
 
+	for (i = 0; i < gobplayers; i += 1) add ( new RainbowRift() );
 
 	next_add_new_enemy_time = 1000;
 	add_new_enemy();
@@ -259,21 +271,18 @@ void GobGame::fps() {
 	message.print(msecs_per_fps, 15, "time: %d", game_time / 1000);
 
 	int i = 0;
-	while (true) {
-		if (i == gobplayers) return;
-		if (is_local(gobplayer[i]->channel)) break;
-		i += 1;
-	} 
-	
+	for (i = 0; i < gobplayers; i += 1) {
+		if (!is_local(gobplayer[i]->channel)) continue;
 
-	if (gobplayer[i]->ship) {
-		message.print(msecs_per_fps, 15, "coordinates: %d x %d", 
-				iround(gobplayer[i]->ship->normal_pos().x), 
-				iround(gobplayer[i]->ship->normal_pos().y));
+		if (gobplayer[i]->ship) {
+			message.print(msecs_per_fps, 15-i, "coordinates: %d x %d", 
+					iround(gobplayer[i]->ship->normal_pos().x), 
+					iround(gobplayer[i]->ship->normal_pos().y));
+		}
+		message.print(msecs_per_fps, 15-i, "starbucks: %d", gobplayer[i]->starbucks);
+		message.print(msecs_per_fps, 15-i, "buckazoids: %d", gobplayer[i]->buckazoids);
+		message.print(msecs_per_fps, 15-i, "kills: %d", gobplayer[i]->kills);
 	}
-	message.print(msecs_per_fps, 15, "starbucks: %d", gobplayer[i]->starbucks);
-	message.print(msecs_per_fps, 15, "buckazoids: %d", gobplayer[i]->buckazoids);
-	message.print(msecs_per_fps, 15, "kills: %d", gobplayer[i]->kills);
 	return;
 }
 
@@ -765,7 +774,10 @@ void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
 		game->log_int(gs->channel, m);
 		if (m == UPGRADE_DIALOG_EXIT) return;
 		if (m == UPGRADE_DIALOG_LIST) {
-			int i = upgrade_dialog[UPGRADE_DIALOG_LIST].d1;
+			int i = 0;
+			if (game->is_local(gs->channel))
+				i = upgrade_dialog[UPGRADE_DIALOG_LIST].d1;
+			game->log_int(gs->channel, i);
 			i = upgrade_index[i];
 			Upgrade *u = gs->upgrade_list[i];
 			if (gs->charge(u->name, u->starbucks, u->buckazoids)) {
@@ -888,10 +900,11 @@ void RainbowRift::calculate() {
 		Query q;
 		for (q.begin(this, bit(LAYER_SHIPS), 40); q.current; q.next()) {
 			GobPlayer *p = gobgame->get_player(q.currento);
-			if (q.currento  == p->ship) {
-				int i = p->control->choose_ship(game->window, "You found the Rainbow Rift!", reference_fleet);
+			if (q.currento == p->ship) {
+				int i = 0;
+				i = p->control->choose_ship(game->window, "You found the Rainbow Rift!", reference_fleet);
+				game->log_int(p->channel, i);
 				if (i == -1) i = random(reference_fleet->size);
-				die();
 				game->redraw();
 				if (reference_fleet->ship[i] == p->ship->type) {
 					p->starbucks += random() % 80;
@@ -903,6 +916,7 @@ void RainbowRift::calculate() {
 					p->buckazoids += random() % (1+p->value_buckazoids);
 					p->new_ship(reference_fleet->ship[i]);
 				}
+				die();
 			}
 		}
 	}

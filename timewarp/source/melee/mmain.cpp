@@ -32,12 +32,12 @@ int NormalGame::add_player (Control *c, int team_index, const char *name, const 
 	num_players += 1;
 	player_control = (Control**) realloc(player_control,   sizeof(Control*)   * num_players);
 	player_name    =    (char**) realloc(player_name,      sizeof(char*)      * num_players);
-	player_panel = (ShipPanel**) realloc(player_panel,     sizeof(ShipPanel*) * num_players);
+//	player_panel = (ShipPanel**) realloc(player_panel,     sizeof(ShipPanel*) * num_players);
 	player_fleet =     (Fleet**) realloc(player_fleet,     sizeof(Fleet *)    * num_players);
 	player_team =    (TeamCode*) realloc(player_team,      sizeof(TeamCode)   * num_players);
 	player_control[i] = c;
 	add_focus(c, c->channel);
-	player_panel[i] = NULL;
+//	player_panel[i] = NULL;
 	player_fleet[i] = new Fleet();
 	player_fleet[i]->reset();
 	player_name[i] = strdup(name);
@@ -78,12 +78,15 @@ int NormalGame::add_player (Control *c, int team_index, const char *name, const 
 	player_fleet[i]->save("fleets.tmp", sect);
 	return i;
 	}
+
+Planet *create_planet( Vector2 position = map_size/2 );//remove me!
 void NormalGame::init_objects() {STACKTRACE
 	int i;
 	//add(new Stars2());
 	add(new Stars());
-	Planet *planet = new Planet (size/2, planetSprite, random(planetSprite->frames()));
-	add (planet);
+	Planet *planet = create_planet();
+	//Planet *planet = new Planet (size/2, planetSprite, random(planetSprite->frames()));
+	//add (planet);
 	if (view) view->camera.pos = size/2;
 	add(new WedgeIndicator(planet, 75, 4));
 	for (i = 0; i < num_asteroids; i += 1) add(new Asteroid());
@@ -114,17 +117,23 @@ void NormalGame::init_players() {STACKTRACE
 		case Log::log_net1server: {
 			log_file("server.ini");
 			int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
-			if (use_teams_menu) {
+			//if (use_teams_menu) {
+			if (1) {
 				int j;
 				for (j = 0; j < 2; j += 1) {
 					int ch;
 					if (j == 0) ch = channel_server;
 					else ch = channel_client;
 					if (is_local(ch)) {
+						log_file("client.ini");
+						int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
 						for (int i = 0; true; i += 1) {
 							char buffy[64];
+							const char *simple_config = 
+								"[Player1]\nType=Human\nConfig=0\nTeam=0\n";
 							sprintf(buffy, "Player%d", i + 1);
-							set_config_file("scp.ini");
+							if (use_teams_menu) set_config_file("scp.ini");
+							else set_config_data(simple_config, strlen(simple_config));
 							const char *type = get_config_string(buffy, "Type", NULL);
 							if (!type) {
 								int tmp = 0;
@@ -165,7 +174,7 @@ void NormalGame::init_players() {STACKTRACE
 					}
 				}
 			}
-			else {
+/*			else {
 				set_config_file("client.ini");
 				int lp = get_config_int("Network", "LocalPlayers", 1);
 				int cp = lp, sp = lp;
@@ -187,7 +196,7 @@ void NormalGame::init_players() {STACKTRACE
 					sprintf(buffy3, "Player%d", sp+i+1);
 					add_player(create_control(channel_client, "Human", buffy1), 0, buffy2, buffy3);
 				}
-			}
+			}*/
 		}
 		break;
 	}
@@ -211,7 +220,7 @@ void NormalGame::preinit() {
 	Game::preinit();
 	player_control = NULL;
 	player_name = NULL;
-	player_panel = NULL;
+//	player_panel = NULL;
 	player_fleet = NULL;
 
 	player_team = NULL;
@@ -300,7 +309,7 @@ NormalGame::~NormalGame() {STACKTRACE
 			}
 		free(player_name);
 		}
-	if (player_panel) free (player_panel);
+//	if (player_panel) free (player_panel);
 
 	if (player_team) free(player_team);
 	if (kills) free(kills);
@@ -311,7 +320,7 @@ void NormalGame::calculate() {STACKTRACE
 	if (next_choose_new_ships_time <= game_time) {
 		choose_new_ships();
 		next_choose_new_ships_time = game_time + 24*60*60*1000;
-		}
+	}
 	return;
 	}
 
@@ -320,14 +329,38 @@ void NormalGame::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
 	if (next_choose_new_ships_time > n) next_choose_new_ships_time = n;
 	Game::ship_died(who, source);
 
-	if (!(num_kills & 31)) kills = (ShipKill*) realloc(kills, (num_kills+32) * sizeof(ShipKill) );
+/*	if (!(num_kills & 31)) kills = (ShipKill*) realloc(kills, (num_kills+32) * sizeof(ShipKill) );
 	kills[num_kills].time = this->game_time;
-	kills[num_kills].victim_data = who->data;
+	kills[num_kills].victim.ally_flag = who->ally_flag;
+	kills[num_kills].victim.data = who->data;
+	kills[num_kills].victim.type = who->type;
 //	if (who->control) kills[num_kills].victim_player = who->control->player;
-	if (source) kills[num_kills].killer_data = source->data;
-	else kills[num_kills].killer_data = NULL;
+	if (source) {
+		kills[num_kills].killer.ally_flag = source->ally_flag;
+		kills[num_kills].killer.data = source->data;
+		if (source->ship) kills[num_kills].killer.type = source->ship->type;
+		else kills[num_kills].killer.type = NULL;
+	}
+	else {
+		kills[num_kills].killer.ally_flag = -1;
+		kills[num_kills].killer.data = NULL;
+		kills[num_kills].killer.type = NULL;
+
+	}
 //	kills[num_kills].killer_player = get_player(source);
 	num_kills += 1;
+
+	if (who->type) {
+		if (source->ship && source->ship->type) 
+			message.print(2500, 7, "%s killed %s", source->ship->type->name, who->type->name);
+		else message.print(2500, 7, "%s died", who->type->name);
+	}
+
+	int i;
+	for (i = 0; i < num_kills; i += 1) {
+
+	}
+//*/
 	return;
 	}
 void NormalGame::display_stats() {STACKTRACE
@@ -392,8 +425,8 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		if (player_control[i]->ship) {
 			}
 		else {
-			//if (player_panel[i]) delete player_panel[i];
-			player_panel[i] = NULL;
+//			if (player_panel[i]) player_panel[i]->window->hide();
+//			player_panel[i] = NULL;
 			sprintf (tmp, "Player%d", i+1);
 			Fleet *fleet = player_fleet[i];
 			if (fleet->size == 0) continue;
@@ -430,15 +463,15 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		//fleet->save("./fleets.tmp", tmp);
 		s->locate();
 		add ( new WedgeIndicator ( s, 30, i+1 ) );
-		player_panel[i] = new ShipPanel(s);
-		player_panel[i]->window->init(window);
-		player_panel[i]->window->locate(
+		ShipPanel *panel = new ShipPanel(s);
+		panel->window->init(window);
+		panel->window->locate(
 			0, 0.9,
 			0, i * (100.0/480), 
 			0, 0.1,
 			0, (100.0/480)
 			);
-		add(player_panel[i]);
+		add(panel);
 		add(s->get_ship_phaser());
 		}
 	delete slot;

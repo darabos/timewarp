@@ -103,13 +103,13 @@ class View : public BaseClass {
 //	virtual void set_background (int color);
 	//translates screen coordinates to game coordinates
 	virtual bool screen2game(Vector2 *pos);
-//	virtual bool game2screen(double *x, double *y);
+	virtual double in_view(Vector2 pos, Vector2 size);//only valid during animate()
 	//called more or less every game tic, with the amount of time passed
 	virtual void calculate(Game *game);
 
 
 	virtual void prepare(Frame *frame, int time = 0);
-	virtual void animate ( Game *game );
+	//virtual void animate ( Game *game );
 	virtual void animate_predict ( Game *game, int time );
 	void refresh () ; 
 };

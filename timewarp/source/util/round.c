@@ -11,10 +11,10 @@ produce off-by-one results for large numbers, and the STDLIB version may
 round in a subtly different way than the others.  
 */
 
-//#define USE_ASM_FLOAT_CONVERSION
-#define USE_BINARY_FLOAT_CONVERSION
+#define USE_ASM_FLOAT_CONVERSION
+//#define USE_BINARY_FLOAT_CONVERSION
 //#define USE_C99_FLOAT_CONVERSION
-//#define USE_STDLIB_FLOAT_CONVERSION
+#define USE_STDLIB_FLOAT_CONVERSION
 
 
 

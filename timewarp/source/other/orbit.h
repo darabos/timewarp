@@ -1,18 +1,21 @@
-#include <allegro.h>
-#include <stdio.h>
+#ifndef _ORBIT_H
+#define _ORBIT_H
 
-#include "../melee.h"
-#include "../id.h"
-#include "../scp.h"
-#include "../frame.h"
+//#include <allegro.h>
+//#include <stdio.h>
 
-#include "../melee/mgame.h"
-#include "../melee/mview.h"
-#include "../melee/mcbodies.h"
-#include "../melee/manim.h"
-#include "../melee/mship.h"
+//#include "../melee.h"
+//#include "../id.h"
+//#include "../scp.h"
+//#include "../frame.h"
 
-#include "../melee/mframe.h"
+//#include "../melee/mgame.h"
+//#include "../melee/mview.h"
+//#include "../melee/mcbodies.h"
+//#include "../melee/manim.h"
+//#include "../melee/mship.h"
+
+//#include "../melee/mframe.h"
 
 #define ORBIT_ID 0x26842116
 #define SUN_ID 0x9f327223
@@ -59,3 +62,5 @@ class Sun : public SpaceObject {
 	virtual void calculate();
 	virtual int canCollide(SpaceLocation *other);
 };
+
+#endif

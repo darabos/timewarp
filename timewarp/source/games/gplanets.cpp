@@ -32,6 +32,7 @@ REGISTER_FILE
 #include "../melee/mfleet.h"   //fleets...
 
 #include "../other/orbit.h"
+#include "../id.h"
 //#define STATION_LOG
 
 

@@ -177,7 +177,7 @@ static void tw_error_handler (const char *file, int line, const char *message) {
 		__error_flag |= 1;
 #		if defined ALLEGRO_MSVC
 			__asm int 3;
-#		elif defined __GNUC__
+#		elif defined __GNUC__ && defined __I386__
 			asm("int $0x03");
 #		else
 			if (1) (*((int*)NULL)) = 0;

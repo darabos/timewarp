@@ -234,20 +234,20 @@ void TauMercury::calculate_fire_special()
 	while (special_recharge <= 0) {
 		special_recharge += special_rate;
 
-		int i;
+//		int i;
 
-		for (i=0; i<1; i++) {
-			game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random()%1000)/1000.0,
-						scale_velocity(2)*(random()%101)/100.0,
-						800*(1-0.5*(random()%101)/100.0),
-						190+random()%50, 190+random()%50, 200+random()%55,
-						DEPTH_EXPLOSIONS, 1.0, 1));
-			game->add(new TauMercurySpark(this, 26, -3.5, PI2*(random()%1000)/1000.0,
-						scale_velocity(2)*(random()%101)/100.0,
-						800*(1-0.5*(random()%101)/100.0),
-						190+random()%50, 190+random()%50, 200+random()%55,
-						DEPTH_EXPLOSIONS, 1.0, 1)); }
-		for (i=0; i<1; i++) {
+//		for (i=0; i<1; i++) {
+		game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random()%1000)/1000.0,
+					scale_velocity(2)*(random()%101)/100.0,
+					800*(1-0.5*(random()%101)/100.0),
+					190+random()%50, 190+random()%50, 200+random()%55,
+					DEPTH_EXPLOSIONS, 1.0, 1));
+		game->add(new TauMercurySpark(this, 26, -3.5, PI2*(random()%1000)/1000.0,
+					scale_velocity(2)*(random()%101)/100.0,
+					800*(1-0.5*(random()%101)/100.0),
+					190+random()%50, 190+random()%50, 200+random()%55,
+					DEPTH_EXPLOSIONS, 1.0, 1)); //}
+/*		for (i=0; i<1; i++) {
 			game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random()%1000)/1000.0,
 						scale_velocity(5)*(random()%101)/100.0,
 						800*(1-0.5*(random()%101)/100.0),
@@ -258,6 +258,7 @@ void TauMercury::calculate_fire_special()
 						800*(1-0.5*(random()%101)/100.0),
 						190+random()%50, 190+random()%50, 200+random()%55,
 						DEPTH_EXPLOSIONS, 0.0)); }
+*/	
 	}
 }
 
@@ -356,7 +357,7 @@ void TauMercurySpark::calculate()
 {
 	lifetime -= frame_time;
 	if (lifetime <= 0)
-		die();
+		state = 0;
 
 	SpaceLine::calculate();	
 }
@@ -364,7 +365,7 @@ void TauMercurySpark::calculate()
 void TauMercurySpark::inflict_damage(SpaceObject *other)
 {
 	SpaceLine::inflict_damage(other);
-	die();
+	state =0;
 }
 
 void TauMercurySpark::animate(Frame *space)

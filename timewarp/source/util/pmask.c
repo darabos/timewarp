@@ -96,7 +96,7 @@ void deinit_pmask(struct PMASK *mask) {
 #define BYTE_N(word,index) (((word)>>((index)*8)) & 255)
 
 int serialize_pmask(void *destination, int maxsize, CONST PMASK *source) {
-	unsigned char *dest = destination;
+	unsigned char *dest = (unsigned char *) destination;
 	int i, j, k;
 	int bytes = 1 + ((source->w-1) >> 3);
 	int words = 1 + ((source->w-1) >> MASK_WORD_BITBITS);
@@ -127,7 +127,7 @@ int serialize_pmask(void *destination, int maxsize, CONST PMASK *source) {
 #define PUSH_BYTE(word,byte) ((word) = (word<<8) | (byte))
 
 int init_deserialize_pmask(void *source, int maxsize, PMASK *pmask) {
-	unsigned char *src = source;
+	unsigned char *src = (unsigned char *) source;
 	int w = 0, h = 0;
 	int i, j, k;
 	int size, bytes, words;
@@ -175,7 +175,7 @@ PMASK *create_deserialize_pmask(void *source, int maxsize, int *ret_size) {
 	int i, j, k;
 	int size, bytes, words;
 	PMASK *pmask;
-	unsigned char *src = source;
+	unsigned char *src = (unsigned char *) source;
 
 	*ret_size = -1;
 	size = sizeof(pmask->w) + sizeof(pmask->h);
@@ -576,14 +576,14 @@ int check_pmask_collision(CONST struct PMASK *mask1, CONST struct PMASK *mask2, 
 }
 
 static int pmaskdata_sort ( CONST void *_a, CONST void *_b ) {
-	CONST struct PMASKDATA *a = _a;
-	CONST struct PMASKDATA *b = _b;
+	CONST struct PMASKDATA *a = (CONST struct PMASKDATA *) _a;
+	CONST struct PMASKDATA *b = (CONST struct PMASKDATA *) _b;
 	return a->y - b->y;
 }
 
 static int pmaskdata_float_sort ( CONST void *_a, CONST void *_b ) {
-	CONST struct PMASKDATA_FLOAT *a = _a;
-	CONST struct PMASKDATA_FLOAT *b = _b;
+	CONST struct PMASKDATA_FLOAT *a = (CONST struct PMASKDATA_FLOAT *) _a;
+	CONST struct PMASKDATA_FLOAT *b = (CONST struct PMASKDATA_FLOAT *) _b;
 	if (a->y - b->y > 0) return 1;
 	else return -1;
 }

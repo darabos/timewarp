@@ -119,7 +119,7 @@ ChenjesuShot::ChenjesuShot(Vector2 opos, double oangle, double ov,
 {
 	collide_flag_sameship = bit(LAYER_SPECIAL);
 	explosionSprite     = data->spriteWeaponExplosion;
-	explosionFrameCount = 31;
+	explosionFrameCount = 30;
 	explosionFrameSize  = 50;
 }
 

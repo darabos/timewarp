@@ -35,6 +35,10 @@
 	#error unknown platform (allegro?)
 #endif
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4800 ) //forcing value to bool (performance warning)
+#endif
+
 #include "util/base.h"
 #include "util/endian.h"
 #include "util/get_time.h"
@@ -120,7 +124,7 @@ class Logger;
 
 #define MAX_SPACE_ITEMS 1024
 
-#define MAX_FLEET_SIZE 120
+#define MAX_FLEET_SIZE 200
 #define MAX_SHIP_ID    80
 
 #include "input.h"
@@ -191,9 +195,6 @@ class Laser;
 class Animation;
 class Asteroid;
 class Planet;
-
-//melee/mplayer.h
-class Player;
 
 //melee/mgame.h
 class Game;
@@ -440,6 +441,7 @@ class SpaceSprite {
 	};
 	//sprite_count * rotation new images based upon sprite_count RLE_SPRITES, with gamma correction
 	SpaceSprite(const DATAFILE *sprites, int sprite_count, int attributes = -1, int rotations = 1);
+	SpaceSprite(BITMAP *image, int _attributes = -1);
 	SpaceSprite(SpaceSprite &old);
 //	SpaceSprite(const char *sourcename, const char *spritename);
 

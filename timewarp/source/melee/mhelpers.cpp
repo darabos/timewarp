@@ -118,9 +118,30 @@ void set_gamma(int gamma) {
 	return;
 }
 void gamma_color_effects (RGB *c) {
-	c->r = _gamma_map[c->r];
-	c->g = _gamma_map[c->g];
-	c->b = _gamma_map[c->b];
+	if (!c->filler) {
+		c->r = _gamma_map[c->r];
+		c->g = _gamma_map[c->g];
+		c->b = _gamma_map[c->b];
+	}
+	else {
+		int alpha = (c->filler ^ 255) + 1;
+		int r, g, b;
+		r = (c->r << 8) / alpha;
+		g = (c->g << 8) / alpha;
+		b = (c->b << 8) / alpha;
+		if ((r | g | b) > 255) {
+			tw_error("gamma_color_effects : premultiplied alpha color invalid");
+		}
+		r = _gamma_map[r];
+		g = _gamma_map[g];
+		b = _gamma_map[b];
+		r = (r * alpha) >> 8;
+		g = (g * alpha) >> 8;
+		b = (b * alpha) >> 8;
+		c->r = r;
+		c->g = g;
+		c->b = b;
+	}
 	return;
 	}
 int tw_color (RGB c) {
@@ -462,7 +483,7 @@ void VideoWindow::update_pos() {
 void VideoWindow::_event( Event *e ) {
 	if (e->type == Event::VIDEO) {
 		const VideoEvent *ve = (const VideoEvent *) e;
-		if (ve->window != parent) tw_error ("VideoWindow event not from parent?");
+		if (ve->window != parent) {tw_error ("VideoWindow event not from parent?");}
 		VideoEvent nve;
 		nve.type = Event::VIDEO;
 		nve.window = this;
@@ -504,17 +525,18 @@ void VideoWindow::preinit () {
 	return;
 }
 void VideoWindow::init ( VideoWindow *parent_window) {
-	if (lock_level) tw_error("VideoWindow - illegal while locked");
+	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
 	if (parent) parent->remove_callback( this );
 	parent = parent_window;
-	if (parent != this) parent->add_callback ( this );
+	//if (parent == this) {tw_error("VideoWindow - incest");}
+	if (parent && (parent != this)) parent->add_callback ( this );
 	update_pos();
 	event(VideoEvent::RESIZE);
 	event(VideoEvent::REDRAW);
 	return;
 }
 void VideoWindow::locate ( double x1, double x2, double y1, double y2, double w1, double w2, double h1, double h2) {
-	if (lock_level) tw_error("VideoWindow - illegal while locked");
+	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
 	const_x = x1;
 	propr_x = x2;
 	const_y = y1;
@@ -534,6 +556,13 @@ void VideoWindow::deinit() {
 		parent->remove_callback( this );
 		parent = NULL;
 	}
+	if (num_callbacks) 
+		{tw_error("VideowWindow - deinit illegal while child windows remain");}
+	/*for (int i = 0; i < num_callbacks; i += 1) {
+		Event e;
+		e.type = 
+		callback_list[i]->_event(e);
+	}*/
 
 	free(callback_list);
 	callback_list = NULL;

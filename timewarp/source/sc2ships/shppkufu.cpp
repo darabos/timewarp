@@ -113,6 +113,7 @@ void PkunkFury::calculate_fire_special()
     //sound.stop(data->sampleSpecial[special_sample]);
 
     special_sample = (special_sample + 1 + random(13)) % 14;
+	play_sound2(data->sampleSpecial[special_sample]);
   }
 }
 

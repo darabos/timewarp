@@ -2,11 +2,18 @@
 #define _TYPES_H
 
 #if 0
-
 #elif defined __GNUC__
 
 //GNU C++
 
+/*typedef uint64_t Uint64;
+typedef uint32_t Uint32;
+typedef uint16_t Uint16;
+typedef uint8_t  Uint8;
+typedef int64_t Sint64;
+typedef int32_t Sint32;
+typedef int16_t Sint16;
+typedef int8_t  Sint8;*/
 typedef unsigned long long int Uint64;
 typedef unsigned int           Uint32;
 typedef unsigned short int     Uint16;
@@ -16,14 +23,6 @@ typedef signed long long int Sint64;
 typedef signed int           Sint32;
 typedef signed short int     Sint16;
 typedef signed char          Sint8;
-/*typedef uint64_t Uint64;
-typedef uint32_t Uint32;
-typedef uint16_t Uint16;
-typedef uint8_t  Uint8;
-typedef int64_t Sint64;
-typedef int32_t Sint32;
-typedef int16_t Sint16;
-typedef int8_t  Sint8;*/
 
 #elif defined _MSC_VER
 
@@ -44,14 +43,15 @@ typedef signed __int8  Sint8;
 //will guess type names
 //and double-check in types.cpp
 
-typedef Uint64 unsigned __int64;
-typedef Uint32 unsigned __int32;
-typedef Uint16 unsigned __int16;
-typedef Uint8  unsigned __int8;
-typedef Sint64 signed __int64;
-typedef Sint32 signed __int32;
-typedef Sint16 signed __int16;
-typedef Sint8  signed __int8;
+typedef unsigned long long int Uint64;
+typedef unsigned int           Uint32;
+typedef unsigned short int     Uint16;
+typedef unsigned char          Uint8;
+
+typedef signed long long int Sint64;
+typedef signed int           Sint32;
+typedef signed short int     Sint16;
+typedef signed char          Sint8;
 
 #endif
 #endif

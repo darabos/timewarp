@@ -10,7 +10,7 @@ class TauBomber : public Ship
 	double		bombDamage, bombArmour;
 	double		bombProximity, bombBlastRange, bombKick;
 	
-	int			decoyLifetime, side;
+	int			decoyLifetime, side, decoyEffect;
 	double		decoyRange, decoySlowdown, decoyVelocity;
 		
 	bool		can_launch_bomb;
@@ -65,7 +65,7 @@ class TauBomberDecoy : public Shot//AnimatedShot
 
 public:
 	TauBomberDecoy (SpaceLocation *creator, double ox, double oy, double oangle, double ov,
-					SpaceSprite *osprite, int olifetime, double er, double oslowdown);
+					SpaceSprite *osprite, int olifetime, double er, double oslowdown, int effect);
 	virtual void calculate();
 };
 
@@ -94,6 +94,9 @@ TauBomber::TauBomber(Vector2 opos, double shipAngle, ShipData *shipData, unsigne
 
 	decoyLifetime	= int(get_config_float("Decoy", "Lifetime", 0) * 1000);
 	decoyRange		= scale_range(get_config_float("Decoy", "Range", 0));
+	decoyEffect		= get_config_int("Decoy", "Effect", 50);
+	if (decoyEffect < 0) decoyEffect = 0;
+	else if (decoyEffect > 100) decoyEffect = 100;
 	decoySlowdown	= get_config_float("Decoy", "Slowdown", 0) / 10000.0;
 	decoyVelocity	= scale_velocity(get_config_float("Decoy", "Velocity", 0));
 
@@ -115,7 +118,7 @@ int TauBomber::activate_weapon()
 int TauBomber::activate_special()
 {
 	add(new TauBomberDecoy(this, side*5, -10, angle + side*PI*11/12.0, decoyVelocity,
-		data->spriteSpecial, decoyLifetime, decoyRange, decoySlowdown));
+		data->spriteSpecial, decoyLifetime, decoyRange, decoySlowdown, decoyEffect));
 	side *= -1;
 	return true;
 }
@@ -189,6 +192,7 @@ void TauBomberBomb::calculate()
 				r0 = r;
 				tgt = q.currento; }
 		}
+	q.end();
 	if ((old_tgt?old_tgt->exists():false) && (tgt?(r>old_range):true) && active) {
 		damage(this, 9999); return; }
 	old_range = r0;
@@ -309,7 +313,7 @@ TauBomberBombExplosion::~TauBomberBombExplosion()
 
 
 TauBomberDecoy::TauBomberDecoy (SpaceLocation *creator, double ox, double oy, double oangle, double ov,
-								SpaceSprite *osprite, int olifetime, double er, double oslowdown) :
+								SpaceSprite *osprite, int olifetime, double er, double oslowdown, int effect) :
 	Shot(creator, Vector2(ox, oy), oangle, ov, 1, 1e40, 1, creator, osprite, 1.0),
 	lifetime(olifetime), slowdown(oslowdown), lifetime_max(olifetime)
 {
@@ -318,7 +322,7 @@ TauBomberDecoy::TauBomberDecoy (SpaceLocation *creator, double ox, double oy, do
 
 	Query q;
 	for (q.begin(this, ALL_LAYERS, er); q.current; q.next())
-		if (q.current->target == creator)
+		if ((q.current->target == creator) && (tw_random()%100 < effect))
 			add(new TauBomberJam(this, q.currento, lifetime));
 	
 	sprite_index = 0;

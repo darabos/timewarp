@@ -119,7 +119,7 @@ int _no_idle = 0;
 			__asm mov b, edx
 			return (a + ((Sint64)b << 32)) - rdtsc_base;
 		}
-#	elif defined __GNUC__ && defined __I386__
+#	elif defined(__GNUC__) && defined(__i386__)
 //#		define RDTSC_TIMER
 		//need to double-check the inline asm here
 		static double rdtsc_period_f = 0;

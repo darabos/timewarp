@@ -446,7 +446,7 @@ void GarashShot::inflict_damage(SpaceObject *other)
 
 	if (!other->isShip() &&
 		  !other->isPlanet())
-			other->state=0;
+			other->die();
 
 
 	if (other->isShip()) {

@@ -75,7 +75,7 @@ int SyreenPenetrator::activate_special() {
 						target->normal_pos() + (unit_vector(trajectory_angle(target) - PI) * 
 						target->size.x) + random(Vector2(50,50)) - Vector2(25,25),
 						specialVelocity, specialFrames, this, data->spriteSpecial, 32, 
-						specialFrames));
+						50));
 				}
 			}
 		}

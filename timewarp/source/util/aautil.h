@@ -98,6 +98,16 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int mode);
 }
 #endif
 
+#define NON_MASK_COLOR_15    (MASK_COLOR_15 - 1)
+#define NON_MASK_COLOR_16    (MASK_COLOR_16 - 1)
+#define NON_MASK_COLOR_24    (MASK_COLOR_24 - 1)
+#define NON_MASK_COLOR_32    (MASK_COLOR_32 - 1)
+
+#define MASK_COLOR_32a       MASK_COLOR_32
+#define NON_MASK_COLOR_32a   NON_MASK_COLOR_32
+#define MASK_COLOR_16a       MASK_COLOR_16
+#define NON_MASK_COLOR_16a   0
+
 //#define makeacol16a(r,g,b,a) ( (r>>4)+(g&0xf0)+((b>>4)<<8)+((a>>4)<<12) )
 #define makeacol16a(r,g,b,a) ( ((g+(a<<8))&0xf0f0) + (r>>4) + ((b>>4)<<8) )
 #define makeacol12(r,g,b) makecol16a(r,g,b,0)
@@ -146,7 +156,6 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int mode);
   else                                          \
     (y) += (inc), (dd) += (i1);                 \
 }
-
 
 #endif /* !__bma_aautil_h */
 

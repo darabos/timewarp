@@ -115,7 +115,7 @@ OwaVoyager::OwaVoyager(Vector2 opos, double shipAngle,
   weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
-  weaponHoming   = get_config_float("Weapon","Homing",0);
+  weaponHoming   = scale_turning(get_config_float("Weapon","Homing",0));
   weaponArming   = scale_frames(get_config_int("Weapon","Arming",0));
   weaponLaunch   = scale_range(get_config_float("Weapon", "Launch",0));
 
@@ -123,7 +123,7 @@ OwaVoyager::OwaVoyager(Vector2 opos, double shipAngle,
   shrapnelVelocity = scale_velocity(get_config_float("Shrapnel", "Velocity", 0));
   shrapnelDamage   = get_config_int("Shrapnel", "Damage", 0);
   shrapnelArmour   = get_config_int("Shrapnel", "Armour", 0);
-  shrapnelHoming   = get_config_float("Shrapnel","Homing",0);
+  shrapnelHoming   = scale_turning(get_config_float("Shrapnel","Homing",0));
   shrapnelArming   = scale_frames(get_config_int("Shrapnel","Arming",0));
   shrapnelHotspot  = scale_frames(get_config_int("Shrapnel","Hotspot",0));
 

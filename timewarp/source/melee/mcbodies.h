@@ -14,6 +14,7 @@ class Asteroid : public SpaceObject {
 	int step;
 	int speed;
 	SpaceSprite *explosion;
+	double armour;
 
 	public:
 	Asteroid();
@@ -72,7 +73,7 @@ class Stars : public Presence {
 	int num_layers;
 	int num_stars;   //300?
 	int aa_mode;     //0 to 5, 1, 2, or 5 recommended
-	int depth;       //0 to 255
+	int field_depth;       //0 to 255
 
 	Uint32 seed;
 	void animate(Frame *space);

@@ -32,7 +32,7 @@ class TauStormMissile : public HomingMissile
 	SpaceObject *latched;
 	
 	double accel, thrust, booster_speed, rotation;
-	int fire_index, fire_frame, smoke_frame, first_frame;
+	int smoke_frame, first_frame;
 
 public:
 
@@ -41,7 +41,6 @@ public:
 				int ofuel, double othrust, double omass, double oboosterspeed,
 				SpaceSprite *osprite, double omr, double osv, SAMPLE *s);				
 	virtual void calculate();
-	virtual void animate(Frame *space);
 	virtual void inflict_damage (SpaceObject *other);
 	virtual void handle_damage (SpaceObject *other, double normal, double direct = 0);
 	virtual int  canCollide(SpaceLocation *other);
@@ -64,7 +63,7 @@ TauStorm::TauStorm(Vector2 opos, double shipAngle, ShipData *shipData, unsigned 
 	weaponRotation		= get_config_float("Weapon", "Rotation", 0)*PI/180;
 	weaponKick			= scale_velocity(get_config_float("Weapon", "Kick", 0));
 	weaponKickMaxspeed	= scale_velocity(get_config_float("Weapon", "KickMaxspeed", 0));
-	weaponStart			= get_config_int("Weapon", "StartSpeed", 0);
+	weaponStart			= get_config_float("Weapon", "StartSpeed", 0);
 	weaponRandom		= get_config_float("Weapon", "Random", 0);
 
 	specialVelocity		= scale_velocity(get_config_float("Special", "Velocity", 0));
@@ -76,10 +75,13 @@ TauStorm::TauStorm(Vector2 opos, double shipAngle, ShipData *shipData, unsigned 
 	specialRotation		= get_config_float("Special", "Rotation", 0)*PI/180;
 	specialKick			= scale_velocity(get_config_float("Special", "Kick", 0));
 	specialKickMaxspeed	= scale_velocity(get_config_float("Special", "KickMaxspeed", 0));
-	specialStart		= get_config_int("Special", "StartSpeed", 0);
+	specialStart		= get_config_float("Special", "StartSpeed", 0);
 	specialRandom		= get_config_float("Special", "Random", 0);
 
 	slot = 0;
+
+	weapon_sample		= -1;
+	special_sample		= -1;
 }
 
 int TauStorm::activate_weapon()
@@ -92,7 +94,7 @@ int TauStorm::activate_weapon()
 				weaponVelocity, weaponTurnRate, target,
 				weaponFuel*(1+weaponRandom*(100-random()%201)/100.0), weaponThrust, weaponMass,
 				weaponBoosterSpeed, data->spriteWeapon,
-				weaponRotation, weaponStart, data->sampleExtra[0]));
+				weaponRotation, weaponStart, data->sampleWeapon[0]));
 	slot = (slot +1) % 6;
 	accelerate(this, angle+PI, weaponKick, weaponKickMaxspeed);
     return true;
@@ -107,8 +109,8 @@ int TauStorm::activate_special()
 	game->add(new TauStormMissile (this, rx, 10, angle, specialAccel,
 			specialVelocity, specialTurnRate, target,
 			specialFuel*(1+specialRandom*(100-random()%201)/100.0), specialThrust, weaponMass,
-			specialBoosterSpeed, data->spriteWeapon,
-			specialRotation, specialStart, data->sampleExtra[1]));
+			specialBoosterSpeed, data->spriteSpecial,
+			specialRotation, specialStart, data->sampleSpecial[0]));
 	slot = (slot + 1) % 6;
 	accelerate(this, angle+PI, specialKick, specialKickMaxspeed);
     return true;
@@ -121,7 +123,6 @@ void TauStorm::animate(Frame *space)
 		sprite->animate(pos, sprite_index + 64, space);
 	else
 		sprite->animate(pos, sprite_index, space);
-
 }
 
 
@@ -140,17 +141,13 @@ TauStormMissile::TauStormMissile (SpaceLocation *creator, double ox, double oy, 
 
 	vel = vel*osv + creator->get_vel();
 
-	fire_index = random() % 5;
-	fire_frame = 50;
-
 	explosionSprite = data->spriteWeaponExplosion;
 	explosionFrameCount = 10;
 	explosionFrameSize = 50;
-	explosionSample = data->sampleWeapon[1];
+	explosionSample = data->sampleExtra[0];
 
 	smoke_frame = 0;
 	first_frame = 12;
-	fire_index = 0;
 
 	play_sound(s);
 }
@@ -187,17 +184,12 @@ void TauStormMissile::calculate()
 			latched->angle += rotation * 1000 * rt * frame_time / jr;
 	};
 
-	if (fire_frame > 0) fire_frame -= frame_time;
-	else {
-		while (fire_frame <= 0)
-			fire_frame +=50;
-		fire_index = (fire_index + 1) % 2; }
-               
+              
 	if (smoke_frame > 0) smoke_frame -= frame_time;
 	else {
 		while (smoke_frame <= 0)
 			smoke_frame += 25;
-		game->add(new Animation(this, pos, data->spriteSpecial,
+		game->add(new Animation(this, pos, data->spriteExtra,
 			first_frame, 20-first_frame, 50, LAYER_HOTSPOTS));
 		if (first_frame > 0) first_frame -= 3; }
 
@@ -212,11 +204,6 @@ void TauStormMissile::calculate()
 		if (latched)
 			damage(latched, 0, 1);
 		handle_damage(this, 999); }
-}
-
-void TauStormMissile::animate(Frame *space)
-{
-	sprite->animate(pos, sprite_index + fire_index*64, space);
 }
 
 void TauStormMissile::inflict_damage (SpaceObject *other)

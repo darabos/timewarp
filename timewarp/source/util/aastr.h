@@ -181,11 +181,11 @@ Blending & Alpha Blending: (AA_ALPHA, AA_BLEND, AA_RAW_ALPHA)
 */
 
 
-void convert_alpha         ( BITMAP *bob );  //32 bit only
-void un_convert_alpha      ( BITMAP *bob );  //32 bit only
-void premultiply_alpha    ( BITMAP *bob );   //32 bit only
-void un_premultiply_alpha ( BITMAP *bob );   //32 bit only
-void invert_alpha          ( BITMAP *bob );  //32 bit only
+void convert_alpha         ( BITMAP *bob, int masked );  //32 bit only
+void un_convert_alpha      ( BITMAP *bob, int masked );  //32 bit only
+void premultiply_alpha    ( BITMAP *bob, int masked );   //32 bit only
+void un_premultiply_alpha ( BITMAP *bob, int masked );   //32 bit only
+void invert_alpha          ( BITMAP *bob, int masked );  //32 bit only
 void make_alpha ( BITMAP *bob ) ;  //32 bit only
 void rgba4444_as_rgb16 (BITMAP *bob) ;//16 bit only
 unsigned long _blender_premultiplied_alpha24 (unsigned long x, unsigned long y, unsigned long n) ;

@@ -29,15 +29,19 @@ class NormalGame : public Game {
 	int num_kills;
 	struct ShipKill {
 		int time;
-		ShipData *victim_data, *killer_data;
-		Player *victim_player, *killer_player;
+		struct Party {
+			unsigned int ally_flag;
+			ShipData *data;
+			ShipType *type;
+		};
+		Party victim, killer;
 		} *kills;
 	void display_stats();
 
 	virtual int add_player (Control *c, int team_index, const char *name, const char *fleet, const char *fleet_file = "fleets.ini") ;
 	int num_players;
 	Control **player_control;
-	ShipPanel **player_panel;
+//	ShipPanel **player_panel;
 	Fleet **player_fleet;
 	char **player_name;
 	char *player_attributes;

@@ -142,7 +142,9 @@ tail_recurse4:
 
 void Query::next () {STACKTRACE
 tail_recurse3:
-	if (current == current->qnext) tw_error ("Query::next - current = next");
+	if (current == current->qnext) {
+		tw_error ("Query::next - current = next");
+	}
 	current = current->qnext;
 	if (!current) {
 		next_quadrant();
@@ -641,7 +643,6 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	if (!exists() || !other->exists()) return;
 
 	pos = normal_pos();
-
 	Vector2 p1, p2, dp, dv;
 
 	p1 = pos;
@@ -848,20 +849,34 @@ int Physics::_find_serial(int serial) {STACKTRACE
 	return -1;
 	}
 
-Physics::~Physics() {STACKTRACE
+void Physics::destroy_all() {
+	STACKTRACE
 	int i;
 	for (i = 0; i < num_presences; i += 1) {
-		delete presence[i];
+		Presence *tmp = presence[i];
 		presence[i] = NULL;
-		}
-	if (presence) free(presence);
-	for (i = 0; i < num_items; i += 1) {
-		delete item[i];
-		item[i] = NULL;
-		}
-	if (item) free(item);
-	if (quadrant) delete quadrant;
+		delete tmp;
 	}
+	if (presence) free(presence);
+	presence = NULL;
+	num_presences = 0;
+	max_presences = 0;
+	for (i = 0; i < num_items; i += 1) {
+		SpaceLocation *tmp = item[i];
+		item[i] = NULL;
+		delete tmp;
+	}
+	if (item) free(item);
+	item = NULL;
+	num_items = 0;
+	max_items = 0;
+}
+
+Physics::~Physics() {STACKTRACE
+	destroy_all();
+	if (quadrant) delete quadrant;
+	quadrant = NULL;
+}
 
 void Physics::preinit() {STACKTRACE
 	quadrant = NULL;
@@ -968,6 +983,7 @@ void Physics::add(SpaceLocation *o) {STACKTRACE
 	Vector2 n = o->normal_pos();
 	int q = int(n.x * QUADI_X) + 
 			int(n.y * QUADI_Y) * QUADS_X;
+	if ((q < 0) || (q > QUADS_TOTAL)) {tw_error("bad quadrant");}
 	o->qnext = quadrant[q];
 	quadrant[q] = o;
 
@@ -1073,6 +1089,7 @@ checksync();
 			Vector2 n = item[i]->normal_pos();
 			int q = iround_down(n.x * QUADI_X) + 
 					iround_down(n.y * QUADI_Y) * QUADS_X;
+			if ((q < 0) || (q > QUADS_TOTAL)) {tw_error("bad quadrant");}
 			item[i]->qnext = quadrant[q];
 			quadrant[q] = item[i];
 			}
@@ -1189,6 +1206,11 @@ void Physics::animate (Frame *frame) {STACKTRACE
 
 void Physics::animate_predict(Frame *frame, int time) {STACKTRACE
 	int i, j;
+
+	if (time == 0) {
+		animate(frame);
+		return;
+	}
 
 	::render_time = this->game_time + time;
 

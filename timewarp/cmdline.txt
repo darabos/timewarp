@@ -8,26 +8,27 @@ Example: -res 512 384
 Set screen color depth to z (valid options are 8, 15, 16, 24, or 32
 Example: -bpp 8
 
--interpolate_frames
-Causes TW to interpolate new frames of animation between frames 
-of physics.  This improves graphical quality when running at low 
-tic-rates.  When this option is enabled, TW will use 100% of 
-available CPU-time.  
-
--auto_unload
-Causes TW to automatically unload datafiles as soon as 
-possible.  This will use less RAM, but have more delays.  
-
 -low_quality
 Not Yet Implemented
 Causes TW to use lower quality graphics.  This will use less 
 RAM.  
 
--play game mode
+-play game gametype
+-play demo demofile
+-play net1client serverIP [port]
+-play net1server gametype [port]
 Bypasses the main menu, putting you directly into a game.  
-Note that names are case-sensitive, and that underscores (_)
-should be used in place of spaces in game names.  
-Example: -play Melee_in_Asteroid_Field Normal
+Note that game names are case-sensitive, and that underscores (_)
+should be used in place of spaces.
+The 'type' parameter must be either 'game', 'demo', 'net1client',
+or 'net1server'.  If the port parameter is omitted then it will
+default to port 15515, as specified in client.ini.  
+Example: -play game Melee
+Example: -play game Melee_in_Asteroid_Field
+Example: -play demo mydemo.dmo
+Example: -play net1client 131.215.72.49
+Example: -play net1server Melee_in_Asteroid_Field 15515
+Example: -play net1client josh.joshesdomain.net 15515
 
 -fullscreen
 Set screen mode to fullscreen.  This is the opposite of -window

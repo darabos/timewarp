@@ -1,7 +1,7 @@
 #include "../ship.h"
 REGISTER_FILE
 
-
+#include "../util/aastr.h"
 #include "../sc2ships.h"
 
 
@@ -63,53 +63,45 @@ ChmmrAvatar::ChmmrAvatar(Vector2 opos, double shipAngle,
 	extraRechargeRate = get_config_int("Extra", "RechargeRate", 0);
 	extraColor        = get_config_int("Extra", "Color", 0);
 	extraArmour       = get_config_int("Extra", "Armour", 0);
-	}
 
-int ChmmrAvatar::activate_weapon() {
-  add(new ChmmrLaser(angle, weaponRange,
-    weaponDamage, weapon_rate, this, Vector2(0.0, 25.0) ));
-	if ((random() % 200) < frame_time) {
-		Vector2 f, c;
-		//double f, o, c, s;
-		f.x = random(1.0);
-		f.y = random(-1.0, 1.0) * (f.x+.5) / 5 ;
-//		f = (((double)random()) / MAXINT);
-//		o = ((((double)random()) / MAXINT) - 0.5) * (f+.5) / 2.5;
-//		c = Vector2 ( cos(angle), sin(angle) );
-//		c = unit_vector(angle);
-//		c = cos(angle);
-//		s = sin(angle);
-		add(new Animation(this, 
-			pos + rotate(f, angle) * weaponRange,
-//				x + (c * f + s * o) * weaponRange, 
-//				y + (s * f + c * o) * weaponRange, 
-				data->spriteWeaponExplosion, (random()&1)*6, 6, 50, DEPTH_HOTSPOTS));
+	uninterrupted_fire = false;
+}
 
-//		f = (((double)random()) / MAXINT);
-//		o = ((((double)random()) / MAXINT) - 0.5) * (f+.5) / 2.5;
-		f.x = random(1.0);
-		f.y = random(-1.0, 1.0) * (f.x+.5) / 5 ;
-//		c = cos(angle);
-//		s = sin(angle);
+
+void ChmmrAvatar::calculate()
+{
+	Ship::calculate();
+	
+	if ((uninterrupted_fire) && ((!fire_weapon) || weapon_low))
+	{
+		uninterrupted_fire = false;
+/*
 		add(new Animation(this, 
-			pos + rotate(f, angle) * weaponRange,
-//				x + (c * f + s * o) * weaponRange, 
-//				y + (s * f + c * o) * weaponRange, 
-				data->spriteWeaponExplosion, (random()&1)*6, 6, 50, DEPTH_HOTSPOTS));
-//		f = (((double)random()) / MAXINT);
-//		o = ((((double)random()) / MAXINT) - 0.5) * (f+.5) / 2.5;
-		f.x = random(1.0);
-		f.y = random(-1.0, 1.0) * (f.x+.5) / 5 ;
-//		c = cos(angle);
-//		s = sin(angle);
+				pos + unit_vector(angle) * (tw_random(weaponRange-15) + 25 + 25)
+				+ Vector2(tw_random(-25,25), tw_random(-25,25)),
+				data->spriteWeaponExplosion, (random()%4)*10, 10, 25, DEPTH_HOTSPOTS));
+*/
 		add(new Animation(this, 
-			pos + rotate(f, angle) * weaponRange,
-//				x + (c * f + s * o) * weaponRange, 
-//				y + (s * f + c * o) * weaponRange, 
-				data->spriteWeapon, (random()&1)*6, 6, 100, DEPTH_HOTSPOTS));
-		}
+				pos + unit_vector(angle) * (tw_random(weaponRange-15) + 25 + 25)
+				+ Vector2(tw_random(-25,25), tw_random(-25,25)),
+				data->spriteWeaponExplosion, (random()%4)*10, 10, 50, DEPTH_EXPLOSIONS));
+		add(new Animation(this, 
+				pos + unit_vector(angle) * (tw_random(weaponRange-15) + 25 + 25)
+				+ Vector2(tw_random(-25,25), tw_random(-25,25)),
+				data->spriteWeaponExplosion, (random()%4)*10, 10, 75, DEPTH_EXPLOSIONS));
+
+	};
+
+}
+
+int ChmmrAvatar::activate_weapon()
+{
+	add(new ChmmrLaser(angle, weaponRange, weaponDamage, weapon_rate, this, Vector2(0.0, 25.0) ));
+
+	uninterrupted_fire = true;
+
 	return(TRUE);
-	}
+}
 
 int ChmmrAvatar::activate_special()
 {
@@ -190,22 +182,26 @@ void ChmmrBeam::calculate()
 
 void ChmmrBeam::animate(Frame *space)
 {
-  const int beam_color[5] = { 80, 81, 82, 83, 84 };
-  int i;
-  double length;
-
-//  length = sqrt((target->get_vx() * target->get_vx()) +
-//    (target->get_vy() * target->get_vy())) + (target->width() / 4.0);
-  length = target->get_vel().length() + (target->get_size().x / 4.0);
-
+	const int beam_color[5] = { 80, 81, 82, 83, 84 };
+	int i;//, old_trans;
+	double length = target->get_vel().length() + (target->get_size().x / 4.0);
+/*
+	if ((get_tw_aa_mode() & AA_BLEND) && !(get_tw_aa_mode() & AA_NO_AA)) {
+		old_trans = aa_get_trans();
+		for(i = 3; i >= 0 ; i--) {
+			aa_set_trans(255*(i+1)/4.0);
+			target->get_sprite()->animate_character(
+					target->normal_pos() + (i+1) * unit_vector(trajectory_angle(target) - PI) * length,
+					target->get_sprite_index(), makecol(20,20,240), space);
+		}
+		aa_set_trans(old_trans);
+	}
+	else*/
 	for(i = 3; i >= 0 ; i--)
 		target->get_sprite()->animate_character(
-		target->normal_pos() + (i+1) * unit_vector(trajectory_angle(target) - PI) * length,
-//				target->normal_x() + (i + 1) * 
-//				cos(trajectory_angle(target) - PI) * length,
-//				target->normal_y() + (i + 1) *
-//				sin(trajectory_angle(target) - PI) * length,
+				target->normal_pos() + (i+1) * unit_vector(trajectory_angle(target) - PI) * length,
 				target->get_sprite_index(), pallete_color[beam_color[i]], space);
+
 }
 
 ChmmrZapSat::ChmmrZapSat(double oangle, double orange, int odamage,

@@ -266,7 +266,7 @@ void BathaDeviant :: calculate ()
 	}
 	
 
-	if ((game->game_time) & 128 != ((game->game_time+frame_time) & 128))
+	if (((game->game_time) & 128) != ((game->game_time+frame_time) & 128))
 	{
 		int i;
 		i = tw_random(Nleakingsprites);

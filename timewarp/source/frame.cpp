@@ -109,6 +109,7 @@ Frame::Frame(int max_items) {
 
 Frame::~Frame() {
 	destroy_bitmap(surface);
+	window->deinit();
 	delete window;
 
 	delete item;

@@ -58,8 +58,9 @@ int string_to_sprite_attributes ( const char *s, int recommended ) {STACKTRACE
 
 	if (strstr(s, "+alpha")) {
 		a |= SpaceSprite::ALPHA;
+		a &=~SpaceSprite::MATCH_SCREEN_FORMAT;//remove me
 	}
-	if (strstr(s, "-masked")) {
+	if (strstr(s, "-alpha")) {
 		a &=~SpaceSprite::ALPHA;
 	}
 
@@ -86,7 +87,7 @@ void handle_alpha_load ( BITMAP *bmp ) {
 			//invert_alpha(bmp);
 		} break;
 		case 32: {
-			convert_alpha(bmp);
+			convert_alpha(bmp, 1);
 		} break;
 		default: {
 		} break;
@@ -137,8 +138,8 @@ void convert_bitmap(BITMAP *src, BITMAP *dest, int aa_mode) {STACKTRACE
 	//requires that both be memory bitmaps
 	int obpp = bitmap_color_depth(src);
 	int bpp = bitmap_color_depth(dest);
-	if ((src->w != dest->w) || (src->h != dest->h)) tw_error("convert_bitmap - wrong size");
-	//if (obpp == bpp) tw_error("convert_bitmap - color depths match");
+	if ((src->w != dest->w) || (src->h != dest->h)) {tw_error("convert_bitmap - wrong size");}
+	//if (obpp == bpp) {tw_error("convert_bitmap - color depths match");}
 	if ((obpp == bpp) || !(aa_mode & AA_MASKED)) {
 		blit(src, dest, 0, 0, 0, 0, src->w, src->h);
 		return;
@@ -178,7 +179,7 @@ void convert_bitmap(BITMAP *src, BITMAP *dest, int aa_mode) {STACKTRACE
 		);
 	return;
 	}
-
+/*
 void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 	//return;//remove me!!!
 	int x, y, w, h;
@@ -234,6 +235,64 @@ void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 		}
 	return;
 	}
+*/
+void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
+	//return;//remove me!!!
+	int x, y, w, h;
+	w = bmp->w;
+	h = bmp->h;
+	int bmc = bitmap_mask_color(bmp);
+	for (y = 0; y < h; y += 1) {
+		for (x = 0; x < w; x += 1) {
+			RGB a;
+			a.filler = 0;
+			int c;
+			c = getpixel(bmp, x, y);
+			if ((c == bmc) && masked) continue;
+			switch (bitmap_color_depth(bmp)) {
+				case 8:{
+					a.r = getr8(c);
+					a.g = getg8(c);
+					a.b = getb8(c);
+				}
+				break;
+				case 15:{
+					a.r = getr15(c);
+					a.g = getg15(c);
+					a.b = getb15(c);
+				}
+				break;
+				case 16:{
+					a.r = getr16(c);
+					a.g = getg16(c);
+					a.b = getb16(c);
+				}
+				break;
+				case 24:{
+					a.r = getr24(c);
+					a.g = getg24(c);
+					a.b = getb24(c);
+				}
+				break;
+				case 32:{
+					a.r = getr32(c);
+					a.g = getg32(c);
+					a.b = getb32(c);
+					a.filler = geta32(c);
+				}
+				break;
+			}
+			videosystem.color_effects(&a);
+			c = makeacol_depth(bitmap_color_depth(bmp), a.r, a.g, a.b, a.filler);
+			if ((c == bmc) && masked) {
+				if (c == 0) c = makecol(10,10,10);
+				else c = makecol(255, 16, 255);
+				}
+			putpixel(bmp, x, y, c);
+			}
+		}
+	return;
+	}
 
 void SpaceSprite::generate_mipmaps() {STACKTRACE
 	int bpp, level, i;
@@ -270,7 +329,7 @@ void SpaceSprite::change_color_depth(int newbpp) {STACKTRACE
 	for (l = 0; l <= highest_mip; l += 1) {
 		for (i = 0; i < count; i += 1) {
 			BITMAP *tmp = create_bitmap_ex(newbpp, w, h);
-			convert_bitmap(b[l][i], tmp, general_attributes & MASKED);
+			convert_bitmap(b[l][i], tmp, (general_attributes & MASKED) ? AA_MASKED : 0);
 			if (attributes[i] & DEALLOCATE_IMAGE) destroy_bitmap(b[l][i]);
 			attributes[i] |= DEALLOCATE_IMAGE;
 			b[l][i] = tmp;
@@ -315,7 +374,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	if (_attributes == -1) _attributes = string_to_sprite_attributes(NULL);
 
 	count = sprite_count * rotations;
-	if ((rotations < 1) || (count < 1)) tw_error("SpaceSprite::SpaceSprite - bad parameters");
+	if ((rotations < 1) || (count < 1)) {tw_error("SpaceSprite::SpaceSprite - bad parameters");}
 
 	references = 0;
 	highest_mip = 0;
@@ -324,13 +383,14 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	}
 
 	general_attributes = _attributes;
-	if (general_attributes &  MATCH_SCREEN_FORMAT)
+	if (general_attributes &  MATCH_SCREEN_FORMAT) {
 		bpp = videosystem.bpp;
-	else bpp = 0;
-	if (general_attributes & ALPHA) {
-		if (bpp <= 16) bpp = 16;
-		else bpp = 32;
+		if (general_attributes & ALPHA) {
+			if (bpp <= 16) bpp = 16;
+			else bpp = 32;
+		}
 	}
+	else bpp = 0;
 
 	originaltype = images[0].type;
 	switch (originaltype) {
@@ -338,38 +398,42 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			w = ((RLE_SPRITE *)images[0].dat)->w;
 			h = ((RLE_SPRITE *)images[0].dat)->h;
 			obpp = ((RLE_SPRITE *)images[0].dat)->color_depth;
-			if (bpp == 0) bpp = obpp;
-			if (obpp != bpp) tmp = create_bitmap_ex(obpp, w, h);
 			}
 		break;
 		case DAT_BITMAP: {
 			w = ((BITMAP *)images[0].dat)->w;
 			h = ((BITMAP *)images[0].dat)->h;
 			obpp = bitmap_color_depth((BITMAP *)images[0].dat);
-			if (bpp == 0) bpp = obpp;
 			}
 		break;
 		default: {
-			tw_error("SpaceSprite::SpaceSprite - bad data file");
+			{tw_error("SpaceSprite::SpaceSprite - bad data file");}
 			}
 		break;
 		}
 
+	if (bpp == 0) bpp = obpp;
+	if (obpp != bpp) tmp = create_bitmap_ex(obpp, w, h);
+	if (general_attributes & ALPHA) {
+		if (bpp <= 16) bpp = 16;
+		else bpp = 32;
+	}
+
 
 	if (general_attributes & IRREGULAR) goto irregular;
 	for(i = 1; i < sprite_count; i++) {
-		if (images[i].type != originaltype) tw_error ("SpaceSprite - bad data file");
+		if (images[i].type != originaltype) {tw_error ("SpaceSprite - bad data file");}
 		switch (originaltype) {
 			case DAT_RLE_SPRITE: {
 				if ((w != ((RLE_SPRITE *)images[i].dat)->w) || 
-						(h != ((RLE_SPRITE *)images[i].dat)->h) ) tw_error("SpaceSprite - size changed");
-				if (((RLE_SPRITE *)images[i].dat)->color_depth != obpp) tw_error("SpaceSprite - changing source color depth not yet allowed");
+						(h != ((RLE_SPRITE *)images[i].dat)->h) ) {tw_error("SpaceSprite - size changed");}
+				if (((RLE_SPRITE *)images[i].dat)->color_depth != obpp) {tw_error("SpaceSprite - changing source color depth not yet allowed");}
 				}
 			break;
 			case DAT_BITMAP: {
 				if ((w != ((BITMAP *)images[i].dat)->w) || 
-						(h != ((BITMAP *)images[i].dat)->h) ) tw_error("SpaceSprite - size changed");
-				if (bitmap_color_depth((BITMAP *)images[i].dat) != obpp) tw_error("SpaceSprite - changing source color depth not yet allowed");
+					(h != ((BITMAP *)images[i].dat)->h) ) {tw_error("SpaceSprite - size changed");}
+				if (bitmap_color_depth((BITMAP *)images[i].dat) != obpp) {tw_error("SpaceSprite - changing source color depth not yet allowed");}
 				}
 			break;
 			}
@@ -383,18 +447,24 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 		bmp = create_bitmap_ex(bpp, w, h);
 		if (!tmp) tmp = bmp;
 		if (general_attributes & MASKED) clear_to_color(bmp, bitmap_mask_color(bmp));
+/*		if (general_attributes & MASKED) {
+			if (general_attributes & ALPHA) {
+				if (bpp == 16) clear_to_color(bmp, );
+			}
+			clear_to_color(bmp, bitmap_mask_color(bmp));
+		}*/
 		if (tmp != bmp) clear_to_color(tmp, bitmap_mask_color(tmp));
 		switch (originaltype) {
 			case DAT_RLE_SPRITE: {
 				draw_rle_sprite(tmp, (RLE_SPRITE *)(images[i].dat), 0, 0);
 				if (general_attributes & ALPHA) handle_alpha_load(tmp);
-				if (tmp != bmp) convert_bitmap(tmp, bmp, general_attributes & MASKED);
+				if (tmp != bmp) convert_bitmap(tmp, bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
 				}
 			break;
 			case DAT_BITMAP: {
 				if (general_attributes & ALPHA) handle_alpha_load((BITMAP *)(images[i].dat));
 				if (obpp != bpp) {
-					convert_bitmap((BITMAP *)(images[i].dat), bmp, general_attributes & MASKED);
+					convert_bitmap((BITMAP *)(images[i].dat), bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
 					}
 				else {
 					if (general_attributes & MASKED) draw_sprite(bmp, (BITMAP*)images[i].dat, 0, 0);
@@ -443,7 +513,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 
 	irregular:
 
-	if (rotations != 1) tw_error (" irregular SpaceSprites are not permitted to be autorotated");
+	if (rotations != 1) {tw_error (" irregular SpaceSprites are not permitted to be autorotated");}
 
 	m = new PMASK*[count];
 	b[0] = new BITMAP*    [count];
@@ -465,7 +535,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 				}
 				else {
 					bmp = create_bitmap_ex ( bpp, w, h);
-					convert_bitmap(tmp, bmp, general_attributes & MASKED);
+					convert_bitmap(tmp, bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
 					destroy_bitmap(tmp);
 					tmp = NULL;
 					}
@@ -547,7 +617,7 @@ SpaceSprite::SpaceSprite(const char *sourcename, const char *spritename) {
 	sprintf(buf, "%s/%s.ini", sourcename, spritename);
 	set_config_file(buf);
 	tmpstr = get_config_string("Main", "Type", "BadType");
-	if (strcmp(tmpstr, "SpaceSprite")) tw_error("SpaceSprite(%s # %s) : %s != SpaceSprite", sourcename, spritename, tmpstr);
+	if (strcmp(tmpstr, "SpaceSprite")) {tw_error("SpaceSprite(%s # %s) : %s != SpaceSprite", sourcename, spritename, tmpstr);}
 	count = get_config_int("SpaceSprite", "Number", 0);
 	w = get_config_int("SpaceSprite", "Width", 0);
 	h = get_config_int("SpaceSprite", "Height", 0);
@@ -632,7 +702,7 @@ SpaceSprite::SpaceSprite(const char *package, const char *name) {
 	w = get_config_int(name, "Width", 1);
 	h = get_config_int(name, "Height", 1);
 	if (strcmp(get_config_string(name, "Type", NULL), "SpaceSprite"))
-		tw_error("Error loading SpaceSprite: that's not a SpaceSprite!");
+		{tw_error("Error loading SpaceSprite: that's not a SpaceSprite!");}
 	ext = get_config_string(name, "Extension", "");
 
 	m = new PPMASK*[count * rotations];
@@ -642,7 +712,7 @@ SpaceSprite::SpaceSprite(const char *package, const char *name) {
 		BITMAP *bmp = load_bitmap(buf, NULL);
 		b[i * rotations] = bmp;
 		m[i * rotations] = create_ppmask(bmp);
-		if (!m[i * rotations]) tw_error ("Error loading SpaceSprite: image %s not found", buf);
+		if (!m[i * rotations]) {tw_error ("Error loading SpaceSprite: image %s not found", buf);}
 		for (int j = 1; j < rotations; j += 1) {
 			BITMAP *tmp = create_bitmap(w, h);
 			clear_to_color(tmp, bitmap_mask_color(tmp));
@@ -662,7 +732,7 @@ SpaceSprite::SpaceSprite(BITMAP **sprites, int sprite_count) {
 	BITMAP *bmp;
 	rotations = 1;
 	count = sprite_count;
-	if (count < 1) tw_error("SpaceSprite::SpaceSprite - bad parameters (2)");
+	if (count < 1) {tw_error("SpaceSprite::SpaceSprite - bad parameters (2)");}
 	m = new PPMASK*[count * rotations];
 	b = new BITMAP*    [count * rotations];
 	w = sprites[0]->w;
@@ -699,9 +769,9 @@ SpaceSprite::~SpaceSprite() {
 BITMAP *SpaceSprite::get_bitmap(int index)
 {STACKTRACE
 	if (general_attributes & MIPMAPED) if (highest_mip > 0) 
-		tw_error ("get_bitmap on a mipmaped sprite!\n(retry likely to work)");
-	if (index >= count) tw_error("SpaceSprite::get_bitmap - index %d > count %d", index, count);
-	if (index < 0) tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);
+		{tw_error ("get_bitmap on a mipmaped sprite!\n(retry likely to work)");}
+	if (index >= count) {tw_error("SpaceSprite::get_bitmap - index %d > count %d", index, count);}
+	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);}
 	highest_mip = 0;
 	return(b[0][index]);
 }
@@ -736,9 +806,9 @@ void SpaceSprite::animate_character(Vector2 pos, int index, int color, Frame *sp
 void SpaceSprite::overlay (int index1, int index2, BITMAP *dest) {
 	STACKTRACE
 	int x, y;
-	if (general_attributes & MIPMAPED) tw_error ("overlay on a mipmaped sprite!  oh no!");
-	if (index1 > count) tw_error("SpaceSprite::overlay - index1 %d > count %d", index1, count);
-	if (index2 > count) tw_error("SpaceSprite::overlay - index2 %d > count %d", index2, count);
+	if (general_attributes & MIPMAPED) {tw_error ("overlay on a mipmaped sprite!  oh no!");}
+	if (index1 > count) {tw_error("SpaceSprite::overlay - index1 %d > count %d", index1, count);}
+	if (index2 > count) {tw_error("SpaceSprite::overlay - index2 %d > count %d", index2, count);}
 
 	for(y = 0; y < h; y += 1) {
 		for(x = 0; x < w; x += 1) {
@@ -809,13 +879,7 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 
 void SpaceSprite::draw(int x, int y, int index, BITMAP *surface) {
 	STACKTRACE
-	if (index >= count) {tw_error("SpaceSprite::draw - index %d >= count %d", index, count); index = 0;}
-	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
-	BITMAP *bmp = b[0][index];
-	if (general_attributes & MASKED) 
-		masked_blit (bmp, surface, 0, 0, x, y, bmp->w, bmp->h);
-	else 
-		blit        (bmp, surface, 0, 0, x, y, bmp->w, bmp->h);
+	draw(Vector2(x,y), Vector2(b[0][index]->w, b[0][index]->h), index, surface);
 	return;
 }
 
@@ -884,43 +948,43 @@ PMASK *rect_mask;
 
 void check_line_collision(BITMAP *bmp, int x, int y, int d)
 {STACKTRACE
-  int row, col;
+	int row, col;
 
-  if(line_collide)
-    return;
+	if(line_collide)
+		return;
 
-  col = x - rect_x;
-  row = y - rect_y;
+	col = x - rect_x;
+	row = y - rect_y;
 
-  if((col >= 0) && (col < rect_w) &&
-     (row >= 0) && (row < rect_h)) {
-    if(get_pmask_pixel(rect_mask, col, row)) {
-      line_collide = TRUE;
-      collide_x = x;
-      collide_y = y;
-    }
-  }
+	if((col >= 0) && (col < rect_w) &&
+		(row >= 0) && (row < rect_h)) {
+		if(get_pmask_pixel(rect_mask, col, row)) {
+			line_collide = TRUE;
+			collide_x = x;
+			collide_y = y;
+		}
+	}
 }
 
 int SpaceSprite::collide_ray(int lx1, int ly1, int *lx2, int *ly2,
   int sx, int sy, int sindex)
 {STACKTRACE
-  line_collide = FALSE;
-  rect_x = sx - (w / 2);
-  rect_y = sy - (h / 2);
-  rect_w = w;
-  rect_h = h;
+	line_collide = FALSE;
+	rect_x = sx - (w / 2);
+	rect_y = sy - (h / 2);
+	rect_w = w;
+	rect_h = h;
 	if ((rect_x   > lx1) && (rect_x   > *lx2)) return FALSE;
 	if ((rect_x+w < lx1) && (rect_x+w < *lx2)) return FALSE;
 	if ((rect_y   > ly1) && (rect_y   > *ly2)) return FALSE;
 	if ((rect_y+h < ly1) && (rect_y+h < *ly2)) return FALSE;
-  rect_mask = m[sindex];
-  do_line(NULL, lx1, ly1, *lx2, *ly2, 0, check_line_collision);
-  if(line_collide) {
-    *lx2 = collide_x;
-    *ly2 = collide_y;
-    return(TRUE);
-  }
+	rect_mask = m[sindex];
+	do_line(NULL, lx1, ly1, *lx2, *ly2, 0, check_line_collision);
+	if(line_collide) {
+		*lx2 = collide_x;
+		*ly2 = collide_y;
+		return(TRUE);
+	}
 
-  return(FALSE);
+	return(FALSE);
 }

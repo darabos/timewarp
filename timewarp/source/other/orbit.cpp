@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <allegro.h>
 #include "../melee.h"
 REGISTER_FILE

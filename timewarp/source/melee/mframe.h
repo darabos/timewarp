@@ -116,6 +116,7 @@ class Physics : public BaseClass {
 	virtual void preinit();
 	virtual void init();
 	virtual ~Physics();
+	virtual void destroy_all();
 
 	virtual int checksum();
 	virtual void dump_state ( const char *file_name );
@@ -175,7 +176,7 @@ protected: public: //aught to be protected, but we're lazy
 		SpaceLocation *qnext;
 	};
 	public:
-	int    layer;       // effects collisions & queries
+	int    layer;       // effects collisions & queries... (will be phased out eventually)
 protected: public://aught to be protected, but we're lazy
 	Vector2 vel;
 	double angle;        // the angle it's facing (sometimes not very meaningfull)
@@ -211,7 +212,7 @@ protected: public://aught to be protected, but we're lazy
 	double damage_factor;         // the damage this item inflicts
 
 	int damage(SpaceLocation *who, double normal, double direct = 0) { return who->handle_damage(this, normal, direct); }
-	/*handle_damage returns: 
+	/*handle_damage returns: (this is a lie)
 		-1 = benefitted from damage
 		 0 = ignored damage
 		 1 = took damage normally

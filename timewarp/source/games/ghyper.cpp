@@ -11,7 +11,10 @@
 #include "../melee/mshot.h"
 
 void HyperspaceColorEffects (RGB *c) {
-	c->r = ((c->r * 2) / 3) + 256/3;
+	int alpha = (c->filler ^ 255) + 1;
+	c->r = (c->r << 8) / alpha;
+	c->r = (c->r * 2 + 256) / 3;
+	c->r = (c->r * alpha) >> 8;
 	gamma_color_effects (c);
 	return;
 }

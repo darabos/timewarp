@@ -141,7 +141,9 @@ int TW_Dialog_Player::update() {
 	if (!player) player = init_dialog(dialog, ifocus);
 	int i = update_dialog ( player );
 	screen = old;
-	if (!i) return player->obj;
+	if (!i) {
+		return player->obj;
+	}
 	return -2;
 }
 
@@ -649,7 +651,11 @@ int d_tw_bitmap_proc(int msg, DIALOG *d, int c)
 /*	if (b && (msg==MSG_DRAW))
 		_aa2_stretch_blit(b, screen, d->x, d->y, d->w, d->h, true);*/
 	if (b && ((msg==MSG_IDLE) || (msg==MSG_DRAW))) {
-		rotate_sprite ( screen, b, d->x, d->y, get_time() * 4096 );
+		int ocl, oct, ocr, ocb;
+		ocl = screen->cl; oct = screen->ct; ocr = screen->cr; ocb = screen->cb;
+		screen->cl = d->x; screen->ct = d->y; screen->cr = d->x+d->w-1; screen->cb = d->y+d->h+1;
+		rotate_sprite ( screen, b, d->x+d->w/2 - b->w/2, d->y+d->h/2 - b->h/2, get_time() * 4096 );
+		screen->cl = ocl; screen->ct = oct; screen->cr = ocr; screen->cb = ocb;
 		//_aa2_stretch_blit(b, screen, d->x, d->y, d->w, d->h, true);
 	}
 	return D_O_K;

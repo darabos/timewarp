@@ -114,6 +114,7 @@ GlathrielMissile::GlathrielMissile(SpaceLocation *creator, double ox, double oy,
 void GlathrielMissile::calculate()
 {
 	Missile::calculate();
+	if (!exists()) return;
 	if (d > inactive_range) {
 		SpaceObject *o;
 		double a;
@@ -127,9 +128,10 @@ void GlathrielMissile::calculate()
 				add(new GlathrielSpot(this,angle,data->spriteExtra,
 					laser_num,laser_damage,laser_color,laser_range,laser_sweep));
 				//play_sound(data->sampleWeapon[1]);//using wrong datafile?
-				die();
+				state = 0;
 			}
 		}
+		q.end();
 	}
 }
 
@@ -154,7 +156,7 @@ void GlathrielSpot::calculate()
 	SpaceLocation::calculate();
 	life_counter += frame_time;
 	if (life_counter >= lifetime)
-		die();
+		state = 0;
 }
 
 void GlathrielSpot::animate(Frame *space)

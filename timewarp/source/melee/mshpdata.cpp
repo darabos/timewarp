@@ -292,6 +292,7 @@ SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index)
 			cp += sprintf(cp, "%s ", argv[i]);
 		}
 		else if (argv[i][0] == 'r') tp = argv[i];
+		else {tw_error("load_sprite - unrecognized modifiers '%s'", argv[i]);}
 	}
 	if (tp) {
 		rotations = atoi(tp+1);

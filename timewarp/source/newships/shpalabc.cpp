@@ -1,5 +1,4 @@
 #include "../ship.h"
-#include "../util/aastr.h"
 REGISTER_FILE
 
 #define turret_fire_frame_size 40
@@ -14,11 +13,6 @@ public:
 	int			death_frame, exp_frame;
 
 	bool		dying;
-
-	SpaceSprite	*dummy;
-
-	bool		supersprite;
-	int			ship_forceAA, turret_forceAA, fire_forceAA, engines_forceAA;
 
 	int			engine_phase;
 
@@ -66,11 +60,9 @@ public:
 	virtual void calculate_turn_right();
 	virtual void calculate_hotspots();
 	virtual void animate(Frame *space);
-	virtual	void animate_simple(Frame *space);
 	virtual int  handle_damage(SpaceLocation* source, double normal, double direct);
 	virtual int  handle_fuel_sap(SpaceLocation *source, double normal);
 	virtual double handle_speed_loss(SpaceLocation *source, double normal);
-//	virtual		~AlaryBC();
   
 };
 
@@ -114,7 +106,7 @@ public:
 	bool		alive;
 	int			fire_frame[2], fire_time[2];
 	double		rel_x, rel_y;
-	int			armour;
+	double		armour;
 
 	int			barrel;
 	int			shots_fired;
@@ -180,13 +172,6 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 	extraFuelSapReduction    = get_config_float("Extra", "FuelSapReduction", 1);
     extraSpeedLossReduction  = get_config_float("Extra", "SpeedLossReduction", 1);
 
-	supersprite				= (get_config_int("GFX", "SuperSprite", 0) > 0);
-
-	ship_forceAA			= get_config_int("GFX", "ShipAA", 0);
-	turret_forceAA			= get_config_int("GFX", "TurretAA", 0);
-	fire_forceAA			= get_config_int("GFX", "FireAA", 0);
-	engines_forceAA			= get_config_int("GFX", "EnginesAA", 0);
-	
 	absorbed_damage = 0;
 //	residual_damage = 0;
 	old_shield_state= -1;
@@ -210,32 +195,6 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 	sprite_index = iround(angle / (PI2/128)) + 32;
 	sprite_index &= 127;
 
-	dummy = data->more_sprites[7];
-
-/*
-	DATAFILE *rawdata = load_datafile("ships/shpalabs.dat");
-	if(!rawdata) error("Error loading 'shpalabs.dat'", "xxx");
-
-	dummy = NULL;
-
-	if (supersprite) {
-		dummy = new SpaceSprite(&rawdata[0], 1, SpaceSprite::MASKED);
-		sprite = new SpaceSprite(&rawdata[0], 128, SpaceSprite::MASKED);
-		sprite_turret = new SpaceSprite(&rawdata[128], 256, SpaceSprite::MASKED);
-		sprite_fire = new SpaceSprite(&rawdata[384], 4, SpaceSprite::MASKED);
-		for (i=0; i<4; i++)
-			sprite_engines[i] = new SpaceSprite(&rawdata[388+i*2], 2, SpaceSprite::MASKED);
-	}
-	else {
-		sprite = new SpaceSprite(&rawdata[0], 128, SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-		sprite_turret = new SpaceSprite(&rawdata[128], 256, SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-		sprite_fire = new SpaceSprite(&rawdata[384], 4, SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-		for (i=0; i<4; i++)
-			sprite_engines[i] = new SpaceSprite(&rawdata[388+i*2], 2, SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	}
-
-	unload_datafile(rawdata);
-*/
 }
 
 void AlaryBC::calculate()
@@ -331,8 +290,7 @@ int AlaryBC::activate_weapon()
 
 	game->add(new AlaryBCTorpedo(this, 30*side, 0, angle, 350/*oinactive*/, weaponAccel, weaponVelocity,
 		weaponLifetime, weaponProximity, weaponArmour, weaponTR, target,
-		data->spriteWeapon,
-		warheadDamage,  warheadRange, warheadArmour, warheadVelocity, warheadTR));
+		data->spriteWeapon, warheadDamage,  warheadRange, warheadArmour, warheadVelocity, warheadTR));
 
 	side *= -1;
 	return true;
@@ -384,15 +342,12 @@ void AlaryBC::calculate_hotspots()
 }
 
 
-void AlaryBC::animate_simple(Frame *space)
+void AlaryBC::animate(Frame *space)
 {
 	if (state == 0) return;
 
 	double tx = cos(angle), ty = sin(angle);
 
-	int old_aa = get_tw_aa_mode();
-
-	set_tw_aa_mode((engines_forceAA<0)?old_aa:engines_forceAA);
 	if ((thrust)&&(engines_armour > 0)&&(crew>0)) {
 		engine_phase = (engine_phase + 1) % 2;
 		data->more_sprites[3]->animate(Vector2(pos.x+0.5-50*tx, pos.y+0.5-50*ty), engine_phase, space);
@@ -404,9 +359,7 @@ void AlaryBC::animate_simple(Frame *space)
 		data->more_sprites[6]->animate(Vector2(pos.x+0.5-48*tx+39*ty, pos.y+0.5-48*ty-39*tx), engine_phase, space);
 	}
 
-	set_tw_aa_mode((ship_forceAA<0)?old_aa:ship_forceAA);
 	sprite->animate(pos,sprite_index, space);
-
 
 	int i;
 	for (i=0; i<3; i++) {
@@ -416,86 +369,16 @@ void AlaryBC::animate_simple(Frame *space)
 			si = iround(normalize(angle+turret[i]->angle,PI2) / (PI2/128));
 			ta = si * (PI2/128);
             ttx = cos(ta); tty = sin(ta);
-			set_tw_aa_mode((fire_forceAA<0)?old_aa:fire_forceAA);
 			if (turret[i]->fire_frame[0] < 4)
 				data->more_sprites[2]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty + 13*ttx+3*tty, pos.y+0.5+ry*ty+rx*tx + 13*tty-3*ttx), turret[i]->fire_frame[0], space);
 			if (turret[i]->fire_frame[1] < 4)
 				data->more_sprites[2]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty + 13*ttx-3*tty, pos.y+0.5+ry*ty+rx*tx + 13*tty+3*ttx), turret[i]->fire_frame[1], space);
-			set_tw_aa_mode((turret_forceAA<0)?old_aa:turret_forceAA);
 			data->more_sprites[0]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), (iround(si) + 32) & 127, space);
 		}
 		else	{
-			set_tw_aa_mode((turret_forceAA<0)?old_aa:turret_forceAA);
 			data->more_sprites[1]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127), space); }
 	}
 
-	set_tw_aa_mode(old_aa);
-}
-
-void AlaryBC::animate(Frame *space)
-{
-
-	if (!supersprite) {
-		animate_simple(space);
-		return; }
-
-	int i;
-
-	set_tw_aa_mode(get_tw_aa_mode() &~AA_BLEND);
-
-	double tx = cos(angle), ty = sin(angle);
-	BITMAP *bmp;
-	bmp = dummy->get_bitmap(0);
-	clear_to_color( bmp, bitmap_mask_color(bmp));
-
-
-//  animate engines
-
-	int old_aa = get_tw_aa_mode();
-
-	if ((thrust)&&(engines_armour > 0)&&(crew>0)) {
-		engine_phase = (engine_phase + 1) % 2;
-        data->more_sprites[3]->draw(Vector2(91+0.5-50*tx, 91+0.5-50*ty), data->more_sprites[3]->size(), engine_phase, bmp);
-        data->more_sprites[4]->draw(Vector2(92.5+0.5-49*tx-16*ty, 92.5+0.5-49*ty+16*tx), data->more_sprites[4]->size(), engine_phase, bmp);
-	    data->more_sprites[4]->draw(Vector2(92.5+0.5-49*tx+16*ty, 92.5+0.5-49*ty-16*tx), data->more_sprites[4]->size(), engine_phase, bmp);
-        data->more_sprites[5]->draw(Vector2(94+0.5-49.5*tx-28.5*ty, 94+0.5-49.5*ty+28.5*tx), data->more_sprites[5]->size(), engine_phase, bmp);
-	    data->more_sprites[5]->draw(Vector2(94+0.5-49.5*tx+28.5*ty, 94+0.5-49.5*ty-28.5*tx), data->more_sprites[5]->size(), engine_phase, bmp);
-        data->more_sprites[6]->draw(Vector2(95.5+0.5-48*tx-39*ty, 95.5+0.5-48*ty+39*tx), data->more_sprites[6]->size(), engine_phase, bmp);
-	    data->more_sprites[6]->draw(Vector2(95.5+0.5-48*tx+39*ty, 95.5+0.5-48*ty-39*tx), data->more_sprites[6]->size(), engine_phase, bmp);
-	}
-
-
-//	draw ship
-	sprite->draw(Vector2(0, 0), size, sprite_index, bmp);
-
-	
-//	animate turrets
-
-	for (i=0; i<3; i++) {
-
-		double si, ta, ttx, tty, rx, ry;
-		rx = turret[i]->rel_x; ry = turret[i]->rel_y;
-		if (turret[i]->alive) {
-			si = iround(normalize(angle+turret[i]->angle,PI2) / (PI2/128));
-			ta = si * (PI2/128);
-            ttx = cos(ta); tty = sin(ta);
-			if (turret[i]->fire_frame[0] < 4)
-				data->more_sprites[2]->draw(97+0.5+ry*tx-rx*ty + 13*ttx+3*tty, 97+0.5+ry*ty+rx*tx + 13*tty-3*ttx, turret[i]->fire_frame[0], bmp);
-			if (turret[i]->fire_frame[1] < 4)
-				data->more_sprites[2]->draw(97+0.5+ry*tx-rx*ty + 13*ttx-3*tty, 97+0.5+ry*ty+rx*tx + 13*tty+3*ttx, turret[i]->fire_frame[1], bmp);
-			data->more_sprites[0]->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, (iround(si) + 32) & 127, bmp);
-		}
-		else
-			data->more_sprites[1]->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127), bmp);
-	}
-
-	
-//  draw on screen
-
-//	int old_aa = get_tw_aa_mode();
-	set_tw_aa_mode((ship_forceAA<0)?old_aa:ship_forceAA);
-	dummy->animate(pos, 0, space);
-	set_tw_aa_mode(old_aa);
 };
 
 
@@ -575,7 +458,7 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 			turret[i]->state = 0;
 		play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 		game->add(new Animation(this, pos,
-				game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
+				game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS, 2.0));
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH) game->ship_died(this, source);
 		state = 0; return 0;
 	}
@@ -624,24 +507,9 @@ double AlaryBC::handle_speed_loss(SpaceLocation *source, double normal)
 }
 
 
-
-/*AlaryBC::~AlaryBC()
-{
-	if (supersprite) delete dummy;
-//	delete sprite;
-//	delete sprite_turret;
-//	delete sprite_fire;
-//	int i;
-//	for (i=0; i<4; i++)
-//		delete sprite_engines[i];
-}
-*/
-
-
 AlaryBCTorpedo::AlaryBCTorpedo(SpaceLocation *creator, double ox, double oy, double oangle, int oinactive, double oaccel, double  omaxspeed,
 		int olifetime, double oproximity, double oarmour, double otr, SpaceObject *otarget,
-		SpaceSprite *osprite,
-		double wdamage, double wrange, double warmour, double wv,
+		SpaceSprite *osprite, double wdamage, double wrange, double warmour, double wv,
 		double wtr) :
 	SpaceObject(creator, 0, oangle, osprite),
 	armour(oarmour), lifetime(olifetime), proximity(oproximity), accel(oaccel),
@@ -654,16 +522,7 @@ AlaryBCTorpedo::AlaryBCTorpedo(SpaceLocation *creator, double ox, double oy, dou
 	set_depth(DEPTH_SHOTS);
 //	attributes |= ATTRIB_SHOT;
 
-//	double alpha, tx, ty;
-//	alpha = (creator->get_angle());
-//	tx = cos(alpha);
-//	ty = sin(alpha);
-
-//	x += creator->normal_x() + oy * tx - ox * ty;
-//	y += creator->normal_y() + oy * ty + ox * tx;
 	pos = normalize(creator->normal_pos() + rotate(Vector2(-ox, oy), -PI/2+creator->get_angle()));
-//	vx = creator->get_vx();
-//	vy = creator->get_vy();
 	vel = creator->get_vel();
 
 	smoke_frame = 0;
@@ -680,7 +539,7 @@ void AlaryBCTorpedo::calculate()
 	if (lifetime < 0) {
 
 		//launch warheads or die
-		die();
+		state = 0;
 		return;
 
 	}
@@ -701,15 +560,15 @@ void AlaryBCTorpedo::calculate()
 			game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 10, 50, DEPTH_EXPLOSIONS));
 			
 			game->add(new AlaryBCWarhead(this, 0, 10, angle,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteSpecial, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle - 50*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteSpecial, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle + 50*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteSpecial, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle - 75*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteSpecial, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle + 75*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteSpecial, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			
 			state = 0;
 		}
@@ -728,8 +587,8 @@ void AlaryBCTorpedo::calculate()
 
 	while (smoke_frame <= 0) {
 		smoke_frame += 50;
-		game->add(new Animation(this, pos - 14*unit_vector(angle), data->spriteSpecial,
-			128, 12, 50, LAYER_HOTSPOTS));
+		game->add(new Animation(this, pos - 14*unit_vector(angle), data->more_sprites[7],
+			0, 12, 50, LAYER_HOTSPOTS));
 	}
 	smoke_frame -= frame_time;
 
@@ -762,8 +621,6 @@ AlaryBCWarhead::AlaryBCWarhead(SpaceLocation *creator, double ox, double oy, dou
 	HomingMissile(creator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, 
 	otrate, creator, osprite, otarget)
 {
-	sprite_index += 64;
-
 	explosionSprite     = data->spriteExtraExplosion;
 	explosionFrameCount = 10;
 	explosionFrameSize  = 50;
@@ -777,12 +634,9 @@ void AlaryBCWarhead::calculate()
 {
 	HomingMissile::calculate();
 	
-	if (sprite_index < 64)
-		sprite_index += 64;
-
 	while (smoke_frame <= 0) {
 		smoke_frame += 25;
-		game->add(new Animation(this, pos -2*unit_vector(angle), data->spriteExtra,
+		game->add(new Animation(this, pos -2*unit_vector(angle), data->more_sprites[8],
 			0, 12, 50, LAYER_HOTSPOTS));
 	}
 	smoke_frame -= frame_time;
@@ -917,6 +771,7 @@ SpaceObject *AlaryBCTurret::get_target(SpaceObject *tgt)
 					tgt = q.currento; }
 			}
 		}
+	q.end();
 
 
 	if (tgt != tgt0)

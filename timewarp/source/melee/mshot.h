@@ -1,6 +1,9 @@
 #ifndef _MFRAME_H
 #include "mframe.h"
 #endif
+#ifndef _MGAME_H
+#include "mgame.h"
+#endif
 
 #ifndef _MSHOT_H
 #define _MSHOT_H

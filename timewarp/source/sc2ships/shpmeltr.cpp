@@ -115,6 +115,7 @@ MelnormeShot::MelnormeShot(Vector2 opos, double oangle, double ov,
 //  vx = ship->get_vx();
 //  vy = ship->get_vy();
   vel = ship->get_vel();
+  set_depth(DEPTH_SHIPS+0.5);
 }
 
 void MelnormeShot::calculate() {
@@ -193,6 +194,7 @@ MelnormeDisable::MelnormeDisable(Ship *creator, Ship *oship, SpaceSprite *osprit
   frame_count(ofcount)
 {
 	collide_flag_anyone = 0;
+	set_depth(DEPTH_EXPLOSIONS);
 }
 
 void MelnormeDisable::calculate() {

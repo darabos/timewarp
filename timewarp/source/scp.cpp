@@ -124,7 +124,7 @@ void edit_fleet(int player);
  *   is set to the default value NULL, the reference fleet is used to build
  *   the ship list.
  */
-void ship_view_dialog(int si = 0, Fleet *Fleet = NULL);
+//void ship_view_dialog(int si = 0, Fleet *fleet = NULL);
 
 /*
  * show_diagnostics();
@@ -520,6 +520,8 @@ class MainMenu : public BaseClass {
 	public:
 	virtual void _event(Event * e);
 	virtual void preinit();
+	virtual void deinit();
+	virtual void init(VideoWindow *parent);
 	virtual void doit();
 	virtual void enable();
 	virtual void disable();
@@ -545,6 +547,25 @@ void MainMenu::disable() {STACKTRACE
 void MainMenu::preinit() {
 	window = NULL;
 	state = 0;
+}
+
+void MainMenu::init(VideoWindow *parent) {
+	if (window) window->init(parent);
+	else {
+		window = new VideoWindow();
+		window->preinit();
+		window->init(parent);
+	}
+}
+
+void MainMenu::deinit() {
+	STACKTRACE
+	if (state & 2) {
+		window->remove_callback(this);
+		window->deinit();
+		delete window;
+		window = NULL;
+	}
 }
 
 void MainMenu::doit() {STACKTRACE
@@ -614,7 +635,8 @@ END_OF_MAIN();
 
 int tw_main(int argc, char *argv[]) { STACKTRACE
 	int i;
-	const char *auto_game = NULL, *auto_log = NULL;
+	int auto_port = -1;
+	const char *auto_play = NULL, *auto_param = NULL;
 
 	#ifdef __BEOS__
 		// set cwd to path of exe 
@@ -704,12 +726,15 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 				log_debug("command-line argument -noidle\n");
 				_no_idle = 1;
 			}
-
 			else if (!strcmp(argv[i], "-play") && (argc > i + 2)) {
 				log_debug("command-line argument -play\n");
-				auto_game = argv[i+1];
-				auto_log = argv[i+2];
-				i += 2;				
+				auto_play = argv[i+1];
+				auto_param = argv[i+2];
+				i += 2;
+				if ((argc > i + 0) && (argv[i][0] != '-')) {
+					auto_port = atoi(argv[i]);
+					i += 1;
+				}
 			}
 			else {
 				log_debug("unrecognized command-line argument\n");
@@ -726,7 +751,8 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		sound.load();
 		videosystem.set_resolution(screen_width, screen_height, screen_bpp, fullscreen);
 
-		View *v = get_view ( get_config_string("View", "View", NULL) , NULL );
+		View *v = NULL;
+		v = get_view ( get_config_string("View", "View", NULL) , NULL );
 		if (!v) v = get_view ( "Hero", NULL );
 		set_view(v);
 
@@ -734,14 +760,23 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		init_fleet();
 		init_time();
 
-//		if (auto_game) { FIX ME
-//			play_game(auto_game, auto_log);
-//		}
-//		else {
+		if (auto_play) {// FIX ME
+			if (!strcmp(auto_play, "game")) play_game(auto_param, NULL);
+			if (!strcmp(auto_play, "demo")) play_demo(auto_param);
+			if (!strcmp(auto_play, "net1client")) play_net1client(auto_param, auto_port);
+			if (!strcmp(auto_play, "net1server")) play_net1server(auto_param, auto_port);
+		}
+		else {
 			mainmenu.preinit();
-			mainmenu.window = &videosystem.window;
+			mainmenu.init(&videosystem.window);
 			mainmenu.doit();
-//		}
+			mainmenu.deinit();
+		}
+		if (old_game) {
+			delete old_game;
+			old_game = NULL;
+		}
+
 		sound.disable();
 		disable_input();
 		unload_datafile(scppal);
@@ -933,6 +968,7 @@ enum {
 	TEAMS_DIALOG_PLAYERLIST_TEXT,
 	TEAMS_DIALOG_PLAYERLIST,
 	TEAMS_DIALOG_CONTROLLIST,
+	TEAMS_DIALOG_NETTEAMS,
 	TEAMS_DIALOG_SELECTCONTROL,
 	TEAMS_DIALOG_TEAM_NUM,
 	TEAMS_DIALOG_CONFIG_NUM,
@@ -944,17 +980,18 @@ enum {
 // TEAMS - dialog structure
 DIALOG teamsDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_box_proc,        35,   35,   420,  380,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_box_proc,        35,   35,   420,  385,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { d_textbox_proc,    150,  40,   200,  25,   255,  0,    0,    0,       0,    0,    (void *)"Teams Dialog", NULL, NULL },
   { d_text_proc,       40,   70,   240,  160,  255,  0,    0,    D_EXIT,  0,    0,    (void *)" Player   Team Config Type", NULL, NULL },
   { d_list_proc,       40,   85,   240,  145,  255,  0,    0,    D_EXIT,  0,    0,    (void *)playerListboxGetter, NULL, NULL },
   { d_list_proc,       290,  70,   160,  160,  255,  0,    0,    D_EXIT,  0,    0,    (void *)controlListboxGetter, NULL, NULL },
-  { d_button_proc,     295,  235,  150,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select Controller", NULL, NULL },
-  { d_button_proc,     50,   250,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Team #", NULL, NULL },
-  { d_button_proc,     50,   280,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Config #", NULL, NULL },
-  { d_button_proc,     50,   310,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Config", NULL, NULL },
-  { d_button_proc,     50,   340,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Fleet", NULL, NULL },
-  { d_button_proc,     90,   375,  220,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Main Menu", NULL, NULL },
+  { d_check_proc,      100,  236,  120,  20,   255,  0,    0,    0,       1,    0,    (void *)"Teams in Net Games",    NULL, NULL },
+  { d_button_proc,     295,  240,  150,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select Controller", NULL, NULL },
+  { d_button_proc,     50,   255,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Team #", NULL, NULL },
+  { d_button_proc,     50,   285,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Config #", NULL, NULL },
+  { d_button_proc,     50,   315,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Config", NULL, NULL },
+  { d_button_proc,     50,   345,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Fleet", NULL, NULL },
+  { d_button_proc,     90,   380,  220,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Main Menu", NULL, NULL },
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 };
@@ -962,14 +999,19 @@ DIALOG teamsDialog[] = {
 
 // TEAMS - dialog function
 void change_teams() {STACKTRACE
-	int a;
+	int a, i;
 
 	set_config_file("scp.ini");
 
 	teamsDialog[TEAMS_DIALOG_PLAYERLIST].d1 = 0;
+	teamsDialog[TEAMS_DIALOG_NETTEAMS].flags = 
+		twconfig_get_int("/ini/client.ini/network/NetworkMeleeUseTeams")
+		? D_SELECTED : 0;
+
 	while (1) {
 		dialog_string[0][0] = 0;
 		sprintf(dialog_string[0], "Config #");
+
 
 		a = tw_do_dialog(NULL, teamsDialog, 0);
 		if((a == TEAMS_DIALOG_SELECTCONTROL) || (a == TEAMS_DIALOG_CONTROLLIST)) {
@@ -1002,12 +1044,15 @@ void change_teams() {STACKTRACE
 	}
 
 	set_config_file("scp.ini");
-	for (int i = 0; i < MAX_PLAYERS; i += 1) {
+	for (i = 0; i < MAX_PLAYERS; i += 1) {
 		sprintf(dialog_string[0], "Player%d", i+1);
 		set_config_string (dialog_string[0], "Type", player_type[i]);
 		set_config_int (dialog_string[0], "Config", player_config[i]);
 		set_config_int (dialog_string[0], "Team", player_team[i]);
 	}
+	twconfig_set_int("/cfg/client.ini/network/NetworkMeleeUseTeams", 
+		(teamsDialog[TEAMS_DIALOG_NETTEAMS].flags & D_SELECTED) ? 1 : 0);
+
 	return;
 }
 
@@ -1281,7 +1326,7 @@ DIALOG shipviewDialog[] = {
   { d_list_proc2,      5,    50,   220,  420,  255,  0,    0,    D_EXIT,  0,    0,    (void *) fleetListboxGetter, NULL, NULL },
   { d_textbox_proc,    230,  110,  400,  160,  255,  0,    0,    0,       0,    0,    (void *) NULL, NULL, NULL },
   { d_textbox_proc,    230,  280,  400,  190,  255,  0,    0,    0,       0,    0,    (void *) NULL, NULL, NULL },
-  { d_bitmap_proc,     230,  5,    64,   100,  255,  0,    0,    0,       0,    0,    (void *) NULL, NULL, NULL },
+  { d_tw_bitmap_proc,  230,  5,    64,   100,  255,  0,    0,    0,       0,    0,    (void *) NULL, NULL, NULL },
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 };
@@ -1331,7 +1376,20 @@ void ship_view_dialog(int si, Fleet *fleet) {
 				if (sprite)
 					destroy_bitmap(sprite);
 				sprite = NULL;
-				d = load_datafile_object(type->data->file, "SHIP_P00_PCX");
+				type->data->lock();
+				if (type->data->spriteShip) {
+					sprite = create_bitmap(180, 180);
+					BITMAP *tmp = type->data->spriteShip->get_bitmap_readonly(0);
+					clear_to_color(sprite, 0);
+					type->data->spriteShip->draw( 
+						Vector2(90,90) - type->data->spriteShip->size()/2, 
+						type->data->spriteShip->size(), 
+						0, sprite 
+					);
+				}
+				type->data->unlock();
+
+//				d = load_datafile_object(type->data->file, "SHIP_P00_PCX");
 
 				/*
 				if (!d) d = load_datafile_object(blah, "SHIP_S00_BMP");
@@ -1339,7 +1397,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 				if (!d) d = load_datafile_object(blah, "SHIP_S01_BMP");
 				*/
 				//if (!d) error (" viewships failed to load ship picture");
-
+/*
 				switch (d->type) {
 					case DAT_RLE_SPRITE: {
 						RLE_SPRITE *rle = (RLE_SPRITE*)(d->dat);
@@ -1362,7 +1420,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 				}
 				if (d)
 					unload_datafile_object(d);
-
+*/
 				// read ship text file contents
 				f = pack_fopen(type->text, F_READ);
 				if (!f)
@@ -1432,6 +1490,8 @@ void ship_view_dialog(int si, Fleet *fleet) {
 	}
 	// main dialog loop - end
 
+	if (sprite)
+		destroy_bitmap(sprite);
 	return;
 }
 

@@ -327,6 +327,8 @@ OPTIONS_DIALOG_VIEW,
 OPTIONS_DIALOG_OK,
 OPTIONS_DIALOG_CANCEL,
 
+OPTIONS_DIALOG_QUALITY_TEXT,
+OPTIONS_DIALOG_INTERPOLATION_ON,
 OPTIONS_DIALOG_AA_ON,
 OPTIONS_DIALOG_NOALIGN_ON,
 OPTIONS_DIALOG_BLEND_ON,
@@ -349,6 +351,9 @@ DIALOG old_optionsDialog[] =
    { d_button_proc,   400, 60,  80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"OK",               NULL, NULL          },
    { d_button_proc,   400, 116, 80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"Cancel",           NULL, NULL          },
 
+   { d_text_proc,      40, 216, 120, 20,  255, 0,   0,    0,      1,   0,   (void *)"Rendering Quality:", NULL, NULL          },
+
+   { d_check_proc,     40, 236, 120, 20,  255, 0,   0,    0,      1,   0,   (void *)"Interpolation",    NULL, NULL          },
    { d_check_proc,     40, 260, 120, 20,  255, 0,   0,    0,      1,   0,   (void *)"Anti-Aliasing",    NULL, NULL          },
    { d_check_proc,     40, 284, 120, 20,  255, 0,   0,    0,      1,   0,   (void *)"AA:Non-integer",   NULL, NULL          },
    { d_check_proc,     40, 308, 120, 20,  255, 0,   0,    0,      1,   0,   (void *)"AA:Blend",         NULL, NULL          },
@@ -364,6 +369,8 @@ void change_options() {STACKTRACE
 	set_config_file("client.ini");
 //	old_optionsDialog[OPTIONS_DIALOG_AA].d1 = get_aa_mode();
 
+	old_optionsDialog[OPTIONS_DIALOG_INTERPOLATION_ON].flags = 
+		interpolate_frames ? D_SELECTED : 0;
 	int aa = get_config_int("Rendering", "AA_Mode", AA_NO_AA);
 	old_optionsDialog[OPTIONS_DIALOG_AA_ON].flags = 
 		(aa&AA_NO_AA) ? 0 : D_SELECTED;
@@ -400,6 +407,9 @@ void change_options() {STACKTRACE
 
 	set_config_file("client.ini");
 //	set_config_int("View", "Anti-Aliasing", get_aa_mode());
+	interpolate_frames = 
+		(old_optionsDialog[OPTIONS_DIALOG_INTERPOLATION_ON].flags & D_SELECTED) ? 1 : 0;
+	set_config_int("View", "InterpolateFrames", interpolate_frames);
 	aa&=~AA_NO_AA;aa|= (old_optionsDialog[OPTIONS_DIALOG_AA_ON].flags) ? 
 		0 : AA_NO_AA;
 	aa&=~AA_NO_ALIGN;aa|= (old_optionsDialog[OPTIONS_DIALOG_NOALIGN_ON].flags) ? 

@@ -57,8 +57,8 @@ ViewType *viewtypelist = NULL;
 
 
 void set_view ( View * new_default ) {STACKTRACE
-	if (!new_default) tw_error( "new default view is NULL");
-	if (!new_default->type) tw_error("new default view has no type info");
+	if (!new_default) {tw_error( "new default view is NULL");}
+	if (!new_default->type) {tw_error("new default view has no type info");}
 	if (_default_view) delete _default_view;
 	_default_view = new_default;
 	return;
@@ -133,7 +133,7 @@ void View::prepare ( Frame *frame, int time ) {STACKTRACE
 	return;
 }
 
-void View::animate(Game *game) {STACKTRACE
+/*void View::animate(Game *game) {STACKTRACE
 	if (FULL_REDRAW) frame->full_redraw = true;
 	frame->erase();
 	prepare(frame);
@@ -149,7 +149,7 @@ void View::animate(Game *game) {STACKTRACE
 	frame->draw();
 	unscare_mouse();
 	return;
-	}
+	}*/
 
 void View::animate_predict(Game *game, int time) {STACKTRACE
 	if (FULL_REDRAW) frame->full_redraw = true;
@@ -190,6 +190,25 @@ bool View::screen2game(Vector2 *_pos) {
 		return false;
 	return true;
 	}
+double View::in_view(Vector2 pos, Vector2 size) {
+	STACKTRACE
+	pos = corner(pos, size);
+	size = size * space_zoom;
+
+	double a = size.x, b = size.y;
+	double c;
+	c = pos.x + size.x - space_view_size.x;
+	if (c > 0) a -= c;
+	c = pos.x;
+	if (c < 0) a += c;
+	if (a < 0) return 0;
+	c = pos.y + size.y - space_view_size.y;
+	if (c > 0) b -= c;
+	c = pos.y;
+	if (c < 0) b += c;
+	if (b < 0) return 0;
+	return a * b / (size.x * size.y);
+}
 int View::focus(CameraPosition *pos, SpaceLocation *la, SpaceLocation *lb) {
 	STACKTRACE
 	if (!la && !lb) return 0;
@@ -285,6 +304,9 @@ void View::track (const CameraPosition &target, double smooth_time, CameraPositi
 }
 
 void View::init(View *old) {STACKTRACE
+	if (window || frame) {
+		tw_error("View::init - hmm...");
+	}
 	if (old) {
 		camera = old->camera;
 		key_zoom_in = old->key_zoom_in;
@@ -312,7 +334,12 @@ void View::init(View *old) {STACKTRACE
 	return;
 }
 void View::replace ( View * v ) {STACKTRACE
-	if (frame) delete frame;
+	if (frame) {
+		window->remove_callback(this);
+		delete frame;
+		frame = NULL;
+		window = NULL;
+	}
 	frame = v->frame;
 	window = frame->window;
 	view_size = v->view_size;
@@ -327,7 +354,11 @@ void View::replace ( View * v ) {STACKTRACE
 	return;
 }
 View::~View() {STACKTRACE
+	if (frame) {
+		window->remove_callback(this);
+		delete frame;
 	}
+}
 void View::calculate(Game *game) {}
 
 void message_type::out(char *string, int dur, int c) {STACKTRACE
@@ -543,118 +574,389 @@ void View_Enemy_Discrete::calculate (Game *game) {STACKTRACE
 
 
 
-class View_Split : public View {
+class View_Split2a : public View {
 	double max, min;
-	CameraPosition c1, c2;
-	VideoWindow *sub[2];
-	Frame *frame2;
+	enum {num_windows = 2};
+	CameraPosition cam[num_windows];
+	Frame *frames[num_windows];
 	public:
 	virtual void calculate(Game *game);
 	virtual void init(View *old);
-	virtual void animate(Game *game);
-	//virtual void set_window (BITMAP *dest, int x, int y, int w, int h);
+	virtual void animate_predict(Game *game, int time);
+	virtual ~View_Split2a();
 	};
-void View_Split::init(View *old) {STACKTRACE
+void View_Split2a::init(View *old) {STACKTRACE
 	View::init(old);
 
-	c1 = camera;
-	c2 = camera;
 	min = 480;
 	max = 4800;
-	frame2 = new Frame(1024);
-	sub[0] = window;
-	sub[1] = frame2->window;
-	sub[1]->preinit();
-	window = new VideoWindow();
-	window->preinit();
-	window->match(sub[0]);
-	sub[0]->init(window);
-	sub[1]->init(window);
-	sub[0]->locate(0,0.0, 0,0, 0,0.5, 0, 1);
-	sub[1]->locate(0,0.5, 0,0, 0,0.5, 0, 1);
+
+	int i;
+	for (i = 0; i < num_windows; i += 1) cam[i] = camera;
+	for (i = 0; i < num_windows; i += 1) frames[i] = new Frame(1024);
+	frames[0]->window->locate(0,0.0, 0,0, 0,0.5, 0, 1);
+	frames[1]->window->locate(0,0.5, 0,0, 0,0.5, 0, 1);
 	return;
 	}
-void View_Split::animate(Game *game) {STACKTRACE
+View_Split2a::~View_Split2a()
+{
+	int i;
+	for (i = 0; i < num_windows; i += 1) {
+		delete frames[i];
+	}
+}
+void View_Split2a::animate_predict(Game *game, int time) {STACKTRACE
 	VideoWindow *tmpw;
 	Frame *tmpf;
+	CameraPosition tmpc;
+	int i;
 
 	tmpw = window;
 	tmpf = frame;
+	tmpc = camera;
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(window);
+	}
 
-	window = sub[0];
-	camera = c1;
-	View::animate(game);
+	for (i = 0; i < num_windows; i += 1) {
+		window = frames[i]->window;
+		frame = frames[i];
+		camera = cam[i];
+		View::animate_predict(game, time);
+	}
 
-	frame = frame2;
-	window = sub[1];
-	camera = c2;
-	View::animate(game);
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(NULL);
+	}
 
 	frame = tmpf;
 	window = tmpw;
+	camera = tmpc;
 	view_size.x = window->w;
 	view_size.y = window->w;
 }
 
-void View_Split::calculate (Game *game) {STACKTRACE
+void View_Split2a::calculate (Game *game) {STACKTRACE
 	CameraPosition n;
 	SpaceLocation *c;
+	int i;
 
-	n = c1;
-	if (key_pressed(key_zoom_in)) n.z *= 1 + 0.002 * frame_time;
-	if (key_pressed(key_zoom_out))  n.z /= 1 + 0.002 * frame_time;
-	if (n.z < min) n.z = min;
-	if (n.z > max) n.z = max;
-	c = NULL;
-	if (game->num_focuses) c = game->focus[game->focus_index]->get_focus();
-	focus ( &n, c );
-	track ( n, frame_time, &c1 );
+	for (i = 0; i < num_windows; i += 1) {
+		n = cam[i];
+		switch (i) {
+		case 0:
+			if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
+			if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
+			break;
+		case 1:
+			if (key_pressed(key_alter1)) n.z *= 1 + 0.002 * frame_time;
+			if (key_pressed(key_alter2)) n.z /= 1 + 0.002 * frame_time;
+			break;
+		default:
+			break;
+		}
+		if (n.z < min) n.z = min;
+		if (n.z > max) n.z = max;
+		c = NULL;
+		if (game->num_focuses > i) c = game->focus[(game->focus_index + i) % game->num_focuses]->get_focus();
+		focus ( &n, c );
+		track ( n, frame_time, &cam[i] );
+	}
 
-	n = c2;
-	if (key_pressed(key_alter1)) n.z *= 1 + 0.002 * frame_time;
-	if (key_pressed(key_alter2)) n.z /= 1 + 0.002 * frame_time;
-	if (n.z < min) n.z = min;
-	if (n.z > max) n.z = max;
-	c = NULL;
-	if (game->num_focuses) c = game->focus[(game->focus_index + 1) % game->num_focuses]->get_focus();
-	focus ( &n, c );
-	track ( n, frame_time, &c1 );
+	camera = cam[0];
+	return;
+	}
 
-	camera = c1;
 
-/*	if (key_pressed(key_zoom_in)) z *= 1 + 0.002 * frame_time;
-	if (key_pressed(key_zoom_out))  z /= 1 + 0.002 * frame_time;
-	if (z < min) z = min;
-	if (z > max) z = max;
-	if (key_pressed(key_alter2)) z2 *= 1 + 0.002 * frame_time;
-	if (key_pressed(key_alter1))  z2 /= 1 + 0.002 * frame_time;
-	if (z2 < min) z2 = min;
-	if (z2 > max) z2 = max;
+
+
+class View_Split2b : public View {
+	double max, min;
+	enum {num_windows = 2};
+	CameraPosition cam[num_windows];
+	Frame *frames[num_windows];
+	public:
+	virtual void calculate(Game *game);
+	virtual void init(View *old);
+	virtual void animate_predict(Game *game, int time);
+	virtual ~View_Split2b();
+	};
+void View_Split2b::init(View *old) {STACKTRACE
+	View::init(old);
+
+	min = 480;
+	max = 4800;
+
+	int i;
+	for (i = 0; i < num_windows; i += 1) cam[i] = camera;
+	for (i = 0; i < num_windows; i += 1) frames[i] = new Frame(1024);
+	frames[0]->window->locate(0,0, 0,0.0, 0,1, 0, .5);
+	frames[1]->window->locate(0,0, 0,0.5, 0,1, 0, .5);
+	return;
+	}
+View_Split2b::~View_Split2b()
+{
+	int i;
+	for (i = 0; i < num_windows; i += 1) {
+		delete frames[i];
+	}
+}
+void View_Split2b::animate_predict(Game *game, int time) {STACKTRACE
+	VideoWindow *tmpw;
+	Frame *tmpf;
+	CameraPosition tmpc;
+	int i;
+
+	tmpw = window;
+	tmpf = frame;
+	tmpc = camera;
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(window);
+	}
+
+	for (i = 0; i < num_windows; i += 1) {
+		window = frames[i]->window;
+		frame = frames[i];
+		camera = cam[i];
+		View::animate_predict(game, time);
+	}
+
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(NULL);
+	}
+
+	frame = tmpf;
+	window = tmpw;
+	camera = tmpc;
+	view_size.x = window->w;
+	view_size.y = window->w;
+}
+
+void View_Split2b::calculate (Game *game) {STACKTRACE
+	CameraPosition n;
 	SpaceLocation *c;
-	double tx = x, ty = y;	
+	int i;
 
-	c = NULL;
-	if (game->num_focuses) 
-		c = game->focus[(game->focus_index+1) % game->num_focuses]->get_focus();
-	if (c) {
-		focus ( c );
-		x += (f) * view_w / z2 * cos(c->get_angle_ex()) / 4;
-		y += (f) * view_h / z2 * sin(c->get_angle_ex()) / 4;
+	for (i = 0; i < num_windows; i += 1) {
+		n = cam[i];
+		switch (i) {
+		case 0:
+			if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
+			if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
+			break;
+		case 1:
+			if (key_pressed(key_alter1)) n.z *= 1 + 0.002 * frame_time;
+			if (key_pressed(key_alter2)) n.z /= 1 + 0.002 * frame_time;
+			break;
+		default:
+			break;
 		}
-	x2 = normalize(x, X_MAX);
-	y2 = normalize(y, Y_MAX);
-	
-	x = tx; y = ty;
-	
-	c = NULL;
-	if (game->num_focuses) c = game->focus[game->focus_index]->get_focus();
-	if (c) {
-		focus ( c );
-		x += (f) * view_w / z * cos(c->get_angle_ex()) / 4;
-		y += (f) * view_h / z * sin(c->get_angle_ex()) / 4;
+		if (n.z < min) n.z = min;
+		if (n.z > max) n.z = max;
+		c = NULL;
+		if (game->num_focuses > i) c = game->focus[(game->focus_index + i) % game->num_focuses]->get_focus();
+		focus ( &n, c );
+		track ( n, frame_time, &cam[i] );
+	}
+
+	camera = cam[0];
+	return;
+	}
+
+
+
+
+class View_Split3 : public View {
+	double max, min;
+	enum {num_windows = 3};
+	CameraPosition cam[num_windows];
+	Frame *frames[num_windows];
+	public:
+	virtual void calculate(Game *game);
+	virtual void init(View *old);
+	virtual void animate_predict(Game *game, int time);
+	virtual ~View_Split3();
+	};
+void View_Split3::init(View *old) {STACKTRACE
+	View::init(old);
+
+	min = 480;
+	max = 4800;
+
+	int i;
+	for (i = 0; i < num_windows; i += 1) cam[i] = camera;
+	for (i = 0; i < num_windows; i += 1) frames[i] = new Frame(1024);
+	frames[0]->window->locate(0,0.0/3, 0,0, 0,1/3.0, 0,1);
+	frames[1]->window->locate(0,1.0/3, 0,0, 0,1/3.0, 0,1);
+	frames[2]->window->locate(0,2.0/3, 0,0, 0,1/3.0, 0,1);
+	return;
+	}
+View_Split3::~View_Split3()
+{
+	int i;
+	for (i = 0; i < num_windows; i += 1) {
+		delete frames[i];
+	}
+}
+void View_Split3::animate_predict(Game *game, int time) {STACKTRACE
+	VideoWindow *tmpw;
+	Frame *tmpf;
+	CameraPosition tmpc;
+	int i;
+
+	tmpw = window;
+	tmpf = frame;
+	tmpc = camera;
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(window);
+	}
+
+	for (i = 0; i < num_windows; i += 1) {
+		window = frames[i]->window;
+		frame = frames[i];
+		camera = cam[i];
+		View::animate_predict(game, time);
+	}
+
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(NULL);
+	}
+
+	frame = tmpf;
+	window = tmpw;
+	camera = tmpc;
+	view_size.x = window->w;
+	view_size.y = window->w;
+}
+
+void View_Split3::calculate (Game *game) {STACKTRACE
+	CameraPosition n;
+	SpaceLocation *c;
+	int i;
+
+	for (i = 0; i < num_windows; i += 1) {
+		n = cam[i];
+		switch (i) {
+		case 0:
+			if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
+			if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
+			break;
+		case 1:
+			if (key_pressed(key_alter1)) n.z *= 1 + 0.002 * frame_time;
+			if (key_pressed(key_alter2)) n.z /= 1 + 0.002 * frame_time;
+			break;
+		default:
+			break;
 		}
-	x = normalize(x, X_MAX);
-	y = normalize(y, Y_MAX);*/
+		if (n.z < min) n.z = min;
+		if (n.z > max) n.z = max;
+		c = NULL;
+		if (game->num_focuses > i) c = game->focus[(game->focus_index + i) % game->num_focuses]->get_focus();
+		focus ( &n, c );
+		track ( n, frame_time, &cam[i] );
+	}
+
+	camera = cam[0];
+	return;
+	}
+
+
+
+
+
+
+class View_Split4 : public View {
+	double max, min;
+	enum {num_windows = 4};
+	CameraPosition cam[num_windows];
+	Frame *frames[num_windows];
+	public:
+	virtual void calculate(Game *game);
+	virtual void init(View *old);
+	virtual void animate_predict(Game *game, int time);
+	virtual ~View_Split4();
+	};
+void View_Split4::init(View *old) {STACKTRACE
+	View::init(old);
+
+	min = 480;
+	max = 4800;
+
+	int i;
+	for (i = 0; i < num_windows; i += 1) cam[i] = camera;
+	for (i = 0; i < num_windows; i += 1) frames[i] = new Frame(1024);
+	frames[0]->window->locate(0,0.0/2, 0,0.0/2, 0,0.5, 0,0.5);
+	frames[1]->window->locate(0,1.0/2, 0,0.0/2, 0,0.5, 0,0.5);
+	frames[2]->window->locate(0,0.0/2, 0,1.0/2, 0,0.5, 0,0.5);
+	frames[3]->window->locate(0,1.0/2, 0,1.0/2, 0,0.5, 0,0.5);
+	return;
+	}
+View_Split4::~View_Split4()
+{
+	int i;
+	for (i = 0; i < num_windows; i += 1) {
+		delete frames[i];
+	}
+}
+void View_Split4::animate_predict(Game *game, int time) {STACKTRACE
+	VideoWindow *tmpw;
+	Frame *tmpf;
+	CameraPosition tmpc;
+	int i;
+
+	tmpw = window;
+	tmpf = frame;
+	tmpc = camera;
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(window);
+	}
+
+	for (i = 0; i < num_windows; i += 1) {
+		window = frames[i]->window;
+		frame = frames[i];
+		camera = cam[i];
+		View::animate_predict(game, time);
+	}
+
+	for (i = 0; i < num_windows; i += 1) {
+		frames[i]->window->init(NULL);
+	}
+
+	frame = tmpf;
+	window = tmpw;
+	camera = tmpc;
+	view_size.x = window->w;
+	view_size.y = window->w;
+}
+
+void View_Split4::calculate (Game *game) {STACKTRACE
+	CameraPosition n;
+	SpaceLocation *c;
+	int i;
+
+	for (i = 0; i < num_windows; i += 1) {
+		n = cam[i];
+		switch (i) {
+		case 0:
+			if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
+			if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
+			break;
+		case 1:
+			if (key_pressed(key_alter1)) n.z *= 1 + 0.002 * frame_time;
+			if (key_pressed(key_alter2)) n.z /= 1 + 0.002 * frame_time;
+			break;
+		default:
+			break;
+		}
+		if (n.z < min) n.z = min;
+		if (n.z > max) n.z = max;
+		c = NULL;
+		if (game->num_focuses > i) c = game->focus[(game->focus_index + i) % game->num_focuses]->get_focus();
+		focus ( &n, c );
+		track ( n, frame_time, &cam[i] );
+	}
+
+	camera = cam[0];
 	return;
 	}
 
@@ -664,5 +966,8 @@ REGISTER_VIEW ( View_Hero, "Hero" )
 REGISTER_VIEW ( View_Everything, "Everything" )
 REGISTER_VIEW ( View_Enemy, "Enemy" )
 REGISTER_VIEW ( View_Enemy_Discrete, "Enemy_Discrete" )
-REGISTER_VIEW ( View_Split, "Split" )
+REGISTER_VIEW ( View_Split2a, "Split_2_Horizontal" )
+REGISTER_VIEW ( View_Split2b, "Split_2_Vertical" )
+REGISTER_VIEW ( View_Split3, "Split_3_Horizontal" )
+REGISTER_VIEW ( View_Split4, "Split_4_Quad" )
 

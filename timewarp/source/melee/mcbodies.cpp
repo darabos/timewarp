@@ -28,6 +28,8 @@ Asteroid::Asteroid()
 	mass  = 10 + random(10);
 
 	vel = unit_vector(angle) * (speed * 0.05);
+
+	armour = 0.99;//*tau*
 }
 
 void Asteroid::calculate()
@@ -47,7 +49,10 @@ int Asteroid::handle_damage(SpaceLocation *source, double normal, double direct)
 	if (!exists()) return 0;
 	if (!normal && !direct) return 0;
 
-	state = 0;
+	armour -= (normal + direct);	//*tau*
+	if (armour <=0)					//*tau*
+		state = 0;					//*tau*
+
 	return 1;
 	}
 
@@ -61,7 +66,6 @@ void Asteroid::death() {STACKTRACE
 	game->add(new Asteroid());
 	return;
 	}
-
 
 Planet::Planet(Vector2 loc, SpaceSprite *sprite, int index) 
 	:
@@ -383,11 +387,11 @@ void Stars::_event( Event *e) {STACKTRACE
 			switch (ce->subtype) {
 				case ConfigEvent::GET: {
 					char blah[64];
-					sprintf(ce->value, "%f", depth);
+					sprintf(ce->value, "%f", field_depth);
 					ce->value = strdup(blah);
 				} break;
 				case ConfigEvent::SET: {
-					depth = atoi(ce->value);
+					field_depth = atoi(ce->value);
 				} break;
 				case ConfigEvent::FIND: {
 					//later
@@ -418,18 +422,23 @@ Stars::Stars() {STACKTRACE
 	seed = (seed * (Uint64)tw_random()) >> 16;
 	seed += tw_random();
 	for(i = 0; i < num_pics; i++) {
-		pic[i] = new SpaceSprite(&stardat[i], 1);
-		}
+		pic[i] = new SpaceSprite(&stardat[i], 1, 
+			SpaceSprite::ALPHA | 
+			SpaceSprite::MASKED | 
+			SpaceSprite::IRREGULAR | 
+			SpaceSprite::MIPMAPED
+		);
+	}
 	game->log_file("server.ini");
 	width = get_config_int("Stars", "Width", 4000);
 	height = get_config_int("Stars", "Height", 4000);
 	num_stars = get_config_int("Stars", "Number", 150);
 	num_layers = get_config_int("Stars", "Layers", 5);
-	depth = get_config_int("Stars", "Depth", 192);
+	field_depth = get_config_int("Stars", "Depth", 192);
 	set_config_file("client.ini");
 	aa_mode = get_config_int("Stars", "Quality", 5);
 	unload_datafile(stardat);
-	}
+}
 /*
 Stars::Stars() {
 	int i;
@@ -448,7 +457,7 @@ Stars::Stars() {
 	height = get_config_int("Stars", "Height", 4000);
 	num_stars = get_config_int("Stars", "Number", 150);
 	num_layers = get_config_int("Stars", "Layers", 5);
-	depth = get_config_int("Stars", "StarDepth", 192);
+	field_depth = get_config_int("Stars", "StarDepth", 192);
 	set_config_file("client.ini");
 	aa_mode = get_config_int("Stars", "Quality", 5);
 	}
@@ -468,7 +477,7 @@ void Stars::animate(Frame *space) {STACKTRACE
 	double h = height * d;
 	int x, y, layer;
 	for (layer = 0; layer < num_layers; layer += 1) {
-		d = space_zoom * pow(1.0 - depth / 260.0, (num_layers-layer)/(double)num_layers);
+		d = space_zoom * pow(1.0 - field_depth / 260.0, (num_layers-layer)/(double)num_layers);
 		for (y = 0; y * h < space->surface->h; y+=1) {
 			for (x = 0; x * w < space->surface->w; x+=1) {
 				fs_random_seed32(seed + layer);

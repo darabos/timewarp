@@ -54,6 +54,7 @@ class Control : public Presence {
 //presents the ship selection dialog
 	virtual int choose_ship(VideoWindow *window, char *prompt, class Fleet *fleet);
 //called whenever the ship being controlled changes
+//WARNING: select_ship() is not thread-safe
 	virtual void select_ship(Ship* ship_pointer, const char* ship_name);
 //called every frame of physics
 	virtual void calculate();

@@ -5,18 +5,19 @@ These are the options presented to you in the game:
 Melee:  Starts a battle.  In battle the following keys do stuff:
         F1 brings up the help screen (this file, at the moment)
         F2 brings up the options menu
-        F3 switches focus
+        F3 switches camera focus
         F4 is fast-forward (speeds up in-game time greatly)
         F5 displays fleet status
         F6 is chat (for network games)
-        F7 changes game tic rate
+        F7 changes game tic rate (physics quality)
         F8 changes camera mode
-        F9 creates planets
+        F9 creates planets (silly "feature")
         F10 quits (so does ESCAPE)
         F11 saves screenshots
-        F12 displays framerates
+        F12 displays framerates / performance data
         - zooms out on some viewing modes.
         + (or =) zooms in on some viewing modes.
+        0 and 9 also effect the camera in some viewing modes.  
         Also, if some controllers are set to keyboard, customizable
         buttons may cause ship actions.  Be default these are:
         Config 0:

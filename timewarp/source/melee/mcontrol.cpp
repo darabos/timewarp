@@ -13,6 +13,7 @@ REGISTER_FILE
 #include "mnet1.h"
 #include "mview.h" //remove this
 #include "mfleet.h"
+#include "../scp.h"
 
 
 
@@ -199,11 +200,15 @@ SpaceLocation *Control::get_focus() {STACKTRACE
 	}
 
 
-#define SELECT_DIALOG_LIST      0
-#define SELECT_DIALOG_TITLE     1
-#define SELECT_DIALOG_SHIP      2
-#define SELECT_DIALOG_RANDOM    3
-#define SELECT_DIALOG_ARANDOM   4
+enum {
+	SELECT_DIALOG_LIST = 0,
+	SELECT_DIALOG_TITLE,
+	SELECT_DIALOG_SHIP,
+	SELECT_DIALOG_RANDOM,
+	SELECT_DIALOG_ARANDOM,
+	SELECT_DIALOG_INFO,
+	SELECT_DIALOG_PIC
+};
 char selectPlayer[18];
 char selectTitleString[100];
 
@@ -222,10 +227,11 @@ static DIALOG selectDialog[] = {
 	// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
 	{ my_list_proc,      5,     5,   280,  400,  255,  0,    0,    D_EXIT,  0,    0,    (void *)fleetListboxGetter, NULL, NULL },
 	{ d_textbox_proc,    300,  10,   240,  80,   255,  0,    0,    0,       0,    0,    (void *)selectTitleString, NULL, NULL },
-	{ d_button_proc,     330, 120,   180,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select ship", NULL, NULL },
-	{ d_button_proc,     330, 180,   180,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Random selection", NULL, NULL },
-	{ d_button_proc,     330, 240,   180,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Always random", NULL, NULL },
-	{ my_bitmap_proc,    388, 300,   64,  100,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+	{ d_button_proc,     330, 110,   180,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select ship", NULL, NULL },
+	{ d_button_proc,     330, 165,   180,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Random selection", NULL, NULL },
+	{ d_button_proc,     330, 220,   180,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Always random", NULL, NULL },
+	{ d_button_proc,     330, 275,   180,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Ship Info", NULL, NULL },
+	{ my_bitmap_proc,    388, 330,   64,   100,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
 	{ d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
 	{ NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 	};
@@ -252,10 +258,10 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 			color_correct_bitmap( panel, 0 );
 		}
 
-		if( selectDialog[5].dp ) destroy_bitmap( (BITMAP*)selectDialog[5].dp );
-		selectDialog[5].dp = panel;
+		if( selectDialog[SELECT_DIALOG_PIC].dp ) destroy_bitmap( (BITMAP*)selectDialog[SELECT_DIALOG_PIC].dp );
+		selectDialog[SELECT_DIALOG_PIC].dp = panel;
 		scare_mouse();
-		SEND_MESSAGE( &selectDialog[5], MSG_DRAW, 0 );
+		SEND_MESSAGE( &selectDialog[SELECT_DIALOG_PIC], MSG_DRAW, 0 );
 		unscare_mouse();
 	}
 	return ret;
@@ -266,15 +272,23 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {STAC
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
 	sprintf(selectTitleString, "%s", prompt);
 	slot = -1;
-	if (!always_random) {
+	while (!always_random) {
 		while (key[KEY_ENTER] || key[KEY_SPACE]) poll_keyboard();
 		ret = tw_do_dialog(window, selectDialog, SELECT_DIALOG_LIST);
+		if (ret == SELECT_DIALOG_INFO) {
+			ship_view_dialog(
+				selectDialog[SELECT_DIALOG_LIST].d1, 
+				fleet 
+			);
+			continue;
 		}
+		break;
+	}
 	if ((ret == SELECT_DIALOG_SHIP) || (ret == SELECT_DIALOG_LIST))
 		slot = selectDialog[SELECT_DIALOG_LIST].d1;
 	if ((ret == SELECT_DIALOG_ARANDOM) || (ret == -1)) always_random = 1;
 	return(slot);
-	}
+}
 void Control::set_target(int i) {STACKTRACE
 	if (i >= game->num_targets) tw_error("oscar hamburger!!!!!!!!!");
 	if (i == -1) {
@@ -348,7 +362,7 @@ void Control::calculate() {STACKTRACE
 	target_stuff();
 
 	if (ship) {
-		if (!ship->exists()) {
+		if (!ship->exists() || (ship->death_counter != -1)) {
 			//message.print(5000, 12, "Ship died in frame %d", game->frame_number);
 			select_ship( NULL, NULL);
 			}

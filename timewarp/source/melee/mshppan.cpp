@@ -59,6 +59,7 @@ ShipPanel::~ShipPanel()
 {STACKTRACE
   destroy_bitmap(captain);
   destroy_bitmap(panel);
+  window->deinit();
   delete window;
 }
 

@@ -74,10 +74,10 @@ int EarthlingCruiser2::activate_special() {
   int fire = FALSE;
   SpaceObject *o;
 
-	Query a;
-	for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
-			bit(LAYER_CBODIES), specialRange); a.current; a.next()) {
-		o = a.currento;
+	Query q;
+	for (q.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
+			bit(LAYER_CBODIES), specialRange); q.current; q.next()) {
+		o = q.currento;
 		if (!o->isInvisible() && !o->sameTeam(this) && (o->collide_flag_anyone&bit(LAYER_LINES))) {
 			SpaceLocation *l = new PointLaser(this, pallete_color[specialColor], 1,
 					                    specialFrames, this, o, Vector2(0.0,0.0));
@@ -87,6 +87,7 @@ int EarthlingCruiser2::activate_special() {
                                 l->set_depth(LAYER_EXPLOSIONS); }
 			}
 		}
+	q.end();
 	if (fire) sound.play((SAMPLE *)(melee[MELEE_BOOM + 0].dat));
 
 	return(fire);

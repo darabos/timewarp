@@ -138,17 +138,25 @@ void SoundSystem::init() {
 	}
 	return;
 }
-int SoundSystem::play (SAMPLE *spl, int vol, int pan, int freq) {
+int SoundSystem::play (SAMPLE *spl, int vol, int pan, int freq, bool loop) {
 	if ((state & (ENABLED | SOUND_ON)) == (ENABLED | SOUND_ON)) {
 		//if (freq > 4535) freq = 4535;
 		//I THINK that the 4536 bug is specific to my sound hardware, so that's commented out
-		return ::play_sample (spl, (vol * sound_volume) >> 8, pan, freq, false);
+		return ::play_sample (spl, (vol * sound_volume) >> 8, pan, freq, loop);
 		}
-	else return 0;
+	else return -1;
 	}
 void SoundSystem::stop (SAMPLE *spl) {
 	if (state & ENABLED) {
 		::stop_sample (spl);
+		return;
+		}
+	else return;
+	}
+void SoundSystem::stop (int voice_id) {
+	if (voice_id < 0) {tw_error("negative voice id");}
+	if (state & ENABLED) {
+		::voice_stop (voice_id);
 		return;
 		}
 	else return;

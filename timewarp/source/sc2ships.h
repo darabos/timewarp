@@ -13,12 +13,15 @@ public:
   int    extraColor;
   int    extraArmour;
 
+  bool   uninterrupted_fire;
+
   public:
   ChmmrAvatar(Vector2 opos, double shipAngle, 
     ShipData *shipData, unsigned int code);
 
   virtual int activate_weapon();
   virtual int activate_special();
+  virtual void calculate();
   virtual void materialize();
 };
 
@@ -50,11 +53,13 @@ class KohrAhMarauder : public Ship
   int          weaponArmour;
   int          weaponFired;
   KohrAhBlade **weaponObject;
+  bool         bladesPersist;
 
   double       specialVelocity;
   int          specialDamage;
   int          specialArmour;
   double       specialRange;
+
 
   KohrAhMarauder(Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code);

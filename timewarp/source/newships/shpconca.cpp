@@ -149,7 +149,11 @@ int CargoLink::handle_damage(SpaceLocation *source, double normal, double direct
 	//directDamage is used so that we don't play the damage sound
 	//again.
 
-	return damage(Prev_Link, 0, totalDamage);
+	if (Prev_Link) return damage(Prev_Link, 0, totalDamage);
+	else {
+		die();
+		return totalDamage;
+	}
 }
 
 void CargoLink::calculate()

@@ -3,6 +3,13 @@
 
 #include "types.h"
 
+
+#ifndef __i386__
+#	if defined(__I386__) || defined(__IA32__) || defined(__ia32__)
+#		define __i386__
+#	endif
+#endif
+
 #ifdef __cplusplus
 
 class __call_before_main { 

@@ -26,7 +26,10 @@ KatAssim::KatAssim( Vector2 opos, double shipAngle,
 void KatAssim::inflict_damage( SpaceObject* other ){
   Ship::inflict_damage( other );
   if( special_recharge <= 0 || !other->isShot() || !other->ship ) return;
-  if( morph ) delete morph;
+  if( morph ) {
+	  add(morph);
+	  if (morph->exists()) morph->die();
+  }
 
   morph = game->create_ship( other->ship->type->id, control, pos, angle, get_team() );
   recharge_rate   = morph->recharge_rate;

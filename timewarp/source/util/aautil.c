@@ -81,10 +81,6 @@ static void _aa_prepare_for_24bpp (void)
 
 
 //these macros adjust the color to remove the mask color from the output
-#define NON_MASK_COLOR_15    (MASK_COLOR_15 - 1)
-#define NON_MASK_COLOR_16    (MASK_COLOR_16 - 1)
-#define NON_MASK_COLOR_24    (MASK_COLOR_24 - 1)
-#define NON_MASK_COLOR_32    (MASK_COLOR_32 - 1)
 #define NO_TRANS(bpp,bpp2)   if (c == MASK_COLOR_ ## bpp2) c = NON_MASK_COLOR_ ## bpp2;
 #define OPTIONAL_NO_TRANS(bpp,bpp2) if (_aa.mode&AA_NOTRANS) NO_TRANS(bpp,bpp2)
 
@@ -314,7 +310,7 @@ static PUT_TYPE *put_array_alpha_dither_notrans[num_bpps] = {
 
 
 void _aa_put_raw_16a ( unsigned long _addr, int _x ) {
-	bmp_write32(_addr+_x*4, makeacol16a(_aa.r, _aa.g, _aa.b, _aa.trans) ); 
+	bmp_write32(_addr+_x*2, makeacol16a(_aa.r, _aa.g, _aa.b, _aa.trans) ); 
 }
 
 void _aa_put_raw_32a ( unsigned long _addr, int _x ) {
@@ -363,7 +359,7 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int options) {
 	if (i == num_bpps) return NULL;
 
 	j = 0;
-	if (options & AA_BLEND)   j += 1;
+	if (options & AA_BLEND) j += 1;
 	if (options & AA_DITHER)  j += 2;
 	if (options & AA_MASKED_DEST) j += 4;
 
@@ -371,7 +367,7 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int options) {
 		if (is_planar_bitmap(destination)) {
 			if (bpp != 8) return NULL;
 			return put_array_modex[j & 3];
-			}
+		}
 #	endif
 
 	if (options & AA_RAW_ALPHA) {
@@ -380,7 +376,7 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int options) {
 	}
 	
 	return master_put_array[j][i];
-	}
+}
 
 
 
@@ -424,7 +420,7 @@ void _aa_masked_add_bpp_independant_calculations() {
 
 #ifdef ALLEGRO_COLOR32
 
-//32 bit color with alpha channel, NOT premultiplied
+//32 bit color with alpha channel, NOT premultiplied, probably buggy
 void 
 _aa_add_rgba32 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 {
@@ -608,11 +604,11 @@ _aa_add_rgba32 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	return;
 }
 
-//32 bit color with alpha channel, premultiplied
+//32 bit color with alpha channel, premultiplied.  should work
 void 
 _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 {
-	signed long *sline;
+	unsigned long *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
 	unsigned long r1, g1, b1, a1, t1;
@@ -628,7 +624,7 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	// First line.  
 	sx1i = _sx1 >> aa_BITS;
 	sx = sx1i;
-	sline = (signed long*) (_src->line[sy]) + sx;
+	sline = (unsigned long*) (_src->line[sy]) + sx;
 
 	sx1f = aa_SIZE - (_sx1 & aa_MASK);
 	color.i = *sline;
@@ -689,7 +685,7 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 		do
 			{
 			sx = sx1i;
-			sline = (signed long*) (_src->line[sy]) + sx;
+			sline = (unsigned long*) (_src->line[sy]) + sx;
 
 			color.i = *sline;
 			if (color.i != _aa.mask_color)
@@ -741,7 +737,7 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	if (sy2f != 0)
 		{
 		sx = sx1i;
-		sline = (signed long*) (_src->line[sy]) + sx;
+		sline = (unsigned long*) (_src->line[sy]) + sx;
 
 		color.i = *sline;
 		if (color.i != _aa.mask_color)
@@ -800,7 +796,14 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 		_aa.r = b1;
 		_aa.g = g1;
 		_aa.b = r1;
-		t1 = a1 + (t1 << 8);
+		if (a1 != 0) {
+			t1 = a1 + (t1 << 8);
+		}
+		else t1 = t1 << 8;
+	} else {
+		//uh.. what do we do now?
+		_aa.r = rand() & 255;
+		t1 = 0;
 	}
 	_aa.trans = t1 + ((_aa.total - (_sx2 - _sx1) * (_sy2 - _sy1)) << 8);
 	_aa_masked_add_bpp_independant_calculations();
@@ -808,10 +811,11 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	}
 #endif
 #ifdef ALLEGRO_COLOR16
+//16 bit color with alpha channel, premultiplied.  should work
 void 
 _aa_add_rgba4444 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 {
-	signed long *sline;
+	unsigned short *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
 	unsigned long r1, g1, b1, a1, t1;
@@ -825,7 +829,7 @@ _aa_add_rgba4444 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	// First line.  
 	sx1i = _sx1 >> aa_BITS;
 	sx = sx1i;
-	sline = (signed long*) (_src->line[sy]) + sx;
+	sline = (unsigned short*) (_src->line[sy]) + sx;
 
 	sx1f = aa_SIZE - (_sx1 & aa_MASK);
 	scolor = *sline;
@@ -886,7 +890,7 @@ _aa_add_rgba4444 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 		do
 			{
 			sx = sx1i;
-			sline = (signed long*) (_src->line[sy]) + sx;
+			sline = (unsigned short*) (_src->line[sy]) + sx;
 
 			scolor = *sline;
 			if (scolor != _aa.mask_color)
@@ -938,7 +942,7 @@ _aa_add_rgba4444 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	if (sy2f != 0)
 		{
 		sx = sx1i;
-		sline = (signed long*) (_src->line[sy]) + sx;
+		sline = (unsigned short*) (_src->line[sy]) + sx;
 
 		scolor = *sline;
 		if (scolor != _aa.mask_color)
@@ -992,6 +996,7 @@ _aa_add_rgba4444 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	_aa.g = g1 + (g1 >> 4);
 	_aa.b = b1 + (b1 >> 4);
 	t1 = a1 + (a1 >> 4) + (t1 << 8);
+
 
 	_aa.trans = t1 + ((_aa.total - (_sx2 - _sx1) * (_sy2 - _sy1)) << 8);
 	_aa_masked_add_bpp_independant_calculations();
@@ -1339,11 +1344,13 @@ ADD_TYPE *get_aa_add_function(BITMAP *source, int mode) {
 	if (AA_ALPHA & mode) {
 		if (bpp == 32) {
 			if (_aa.mask_color == -1) _aa.mask_color = 0xff000000;
+			else _aa.mask_color = MASK_COLOR_32a;
 			if (AA_NO_AA & mode) return &_aa_get_rgb32a_t;
 			return &_aa_add_rgba8888;
 		}
 		if (bpp == 16) {
 			if (_aa.mask_color == -1) _aa.mask_color = 0xf000;
+			else _aa.mask_color = MASK_COLOR_16a;
 			if (AA_NO_AA & mode) return &_aa_get_rgb16a_t;
 			return &_aa_add_rgba4444;
 		}
@@ -1356,38 +1363,46 @@ ADD_TYPE *get_aa_add_function(BITMAP *source, int mode) {
 	return add_array[i];
 }
 
-void invert_alpha ( BITMAP *bob ) {
-	int x, y;
+void invert_alpha ( BITMAP *bob, int masked ) {
+	int x, y, mask;
 	//32 bit RGBA 8888
 	if (bitmap_color_depth(bob) == 32) {
+		if (masked) mask = bitmap_mask_color(bob); else mask = -1;
 		for (y = 0; y < bob->h; y += 1) {
 			for (x = 0; x < bob->w; x += 1) {
-				((int*)bob->line[y])[x] ^= 0xff000000;
+				int c = ((int*)bob->line[y])[x];
+				if (c == mask) continue;
+				((int*)bob->line[y])[x] = c ^ 0xff000000;
 			}
 		}
 	}
 	//16 bit RGBA 4444
 	if (bitmap_color_depth(bob) == 16) {
+		if (masked) mask = 0x0F0F; else mask = -1;
 		for (y = 0; y < bob->h; y += 1) {
 			for (x = 0; x < bob->w; x += 1) {
-				((short int*)bob->line[y])[x] ^= 0xf000;
+				int c = ((short*)bob->line[y])[x];
+				if (c == mask) continue;
+				((short*)bob->line[y])[x] = c ^ 0xf000;
 			}
 		}
 	}
 	return;
 }
 
-void premultiply_alpha ( BITMAP *bob ) {
-	int x, y, a;
+void premultiply_alpha ( BITMAP *bob, int masked ) {
+	int x, y, a, mask;
 	union {
 		struct RGBA rgba;
 		int i;
 	} c;
 	if (bitmap_color_depth(bob) != 32) return;
+	if (masked) mask = bitmap_mask_color(bob); else mask = -1;
 	//32 bit RGBA 8888
 	for (y = 0; y < bob->h; y += 1) {
 		for (x = 0; x < bob->w; x += 1) {
 			c.i = ((int*)bob->line[y])[x];
+			if (c.i == mask) continue;
 			a = (c.rgba.a ^ 255) + 1;
 			c.rgba.r = (c.rgba.r * a) >> 8;
 			c.rgba.g = (c.rgba.g * a) >> 8;
@@ -1398,17 +1413,19 @@ void premultiply_alpha ( BITMAP *bob ) {
 	return;
 }
 
-void un_premultiply_alpha ( BITMAP *bob ) {
-	int x, y,a;
+void un_premultiply_alpha ( BITMAP *bob, int masked ) {
+	int x, y, a, mask;
 	union {
 		struct RGBA rgba;
 		int i;
 	} c;
 	if (bitmap_color_depth(bob) != 32) return;
+	if (masked) mask = bitmap_mask_color(bob); else mask = -1;
 	//32 bit RGBA 8888
 	for (y = 0; y < bob->h; y += 1) {
 		for (x = 0; x < bob->w; x += 1) {
 			c.i = ((int*)bob->line[y])[x];
+			if (c.i == mask) continue;
 			a = (c.rgba.a ^ 255) + 1;
 			c.rgba.r = (c.rgba.r << 8) / a;
 			c.rgba.g = (c.rgba.g << 8) / a;
@@ -1419,14 +1436,14 @@ void un_premultiply_alpha ( BITMAP *bob ) {
 	return;
 }
 
-void convert_alpha ( BITMAP *bob ) {
-	invert_alpha ( bob );
-	premultiply_alpha ( bob );
+void convert_alpha ( BITMAP *bob, int masked ) {
+	invert_alpha ( bob, masked );
+//	premultiply_alpha ( bob, masked );
 }
 
-void un_convert_alpha ( BITMAP *bob ) {
-	un_premultiply_alpha ( bob );
-	invert_alpha ( bob );
+void un_convert_alpha ( BITMAP *bob, int masked ) {
+//	un_premultiply_alpha ( bob, masked );
+	invert_alpha ( bob, masked );
 }
 
 void rgba4444_as_rgb16 (BITMAP *bob) {
@@ -1434,11 +1451,11 @@ void rgba4444_as_rgb16 (BITMAP *bob) {
 	if (bitmap_color_depth(bob) != 16) return;
 	for (y = 0; y < bob->h; y += 1) {
 		for (x = 0; x < bob->w; x += 1) {
-			i = ((short*)bob->line[y])[x];
+			i = ((unsigned short*)bob->line[y])[x];
 			if (_rgb_r_shift_16 == 11) {
 				i = (i >> 11) | (i << 11) | (i & 0x07e0);
 			}
-			((short*)bob->line[y])[x] = i;
+			((unsigned short*)bob->line[y])[x] = i;
 		}
 	}
 	return;
