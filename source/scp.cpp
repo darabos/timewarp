@@ -885,7 +885,7 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 			if (!strcmp(auto_play, "net1client")) play_net1client(auto_param, auto_port);
 			if (!strcmp(auto_play, "net1server")) play_net1server(auto_param, auto_port);
 #ifdef INCLUDE_GAMEX
-			if (!strcmp(auto_play, "fg")) play_fg(&scp, SCPGUI_MUSIC);
+			if (!strcmp(auto_play, "fg")) play_fg(&scp, SCPGUI_MUSIC, auto_param);
 #endif
 		}
 		else {

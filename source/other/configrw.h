@@ -51,5 +51,27 @@ void confnum(char *id0, int i, char *x);
 
 
 
+/** \brief the default directory, where all "clean" data are stored. Those data define
+the start of a new game.
+*/
+
+extern char *init_dir;
+
+/** \brief the directory used to get resources from. This can point to any valid data
+directory: the init directory, or a save-game directory.
+*/
+extern char *source_dir;
+
+/** \brief the directory where game-data are save to
+*/
+extern char *target_dir;
+
+/** \brief this defines a set_config_file based on the source or target-dir, and
+append the f filename to that directory.
+*/
+void set_conf(char *f);
+
+
+
 #endif
 

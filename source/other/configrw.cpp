@@ -61,3 +61,30 @@ void confnum(char *id0, int i, char *x)
 	conf(id, x);
 }
 
+
+
+char *init_dir = "gamedata";
+char *source_dir = "save/save01";
+char *target_dir = "save/save01";
+
+void set_conf(char *f)
+{
+	char s[512];
+	
+	if (config_read)
+		strcpy(s, source_dir);
+	else
+		strcpy(s, target_dir);
+
+	// to-do:
+	// check if the target-directory exists, if not, create it.
+//	if (!file_exists(s, FA_DIREC, 0))		// this is too limited, "f" can also contain directory info...
+//		mkdir(s);
+
+	strcat(s, "/");
+	strcat(s, f);
+
+	set_config_file(s);
+}
+
+
