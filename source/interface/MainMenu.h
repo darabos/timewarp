@@ -48,8 +48,11 @@ public:
 	MyMainMenu(BITMAP *buffer, MenuDialogs prev) : 
 	  OverlayDialog(buffer, prev)
 	  {
-		  _state = IDLE;
-		  int x=10, 
+		  init();
+	  }
+
+	  virtual void init() {
+		  int x = 10, 
 			  y = 10;
 		  
 		  panel.Shape(x, y, 32, 52, true);
@@ -71,17 +74,11 @@ public:
 		  Add(bQuit);
 	  }
 
-	  void SelectDriver() { OverlayDialog::SelectDriver(); }
+	  virtual void SelectDriver() { OverlayDialog::SelectDriver(); }
 	  
 	  // handle key presses mouse moves, etc. in this function
-	  void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);
+	  virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);
 	  
-	  /** creates a main menu, displays it, and makes it interactive. */
-	  void doMainMenu();
-
-	  /** */
-	  //MainMenuState getState() { return state; }
-
 	  /** */
 	  friend void doMyEngine();
 	  friend MyUpdateDriver;

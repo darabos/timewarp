@@ -33,7 +33,7 @@ using namespace MAS;
 #include "Interface.h"
 using namespace Interface;
 
-
+#include "../melee/mgame.h"
 
 
 
@@ -47,33 +47,64 @@ private:
 	ListBox gametypeList;
 	Button bQuit;
 	
+	PanelRaised rightSide;
+	Button button, button2;
+
 public:
 
 	PlayLocalMenu(BITMAP *buffer, MenuDialogs prev) : 
 	  OverlayDialog(buffer, prev)
-	  {
-		  _state = IDLE;
-		  int x=10, 
-			  y = 10;
-		  
-		  panel.Shape(x, y, 32, 52, true);
-		  
-		  x++; 
-		  y++;
+	{
+       init();
+	}
 
-		  gametypeList.Shape(x, y, 32, 30, true);
+    virtual ~PlayLocalMenu() {
+		while (gametypeList.Size() > 0) {
+			if (gametypeList.GetItem(0) != NULL)
+				delete gametypeList.GetItem(0);
+			gametypeList.DeleteItem(0);
+		}
+		gametypeList.DeleteAllItems();
+	}
 
-		  gametypeList.InsertItem( new ListItemString("Melee1") );
-		  gametypeList.InsertItem( new ListItemString("Melee2") );
-		  gametypeList.InsertItem( new ListItemString("Melee3") );
-		  
-		  bQuit.SetupNormalized(x, y+=10, 30, 10, KEY_Q, D_EXIT, "&Quit");
-		  
-		  Add(bQuit);
+
+	virtual void init() {
+	  int x = 5, 
+		  y = 5;
+  
+	  panel.Shape(x, y, 32, 52, true);
+  
+	  x++; y++;
+
+	  gametypeList.Shape(x, y, 30, 30, true);
+
+	  for (int i=0; i<num_games; i++) {
+		  gametypeList.InsertItem( new ListItemString(game_names[i]),0 );
 	  }
+  
+	  bQuit.SetupNormalized(x, y+=30, 30, 10, KEY_Q, D_EXIT, "&Quit");
 
-	  /** handle key presses mouse moves, etc. in this function */
-	  void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);
+	  x = 43; y = 10;
+
+	  rightSide.Shape(x, y, 45, 53, true);
+	  x++; y++;
+
+	  button.Shape(x, y+=30, 30, 10, true);
+	  button.SetText("Remove me!");
+
+	  button2.SetupNormalized(x, y+=30, 30,10, 0, 0, "Add me!");
+  
+	  Add(panel);
+	  Add(rightSide);
+
+	  Add(gametypeList);
+	  Add(bQuit);
+	  Add(button);
+	  Add(button2);
+	}
+
+	/** handle key presses mouse moves, etc. in this function */
+	virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);
 };
 
 //}//namespace MainMenu

@@ -42,6 +42,19 @@ void PlayLocalMenu::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 			if (obj == bQuit) {
 			    _state = FOLLOW_PREV;
 			}
+
+			if (obj == button) {
+				GetParent()->HandleEvent(obj, MSG_REMOVEME);
+			}
+
+			if (obj == button2) {
+				Add(button);
+				//GetParent()->HandleEvent(obj, MSG_REMOVEME);
+			}
+			break;
+
+		case MSG_REMOVEME:
+			Remove(obj);
 			break;
 	}
 }

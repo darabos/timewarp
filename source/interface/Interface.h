@@ -71,38 +71,40 @@ public:
 
 	
 
-	OverlayDialog(BITMAP * buffer, 
-		          MenuDialogs prev, 
-		          MenuDialogs next = (MenuDialogs)NULL) :
+	OverlayDialog(BITMAP * buffer, MenuDialogs prev, MenuDialogs next = (MenuDialogs)NULL) :
 	  Dialog(),
 	  _buffer(buffer),
 	  _state(IDLE),
 	  _prev(prev),
 	  _next(next)
 	{
+		init();
 	}
 
-	void MsgStart() { 
-		//_isDone = false;
+    /** this is where GUI elements should be added, not in the constructor. */
+    virtual void init(){ }
+
+	virtual void MsgStart() { 
 		_state = IDLE;
 		_next = (MenuDialogs)NULL;
+		init();
 		Dialog::MsgStart(); 
 	}
-	void MsgEnd() { Dialog::MsgEnd(); }
-	void Close() { Dialog::Close(); }
-	void MsgIdle() { Dialog::MsgIdle(); }
-	//bool getIsDone() { return close; }
 
-	OverlayDialogState getState() { return _state; }
-	OverlayDialogState setState(OverlayDialogState state) { return _state; }
+	virtual void MsgEnd() { Dialog::MsgEnd(); }
+	virtual void Close() { Dialog::Close(); }
+	virtual void MsgIdle() { Dialog::MsgIdle(); }
+
+	virtual OverlayDialogState getState() { return _state; }
+	virtual OverlayDialogState setState(OverlayDialogState state) { return _state; }
 
 	/** if the user is done interacting with this thing and wants to go back, what kind of thing should
 		it return to? */
-	Interface::MenuDialogs getNext() { return _next; }
+	virtual MenuDialogs getNext() { return _next; }
 
 	/** if the user is done interacting with this thing and wants to go forward, what kind of thing should
 		it return to? */
-	Interface::MenuDialogs getPrev() { return _prev; }
+	virtual MenuDialogs getPrev() { return _prev; }
 
 protected:
 	/** the dialog's state, ie, what is it currently doing now.  This can be used to determine
@@ -115,11 +117,11 @@ protected:
 
 	/** if the user is done interacting with this thing and wants to go back, what kind of thing should
 		it return to? */
-	Interface::MenuDialogs _prev;
+	MenuDialogs _prev;
 
 	/** if the user is done interacting with this thing and wants to go forward, what kind of thing should
 		it return to? */
-	Interface::MenuDialogs _next;
+	MenuDialogs _next;
 
 	virtual void SelectDriver();
 };
@@ -158,7 +160,14 @@ namespace Interface {
 			}
 		}
 	};
+
+	class SelfRemovingButton : public Button {
+
+	};
 };
+
+
+
 
 
 #endif

@@ -336,15 +336,15 @@ class VideoSystem : public BaseClass {
 	void preinit() ;
 	int poll_redraw();
 	int set_resolution (int width, int height, int bpp, int fullscreen) ; //returns 0 on failure
-	void set_palette(Color *pal);
-	void (*color_effects)(Color *color);
+	void set_palette(::Color *pal);
+	void (*color_effects)(::Color *color);
 	void update_colors();
 	void redraw();
 } extern videosystem;
 
 int get_gamma();
 void set_gamma(int gamma);
-void gamma_color_effects (Color *color) ;
+void gamma_color_effects (::Color *color) ;
 
 
 struct registered_file_type {
