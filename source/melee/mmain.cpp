@@ -513,21 +513,15 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		int myfsize, otherfsize;
 
 		myfsize = file_size(s->type->data->file);
-
 		otherfsize = myfsize;
-
 		log_int(player_control[i]->channel, otherfsize);
 
 
 
 		if (otherfsize != myfsize)
-
 		{
-
 			// the player who loads the ship doesn't get this message, cause his own file is identical by default
-
 			tw_error("DAT files have different size! This may cause a desynch. Press Retry to continue");
-
 		}
 		}
 	delete slot;

@@ -14,11 +14,8 @@ rogsc
 
 Rogue Squadron
 
-
   to-do:
-
 	// check if an enemy targets the virtual ship, or a dead fighter:
-
 
 */
 

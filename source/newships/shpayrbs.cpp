@@ -370,7 +370,8 @@ int AyronShipPart::handle_damage(SpaceLocation *source, double normal, double di
 		// as soon as this is done, it won't have to handle damage anymore ?
 
 		// remove this thing from the game target list.
-		removefromtargetlist(this);
+		//removefromtargetlist(this);
+		game->rem_target(this);
 
 	} else
 		t = 0;	// all damage absorbed.

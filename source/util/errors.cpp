@@ -5,6 +5,88 @@
 #include "../melee.h"
 REGISTER_FILE
 
+
+
+// test GEO.
+// creating a looping list of the ## most recent STACKTRACE encounters
+#if defined DO_STACKTRACE
+	static const int max_stacklist = 16;	// I guess 16 is more than enough.
+	static int stacklist_level = 0;	// for TRACES in the same subr., the level is inverted cause cleaning-up is inverted... (looks like that anyway)
+	static int stacklist_current = 0;
+	static bool stacklist_freeze = false;		// this is set to TRUE after a crash by caught_error
+
+	struct StackList {
+		const char *file;
+		int line;
+		int level;
+		StackList();
+	};
+
+	StackList::StackList()
+	{
+		file = 0;
+		line = 0;
+		level = 0;
+	}
+
+	static StackList stacklist_data[max_stacklist];
+
+	void add2stacklist(const char *file, int line)
+	{
+		if (stacklist_freeze)
+			return;
+
+		stacklist_data[stacklist_current].file = file;
+		stacklist_data[stacklist_current].line = line;
+		stacklist_data[stacklist_current].level = stacklist_level;
+
+		++stacklist_current;
+		if (stacklist_current >= max_stacklist)
+			stacklist_current = 0;
+
+		++stacklist_level;
+	}
+
+	void sub4stacklist()
+	{
+		if (stacklist_freeze)
+			return;
+
+		--stacklist_level;
+	}
+
+	bool get_stacklist_info(int N, const char **filename, int **linenum, int **level)
+	{
+		int i, k;
+		i = stacklist_current;
+		k = 0;
+		for(;;)
+		{
+			++k;
+			if (k > N)	// find the Nth item (0 = the first)
+				break;
+
+			--i;	// count back to ever older traces
+			if (i < 0)
+				i = max_stacklist-1;	// loop around
+
+			if (i == stacklist_current)
+				return false;	// full loop
+		}
+
+		// treat this item...
+		StackList *s;
+		s = &stacklist_data[i];
+		*filename = s->file;
+		*linenum = &(s->line);
+		*level = &(s->level);
+
+		return true;
+	}
+#endif
+
+
+
 #if defined DO_STACKTRACE
 	struct StackTraceData {
 		const char *file;
@@ -18,10 +100,16 @@ REGISTER_FILE
 		_stacktrace_data[_stacktrace_level & MAX_STACKTRACE_LEVELS_MASK].file = file;
 		_stacktrace_data[_stacktrace_level & MAX_STACKTRACE_LEVELS_MASK].line = line;
 		_stacktrace_level += 1;
+
+		// somewhat different info as well:
+		add2stacklist(file, line);
 	}
 	UserStackTraceHelper::~UserStackTraceHelper() {
 		_stacktrace_level -= 1;
+		sub4stacklist();
 	}
+	// why use a class: because it places a count-down automatically at the end
+	// of the subroutine where you place the STACKTRACE.
 	char *get_stack_trace_string(int max) {
 		int l = 30;
 		int i = 0;
@@ -213,6 +301,9 @@ void tw_error_exit(const char* message) {
 	tw_exit(1);
 }
 
+//const int tw_error_str_len = 2048;	// should be pleny of room.
+char tw_error_str[tw_error_str_len];
+
 void caught_error(const char *format, ...) {
 	char error_string[4096];
 	if (format) {
@@ -227,10 +318,21 @@ void caught_error(const char *format, ...) {
 	char *STstring = get_stack_trace_string(8);
 	if (l + strlen(STstring) < 4000) 
 		sprintf(error_string + l, "\n\n%s", STstring);
+
+	// added GEO:
+	strncpy(tw_error_str, STstring, tw_error_str_len-1);
+	tw_error_str[tw_error_str_len-1] = 0;
+	// for later use. This needs to be stored, cause this is the only place where
+	// the stacks lead to the bug location ?? Or not ??
+
 	free(STstring);
 #endif
+	// the following makes calls to subroutines that are monitored; I'll disable
+	// further monitoring by ...
+	stacklist_freeze = true;
 	int i = tw_alert(error_string, "Okay", "Debug");
 	if (i == 2) __error_flag |= 1;
+
 
 	return;
 }
@@ -278,5 +380,6 @@ void deinit_error() {
 }
 
 #endif
+
 
 

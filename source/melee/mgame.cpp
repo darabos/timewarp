@@ -385,21 +385,23 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 
 void game_create_errorlog()
 {
+	STACKTRACE
 	FILE *f;
 
 	f = fopen("error.log", "a");
 	if (!f) return;
 
-	fprintf(f, "\n\n--------error report, showing in-game objects posx/y velx/y--------\n");
-	fprintf(f, "timewarp version = %s", tw_version());
+	fprintf(f, "\n\n--------error report, showing in-game objects--------\n");
+	fprintf(f, "timewarp version = %s\n", tw_version());
 
 	time_t t;
 	tm *td;
 	t = ::time(0);
 	td = ::localtime(&t);
-	fprintf(f, "%i-%02i-%02i %02i:%02i\n", td->tm_mday, td->tm_mon, td->tm_year,
+	fprintf(f, "local time = %i-%02i-%02i %02i:%02i\n\n", td->tm_mday, td->tm_mon, 1900+td->tm_year,
 		td->tm_hour, td->tm_min);
 
+	fprintf(f, "name, pos(x,y), vel(x,y), obj-pointer(this), ship-pointer(ship), target pointer(target)\n\n");
 	int i;
 	for (i = 0; i < physics->num_items; i += 1)
 	{
@@ -414,9 +416,31 @@ void game_create_errorlog()
 
 		// set "enable run-type information" for this feature
 		// (rebuild all after changing that option)
-		fprintf(f, "%30s %8.1e %8.1e %8.1e %8.1e\n",
-			typeid(*s).name(), p.x, p.y, v.x, v.y );
+		fprintf(f, "%30s %9.1e %9.1e %9.1e %9.1e 0x%08X 0x%08X 0x%08X\n",
+			typeid(*s).name(), p.x, p.y, v.x, v.y, s, s->ship, s->target );
 	}
+
+	#ifdef DO_STACKTRACE
+	//char *s = tw_error_str;
+//	fprintf(f, "%s\n", tw_error_str);
+	//free(s);	// cause s was allocated with malloc().
+
+	fprintf(f, "\nSTACKTRACE: level of call, line number in file, file name (top=most recent call)\n\n");
+
+	const char *fname = 0;
+	int *linenum = 0, *level = 0;
+
+	i = 0;	// start with the most recent one.
+	while (	get_stacklist_info(i, &fname, &linenum, &level) )
+	{
+		++i;	// go on until it's a full circle
+		if (fname && linenum && level)
+			fprintf(f, "%2i   %4i  %s\n", *level, *linenum, fname);
+	}
+
+	#endif
+
+	fprintf(f, "----------------- end error log ---------------------\n");
 
 	fclose(f);
 
@@ -651,8 +675,8 @@ void Game::play() {STACKTRACE
 		}*/
 	catch (...) {
 		if (__error_flag & 1) throw;
-		game_create_errorlog();
 		caught_error("Ack(1)!!!\nAn error occured in the game!\nBut I don't know what error (check error log)!");
+		game_create_errorlog();
 		if (__error_flag & 1) throw;
 	}
 	return;

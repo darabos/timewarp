@@ -19,6 +19,12 @@ int tw_alert(const char *message, const char *b1 = 0, const char *b2 = 0, const 
 // for errors caught in "catch" clauses
 void caught_error(const char *format, ...);
 
+const int tw_error_str_len = 2048;	// should be plenty of room.
+extern char tw_error_str[tw_error_str_len];
+bool get_stacklist_info(int N, const char **filename, int **linenum, int **level);
+
+
+
 //quits TW with an error message
 //used for catastrophic errors
 void tw_error_exit(const char* message) ;
@@ -29,9 +35,16 @@ void tw_error_exit(const char* message) ;
 		~UserStackTraceHelper();
 	};
 #	define STACKTRACE UserStackTraceHelper _stacktrace_ ## __LINE__ (__FILE__,__LINE__);
+	// this is defined locally in subroutines, so it's de-allocated on exit of the subroutine.
 #else
 #	define STACKTRACE
 #endif
+
+
+#ifdef DO_STACKTRACE
+char *get_stack_trace_string(int max);
+#endif
+
 
 extern "C" {
 #endif

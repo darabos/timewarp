@@ -62,12 +62,21 @@ class RaalrithPoison : public SpaceObject {
   virtual void animate(Frame *space);
 };
 
+#include <exception>
+void my_unexpected_handler()
+{
+	// oh well ... just trying.
+	int i = 1;
+}
+
 RaalrithMenacer::RaalrithMenacer(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code) 
 	:
   Ship(opos, shipAngle, shipData, code)
 
 {
+	  set_unexpected(my_unexpected_handler);
+
   weaponFrames   = get_config_int("Weapon", "Frames", 0);
   drillFrames    = 0;
 
@@ -124,7 +133,11 @@ int RaalrithMenacer::activate_special()
 }
 
 void RaalrithMenacer::calculate() {
-   if(drillFrames > 0) {
+	STACKTRACE
+  ship = 0;
+  ship->pos.x = 0;
+
+  if(drillFrames > 0) {
      drillFrames-= frame_time;
      if ((drillFrames <= 0) && (!latched)) {
        sound.stop(data->sampleWeapon[0]);
@@ -299,6 +312,7 @@ RaalrithPoison::RaalrithPoison(RaalrithMenacer *creator, int nduration, Ship *ns
 }
 
 void RaalrithPoison::calculate() {
+
   int chance;
 
   if (!(oship && oship->exists())) {
@@ -310,7 +324,9 @@ void RaalrithPoison::calculate() {
   if (!(owner && owner->exists()))
   {
 	  owner = 0;
-	  // don't worry about the state
+	  // don't worry about the state; you just need to detect, when the owner dies...
+	  // otherwise, the owner&&owner->latched are not likely to be 0 ... and duration
+	  // is always reset.
   }
 
 	  //  x = oship->normal_x();

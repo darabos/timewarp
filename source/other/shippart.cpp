@@ -29,6 +29,7 @@ bool isintargetlist(SpaceObject *o)
 	return false;
 }
 
+/*
 void removefromtargetlist(SpaceObject *o)
 {
 	int i;
@@ -43,7 +44,7 @@ void removefromtargetlist(SpaceObject *o)
 		}
 	}
 }
-
+*/
 
 
 
@@ -66,7 +67,8 @@ void BigShip::calculate()
 {
 	// make sure the "ship" is not a real target
 	if (isintargetlist(this))
-		removefromtargetlist(this);
+		//removefromtargetlist(this);
+		game->rem_target(this);
 
 	Ship::calculate();
 
@@ -337,5 +339,13 @@ int BigShipPart::handle_fuel_sap(SpaceLocation *source, double normal)
 }
 
 
+
+ShipType *BigShipPart::get_shiptype()
+{
+	// this is necessary, otherwise the Kat Poly ship crashes.
+	// also, "type" cannot be redirected inside the constructor, cause the
+	// parents' type is declared outside of its constructor (bad?).
+	return owner->type;
+};
 
 
