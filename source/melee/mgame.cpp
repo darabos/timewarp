@@ -679,6 +679,7 @@ void Game::compare_checksums()
 
 	unsigned char local_checksum = checksum() & 255;
 	unsigned char client_checksum[max_network];
+	memset(client_checksum, 0, sizeof(char)* max_network);
 	unsigned char server_checksum = local_checksum;
 	bool desync = false;
 
