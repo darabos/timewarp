@@ -102,17 +102,9 @@ void init_fleet() {STACKTRACE
         int j;
         unsigned char *k = NULL;
 
-        reset();
-        
+        reset();        
         READ(j);
         
-        
-        //handed by reset()
-        //size = 0;
-        //cost = 0;
-        //for(int i = 0; i < MAX_FLEET_SIZE; i++ )
-          //  ship[i] = empty_slot;
-
         int _fleet_size = intel_ordering(j);
         if (_fleet_size > MAX_FLEET_SIZE) 
         {tw_error("fleet too large! (%d ships)", _fleet_size);}
@@ -132,7 +124,6 @@ void init_fleet() {STACKTRACE
                 tw_error("deserialize fleet - bad shiptype (%s)", sname);
             }
             else addShipType(t);
-            //else select_slot(j, t);
         }
         if (s != psize)
             tw_error("deserialize_fleet - didn't use all the data...");
@@ -143,11 +134,6 @@ void init_fleet() {STACKTRACE
 #undef READ
 #undef READ2
        
-    
-
-
-    //void Fleet::select_slot(int slot, ShipType *type) {STACKTRACE
-    //}
 
     int Fleet::addShipType(ShipType * type) {
         if ( (getSize() >= MAX_FLEET_SIZE) || (type == NULL))
@@ -160,7 +146,7 @@ void init_fleet() {STACKTRACE
     }
 
     void Fleet::clear_slot (int slot) {STACKTRACE
-        if ( (slot >= getSize()) || (slot<=0) )
+        if ( (slot >= getSize()) || (slot<0) )
             return;
         cost -= ships[slot]->cost;
         ships.erase( ships.begin() + slot );
@@ -213,8 +199,6 @@ void init_fleet() {STACKTRACE
             type = shiptype(slot_id);
             if (type) {
                 addShipType(type);
-                //replaced with preceding line
-                //select_slot(count, type );
                 count++;
             }
         }

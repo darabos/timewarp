@@ -1161,7 +1161,7 @@ void edit_fleet(int player) {STACKTRACE
             int selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_SHIPLIST].d1));
             if (selectedSlot != -1)
                 fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = selectedSlot;
-			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETLIST], MSG_DRAW, 0);
+			//SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETLIST], MSG_DRAW, 0);
 		}
 
 		if ((fleetRet == FLEET_DIALOG_CLEAR) ||
@@ -1169,7 +1169,7 @@ void edit_fleet(int player) {STACKTRACE
 			fleet->clear_slot(fleetDialog[FLEET_DIALOG_FLEETLIST].d1);
             if (fleet->getSize() <= 0)
                 fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = 0;
-			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETLIST], MSG_DRAW, 0);
+			//SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SAVE) {
@@ -1194,22 +1194,22 @@ void edit_fleet(int player) {STACKTRACE
 
 		if(fleetRet == FLEET_DIALOG_SORTBYNAME) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_NAME_DESCENDING);
-			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
+			//SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYCOST) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_COST_DESCENDING);
-			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
+			//SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYORIGIN) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_ORIGIN_DESCENDING);
-			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
+			//SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYCODERS) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_CODERS_DESCENDING);
-			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
+			//SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_TITLE) {
@@ -1221,7 +1221,7 @@ void edit_fleet(int player) {STACKTRACE
 		if(fleetRet == FLEET_DIALOG_CLEARALL) {
 			fleet->reset();
 			fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = 0;
-			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
+			//SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 	} while((fleetRet != FLEET_DIALOG_MAIN) && (fleetRet != -1));
 

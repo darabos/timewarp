@@ -735,7 +735,8 @@ char *fleetpointsListboxGetter(int index, int *list_size, Fleet *fleet)
 {
 	static char buffy[256];
   if(index < 0) {
-    *list_size = MAX_FLEET_SIZE;
+      *list_size = fleet->getSize();
+    //*list_size = MAX_FLEET_SIZE;
     return NULL;
   } else
 	  if (fleet->getShipType(index)) {
@@ -816,63 +817,66 @@ void _handle_listbox_click2(DIALOG *d)
  */
 void _draw_listbox2(DIALOG *d)
 {
-   int height, listsize, i, len, bar, x, y, w;
-   int fg_color, fg, bg;
-   char *sel = (char*) d->dp2;
-   char s[1024];
-   int rtm;
+    int height, listsize, i, len, bar, x, y, w;
+    int fg_color, fg, bg;
+    char *sel = (char*) d->dp2;
+    char s[1024];
+    int rtm;
+    
+    (*(getfuncptr2)d->dp)(-1, &listsize, (char**) d->dp3);
+    height = (d->h-4) / text_height(font);
+    bar = (listsize > height);
+    w = (bar ? d->w-15 : d->w-3);
+    fg_color = (d->flags & D_DISABLED) ? gui_mg_color : d->fg;
+    
+    /* draw box contents */
+    for (i=0; i<height; i++) {
+        if (d->d2+i < listsize) {
+            if (d->d2+i == d->d1) {
+                fg = d->bg;
+                bg = fg_color;
+            } 
+            else if ((sel) && (sel[d->d2+i])) { 
+                fg = d->bg;
+                bg = gui_mg_color;
+            }
+            else {
+                fg = fg_color;
+                bg = d->bg;
+            }
+            usetc(s, 0);
+            ustrncat(s, (*(getfuncptr2)d->dp)(i+d->d2, NULL, (char**)d->dp3), sizeof(s)-ucwidth(0));
+            x = d->x + 2;
+            y = d->y + 2 + i*text_height(font);
+            rtm = text_mode(bg);
+            rectfill(screen, x, y, x+7, y+text_height(font)-1, bg); 
+            x += 8;
+            len = ustrlen(s);
+            while (text_length(font, s) >= MAX(d->w - 1 - (bar ? 22 : 10), 1)) {
+                len--;
+                usetat(s, len, 0);
+            }
+            textout(screen, font, s, x, y, fg);
+            text_mode(rtm);
+            x += text_length(font, s);
+            if (x <= d->x+w) 
+                rectfill(screen, x, y, d->x+w, y+text_height(font)-1, bg);
+        }
+        else {
+            rectfill(screen, d->x+2,  d->y+2+i*text_height(font), 
+                d->x+w, d->y+1+(i+1)*text_height(font), d->bg);
+        }
+    }
+    
+    if (d->y+2+i*text_height(font) <= d->y+d->h-3)
+        rectfill(screen, d->x+2, d->y+2+i*text_height(font), 
+        d->x+w, d->y+d->h-3, d->bg);/**/
 
-   (*(getfuncptr2)d->dp)(-1, &listsize, (char**) d->dp3);
-   height = (d->h-4) / text_height(font);
-   bar = (listsize > height);
-   w = (bar ? d->w-15 : d->w-3);
-   fg_color = (d->flags & D_DISABLED) ? gui_mg_color : d->fg;
-
-   /* draw box contents */
-   for (i=0; i<height; i++) {
-      if (d->d2+i < listsize) {
-	 if (d->d2+i == d->d1) {
-	    fg = d->bg;
-	    bg = fg_color;
-	 } 
-	 else if ((sel) && (sel[d->d2+i])) { 
-	    fg = d->bg;
-	    bg = gui_mg_color;
-	 }
-	 else {
-	    fg = fg_color;
-	    bg = d->bg;
-	 }
-	 usetc(s, 0);
-	 ustrncat(s, (*(getfuncptr2)d->dp)(i+d->d2, NULL, (char**)d->dp3), sizeof(s)-ucwidth(0));
-	 x = d->x + 2;
-	 y = d->y + 2 + i*text_height(font);
-	 rtm = text_mode(bg);
-	 rectfill(screen, x, y, x+7, y+text_height(font)-1, bg); 
-	 x += 8;
-	 len = ustrlen(s);
-	 while (text_length(font, s) >= MAX(d->w - 1 - (bar ? 22 : 10), 1)) {
-	    len--;
-	    usetat(s, len, 0);
-	 }
-	 textout(screen, font, s, x, y, fg);
-	 text_mode(rtm);
-	 x += text_length(font, s);
-	 if (x <= d->x+w) 
-	    rectfill(screen, x, y, d->x+w, y+text_height(font)-1, bg);
-      }
-      else {
-	 rectfill(screen, d->x+2,  d->y+2+i*text_height(font), 
-		  d->x+w, d->y+1+(i+1)*text_height(font), d->bg);
-      }
-   }
-
-   if (d->y+2+i*text_height(font) <= d->y+d->h-3)
-      rectfill(screen, d->x+2, d->y+2+i*text_height(font), 
-				       d->x+w, d->y+d->h-3, d->bg);
-
-   /* draw frame, maybe with scrollbar */
-   _draw_scrollable_frame(d, listsize, d->d2, height, fg_color, d->bg);
+    //rectfill(screen, 100,100,200,200,d->bg);
+    _draw_scrollable_frame(d, listsize, d->d2, height, fg_color, d->bg);
+    /* draw frame, maybe with scrollbar */
+    //_draw_scrollable_frame(d, listsize, 4, height, fg_color, d->bg);
+    //_draw_scrollable_frame(d, listsize, d->d2, height, fg_color, d->bg);
 }
 
 
