@@ -223,9 +223,12 @@ void NaroolPoison::calculate() {
 	vel = oship->get_vel();
 	duration -= frame_time;
 	if (duration < 0){
+		if (oship->spritePanel)
+		{
 		blit(oship->data->spritePanel->get_bitmap(0), oship->spritePanel->get_bitmap(0),
 				16 , 18, 16, 18, 32, 30);
 		oship->update_panel = TRUE;
+		}
 		state = 0;
 		return;
 		}
@@ -235,9 +238,12 @@ void NaroolPoison::calculate() {
 	else {
 		if (start) {
 			start = FALSE;
+			if (oship->spritePanel)
+			{
 			data->spriteExtra->draw(16, 18, 0, oship->spritePanel->get_bitmap(0));
 //			draw_sprite(oship->spritePanel->get_bitmap(0), data->spriteExtra->get_bitmap(0),16,18);
 			oship->update_panel = TRUE;
+			}
 			}
 		chance = random(1000.0);
 		if (chance < frame_time * poison) {

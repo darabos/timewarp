@@ -1,12 +1,15 @@
 #ifndef _VECTOR2_H
 #define _VECTOR2_H
 
+class Vector2;
+class Vector2i;
 
 class Vector2 {
 public:
 	double x, y;
 	Vector2 () {}
 	Vector2 (double a, double b) : x(a), y(b) {}
+	Vector2 (Vector2i v2i);
 	Vector2 (_Ignore_Me *nothing) : x(0), y(0) {}
 	Vector2 &operator= (_Ignore_Me *nothing) {x = y = 0; return *this;}
 	Vector2 &operator+=(Vector2 a) { x+=a.x;y+=a.y; return *this;}
@@ -16,6 +19,9 @@ public:
 	Vector2 operator-() const { return Vector2(-x,-y); }
 	bool operator==(Vector2 a) const { return ((x==a.x) && (y==a.y)); }
 	bool operator!=(Vector2 a) const { return ((x!=a.x) || (y!=a.y)); }
+
+	Vector2i round();
+	Vector2i truncate();
 
 	double length() const;
 	double abs() const {return length();}//just another name
@@ -107,4 +113,27 @@ if ( atan ( vc ) != atan(va) + atan(vb) ) an_error_occurred();
 ...
 
 */
+
+class Vector2i {
+public:
+	int x, y;
+	Vector2i () {}
+	Vector2i (int a, int b) : x(a), y(b) {}
+	Vector2i (_Ignore_Me *nothing) : x(0), y(0) {}
+	Vector2i &operator= (_Ignore_Me *nothing) {x = y = 0; return *this;}
+	Vector2i &operator+=(Vector2i a) { x+=a.x;y+=a.y; return *this;}
+	Vector2i &operator-=(Vector2i a) { x-=a.x;y-=a.y; return *this;}
+//	Vector2i &operator*=(int a) { x*=a; y*=a; return *this;}
+//	Vector2i &operator/=(int a) { x/=a; y/=a; return *this;}
+	Vector2i operator-() const { return Vector2i(-x,-y); }
+	bool operator==(Vector2i a) const { return ((x==a.x) && (y==a.y)); }
+	bool operator!=(Vector2i a) const { return ((x!=a.x) || (y!=a.y)); }
+
+/*	Vector2i product ( Vector2i other ) const {
+		return Vector2i ( x * other.x, y * other.y );
+	}
+	Vector2i operator* ( Vector2i other) const {return product(other);}*/
+};
+
+
 #endif

@@ -86,9 +86,10 @@ void ZekfahanShocker::calculate()
    if(shockingFrames > 0) {
      shockingFrames -= frame_time;
      }
-   if(shockingFrames == 2500 ) {
+   if(shockingFrames % 500 == 0 ) {
      add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS));
      }
+   /*
    if(shockingFrames == 2000 ) {
 	play_sound2(data->sampleSpecial[0]);
      add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS));
@@ -105,7 +106,9 @@ void ZekfahanShocker::calculate()
 	play_sound2(data->sampleSpecial[0]);
      add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS));
      }
-   if(shockingFrames == 50 ) {
+	 */
+   if(shockVar && shockingFrames <= 50 )
+   {
 	play_sound2(data->sampleSpecial[1]);
      add( new Shockwave(Vector2(0, 70), angle , specialVelocity, specialDamage, specialRange, specialArmour, this, this, data->spriteSpecial, 2, 50));
      shockingFrames = 0;

@@ -150,13 +150,15 @@ void play_net1server ( const char *_gametype_name, int port = -1 ) ;
 
 int getKey();
 
-#define MAIN_DIALOG_BOX               0
-#define MAIN_DIALOG_MELEE             1
-#define MAIN_DIALOG_MELEE_EXTENDED    2
-#define MAIN_DIALOG_TEAMS             3
-#define MAIN_DIALOG_OPTIONS           4
-#define MAIN_DIALOG_HELP              5
-#define MAIN_DIALOG_EXIT              6
+enum {
+	MAIN_DIALOG_BOX = 0,
+	MAIN_DIALOG_MELEE,
+	MAIN_DIALOG_MELEE_EXTENDED,
+	MAIN_DIALOG_TEAMS,
+	MAIN_DIALOG_OPTIONS,
+	MAIN_DIALOG_HELP,
+	MAIN_DIALOG_EXIT
+};
 
 DIALOG mainDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
@@ -945,8 +947,8 @@ DIALOG teamsDialog[] = {
   { d_box_proc,        35,   35,   420,  380,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { d_textbox_proc,    150,  40,   200,  25,   255,  0,    0,    0,       0,    0,    (void *)"Teams Dialog", NULL, NULL },
   { d_text_proc,       40,   70,   240,  160,  255,  0,    0,    D_EXIT,  0,    0,    (void *)" Player   Team Config Type", NULL, NULL },
-  { d_list_proc,       40,   85,   240,  145,  255,  0,    0,    D_EXIT,  0,    0,    playerListboxGetter, NULL, NULL },
-  { d_list_proc,       290,  70,   160,  160,  255,  0,    0,    D_EXIT,  0,    0,    controlListboxGetter, NULL, NULL },
+  { d_list_proc,       40,   85,   240,  145,  255,  0,    0,    D_EXIT,  0,    0,    (void *)playerListboxGetter, NULL, NULL },
+  { d_list_proc,       290,  70,   160,  160,  255,  0,    0,    D_EXIT,  0,    0,    (void *)controlListboxGetter, NULL, NULL },
   { d_button_proc,     295,  235,  150,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select Controller", NULL, NULL },
   { d_button_proc,     50,   250,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Team #", NULL, NULL },
   { d_button_proc,     50,   280,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Config #", NULL, NULL },
@@ -1058,14 +1060,14 @@ int scp_fleet_dialog_bitmap_proc(int msg, DIALOG* d, int c);
 // FLEET - dialog structure
 DIALOG fleetDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_textbox_proc,    390,  40,   240,  60,   255,  0,    0,    0,       0,    0,    fleetTitleString, NULL, NULL },
-  { d_list_proc2,      390,  110,  240,  280,  255,  0,    0,    D_EXIT,  0,    0,    fleetpointsListboxGetter, NULL, NULL },
+  { d_textbox_proc,    390,  40,   240,  60,   255,  0,    0,    0,       0,    0,    (void *)fleetTitleString, NULL, NULL },
+  { d_list_proc2,      390,  110,  240,  280,  255,  0,    0,    D_EXIT,  0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },
   { scp_fleet_dialog_text_list_proc,
-                       10,   90,   240,  380,  255,  0,    0,    D_EXIT,  0,    0,    shippointsListboxGetter, NULL, NULL },
+                       10,   90,   240,  380,  255,  0,    0,    D_EXIT,  0,    0,    (void *)shippointsListboxGetter, NULL, NULL },
   { d_button_proc,     256,  220,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)">>", NULL, NULL },
   { d_button_proc,     256,  270,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"<<", NULL, NULL },
   { d_button_proc,     256,  330,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Info", NULL, NULL },
-  { d_textbox_proc,    390,  10,   240,  30,   255,  0,    0,    0,       0,    0,    fleetPlayer, NULL, NULL },
+  { d_textbox_proc,    390,  10,   240,  30,   255,  0,    0,    0,       0,    0,    (void *)fleetPlayer, NULL, NULL },
   { d_button_proc,     400,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Save", NULL, NULL },
   { d_button_proc,     520,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Load", NULL, NULL },
   { d_button_proc,     25,   10,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by name", NULL, NULL },

@@ -4,6 +4,7 @@
 #include <allegro.h> //only used for endianness
 
 #include "base.h"
+#include "errors.h"
 #include "types.h"
 #include "random.h"
 

@@ -55,7 +55,7 @@ class BipoleKatamaran : public Ship {
 class BipoleShip : public Ship {
 // one of the two sub-ships making up the Katamaran
 
-  friend BipoleKatamaran;
+  friend class BipoleKatamaran;
 
   double       weaponRange;
   double       weaponVelocity;
@@ -378,7 +378,15 @@ int BipoleShip::activate_weapon(){
 }
 
 int BipoleShip::activate_special(){
-  accelerate_gravwhip( this, angle, -specialBrakes * frame_time, speed_max );
+
+	if ( vel != 0 )
+	{
+		Vector2 oldvel = vel;
+		double a = vel.atan();
+		accelerate( this, a, -specialBrakes * frame_time, speed_max );
+		if ( vel.dot(oldvel) < 0 )	// this detects overshoot.
+			vel = 0;
+	}
 
   return TRUE;
 }

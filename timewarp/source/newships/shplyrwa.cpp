@@ -6,18 +6,19 @@ REGISTER_FILE
 class LyrmristuWaBolt1 : public Missile {
 	public:
 	LyrmristuWaBolt1(double ox, double oy, double oangle, double ov, int odamage,
-			double orange, int oarmour, Ship *oship, SpaceSprite *osprite);
+			double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double relativity);
 };
 
 class LyrmristuWaBolt2 : public Missile {
 	public:
 	LyrmristuWaBolt2(double ox, double oy, double oangle, double ov, int odamage,
-			double orange, int oarmour, Ship *oship, SpaceSprite *osprite);
+			double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double relativity);
 };
 
 
 class LyrmristuWaSphere : public Shot {
 	public:
+  double powerLevel;
 	LyrmristuWaSphere **PP;
 	LyrmristuWaSphere(double ox, double oy, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship, SpaceSprite *osprite, LyrmristuWaSphere **P);
@@ -25,6 +26,7 @@ class LyrmristuWaSphere : public Shot {
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
 	virtual void inflict_damage(SpaceObject *other);
 	virtual void destroy();
+  virtual bool die(void);
 	virtual ~LyrmristuWaSphere();
 	private:
 
@@ -37,11 +39,13 @@ public:
   double       weaponVelocity1;
   int          weaponDamage1;
   int          weaponArmour1;
-  double	   weaponAngleSpread1;
+  double       weaponRelativity1;
+  double	     weaponAngleSpread1;
   double       weaponRange2;
   double       weaponVelocity2;
   int          weaponDamage2;
   int          weaponArmour2;
+  double       weaponRelativity2;
 
   int    specialColor;
   double specialRange;
@@ -56,12 +60,14 @@ public:
 
 
   public:
-  LyrmristuWarDestroyer(Vector2 opos, double angle, ShipData *data, unsigned int code);
+  LyrmristuWarDestroyer(Vector2 opos, double angle, ShipData *data, unsigned 
+int code);
 
   protected:
   virtual int activate_weapon();
   virtual int activate_special();
-  virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+  virtual int handle_damage(SpaceLocation *source, double normal, double 
+direct);
 
 };
 
@@ -74,11 +80,13 @@ LyrmristuWarDestroyer::LyrmristuWarDestroyer(Vector2 opos, double angle, ShipDat
   weaponVelocity1 = scale_velocity(get_config_float("Weapon", "Velocity1", 0));
   weaponDamage1   = get_config_int("Weapon", "Damage1", 0);
   weaponArmour1   = get_config_int("Weapon", "Armour1", 0);
+  weaponRelativity1 = get_config_float("Weapon", "Relativity1", 0);
   weaponAngleSpread1 = get_config_float("Weapon","AngleSpread1", 0) * ANGLE_RATIO;
   weaponRange2    = scale_range(get_config_float("Weapon", "Range2", 0));
   weaponVelocity2 = scale_velocity(get_config_float("Weapon", "Velocity2", 0));
   weaponDamage2   = get_config_int("Weapon", "Damage2", 0);
   weaponArmour2   = get_config_int("Weapon", "Armour2", 0);
+  weaponRelativity2 = get_config_float("Weapon", "Relativity2", 0);
 
   specialColor  = get_config_int("Special", "Color", 0);
   specialRange  = scale_range(get_config_float("Special", "Range", 0));
@@ -95,13 +103,15 @@ LyrmristuWarDestroyer::LyrmristuWarDestroyer(Vector2 opos, double angle, ShipDat
 int LyrmristuWarDestroyer::activate_weapon() {
   game->add(new LyrmristuWaBolt2(size.y*(0.0), (size.y * 0.6),
     angle, weaponVelocity2, weaponDamage2, weaponRange2, weaponArmour2,
-    this, data->spriteWeapon));
+    this, data->spriteWeapon, weaponRelativity2));
   game->add(new LyrmristuWaBolt1(size.y*(-0.4), (size.y * 0.6),
-    angle-weaponAngleSpread1, weaponVelocity1, weaponDamage1, weaponRange1, weaponArmour1,
-    this, data->spriteWeapon));
+    angle-weaponAngleSpread1, weaponVelocity1, weaponDamage1, weaponRange1, 
+weaponArmour1,
+    this, data->spriteWeapon, weaponRelativity1));
   game->add(new LyrmristuWaBolt1(size.y*(0.4), (size.y * 0.6),
-    angle+weaponAngleSpread1, weaponVelocity1, weaponDamage1, weaponRange1, weaponArmour1,
-    this, data->spriteWeapon));
+    angle+weaponAngleSpread1, weaponVelocity1, weaponDamage1, weaponRange1, 
+weaponArmour1,
+    this, data->spriteWeapon, weaponRelativity1));
 
   return(TRUE);
 }
@@ -118,10 +128,12 @@ if(weaponObject==NULL)
 	{
 		weaponObject->damage_factor += specialDamage;
 		weaponObject->armour += specialArmour;
+    weaponObject->powerLevel = weaponObject->damage_factor;
 	}
 	return(TRUE);	}
 
-int LyrmristuWarDestroyer::handle_damage(SpaceLocation *source, double normal, double direct) {
+int LyrmristuWarDestroyer::handle_damage(SpaceLocation *source, double 
+normal, double direct) {
 	if(weaponObject==NULL)
 	  return Ship::handle_damage(source, normal, direct);
 	else if(weaponObject->state==0)
@@ -132,16 +144,19 @@ int LyrmristuWarDestroyer::handle_damage(SpaceLocation *source, double normal, d
 			weaponObject->armour = 0;
 			weaponObject->damage_factor = 0;
 			weaponObject->state = 0;
+      weaponObject->powerLevel = 0;
 		}
 		if(weaponObject->armour = normal) {
 			weaponObject->armour = 0;
 			weaponObject->damage_factor = 0;
 			normal = 0;
 			weaponObject->state = 0;
+      weaponObject->powerLevel = 0;
 		}
 		if(weaponObject->armour > normal) {
 			weaponObject->armour -= normal;
 			weaponObject->damage_factor = weaponObject->armour;
+      weaponObject->powerLevel = weaponObject->damage_factor;
 			normal = 0;
 		}
 		return Ship::handle_damage(source, normal, direct);
@@ -149,15 +164,16 @@ int LyrmristuWarDestroyer::handle_damage(SpaceLocation *source, double normal, d
 }
 
 
-LyrmristuWaSphere::LyrmristuWaSphere(double ox, double oy, double oangle, 
-double ov, int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, 
+LyrmristuWaSphere::LyrmristuWaSphere(double ox, double oy, double oangle,
+double ov, int odamage, double orange, int oarmour, Ship *oship, SpaceSprite 
+*osprite,
 LyrmristuWaSphere **P)
 	:
-	Shot(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, osprite)
+	Shot(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, 
+osprite)
 	{
 	explosionSprite     = data->spriteWeaponExplosion;
-	//explosionFrameCount = 20;
-	//explosionFrameSize  = 50;
+  powerLevel = damage_factor;
 	PP=P;
 	if(armour<damage_factor) damage_factor=armour;
 	if(damage_factor<armour) armour=damage_factor;
@@ -179,27 +195,25 @@ LyrmristuWaSphere **P)
 	pos = ship->normal_pos();
 	angle = ship->angle;
 	vel = ship->get_vel();
-
-
 	Shot::calculate();
 	if(state!=0) {
 		sprite_index = damage_factor - 1;
 		if(sprite_index>15) sprite_index=15;
 		if(sprite_index<0) sprite_index=0;
 	}
+if(powerLevel<1) state=0; //should be the only gateway to kill it!
+}
 
-	}
-
-int LyrmristuWaSphere::handle_damage(SpaceLocation *source, double normal, double direct) {
+int LyrmristuWaSphere::handle_damage(SpaceLocation *source, double normal, 
+double direct) {
 	int x;
 	x = Shot::handle_damage(source, normal, direct);
 	if(source->isShot()){
-		// empty statement... not sure how to handle it yet
+    source->state = 0; //an intact field kills at least one incoming shot.
+    source->damage_factor = 0;
 	}
-	if(state==0) *PP=NULL;
-	if(damage_factor<=0) *PP=NULL;
-	if(armour<=0) *PP=NULL;
 	if(armour<damage_factor) damage_factor=armour;
+  powerLevel = damage_factor;
 	return x;
 	}
 
@@ -217,26 +231,38 @@ void LyrmristuWaSphere::inflict_damage(SpaceObject *other) {
 	Shot::inflict_damage(other);
   if(other->isShot()) {
     endingTargetArmour = ((Shot*)other)->armour;
-    ((Shot*)other)->damage_factor -= (startingTargetArmour - 
+    ((Shot*)other)->damage_factor -= (startingTargetArmour -
 endingTargetArmour);
     if(((Shot*)other)->damage_factor<0) ((Shot*)other)->damage_factor = 0;
   }
 	if(other->isAsteroid()&&damage_factor>1) {
-		state=1; damage_factor--;
+		state=1; damage_factor--; powerLevel=damage_factor;
 	}
 	if(originalCrew>0 && originalCrew<originalStrength) {
 		damage_factor = originalStrength-originalCrew;
 		armour = damage_factor;
+    powerLevel=damage_factor;
 		state = 1;
 	}
-		if(state == 0) *PP=NULL;
-		if(damage_factor<=0) *PP=NULL;
-		if(armour<=0) *PP=NULL;
-
 	return;
 }
 
-void LyrmristuWaSphere::destroy()
+bool LyrmristuWaSphere::die(void)
+{
+  if(powerLevel>0) {
+    state = 1;
+    damage_factor = powerLevel;
+    armour = powerLevel;
+    return(false);
+  }
+  else
+    *PP=NULL;
+    return(Shot::die());
+}
+
+
+
+void LyrmristuWaSphere::destroy(void)
 {
 	*PP=NULL;
 	Shot::destroy();
@@ -244,34 +270,31 @@ void LyrmristuWaSphere::destroy()
 
 LyrmristuWaSphere::~LyrmristuWaSphere(){
 	*PP=NULL;
-	//LyrmristuWaSPhere::~LyrmristuWaSphere()
 }
 
-LyrmristuWaBolt1::LyrmristuWaBolt1(double ox, double oy, double oangle, 
+LyrmristuWaBolt1::LyrmristuWaBolt1(double ox, double oy, double oangle,
 double ov,
-	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite)
+	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, 
+double relativity)
 	:
-	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship,osprite)
+	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, 
+oship,osprite, relativity)
 	{
 	explosionSprite     = data->spriteWeaponExplosion;
-	//explosionFrameCount = 20;
-	//explosionFrameSize  = 50;
-	//sprite_index=0;
     sprite_index = (get_index(ship->get_angle()) +
 										 (0 * 64));
 
 	}
 
-LyrmristuWaBolt2::LyrmristuWaBolt2(double ox, double oy, double oangle, 
+LyrmristuWaBolt2::LyrmristuWaBolt2(double ox, double oy, double oangle,
 double ov,
-	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite)
+	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, 
+double relativity)
 	:
-	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship,osprite)
+	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, 
+oship,osprite, relativity)
 	{
 	explosionSprite     = data->spriteWeaponExplosion;
-	//explosionFrameCount = 20;
-	//explosionFrameSize  = 50;
-	//sprite_index=1;
     sprite_index = (get_index(ship->get_angle()) +
 										 (1 * 64));
 
@@ -279,4 +302,5 @@ double ov,
 
 
 REGISTER_SHIP ( LyrmristuWarDestroyer )
+
 

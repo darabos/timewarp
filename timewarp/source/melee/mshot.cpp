@@ -100,7 +100,7 @@ void Shot::soundExplosion() {
 		play_sound2(explosionSample);
 	}
 	else if(damage_factor > 0) {
-		int i = round_down(damage_factor / 2);
+		int i = iround_down(damage_factor / 2);
 		if(i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
 		play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
 	}

@@ -100,3 +100,4 @@ class NetLog : public Log { //Logging system, usefull for networking & demo reco
 
 
 	};
+

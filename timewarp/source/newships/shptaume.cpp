@@ -49,7 +49,7 @@ class TauMercurySpark : public SpaceLine
 public:
 
 	TauMercurySpark (SpaceLocation *creator, double ox, double oy, double oangle, double ov,
-		int olifetime, int or, int og, int ob, double od, double relativity, double odamage = 0);
+		int olifetime, int blah_or, int og, int ob, double od, double relativity, double odamage = 0);
 	virtual void calculate();
 	virtual void inflict_damage(SpaceObject *other);
 	virtual void animate(Frame *space);
@@ -330,10 +330,10 @@ void TauMercuryShot::animateExplosion()
 
 
 TauMercurySpark::TauMercurySpark (SpaceLocation *creator, double ox, double oy, double oangle, double ov, int olifetime,
-			int or, int og, int ob, double od, double relativity, double odamage) :
+			int blah_or, int og, int ob, double od, double relativity, double odamage) :
 	SpaceLine(creator, Vector2(ox,oy), oangle, 0, 0),
 	lifetime(olifetime), lifetime_max(olifetime),
-	r(or), g(og), b(ob)
+	r(blah_or), g(og), b(ob)
 {
 	if (odamage == 0)
 		collide_flag_anyone = 0;
@@ -385,7 +385,7 @@ void TauMercurySpark::animate(Frame *space)
 		set_trans_blender(0, 0, 0, 1 * 255 * c);
 
 	putpixel(space->surface, x0, y0, color);
-	space->add_pixel(x0, y0, 1, 1);
+	space->add_pixel(x0, y0);
 
 	drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
 }

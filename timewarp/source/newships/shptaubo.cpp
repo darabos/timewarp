@@ -293,7 +293,7 @@ void TauBomberBombExplosion::animate(Frame *space)
 			xi = iround(x0 - dx * j);
 			yi = iround(y0 - dy * j);
 			putpixel(space->surface, xi, yi, color);
-			space->add_pixel(xi, yi, 1, 1);
+			space->add_pixel(xi, yi);
 		}
 	}
 	drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);

@@ -10,8 +10,8 @@ REGISTER_FILE
 class TulkonDevice;
 
 /*
- * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
- */
+* created by: cyhawk@sch.bme.hu and forevian@freemail.hu
+*/
 class TulkonRam : public Ship {
 // the body of the ship
 
@@ -23,6 +23,7 @@ class TulkonRam : public Ship {
   double        specialMass;
   double        specialDRange;
   double        specialSRange;
+  int           specialImmuneToBombs;
 
   TulkonDevice *ram;
 
@@ -56,7 +57,8 @@ class TulkonDevice : public SpaceObject {
   void ram( bool mode );
 
   public:
-  TulkonDevice( Ship* creator, SpaceSprite* osprite, double odist, int odamage,
+  TulkonDevice( Ship* creator, SpaceSprite* osprite, double odist, int 
+odamage,
     double oforce );
 
   double dist;                                        // distance of ship and device
@@ -72,17 +74,21 @@ class TulkonDevice : public SpaceObject {
 class TulkonBomb : public AnimatedShot {
 // bombs
 
-  friend TulkonDevice;
+  friend class TulkonDevice;
 
+  SpaceLocation* creator;
+  double damageInflicted;
   double drange;
   double srange;
   bool   exploding;
-
   protected:
   bool   rammed;
 
   public:
-  TulkonBomb( SpaceLocation* creator, Vector2 opos, int odamage, double odrange,
+  int immunity;
+
+  SpaceLocation* ram;
+  TulkonBomb( SpaceLocation* ocreator, Vector2 opos, int odamage, double odrange,
     double osrange, double oarmour, double omass, SpaceSprite* osprite,
     double orelativity = game->shot_relativity );
 
@@ -105,8 +111,10 @@ TulkonRam::TulkonRam( Vector2 opos, double shipAngle,
   specialMass   = get_config_float( "Special", "Mass", 0 );
   specialDRange = scale_range( get_config_float( "Special", "DamageRange", 0 ));
   specialSRange = scale_range( get_config_float( "Special", "SensorRange", 0 ));
+  specialImmuneToBombs = get_config_int("Special", "ImmuneToBombs", 0);
 
-  ram = new TulkonDevice( this, data->spriteWeapon, TULKON_DEVICE_MAX_DIST, weaponDamage,
+  ram = new TulkonDevice( this, data->spriteWeapon, TULKON_DEVICE_MAX_DIST, 
+weaponDamage,
     weaponForce );
 
   numBombs = 0;
@@ -121,6 +129,7 @@ int TulkonRam::activate_weapon(){
 }
 
 int TulkonRam::activate_special(){
+  TulkonBomb* TB;
   if( numBombs == maxBombs ){
     bombs[0]->state = 0;
     numBombs--;
@@ -129,8 +138,11 @@ int TulkonRam::activate_special(){
     }
   }
 
-  bombs[numBombs] = new TulkonBomb( this, Vector2(-get_size().x/2-TULKON_BOMB_DROP_DIST, get_size().y/5), specialDamage,
+  TB = new TulkonBomb( this, Vector2(-get_size().x/2-TULKON_BOMB_DROP_DIST, get_size().y/5), specialDamage,
     specialDRange, specialSRange, specialArmour, specialMass, data->spriteSpecial, 1.0 );
+  TB->ram = ram;
+  TB->immunity = this->specialImmuneToBombs;
+  bombs[numBombs] = TB;
   game->add( bombs[numBombs] );
   numBombs++;
 
@@ -186,21 +198,24 @@ void TulkonRam::calculate()
 }
 
 void TulkonRam::calculate_hotspots(){
+  double xx, yy, tx, ty, sz;
+  Vector2 vv;
+  sz = (this->size).magnitude();
   if( thrust && hotspot_frame <= 0 ){
-//    double tx = cos( angle );
-//    double ty = sin( angle );
+    tx = cos( angle );
+    ty = sin( angle );
+    xx = this->pos.x - tx * sz / 2.5 + ty * sz / 5;
+    yy = this->pos.y - ty * sz / 2.5 - tx * sz / 5;
+    vv.x = xx; vv.y = yy;
 	Vector2 t = unit_vector(angle);
-    game->add( new Animation( this, 
-//      normal_x() - tx * w / 2.5 + ty * h / 5,
-//      normal_y() - ty * w / 2.5 - tx * h / 5,
-	  normal_pos() - product(complex_multiply(unit_vector(angle), get_size()), Vector2(1/2.5, 1/5.0)),
-      data->spriteExtra, 0, 12, time_ratio, LAYER_HOTSPOTS));
-    game->add( new Animation( this, 
-//      normal_x() - tx * w / 2.5 - ty * h / 5,
-//      normal_y() - ty * w / 2.5 + tx * h / 5,
-	  normal_pos() - product(complex_multiply(unit_vector(-angle), get_size()), Vector2(1/2.5, 1/5.0)),
-      data->spriteExtra, 0, 12, time_ratio, LAYER_HOTSPOTS));
-      hotspot_frame += hotspot_rate;
+    game->add( new Animation( this,
+	  vv, data->spriteExtra, 0, 12, time_ratio, LAYER_HOTSPOTS));
+    xx = this->pos.x - tx * sz / 2.5 - ty * sz / 5;
+    yy = this->pos.y - ty * sz / 2.5 + tx * sz / 5;
+    vv.x = xx; vv.y = yy;
+    game->add( new Animation( this,
+	  vv, data->spriteExtra, 0, 12, time_ratio, LAYER_HOTSPOTS));
+    hotspot_frame += hotspot_rate;
   }
   if( hotspot_frame > 0 ) hotspot_frame -= frame_time;
 }
@@ -214,7 +229,8 @@ void TulkonRam::materialize(){
   game->add( ram );
 }
 
-TulkonDevice::TulkonDevice( Ship* creator, SpaceSprite* osprite, double odist,
+TulkonDevice::TulkonDevice( Ship* creator, SpaceSprite* osprite, double 
+odist,
   int odamage, double oforce ):
 SpaceObject( creator, creator->normal_pos(), creator->get_angle(),
   osprite ), dist( odist ), ramming( false ), force( oforce ){
@@ -265,7 +281,7 @@ int TulkonDevice::canCollide( SpaceLocation* other ){
 void TulkonDevice::collide( SpaceObject* other ){
   if( ramming ){
     // these lines of code execute
-    // once a [ramming] frame 
+    // once a [ramming] frame
     // after all calculate()s
     // and before any inflict_damage()s
     play_sound2( data->sampleWeapon[1] );             // play ram_nohit.wav
@@ -341,12 +357,14 @@ void TulkonDevice::ram( bool mode ){
   }
 }
 
-TulkonBomb::TulkonBomb( SpaceLocation* creator, Vector2 opos, int odamage,
+TulkonBomb::TulkonBomb( SpaceLocation* ocreator, Vector2 opos, int odamage,
   double odrange, double osrange, double oarmour, double omass, SpaceSprite* osprite,
   double orelativity ):
-AnimatedShot( creator, opos, 0, 0, odamage, -1, oarmour, creator, osprite, 64, time_ratio, orelativity ),
-  rammed( false ){
-
+AnimatedShot( ocreator, opos, 0, 0, odamage, -1, oarmour, ocreator, osprite, 64, time_ratio, orelativity ),
+  rammed( false )
+  {
+  damageInflicted = odamage;
+  creator=ocreator;
   collide_flag_sameship = collide_flag_sameteam = ALL_LAYERS;
   mass = omass;
   srange = osrange;
@@ -365,7 +383,7 @@ void TulkonBomb::calculate(){
   Query q;
   for( q.begin( this, bit(LAYER_HOTSPOTS), srange ); q.currento; q.next() ){
     if( q.currento->get_sprite() == game->hotspotSprite ){
-		damage(this, armour);
+		  damage(this, armour);
     }
   }
   q.end();
@@ -384,7 +402,9 @@ void TulkonBomb::collide( SpaceObject* other ){
   }
 }
 
-int TulkonBomb::handle_damage( SpaceLocation* other, double normal, double direct ){
+int TulkonBomb::handle_damage( SpaceLocation* other, double normal, double 
+direct ){
+  if(other==creator||other==ram)return(0); // creator can't set them off by slamming them with the ram.
 	int s = exists();
   int d= AnimatedShot::handle_damage( other, normal, direct );
   if( s && !exists() ){
@@ -392,7 +412,12 @@ int TulkonBomb::handle_damage( SpaceLocation* other, double normal, double direc
     for( q.begin( this, OBJECT_LAYERS, drange ); q.currento; q.next() ){
 // we could use a distance dependant damage factor
 //      int dmg = (int)ceil((drange - distance(q.currento)) / drange * damage_factor);
-	  q.currento->damage(this, damage_factor);
+	  //q.currento->damage(this, damage_factor);
+    if(immunity&&(q.currento==creator||q.currento==ram))
+      ;
+    else
+		  damage(q.currento, 0, damageInflicted);
+
     }
     animateExplosion();
     soundExplosion();
@@ -407,3 +432,4 @@ void TulkonBomb::soundExplosion(){
 void TulkonBomb::inflict_damage( SpaceObject* other ){}
 
 REGISTER_SHIP(TulkonRam)
+

@@ -1,16 +1,29 @@
 Vezlagari Battle Barge.
 
-This ship is a converted freighter.  The weaponry is made as an
-exact copy of the weaponry of a much older, extinct race.  However,
-the Vezlagari do not understand how to give targeting instructions
-to these otherwise very effective weapons.  Therefore, all
-missile launches and laser fire is in a random trajectory.
+This ship is a converted freighter.  The vezlagari
+are very defense-minded, and they augmented their
+freighters with a massive armour plate/energy 
+defense grid welded to the front of the freighter.
+However, in this design, there were no openings for
+weapon ports.  Therefore, the two missile tubes point
+backwards, and the missiles turn around quickly
+and race towards the enemy.
 
-fire = launches one corkscrew missile.  Cost is 2 battery, damage of 6,
-armour 3.  The missiles will randomly launch forward or backward, and will
-meander across space in an unpredictable fashion.  Scoring a hit with
-one is difficult, but worth the effort.
+The armour can take a vicious pounding, but it
+does not make the ship invulnerable to damage.
+A determined frontal assault will, over time,
+break down the armour/shielding.
 
-special = projects energy beam.  The cost is three battery, damage
-is one or two points of damage.  The facing, duration, damage,
- and length of the beam is completely random.
+fire - launch two unguided corkscrew missiles.
+The vezlagari have not worked all of the kinks
+out of the guidance system, so the missiles
+tend to wander.  Damage is 2, energy is 2.
+
+special - send energy to the armor plate/defense
+grid.  This costs 12 (all) energy, and undoes the
+effect of 3 points of damage.
+
+Other - the front armour has a rebound effect.  If a 
+solid object strikes the front armour, the ship
+and the other object will recoil away from each other.
+This is automatic.

@@ -1,5 +1,6 @@
 #include <math.h>
 #include "base.h"
+#include "errors.h"
 #include "sintable.h"
 
 float _sintable_table[(1 << SINTABLE_WIDTH_BITS) + 1];

@@ -102,9 +102,9 @@ void NormalGame::init_players() {STACKTRACE
 				const char *name = get_config_string(buffy, "Name", buffy);
 				char config[64];
 				sprintf(config, "Config%d", get_config_int(buffy, "Config", 0));
-				int channel = channel_server;
-				if (strcmp(type, "WussieBot") == 0) channel = channel_none;
-				if (strcmp(type, "MoronBot") == 0) channel = channel_none;
+				//int channel = channel_server;
+				//if (strcmp(type, "WussieBot") == 0) channel = channel_none;
+				//if (strcmp(type, "MoronBot") == 0) channel = channel_none;
 				int ti = get_config_int(buffy, "Team", 0);
 				add_player(create_control(channel_server, type, config), ti, name, buffy);
 			}
@@ -112,26 +112,81 @@ void NormalGame::init_players() {STACKTRACE
 		break;
 		case Log::log_net1client:
 		case Log::log_net1server: {
-			set_config_file("client.ini");
-			int lp = get_config_int("Network", "LocalPlayers", 1);
-			int cp = lp, sp = lp;
-			log_int(channel_server, sp);
-			log_int(channel_client, cp);
-			int i;
-			char buffy1[256];
-			char buffy2[256];
-			char buffy3[256];
-			for (i = 0; i < sp; i += 1) {
-				sprintf(buffy1, "Config%d", i);
-				sprintf(buffy2, "Server Player%d", i+1);
-				sprintf(buffy3, "Player%d", i+1);
-				add_player(create_control(channel_server, "Human", buffy1), 0, buffy2, buffy3);
+			log_file("server.ini");
+			int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
+			if (use_teams_menu) {
+				int j;
+				for (j = 0; j < 2; j += 1) {
+					int ch;
+					if (j == 0) ch = channel_server;
+					else ch = channel_client;
+					if (is_local(ch)) {
+						for (int i = 0; true; i += 1) {
+							char buffy[64];
+							sprintf(buffy, "Player%d", i + 1);
+							set_config_file("scp.ini");
+							const char *type = get_config_string(buffy, "Type", NULL);
+							if (!type) {
+								int tmp = 0;
+								log_int(ch, tmp);
+								break;
+							}
+							if (strcmp(type, "none") == 0) continue;
+							const char *name = get_config_string(buffy, "Name", buffy);
+							char config[64];
+							sprintf(config, "Config%d", get_config_int(buffy, "Config", 0));
+							int channel = channel_server;
+							//if (strcmp(type, "WussieBot") == 0) channel = channel_none;
+							//if (strcmp(type, "MoronBot") == 0) channel = channel_none;
+							int ti = get_config_int(buffy, "Team", 0);
+							{int tmp = 1; log_int(ch, tmp);}
+							log_int(ch, ti);
+							int name_length = strlen(name);
+							log_int(ch, name_length);
+							log_data(ch, (char*)name, name_length);
+							add_player(create_control(ch, type, config), ti, name, buffy);
+						}
+					}
+					else {
+						for (int i = 0; true; i += 1) {
+							int tmp;
+							log_int(ch, tmp);
+							if (tmp == 0) break;
+							int team;
+							char *name;
+							log_int(ch, team);
+							int name_length;
+							log_int(ch, name_length);
+							name = (char*)malloc((name_length+1)*sizeof(char));
+							log_data(ch, name, name_length);
+							name[name_length] = 0;
+							add_player(create_control(ch, "Whatever"), team, name, NULL);
+						}
+					}
+				}
 			}
-			for (i = 0; i < cp; i += 1) {
-				sprintf(buffy1, "Config%d", i);
-				sprintf(buffy2, "Client Player%d", i+1);
-				sprintf(buffy3, "Player%d", sp+i+1);
-				add_player(create_control(channel_client, "Human", buffy1), 0, buffy2, buffy3);
+			else {
+				set_config_file("client.ini");
+				int lp = get_config_int("Network", "LocalPlayers", 1);
+				int cp = lp, sp = lp;
+				log_int(channel_server, sp);
+				log_int(channel_client, cp);
+				int i;
+				char buffy1[256];
+				char buffy2[256];
+				char buffy3[256];
+				for (i = 0; i < sp; i += 1) {
+					sprintf(buffy1, "Config%d", i);
+					sprintf(buffy2, "Server Player%d", i+1);
+					sprintf(buffy3, "Player%d", i+1);
+					add_player(create_control(channel_server, "Human", buffy1), 0, buffy2, buffy3);
+				}
+				for (i = 0; i < cp; i += 1) {
+					sprintf(buffy1, "Config%d", i);
+					sprintf(buffy2, "Client Player%d", i+1);
+					sprintf(buffy3, "Player%d", sp+i+1);
+					add_player(create_control(channel_client, "Human", buffy1), 0, buffy2, buffy3);
+				}
 			}
 		}
 		break;

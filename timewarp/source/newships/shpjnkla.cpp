@@ -7,7 +7,7 @@ class JnkdwoLazelCrystal;
 
 class JnkdwoLazel : public Ship {
 
-  friend JnkdwoLazelCrystal;
+  friend class JnkdwoLazelCrystal;
 
   double       weaponRange;
   double       weaponVelocity;

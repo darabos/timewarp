@@ -10,6 +10,7 @@
 
 
 #define PLATFORM_IS_ALLEGRO
+//#define PLATFORM_IS_SDL
 
 
 
@@ -48,7 +49,11 @@ Three sections:
 #	include <time.h>
 #	include <math.h>
 #endif
-#include "types.h"
+#ifdef PLATFORM_IS_SDL
+#	include <SDL.h>
+#else
+#	include "types.h"
+#endif
 #include "get_time.h"
 #include "errors.h"
 
@@ -158,7 +163,7 @@ int _no_idle = 0;
 		static double winmm_qpc_get_freq() {
 			LARGE_INTEGER fred;
 			if (QueryPerformanceFrequency(&fred)) {
-				return fred.QuadPart;
+				return (double)fred.QuadPart;
 			}
 			else return 0;
 		}
@@ -191,13 +196,13 @@ int _no_idle = 0;
 #elif defined PLATFORM_IS_SDL
 #	include <SDL.h>
 	static int sdl_base;
-	static int get_time() {
+	static int sdl_get_time() {
 		return SDL_GetTicks() - sdl_base;
 	}
-	void init_sdl_time() {
+	static void init_sdl_time() {
 		SDL_InitSubSystem(SDL_INIT_TIMER);
 	}
-	void deinit_sdl_time() {
+	static void deinit_sdl_time() {
 		SDL_QuitSubSystem(SDL_INIT_TIMER);
 	}
 #else
@@ -208,7 +213,7 @@ int _no_idle = 0;
 #	define LIBC_TIME
 	int libc_base = 0;
 	int libc_get_time() {
-		return (clock() * 1000) / CLK_TCK - libc_base;
+		return (clock() * 1000) / CLOCKS_PER_SEC - libc_base;
 	}
 #endif
 
@@ -254,7 +259,7 @@ volatile double get_time2() {
 volatile Sint64 get_time3() {
 #	if 0
 #	elif defined RDTSC_TIMER
-		//require debuging mode, since we don't have run-time check
+		//ought to require debuging mode, since we don't have run-time check that RDTSC is a valid instruction
 		return rdtsc_get_time();
 #	elif defined WINMM_QPC
 		return winmm_qpc_get_time();
@@ -304,7 +309,6 @@ void init_time() {
 		winmm_qpc_period_f = 1000.0 / winmm_qpc_get_freq();
 #	endif
 
-
 #	if defined RDTSC_TIMER
 	{
 		Sint64 tmpl;
@@ -328,6 +332,19 @@ void init_time() {
 #	endif
 }
 
+
+
+
+
+//not tested, not even a little bit...
 void deinit_time() {
-	//not yet implemented
+	if (~(timer_attributes & 1)) return;
+	timer_attributes &=~ 1;
+#	if defined PLATFORM_IS_SDL
+		deinit_sdl_time();
+#	endif
+#	if defined PLATFORM_IS_ALLEGRO
+		deinit_allegro_time();
+#	endif
+	return;
 }

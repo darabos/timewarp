@@ -1,14 +1,14 @@
-The Hotspot Ship !
+Idea: GeomanNL
 
-About the ship:
+Ship: The Hotspot
 
-You can control the lens after the weaon is activated by pressing the fire key and the turn-left or turn-right keys together. This controls the point where the dangerous hotspot is projected.
+This ship is a tweaked space lens. Very ingenius, it focuses light from an exposed energy source onto a single intensely hot spot in the far distance. A system of gyroscopes makes the weapon manageable at long distances, by slowing turning rate when focussed far away.
 
-It's quite hard to track the target, even for the most experienced captain, therefore there's the Autofocus special, which can be toggled on or off by pressing the special once (toggling on costs a 1-time consumption of 2 fuel). The Autofocus system isn't perfected yet, firstly, it is much slower than manual focusing and secondly, the system uses extreme amounts of power, which reduces the power of the hot spot, dealing less damage than normal.
+You can light the source by pressing fire. You can control the lens manually after the weaon is activated by pressing fire (increase) or special (decrease distance). This controls the point where the dangerous hotspot is projected.
 
-About the race:
+The special (special+fire) ejects the nuclear source into space, where it is a dangerous object for a short while. It's expendable, and the Vinsmel always have a new energy source ready, but you instantly lose all battery power. It can only be ejected if enough power, namely 75% of battery, is remaining.
 
-VinsMel
+Race: the VinsMel
 
 (GeomanNL/ Bristle/ (Culture20))
 
@@ -45,8 +45,6 @@ Current leader has acquired a synthetic lens from a magnifying glass, accidental
 They had only just launched a giant telescope into space, for the purpose of studying the star. A bright young student, studying a particularly boring star, accidentally discovered a dangerous asteroid out of orbit when it was on collision course with their planet. Coincidentally, he was just thinking of the process that focused the light of that uninteresting star on his blurry eye, dazing away he realized, he could reverse the process! He exposed their nuclear power source and indeed, burnt the asteroids into small bits, which showed that the giant telescope lens could also be used as a weapon (thus, the hotspot ship). Btw, the VinsMel make the biggest lenses and most powerful telescopes throughout known space.
 
 Short, stocky, in space wearing bulky rubbery space suits, on the hot surface wearing wide sparse clothing (boxer shorts, sun glasses, T-shirts).
-
-They are ripe for a Drax/Rotean encounter because of their technology collecting habits.
 
 This is the time at which they encounter a new species.
 

@@ -2,8 +2,8 @@
 	extern "C" {
 #endif
 int iround(double a);
-int round_up(double a);
-int round_down(double a);
+int iround_up(double a);
+int iround_down(double a);
 #ifdef __cplusplus
 	}
 #endif

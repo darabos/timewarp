@@ -4,6 +4,8 @@
 #define DO_STACKTRACE
 #define USE_ALLEGRO
 
+#define COMPILE_TIME_ASSERT(condition) typedef char _compile_time_assert_type_ ## __LINE__ [(condition) ? 1 : -1];
+
 /*
  * int tw_alert(char *message, char *b1, char *b2, char *b3)
  *
@@ -26,7 +28,7 @@ void tw_error_exit(const char* message) ;
 		UserStackTraceHelper(const char *file, int line);
 		~UserStackTraceHelper();
 	};
-#	define STACKTRACE UserStackTraceHelper _stacktrace ## __LINE__ (__FILE__,__LINE__);
+#	define STACKTRACE UserStackTraceHelper _stacktrace_ ## __LINE__ (__FILE__,__LINE__);
 #else
 #	define STACKTRACE
 #endif
@@ -47,27 +49,42 @@ void deinit_error();  //de-initialize error handling routines
  *     tw_error, wrap the call to tw_error with curly braces like 
  *     this: {tw_error("My error message");}
  *
- * This function is used to query the user what action to take when an error occurs.
- * It will pop up a box displaying the error string and prompting the user to abort,
- * retry, or debug.
+ * This function is used to query the user what action to take when an error 
+ * occurs.  It will pop up a box displaying the error string and prompting 
+ * the user to abort, retry, or debug.  It may also display some diagnostic 
+ * data, such as a call stack.  To avoid showing the call stack, call error 
+ * instead of tw_error.  
  *
  * If the user clicks on "retry" then error() will return.
  *
- * If the user clicks on "abort" then error() will throw 0. This will cause one level
- * of the program to be aborted. (i.e. from game to main menu)
+ * If the user clicks on "abort" then error() will throw 0. This will cause 
+ * one level of the program to be aborted. (i.e. from game to main menu)
  *
- * If the user clicks on "debug" then error() will attempt to abort the entire program
- * in a way that lets the debugger work on things. Currently, this is implemented by
- * intentionally dereferencing a NULL pointer.
- *
+ * If the user clicks on "debug" then error() will attempt to abort the 
+ * entire program in a way that lets the debugger work on things. On MSVC 
+ * this is currently implemented with the assembly instruction "int 3".  On 
+ * other platforms this is currently implemented by intentionally 
+ * derefencing a NULL pointer.  
+ * 
  */
 
 #	define tw_error _prep_error(__FILE__, __LINE__); _error
 	void error_handler ( const char *message);
 	extern void (*_error_handler) ( const char *src_file, int line, const char *message );
-	void error(const char *format, ...);
 	void _prep_error(const char *file, int line);
 	void _error(const char *format, ...);
+
+/*
+ * void error(const char *format, ...)
+ *
+ * This function is more or less the same as tw_error(const char *format, ...)
+ *
+ * The primary difference is, this function will not display extra debugging 
+ * information.  Specifically, it won't attempt to display the call stack.  
+ * 
+ */
+
+	void error(const char *format, ...);
 
 
 /*

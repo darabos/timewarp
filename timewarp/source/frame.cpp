@@ -179,9 +179,9 @@ void Frame::add_to_old_list(int x, int y, int a, int b,
 	old_item_count++;
 }
 
-void Frame::add_pixel(int x, int y, int a, int b)
+void Frame::add_pixel(int x, int y)
 {
-	add_to_list(x, y, a, b, erase_pixel, draw_pixel);
+	add_to_list(x, y, 0, 0, erase_pixel, draw_pixel);
 }
 
 void Frame::add_box(int x, int y, int a, int b)
@@ -204,9 +204,9 @@ void Frame::add_line(int x, int y, int a, int b)
 	add_to_list(x, y, a, b, erase_line, draw_line);
 }
 
-void Frame::add_old_pixel(int x, int y, int a, int b)
+void Frame::add_old_pixel(int x, int y)
 {
-	add_to_old_list(x, y, a, b, erase_pixel, draw_pixel);
+	add_to_old_list(x, y, 0, 0, erase_pixel, draw_pixel);
 }
 
 void Frame::add_old_box(int x, int y, int a, int b)
@@ -339,3 +339,47 @@ void Frame::draw()
 	}
 	return;
 }
+
+
+/*
+struct ShortIntRect {
+	short int x, y, w, h;
+};
+
+class Frame2 {
+
+	//front surface
+	BITMAP *front;
+
+	//back surface
+	BITMAP *back;
+
+	//background / clear
+	Color background_color;
+	BITMAP *background_image;
+
+	//mode
+	int full_redraw;//0 = false, 1 = this frame only, -1 = always
+	char clear;     //bit 0: 0=off,1=on;   bit 1: 0=flat color, 1=bitmap
+
+	//clipping region
+	int x_min, x_max; //x_min inclusive, x_max exclusive
+	int y_min, y_max; //y_min inclusive, y_max exclusive
+
+	//dirtyness:
+	//dirty rectangles
+	int num_dirty_rects;
+	ShortIntRect *dirty_rects;
+	//dirty non-rectangles
+	int num_dirty_items;
+	DirtyItem *dirty_items;
+
+	//clears:
+	//clear rectangles
+	int num_clear_rects;
+	ShortIntRect *clear_rects;
+	//clear non-rectangles
+	int num_clear_items;
+	ShortIntRect *clear_items;
+};
+*/

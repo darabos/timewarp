@@ -14,6 +14,8 @@ REGISTER_FILE
 #include "../melee/mcbodies.h"
 #include "../melee/mview.h"
 #include "../other/orbit.h"
+#include "../melee/mitems.h"
+#include "../util/aastr.h"
 //#define STATION_LOG
 
 #define Num_Planet_Pics 7
@@ -25,12 +27,13 @@ class Huge : public NormalGame
 
 	virtual void init_objects();
 
-	bool GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites);
-	SpaceSprite *GetSprite(char *fileName, char *spriteName);
+	bool GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites, int attribs);
+	SpaceSprite *GetSprite(char *fileName, char *spriteName, int attribs);
 };
 
 
-SpaceSprite *Huge::GetSprite(char *fileName, char *spriteName)
+
+SpaceSprite *Huge::GetSprite(char *fileName, char *spriteName, int attribs)
 {
 
 	DATAFILE *tmpdata;
@@ -45,19 +48,19 @@ SpaceSprite *Huge::GetSprite(char *fileName, char *spriteName)
 		return NULL;
 	}
 
-	#ifdef STATION_LOG
-		sprintf(msgStr, "Succesfully loaded %s#%s!  Hot damn!",fileName,spriteName);
-		message.out(msgStr);
-	#endif
+//	#ifdef STATION_LOG
+//		sprintf(msgStr, "Succesfully loaded %s#%s!  Hot damn!",fileName,spriteName);
+//		message.out(msgStr);
+//	#endif
 
-	SpaceSprite *spr=new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED, 1);
+	SpaceSprite *spr=new SpaceSprite(tmpdata, 1, attribs, 1);
 	unload_datafile_object(tmpdata);
 
 	return spr;
 }
 
 bool Huge::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, 
-int numSprites)
+int numSprites, int attribs)
 {
 
 	SpaceSprite *spr;
@@ -66,7 +69,7 @@ int numSprites)
 	for(int num=0; num<numSprites; num++)
 	{
 		sprintf(dataStr,cmdStr,num);
-		spr=GetSprite(fileName, dataStr);
+		spr=GetSprite(fileName, dataStr, attribs);
 		if(!spr)
 		{
 			return FALSE;
@@ -85,7 +88,9 @@ void Huge::init_objects()
 	set_tw_aa_mode(antia_on);
 
 
-	if(GetSprites(HugePics,"plhuge.dat","Station_Planet%03d",Num_Planet_Pics)==FALSE)
+	// load the sprite, but set the anti-alias to 0 for them - they're _big_:
+	if(GetSprites(HugePics,"plhuge.dat","Station_Planet%03d",Num_Planet_Pics,
+		SpaceSprite::MASKED | SpaceSprite::NO_AA)==FALSE)
 		error("File error, planet pics.  Bailing out...");
 
 
@@ -122,23 +127,26 @@ void Huge::init_objects()
 		}
 	else iMessage("PlanetType= %d *PRESET*",PlanetType);
 	Centre = new Planet(size/2, HugePics[PlanetType],0);
+	game->add(Centre);
+	game->add(new WedgeIndicator(Centre, 75, 4));
 
+	// copied from Planet::Planet :
+	// note that Planet constructor calls another log file.
+	log_file("plhuge.ini");
+	Centre->gravity_mindist = scale_range(get_config_float("GPlanet", "GravityMinDist", 0));
+	Centre->gravity_range = scale_range(get_config_float("GPlanet", "GravityRange", 0));
+	Centre->gravity_power = get_config_float("GPlanet", "GravityPower", 0);
+	Centre->gravity_force = scale_acceleration(get_config_float("GPlanet", "GravityForce", 0), 0);
+	Centre->gravity_whip = get_config_float("GPlanet", "GravityWhip", 0);
+	Centre->gravity_whip2 = get_config_float("GPlanet", "GravityWhip2", 0);
 
+	double vx, vy;
+	vx = scale_velocity( get_config_float("GPlanet", "VelX", 0) );
+	vy = scale_velocity( get_config_float("GPlanet", "VelY", 0) );
+	Centre->vel = Vector2( vx, vy );
 
-	//mapsize
-/*if (MapSize < 2000) 
-	{
-		width = height = 2 * 2 * distancetemp[NumMoons-1]; // two times diamter = 4 times radius of the system
-		//(NumMoons*Radius+200)*2;   //size formula
-		if (width < 3600) width = height =3600; // minimum screen size of 3600
-	
-		iMessage("Size   = %d *FORMULA*",(width));
-		game->add(Centre);
-	}
-	else {*/
-		size.x = size.y = MapSize;
-		iMessage("Size   = %d *PRESET*",(size.x));
-		game->add(Centre);	
+	size.x = size.y = MapSize;
+	iMessage("Size   = %d *PRESET*",(size.x));
 
 	int num;
 
@@ -151,9 +159,6 @@ void Huge::init_objects()
 		c->mass = CoMass;
 		c->gravity_force *= 0;
 		c->gravity_whip = 0;
-		//double a=(random(PI2));
-	  //	c->vx=(ComMax/CoMass)*cos(a);
-	  //	c->vy=(ComMax/CoMass)*sin(a);
 		c->accelerate(NULL, random(PI2), get_config_int(NULL, "Comet_acc", 2), 
 		get_config_int(NULL, "Comet_max", 2));
 		add (c);
@@ -161,12 +166,18 @@ void Huge::init_objects()
 
 	//asteroids code
 	Asteroids = get_config_int(NULL, "Asteroids", 0);
-	if (Asteroids > 0) for (int num = 0; num < Asteroids; num += 1) add(new Asteroid());
-	else {
-//		NumMoons = get_config_int(NULL, "NPlanets", 2);
-//		Radius = get_config_int(NULL, "Radius", 2);
-//		if ((NumMoons*Radius+200)*2>3840) for (int i = 0; i < ((NumMoons*Radius+200)*2)/900; i += 1) add(new Asteroid());
-		 for (int i = 0; i < 4; i += 1) add(new Asteroid());
+	if (Asteroids > 0)
+	{
+		for (int num = 0; num < Asteroids; num += 1)
+		{
+			Asteroid *a = new Asteroid();
+			add(a);
+			a->pos = Centre->pos + (400+tw_random(400)) * unit_vector(tw_random(PI2));
+			a->vel = 500*unit_vector(a->trajectory_angle(Centre)+PI/2) / a->distance(Centre);
+		}
+	} else {
+		 for (int i = 0; i < 4; i += 1)
+			 add(new Asteroid());
 	}
 
 	}

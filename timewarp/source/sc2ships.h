@@ -177,6 +177,8 @@ public:
 	double realturnstep;
 	
 	int sprite_index2;
+
+	int last_turn_left, last_turn_right;
 	
 public:
 	SlylandroProbe(Vector2 opos, double shipAngle,

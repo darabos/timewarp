@@ -245,7 +245,11 @@ void ArkanoidPincerShip::calculate(void) {
   if(pincerR)pincerR->angleShift = jawAngle;
   if(pincerL)pincerL->MoveToRelativeLocationPolar(this, -jawAngle, jawsRange);
   if(pincerR)pincerR->MoveToRelativeLocationPolar(this, jawAngle, jawsRange);
-  if((pincerR->isAlive==FALSE||pincerL->isAlive==FALSE)&&batt>=shipMinBattForRegrowth) {
+
+  if(( ( !pincerR || pincerR->isAlive==FALSE) ||
+	   ( !pincerL || pincerL->isAlive==FALSE) ) &&
+	   batt >= shipMinBattForRegrowth) {
+
     regrowthCount += frame_time;
     if(regrowthCount>shipTimeForRegrowth) {
       Regrow();
@@ -441,7 +445,7 @@ void ArkanoidPincerShip::Regrow(void) {
       return;
     }
   }
-  else tw_error("pincerL does not exist!");
+  else { tw_error("pincerL does not exist!"); }	// this is an evil macro
   if(pincerR) {
     if(pincerR->isAlive==FALSE) {
       pincerR->isAlive=TRUE; 
@@ -454,21 +458,19 @@ void ArkanoidPincerShip::Regrow(void) {
       return;
     }
   }
-  else tw_error("pincerR does not exist!");
+  else { tw_error("pincerR does not exist!"); }	// this is an evil macro
   //message.print(1500,11,"Regrow2");
 }
 
 void ArkanoidPincerShip::death(void) {
   //message.print(1500,13,"ShipDeath1");
-  if(pincerL)
-    if(pincerL->exists()) {
+  if (pincerL && pincerL->exists()) {
       pincerL->creator = NULL;
       pincerL->otherPincer = NULL;
       pincerL->state = 0;
       pincerL = NULL;
     }
-  if(pincerR)
-    if(pincerR->exists()) {
+  if(pincerR && pincerR->exists()) {
       pincerR->creator = NULL; 
       pincerR->otherPincer = NULL;
       pincerR->state = 0;
@@ -625,6 +627,16 @@ void ArkanoidPincer::inflict_damage(SpaceObject *other) {
 
 int ArkanoidPincer::handle_damage (SpaceLocation *source, double normal, double direct) {
   int x;
+
+  if (source->isPlanet())
+  {
+	  state = 1;
+	  normal = armour / 3;
+	  armour -= normal;
+  }
+  // sometimes, the planet makes the state=0. This corrects for that, since the damage()
+  // call is done _after_ the statement state=0 by the planet damage function.
+
   //message.print(1500,15,"ArkanoidPincerHandleDamage1 armour= %d normal= %d", armour, normal);
   x = 0;
   if(creator) {
@@ -658,7 +670,7 @@ int ArkanoidPincer::handle_damage (SpaceLocation *source, double normal, double 
     //tw_error("Pincer took damage!");
     isAlive=FALSE; 
     state=1;
-    collide_flag_anyone = 0;
+    collide_flag_anyone = 0;			// ok, it becomes passive, as if it's not there.
 	  collide_flag_sameship = 0;
     collide_flag_sameteam = 0;
   }

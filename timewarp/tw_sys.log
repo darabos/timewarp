@@ -8,21 +8,6 @@ Sound driver pre-aproved 65535 voices
 Requesting 10 voices for sound and 22 for music
 Sound initialization succeeded
 Music initialized (maybe)
-
-Possible Infinite Loop:
-
-Stack Trace:
-  melee\msprite.cpp : 188
-called from  melee\msprite.cpp : 317
-called from  melee\mgame.cpp : 187
-called from  melee\mmain.cpp : 328
-called from  melee\mmain.cpp : 254
-called from  melee\mgame.cpp : 532
-called from  scp.cpp : 405
-called from  scp.cpp : 854
-called from  scp.cpp : 548
-called from  scp.cpp : 613
-called from  scp.cpp : 606
 Music disabled
 Sound disabled
 keyboard disabled

@@ -5,8 +5,6 @@
 
 #ifdef __cplusplus
 
-#define COMPILE_TIME_ASSERT(condition) typedef char _compile_time_assert__[(condition) ? 1 : -1];
-
 class __call_before_main { 
 public:__call_before_main ( void (*func)());
 };

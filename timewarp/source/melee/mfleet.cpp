@@ -20,7 +20,7 @@ REGISTER_FILE
 #include "mfleet.h"
 #include "../util/net_tcp.h"
 
-ShipType es = { "_???_", "[Empty slot]", "\255\255\255", 0, NULL, NULL };
+ShipType es = { "_???_", "", "[Empty slot]", NULL, 0, NULL, NULL };
 ShipType* empty_slot = &es;
 
 Fleet* reference_fleet = NULL;

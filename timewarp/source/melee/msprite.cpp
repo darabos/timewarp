@@ -132,12 +132,6 @@ inline int find_aa_mode(int general_options) {
 }
 
 
-/*class GraphicsTable {
-	int num_spacesprites, max_spacesprites;
-	SpaceSprite **spacesprites;
-	BITMAP *register_bitmap      (const char *path);
-	SpaceSprite *register_sprite (const char *path, int attributes);
-} graphics_table;*/
 
 void convert_bitmap(BITMAP *src, BITMAP *dest, int aa_mode) {STACKTRACE
 	//requires that both be memory bitmaps
@@ -539,9 +533,7 @@ void SpaceSprite::unlock() {
 	for (i = 0; i < MAX_MIP_LEVELS; i += 1) {
 		if (b[i]) j = i;
 	}
-	/*
-	We aught to rebuild mipmaps	but too much work, so for now we do nothing
-	*/
+	//We aught to rebuild mipmaps	but too much work, so for now we do nothing
 	//highest_mip = j;
 	return;
 }
@@ -772,8 +764,8 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, BITMAP *surface) {
 	else {
 		ix = iround(pos.x);
 		iy = iround(pos.y);
-		iw = round_up(size.x);
-		ih = round_up(size.y);
+		iw = iround_up(size.x);
+		ih = iround_up(size.y);
 		aa_stretch_blit(bmp, surface, 0, 0, bmp->w, bmp->h, 
 					ix, iy, iw, ih);
 	}
@@ -796,10 +788,10 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 	BITMAP *bmp = b[mip][index];
 	aa_set_mode(find_aa_mode(general_attributes));
 	if (tw_aa_mode & AA_NO_ALIGN) {
-		ix = round_down(pos.x);
-		iy = round_down(pos.y);
-		iw = round_up(pos.x+size.x) + 1 - ix;
-		ih = round_up(pos.y+size.y) + 1 - iy;
+		ix = iround_down(pos.x);
+		iy = iround_down(pos.y);
+		iw = iround_up(pos.x+size.x) + 1 - ix;
+		ih = iround_up(pos.y+size.y) + 1 - iy;
 		aa_stretch_blit(bmp, frame->surface, 0,0,bmp->w,bmp->h, 
 			pos.x, pos.y, size.x, size.y);
 	}

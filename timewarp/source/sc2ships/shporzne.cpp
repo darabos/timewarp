@@ -219,7 +219,7 @@ void OrzMarine::calculate() {
 
 			if(damage_frame > 0) {
 				damage_frame -= frame_time;
-				if(damage_frame <= 0) {
+				if(damage_frame <= 0 && invading->spritePanel) {
 					sprite->draw(
 						14 + ((slot % 4) * 6), 	16 + ((slot / 4) * 6), 
 						0, invading->spritePanel->get_bitmap(0)
@@ -237,20 +237,26 @@ void OrzMarine::calculate() {
 				play_sound(data->sampleExtra[0]);
 				damage(invading, 0, 1);
 				damage_frame = 50;
+				if ( invading->spritePanel )
+				{
 				sprite->draw( 
 					14 + ((slot % 4) * 6), 
 					16 + ((slot / 4) * 6), 
 					1, invading->spritePanel->get_bitmap(0) );
 				/*draw_sprite(invading->spritePanel->get_bitmap(0), sprite->get_bitmap(1),
 						14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6));*/
-				invading->update_panel = TRUE; }
+				invading->update_panel = TRUE;
+			}}
 			else    if (chance < 10 * frame_time) {
-                                        state = 0;
+                        state = 0;
 				        play_sound(data->sampleExtra[2]);
+						if ( invading->spritePanel )
+						{
 				        blit(invading->data->spritePanel->get_bitmap(0), invading->spritePanel->get_bitmap(0),
 						14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6),
 						14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6), 12, 12);
                                         invading->update_panel = TRUE;
+						}
 				        return; }
 		}
 		else {	invading = NULL;
@@ -315,14 +321,18 @@ void OrzMarine::animate(Frame *space)
 }
 
 void OrzMarine::inflict_damage(SpaceObject *other) {
-	if (other->isShip() && (!returning) && (!other->sameTeam(this)) && (!other->isProtected())) {
+	if (other->isShip() && (!returning) && (!other->sameTeam(this)) && (!other->isProtected()))
+	{
 		invading = (Ship *) other;
         collide_flag_anyone = 0;
         play_sound(data->sampleExtra[1]);
+		if (invading->spritePanel)
+		{
 		sprite->draw(14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6), 0, invading->spritePanel->get_bitmap(0) );
         /*draw_sprite(invading->spritePanel->get_bitmap(0), sprite->get_bitmap(0),
 				14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6));*/
-		invading->update_panel = TRUE;	}
+		invading->update_panel = TRUE;
+	}}
 	if((ship) && (other == ship) && (returning)) {
 		state = 0;
 		damage(ship, 0, -1);

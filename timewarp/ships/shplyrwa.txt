@@ -9,3 +9,4 @@ both inflict and absorb damage.  Each use of the special costs
 damage/armour.  This force sphere does not have a time limit.
 The sphere may accumulate a maximum of 16 points of potential
 damage/protection.
+

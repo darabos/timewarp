@@ -3,7 +3,7 @@ comes after version 0.05u5 (tw05u5.zip) and before
 version 0.05u6 (which does not yet exist at the time
 of this writting).  This alpha version was finalized at
 
-5:14 10/1/2002 (month/day/year).  
+14:14 12/5/2002 (month/day/year).  
 
-The size of the compressed full game is aproximately: 49199648
-The size of the compressed patch is aproximately:     2460298
+The size of the compressed full game is aproximately: 50888018
+The size of the compressed patch is aproximately:     3102919

@@ -147,13 +147,19 @@ void KzerZaFighter::calculate() {
 		a = normalize(a,PI2);
 		Vector2 l = t + unit_vector(ta+PI/2) * laser_range * 0.8;
 		Vector2 r = t + unit_vector(ta+PI*3/2) * laser_range * 0.8;
-		if (distance_from(pos, l) < distance_from(pos, r)) {
+		double d_l = distance_from(pos, l);
+		double d_r = distance_from(pos, r);
+		double d2t;
+		if (d_l < d_r) {
 			angle = atan(min_delta(l, pos));
+			d2t = d_l;
 			}
 		else {
 			angle = atan(min_delta(r, pos));
+			d2t = d_r;
 			}
-		vel = v * unit_vector(angle);
+		if (d2t > 20) d2t = 20;
+		vel = v * unit_vector(angle) * d2t / 20;
 		sprite_index = get_index(angle);
 		}
 
@@ -163,23 +169,24 @@ void KzerZaFighter::calculate() {
 
 int KzerZaFighter::handle_damage(SpaceLocation *source, double normal, double direct){
 	if (source->isPlanet()) {
-		}
+		state = 1;
+	}
 	else state = 0;
 	return 0;
-	}
+}
 
 void KzerZaFighter::inflict_damage(SpaceObject *other) {
 	if (other == ship) {
 		play_sound2(data->sampleExtra[1]);
 		damage(ship, 0, -1);
-		} 
+	} 
 	if (!other->isPlanet()) state = 0;
 	else {
 		double a = trajectory_angle(other);
 		translate(unit_vector(a) * -10);
-		}
-	return;
 	}
+	return;
+}
 
 
 REGISTER_SHIP ( KzerZaDreadnought )

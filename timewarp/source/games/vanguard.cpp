@@ -514,15 +514,15 @@ void Vanguard::pick_new_ships() {
 	int ComMax = get_config_int(NULL, "Comet_max",0);
 	int Asteroids=get_config_int(NULL,"Asteroids",0);
 	int ComAcc = get_config_int(NULL, "Comet_acc",0);
-	int Size1 = get_config_int(NULL, "Size1",0);
-	int Size2 = get_config_int(NULL, "Size2",0);
+	int SizeX = get_config_int(NULL, "SizeX",0);
+	int SizeY = get_config_int(NULL, "SizeY",0);
 	double MinDistance = get_config_float(NULL,"MinDistance",0);
-	double PlanetVel = get_config_float(NULL,"PlanetVel",0);
-	double MoonVel = get_config_float(NULL,"MoonVel",0);
+	double PlanetVel = get_config_float(NULL,"PlanetVel",0) * ANGLE_RATIO;
+	double MoonVel = get_config_float(NULL,"MoonVel",0) * ANGLE_RATIO;
 
 //	width = Size1*Size2;			//Set the size BEFORE putting in the ships
 //	height = Size1*Size2;
-	size = Vector2(Size1*Size2, Size1*Size2);
+	size = Vector2(SizeX, SizeY);
 
 
 	//player 1 selects a new ship
@@ -628,10 +628,12 @@ void Vanguard::pick_new_ships() {
 
 
 
-	int kind, moons,NumPlanets;
-	int w,h,w2,h2,ok;
+	int kind, moons, NumPlanets, iSuns;
+	int w, h, w2, h2, ok;
 
-	for (int j=0; j<NSuns; j+=1)
+	//for (int j=0; j<NSuns; j+=1)
+	iSuns = 0;
+	while ( iSuns < NSuns )
 	{
 		ok = 0;
 		int n=0;
@@ -645,7 +647,7 @@ void Vanguard::pick_new_ships() {
 			h = (int)( random((int)(size.y-(MinDistance*2)))+MinDistance);
 			ok=1;
 
-			for (i=0; i<j; i+=1)
+			for (i=0; i<iSuns; i+=1)
 			{
 				w2 = (int)Centre[i]->pos.x;
 				h2 = (int)Centre[i]->pos.y;
@@ -656,14 +658,15 @@ void Vanguard::pick_new_ships() {
 			n++;
 			if(n>50000)
 			{
-				message.print(1000,12,"50,000 iterations.  Only %d stars added.",j);
+				message.print(1000,12,"50,000 iterations.  Only %d stars added.",iSuns);
 				goto done;
 			}
 		}
 
-		add(Centre[j] = new Sun(Vector2(w, h), StarPics[rand()%Num_Star_Pics],0));
 
-		Centre[j]->id=SUN_ID;
+		add(Centre[iSuns] = new Sun(Vector2(w, h), StarPics[rand()%Num_Star_Pics],0));
+
+		Centre[iSuns]->id=SUN_ID;
 
 		// planets creating loop
 		NumPlanets=MinPlanets+rand()%(MaxPlanets-MinPlanets);
@@ -680,7 +683,7 @@ void Vanguard::pick_new_ships() {
 
 //				handler = new OrbitHandler(Centre[j],width/2,height/2,random(PI2), (SpaceLocation *)Centre[j],
 //					(SpaceLocation *)Satellite, (num+1)*Radius, PlanetVel*Dir,0);
-				handler = new OrbitHandler(Centre[j],size/2,random(PI2), (SpaceLocation *)Centre[j],
+				handler = new OrbitHandler(Centre[iSuns],size/2,random(PI2), (SpaceLocation *)Centre[iSuns],
 					(SpaceLocation *)Satellite, (num+1)*Radius, PlanetVel*Dir,0);
 			}
 			else
@@ -690,7 +693,7 @@ void Vanguard::pick_new_ships() {
 
 //				handler = new OrbitHandler(Centre[j],width/2,height/2,random(PI2), (SpaceLocation *)Centre[j],
 //					(SpaceLocation *)Satellite, (num+1)*Radius, PlanetVel*Dir,0);
-				handler = new OrbitHandler(Centre[j],size/2,random(PI2), (SpaceLocation *)Centre[j],
+				handler = new OrbitHandler(Centre[iSuns],size/2,random(PI2), (SpaceLocation *)Centre[iSuns],
 					(SpaceLocation *)Satellite, (num+1)*Radius, PlanetVel*Dir,0);
 			}
 
@@ -715,6 +718,9 @@ void Vanguard::pick_new_ships() {
 
 			}
 		}
+
+		++iSuns;
+
 	}
 done:
 	//comet code
@@ -821,8 +827,8 @@ void Vanguard::init(Log *_log) {
 	else human_control[1] = NULL;
 
 	log_file("vanguard.ini");
-	int Size1 = get_config_int(NULL, "Size1", 0);
-	int Size2 = get_config_int(NULL, "Size2", 0);
+//	int Size1 = get_config_int(NULL, "Size1", 0);
+//	int Size2 = get_config_int(NULL, "Size2", 0);
 	int Asteroids = get_config_int(NULL,"Asteroids",0);
 
 	int i;

@@ -100,14 +100,20 @@ int ForevianShocker::activate_special()
 
 void ForevianShocker::calculate()
 {
-	if(shockVar == 1) {
+	if(shockVar == 1)
+	{
 		if(shockingFrames > 0)
 			shockingFrames -= frame_time;
-		if(shockingFrames == 2500 ) {
+		
+		if(shockVar && shockingFrames <= 2500 )
+		{
 			add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS)); } if(shockingFrames == 2000 ) {	play_sound2(data->sampleSpecial[0]); add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS)); } if(shockingFrames == 1500 ) {	play_sound2(data->sampleSpecial[0]); add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS)); } if(shockingFrames == 1000 ) {	play_sound2(data->sampleSpecial[0]); add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS)); } if(shockingFrames == 500 ) {	play_sound2(data->sampleSpecial[0]); add( new FixedAnimation(this, this, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS)); } if(shockingFrames == 50 ) {	play_sound2(data->sampleSpecial[1]); add( new ForevianShockwave(0, 70, angle , specialVelocity, specialDamage, specialRange, specialArmour, this, this, special_sprite, special_frame_num, special_frame_size, specialLoss));
 			shockingFrames = 0;
 			shockVar = 0;
-			recharge_amount = 1; } }
+			recharge_amount = 1;
+		}
+	}
+	
 	Ship::calculate();
 }
 

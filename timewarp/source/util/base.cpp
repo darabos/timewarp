@@ -1,6 +1,6 @@
 
 #include "base.h"
-
+#include "errors.h"
 
 COMPILE_TIME_ASSERT(sizeof(char)==1);
 COMPILE_TIME_ASSERT(sizeof(short)==2);

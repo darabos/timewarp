@@ -1,4 +1,4 @@
-#include "base.h"
+#include "errors.h"
 #include "types.h"
 
 COMPILE_TIME_ASSERT(sizeof(Uint8 ) == 1);

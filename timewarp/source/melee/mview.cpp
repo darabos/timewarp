@@ -120,7 +120,7 @@ void View::prepare ( Frame *frame, int time ) {STACKTRACE
 	double tz = magnitude(view_size) / 1.41421356237309504880168872;
 	::space_zoom = tz / camera.z;
 	::space_mip = -log(space_zoom) / log(2);
-	::space_mip_i = round_down(::space_mip);
+	::space_mip_i = iround_down(::space_mip);
 	::space_size  = view_size * space_zoom;
 
 	::space_corner = normalize2(camera.pos - space_size /2, map_size);

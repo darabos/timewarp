@@ -89,7 +89,7 @@ void AndrosynthGuardian::inflict_damage(SpaceObject *other) {
 					game->sparkSprite, 0, SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
 			translate(-specialBounceDistance*unit_vector(angle));
 			bounce_status = specialBounceTime;
-			int i = round_down(damage_factor / 2);
+			int i = iround_down(damage_factor / 2);
 			if (i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
 			play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
 			}

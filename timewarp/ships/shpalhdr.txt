@@ -11,7 +11,7 @@ damage at extremely close range.
 
 special = activates the two side lasers.
 They start pointing backwards, and rotate
-forward, damaing anything on the sides of
-the ship.  The lasers do not auto-target,
+forward as the special button is held down.
+The lasers do not auto-target,
 so using them as a defense requires careful
-timing.  Cost is 4 energy.
+timing.

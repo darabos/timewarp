@@ -11,6 +11,7 @@ class DraxGryphon : public Ship {
   int          weaponDamage;
   int          weaponArmour;
   int          weaponoffset;
+  double       weaponRelativity;
 
   double       specialRange;
   double       specialVelocity;
@@ -59,18 +60,22 @@ DraxGryphon::DraxGryphon(Vector2 opos, double shipAngle,
 {
 
   weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
-  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
+  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 
+0));
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
   weaponoffset   = 0;
+  weaponRelativity = get_config_float("Weapon", "Relativity", 0);
   specialRange    = scale_range(get_config_float("Special", "Range", 0));
-  specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
+  specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 
+0));
   specialDamage   = get_config_int("Special", "Damage", 0);
   specialArmour   = get_config_int("Special", "Armour", 0);
   specialTimer    = get_config_int("Special","Timer", 0);
   specialRadius   = scale_range(get_config_float("Special", "Radius", 0));
   specialSeek     = scale_range(get_config_float("Special", "Seek", 0));
-  specialVSeek    = scale_velocity(get_config_float("Special", "VelSeek", 0));
+  specialVSeek    = scale_velocity(get_config_float("Special", "VelSeek", 
+0));
   numMines        = 0;
   maxMines        = get_config_int("Special", "Number", 1);
   weaponObject = new DraxMine*[maxMines];
@@ -88,10 +93,10 @@ int DraxGryphon::activate_weapon()
 
   add(new Missile(this, Vector2((size.x/4)+(weaponoffset*4),
     (size.y*.25)),angle, weaponVelocity, weaponDamage,
-    weaponRange, weaponArmour,this, data->spriteWeapon));
+    weaponRange, weaponArmour,this, data->spriteWeapon, weaponRelativity));
   add(new Missile(this, Vector2((-size.x/4)-(weaponoffset*4),
     (size.y*.25)),angle, weaponVelocity, weaponDamage,
-    weaponRange, weaponArmour,this, data->spriteWeapon));
+    weaponRange, weaponArmour,this, data->spriteWeapon, weaponRelativity));
   return(TRUE);
 }
 
@@ -105,8 +110,10 @@ int DraxGryphon::activate_special()
 			}
 		weaponObject[numMines] = NULL;
 		}
-        weaponObject[numMines] = new DraxMine(0.0, -(size.y / 2.0),specialVelocity, (angle + PI),
-	   specialDamage, specialArmour, this, data->spriteSpecial, 32, 20, specialRange,
+        weaponObject[numMines] = new DraxMine(0.0, -(size.y / 
+2.0),specialVelocity, (angle + PI),
+	   specialDamage, specialArmour, this, data->spriteSpecial, 32, 20, 
+specialRange,
 	   specialTimer, specialRadius, specialSeek, specialVSeek);
 	add(weaponObject[numMines]);
 	numMines += 1;
@@ -127,10 +134,13 @@ void DraxGryphon::calculate()
 }
 
 
-DraxMine::DraxMine(double ox,double oy,double ov, double oangle, int odamage, int oarmour,
-    Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double miner,
+DraxMine::DraxMine(double ox,double oy,double ov, double oangle, int 
+odamage, int oarmour,
+    Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double 
+miner,
     int minet, double minera, double mines, double minesv) :
-    AnimatedShot(oship, Vector2(ox,oy), oangle, ov, odamage, -1.0, oarmour, oship,
+    AnimatedShot(oship, Vector2(ox,oy), oangle, ov, odamage, -1.0, oarmour, 
+oship,
       osprite, ofcount, ofsize)
 
 {
@@ -177,7 +187,7 @@ void DraxMine::calculate() {
 			}
 		}
 	if (Seek && (!MineMoving)) {
-		angle = intercept_angle2(pos, 0, MineSeekVel, 
+		angle = intercept_angle2(pos, 0, MineSeekVel,
 			f->normal_pos(), f->get_vel());
 		v = MineSeekVel;
 		vel = MineSeekVel * unit_vector(angle);
@@ -200,3 +210,4 @@ void DraxMine::inflict_damage(SpaceObject *other) {
 
 
 REGISTER_SHIP(DraxGryphon)
+

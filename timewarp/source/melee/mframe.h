@@ -62,7 +62,7 @@ class Physics : public BaseClass {
 	public:
 
 	SpaceLocation **quadrant;
-	friend Query;
+	friend struct Query;
 
 	Listed *listed;
 	int num_listed, max_listed;
@@ -123,7 +123,7 @@ class Physics : public BaseClass {
 
 
 class Presence : public BaseClass { 
-	friend Physics;
+	friend class Physics;
 	public:
 
 	int    id;            // id code, indicates what type it is
@@ -164,8 +164,8 @@ class Presence : public BaseClass {
 };
 
 class SpaceLocation : public Presence { // base class for all items in game
-	friend Physics;
-	friend Query;
+	friend class Physics;
+	friend struct Query;
 
 protected: public: //aught to be protected, but we're lazy
 	Vector2 pos;

@@ -1,4 +1,5 @@
 #include "../ship.h"
+#include "../util/aastr.h"
 
 #define RAALRITH_POISON_ID     0x2233
 
@@ -44,6 +45,7 @@ class RaalrithMenacer : public Ship {
   virtual void animate(Frame *space);
   virtual void inflict_damage(SpaceObject *other);
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+  virtual RGB crewPanelColor();
   
 };
 
@@ -156,6 +158,14 @@ void RaalrithMenacer::calculate() {
      phase = 100;
      phaseIn = FALSE;
    }
+
+
+   // crew turns grey if phase < 30
+   if ( phase == 30 || phase == 31 )
+   {
+	   update_panel = 1;
+   }
+
    if (int((double(phase)/100)*30) != int((double(phaseOld)/100)*30)) { 
 		 BITMAP *bmp = spritePanel->get_bitmap(0);
      rectfill(bmp, 15, 14, 48, 15, pallete_color[0]);
@@ -209,12 +219,20 @@ int RaalrithMenacer::canCollide(SpaceObject *other)
  
 void RaalrithMenacer::animate(Frame *space)
 {
-  if(drillFrames > 0)
-    data->spriteWeapon->animate( pos, sprite_index, space);
-  else
-    sprite->animate( pos, sprite_index, space);
-  if(latched)
-    data->spriteWeapon->animate( pos, sprite_index, space);
+	int a;
+	// 0 = not transparent; 255 = fully transparent
+	a = aa_get_trans();
+	aa_set_trans(0 + (150 * (100-phase)) / 100.0);	// not, phase = 100 means its solid
+//	Ship::animate(space);
+	
+	if(drillFrames > 0)
+		data->spriteWeapon->animate( pos, sprite_index, space);
+	else
+		sprite->animate( pos, sprite_index, space);
+	if(latched)
+		data->spriteWeapon->animate( pos, sprite_index, space);
+
+	aa_set_trans(a);
 }
 
 
@@ -239,6 +257,21 @@ int RaalrithMenacer::handle_damage(SpaceLocation *source, double normal, double 
   int d = iround((double)normal*((double)phase/50)); // full phase = 2x damage, full out = 1/2 damage
   return Ship::handle_damage(source, d, direct);
 }
+
+
+
+RGB RaalrithMenacer::crewPanelColor()
+{
+  	// change the crew color, if needed
+	if ( phase < 30.0 )
+	{
+		RGB c = {200,200,200};	// some dark greyish color.
+		return c;
+	} else {
+		return Ship::crewPanelColor();
+	}
+}
+
 
 
 /******* Poison Definitions ***********************************************************/

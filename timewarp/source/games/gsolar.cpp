@@ -563,4 +563,3 @@ void Solar::init_objects()
 	}    */
 
 REGISTER_GAME (Solar, "Melee in solar system (INI)");
-

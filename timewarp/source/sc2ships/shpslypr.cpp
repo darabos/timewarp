@@ -63,6 +63,9 @@ thrustForward(TRUE)
 	realturnstep = turn_step;
 
 	SlyLaser = 0;
+
+	last_turn_left = turn_left;
+	last_turn_right = turn_right;
 }
 
 RGB SlylandroProbe::crewPanelColor()
@@ -73,33 +76,74 @@ RGB SlylandroProbe::crewPanelColor()
 
 void SlylandroProbe::calculate_turn_left()
 {
+	if ( turn_left )
+	{
+		if (!last_turn_left)
+			realturnstep = -PI2 / 16;	//Ndirections;
+		else
+			realturnstep -= turn_rate * frame_time;
+	}
+
+	/*
+	if (!last_turn_left)
+	{
+		// turn at once ! This should make it look "jerky" since it responds
+		// immediately to a keypress; no delays !
+
+		realturnstep = -PI2 / Ndirections;
+	} else
+
 	// turnstep is the angle, really.
   if(turn_left)
 		realturnstep -= turn_rate * frame_time;
+		*/
 
-  while (realturnstep < 0)
-  {
-	  realturnstep += PI2 / Ndirections;
-	  turn_step -= PI2 / Ndirections;
-  }
+	while (realturnstep < 0)
+	{
+		realturnstep += PI2 / 16;//Ndirections;
+		turn_step -= PI2 / 16;//Ndirections;
+	}
+  
 }
 
 void SlylandroProbe::calculate_turn_right()
 {
+	if ( turn_right )
+	{
+	if (!last_turn_right)
+		realturnstep = PI2 / 16;//Ndirections;
+	else
+		realturnstep += turn_rate * frame_time;
+	}
+
+	/*
+	if (!last_turn_right)
+	{
+		// turn at once ! This should make it look "jerky" since it responds
+		// immediately to a keypress; no delays !
+
+		realturnstep = PI2 / Ndirections;
+	} else
+
   if(turn_right)
 		realturnstep += turn_rate * frame_time;
+		*/
 
-  while (realturnstep > 0)
-  {
-	  realturnstep -= PI2 / Ndirections;
-	  turn_step += PI2 / Ndirections;
-  }
+	while (realturnstep > 0)
+	{
+		realturnstep -= PI2 / 16; // Ndirections;
+		turn_step += PI2 / 16;// Ndirections;
+	}
+  
 }
 
 
 void SlylandroProbe::calculate()
 {
 	
+	last_turn_left = turn_left;
+	last_turn_right = turn_right;
+
 	Ship::calculate();
 
 	/*

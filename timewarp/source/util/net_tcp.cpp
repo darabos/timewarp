@@ -173,7 +173,7 @@ int NetTCP::listen(int port, int (*cancel_callback)()) {
 	sockaddr_in other;
 #	ifdef NETWORK_WINSOCK 
 		int tmp;
-#	else if defined NETWORK_BSD
+#	elif defined NETWORK_BSD
 #		if defined NETWORK_WEIRD_SIGNEDNESS
 			//WTF!?! 
 			size_t tmp; 

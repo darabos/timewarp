@@ -77,7 +77,7 @@ class MonoMissile : public HomingMissile {
 class MonoLaser : public Laser {
 // a segment of a laser wall
 
-  friend MonoTron;
+  friend class MonoTron;
 
   SpaceLocation* endpoint;
   MonoLaser* laser;         // preceding segment

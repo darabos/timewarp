@@ -4,90 +4,80 @@ REGISTER_FILE
 
 #include "../sc1ships.h"
 #include "../frame.h"
+#include "../util/aastr.h"
 
 
 /*
 
-  DESCRIPTION:
-  Shape is based on quasars, which contain a black hole in the center of a gas disk.
-  The quasars shoot jets of hot gas in two directions whenever enough mass enters into
-  the disk.
+  quirk: anti-grav field. Its strength depends on the battery.
+  battery drains when the ship moves.
 
-  PRIMARY:
-  Matter burners. Shoots forward and backward, it takes all battery power to activate.
+  weapon: plasma missiles
 
-  SPECIAL:
-  The ship possesses a permanent anti-gravity well. Pushing special, disables the anti-
-  gravity shield. This increases battery recharge rate, but leads to crew loss.
-
-  Idea for the main: GeomanNL
-  Idea for the special and the race: IamTheSongMan
-
-  Ok ... the ships sucks right now... needs to be improved !!
-
-  BETTER MAYBE :
-
-  Burners, take all power. No recharge. Anti-Grav field disappears completely.
-
-  Permanent anti-gravity property (anti-matter). "High" recharge rate.
-
-  Special, disable anti-gravity; "Slow" recharge rate. Also, a short "bump" in
-  the field: temporarily, a strong attraction? Makes the ship extremely maneouverable.
-  If anti-grav is re-enabled, then there's a strong anti-bump.
-
-  Special, weakens space, slows down anything in the neighbourhood. The closer to
-  the ship, the greater the slow-down. Especially useful as defense against weapons.
-
-
-
-
-  -----------------
-
-Activating the main does 2 things: flames are turned on, and the 
-anti-gravity field is turned off. The change in gravity is accompanied 
-by a bump in the field power. Recharge is very slow as long as the 
-flames are on; manoeuverability is increased. This should be the 
-offensive mode.
-
-Activating the special does 1 thing: this weakens space/ changes 
-physics slightly, around the ship, slowing everything down (like 
-in hyperspace). At the expense of manoeuverability. This should 
-be an additional defensive mode.
+  special: gas cloud, each confuses one of the existing homing missiles, which
+			have the Deviant as their target.
 
 */
 
+class SpriteDrawListItem : public Presence
+{
+public:
+	SpriteDrawListItem	*prev, *next;
 
-class	Flamer;
-class	GravityShockWave;
+	Vector2				pos;
+	SpaceSprite			**sprites;
+	int					sprite_index, sprite_array_index;
+
+	SpriteDrawListItem(SpriteDrawListItem *s, SpaceSprite **osprites);
+
+	void animate(Frame *frame);
+	void init(int oindex, Vector2 opos);
+};
+
+class SpriteDrawList : public Presence
+{
+public:
+	SpriteDrawListItem	*firstitem, *lastitem;
+	SpaceObject			*mother;
+	int					Nsprites;
+	double				existtime, delaytime;
+
+	SpriteDrawList(SpaceObject *creator, int N, SpaceSprite **osprites, double odelaytime);
+	~SpriteDrawList();
+
+	void calculate();
+
+	void animate(Frame *frame);
+};
+
+
+
+class	BathaMissile;
+class	BathaCloud;
+
+
 
 class BathaDeviant : public Ship
 {
-	double weaponRange;
-	double weaponVelocity;
-	int    weaponDamage;
-	int    weaponArmour;
-	double weaponAccel;
+	double weaponRange, weaponVelocity, weaponTurnRate, weaponTailDelay, weaponMass;
+	int    weaponDamage, weaponArmour;
 
-	double	crewdietime, crewdietimeproceed;
-	double	gravforce, grav_force_default;
-	double	accel_rate_default;
-	double	recharge_rate_default;
-	double	speed_max_default;
-	double	batt_max_default, batt_max_new;
+	double cloudLifeTime;
+
+	double	gravforce, gravforce_default;
 
 	double well_size;
 	double whipfactor;
 	double whipacc_max;
 
-	double slowdownfactor;
-	
-	GravityShockWave	*ShockWave;
+	double drain_travel_distance, drain_distance;
+
+	int Nleakingsprites, Ntailsprites;
+	SpaceSprite **leakingsprites, **tailsprites;
 
 	public:
-	Flamer	*flamer1, *flamer2;
-	int		weapon1, weapon2, flame_active;
 
-	int		CrewAsteroidHit, CrewShipHit;
+	int		CrewAsteroidHit, CrewShipHit, CrewPlanetHit;
 
 	BathaDeviant(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
@@ -100,245 +90,138 @@ class BathaDeviant : public Ship
 
 	virtual void inflict_damage(SpaceObject *other);
 
+	void animate(Frame *frame);
 };
 
 
 
-class Flamer : public Missile {
-	BathaDeviant	*commandship;
-	int		iSide;
-	double	animate_time, nextpictime;
-	int		sprite_offset, Nanimatedflame;
-	double	FlameAccel;
+class BathaMissile : public HomingMissile
+{
 
+	SpaceSprite *tailsprite;
 	public:
-	Flamer(Vector2 opos, double oangle, double ov, int odamage,
-			double orange, int oarmour, double oaccel, Ship *oship, SpaceSprite *osprite, int thisiSide,
-			BathaDeviant *commandshipref);
-	virtual void calculate();
-	virtual void inflict_damage(SpaceObject *other);
-	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
-	};
+	BathaMissile(SpaceLocation *creator, Vector2 rpos, 
+		double oangle, double ov, double odamage, double orange, double oarmour, 
+		double otrate, double omass, SpaceLocation *opos, SpaceSprite *osprite,
+		SpaceObject *otarget, SpaceSprite **tailsprites, int Ntailsprites, double odelaytime);
+
+	void animate(Frame *frame);
+};
 
 
-class GravityShockWave : public SpaceObject	// cannot hit anything .. it simply exists for a short period
+class BathaCloud : public SpaceObject
 {
 public:
 
-	Vector2		P, lastP;
-	double		R, lastR;
+	double existtime, lifetime, spr_changetime, spr_time;
 
-	int			gravsign;
-
-	double	waveradius, wavemaxradius, wavevel;
-
-	GravityShockWave(SpaceLocation *creator, Vector2 opos, 
-	double oangle, SpaceSprite *osprite);
+	BathaCloud(SpaceLocation *creator, Vector2 opos, double oangle,
+					SpaceSprite *osprite, double olifetime);
 
 	virtual void calculate();
-	virtual void animate (Frame *frame);
 };
-
-/*
-// return 0.0 to 1.0
-double tw_drandom()
-{
-	return	double(tw_random()) / double(0x080000000);
-}
-
-// return -1.0 to 1.0
-double tw_sdrandom()
-{
-	return	1.0 - 2.0 * double(tw_random()) / double(0x080000000);
-}
-*/
 
 
 
 
 BathaDeviant::BathaDeviant(Vector2 opos, double angle, ShipData *data, unsigned int code) 
-	:
-	Ship(opos, angle, data, code) 
-	{
+:
+Ship(opos, angle, data, code) 
+{
 	weaponRange         = scale_range(get_config_float("Weapon", "Range", 0));
 	weaponVelocity      = scale_velocity(get_config_float("Weapon", "Velocity", 0));
 	weaponDamage        = get_config_int("Weapon", "Damage", 0);
 	weaponArmour        = get_config_int("Weapon", "Armour", 0);
-
-	weaponAccel = scale_velocity(get_config_float("Weapon", "Accelerate", 0));
-
+	weaponTurnRate      = scale_turning(get_config_float("Weapon", "TurnRate", 0));
+	weaponMass          = get_config_float("Weapon", "Mass", 0);
+	weaponTailDelay     = get_config_float("Weapon", "TailDelay", 0);
+	
+	cloudLifeTime = get_config_float("Special", "LifeTime", 0);
+	
 	// properties of this ship are :
+	
+	gravforce_default = scale_acceleration(get_config_float("Quirk", "GravityForce", 0), 0);
+	whipfactor = get_config_float("Special", "Quirk", 0);
+	whipacc_max = get_config_float("Special", "Quirk", 0);
+	well_size = scale_range(get_config_float("Quirk", "WellSize", 0));
+	drain_distance = get_config_float("Quirk", "DrainDistance", 0);
+	drain_travel_distance = 0;
+	
+	// how much crew do you lose when you hit an enemy ship or an asteroid?
+	
+	CrewAsteroidHit = get_config_int("Quirk", "DieAsteroid", 0);
+	CrewShipHit = get_config_int("Quirk", "DieShip", 0);		// 10
+	CrewPlanetHit = get_config_int("Quirk", "DiePlanet", 0);
 
-	accel_rate_default = accel_rate;
-	speed_max_default = speed_max;
+	Ntailsprites = 8;
+	tailsprites = &(data->more_sprites[0]);
 
-	recharge_amount = 1;
-	recharge_rate_default = recharge_rate;
+	Nleakingsprites = 4;
+	leakingsprites = &(data->more_sprites[Ntailsprites]);	
+}
 
-	crewdietime = get_config_float("Special", "CrewDieTime", 0);
-	crewdietimeproceed = 0.0;
 
-	grav_force_default = scale_acceleration(get_config_float("Special", "GravityForce", 0), 0);
-	whipfactor = get_config_float("Special", "WhipFactor", 0);
-	whipacc_max = get_config_float("Special", "WhipAccmax", 0);
-	well_size = scale_range(get_config_float("Special", "WellSize", 0));
-
-	batt_max_default = batt_max;
-	batt_max_new = batt_max;
-
-	flamer1 = 0;
-	flamer2 = 0;
-	weapon1 = 0;
-	weapon2 = 0;
-
-	// how much crew do you lose when you hit an enemy ship or and asteroid?
-
-	CrewAsteroidHit = 1;	//  5
-	CrewShipHit = 4;		// 10
-
-	ShockWave = 0;
-	flame_active = weapon1 | weapon2;
-	}
 
 
 int BathaDeviant::activate_weapon()
 {
-	weaponVelocity = 0.0;
+	BathaMissile *bm;
+	bm = new BathaMissile(
+		this, Vector2(0.0, 0.5*get_size().y), angle, weaponVelocity, weaponDamage,
+		weaponRange, weaponArmour, weaponTurnRate, weaponMass, this, data->spriteWeapon,
+		target, tailsprites, Ntailsprites, weaponTailDelay);
+	game->add( bm );
 
-	if ( weapon1 && weapon2 )
-		return false;	// couldn't be used.
-
-	if ( weapon1 == 0 )
-	{
-		weapon1 = 1;
-		flamer1 = new Flamer(
-				Vector2(0.0, 0.5*get_size().y), angle, weaponVelocity, weaponDamage, weaponRange,
-				weaponArmour, weaponAccel, this, data->spriteWeapon, 1, this);
-		game->add( flamer1 );
-		
-	}
-	if ( weapon2 == 0 )
-	{
-		weapon2 = 1;
-		flamer2 = new Flamer(
-				Vector2(0.0, -0.5*get_size().y), angle+PI, weaponVelocity, weaponDamage, weaponRange,
-				weaponArmour, weaponAccel, this, data->spriteWeapon, 2, this);
-		game->add( flamer2 );
-	}
-
-	return(TRUE);
+	return TRUE;
 }
 
 
-int BathaDeviant::activate_special() {
+int BathaDeviant::activate_special()
+{
+
+	// come to an immediate halt.
+	vel = 0;
+
+
+	// and also put up a single extra smoke cloud
+	BathaCloud *bc;
+	Vector2 D;
+
+	double R = tw_random(50, 100);
+	D = R * unit_vector(tw_random(PI2));
+
+	bc = new BathaCloud(this, pos+D, angle, data->spriteSpecial, cloudLifeTime);
+	game->add(bc);
 
 	return(true);
-	}
+}
 
 
 void BathaDeviant :: calculate ()
 {
 
-	// check if the weapons exist
-	weapon1 = flamer1 && flamer1->exists();
-	weapon2 = flamer2 && flamer2->exists();
-
-	int flame_prev_active = flame_active;
-	flame_active = weapon1 || weapon2;
 
 	Ship::calculate();
-
-	if ( batt > batt_max_new )
-		batt = batt_max_new;
-
 	
-	// a shockwave is generated if the gravity field is changed.
-	if ( flame_active && !flame_prev_active )		// flames were activated !!
+	// if the Batha flies happily around, its battery slowly drains
+	drain_travel_distance += vel.magnitude() * frame_time;
+	if ( drain_travel_distance > drain_distance )
 	{
-		ShockWave = new GravityShockWave(this, pos, 0.0, this->data->spriteShip);
-		ShockWave->gravsign = -1;
-		game->add(ShockWave);
-	}
-	
-	if ( !flame_active && flame_prev_active )		// both flames were de-activated !!
-	{
-		ShockWave = new GravityShockWave(this, pos, 0.0, this->data->spriteShip);
-		ShockWave->gravsign =  1;
-		game->add(ShockWave);
-	}
-	
-
-	// apply the gravity force:
-	if (!this->fire_special && !flame_active)	// DEFAULT MODE
-	{
-		gravforce = -grav_force_default;
-		recharge_rate = recharge_rate_default;
-
-		accel_rate = accel_rate_default;
-		speed_max = speed_max_default;
-
-	}
-	
-	if ( flame_active )		// OFFENSIVE MODE
-	{
-		gravforce = 0.0;
-		recharge_rate = recharge_rate_default;
-
-		// you also have increased acceleration power
-		accel_rate = 5*accel_rate_default;
-		speed_max = 2*speed_max_default;
-
-		/* Well ... the ship is already pretty weak, and very quirky, so if you've crew dying as well is... too freaky.
-		crewdietimeproceed += frame_time;
-		if (crewdietimeproceed > crewdietime)
+		if (batt >= 1)
 		{
-			
-			crewdietimeproceed -= crewdietime;
-			crew -= 1;
+			batt -= 1;
+			update_panel = 1;
+		} else
+			batt = 0;
 
-			if ( crew <= 0 )
-				state = 0;
-		}
-		*/
-
+		drain_travel_distance -= drain_distance;
 	}
+
+	// the anti-grav force depends on the battery:
+
+	gravforce = gravforce_default * batt / batt_max;
+
 	
-	// regardless of whether the flames are activated or not:
-	if ( this->fire_special )	// DEFENSIVE MODE
-	{
-		accel_rate = 0.5 * accel_rate_default;	// less maneouverable.
-		speed_max = speed_max_default;
-
-		double HalfTime = 1000.0 * 0.5;	// 0.5 second to half the speed.
-		slowdownfactor = exp(-frame_time / HalfTime);	// is nearly 1
-
-		recharge_rate = 0.5 * recharge_rate_default;
-	} else {
-		slowdownfactor = 1.0;
-	}
-
-	if ( flame_active )
-	{
-		accel_rate = accel_rate / 2;		// you lose half your (previous) thrust power !
-		
-		if ( weapon1 + weapon2 == 2 )
-			batt_max_new = 2;	// you cannot recharge more than this as long as two flames are on
-		else
-			batt_max_new = batt_max_default/2;	// this is max battery if one of the flames are on.
-
-		if ( batt > batt_max_new )
-			this->handle_fuel_sap(this, batt - batt_max_new);
-
-		//batt_max = batt_max_new;
-
-	}
-	else
-	{
-		accel_rate = accel_rate_default;
-		batt_max_new = batt_max_default;
-	}
-
-
 	int layers = bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) +
 		bit(LAYER_CBODIES);
 	double passiveRange = 1000.0;	// outside this area, gravity doesn't do anything
@@ -347,14 +230,13 @@ void BathaDeviant :: calculate ()
 	for (a.begin(this, layers, passiveRange); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
-		if (!(o->isPlanet()) && (o->mass != 0 || o->isShot()) && o != ship )
+		if (!(o->isPlanet()) && o->mass != 0 && o != ship )
 		{
-			
-			double Rv = magnitude(o->get_vel());	//sqrt(o->vx * o->vx  +  o->vy * o->vy);
-			if (Rv == 0.0) Rv = 0.1;
 
-			Vector2 Vd = min_delta(o->normal_pos(), normal_pos(), map_size);
+			Vector2 Vd = min_delta(pos - o->pos, map_size);
 			double R = magnitude(Vd);
+			if (R < 1)
+				continue;
 
 			double bb;
 			double Rscaled = R / well_size;
@@ -380,61 +262,47 @@ void BathaDeviant :: calculate ()
 			this->vel -= Vacc;
 
 
-			// the special introduces drag around the ship, depending on distance
-
-			if ( R < 1000.0 )
-			{
-				o->vel *= slowdownfactor;
-			}
-
-
-			/*
-			// as extra, when the gravity fields changes, the enemy experiences
-			// a short overshoot .. a powerful gravity wave hits it ;)
-
-			
-			if ( ShockWave && ShockWave->exists() )
-			{
-				Vector2 Vd = min_delta(o->normal_pos(), ShockWave->normal_pos(), map_size);
-				double R = magnitude(Vd);
-
-				if ( fabs(R - ShockWave->waveradius) < 50.0 )	// the wavefront has a short action range
-				{
-					
-					double vel_boost = 0.0025 * frame_time;
-					o->vel += ShockWave->gravsign * (Vd/R) * vel_boost;
-					
-					
-				}
-			}
-			*/
-			
-	
-
-
 		}
 	}
+	
 
+	if ((game->game_time) & 128 != ((game->game_time+frame_time) & 128))
+	{
+		int i;
+		i = tw_random(Nleakingsprites);
+
+		Vector2 P;
+
+		P.x = tw_random(-20,20);
+		P.y = -20 - tw_random(20);
+
+		int duration = 1000*fabs(1 - fabs(P.x/100));
+		P = rotate(P, angle+PI + PI/2);
+
+		game->add(new Animation(this, pos+P, leakingsprites[i], sprite_index, 1,
+			duration, DEPTH_SHIPS, 1.0));
+	}
 
 }
 
 int BathaDeviant::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 
+	// hitting a planet with its enormous mass is fatal
+	// also creates an extra asteroid ;)
+	if (source->isPlanet())
+		normal += CrewPlanetHit;
+
 	// hitting an asteroid deals damage
 	if (source->isAsteroid())
-		crew -= CrewAsteroidHit;
-
-	// hitting a planet with its enormous mass is fatal
-	if (source->isPlanet())
-		crew = 0;
+		normal += CrewAsteroidHit;
 
 	// hitting a ship causes major trauma as well
 	if (source->isShip())
-		crew -= CrewShipHit;
+		normal += CrewShipHit;
 
 	Ship::handle_damage(source, normal, direct);
-	return true;
+	return normal+direct;
 }
 
 void BathaDeviant::inflict_damage(SpaceObject *other)
@@ -454,215 +322,219 @@ void BathaDeviant::inflict_damage(SpaceObject *other)
 
 }
 
+//Animation::Animation(SpaceLocation *creator, Vector2 opos, 
+//	SpaceSprite *osprite, int first_frame, int num_frames, int frame_length, 
+//	double depth, double _scale) 
 
-// This is an intense flame with a short range.
-
-Flamer::Flamer(Vector2 opos, double oangle, double ov,
-						   int odamage, double orange, int oarmour, double oaccel, Ship *oship, SpaceSprite *osprite, int thisiSide,
-							BathaDeviant *commandshipref) 
-						   :
-Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship,osprite) ,
-commandship(commandshipref),
-iSide(thisiSide),
-FlameAccel(oaccel)
+void BathaDeviant::animate(Frame *frame)
 {
-	explosionSprite     = data->spriteWeaponExplosion;
-	explosionFrameCount = 20;
-	explosionFrameSize  = 50;
-
-	sprite_offset = 0;
-	animate_time = 0;
-	nextpictime = 250.0;
-	Nanimatedflame = 4;
-
-}
-
-	
-
-
-void Flamer::calculate()
-{
-	if ( !commandship || !ship || !commandship->exists() || !ship->exists() )
-	{
-		state = 0;
-		return;
-	}
-	
-
-	Missile::calculate();
-	
-	// fix the location and direction of the flame with respect to the ship.
-	
-	double D = ( commandship->get_size().y + get_size().y ) / 2.0;
-	if ( iSide == 1 )
-	{
-		pos = commandship->pos + D * unit_vector(commandship->angle);
-		angle = commandship->angle;
-	} else {
-		pos = commandship->pos - D * unit_vector(commandship->angle);
-		angle = commandship->angle + PI;
-	}
-	
-	sprite_index = get_index(angle, -0.5*PI);// - 16;
-	sprite_index += sprite_offset * 64;
-
-	animate_time += frame_time;
-	if ( animate_time > nextpictime )
-	{
-		animate_time -= nextpictime;
-		sprite_offset += 1;
-		if ( sprite_offset > Nanimatedflame-1 )		// hard coded ?!?!?!
-			sprite_offset = 0;
-	}
-
-
-
-
-	// the active weapon also has influence on the commandship by providing thrust:
-
-	commandship->vel += FlameAccel*unit_vector(angle+PI);
-
-	double v = magnitude(commandship->vel);
-
-	if ( v > commandship->speed_max )
-		commandship->vel *= commandship->speed_max / v;
-
+	Ship::animate(frame);
 
 }
 
 
 
-int Flamer::handle_damage(SpaceLocation *source, double normal, double direct)
+BathaMissile::BathaMissile(SpaceLocation *creator, Vector2 rpos, 
+	double oangle, double ov, double odamage, double orange, double oarmour, 
+	double otrate, double omass, SpaceLocation *opos, SpaceSprite *osprite,
+	SpaceObject *otarget, SpaceSprite **tailsprites, int Ntailsprites,
+	double otaildelay) 
+:
+HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate, opos, osprite, otarget)
 {
+	game->add(new SpriteDrawList(this, Ntailsprites, tailsprites, otaildelay) );
+	mass = omass;
+}
+
 	
-	int totdamage = normal + direct;
 
-	if (source->isShip())
-		totdamage = armour;
 
-	armour -= totdamage;
+void BathaMissile::animate(Frame *frame)
+{
+	// animate the sphere.
+	HomingMissile::animate(frame);
+}
 
-	if ( armour <= 0 )
+
+
+
+
+
+SpriteDrawListItem::SpriteDrawListItem(SpriteDrawListItem *s, SpaceSprite **osprites)
+{
+	prev = s;
+	next = 0;
+
+	sprites = osprites;
+
+	sprite_index = 0;
+	sprite_array_index = 0;
+}
+
+
+void SpriteDrawListItem::init(int oindex, Vector2 opos)
+{
+	sprite_index = oindex;
+	pos = opos;
+
+	sprite_array_index = 0;
+}
+
+
+void SpriteDrawListItem::animate(Frame *frame)
+{
+	SpaceSprite *spr;
+	spr = sprites[sprite_array_index];
+
+	Vector2 C, S;
+	S = spr->size();
+	C = corner(pos, S);
+
+	spr->draw(C, S*space_zoom, sprite_index, frame);
+}
+
+
+SpriteDrawList::SpriteDrawList(SpaceObject *creator, int N, SpaceSprite **osprites, double odelaytime)
+{
+	mother = creator;
+
+	SpriteDrawListItem *s;
+
+	Nsprites = N;
+	
+	s = 0;
+
+	int i;
+	for ( i = 0; i < N; ++i )
 	{
-		state = 0;
-		return totdamage + armour;
+		s = new SpriteDrawListItem(s, osprites);
+		s->init(mother->get_sprite_index(), mother->pos);
+
+		if (i == 0)
+			firstitem = s;
 	}
 
-	return totdamage;
+	lastitem = s;
+
+	delaytime = odelaytime;
+	existtime = 0;
 }
 
-
-
-void Flamer::inflict_damage(SpaceObject *other)
+SpriteDrawList::~SpriteDrawList()
 {
-	SpaceObject::inflict_damage(other);
+	SpriteDrawListItem *s, *t;
 
-	return;
+	t = 0;
+
+	s = firstitem;
+	while ( s != 0 )
+	{
+		t = s->next;
+		delete s;
+
+		s = t;
+	}
 }
 
-
-GravityShockWave::GravityShockWave(SpaceLocation *creator, Vector2 opos, 
-	double oangle, SpaceSprite *osprite)
-: SpaceObject(creator, opos, angle, osprite)
+void SpriteDrawList::calculate()
 {
-	waveradius = 100.0;
-	wavevel = 0.3;
-	wavemaxradius = 500.0;
-
-	layer = LAYER_SHIPS;
-	set_depth(DEPTH_SHIPS);
-
-	collide_flag_anyone = 0;
-	collide_flag_sameship = 0;
-	collide_flag_sameteam = 0;
-
-	P = corner(pos);
-	R = waveradius * space_zoom;
-}
-
-
-void GravityShockWave::calculate()
-{
-
-	// increase radius of the circle.
-	waveradius += wavevel * frame_time;
-
-	if ( waveradius > wavemaxradius )	// the shockwave doesn't reach everywhere
+	if ( !(mother && mother->exists()) )
 	{
 		state = 0;
 		return;
 	}
 
-	SpaceLocation::calculate();
 
-	if ( ship && ship->exists() )
-		pos = ship->pos;
+	existtime += frame_time * 1E-3;
+	if ( existtime < delaytime )
+		return;
+	else
+		existtime -= delaytime;
 
-	lastP = P;
-	P = corner(pos);
+	SpriteDrawListItem *s;
+	Vector2 *P;
 
-	lastR = R;
-	R = waveradius * space_zoom;
+	for ( s = firstitem; s != 0; s = s->next)
+		if (s->sprite_array_index < Nsprites-1)
+			++ s->sprite_array_index;
+
+	// reset the last in the list, bring it to the front and init its values:
+	s = lastitem;
+	lastitem = s->prev;
+	lastitem->next = 0;
+
+	s->next = firstitem;
+	s->prev = 0;
+	firstitem->prev = s;
+
+	firstitem = s;
+
+	s->init(mother->get_sprite_index(), mother->pos);
+}
+
+
+void SpriteDrawList::animate(Frame *frame)
+{
+	SpriteDrawListItem *s;
+	for ( s = lastitem; s != 0; s = s->prev)
+		s->animate(frame);
+}
 
 
 
-	int layers = bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) +
-		bit(LAYER_CBODIES);
-	double passiveRange = 1000.0;	// outside this area, gravity doesn't do anything
+
+BathaCloud::BathaCloud(SpaceLocation *creator, Vector2 opos, double oangle,
+				SpaceSprite *osprite, double olifetime)
+:
+SpaceObject(creator, opos, oangle, osprite)
+{
+	vel = 0;
+
+	lifetime = olifetime;
+	existtime = 0;
+
+	// check if one of the homing missiles has the creator as target - change
+	// its target:
+
+	int layers = bit(LAYER_SHOTS);
+	double passiveRange = 1000.0;	// outside this area, don't do anything
 
 	Query a;
 	for (a.begin(this, layers, passiveRange); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
-		if (!(o->isPlanet()) && (o->mass != 0 || o->isShot()) && o != ship )
+		if ( o->isShot() && ((Shot*)o)->isHomingMissile() && o->target == ship )
 		{
-			
-			// as extra, when the gravity fields changes, the enemy experiences
-			// a short overshoot .. a powerful gravity wave hits it ;)
-
-			
-			Vector2 Vd = min_delta(o->normal_pos(), normal_pos(), map_size);
-			double R = magnitude(Vd);
-			
-			if ( fabs(R - waveradius) < 50.0 )	// the wavefront has a short action range
-			{
-				
-				double vel_boost = 0.0025 * frame_time;
-				o->vel += gravsign * (Vd/R) * vel_boost;
-				
-				
-			}
-			
-	
+			o->target = this;
+			break;
 		}
 	}
 
+	spr_changetime = 0.3;
+	spr_time = 0;
+	sprite_index = 0;
 }
 
-
-
-
-
-void GravityShockWave::animate(Frame *frame)
+void BathaCloud::calculate()
 {
+	SpaceObject::calculate();
 
-	if (!state)
+	existtime += frame_time * 1E-3;
+	if (existtime > lifetime)
+	{
+		state = 0;
 		return;
+	}
 
-
-
-	int i = 255 - 200 * waveradius / wavemaxradius;
-	int wavecol = makecol(i, i, i);
-
-	// draw a circle
-
-	circle(frame->surface, (int)P.x, (int)P.y, (int)R, wavecol);
-
-	frame->full_redraw = TRUE;	// otherwise you've nasty drawing artifacts !
-	// this tweak isn't neat, but well, doing it another way is difficult :(
-
+	spr_time += frame_time * 1E-3;
+	if ( spr_time > spr_changetime )
+	{
+		spr_time -= spr_changetime;
+		++sprite_index;
+		if (sprite_index >= sprite->frames())
+			sprite_index = 0;
+	}
 }
-
 
 
 

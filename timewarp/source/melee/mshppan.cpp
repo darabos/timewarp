@@ -48,8 +48,8 @@ ShipPanel::ShipPanel(Ship *_ship) {STACKTRACE
 
 	ship->spritePanel->draw(0, 0, 0, panel);
 	ship->spritePanel->draw(0, 0, 1, captain);
-	draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, round_up(ship->crew), round_up(ship->crew_max), tw_color(ship->crewPanelColor()), 0);
-	draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, round_up(ship->batt), round_up(ship->batt_max), tw_color(ship->battPanelColor()), 0);
+	draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, iround_up(ship->crew), iround_up(ship->crew_max), tw_color(ship->crewPanelColor()), 0);
+	draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, iround_up(ship->batt), iround_up(ship->batt_max), tw_color(ship->battPanelColor()), 0);
 
 	window = new VideoWindow();
 	window->preinit();
@@ -163,15 +163,15 @@ void ShipPanel::animate(Frame *space) {STACKTRACE
 		panel_needs_update = true;
 		}
 
-	if (round_up(ship->crew) != crew_old) {		
-		crew_old = round_up(ship->crew);
-		draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, crew_old, round_up(ship->crew_max), tw_color(ship->crewPanelColor()), 0);
+	if (iround_up(ship->crew) != crew_old) {		
+		crew_old = iround_up(ship->crew);
+		draw_stuff (crew_x, crew_y, 2, 1, -3, -2, 2, crew_old, iround_up(ship->crew_max), tw_color(ship->crewPanelColor()), 0);
 		panel_needs_update = true;
 		}
 
-	if (round_up(ship->batt) != batt_old) {
-		batt_old = round_up(ship->batt);
-		draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, batt_old, round_up(ship->batt_max), tw_color(ship->battPanelColor()), 0);
+	if (iround_up(ship->batt) != batt_old) {
+		batt_old = iround_up(ship->batt);
+		draw_stuff (batt_x, batt_y, 2, 1, -3, -2, 2, batt_old, iround_up(ship->batt_max), tw_color(ship->battPanelColor()), 0);
 		panel_needs_update = true;
 		}
 

@@ -10,12 +10,12 @@
 Histograph "max"		Memory Usage
 					Minimum		Typical	Maximum
 								
-10					64 bytes	0.8 k	2 kbytes
-100					416 bytes	7.6 k	22 kbytes
-1,000				4 kbytes	60  k	200 kbytes
-10,000				40 kytes	480 k	1.8 Mbytes
-100,000				400 kbytes	3.6 M	17.5 Mbytes
-1,000,000			4 Mbytes	24  M	164 Mbytes
+10					128 bytes	1.6 k	4 kbytes
+100					1 kbytes	15.2 k	44 kbytes
+1,000				8 kbytes	120 k	400 kbytes
+10,000				80 kytes	960 k	3.6 Mbytes
+100,000				800 kbytes	7.2 M	35 Mbytes
+1,000,000			8 Mbytes	48  M	328 Mbytes
 
 That table assumes that floats are used for the elements.  
 If doubles are used instead, double all the memory usage numbers.  

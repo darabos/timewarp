@@ -343,7 +343,11 @@ struct registered_file_type {
 extern registered_file_type *registered_files;
 extern int num_registered_files;
 void _register_file (char *fname, char *fdate, char *ftime);
-#define REGISTER_FILE static void __ignore_me_rf() {_register_file(__FILE__, __DATE__, __TIME__);} CALL_BEFORE_MAIN(__ignore_me_rf);
+#ifdef _DEBUG
+#	define REGISTER_FILE static const char *__registered_filename = __FILE__; static void __ignore_me_rf() {_register_file(__FILE__, __DATE__, __TIME__);} CALL_BEFORE_MAIN(__ignore_me_rf);
+#else
+#	define REGISTER_FILE static void __ignore_me_rf() {_register_file(__FILE__, __DATE__, __TIME__);} CALL_BEFORE_MAIN(__ignore_me_rf);
+#endif
 
 void init_ships();
 

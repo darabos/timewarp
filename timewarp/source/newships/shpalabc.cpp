@@ -1,4 +1,5 @@
 #include "../ship.h"
+#include "../util/aastr.h"
 REGISTER_FILE
 
 #define turret_fire_frame_size 40
@@ -8,7 +9,7 @@ class AlaryBCTurret;
 
 class AlaryBC : public Ship
 {
-	friend		AlaryBCTurret;
+public:
 
 	int			death_frame, exp_frame;
 
@@ -106,7 +107,7 @@ public:
 
 class AlaryBCTurret : public SpaceLocation
 {
-	friend		AlaryBC;
+public:
 	AlaryBC		*ship;
 	double		min_angle, max_angle, std_angle;
 	int			recharge;
@@ -120,7 +121,7 @@ class AlaryBCTurret : public SpaceLocation
 
 public:
 
-	AlaryBCTurret (AlaryBC *oship, double or, double oa, double oangle,
+	AlaryBCTurret (AlaryBC *oship, double blah_or, double oa, double oangle,
 		double omin_angle, double omax_angle, int team);
 	double get_aim(SpaceObject *tgt);
 	SpaceObject *get_target(SpaceObject *tgt);
@@ -425,7 +426,7 @@ void AlaryBC::animate_simple(Frame *space)
 		}
 		else	{
 			set_tw_aa_mode((turret_forceAA<0)?old_aa:turret_forceAA);
-			data->more_sprites[1]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127) + 128, space); }
+			data->more_sprites[1]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127), space); }
 	}
 
 	set_tw_aa_mode(old_aa);
@@ -436,10 +437,11 @@ void AlaryBC::animate(Frame *space)
 
 	if (!supersprite) {
 		animate_simple(space);
-		return; 
-	}
+		return; }
 
 	int i;
+
+	set_tw_aa_mode(get_tw_aa_mode() &~AA_BLEND);
 
 	double tx = cos(angle), ty = sin(angle);
 	BITMAP *bmp;
@@ -448,6 +450,8 @@ void AlaryBC::animate(Frame *space)
 
 
 //  animate engines
+
+	int old_aa = get_tw_aa_mode();
 
 	if ((thrust)&&(engines_armour > 0)&&(crew>0)) {
 		engine_phase = (engine_phase + 1) % 2;
@@ -482,13 +486,13 @@ void AlaryBC::animate(Frame *space)
 			data->more_sprites[0]->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, (iround(si) + 32) & 127, bmp);
 		}
 		else
-			data->more_sprites[0]->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127) + 128, bmp);
+			data->more_sprites[1]->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127), bmp);
 	}
 
 	
 //  draw on screen
 
-	int old_aa = get_tw_aa_mode();
+//	int old_aa = get_tw_aa_mode();
 	set_tw_aa_mode((ship_forceAA<0)?old_aa:ship_forceAA);
 	dummy->animate(pos, 0, space);
 	set_tw_aa_mode(old_aa);
@@ -800,7 +804,7 @@ void AlaryBCTurret::sinc_it()
 	vel = ship->get_vel();
 }
 
-AlaryBCTurret::AlaryBCTurret (AlaryBC *oship, double or, double oa, double oangle,
+AlaryBCTurret::AlaryBCTurret (AlaryBC *oship, double blah_or, double oa, double oangle,
 				double omin_angle, double omax_angle, int team) :
 	SpaceLocation(oship,0,oangle)
 //	barrel(0), ship(oship), recharce(0)
@@ -810,8 +814,8 @@ AlaryBCTurret::AlaryBCTurret (AlaryBC *oship, double or, double oa, double oangl
 	shots_fired = 0;
 	barrel = 0;
 	ship = oship;
-	rel_x = or*sin(oa);
-	rel_y = or*cos(oa);
+	rel_x = blah_or*sin(oa);
+	rel_y = blah_or*cos(oa);
 	recharge = 0;
 	min_angle = omin_angle; max_angle = omax_angle;
 	std_angle = oangle;

@@ -311,6 +311,7 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 
 	spritePanel = NULL;
 
+	turn_step = 0;
 	angle = floor(oangle / (PI2/64)) * (PI2/64);
 	sprite_index = get_index(angle);
 }
@@ -538,8 +539,11 @@ void Ship::calculate()
 	if(special_recharge > 0)
 		special_recharge -=  frame_time;
 
+	int target_pressed_prev = target_pressed;
+	target_pressed = target_next || target_prev || target_closest;
+
 	int i;
-	if (!target_pressed && control) {
+	if (target_pressed && (!target_pressed_prev) && control) {
 		if (target_next) {
 			if (control && game->num_targets) {
 				i = control->index;
@@ -814,7 +818,11 @@ void Ship::animate(Frame *frame) {
 }
 
 void Ship::animate_predict(Frame *frame, int time) {
-	if (!game->lag_frames || !control->_prediction_keys) {
+	if (!game->lag_frames 
+		|| !sprite 
+		|| !control 
+		|| !control->_prediction_keys) 
+	{
 		SpaceObject::animate_predict(frame, time);
 		return;
 	}
@@ -848,6 +856,7 @@ void Ship::animate_predict(Frame *frame, int time) {
 	angle = normalize(angle + da);
 	pos = normalize(pos);
 	sprite_index = get_index(angle);
+	if (sprite_index > sprite->frames()) sprite_index = 0;
 
 	animate(frame);
 

@@ -342,8 +342,13 @@ void ImperialRadioactivity::inflict_damage( SpaceObject* other ){
     latched = (Ship*)other;
     sprite = data->spriteSpecialExplosion;
     change_owner( latched );
-    draw_sprite( latched->spritePanel->get_bitmap(0), data->spriteSpecial->get_bitmap(0), 16, 18 );
-    latched->update_panel = true;
+	if (latched->spritePanel)
+	{
+		data->spriteSpecial->lock();
+		draw_sprite( latched->spritePanel->get_bitmap(0), data->spriteSpecial->get_bitmap(0), 16, 18 );
+		data->spriteSpecial->unlock();
+		latched->update_panel = true;
+	}
     sprite_index = 0;
   }else{
     SpaceObject* r = new ImperialRadioactivity( this, pos, v, 0,
@@ -376,7 +381,15 @@ void ImperialBlade::inflict_damage( SpaceObject *other ){
     Laser::inflict_damage( other );
     damage_factor--; }
 
-  if( !other->isShip() || other->exists() ) return;
+  //if( !other->isShip() || other->exists() ) return;
+  if ( other->isShip() && ((Ship*)other)->crew > 0.1 )	// it's not dead
+	  return;
+
+  if ( damage_factor <= -1 )
+	  return;
+
+  if ( !other->isShip() )
+	  return;	// cannot be split.
 
   // slice code starts here
 

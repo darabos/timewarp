@@ -36,9 +36,11 @@ public:
   //double specialStartLength, specialEndLength;
   double specialTime;
   double specialDamage;
+  int specialSustain;
 
   public:
-  AlhordianDreadnought(Vector2 opos, double angle, ShipData *data, unsigned int code);
+  AlhordianDreadnought(Vector2 opos, double angle, ShipData *data, unsigned 
+int code);
   ~AlhordianDreadnought(void);
   protected:
   virtual int activate_weapon();
@@ -57,39 +59,25 @@ public:
 
 class AlhordianDrBolt : public Missile {
 	public:
-	AlhordianDrBolt(double ox, double oy, double oangle, double ov, int odamage,
+	AlhordianDrBolt(double ox, double oy, double oangle, double ov, int 
+odamage,
 			double orange, int oarmour, Ship *oship,
       SpaceSprite *osprite, double orelativity);
 	int spriteToUse;
 	virtual void calculate();
 	};
 
-class AlhordianLaserSweep : public SpaceLocation {
-  int currentTime;
-  AlhordianDreadnought* creator;
-  double startX, startY;
-  double endX, endY;
-  double startAngle, endAngle;
-  double startLength, endLength;
-  double lifetime; double damage;
-  double Height;
-public:
-  AlhordianLaserSweep** pointerToMe;
-  AlhordianLaserSweep(AlhordianDreadnought* ocreator,
-    double ostartX, double ostartY, double ostartAngle, double ostartLength,
-    double oendX, double oendY, double oendAngle, double oendLength,
-    int oTime, int oDamage);
-  virtual void calculate();
-};
 
 
-AlhordianDreadnought::AlhordianDreadnought(Vector2 opos, double angle, ShipData *data, unsigned int code) 
+AlhordianDreadnought::AlhordianDreadnought(Vector2 opos, double angle, 
+ShipData *data, unsigned int code)
 	:
 	Ship(opos, angle, data, code)
 	{
   shipWeaponDrain = get_config_int("Ship", "WeaponDrain",0);
   weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
-  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
+  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 
+0));
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
   specialDamage = get_config_int("Special", "Damage", 0);
@@ -123,12 +111,16 @@ AlhordianDreadnought::AlhordianDreadnought(Vector2 opos, double angle, ShipData 
   specialStartY = get_config_float("Special", "StartY", 0);
   specialEndX = get_config_float("Special", "EndX", 0);
   specialEndY = get_config_float("Special", "EndY", 0);
-  specialStartAngle = get_config_float("Special", "StartAngle", 0) * ANGLE_RATIO;
-  specialEndAngle = get_config_float("Special", "EndAngle", 0) * ANGLE_RATIO;
-  specialStartRange = scale_range(get_config_float("Special", "StartRange", 0));
+  specialStartAngle = get_config_float("Special", "StartAngle", 0) * 
+ANGLE_RATIO;
+  specialEndAngle = get_config_float("Special", "EndAngle", 0) * 
+ANGLE_RATIO;
+  specialStartRange = scale_range(get_config_float("Special", "StartRange", 
+0));
   specialEndRange = scale_range(get_config_float("Special", "EndRange", 0));
   specialTime = get_config_int("Special", "Time", 0);
   specialDamage = get_config_int("Special", "Damage", 0);
+  specialSustain = get_config_int("Special", "Sustain", 0);
 
   currentSweepTime = specialTime + 1;
   sweepIsOn = FALSE;
@@ -140,8 +132,12 @@ AlhordianDreadnought::~AlhordianDreadnought(void) {
 }
 
 void AlhordianDreadnought::calculate() {
+  if(this->batt<1 || !fire_special) {
+    currentSweepTime = 0; //pulling up on
+    sweepIsOn = FALSE;
+  }
   Ship::calculate();
-  calculate_laser_sweep();
+  if(sweepIsOn) currentSweepTime += frame_time;
 }
 
 
@@ -150,25 +146,19 @@ int AlhordianDreadnought::activate_weapon() {
   if(weaponSpriteNumber>3) weaponSpriteNumber=3;
   if(weaponSpriteNumber<0) weaponSpriteNumber=0;
   game->add(new AlhordianDrBolt(size.y*(0.0), (size.y * 0.1),
-    angle, weaponVelocity, weaponDamage, weaponRange, 
+    angle, weaponVelocity, weaponDamage, weaponRange,
 	  weaponArmour, this, data->spriteWeapon, weaponRelativity));
   this->weapon_flash();
   return(TRUE);
 }
 
 int AlhordianDreadnought::activate_special() {
-  if((!sweepIsOn)&&fire_special) {
-    sweepIsOn = TRUE;
-    currentSweepTime = 0;
-	  return(TRUE);
-  }
-  else
-    return(FALSE);
+  sweepIsOn = TRUE;
+  this->calculate_laser_sweep();
+  return(TRUE);
 }
 
 void AlhordianDreadnought::weapon_flash() {
-//Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, int ldamage,
-//  int lfcount, SpaceLocation *opos, double rel_x, double rel_y, bool osinc_angle) 
   game->add(new Laser(this, angle+flashAngle1, pallete_color[flashColor],
     flashRange1, flashDamage1, 50, this, Vector2(size.y *0.0, size.y*0.5)));
   game->add(new Laser(this, angle-flashAngle1, pallete_color[flashColor],
@@ -205,10 +195,13 @@ void AlhordianDreadnought::weapon_flash() {
     flashRange7, flashDamage7, 50, this, Vector2(size.y *0.0, size.y*0.5)));
 }
 
-AlhordianDrBolt::AlhordianDrBolt(double ox, double oy, double oangle, double ov,
-	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double orelativity) 
+AlhordianDrBolt::AlhordianDrBolt(double ox, double oy, double oangle, double 
+ov,
+	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, 
+double orelativity)
 	:
-	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, osprite, orelativity),
+	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, 
+osprite, orelativity),
 	spriteToUse(odamage)
 {
 	explosionSprite     = data->spriteWeaponExplosion;
@@ -220,70 +213,26 @@ void AlhordianDrBolt::calculate()
 	Missile::calculate();
 }
 
-AlhordianLaserSweep::AlhordianLaserSweep(AlhordianDreadnought* ocreator,
-    double ostartX, double ostartY, double ostartAngle, double ostartLength,
-    double oendX, double oendY, double oendAngle, double oendLength,
-    int oTime, int oDamage) 
-    :
-    SpaceLocation(ocreator, ocreator->normal_pos(), ocreator->angle),
-    creator(ocreator),
-    startX(ostartX), startY(ostartY),
-    endX(oendX), endY(oendY),
-    startAngle(ostartAngle), endAngle(oendAngle),
-    startLength(ostartLength), endLength(oendLength),
-    lifetime(oTime), damage(oDamage)
-{
-  currentTime = 0;
-  Height = creator->size.y;
-}
-
-void AlhordianLaserSweep::calculate(void) {
-  double fractionDone;
-  double X, Y, Angle, Length;
-  if(currentTime>lifetime) {state = 0; return;}
-  if(creator)
-    if(creator->exists())
-      {pos = creator->normal_pos(); angle = creator->get_angle();}
-    else
-      {state = 0; return;}
-  else
-    {state = 0; return;}
-  fractionDone = currentTime / lifetime;
-  X = startX * (1-fractionDone) + endX * fractionDone;
-  Y = startY * (1-fractionDone) + endY * fractionDone;
-  Angle = startAngle * (1-fractionDone) + endAngle * (fractionDone);
-  Length = startLength * (1-fractionDone) + endLength * (fractionDone);
-  //Length = scale_range(10); //debugging override
-  game->add(new Laser(this, Angle+angle, palette_color[9], Length, 1, 25,
-    this, Vector2(Height * X, Height * Y), TRUE));
-//Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, int ldamage,
-//  int lfcount, SpaceLocation *opos, double rel_x, double rel_y, bool osinc_angle) 
-  currentTime += frame_time;
-  if(currentTime>lifetime) state=0;
-}
 
 void AlhordianDreadnought::calculate_laser_sweep(void) {
   double fractionDone;
   double X, Y, Angle, Length;
-  //if(justBorn) {justBorn = FALSE; currentSweepTime = 0; sweepIsOn = FALSE; return;}
+  if(currentSweepTime>specialTime) currentSweepTime = specialTime;
   if(currentSweepTime>specialTime) {sweepIsOn = FALSE; return;}
   fractionDone = currentSweepTime / specialTime;
   X = specialStartX * (1-fractionDone) + specialEndX * fractionDone;
   Y = specialStartY * (1-fractionDone) + specialEndY * fractionDone;
-  Angle = specialStartAngle * (1-fractionDone) + specialEndAngle * (fractionDone);
-  Length = specialStartRange * (1-fractionDone) + specialEndRange * (fractionDone);
-  //Length = scale_range(10); //debugging override
-  game->add(new Laser(this, Angle+angle, palette_color[9], Length, 1*frame_time/25.0, 25,
+  Angle = specialStartAngle * (1-fractionDone) + specialEndAngle * 
+(fractionDone);
+  Length = specialStartRange * (1-fractionDone) + specialEndRange * 
+(fractionDone);
+  game->add(new Laser(this,Angle+angle, palette_color[9], Length, 
+specialDamage, specialSustain,
     this, Vector2(size.y * X, size.y * Y), TRUE));
-  game->add(new Laser(this, -Angle+angle, palette_color[9], Length, 1*frame_time/25.0, 25,
+  game->add(new Laser(this,-Angle+angle, palette_color[9], Length, 
+specialDamage, specialSustain,
     this, Vector2(-size.y * X, size.y * Y), TRUE));
-//Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, int ldamage,
-//  int lfcount, SpaceLocation *opos, double rel_x, double rel_y, bool osinc_angle) 
-  currentSweepTime += frame_time;
-  if(currentSweepTime>specialTime) sweepIsOn = FALSE;
 }
 
-
-
-
 REGISTER_SHIP (AlhordianDreadnought)
+

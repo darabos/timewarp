@@ -113,7 +113,7 @@ void set_gamma(int gamma) {
 	_gamma = gamma;
 	int i;
 	for (i = 0; i < 256; i += 1) {
-		_gamma_map[i] = round_down(256 * pow(i / 255.5, 1-gamma/258.));
+		_gamma_map[i] = iround_down(256 * pow(i / 255.5, 1-gamma/258.));
 	}
 	return;
 }
@@ -450,10 +450,10 @@ void VideoWindow::update_pos() {
 		}
 	}
 
-	x = nx + round_up(const_x + propr_x * nw - 0.05);
-	y = ny + round_up(const_y + propr_y * nh - 0.05);
-	w = round_down(const_w + propr_w * nw + 0.05);
-	h = round_down(const_h + propr_h * nh + 0.05);
+	x = nx + iround_up(const_x + propr_x * nw - 0.05);
+	y = ny + iround_up(const_y + propr_y * nh - 0.05);
+	w = iround_down(const_w + propr_w * nw + 0.05);
+	h = iround_down(const_h + propr_h * nh + 0.05);
 
 	if ((w <= 0) || (h <= 0)) surface = NULL;
 	return;

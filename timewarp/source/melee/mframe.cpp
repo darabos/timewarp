@@ -549,11 +549,15 @@ void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {STACKTRACE
 	nv = vel + delta_v;
 	nvm = magnitude_sqr(nv);
 	if ((nvm <= max_speed * max_speed) || (nvm <= ovm)) {
+		//if new velocity is slow, handle normally
+		//if new velocity is fast, but we're decelerating, still handle normally
 		vel = nv;
 	}
 	else {
 		if (ovm <= max_speed * max_speed) ovm = max_speed;
 		else ovm = sqrt(ovm);
+		//otherwise, slow down closer to the maximum speed
+		//but only when turning, particularly turning fast
 		vel = nv * ovm / (ovm + magnitude(delta_v));
 	}
 	return;
@@ -735,7 +739,7 @@ double SpaceObject::collide_ray(Vector2 lp1, Vector2 lp2, double llength)
 void SpaceObject::inflict_damage(SpaceObject *other) {STACKTRACE
 	int i;
 	if (damage_factor > 0) {
-		i = round_down(damage_factor / 2);
+		i = iround_down(damage_factor / 2);
 		if(i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
 		play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
 		damage(other, damage_factor);
@@ -782,7 +786,7 @@ Vector2 SpaceLine::edge() const
 
 void SpaceLine::inflict_damage(SpaceObject *other) {STACKTRACE
 	int i;
-	i = round_down(damage_factor / 2);
+	i = iround_down(damage_factor / 2);
 	if(i >= BOOM_SAMPLES)
 		i = BOOM_SAMPLES - 1;
 	play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
@@ -1067,8 +1071,8 @@ checksync();
 	for(i = 0; i < num_items; i += 1) {
 		if (item[i]->exists()) {
 			Vector2 n = item[i]->normal_pos();
-			int q = round_down(n.x * QUADI_X) + 
-					round_down(n.y * QUADI_Y) * QUADS_X;
+			int q = iround_down(n.x * QUADI_X) + 
+					iround_down(n.y * QUADI_Y) * QUADS_X;
 			item[i]->qnext = quadrant[q];
 			quadrant[q] = item[i];
 			}
@@ -1227,7 +1231,7 @@ void Physics::collide() {STACKTRACE
 			l += 1;
 		}
 	}
-	SpaceObject *col[128 * 2];
+	SpaceObject *col[128 * 2 + 1];
 	int nc = check_pmask_collision_list_float_wrap(size.x, size.y, tmp, l, (const void**)&col[0], 128);
 	delete tmp;
 //	return;

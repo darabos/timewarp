@@ -206,12 +206,12 @@ void _draw_starfield_cached (
 	wx = sprite->width() * zoom;
 	wy = sprite->height() * zoom;
 	if (aa_mode) {
-		iwx = round_up(wx);
-		iwy = round_up(wy);
+		iwx = iround_up(wx);
+		iwy = iround_up(wy);
 	}
 	else {
-		iwx = round_down(0.5 + wx);
-		iwy = round_down(0.5 + wy);
+		iwx = iround_down(0.5 + wx);
+		iwy = iround_down(0.5 + wy);
 	}
 	if (!iwx || !iwy) return;
 	x = normalize ( x , mx);

@@ -48,16 +48,16 @@ class Frame {
     void (*erase_item)(DirtyItem *item, BITMAP *frame),
     void (*draw_item)(DirtyItem *item, BITMAP *frame, BITMAP *child));
 
-	void add_pixel(int x, int y, int a, int b);
-	void add_box(int x, int y, int a, int b);
-	void add_line(int x, int y, int a, int b);
+	void add_pixel(int x, int y);
+	void add_box(int x, int y, int w, int h);
+	void add_line(int x, int y, int x2, int y2);
 
 	void add_circle(int x, int y, int a, int b);
 	void add_circle_fast(int x, int y, int a, int b);
 	void add_old_circle(int x, int y, int a, int b);
 	void add_old_circle_fast(int x, int y, int a, int b);
 
-	void add_old_pixel(int x, int y, int a, int b);
+	void add_old_pixel(int x, int y);
 	void add_old_box(int x, int y, int a, int b);
 	void add_old_line(int x, int y, int a, int b);
 

@@ -91,28 +91,32 @@ void VuxLimpet::inflict_damage(SpaceObject *other) {
 	//MYCODE begin
 	int hx,hy,tries, col;
 
-	BITMAP *bmp = target->spritePanel->get_bitmap(0);
-	//find a random spot on the target ship where it "exist" 
-	tries = 0;
-	while (tries < 10) {
-		hx = 18 + (rand() % 27);  //NOT part of physics ; not synchronized in network games ; varies with graphics mode
-		hy = 15 + (rand() % 36);
-		tries++;
-		col = getpixel(bmp,hx,hy);
-		if (col == bitmap_mask_color(bmp)) continue;
-		if (col == 0) continue;
-		if (col == -1) continue;
-		if (col == palette_color[8]) continue;
-		break;
+	if ( target->spritePanel )
+	{
+		BITMAP *bmp = target->spritePanel->get_bitmap(0);
+		//find a random spot on the target ship where it "exist" 
+		tries = 0;
+		while (tries < 10) {
+			hx = 18 + (rand() % 27);  //NOT part of physics ; not synchronized in network games ; varies with graphics mode
+			hy = 15 + (rand() % 36);
+			tries++;
+			col = getpixel(bmp,hx,hy);
+			if (col == bitmap_mask_color(bmp)) continue;
+			if (col == 0) continue;
+			if (col == -1) continue;
+			if (col == palette_color[8]) continue;
+			break;
 		} 
-
-	// draw the Limplet on the ship panel
-	//BITMAP *s = sprite->get_bitmap(sprite_index);
-	//stretch_sprite(bmp, s, hx - s->w/4, hy - s->h/4,	s->w/2, s->h/2 );
-	sprite->draw(Vector2(hx,hy)-sprite->size()/4,
+		
+		// draw the Limplet on the ship panel
+		//BITMAP *s = sprite->get_bitmap(sprite_index);
+		//stretch_sprite(bmp, s, hx - s->w/4, hy - s->h/4,	s->w/2, s->h/2 );
+		sprite->draw(Vector2(hx,hy)-sprite->size()/4,
 			sprite->size()/2, 
 			sprite_index, bmp);
-	target->update_panel = TRUE;
+		target->update_panel = TRUE;
+	}
+
 	target->handle_speed_loss(this, slowdown_factor);
 	state = 0;
 	}

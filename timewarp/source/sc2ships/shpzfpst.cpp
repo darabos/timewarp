@@ -135,6 +135,9 @@ void ZoqFotPikTongue::inflict_damage(SpaceObject *other)
 {
   SpaceObject::inflict_damage(other); 
   damage_factor = 0;
+
+  // in order to remove the variable damage:
+  lick_factor = 0;
 }
 
 

@@ -108,17 +108,20 @@ double ControlWussie::evasion (Ship * ship)
 		shot = b.currento;
 		if (shot->canCollide (ship))
 		{
-			if (ship->get_vel().y == 0)
+			Vector2 ship_pos, shot_pos;
+			ship_pos = ship->normal_pos();
+			shot_pos = shot->normal_pos();
+			if (fabs(ship->get_vel().y) < 0.0001)
 				shipslope = sign(ship->get_vel().x) * 10000;
 			else
 				shipslope = ship->get_vel().x / ship->get_vel().y;
-			if (shot->get_vel().y == 0)
+			if (fabs(shot->get_vel().y) < 0.0001)
 				shotslope = sign(shot->get_vel().x) * 10000;
 			else
 				shotslope = shot->get_vel().x / shot->get_vel().y;
 			collideshot = TRUE;
-			shipint = ship->normal_pos().y - (shipslope * ship->normal_pos().x);
-			shotint = shot->normal_pos().y - (shotslope * shot->normal_pos().x);
+			shipint = ship_pos.y - (shipslope * ship_pos.x);
+			shotint = shot_pos.y - (shotslope * shot_pos.x);
 			if (fabs(shotint - shipint) < 1 || fabs(shotslope - shipslope) < 0.05)
 			{
 				collideshot = FALSE;
@@ -136,16 +139,12 @@ double ControlWussie::evasion (Ship * ship)
 				collideshot = FALSE;
 			else
 			{
-				shiptime =
-					distance_from (Vector2(xs, ys), 
-						Vector2(ship->normal_pos().x, ship->normal_pos().y))
-						/ velship;
-				velshot =
-					distance_from (0, shot->get_vel ());
+				shiptime = distance_from (Vector2(xs, ys), ship_pos) / velship;
+				velshot = distance_from (0, shot->get_vel ());
 				if (!((velshot == 0) || (!collideshot)))
 				{
 					shottime =
-						distance_from (Vector2(xs, ys), shot->normal_pos())
+						distance_from (Vector2(xs, ys), shot_pos)
 						/ velshot;
 					if (absf (shottime - shiptime) < closetime)
 					{
@@ -209,8 +208,13 @@ int ControlWussie::think ()
 	}
 	if (!avoid_planet)
 	{
-		if (!ship->target || (last_seen_time < game->game_time - 3000))
+		if (!ship->target || (last_seen_time < game->game_time - 3000)) {
+			if ((rand() & 4095) < frame_time) {
+				if (rand() & 3) return keyflag::closest;
+				else return keyflag::next;
+			}
 			return 0;
+		}
 		if (!ship->target->exists ())
 		{
 			ship->target = NULL;

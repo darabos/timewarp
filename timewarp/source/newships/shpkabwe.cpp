@@ -12,7 +12,7 @@ REGISTER_FILE
   It also fires mines, which create a damaging field around their host when
   they attach themselves.
 
-  The damaging field increases ANY damage that is being taken.
+  The damaging field increases ANY damage that is being taken by 1.0 and is permanent.
 
   Still to do:
   graphics.
@@ -25,21 +25,23 @@ REGISTER_FILE
 
 
 
-class KaboHaze : public SpaceObject
+class KaboHaze : public SpaceLocation
 {
 public:
 	KaboHaze	*next, *prev;
-	Ship		*mother, *host;
+	Ship		*host;		//*mother, 
 	double		power, basepower;
-	double		decay_time;
+//	double		decay_time;
 	int			oldcrew, newcrew;
 	int			*edge_left, *edge_right;
+	int			sprite_index, shield_sprite_index;
 
 	BITMAP		*shield_bmp[64];
 
-	KaboHaze(Ship *mother, Ship *ohost, double obasepower, double odecaytime);
+	KaboHaze(SpaceLocation *creator, Ship *ohost, double obasepower);
 	virtual void calculate();
 	virtual void animate(Frame *space);
+	virtual void collide(SpaceObject *other);
 	//virtual void death();
 	~KaboHaze();
 };
@@ -51,6 +53,7 @@ public:
 static KaboHaze *KaboHazeFirst = 0;
 
 
+class KaboPod;
 
 class KaboWeakener : public Ship {
 public:
@@ -59,14 +62,19 @@ public:
 	int    weaponDamage;
 	int    weaponArmour;
 
-	int    specialFrames;
-	double specialVelocity1, specialVelocity2;
-	double specialRange;
-	int    specialArmour;
+	double mineLifeTime, mineHostileTime;
+	double mineVelocity;
+	double mineRange;
+	int    mineArmour;
+	double mineTurnRate;
 
-	double	Mine_RangeAcc, Haze_basepower, Haze_decaytime;
+	double	podVelocity, podRange, podArmour, podDamage;
+	int		podNmines;
 
-	public:
+	double	Mine_RangeAcc, Haze_basepower;//, Haze_decaytime;
+
+	KaboPod	*pod;
+
 	KaboWeakener(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
 	int activate_weapon();
@@ -75,20 +83,39 @@ public:
 
 
 
-class KaboMine : public Missile {
-	int    air_frames;
-	int    max_air_frames;
+// an intermediate - flies a while, then releases the mines
+class KaboPod : public Missile {
+
+	KaboWeakener *mother;
+	int	ididdamage;
 	double spriteindextime;
-	double rangeacc;
-	double Haze_basepower, Haze_decaytime;
-	double velocity_one, velocity_two;
+
+	public:
+	KaboPod(Vector2 opos, double oangle, double ov,
+		double orange, double oarmour, double odamage,
+		KaboWeakener *oship, SpaceSprite *osprite);
+
+	virtual void calculate();
+	virtual void inflict_damage(SpaceObject *other);
+	};
+
+
+
+
+class KaboMine : public SpaceObject {
+	double lifetime, existtime, hostiletime;
+	double spriteindextime;
+	double Haze_basepower;//, Haze_decaytime;
+
+	double	velocity, turn_rate;
 
 	SpaceObject *thetarget;
 
 	public:
-	KaboMine(Vector2 opos, double oangle, double ov1, double ov2,
-		double orange, int oarmour, int oair_frames, double orangeacc,  double obasepower, double odecaytime,
-		Ship *oship, SpaceSprite *osprite);
+	KaboMine(Vector2 opos, double oangle, double ov, double oturn_rate,
+		double orange, double oarmour, double olifetime, double ohostiletime,
+		double orangeacc,  double obasepower,
+		SpaceLocation *ocreator, SpaceSprite *osprite);
 
 	virtual void calculate();
 	virtual void inflict_damage(SpaceObject *other);
@@ -110,15 +137,25 @@ KaboWeakener::KaboWeakener(Vector2 opos, double angle, ShipData *data, unsigned 
 	weaponArmour        = get_config_int("Weapon", "Armour", 0);
 
 	// for the KaboMine:
-	specialFrames          = get_config_int("Mine", "Frames", 0);
-	specialVelocity1       = scale_velocity(get_config_float("Mine", "Velocity1", 0));
-	specialVelocity2       = scale_velocity(get_config_float("Mine", "Velocity2", 0));
-	specialArmour          = get_config_int("Mine", "Armour", 0);
+	mineVelocity         = scale_velocity(get_config_float("Mine", "Velocity", 0));
+	mineArmour           = get_config_int("Mine", "Armour", 0);
 	Mine_RangeAcc        = scale_range(get_config_float("Mine", "Range", 0));
+	mineTurnRate         = scale_turning(get_config_float("Mine", "TurnRate", 0));
+	mineLifeTime         = get_config_float("Mine", "LifeTime", 0);
+	mineHostileTime      = get_config_float("Mine", "HostileTime", 0);
+
+	// for the Pod:
+	podVelocity        = scale_velocity(get_config_float("Pod", "Velocity", 0));
+	podArmour          = get_config_int("Pod", "Armour", 0);
+	podRange           = scale_range(get_config_float("Pod", "Range", 0));
+	podDamage          = get_config_float("Pod", "Damage", 0);
+	podNmines          = get_config_int("Pod", "Nmines", 0);
 
 	// for the haze:
 	Haze_basepower =	get_config_float("Haze", "Power", 1.0);
-	Haze_decaytime =	get_config_float("Haze", "DecayTime", 10000.0);
+//	Haze_decaytime =	get_config_float("Haze", "DecayTime", 10000.0);
+
+	pod = 0;
 
 	}
 
@@ -131,105 +168,81 @@ int KaboWeakener::activate_weapon()
 	return(TRUE);
 }
 
-int KaboWeakener::activate_special() {
-	game->add( new KaboMine(Vector2(0.0, -0.5*get_size().y),
-			180+angle, specialVelocity1, specialVelocity2, specialRange, specialArmour,
-			specialFrames, Mine_RangeAcc, Haze_basepower, Haze_decaytime, this, data->spriteSpecial));
-	return TRUE;
+int KaboWeakener::activate_special()
+{
+	if (!pod)
+	{
+		pod = new KaboPod(Vector2(0.0, -0.5*get_size().y),
+			angle+PI, podVelocity, podRange, podArmour, podDamage,
+			this, data->spriteSpecial);
+		
+		game->add(pod);
+		return TRUE;
 	}
 
+	return FALSE;
+}
 
-KaboMine::KaboMine (Vector2 opos, double oangle, double ov1, double ov2,
-	double orange, int oarmour, int oair_frames, double orangeacc, double obasepower, double odecaytime,
-	Ship *oship, SpaceSprite *osprite) 
-	:
-	Missile(oship, opos, oangle, ov1, 0.1, orange, oarmour, oship, osprite),
-	air_frames(oair_frames),
-	max_air_frames(oair_frames),
-	rangeacc(orangeacc),
-	Haze_basepower(obasepower),
-	Haze_decaytime(odecaytime),
-	velocity_one(ov1),
-	velocity_two(ov2)
-	{
+
+KaboMine::KaboMine (Vector2 opos, double oangle, double ov, double oturnrate,
+	double orange, double oarmour, double olifetime, double ohostiletime, double orangeacc, double obasepower,
+	SpaceLocation *ocreator, SpaceSprite *osprite) 
+:
+SpaceObject(ocreator, ocreator->pos+rotate(opos,oangle-PI/2), oangle, osprite),
+Haze_basepower(obasepower),
+lifetime(olifetime),
+hostiletime(ohostiletime)
+{
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
 
 	spriteindextime = 0;
 
-	// find the closest enemy; that one will be the target !
-	// otherwise, it'll sometimes shoot at the planet (doh)
-	// the target must be a ship.
-	// hmmmm ... for some reason, that doesnt help.
+	velocity = ov;
+	turn_rate = oturnrate;
 
-	thetarget = 0;
+	existtime = 0;
 
-	Query q;
-	double range = 10000;
-	int qlayers = OBJECT_LAYERS;
-	for (q.begin(this, qlayers, range); q.currento; q.next() )
-	{
-		if (!q.currento->isShip())
-			continue;
-
-		if (q.currento->ally_flag == ship->ally_flag)
-			continue;
-
-		// so ... who's the closest enemy?
-		if (!thetarget)
-			thetarget = q.currento;
-		else
-			if (q.currento->distance(this) < thetarget->distance(this))
-				thetarget = q.currento;
-	}
-
-	if (!thetarget)
-		state = 0;
-
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = 0;
 }
 
-void KaboMine::calculate() {
 
-	if (!ship || !thetarget || !ship->exists() || !thetarget->exists()) {
+void KaboMine::calculate()
+{
+
+	existtime += frame_time * 1E-3;
+
+	if ( existtime > lifetime )
+	{
 		state = 0;
 		return;
-		}
+	}
 
-	air_frames -= frame_time;
-	if (air_frames <= 0) {
-		state = 0;
-		return;
-		}
-
-
-	// if close enough, they increase speed
-
-	double L = distance(thetarget);
-	if ( L > rangeacc )
-		v = velocity_one;
-	else
-		v = velocity_two;
-
+	if ( existtime > hostiletime )
+	{
+		collide_flag_sameship = ALL_LAYERS;
+	}
 
 	// make the sprite/mines rotate around their axes
 	spriteindextime += frame_time / 25.0;
 	sprite_index = (int)(spriteindextime);
 	sprite_index &= 63;
 
-	// turn toward the target:
-	if ( thetarget && !thetarget->isInvisible() )
-	{
-		angle = atan(min_delta(thetarget->pos, pos, map_size));
-		vel = v * unit_vector(angle);
-	}
+	// move around aimlessly
 
-	Missile::calculate();
+	double t = turn_rate * frame_time;
+	angle += tw_random(-t, t);
+	vel = velocity * unit_vector(angle);
+	
+	SpaceObject::calculate();
 }
 
 
 int KaboMine::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	state = 0;
+//	state = 0;	// is already done by inflict_damage.
 	return 0;
 }
 
@@ -257,7 +270,7 @@ void KaboMine::inflict_damage(SpaceObject *other)
 		haze->power += haze->basepower;
 	} else {
 		// it's the first time a haze is applied to this ship ...
-		haze = new KaboHaze( ship, (Ship*) other, Haze_basepower, Haze_decaytime);
+		haze = new KaboHaze( this, (Ship*) other, Haze_basepower);
 
 		// update the list (insert at the start)
 		KaboHaze *hazenext = KaboHazeFirst;
@@ -280,12 +293,17 @@ void KaboMine::inflict_damage(SpaceObject *other)
 
 
 
+void KaboHaze::collide(SpaceObject *other)
+{
+	return;	// never collide with anything.
+}
 
 
 void KaboHaze::calculate()
 {
+	SpaceLocation::calculate();	// this sets ship=0 or target=0 if needed.
 
-	if (!host || !host->exists())
+	if (!(host && host->exists()) )
 	{
 		state = 0;
 		return;
@@ -294,15 +312,17 @@ void KaboHaze::calculate()
 	// the following is used for drawing, really ; but has to be calculated here
 	// because it's a globally accessible/ used variable.
 
-	sprite_index = get_index(host->angle, 0.5*PI);	// + 16;
-	sprite_index &= 63;
+	shield_sprite_index = get_index(host->angle, 0.5*PI);	// + 16;
+	shield_sprite_index &= 63;
 
 	// decrease strength over time ... and when strength = 0, then it should be removed
-
+/*
 	if ( power <= 0.01 )	// too weak, the field loses integrity
-		state = 0;	// CHANGE THIS BACK TO ZERO LATER !
+		state = 0;
 	else
 		power *= exp( - frame_time / decay_time );
+*/
+	// change: the damaging shield is permanent, now.
 
 
 	// check damage taken this turn ... increase that damage !
@@ -314,7 +334,8 @@ void KaboHaze::calculate()
 		// add extra damage !!
 		//... but how ... fractional, or what ??
 
-		int extradeaths = int( (oldcrew - newcrew) * ( power - 1 ) );
+		//int extradeaths = int( (oldcrew - newcrew) * ( power - 1 ) );	// this would be a damage amplifier
+		int extradeaths = power;		// simple, an additional damage on top of other damage, each frame
 
 		if ( extradeaths > 0 )
 		{
@@ -325,7 +346,8 @@ void KaboHaze::calculate()
 
 		newcrew = host->getCrew();
 
-		power *= 0.66;		// big powerdrain from the shield !
+		//power *= 0.66;		// big powerdrain from the shield !
+		// change: the damage shield is permanent.
 
 
 	}
@@ -487,23 +509,31 @@ KaboHaze::~KaboHaze()
 	delete[] edge_left;
 	delete[] edge_right;
 
+	// other destructive stuff ?
+//	SpaceObject::~SpaceObject();
+
 }
 
 
-KaboHaze::KaboHaze(Ship *omother, Ship *ohost, double obasepower, double odecaytime)
+KaboHaze::KaboHaze(SpaceLocation *creator, Ship *ohost, double obasepower)
 :
-SpaceObject(omother, Vector2(0.0, 0.0), 0.0, omother->data->spriteExtra)
+SpaceLocation(creator, Vector2(0.0, 0.0), 0.0)
 {
-	mother = omother;
+	//mother = omother;
 	host = ohost;
 	basepower = obasepower;
 
 	power = basepower;
 
-	decay_time = odecaytime;	// in milliseconds
+//	decay_time = odecaytime;	// in milliseconds
 
 	newcrew = host->getCrew();
 	oldcrew = newcrew;
+
+	// this "haze" is passive, of course:
+	collide_flag_anyone = 0;
+	collide_flag_sameteam = 0;
+	collide_flag_sameship = 0;
 
 
 	// I'll make 64 rotated versions in total, if needed, which I'll store
@@ -514,6 +544,7 @@ SpaceObject(omother, Vector2(0.0, 0.0), 0.0, omother->data->spriteExtra)
 		shield_bmp[i] = 0;
 	}
 	sprite_index = 0;	// no rotation.
+	shield_sprite_index = 0;
 
 
 	// this item cannot collide
@@ -566,6 +597,7 @@ SpaceObject(omother, Vector2(0.0, 0.0), 0.0, omother->data->spriteExtra)
 
 	// scale/draw a shield:
 
+	/*
 	// the raw shield image
 	BITMAP *raw_bmp = this->sprite->get_bitmap_readonly(0);
 
@@ -573,6 +605,8 @@ SpaceObject(omother, Vector2(0.0, 0.0), 0.0, omother->data->spriteExtra)
 	int hraw = raw_bmp->h;
 
 	stretch_blit(raw_bmp, shield_bmp[sprite_index], 0, 0, wraw, hraw, 0, 0, wship, hship );
+	*/
+	clear_to_color(shield_bmp[sprite_index], makecol(0,255,0));	// a uniform green glow
 	
 
 	// mask out the areas outside the ship, so that the shield only covers
@@ -664,11 +698,11 @@ void KaboHaze::animate(Frame *space)
 	int wshield = shield_bmp[0]->w;
 	int hshield = shield_bmp[0]->h;
 
-	if ( !shield_bmp[sprite_index] )
+	if ( !shield_bmp[shield_sprite_index] )
 	{
-		shield_bmp[sprite_index] = create_bitmap(wshield, hshield);
-		clear_to_color(shield_bmp[sprite_index], 0);	// important otherwise it contains artefacts
-		rotate_sprite(shield_bmp[sprite_index], shield_bmp[0], 0, 0, (1<<24)*(host->angle + 0.5*PI)/PI2 );
+		shield_bmp[shield_sprite_index] = create_bitmap(wshield, hshield);
+		clear_to_color(shield_bmp[shield_sprite_index], 0);	// important otherwise it contains artefacts
+		rotate_sprite(shield_bmp[shield_sprite_index], shield_bmp[0], 0, 0, (1<<24)*(host->angle + 0.5*PI)/PI2 );
 		// result is in sprite_bmp[sprite_index]   ( nice conventions, huh !)
 	}
 	
@@ -693,7 +727,7 @@ void KaboHaze::animate(Frame *space)
 
 	// scale/draw a shield:
 
-	stretch_blit(shield_bmp[sprite_index], final_bmp, 0, 0, wshield, hshield, 0, 0, wfinal, hfinal );
+	stretch_blit(shield_bmp[shield_sprite_index], final_bmp, 0, 0, wshield, hshield, 0, 0, wfinal, hfinal );
 	// result is in final_bmp
 
 
@@ -763,7 +797,7 @@ void KaboHaze::animate(Frame *space)
 
 		putpixel(space->surface, x, y, makecol(brightness,brightness,0) );
 
-		space->add_pixel(x, y, 0, 0);
+		space->add_pixel(x, y);
 		
 	}
 	
@@ -773,6 +807,75 @@ void KaboHaze::animate(Frame *space)
 }
 
 
+
+KaboPod::KaboPod(Vector2 opos, double oangle, double ov,
+		double orange, double oarmour, double odamage,
+		KaboWeakener *oship, SpaceSprite *osprite)
+:
+Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship, osprite)
+{
+	mother = oship;
+	ididdamage = 0;
+	spriteindextime = 0;
+}
+
+
+void KaboPod::calculate()
+{
+	if (! (mother && mother->exists()) )
+	{
+		state = 0;
+		return;
+	}
+
+	Missile::calculate();
+
+	// preliminary destruction, if special is released:
+	if (!mother->fire_special)
+		state = 0;
+
+	if (!state)
+		mother->pod = 0;
+
+	if (!state && !ididdamage)
+	{
+		// release several spores, in random directions
+
+		int		i;
+		double	a;
+
+		for ( i = 0; i < mother->podNmines; ++i )
+		{
+			a = tw_random(PI2);
+			
+			game->add( new KaboMine(Vector2(0.0, 40.0),
+				a, mother->mineVelocity, mother->mineTurnRate,
+				mother->mineRange, mother->mineArmour, mother->mineLifeTime,
+				mother->mineHostileTime,
+				mother->Mine_RangeAcc, mother->Haze_basepower,
+				this, mother->data->spriteExtra));
+		}
+
+	}
+
+	// make the sprite/mines rotate around their axes
+	spriteindextime += frame_time / 25.0;
+	sprite_index = (int)(spriteindextime);
+	sprite_index &= 63;
+
+	ididdamage = 0;
+}
+
+
+void KaboPod::inflict_damage(SpaceObject *other)
+{
+	Missile::inflict_damage(other);
+	ididdamage = 1;
+
+	state = 0;
+	if ( mother && mother->exists() )
+		mother->pod = 0;
+}
 
 
 REGISTER_SHIP ( KaboWeakener )

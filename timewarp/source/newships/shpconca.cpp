@@ -9,6 +9,35 @@ inline double sqr(double x)
 	return x*x;
 }
 
+const int  CARGOCRATE_ID = 0x082a98f17;
+
+
+class Chain;
+
+class ConfedCargotran : public Ship {
+	int	weaponColor;
+	double	weaponRange;
+	int	weaponDamage;
+
+	double	specialMass;
+	int	specialLinks;
+	double	specialSpacing;
+
+public:
+
+	Chain *Head;
+
+	ConfedCargotran(Vector2 opos, double angle, ShipData *data, unsigned int code);
+	virtual int activate_weapon();
+	virtual int activate_special();
+	virtual void animate(Frame *space);
+	virtual void calculate();
+	virtual void inflict_damage(SpaceObject *other);
+};
+
+
+
+
 //This is the base class for CargoLink and Chain.
 //It is nothing but a basic SpaceObject with pointers to the next
 //and previous links.
@@ -31,45 +60,88 @@ Link::Link(SpaceLocation *creator, Vector2 opos, double oangle,
 	Next_Link=(Link *)Next_Object;
 }
 
+
+
+
+
 //A CargoLink is pretty much the same, except it rotates and has mass.
 //Needs 64 images.
 class CargoLink : public Link
 {
+protected:
+	double	explosionRange, explosionDamage;
+
 public:
 	CargoLink(SpaceLocation *creator, Vector2 opos, double oangle,
 		SpaceSprite *osprite, SpaceObject *Prev_Object,
 		SpaceObject *Next_Object, double omass);
 	virtual void calculate();
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+	void do_area_damage();
 };
+
 
 class Chain : public Link
 {
 	void ChainPhysics(SpaceObject *first, SpaceObject *second);
 	void ChainRecur(Link *other, int num);
 	virtual void calculate();
+
 	double Link_Distance;
+
 public:
 	Chain(SpaceLocation *creator, Vector2 opos, double oangle,
 	SpaceSprite *osprite, int oLinks, double ospacing, double omass);
 	void Uncouple();
 	int handle_damage(SpaceLocation *source, double normal, double direct);
 	void Pull_Last_Link();
+	void addlink(SpaceLocation *creator, double oangle, SpaceSprite *osprite, double ospacing, double omass);
 };
 
 
 
 
+
+void CargoLink::do_area_damage()
+{
+	Query q;
+	for (q.begin(this, OBJECT_LAYERS, explosionRange); q.currento; q.next())
+	{
+		if (q.currento->canCollide(this))
+		{
+			double d = (int)ceil(((explosionRange - distance(q.currento)) / explosionRange) * explosionDamage);
+			damage(q.current, 0.0, d);
+		}
+	}
+	q.end();
+}
+
+
 int CargoLink::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	int totalDamage=normal+direct;
+	int  totalDamage = int( normal+direct + 0.5);
 
-	if(totalDamage==0) return 0;
+	if (totalDamage == 0) return 0;
 
-	//If there are no previous links, the link is destroyed.
-	if(Prev_Link==NULL)
+	//If there are no links, the link is destroyed.
+	if (!Prev_Link && !Next_Link)
 	{
 		state=0;
+
+		// small chance of causing an explosion here, 1:5
+
+		if ( random(5) == 0 )
+		{
+			
+			do_area_damage( );
+
+			play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
+			game->add(new Animation(this, pos,	game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
+
+		}
+		
+
+
 		return totalDamage;
 	}
 
@@ -90,11 +162,17 @@ void CargoLink::calculate()
 
 CargoLink::CargoLink(SpaceLocation *creator, Vector2 opos, double oangle,
 		SpaceSprite *osprite, SpaceObject *Prev_Object,
-		SpaceObject *Next_Object,double omass):Link(creator,opos,oangle,osprite,Prev_Object,Next_Object)
+		SpaceObject *Next_Object,double omass)
+:
+Link(creator,opos,oangle,osprite,Prev_Object,Next_Object)
 {
 	mass=omass;
 	layer = LAYER_SPECIAL;
 
+	explosionRange = 400.0;
+	explosionDamage = 4.0;
+
+	this->id = CARGOCRATE_ID;
 }
 
 
@@ -120,48 +198,127 @@ int Chain::handle_damage(SpaceLocation *source, double normal, double direct)
 
 void Chain::Uncouple()
 {
-	for(Link *l=this->Next_Link; l!=NULL; l=l->Next_Link)
+
+	for(Link *l=this->Next_Link ; l!=NULL; l=l->Next_Link)
 	{
 		l->Prev_Link->Next_Link=NULL;
 		l->Prev_Link=NULL;
+
+		l->collide_flag_sameship = 0x0FFFFFFFF;// ALL_LAYERS;
+		l->collide_flag_sameteam = 0x0FFFFFFFF;//ALL_LAYERS;
+		l->collide_flag_anyone = 0x0FFFFFFFF;//ALL_LAYERS;
+
+		l->layer = LAYER_SHIPS;
+		l->set_depth(DEPTH_SHIPS);
+
+		l->ally_flag = -1;	// no allies
+		// this is needed, cause lasers don't hurt allies !!
+
 	}
-	state=0;
+
+
+	// removing the chain also removes 1 associated
+	// crate (chain = first crate in the row ... weird )
+	CargoLink *m;
+
+	add(m=new CargoLink(this,this->pos,this->angle,this->sprite,NULL,NULL,this->mass));
+
+	m->vel = this->vel;
+	m->collide_flag_sameship = ALL_LAYERS;
+	m->collide_flag_sameteam = ALL_LAYERS;
+	m->collide_flag_anyone = ALL_LAYERS;
+
+	m->layer = LAYER_SHIPS;
+	m->set_depth(DEPTH_SHIPS);
+
+	m->ally_flag = -1;	// no allies
+
+	state = 0;
 }
 
 
 Chain::Chain(SpaceLocation *creator, Vector2 opos, double oangle,
-	SpaceSprite *osprite, int olinks,double ospacing, double omass):Link(creator,opos,
-	oangle,osprite,NULL,NULL)
+	SpaceSprite *osprite, int olinks,double ospacing, double omass)
+:
+Link(creator,opos, oangle,osprite,NULL,NULL)
 {
+		
 	Prev_Link=(Link *)creator;	//Attach the first link to the ship
-
+	
 	mass=omass;
-
+	
 	Link *Cur_Link=this;		//Move this pointer to the first link
 	Link_Distance=ospacing;
-
+	
 	//Each new link is placed (ospacing) far away from the previous,
 	//forming an angled line.
 	Vector2 dd = - Link_Distance * unit_vector(oangle);
-
-
+	
+	
 	//Loop that creates all the other links
 	for(int num=1; num<olinks; num++)
 	{
 		//Calculate position of new link
 		Vector2 ppos = dd*num + opos;
-
+		
 		//Create a new link that knows that it's attached to Cur_Link
 		Cur_Link->Next_Link = new CargoLink(creator,ppos,oangle,osprite,
 			Cur_Link,NULL,omass);
-
+		
 		//Add it to the game
 		add(Cur_Link->Next_Link);
-
+		
 		//Move the pointer to the new link
 		Cur_Link=Cur_Link->Next_Link;
 	}
+
 }
+
+
+
+
+
+void Chain::addlink(SpaceLocation *creator, double oangle, SpaceSprite *osprite, double ospacing, double omass)
+{
+	// first, find the last link in the list:
+	
+	Link *Cur_Link = this;					// Chain is also of type Link.
+	while ( Cur_Link->Next_Link != 0 )
+		Cur_Link = Cur_Link->Next_Link;
+	
+	Vector2 opos;
+	opos = Cur_Link->pos;
+	
+	// now, add a link
+	
+	mass=omass;
+	
+	Link_Distance = ospacing;
+	
+	//Each new link is placed (ospacing) far away from the previous,
+	//forming an angled line.
+	Vector2 dd = - Link_Distance * unit_vector(oangle);
+	
+	
+	//Calculate position of new link
+	Vector2 ppos = dd + opos;
+	
+	//Create a new link that knows that it's attached to Cur_Link
+	Cur_Link->Next_Link = new CargoLink(creator,ppos,oangle,osprite,
+		Cur_Link,NULL,omass);
+	
+	//Add it to the game
+	add(Cur_Link->Next_Link);
+	
+}
+
+
+
+
+
+
+
+
 
 //A recursuve function, the most efficient way to go thru a linked list
 //backwards.
@@ -177,7 +334,7 @@ void Chain::ChainRecur(Link *other,int num)
 
 void Chain::calculate()
 {
-	if(!ship->exists())
+	if( !(ship && ship->exists()) )
 	{	//If the mothership is killed, the chain dies.
 		Uncouple();		//Shatters chain, links become independent
 		state=0;
@@ -307,39 +464,19 @@ void Chain::ChainPhysics(SpaceObject *first, SpaceObject *second)
 }
 
 
-class ConfedCargotran : public Ship {
-	int	weaponColor;
-	double	weaponRange;
-	int	weaponDamage;
-
-	double	specialMass;
-	int	specialLinks;
-	double	specialSpacing;
-
-	public:
-
-	Chain *Head;
-
-	ConfedCargotran(Vector2 opos, double angle, ShipData *data, unsigned int code);
-	virtual int activate_weapon();
-	virtual int activate_special();
-	virtual void animate(Frame *space);
-};
-
-
 
 ConfedCargotran::ConfedCargotran(Vector2 opos, double angle, ShipData *data, unsigned int code)
 	:
 	Ship(opos, angle, data, code)
 
 {
-	weaponColor  = get_config_int("Weapon", "Color", 0);
-	weaponRange  = scale_range(get_config_float("Weapon", "Range", 0));
-	weaponDamage = get_config_int("Weapon", "Damage", 0);
+	weaponColor   =  get_config_int("Weapon", "Color", 0);
+	weaponRange   =  scale_range(get_config_float("Weapon", "Range", 0));
+	weaponDamage  =  get_config_int("Weapon", "Damage", 0);
 
-	specialLinks = get_config_int("Special","Links",0);
-	specialMass  = get_config_float("Special","LinkMass",0);
-	specialSpacing=get_config_float("Special","LinkDistance",0);
+	specialLinks  =  get_config_int("Special","Links",0);
+	specialMass   =  get_config_float("Special","LinkMass",0);
+	specialSpacing = get_config_float("Special","LinkDistance",0);
 
 	add(Head = new Chain(this,pos,angle,data->spriteSpecial,specialLinks,specialSpacing,specialMass));
 }
@@ -350,8 +487,8 @@ int ConfedCargotran::activate_weapon()
 
 	//Add weapon code here
 	add(new Laser(this, angle,
-	0x00ff2222, 100, 1, 1,
-	this, Vector2(0, (size.y / 2.07)), true));
+	0x00ff2222, 100, 1, 5,
+	this, Vector2(0, (get_size().y / 2.07)), true));
 
 	return(TRUE);
 }
@@ -359,14 +496,11 @@ int ConfedCargotran::activate_weapon()
 int ConfedCargotran::activate_special()
 {
 	//Cuts loose all links and remembers that it did so.
-	if(Head==NULL)	return(FALSE);
+	if(Head==NULL)
+		return(FALSE);
+
 	else if(fire_weapon)
 	{
-		CargoLink *l;
-
-		add(l=new CargoLink(this,Head->pos,Head->angle,data->spriteSpecial,NULL,NULL,specialMass));
-
-		l->vel = Head->vel;
 
 		Head->Uncouple();
 		Head=NULL;
@@ -378,6 +512,7 @@ int ConfedCargotran::activate_special()
 		return(FALSE);
 	}
 }
+
 
 void ConfedCargotran::animate(Frame *space)
 {
@@ -414,5 +549,30 @@ void ConfedCargotran::animate(Frame *space)
 	Ship::animate(space);
 };
 
+
+void ConfedCargotran::calculate()
+{
+	Ship::calculate();
+
+}
+
+
+void ConfedCargotran::inflict_damage(SpaceObject *other)
+{
+	Ship::inflict_damage(other);
+
+	// check if the other thing is a crate (doesn't matter which ship it belongs to)
+	if ( other->id == CARGOCRATE_ID )
+	{
+		// add that crate as a new link at the end of the cargotrain:
+		int Nlinks = 1;
+		if ( Head )
+			Head->addlink(this, angle, data->spriteSpecial, specialSpacing, specialMass );
+		else
+			add(Head = new Chain(this,pos,angle,data->spriteSpecial,1,specialSpacing,specialMass));
+
+		other->state = 0;	// delete the other crate.
+	}
+}
 
 REGISTER_SHIP(ConfedCargotran)

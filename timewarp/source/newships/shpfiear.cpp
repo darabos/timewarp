@@ -10,7 +10,7 @@ class FierasShotSpark : public SpaceLine
 public:
 
 	FierasShotSpark (SpaceLocation *creator, double oangle, double ov,
-		int olifetime, int or, int og, int ob);
+		int olifetime, int blah_or, int og, int ob);
 	virtual void calculate();
 	virtual void animate(Frame *space);
 };	
@@ -124,6 +124,8 @@ FierasArbiter::FierasArbiter(Vector2 opos, double angle, ShipData *data, unsigne
 	specialBounceFactor = get_config_float("Special", "BounceFactor", 1.0);
 	specialPlanetBounceFactor = get_config_float("Special", "PlanetBounceFactor", 1.0);
 	specialMassFactor	= get_config_float("Special", "MassFactor", 1.0);
+
+	repulsor_radius = -1;
 
 }
 
@@ -280,10 +282,10 @@ void FierasShot::calculate() {
 }*/
 
 FierasShotSpark::FierasShotSpark (SpaceLocation *creator, double oangle, double ov, int olifetime,
-			int or, int og, int ob) :
+			int blah_or, int og, int ob) :
 	SpaceLine(creator, 0, oangle, 0, 0),
 	lifetime(olifetime), lifetime_max(olifetime),
-	r(or), g(og), b(ob)
+	r(blah_or), g(og), b(ob)
 {
 	collide_flag_anyone = 0;
 	collide_flag_sameship = 0;
@@ -329,7 +331,7 @@ void FierasShotSpark::animate(Frame *space)
 		set_trans_blender(0, 0, 0, 1 * 255 * c);
 
 	putpixel(space->surface, x0, y0, color);
-	space->add_pixel(x0, y0, 1, 1);
+	space->add_pixel(x0, y0);
 
 	drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
 }

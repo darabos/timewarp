@@ -8,11 +8,6 @@ TO DO
 networking
 	synchronizing the menu
 
-BUGGY:
-
-void BigBackgr::animate(Frame *frame).
-	- too big sprite. (use sprite->animate) !!
-
 */
 
 
@@ -1078,7 +1073,14 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 
 			x = xcenter - PlanetPics[iplanetpic]->width()/2;
 			y = ycenter - PlanetPics[iplanetpic]->height()/2;
-			PlanetPics[iplanetpic]->draw(x, y, index, tmpscreen);
+
+			Vector2 P, S;
+
+			P = Vector2(x,y);
+			S = PlanetPics[iplanetpic]->size() * dialog_scale;
+
+			//PlanetPics[iplanetpic]->draw(x, y, index, tmpscreen);
+			PlanetPics[iplanetpic]->draw(P, S, index, tmpscreen);
 			//x += PlanetPics[iplanetpic]->width() /2;
 
 			scare_mouse();
@@ -1104,8 +1106,15 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 				x = xcenter + int(R * cos(orbitangle[i])) - MoonPics[PlanetMoonPic[i]]->width()/2;
 				y = ycenter + int(R * sin(orbitangle[i])) - MoonPics[PlanetMoonPic[i]]->height()/2;
 
+				Vector2 P, S;
 
-				MoonPics[PlanetMoonPic[i]]->draw(x, y, index, tmpscreen);
+				P = Vector2(x,y);
+				S = MoonPics[PlanetMoonPic[i]]->size() * dialog_scale;
+
+
+//void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, BITMAP *surface)
+				//MoonPics[PlanetMoonPic[i]]->draw(x, y, index, tmpscreen);
+				MoonPics[PlanetMoonPic[i]]->draw(P, S, index, tmpscreen);
 				//x += MoonPics[PlanetMoonPic[i]]->width() /2;
 			}
 

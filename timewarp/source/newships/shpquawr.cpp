@@ -37,7 +37,7 @@ class QuarKathWraith : public Ship {
 
   RGB crewPanelColor();
 
-	virtual double isInvisible() const;
+	virtual double isInvisible() ;
   virtual void calculate_hotspots();
   virtual int activate_weapon();
 	virtual int activate_special();
@@ -116,7 +116,7 @@ RGB QuarKathWraith::crewPanelColor()
 	return c;
 }
 
-double QuarKathWraith::isInvisible() const {
+double QuarKathWraith::isInvisible() {
 	if(cloak_frame >= 300) return(1);
 	return 0;
 	}
@@ -223,18 +223,20 @@ void QuarKathIllusion::animate(Frame *space) {
 
 void QuarKathIllusion::calculate()
 {
-	if (!target) return;
-	if (distance(target) < range * .05 ) cloak=false;
-	 else cloak=true;
-
-  if((cloak) && (cloak_frame < 300))
-    cloak_frame+= frame_time;
-  if((!cloak) && (cloak_frame > 0))
-    cloak_frame-= frame_time;
-
-
+	if (target && target->exists())
+	{
+		if (distance(target) < range * .05 ) cloak=false;
+		else cloak=true;
+	}
+	
+	if((cloak) && (cloak_frame < 300))
+		cloak_frame+= frame_time;
+	if((!cloak) && (cloak_frame > 0))
+		cloak_frame-= frame_time;
+	
+	
 	HomingMissile::calculate();
-
+	
 }
 
 

@@ -258,7 +258,7 @@ void Game::log_fleet(int channel, Fleet *fleet) {STACKTRACE
 }
 
 Control *Game::create_control (int channel, const char *type, char *config, char *file) {STACKTRACE
-	if ((channel != channel_none) && !(log->get_direction(channel) & Log::direction_write)) {
+	if ((channel != channel_none) && !is_local(channel)) {
 		type = "VegetableBot";
 		config = "Config0";
 		file = "scp.ini";
@@ -557,10 +557,11 @@ void Game::play() {STACKTRACE
 					fps();
 				}
 			}
-			else {
+			else if (interpolate_frames || (game_time > next_render_time - msecs_per_render)) {
 				animate();
 				next_render_time = game_time + msecs_per_render;
 			}
+			else idle();
 			while (keypressed())
 				handle_key(readkey());
 		}
@@ -610,6 +611,7 @@ void Game::fps() {STACKTRACE
 		if (ping > 800) tt = "VERY BAD!";
 		message.print(msecs_per_fps, 12, "ping: %dms (that's %s)", ping, tt);
 	}
+	message.print(msecs_per_fps, 12, "interpolation: %d", interpolate_frames);
 
 	if (this->show_fps) {
 /*			double a = 1.0;
@@ -908,7 +910,7 @@ void Game::init_lag() {STACKTRACE
 			increase_latency();
 	}
 	else {
-/*		int lag_frames = 10;//0;
+//		int lag_frames = 10;//0;
 		for (int i = 0; i < lag_frames; i += 1)
 			increase_latency();//*/
 	}

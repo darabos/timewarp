@@ -2,7 +2,18 @@
 #include "base.h"
 #include "vector2.h"
 #include "random.h"
+#include "round.h"
 
+
+Vector2::Vector2(Vector2i v2i) : x(v2i.x), y(v2i.y) {}
+Vector2i Vector2::round()
+{
+	return Vector2i(iround(x), iround(y));
+}
+Vector2i Vector2::truncate()
+{
+	return Vector2i(int(x), int(y));
+}
 
 double Vector2::length () const {
 	return sqrt(magnitude_sqr(*this));

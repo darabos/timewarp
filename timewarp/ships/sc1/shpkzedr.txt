@@ -15,7 +15,7 @@ which seek out enemies and kill them.  These fighters can
 do enourmous damage, but launching them costs crew, which
 is regained when the fighter returns.  
 
-Urquan are green squid-like creatures.
+Urquan are green catepillar-like creatures.
 
 In Star Control 2, the Urquan are the guys who imprisoned
 everyone under force shields, so they seem like the badguy.

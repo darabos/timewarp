@@ -5,7 +5,7 @@ recognize the need to have warships, but they have
 only partially grasped the practical needs of
 building combat spacecraft.
 
-fire = delayed thrust missile.  1 power to launch, 1
+fire = delayed thrust missile.  2 power to launch, 4
 damage when they hit.  For unknown reasons, the
 ship is equipped with a missile release bay, but
 not a missile firing tube.  The unguided missile
@@ -19,3 +19,4 @@ turbocharge.  However, thrust is continuous, and
 may not be turned off early.  Turning also becomes
 worse.  This is meant to allow the ship to escape
 from danger.
+

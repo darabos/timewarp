@@ -19,7 +19,8 @@ protected:
 	double		weaponRecoil, weaponRecoilMaxSpeed;
 
 	double		get_aim(SpaceObject *tgt, double min_angle, double max_angle);
-	int			fire_def_shot(double lowAngle, double highAngle, double defaultAngle);
+	int			fire_def_shot(double lowAngle, double highAngle, double 
+defaultAngle);
 
 	double		specialRange, specialVelocity, specialRelativity;
 	int			specialDamage, specialArmour;
@@ -35,7 +36,7 @@ protected:
   int     defenseGunToFire;
 
 public:
-  VelronCruiser(Vector2 opos, double angle, ShipData *data, unsigned 
+  VelronCruiser(Vector2 opos, double angle, ShipData *data, unsigned
 int code);
 
   protected:
@@ -62,7 +63,8 @@ public:
 		SpaceSprite *osprite, double relativity);
 
 	virtual void calculate();
-	virtual int  handle_damage(SpaceLocation* source, double normal, double direct);
+	virtual int  handle_damage(SpaceLocation* source, double normal, double 
+direct);
 	virtual void animateExplosion();
 };
 
@@ -71,14 +73,16 @@ class VelronCrDefShot : public Shot
 
 public:
 
-	VelronCrDefShot(SpaceLocation *creator, double ox, double oy, double oangle,
+	VelronCrDefShot(SpaceLocation *creator, double ox, double oy, double 
+oangle,
 		double ov, int odamage, double orange, int oarmour,
 		SpaceSprite *osprite, double relativity);
 
 	virtual void calculate();
 };
 
-VelronCruiser::VelronCruiser(Vector2 opos, double angle, ShipData *data, unsigned int code)	:
+VelronCruiser::VelronCruiser(Vector2 opos, double angle, ShipData *data, 
+unsigned int code)	:
 	Ship(opos, angle, data, code)
 {
 
@@ -89,13 +93,16 @@ VelronCruiser::VelronCruiser(Vector2 opos, double angle, ShipData *data, unsigne
   weaponRangeMin	= scale_range(get_config_float("Weapon", "RangeMin", 10));
   weaponRangeMax	= scale_range(get_config_float("Weapon", "RangeMax", 60));
 
-  weaponVelocityMin = scale_velocity(get_config_float("Weapon", "VelocityMin", 65));
-  weaponVelocityMax = scale_velocity(get_config_float("Weapon", "VelocityMax", 95));
+  weaponVelocityMin = scale_velocity(get_config_float("Weapon", 
+"VelocityMin", 65));
+  weaponVelocityMax = scale_velocity(get_config_float("Weapon", 
+"VelocityMax", 95));
 
   weaponRelativity	= get_config_float("Weapon", "Relativity", 0.0);
 
   weaponRecoil		= scale_velocity(get_config_float("Weapon", "Recoil", 20));
-  weaponRecoilMaxSpeed = scale_velocity(get_config_float("Weapon", "RecoilMaxSpeed", 40));
+  weaponRecoilMaxSpeed = scale_velocity(get_config_float("Weapon", 
+"RecoilMaxSpeed", 40));
   if (weaponRecoilMaxSpeed <= 0) weaponRecoilMaxSpeed = MAX_SPEED;
 
   weaponDamageMin	= get_config_int("Weapon", "DamageMin", 4);
@@ -107,15 +114,20 @@ VelronCruiser::VelronCruiser(Vector2 opos, double angle, ShipData *data, unsigne
 
   specialRange		= scale_range(get_config_float("Special", "Range", 6));
   specialDamage		= get_config_int("Special", "Damage", 1);
-  specialVelocity	= scale_velocity(get_config_float("Special", "Velocity", 100));
+  specialVelocity	= scale_velocity(get_config_float("Special", "Velocity", 
+100));
   specialArmour		= get_config_int("Special", "Armour", 1);
   specialRelativity = get_config_float("Special", "Relativity", 1.0);
 
-  specialMinAngle	= get_config_float("Special", "MinAngle",15) * ANGLE_RATIO;
-  specialMidAngle	= get_config_float("Special", "MidAngle",90) * ANGLE_RATIO;
-  specialMaxAngle	= get_config_float("Special", "MaxAngle",180) * ANGLE_RATIO;
+  specialMinAngle	= get_config_float("Special", "MinAngle",15) * 
+ANGLE_RATIO;
+  specialMidAngle	= get_config_float("Special", "MidAngle",90) * 
+ANGLE_RATIO;
+  specialMaxAngle	= get_config_float("Special", "MaxAngle",180) * 
+ANGLE_RATIO;
 
-  specialLaunchAngleDeflectionRange = get_config_float("Special", "LaunchAngleDeflectionRange", 2.0) * PI/180;
+  specialLaunchAngleDeflectionRange = get_config_float("Special", 
+"LaunchAngleDeflectionRange", 2.0) * PI/180;
   specialDrain = get_config_int("Ship", "SpecialDrain", 1);
   specialDrainDivisor = get_config_int("Ship", "SpecialDrainDivisor", 2);
 
@@ -131,16 +143,19 @@ int VelronCruiser::activate_weapon()
 	double tmpR = (batt-weapon_drain)/(double)batt_max; //get power level
 	batt = weapon_drain;
 
-	double	wv = weaponVelocityMin + (weaponVelocityMax - weaponVelocityMin) * tmpR; //velocity
-	int		wd = weaponDamageMin + (int)ceil( (weaponDamageMax - weaponDamageMin) * tmpR ); //damage
+	double	wv = weaponVelocityMin + (weaponVelocityMax - weaponVelocityMin) * 
+tmpR; //velocity
+	int		wd = weaponDamageMin + (int)ceil( (weaponDamageMax - weaponDamageMin) 
+* tmpR ); //damage
 
 	game->add(new VelronCrBolt(this, 0, 46+16, angle, wv, wd, weaponDamageMax,
 		weaponRangeMin + (int)ceil( (weaponRangeMax - weaponRangeMin) * tmpR ),
 		weaponArmourMin + (int)ceil( (weaponArmourMax - weaponArmourMin) * tmpR ),
 		data->spriteWeapon, weaponRelativity));
 
-  accelerate (this, angle + PI, weaponRecoil * wv * wd / (weaponDamageMax * weaponVelocityMax), weaponRecoilMaxSpeed);
-//accelerate_gravwhip (this, angle + PI, weaponRecoil * wv * wd /  (weaponDamageMax * weaponVelocityMax), weaponRecoilMaxSpeed);
+  accelerate (this, angle + PI, weaponRecoil * wv * wd / (weaponDamageMax * 
+weaponVelocityMax), weaponRecoilMaxSpeed);
+//accelerate_gravwhip (this, angle + PI, weaponRecoil * wv * wd /   (weaponDamageMax * weaponVelocityMax), weaponRecoilMaxSpeed);
 
 //finally, the recoil is roughly proportional to the power level squared  (mass ~ damge, and physical recoil ~ mass*velocity)
 
@@ -162,12 +177,14 @@ int VelronCruiser::activate_special()
 
 	pos = normalize(opos + rotate(Vector2(-ox, oy), -PI/2+angle));
 	if(specialAlternatingFire==0||defenseGunToFire==0)
-		VelronCruiser::fire_def_shot(specialMinAngle, specialMaxAngle, specialMidAngle);
+		VelronCruiser::fire_def_shot(specialMinAngle, specialMaxAngle, 
+specialMidAngle);
 
 	pos = normalize(opos + rotate(Vector2(ox, oy), -PI/2+angle));
 
 	if(specialAlternatingFire==0||defenseGunToFire==1)
-   		VelronCruiser::fire_def_shot(PI2-specialMaxAngle, PI2-specialMinAngle, PI2-specialMidAngle);
+   		VelronCruiser::fire_def_shot(PI2-specialMaxAngle, PI2-specialMinAngle, 
+PI2-specialMidAngle);
 
 	pos = opos;
 	if(defenseGunToFire==0) defenseGunToFire=1;
@@ -221,7 +238,8 @@ void VelronCruiser::calculate()
 }
 
 
-double VelronCruiser::get_aim(SpaceObject *tgt, double min_angle, double max_angle)
+double VelronCruiser::get_aim(SpaceObject *tgt, double min_angle, double 
+max_angle)
 {
 	if (tgt == NULL)
 		return (-1000);
@@ -266,7 +284,7 @@ double VelronCruiser::get_aim(SpaceObject *tgt, double min_angle, double max_ang
 
 
 
-int VelronCruiser::fire_def_shot(double lowAngle, double highAngle, double 
+int VelronCruiser::fire_def_shot(double lowAngle, double highAngle, double
 defaultAngle)
 {
 	SpaceObject *o;
@@ -274,7 +292,8 @@ defaultAngle)
 	double angleShift, relativeAngle;
 	double firingAngle = defaultAngle;
 
-	angleShift = ((double)(random()%2001-1000)/1000.0) * specialLaunchAngleDeflectionRange;
+	angleShift = ((double)(random()%2001-1000)/1000.0) * 
+specialLaunchAngleDeflectionRange;
 
 	Query a;
 	for (a.begin(this, OBJECT_LAYERS, specialRange); a.current; a.next()) {
@@ -289,25 +308,29 @@ defaultAngle)
 		}
 	}
 
-	add(new VelronCrDefShot(this, 0.0, 0.0, normalize(angle + firingAngle + angleShift, PI2), specialVelocity,
-		specialDamage, specialRange, specialArmour, data->spriteSpecial, specialRelativity));
+	add(new VelronCrDefShot(this, 0.0, 0.0, normalize(angle + firingAngle + 
+angleShift, PI2), specialVelocity,
+		specialDamage, specialRange, specialArmour, data->spriteSpecial, 
+specialRelativity));
 
 	return(TRUE);
 }
 
 
 
-VelronCrBolt::VelronCrBolt(SpaceLocation *creator, double ox, double oy, 
+VelronCrBolt::VelronCrBolt(SpaceLocation *creator, double ox, double oy,
 		double oangle, double ov, int odamage, int rdamage, double orange,
 		int oarmour, SpaceSprite *osprite, double relativity) :
-	Shot(creator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, creator, osprite, relativity),
+	Shot(creator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, 
+creator, osprite, relativity),
 	maxDamage(odamage), maxArmour(oarmour), referenceDamage(rdamage)
 {
 	explosionSprite     = data->spriteWeaponExplosion;
 	explosionFrameCount = 40;
 	explosionFrameSize = 12;
 	relative_damage = 0;
-	sprite_index = (int)floor( 40 * (referenceDamage - maxDamage) / (double)referenceDamage );
+	sprite_index = (int)floor( 40 * (referenceDamage - maxDamage) / 
+(double)referenceDamage );
 }
 
 
@@ -326,7 +349,8 @@ void VelronCrBolt::calculate()
 	damage_factor += (int)( (tmp - damage_factor) * 2 );
 
 	//current sprite_index is proportinal to the damage_factor
-	sprite_index = (int)floor( 40 * (referenceDamage - tmp) / referenceDamage );
+	sprite_index = (int)floor( 40 * (referenceDamage - tmp) / referenceDamage 
+);
 
 	//calculating current range
 	tmp = maxArmour * tmpR;
@@ -337,7 +361,8 @@ void VelronCrBolt::calculate()
 	if (armour < 1) armour = 1;		//just in case
 }
 
-int VelronCrBolt::handle_damage(SpaceLocation* source, double normal, double direct)
+int VelronCrBolt::handle_damage(SpaceLocation* source, double normal, double 
+direct)
 {
 	if (normal+direct > 0) {
 		relative_damage += (normal + direct) / (double)armour;
@@ -364,10 +389,12 @@ void VelronCrBolt::animateExplosion()
 }
 
 
-VelronCrDefShot::VelronCrDefShot(SpaceLocation *creator, double ox, double oy,
+VelronCrDefShot::VelronCrDefShot(SpaceLocation *creator, double ox, double 
+oy,
 		double oangle, double ov, int odamage, double orange, int oarmour,
 		SpaceSprite *osprite, double relativity) :
-	Shot(creator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, creator, osprite, relativity)
+	Shot(creator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, 
+creator, osprite, relativity)
 {
 }
 
@@ -381,4 +408,5 @@ void VelronCrDefShot::calculate()
 
 
 REGISTER_SHIP (VelronCruiser)
+
 
