@@ -11,6 +11,19 @@ REGISTER_FILE
 
 
 
+bool check_pixel(BITMAP *bmp, int x, int y)
+{
+	if (!bmp)
+		return false;
+	
+	int col;
+	col = getpixel(bmp, x, y);
+	if (col != makecol(255,0,255))
+		return true;
+	else
+		return false;
+}
+
 
 
 TextList::TextList(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont)
@@ -399,6 +412,18 @@ void Button::draw_selected()
 }
 
 
+bool Button::hasmouse()
+{
+	// the first rough check whether it's in the boxed bitmap area
+	if (AreaBox::hasmouse())
+	{
+		// now check the bitmap, if the mouse is touching a non-transparent sprite.
+		// only check the default bitmap (buttons that change size aren't cool)
+		return check_pixel(bmp_default, mouse.xpos()-x, mouse.ypos()-y);
+
+	} else
+		return false;
+}
 
 
 
@@ -1135,6 +1160,19 @@ void SwitchButton::calculate()
 		state = !state;	// switch state.
 }
 
+
+bool SwitchButton::hasmouse()
+{
+	// the first rough check whether it's in the boxed bitmap area
+	if (AreaBox::hasmouse())
+	{
+		// now check the bitmap, if the mouse is touching a non-transparent sprite.
+		// only check the default bitmap (buttons that change size aren't cool)
+		return check_pixel(bmp_on, mouse.xpos()-x, mouse.ypos()-y);
+
+	} else
+		return false;
+}
 
 
 
@@ -2466,6 +2504,19 @@ void AreaTablet::subanimate()
 	// the background before being blitted onto the reserved area.
 }
 
+
+bool AreaTablet::hasmouse()
+{
+	// the first rough check whether it's in the boxed bitmap area
+	if (AreaBox::hasmouse())
+	{
+		// now check the bitmap, if the mouse is touching a non-transparent sprite.
+		// only check the default bitmap (buttons that change size aren't cool)
+		return check_pixel(backgr, mouse.xpos()-x, mouse.ypos()-y);
+
+	} else
+		return false;
+}
 
 
 

@@ -27,6 +27,8 @@ public:
 	virtual void draw_default();
 	virtual void draw_focus();
 	virtual void draw_selected();
+
+	virtual bool hasmouse();
 };
 
 
@@ -39,18 +41,20 @@ protected:
 public:
 
 	AreaTablet(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool akeepkey = 0);
-	AreaTablet::~AreaTablet();
+	virtual AreaTablet::~AreaTablet();
 
 	void initbackgr(bool autoplace);
 	void changebackgr(char *fname);
 
 	void animate();		// shouldn't be changed.
 	virtual void subanimate();
+
+	virtual bool hasmouse();
 };
 
 
 
-class ScrollBar : public AreaTablet	// hmm?
+class ScrollBar : public AreaTablet
 {
 protected:
 	BITMAP	*button;
@@ -65,7 +69,7 @@ public:
 
 	// x, y, W, H are inside the draw area
 	ScrollBar(AreaReserve *menu, char *identbranch, int ax, int ay);
-	~ScrollBar();
+	virtual ~ScrollBar();
 
 	virtual void handle_lhold();
 
@@ -274,6 +278,7 @@ public:
 	void draw_on();
 	void draw_off();
 
+	virtual bool hasmouse();
 	//void locate_by_backgr(char *stron);
 };
 
