@@ -13,8 +13,6 @@ Getting started:
 Windows:
 Get [URL=http://www.cygwin.com/]Cygwin[/URL], which are basic UNIX tools.  When you install it, make sure that the tool CVS is installed, which is normally found under the development section.
 
-Next, get [URL=http://www.wincvs.org/]WinCVS[/URL] or CVSGUI (same thing) and install it.
-
 Linux, UN*X OSes:
 CVS should be installed already.  Honestly I'm the wrong guy to ask what to do if this is not the case.
 
@@ -66,7 +64,8 @@ cvs -z3 -d:ext:developername@cvs.sourceforge.net:/cvsroot/timewarp update
 The output will show filenames of any changed files.  
 * "U" means the file was updated (as in, your local file was old, and a newer one was brought over from the repository)
 * "M" means you have modified a file, and that change has not been brought into the repository
-* "N" means you've made a new file that's not in the repository.
+* "N" means that there is a new file downloaded
+* "?" means you've made a new file or directory that's not in the repository.
 
 [B][U]3. Commit changes (Developers only). [/U][/B]
 
@@ -86,7 +85,8 @@ You must enter a meaningful message in the quotes.  Describe in concise, minimal
 
 [B][U]4. Use WinCVS/WinGUI to save some time (optional) [/U][/B]
 
-Having a visual representation of what files have changed is really handy.  
+Having a visual representation of what files have changed is really handy.  Get [URL=http://www.wincvs.org/]WinCVS[/URL] or CVSGUI (same thing) and install it.
+
 
 1. WinCVS will immediately ask you for preferences when you start it for the first time.  You want the following:
 [B]Non-Developers:[/B]
@@ -94,7 +94,7 @@ Authentication: pserver
 Path: /cvsroot/timewarp
 Host Address: cvs.sourceforge.net
 User name: anonymous
-CVSROOT: should be made automagically, but it should look like: username@cvs.sourceforge.net:/cvsroot/timewarp
+CVSROOT: should be made automagically, but it should look like: anonymous@cvs.sourceforge.net:/cvsroot/timewarp
 
 You should also login via the menu "Admin/login..." so you don't have to type in passwords anymore.
 
@@ -107,12 +107,12 @@ CVSROOT: should be made automagically, but it should look like: username@cvs.sou
 
 You may also import the settings from another local copy, if you have one.
 
-2. Click on the root folder, and right click (or use ctrl-u) to update your copy.  Developers will have to retype their password.
+2. Click on the root folder, and right click (or use ctrl-u) to update your copy.  Developers will have to retype their password ** in the window that appears behind all other windows ** (Man do I hate that, anyone know a workaround?  ... given that you can't use login on a ext server?)
 
 3.  It's really recommened to enable flat view, under the View menu.  That makes all files in subdirectories show up in the right pane.
 
 [B]Developers:[/B]
-4. Developers can commit changes with ctrl-m (with the root directory selected).  A prompt will 
+4. Developers can commit changes with ctrl-m (with the root directory selected).  A password prompt will show up again, hidden of course
 
 5. New files can be made by actually creating the file locally, then doing an update.  The output should show "N" next to the filename.  Find the file in the right pane, and pick Modify/Add Selection (you can select multiple files).  The system should identify whether a file is binary, but just to be sure that it picks the right file type, pick Modify/Add binary as appropriate.  Note that someone, I'm guessing me, has to declare what file types are binary, ie *.jpg are binary.  If you're using a filetype that is not automatically recognized, let me know and I'll add it to the binary list.
 
