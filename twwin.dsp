@@ -728,6 +728,10 @@ SOURCE=.\source\newships\shplyrwa.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpmekpi.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpmontr.cpp
 # End Source File
 # Begin Source File
