@@ -8,6 +8,16 @@
 extern int PANEL_WIDTH;
 extern int PANEL_HEIGHT;
 
+
+extern int CAPTAIN_X;
+extern int CAPTAIN_Y;
+extern int PANEL_DEATH_FRAMES;
+extern int crew_x;
+extern int crew_y;
+extern int batt_x;
+extern int batt_y;
+
+
 class ShipPanel : public Presence {
 	protected:
 	BITMAP *panel;

@@ -698,6 +698,10 @@ SOURCE=.\source\newships\shphotsp.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shphubde.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shphydcr.cpp
 # End Source File
 # Begin Source File

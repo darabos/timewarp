@@ -1,3 +1,4 @@
+
 #include <allegro.h>
 
 #include "../melee.h"
@@ -267,6 +268,8 @@ Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, d
 	vel = lpos->get_vel();
 
 	if(!lpos->exists()) state = 0;
+
+	collide_flag_sameteam = ALL_LAYERS;
 }
 
 
