@@ -1,0 +1,11 @@
+gamex/interface/planetview/edit/plot_default_y = 100
+gamex/interface/planetview/edit/plot_default_x = 100
+gamex/interface/planetview/edit/cancel_default_y = 17
+gamex/interface/planetview/edit/cancel_default_x = 100
+gamex/interface/planetview/edit/select_default_y = 318
+gamex/interface/planetview/edit/select_default_x = 100
+gamex/interface/planetview/edit/inc_default_y = 101
+gamex/interface/planetview/edit/inc_default_x = 317
+gamex/interface/planetview/edit/dec_default_y = 95
+gamex/interface/planetview/edit/dec_default_x = 25
+res = 1024

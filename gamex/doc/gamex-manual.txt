@@ -1,0 +1,43 @@
+
+-----
+START
+-----
+
+Press the FG button in the timewarp screen; it's on the bottom right. Currently this loads the hyperspace map.
+
+
+----------------------------
+NAVIGATING BETWEEN GAMETYPES
+----------------------------
+
+The game starts in hyperspace.
+If you want to jump to another gametype that's not yet "attached", use:
+
+left-control +
++ 1:	loads the starmap
++ 2:  loads the dialog editor
+
+ESC: exits a gametype, and returns to the parent game.
+
+
+-----------
+THE STARMAP
+-----------
+
+left-mouse changes the "active" star.
+
+left-control move the "active" star according to the mouse position.
+
+left-mouse places the "active" star, if it's attached to the mouse position
+
+
+right-mouse centers the new map location
+
+- zooms in
+= zooms out
+
+
+'A' (1) adds a default new star, or (2) changes the star type provided it's being held by the mouse.
+
+
+
