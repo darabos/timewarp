@@ -165,7 +165,7 @@ int enable_input (int which) {
 			failed |= 4;
 			log_debug("joystick failed initialization\n");
 		}	else {
-			log_debug("joystick initialized\n");
+			log_debug("joystick initialized (%d joysticks)\n", num_joysticks);
 			poll_joystick();
 		}
 	}
