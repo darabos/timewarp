@@ -28,6 +28,7 @@ class AlcheroKronos : public Ship {
   double         weaponMinLength;
   int            weaponDamage;
   int            weaponRate;
+  double         weaponsparkNfactor;
   SpaceLine     *weaponObject;
 
   double specialMinTime;
@@ -80,6 +81,7 @@ class AlcheroLaser : public Laser {
   double  growth;
   double  min_length;
   double  olength;
+  double  sparkNfactor;
   SAMPLE* sample;
 
   int    step;
@@ -88,7 +90,8 @@ class AlcheroLaser : public Laser {
   public:
   AlcheroLaser(SpaceLocation *creator, double langle, int lcolor, int ldamage,
     int orate, SpaceLocation *opos, double rel_x, double rel_y, double odeccel,
-    double omin_speed, double ovelocity, double ogrowth, double omin_length );
+    double omin_speed, double ovelocity, double ogrowth, double omin_length,
+	double osparkNfactor);
 
   virtual void calculate();
 };
@@ -120,6 +123,7 @@ AlcheroKronos::AlcheroKronos(Vector2 opos, double shipAngle,
   weaponDamage     = get_config_int( "Weapon", "Damage", 0 );
   weaponRate       = scale_frames( get_config_int( "Weapon", "Rate", 0 ));
   weaponObject     = NULL;
+  weaponsparkNfactor = get_config_float( "Weapon", "sparkNfactor", 0 );
 
   specialMinTime   = get_config_float( "Special", "MinTime", 0 );
   specialSpeedDown = get_config_float( "Special", "SpeedDown", 0 );
@@ -159,7 +163,7 @@ int AlcheroKronos::activate_weapon(){
   if( !weaponObject ){
     weaponObject = new AlcheroLaser( this, angle, pallete_color[ALCHERO_TRACE_START_INDEX], weaponDamage,
       weaponRate, this, 0, 0.5*size.y, weaponDeccel, weaponMinSpeed, weaponVelocity, weaponGrowth,
-      weaponMinLength );
+      weaponMinLength, weaponsparkNfactor );
     game->add( weaponObject );
     play_sound2( data->sampleWeapon[weapon_sample], 1000 );
   }
@@ -324,7 +328,8 @@ AlcheroKronos::~AlcheroKronos(){
 
 AlcheroLaser::AlcheroLaser(SpaceLocation *creator, double langle, int lcolor, int ldamage,
     int orate, SpaceLocation *opos, double rel_x, double rel_y, double odeccel,
-    double omin_speed, double ovelocity, double ogrowth, double omin_length ):
+    double omin_speed, double ovelocity, double ogrowth, double omin_length,
+	double osparkNfactor):
   Laser( creator, langle, lcolor, omin_length, ldamage, 1000, opos, Vector2(rel_x,rel_y), true ){
   released = false;
   rate = orate;
@@ -337,6 +342,7 @@ AlcheroLaser::AlcheroLaser(SpaceLocation *creator, double langle, int lcolor, in
   collide_flag_sameship = collide_flag_sameteam = 0;
   collide_flag_anyone = ALL_LAYERS;
   step = 0;
+  sparkNfactor = osparkNfactor;
 }
 
 void AlcheroLaser::calculate(){
@@ -344,7 +350,7 @@ void AlcheroLaser::calculate(){
   if( step <= 0 ){
     step += rate;
     if( !released ){
-      int l = (int)(length/min_length);
+      int l = (int)(1 + sparkNfactor * length/min_length);
       for( int i = 0; i < l; i++ ){
         double alpha = random(PI2);
         Animation *anim  = new Animation( this, pos + 0.5 * ship->size.x *unit_vector(alpha),

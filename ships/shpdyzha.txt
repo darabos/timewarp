@@ -16,4 +16,3 @@ and do not track quickly.  They are used
 to kill slow moving, large ships and to
 restrict the maneuvering of fast
 opponents.
-
