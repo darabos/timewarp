@@ -326,7 +326,10 @@ void AyronBS::calculate()
 			continue;
 
 		if (!parts[i]->exists())
+		{
 			parts[i] = 0;
+			continue;
+		}
 
 		// NOTE:
 		// this should not occur.

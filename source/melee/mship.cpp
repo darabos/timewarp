@@ -300,6 +300,10 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	type = NULL;
 	code = NULL;
 
+	// modified otherwise the kat poly crashes
+	if (creator->isShip())
+		type = ((Ship*) creator)->type;
+
 	captain_name[0] = '\0';
 	thrust           = FALSE;
 	turn_left        = FALSE;

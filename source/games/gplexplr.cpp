@@ -984,7 +984,7 @@ void Plsurface::calculate()
 	
 
 	// also, check if objects or units get deleted (sometimes happens)
-	int i, k;
+	int i;
 	for ( i = 0; i < Nobjects; ++i )
 		if (!obj[i]->exists())
 			delobj(i);
