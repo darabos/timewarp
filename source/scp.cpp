@@ -666,6 +666,10 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 	FONT *usefont1 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0);
 	psize = iround(20 * T->scale);
 	FONT *usefont2 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0);
+
+	// test:
+//	FONT *usefont = load_font_test (40);
+//	destroy_font(usefont);
 	
 	Button *b_accept, *b_cancel;
 	b_accept = new Button(T, "accept_");
@@ -735,10 +739,13 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 	// exit
 	delete T;
 
-	// for some reason, this crashes ?!
+	// for some reason, this crashes if I don't take special precaution (override the kill subroutine
+	// with an identical copy as that in allegro... 
 	// NEED TO CHECK, WHY !!
 //	destroy_font(usefont1);
 //	destroy_font(usefont2);
+//	color_destroy_font(usefont1);
+//	color_destroy_font(usefont2);
 }
 
 
@@ -930,8 +937,8 @@ void play_net( bool ishost )
 		// note, that tmp can be changed by the menu, so that it points to a different string?!
 
 		// user menu: enter adress and port number
-//		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
-//			return;
+		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
+			return;
 
 		// saving address
 		set_config_string("Network", "Address", tmp);
@@ -2511,15 +2518,20 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
     if (shouldConsumeChar)
         ret = D_USED_CHAR;
 
+	// this is initialized once
     static BITMAP* panel = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
                                          fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
     fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp = panel;
 
+	// this is initialized once
     static BITMAP * sprite = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
                                            fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
     static int rotationFrame = 0;
 
-    //selection has changed
+	if (!sprite || !panel)
+		tw_error("bitmap error");
+
+	//selection has changed
     if (d->d1 != old_d1) {
         safeToDrawPreview = false;
         float fractionRotated = 0;
@@ -2556,6 +2568,14 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 
         if (type && type->data && type->data->spriteShip) {
             
+            rotationFrame++;
+            if (rotationFrame >= type->data->spriteShip->frames())
+                rotationFrame = 0;
+
+			if (rotationFrame < 0)
+				rotationFrame = 0;
+				
+
             type->data->spriteShip->draw(
                 Vector2(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w/2,
                         fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h/2) - type->data->spriteShip->size()/2, 
@@ -2563,10 +2583,8 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
                 rotationFrame, sprite 
                 );
 
-            rotationFrame++;
-            if (rotationFrame >= type->data->spriteShip->frames())
-                rotationFrame = 0;
         }
+
         stretch_blit(sprite, panel, 0, 0, sprite->w, sprite->h, 0, 0, panel->w, panel->h);
         safeToDrawPreview = true;
         
@@ -2729,12 +2747,17 @@ void ship_view_dialog(int si, Fleet *fleet) {
 			else {
                 
 				ShipType *type = reference_fleet->getShipType(si);
+
+				if (!type)
+					tw_error("Unrecognized ship item[%i]", si);
+
 				PACKFILE *f;
 				//DATAFILE *d;
 
                 if (sprite)
 					destroy_bitmap(sprite);
 				sprite = NULL;
+
 				type->data->lock();
 				if (type->data->spriteShip) {
 					sprite = create_bitmap(180, 180);
@@ -2746,6 +2769,9 @@ void ship_view_dialog(int si, Fleet *fleet) {
 					);
 				}
 				type->data->unlock();
+
+				if (!sprite)
+					tw_error("Failed to initialize sprite");
                 
 
 //				d = load_datafile_object(type->data->file, "SHIP_P00_PCX");
