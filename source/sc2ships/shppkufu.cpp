@@ -22,6 +22,8 @@ PkunkFury::PkunkFury(Vector2 opos, double shipAngle,
 
 	reborn = 0;
 	update_panel = true;
+
+	crew = 1;
 }
 
 int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct) {
@@ -32,7 +34,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 	game->add(new Animation(this, pos,	meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 
-	
+	/*
 	if (random() % 2) {
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH){
 			game->ship_died(this, source);
@@ -41,6 +43,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 		die();
 		return r;
 	}
+	*/
 	
 
 	pos = random(Vector2(3000,3000)) - Vector2(1500,1500);
@@ -61,7 +64,12 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 //	update_panel = TRUE;
 //	play_sound(data->sampleExtra[0]);
 	
-	game->remove(this);
+	// dangerous: a memory leak ...
+//	game->remove(this);
+	// that doesn't physically destroy it ... what does ?
+	state = 0;//-DEATH_FRAMES;
+	
+
 	
 	add(new Phaser (this, 
 //			x - cos(angle+0) * PHASE_MAX * w, 
@@ -94,6 +102,12 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	// copied from katpoly code
 	Ship *s;
 	s = game->create_ship( get_shiptype()->id, control, pos, angle, get_team() );
+
+	
+	// the following prevents that a new ship will be "selected" based on this "empty" ship
+	attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
+	control = 0;
+
 	//game->add( s );              // add the ship
 	//s->materialize();                // materialize it
 	//s->crew = crew;                  // set it's attributes
