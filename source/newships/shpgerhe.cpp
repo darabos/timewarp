@@ -33,6 +33,9 @@ REGISTER_FILE
 
   If there's a "shock", the hero also releases the ship ...
 
+  Pressing fire+special causes a suicide, but only when the hero
+  is attached to the ship... causes 1 additional damage.
+
 */
 
 
@@ -376,6 +379,7 @@ GerlHero::GerlHero(GerlVirtualship *creator, SpaceLocation *brother, Vector2 opo
 	lastenemyvel = 0;
 }
 
+
 void GerlHero::calculate()
 {
 
@@ -425,8 +429,17 @@ void GerlHero::calculate()
 		{
 			Vector2 dv = boardingship->vel - lastenemyvel;
 			lastenemyvel = boardingship->vel;
-			if ( dv.length() > boardingship->ship->accel_rate * frame_time * 2 && 
-				dv.length() > this->ship->accel_rate * frame_time * 1.2)
+
+			// debug GEO
+			double arate;
+			if (boardingship->isShip())
+				arate = ((Ship*) boardingship)->accel_rate;
+			else
+				arate = 0;
+
+			if ( dv.length() > arate * frame_time * 2 && 
+				dv.length() > this->accel_rate * frame_time * 1.2)
+			// end debug GEO
 			{
 				attached = 0;
 				
@@ -437,6 +450,25 @@ void GerlHero::calculate()
 
 
 	// commands transferred from the virtual ship
+
+
+	// order a suicide:
+	// must be ordered before the release order (since it'll override that release order)
+
+	if ( mother->fire_special && mother->fire_weapon && attached )
+	{
+		activateyourspecial = 0;
+		activateyourweapon = 0;
+
+		state = 0;
+
+		mother->damage(boardingship, 1, 0);		// it's the (virtual) mother that does the damage
+
+		int n = mother->data->spriteWeaponExplosion->frames();
+		game->add( new Animation(this, pos, mother->data->spriteWeaponExplosion, 0,
+			n, time_ratio, LAYER_EXPLOSIONS) );
+	}
+
 
 	if (!beingbusy )
 	{
@@ -469,7 +501,8 @@ void GerlHero::calculate()
 
 		pos += Vd;
 
-		if ( pos == boardingship->pos )
+		if ( fabs(pos.x - boardingship->pos.x) < 1E-3 &&
+				fabs(pos.y - boardingship->pos.y) < 1E-3 )
 		{
 			comeaboard = 0;
 			attached = 1;
@@ -721,6 +754,7 @@ void GerlHero::calculate()
 	}
 
 
+	
 	activateyourweapon = 0;
 	activateyourspecial = 0;
 
@@ -731,11 +765,11 @@ void GerlHero::calculate()
 }
 
 
-// just as well, I could've use handle_damage
+// This is used to detect that the Hero collides with some object in space,
+// then, it'll crawl on top of it.
+// (I could've use handle_damage instead).
 void GerlHero::inflict_damage(SpaceObject *other)
 {
-	// detect that the Hero collides with some object in space,
-	// then, it'll crawl on top of it.
 
 	if ( other->isShip() || other->isAsteroid() )
 	{
@@ -807,7 +841,7 @@ int GerlHero::handle_damage(SpaceLocation *other, double normal, double direct)
 	{
 		// this ship dies :(
 		play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
-		game->add(new Animation(this, pos, game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
+		game->add(new Animation(this, pos, meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 	}
 
 

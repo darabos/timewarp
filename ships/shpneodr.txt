@@ -1,0 +1,10 @@
+Neogg Drain
+
+Main weapon: small missile, short range and 1 damage.
+
+Special: laser, medium range, drains enemy energy.
+
+Note:
+based on idea of Neo B.
+
+It's an Utwig killer, but due to its limited crew complement, don't come close to the Utwig.
