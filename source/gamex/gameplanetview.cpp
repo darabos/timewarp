@@ -25,6 +25,9 @@ REGISTER_FILE
 #include "stuff/space_body.h"
 #include "stuff/backgr_stars.h"
 
+#include "../twgui/twgui.h"
+
+
 
 Frame2::Frame2(int max_items)
 :
@@ -75,11 +78,35 @@ void GamePlanetview::init()
 		0.0, 1.0
 		);
 
+	// first, allocate the (old) screen from memory ... this should match
+	// exactly the "global" screen ...
+	newscreen = create_video_bitmap(screen->w, screen->h);
+	if (!newscreen)
+	{
+		tw_error("Oh my !");
+	}
+	show_video_bitmap(newscreen);
+	clear_to_color(newscreen, 0);
 
-	T = new TWindow("gamex/interface/planetview", 0, 0, screen);
-	T->tree_doneinit();
+	// ok ... so we've safely allocated the drawable area I guess ...
+	// this is needed, cause
+	// this global one gets deleted for some reason, perhaps a view callback?
+	// and any "new" video_bitmap is *first* allocated from this global area !! So you
+	// can't use this global area normally while you're using other video-bitmaps.
 
-	tmpbmp = create_sub_bitmap(T->backgr, 30, 30, 700, 400);
+	// place the menu into video-memory, cause we're using this as basis for
+	// drawing; the game draws onto part of the menu.
+	T = new TWindow("gamex/interface/planetview", 0, 0, newscreen, true);
+
+	AreaTablet *maparea;
+	maparea = new AreaTablet(T, "map_");
+
+	FONT *usefont;
+	usefont = videosystem.get_font(3);
+
+
+
+	tmpbmp = maparea->backgr;//create_sub_bitmap(T->backgr, 30, 30, 700, 400);
 
 	// use this for game-drawing to part of the menu
 	tempframe = new Frame2(1024);
@@ -101,7 +128,7 @@ void GamePlanetview::init()
 //	mapwrap = false;
 	wininfo.init( Vector2(200,200), 800.0, tempframe);//view->frame );
 	wininfo.zoomlimit(size.x);
-	wininfo.scaletowidth(2*size.x);	// zoom out to this width.
+	wininfo.scaletowidth(size.x);	// zoom out to this width.
 
 
 	// create star objects ?!
@@ -120,6 +147,13 @@ void GamePlanetview::init()
 
 	solarmap = starmap->sub[istar];	// use the solarsystem belonging to that star
 	planetmap = solarmap->sub[iplanet];	// use the planet (and moons) belonging to that planet orbit.
+
+
+	// Button that displays the name of the planet.
+	TextEditBox *starname;
+	starname = new TextEditBox(T, "starname_", usefont, planetmap->name, 128);
+	starname->set_textcolor(makecol(255,255,0));
+	// (on exit, you should copy the (edited) name to the star/planet structure.
 
 
 	// from this, you know the planet position, relative to the sun - we use it
@@ -227,12 +261,14 @@ void GamePlanetview::init()
 	player = new ThePlaya(playerspr, &playerinfo);
 	add(player);
 
-	player->pos = Vector2(0,0);
-	player->angle = 0.25 * PI;
 //	switch_team(player->ally_flag, team_player);
 
 	locate_onedge_aligned_to_center(player, 0.5*size, 0.45*size);
 
+
+	// test
+	player->pos = Vector2(0,0);
+	player->angle = 0.25 * PI;
 
 
 	// an enemy fleet
@@ -244,9 +280,15 @@ void GamePlanetview::init()
 
 	StarBackgr *sb;
 	sb = new StarBackgr();
-	sb->init(100, view->frame);
+	sb->init(100, tempframe);
 	add(sb);
 
+	T->tree_doneinit();
+
+
+	// performance check
+	tic_history = new Histograph(128);
+	render_history = new Histograph(128);
 }
 
 
@@ -271,6 +313,9 @@ void GamePlanetview::quit()
 	if (tmpbmp)
 		destroy_bitmap(tmpbmp);
 
+	if (newscreen)
+		delete (newscreen);
+
 	GameBare::quit();
 }
 
@@ -288,6 +333,8 @@ void GamePlanetview::calculate()
 {
 	if (next)
 		return;
+
+	double t = get_time2();
 
 	T->tree_calculate();
 
@@ -326,6 +373,9 @@ void GamePlanetview::calculate()
 //			gamerequest = new GameMelee();
 	}
 	*/
+
+	t = get_time2() - t;// - paused_time;
+	tic_history->add_element(pow(t, 4.0));
 }
 
 
@@ -368,7 +418,41 @@ void GamePlanetview::checknewgame()
 }
 
 
+void GamePlanetview::animate()
+{
+	double t = get_time2();
 
+	//idle(20);
+	
+	::space_zoom = wininfo.zoomlevel;
+	::space_center = wininfo.mapcenter;
+	::space_view_size = wininfo.framesize;
+
+	// override the use of the "default" screen, instead re-route everything to the
+	// menu bitmaps.
+
+	tempframe->full_redraw = true;
+	FULL_REDRAW = true;
+	tempframe->erase();
+	tempframe->prepare();
+
+
+//	message.print(1500, 14, "%p %p %p", T->drawarea, T->backgr, ::screen);
+
+	animate(tempframe);
+	
+
+
+	// the menu draws to the game frame
+	//T->tree_setscreen(frame->surface);
+
+	T->tree_setscreen(newscreen);
+	T->tree_animate();
+
+
+	t = get_time2() - t;// - paused_time;
+	render_history->add_element(pow(t, 4.0));
+}
 
 
 void GamePlanetview::animate(Frame *frame)
@@ -376,27 +460,11 @@ void GamePlanetview::animate(Frame *frame)
 	if (next)
 		return;
 
-	::space_zoom = wininfo.zoomlevel;
-	::space_center = wininfo.mapcenter;
-
-	FULL_REDRAW = 1;
-
-	// draws to the raw screen (?)
-	FULL_REDRAW = true;
-
-	tempframe->full_redraw = true;
-	tempframe->erase();
-	tempframe->prepare();
-
 	// this draws to the menu (frame2)
-	GameBare::animate(tempframe);
+	GameBare::animate(frame);
 	
-	// the menu draws to the game frame
-	T->tree_setscreen(frame->surface);
-	T->tree_animate();
-
 	// (and the game frame then draws to video memory?)
-
+	show_ticinfo(frame, tic_history, render_history, 4.0);
 }
 
 
@@ -435,4 +503,7 @@ SpaceObject(0, opos, 0.0, osprite)
 
 
 
+GamePlanetview::~GamePlanetview()
+{
+}
 

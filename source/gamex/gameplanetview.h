@@ -36,9 +36,11 @@ class GamePlanetview : public GameBare
 {
 	TWindow *T;
 	Frame2 *tempframe;	// this sets the drawing surface to a subarea of T ...
-	BITMAP *tmpbmp;
+	BITMAP *tmpbmp, *newscreen;
 
 	WindowInfo wininfo;
+
+	virtual ~GamePlanetview();
 
 	class ThePlaya : public LocalPlayerInfo
 	{
@@ -58,11 +60,16 @@ class GamePlanetview : public GameBare
 	//virtual bool handle_key(int k);
 
 	virtual void calculate();
+	virtual void animate();
 	virtual void animate(Frame *frame);
 
 	virtual void checknewgame();
 
 	SpaceSprite *planetspr, *playerspr, *fleetspr, *moonspr[32];
+
+	// performance check
+	Histograph *tic_history;
+	Histograph *render_history;
 };
 
 
