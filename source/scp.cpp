@@ -879,9 +879,14 @@ DIALOG select_game_dialog[] = {
 };
 const char *select_game_menu () {STACKTRACE
 	select_game_dialog[2].dp3 = game_names;
+	set_config_file("client.ini");
+	select_game_dialog[2].d1 = get_config_int("Menu", "SelectGame", 0);
 	int i = tw_popup_dialog(NULL, select_game_dialog, 2);
 	if (i == -1) return NULL;
-	else return game_names[select_game_dialog[2].d1];
+	else {
+		set_config_int("Menu", "SelectGame", select_game_dialog[2].d1);
+		return game_names[select_game_dialog[2].d1];
+	}
 }
 
 

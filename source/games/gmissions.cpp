@@ -1079,7 +1079,8 @@ Ship *Play::create_ship(double relx, double rely, char *shpid, Control *c, TeamC
 Ship *Play::create_ship(double relx, double rely, char *shpid, char *c, TeamCode team)
 {
 	Ship *s;
-	s = Game::create_ship(channel_server, shpid, c, map_size*Vector2(relx, rely), random(2*PI), team);
+	s = Game::create_ship(channel_none, shpid, c, map_size*Vector2(relx, rely), random(2*PI), team);
+	// don't use channel_server for AI players...
 	add(s->get_ship_phaser());
 	add(new HealthBar(s, &healthtoggle));
 	return s;
