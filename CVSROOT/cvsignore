@@ -1,0 +1,14 @@
+#this specifies some file types to ignore.
+#
+#*.exe, *.obj etc should not be stored on sourceforge, it'll take too much space
+#if they are updated along with every change.
+
+*.exe
+*.o
+*.a
+*.obj
+*.dll
+*.lib
+*.a
+
+
