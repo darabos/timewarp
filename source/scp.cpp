@@ -1244,6 +1244,9 @@ DIALOG fleetDialog[] = {
 
   { scp_fleet_dialog_text_list_proc,
                        10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
+
+  //{ d_text_list_proc,
+    //                   10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
   { d_list_proc2,      390, 141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEET_SHIPS_LIST
 
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
@@ -1516,12 +1519,16 @@ void edit_fleet(int player) {STACKTRACE
 }
 
 
-int lastFleetItemShown = 0;
+//int lastFleetItemShown = 0;
+
+//extern void _handle_scrollable_scroll(DIALOG *d, int listsize, int *index, int *offset);
 
 int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
+
 	static int next_anim_time = get_time();
 	int old_d1 = d->d1;
     int old_d2 = d->d2;
+    int ret = 0;
    
 
     // allow user to select the ships based on keystrokes:
@@ -1533,29 +1540,41 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
             d->d1 = reference_fleet->getNextFleetEntryByCharacter( d->d1, typed);
             shouldConsumeChar = true;
             if (d->d1 != old_d1) {
+
+                int size = reference_fleet->getSize();
+                int height = (d->h-4) / text_height(font);
+
+                ret = D_USED_CHAR; 
                 d->flags = D_DIRTY;
 
-                /*int size = lastFleetItemShown - old_d1;
-                
-                if (size > reference_fleet->getSize() {
-                    
-                    if (
-                        (d->d2 + size > d->d1) 
-                        )
-                    {
-                        //d->d2 = d->d1;
-                        d->d2 = d->d1 - size/2;
+                //scroll such that the selection is shown.
+                //only change the scroll if the selection is not already shown,
+                //and the number of ships in the list is greater than the number
+                //of slots that can be shown simultaneously.
+                if ( (size > height) &&
+                     ( (d->d1 < d->d2) ||
+                       (d->d1 >= d->d2 + height))) 
+                {
+                    if (d->d1 <= (height/2))
+                        d->d2 = 0;
+                    else {
+                        
+                        if (d->d1 >= (size - height))
+                            d->d2 = (size - height);
+                        else {
+                            d->d2 = d->d1 - height/2;
+                        }
                     }
-                }*/
+                }
             }
         }
     }
+    else {
+       ret = d_text_list_proc( msg, d, c );
+    }
     
-    int ret = d_text_list_proc( msg, d, c );
-
     if (shouldConsumeChar)
         ret = D_USED_CHAR;
-
 
     static BITMAP* panel = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
                                          fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);

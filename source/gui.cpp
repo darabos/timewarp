@@ -659,7 +659,7 @@ void MI_int_slider::init ( char * params ) {
 }
 */
 
-
+ 
 
 /* 
 
@@ -738,7 +738,6 @@ char *shippointsListboxGetter(int index, int *list_size)
 		*list_size = reference_fleet->getSize();
 		return NULL;
 	} else {
-        lastFleetItemShown = index;
         ShipType * type = reference_fleet->getShipType(index);
 		sprintf(buffy, "%3d %s", type->cost, type->name);
 	}
