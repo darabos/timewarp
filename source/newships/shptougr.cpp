@@ -6,7 +6,7 @@ REGISTER_FILE
 #include "../frame.h"
 
 
-class ToUlGraniter : public Ship
+class ToUl : public Ship
 {
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange, specialDamage;
@@ -17,7 +17,7 @@ class ToUlGraniter : public Ship
 	bool shipmode;
 	
 public:
-	ToUlGraniter(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
+	ToUl(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
 	
 protected:
 	
@@ -30,7 +30,7 @@ protected:
 
 
 
-ToUlGraniter::ToUlGraniter(Vector2 opos, double shipAngle,
+ToUl::ToUl(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code)
 :
 Ship(opos,  shipAngle, shipData, code)
@@ -50,7 +50,7 @@ Ship(opos,  shipAngle, shipData, code)
 }
 
 
-int ToUlGraniter::activate_weapon()
+int ToUl::activate_weapon()
 {	
 
 	int i;
@@ -71,7 +71,7 @@ int ToUlGraniter::activate_weapon()
 }
 
 
-int ToUlGraniter::activate_special()
+int ToUl::activate_special()
 {
 
 	double L;
@@ -88,7 +88,7 @@ int ToUlGraniter::activate_special()
 	return TRUE;
 }
 
-void ToUlGraniter::calculate()
+void ToUl::calculate()
 {
 	Ship::calculate();
 
@@ -102,5 +102,5 @@ void ToUlGraniter::calculate()
 
 
 
-REGISTER_SHIP(ToUlGraniter)
+REGISTER_SHIP(ToUl)
 
