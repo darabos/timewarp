@@ -354,6 +354,22 @@ void init_fleet() {STACKTRACE
         }
     };
     
+    struct _originDecending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+            if (x && y)
+               return (x->origin > y->origin);  
+            else
+                return false;
+        }
+    };
+    struct _originAscending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+            if (x && y)
+                return (x->origin < y->origin); 
+            else 
+                return false; 
+        }
+    };
     
     void Fleet::Sort(SortingMethod sortMethod, bool ascending, int startIndex, int endIndex) {
         MyFleetListType::iterator _begin, _end;
@@ -393,15 +409,6 @@ void init_fleet() {STACKTRACE
                    sort(_begin, _end, _costDecending());
                 break;
 
-
-            /*case SORTING_METHOD_TWCOST:
-                strcpy(_fleetsort_ini_item, "TWCost");
-                if (ascending)
-                    sort(_begin, _end, _NumericConfigDescending());
-                else
-                    sort(_begin, _end, _NumericConfigAscending());
-                break;*/
-
             case SORTING_METHOD_NAME1:                
                 strcpy(_fleetsort_ini_item, "Name1");
                 if (ascending)
@@ -427,11 +434,10 @@ void init_fleet() {STACKTRACE
                 break;
 
             case SORTING_METHOD_ORIGIN:
-                strcpy(_fleetsort_ini_item, "Origin");
                 if (ascending)
-                    sort(_begin, _end, _AlphabeticConfigAscending());
+                    sort(_begin, _end, _originAscending());
                 else
-                    sort(_begin, _end, _AlphabeticConfigDescending());
+                    sort(_begin, _end, _originDecending());
                 break;
 
             case SORTING_METHOD_NAME:    
