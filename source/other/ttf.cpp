@@ -73,6 +73,34 @@ static void cleanup (FT_Library engine, FT_Face face)
 
 
 
+
+
+
+// for debugging (copied from allegro)
+static void color_destroy_font(FONT* f)
+{
+    FONT_COLOR_DATA* cf;
+
+    if(!f) return;
+
+    cf = (FONT_COLOR_DATA*)(f->data);
+
+    while(cf) {
+        FONT_COLOR_DATA* next = cf->next;
+        int i = 0;
+
+        for(i = cf->begin; i < cf->end; i++) destroy_bitmap(cf->bitmaps[i - cf->begin]);
+
+        free(cf->bitmaps);
+        free(cf);
+
+        cf = next;
+    }
+
+    free(f);
+}
+
+
 FONT* load_ttf_font (const char* filename, const int points, const int smooth)
 {
 
@@ -133,21 +161,26 @@ FONT* load_ttf_font (const char* filename, const int points, const int smooth)
 	
 	int c;
 	
-	AL_CONST int num = end - begin + 1;
+	AL_CONST int num = end - begin;
+	// NOTE: static void color_destroy(FONT* f)  destroys bitmaps >=begin, <end
 	
 	struct FONT *f;
 	struct FONT_COLOR_DATA *fcd;
 	
 	// Allocate and setup the Allegro font
 	// (copied from allegttf)
-	f = (struct FONT*)calloc(1,sizeof(struct FONT));
-	fcd = (struct FONT_COLOR_DATA*)calloc(1,sizeof(struct FONT_COLOR_DATA));
+	f = (struct FONT*) calloc(1,sizeof(struct FONT));
+	fcd = (struct FONT_COLOR_DATA*) calloc(1,sizeof(struct FONT_COLOR_DATA));
 	fcd->begin = begin;
 	fcd->end = end;
-	fcd->bitmaps = (BITMAP**)calloc(num,sizeof(BITMAP*));
+	fcd->bitmaps = (BITMAP**) calloc(num,sizeof(BITMAP*));
 	fcd->next = NULL;
 	f->data = (void*)fcd;
 	f->vtable = font_vtable_color;
+	
+	//f->vtable->destroy = &color_destroy_font;
+	// STRANGE, this is needed to avoid a crash ?!?!
+	// WHY ???
 	
 
 
@@ -164,7 +197,7 @@ FONT* load_ttf_font (const char* filename, const int points, const int smooth)
 	yorigin = iround(points_h * double(ymax) / double(ymax - ymin));
 	
 	//char c;
-	for ( c = begin; c <= end; ++c )
+	for ( c = begin; c < end; ++c )		// not <= end !!
 	{
 		// load glyph image into the slot (erase previous one)
 		
@@ -173,7 +206,6 @@ FONT* load_ttf_font (const char* filename, const int points, const int smooth)
 			continue;
 		
 		// now, draw to our target surface
-		BITMAP *bmp = 0;
 		int w, h;
 
 		w = slot->metrics.horiAdvance / 64;
@@ -187,6 +219,7 @@ FONT* load_ttf_font (const char* filename, const int points, const int smooth)
 		dx = slot->bitmap_left;
 		dy = yorigin - slot->bitmap_top;
 
+		BITMAP *bmp = 0;
 		if (w && h)
 		{
 			bmp = create_bitmap_ex(8, w, h);
@@ -212,3 +245,55 @@ FONT* load_ttf_font (const char* filename, const int points, const int smooth)
 
 
 
+
+FONT* load_font_test (const int points)
+{
+	int w, h, begin, end;
+	begin = 32;	// space character
+	end = 128;	// ?
+	w = points;
+	h = points;
+
+	int c;
+	
+	AL_CONST int num = end - begin;
+	// NOTE: static void color_destroy(FONT* f)  destroys bitmaps >=begin, <end
+	
+	struct FONT *f;
+	struct FONT_COLOR_DATA *fcd;
+	
+	// Allocate and setup the Allegro font
+	// (copied from allegttf)
+	f = (struct FONT*) calloc(1,sizeof(struct FONT));
+	fcd = (struct FONT_COLOR_DATA*) calloc(1,sizeof(struct FONT_COLOR_DATA));
+	fcd->begin = begin;
+	fcd->end = end;
+	fcd->bitmaps = (BITMAP**) calloc(num,sizeof(BITMAP*));
+	fcd->next = NULL;
+	f->data = (void*)fcd;
+	f->vtable = font_vtable_color;
+	
+//	f->vtable->destroy = &color_destroy_font;
+	// STRANGE, this is needed to avoid a crash ?!?!
+	// WHY ???
+	
+
+	//char c;
+	for ( c = begin; c < end; ++c )		// not <= end !!
+	{		
+		BITMAP *bmp = 0;
+
+		bmp = create_bitmap_ex(8, w, h);
+		clear_to_color(bmp, 0);
+			
+		fcd->bitmaps[c-begin] = bmp;
+	}
+
+	
+	// set the font height
+	f->height = h;
+	
+	return f;
+   }
+   
+   
