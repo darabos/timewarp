@@ -1,0 +1,8 @@
+gamex/interface/dialogeditor/raceselect/text/barver_backgr_y = 23
+gamex/interface/dialogeditor/raceselect/text/barver_backgr_x = 262
+gamex/interface/dialogeditor/raceselect/text/down_default_y = 373
+gamex/interface/dialogeditor/raceselect/text/down_default_x = 264
+gamex/interface/dialogeditor/raceselect/text/up_default_y = 2
+gamex/interface/dialogeditor/raceselect/text/up_default_x = 266
+gamex/interface/dialogeditor/raceselect/text/backgr_y = 13
+gamex/interface/dialogeditor/raceselect/text/backgr_x = 12

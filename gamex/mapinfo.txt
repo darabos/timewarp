@@ -1,0 +1,37 @@
+1
+
+       Some region
+ empty_type
+ 0.000000 0.000000 1
+ 2
+
+	 Beta Wensicia
+	 small
+	 8.819304 5.500211 2
+	 4
+
+		 noname
+		 medium
+		 1940.026076 516.297262 3
+		 0
+
+		 noname
+		 small
+		 2033.898305 485.006519 4
+		 0
+
+		 noname
+		 dwarf
+		 2033.898305 547.588005 5
+		 0
+
+		 noname
+		 big
+		 2498.044329 730.117340 6
+		 0
+
+	 Alpha Wensicia
+	 medium
+	 2.560443 3.793249 7
+	 0
+

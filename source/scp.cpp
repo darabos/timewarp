@@ -612,7 +612,7 @@ void MainMenu::doit() {STACKTRACE
 
 	meleedata.init();
 
-	///*
+	/*
 				disable();
 				play_fg(&scp, SCPGUI_MUSIC);
 				enable();
