@@ -14,8 +14,11 @@
 #temporary visual c++ files
 *.ncb
 *.opt
+Debug/*
+Release/*
 
 #other files that we probably don't want
 *.old
 old.*
 *.tmp
+
