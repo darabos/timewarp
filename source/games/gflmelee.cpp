@@ -713,7 +713,14 @@ void FlMelee::init(Log *_log)
 	//FlmeleeData = load_datafile("gflmelee01.dat");
 	char txt[512];
 	sprintf(txt, "gflmelee%02i.dat", radarlayout+1);
-	radar = new YRadar(playercontrols[0], radar_sizes[radar_mode], alliance[0], txt, 0, 2);
+
+	if (log->type == Log::log_net1client)
+		iplayer = remoteplayer;
+	else
+		iplayer = localplayer;
+	c = playercontrols[iplayer];
+
+	radar = new YRadar(c, radar_sizes[radar_mode], alliance[iplayer], txt, 0, 2);
 	game->add(radar);
 	radar->location = Vector2(0, 0.5*window->surface->h - 100);
 	//unload_datafile(FlmeleeData);
