@@ -924,11 +924,11 @@ void play_net (bool ishost)
 		// note, that tmp can be changed by the menu, so that it points to a different string?!
 
 		// user menu: enter adress and port number
-//		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
-//			return;
+		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
+			return;
 
 		// saving address
-//		set_config_string("Network", "Address", tmp);
+		set_config_string("Network", "Address", tmp);
 
 		message.out("Connecting to server...");
 		message.animate(0);
