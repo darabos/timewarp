@@ -303,7 +303,8 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 	}
 	add ( p );
 
-	GobStation *gs = new GobStation(station_sprite, p, builds, background);
+	GobStation *gs = new GobStation(station_sprite, p, builds, 
+					background, "NOT_IMPLEMENTED" );
 	gs->collide_flag_sameship = ALL_LAYERS;
 	gs->collide_flag_sameteam = ALL_LAYERS;
 	gs->collide_flag_anyone = ALL_LAYERS;
@@ -746,14 +747,23 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
   \param ship ???
   \param background ???
 */
-GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, const char *ship, const char *background) : 
-		Orbiter(pic, orbit_me, random() % 200 + 500) 
-	{
-	build_type = ship;
-	background_pic = background;
-	layer = LAYER_CBODIES;
-	mass = 99;
-	}
+GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, 
+			 const char *ship, const char *background, 
+			 const char * qlist) : 
+  Orbiter(pic, orbit_me, random() % 200 + 500) 
+{
+  build_type = ship;
+  background_pic = background;
+  layer = LAYER_CBODIES;
+  mass = 99;
+
+  quest_source = new StarBaseQuestSource( qlist );
+}
+
+GobStation::~GobStation()
+{
+  delete quest_source;
+}
 
 #define STATION_DIALOG_DEPART  0
 #define STATION_DIALOG_UPGRADE 1

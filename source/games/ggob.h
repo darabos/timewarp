@@ -111,11 +111,16 @@ class GobStation : public Orbiter {
 	public:
 	const char *build_type;
 	const char *background_pic;
-	GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, const char *ship, const char *background);
+	GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, 
+		     const char *ship, const char *background,
+		     const char *qlist );
+	virtual ~GobStation();
 	virtual void buy_new_ship_menu(GobPlayer *s) ;
 	virtual void inflict_damage(SpaceObject *other);
 	virtual void station_screen (GobPlayer *s);
 	virtual void upgrade_menu(GobStation *station, GobPlayer *gs) ;
+	
+	StarBaseQuestSource* quest_source;
 };
 
 

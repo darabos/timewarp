@@ -35,4 +35,25 @@ class Quest
 };
 
 
+class QuestSource
+{
+ protected:
+  virtual int LoadQuestList( const char* qlist );
+ public:
+  virtual int GetNextQuest(Quest* q, GobPlayer* p) = 0;
+  virtual int QuestSuccess(Quest* q, GobPlayer* p) = 0;
+  virtual int WhenMeet(GobPlayer* p) = 0;
+};
+
+class StarBaseQuestSource: public QuestSource
+{
+ public:
+  StarBaseQuestSource(const char* qlist);
+  virtual ~StarBaseQuestSource();
+  virtual int GetNextQuest(Quest* q, GobPlayer* p);
+  virtual int QuestSuccess(Quest* q, GobPlayer* p);
+  virtual int QuestFailed(Quest* q, GobPlayer* p);
+  virtual int WhenMeet(GobPlayer* p);
+};
+
 #endif // __GQUEST_H__

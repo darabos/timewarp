@@ -8,6 +8,7 @@ REGISTER_FILE
 static GobPlayer * g_player = NULL;
 #define gobgame ((GobGame*)game)
 
+#define NOT_IMPLEMENTED 0
 
 Quest::Quest( const char * szLuaFile, GobPlayer * player )
 {
@@ -102,4 +103,38 @@ int Quest::l_AddObject(lua_State* ls)
 int Quest::l_RemoveObject(lua_State* ls)
 {
   return 0;
+}
+
+int QuestSource::LoadQuestList ( const char* qlist )
+{
+  return NOT_IMPLEMENTED;
+}
+
+StarBaseQuestSource::StarBaseQuestSource( const char* qlist )
+{
+  LoadQuestList( qlist );
+}
+
+StarBaseQuestSource::~StarBaseQuestSource()
+{
+}
+
+int StarBaseQuestSource::GetNextQuest(Quest* q, GobPlayer* p)
+{
+  return NOT_IMPLEMENTED;
+}
+
+int StarBaseQuestSource::QuestSuccess(Quest* q, GobPlayer* p)
+{
+  return NOT_IMPLEMENTED;
+}
+
+int StarBaseQuestSource::QuestFailed(Quest* q, GobPlayer* p)
+{
+  return NOT_IMPLEMENTED;
+}
+
+int StarBaseQuestSource::WhenMeet(GobPlayer* p)
+{
+  return NOT_IMPLEMENTED;
 }
