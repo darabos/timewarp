@@ -586,6 +586,10 @@ SOURCE=.\source\newships\shpartem.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpayrbs.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpbatde.cpp
 # End Source File
 # Begin Source File
