@@ -14,13 +14,8 @@ static void default_error_handler ( const char * file, int line, const char * me
 void (*_error_handler) ( const char *file, int line, const char *message) = &default_error_handler;
 
 
-// A helper function used by tw_error()
 static const char *_error_file = NULL;
 static int         _error_line = -1;
-void _prep_error(const char *file, int line) {
-	_error_file = file;
-	_error_line = line;
-}
 
 static void __error(const char *format, ...) {
 	char error_string[2048];
@@ -39,6 +34,17 @@ static void __error(const char *format, ...) {
 	}
 	else error_string[0] = 0;
 	_error_handler(file, line, error_string);
+}
+
+// A helper function used by tw_error()
+void _prep_error(const char *file, int line) {
+	_error_file = file;
+	_error_line = line;
+}
+//the new version of that helper function:
+ERROR_FUNC_TYPE _prep_error_func ( const char *file, int line ) {
+	_prep_error(file, line);
+	return &__error;
 }
 
 void _error(const char *format, ...) {

@@ -85,9 +85,16 @@ void deinit_error();  //de-initialize error handling routines
  * 
  */
 
-#	define tw_error _prep_error(__FILE__, __LINE__); _error
+#	define tw_error _prep_error_func(__FILE__, __LINE__)
+//#	define tw_error _prep_error(__FILE__, __LINE__); _error
 	void error_handler ( const char *message);
 	extern void (*_error_handler) ( const char *src_file, int line, const char *message );
+#ifdef __cplusplus
+	typedef void (*ERROR_FUNC_TYPE)(const char *fmt = "", ...);
+#else
+	typedef void (*ERROR_FUNC_TYPE)(const char *fmt, ...);
+#endif
+	ERROR_FUNC_TYPE _prep_error_func ( const char *file, int line );
 	void _prep_error(const char *file, int line);
 	void _error(const char *format, ...);
 
