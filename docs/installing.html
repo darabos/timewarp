@@ -50,7 +50,8 @@ here</a>.</p>
 Pick your Operating System and Compiling method of choice:
 <ul>
     <li><a href="#windows-msvc">Windows - MSVC</a>
-    <li><a href="windows-djgpp">Windows/DOS - djgpp</a>
+    <li><a href="#windows-mingw">Windows - mingw32</a>    
+    <li><a href="#dos-djgpp">DOS - djgpp</a>
     <li><a href="#linux">Linux</a>
     <li><a href="#beos">BeOS</a>
 </ul>
@@ -62,8 +63,35 @@ Build/Rebuild All
 from the menu.
 </pre>
 
+<a name="windows-mingw"><h3>Windows - MinGW</h3></a>
+<pre>
+TimeWarp can be built with Minimalist GNU for Win32. 
 
-<a name="windows-djgpp"><h3>Windows - DJGPP</h3></a>
+Download MingWG:
+http://www.mingw.org/
+Install it.
+
+Download ALLEGRO:
+http://http://www.talula.demon.co.uk/allegro/
+Install it.
+
+Download this ALLEGRO extension:
+http://www.geocities.com/jeffery_guan/jgmod/jgmod.zip
+(optional, but necessary for some features)
+(homepage is http://www.geocities.com/jeffery_guan/ )
+Install it.
+
+    If you have installed jgmod then just type:
+    $ make win32=1
+
+    If you don't have jgmod type:
+    $ make win32=1 NO_JGMOD=1 
+
+    That's it! Run timewarp and have fun!
+
+</pre>
+
+<a name="dos-djgpp"><h3>DOS - DJGPP</h3></a>
 <pre>
 Step-By-Step instructions for building Star Control: TimeWarp with DJGPP
 
@@ -288,13 +316,13 @@ upx twdos.exe
 
 3. Installing TW
 
-    It looks like you already got and extracted the TW zip. So let's set the
-    right permissions for the executable files (they got lost because zips
-    don't support file permissions):
-    $ chmod a+x config.status configure install-sh mkinstalldirs update.sh
+    It looks like you already got and extracted the TW zip. 
 
-    Now let's compile TW:
-    $ ./configure && make
+    If you have installed jgmod then just type:
+    $ make
+
+    If you don't have jgmod type:
+    $ make NO_JGMOD=1 
 
     That's it! Run ./timewarp and have fun!
 
