@@ -19,20 +19,20 @@ OutFile "timewarp-${VER_MAJOR}u${VER_MINOR}.exe"
 ; The default installation directory
 InstallDir $PROGRAMFILES\TimeWarp
 
-; Registry key to check for directory (so if you install again, it will 
+; Registry key to check for directory (so if you install again, it will
 ; overwrite the old one automatically)
 InstallDirRegKey HKLM SOFTWARE\TimeWarp "Install_Dir"
 
 ; The text to prompt the user to enter a directory
-ComponentText "This will install Star Control: Time Warp ${VER_MAJOR}u${VER_MINOR} on your computer. Select which optional things you want installed."
+ComponentText "This will install Star Control: TimeWarp ${VER_MAJOR}u${VER_MINOR} on your computer. Select which optional components you want installed."
 
 ; The text to prompt the user to enter a directory
-DirText "Choose a directory to install in to:"
+DirText "Choose a directory to install to:"
 
 ;--------------------------------
 
 ; The stuff to install
-Section "Time Warp Core (required)"
+Section "TimeWarp Core (required)"
 
   SectionIn RO
   
@@ -45,7 +45,7 @@ Section "Time Warp Core (required)"
   File "..\*.cfg"
   File "..\*.dll"
   File "..\*.dmo"
-  File "..\timewarp.exe"
+  File "..\twwin.exe"
   File "..\*.html"
   File "..\*.ini"
   File "..\*.txt"
@@ -71,10 +71,6 @@ Section "Time Warp Core (required)"
   SetOutPath $INSTDIR\ships\sc3
   File "..\ships\sc3\*.*"
 
-  SetOutPath $INSTDIR\Util
-  File "..\Util\*.*"
-    
-
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\TimeWarp "Install_Dir" "$INSTDIR"
   
@@ -83,9 +79,9 @@ Section "Time Warp Core (required)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TimeWarp" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteUninstaller "uninstall.exe"
   CreateDirectory "$SMPROGRAMS\TimeWarp"
-  CreateShortCut "$SMPROGRAMS\TimeWarp\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\TimeWarp\readme.lnk" "$INSTDIR\readme.html" "" "$INSTDIR\readme.html" 0
-  CreateShortCut "$SMPROGRAMS\TimeWarp\timewarp.lnk" "$INSTDIR\timewarp.exe" "" "$INSTDIR\timewarp.exe" 0
+  CreateShortCut "$SMPROGRAMS\TimeWarp\Uninstall.lnk" "$INSTDIR\uninstall.exe"  "Uninstall"
+  CreateShortCut "$SMPROGRAMS\TimeWarp\readme.lnk" "$INSTDIR\readme.html" "Readme.html"
+  CreateShortCut "$SMPROGRAMS\TimeWarp\timewarp.lnk" "$INSTDIR\twwin.exe" "Star Control: TimeWarp"
 SectionEnd
 
 ; optional section (can be disabled by the user)
@@ -116,8 +112,11 @@ Section "Sources"
   File "..\source\sc3ships\*.*"
   SetOutPath $INSTDIR\source\twgui
   File "..\source\twgui\*.*"
-  SetOutPath $INSTDIR\source\util
-  File "..\source\util\*.*"
+  SetOutPath $INSTDIR\Util
+  File "..\Util\*.html"
+  File "..\Util\*.nsi"
+  File "..\Util\*.pl"
+    
 
 SectionEnd
 
