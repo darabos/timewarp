@@ -8,9 +8,6 @@
 #ifndef lauxlib_h
 #define lauxlib_h
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include <stddef.h>
 #include <stdio.h>
@@ -142,9 +139,6 @@ LUALIB_API int   lua_dobuffer (lua_State *L, const char *buff, size_t sz,
 #define luaL_opt_int	luaL_optint
 #define luaL_opt_long	luaL_optlong
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 
