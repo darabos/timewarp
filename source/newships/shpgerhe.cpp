@@ -50,6 +50,7 @@ public:
 	double weaponVelocity;
 	int    weaponDamage;
 	int    weaponArmour;
+	double accel_time;
 
 	double	batt_recharge_range;
 
@@ -134,15 +135,19 @@ GerlVirtualship::GerlVirtualship(Vector2 opos, double angle, ShipData *data, uns
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
 //	weaponTurnrate = scale_turning(get_config_float("Weapon", "TurnRate", 0));
 
+	accel_time = get_config_float("Weapon", "AccelTime", 1.0);
+
 
 	morons = new GerlMorons(this, 0, opos, angle, this->data->spriteShip);
 	game->add(morons);
 	game->add(new WedgeIndicator(morons, 75, 7));
+	// this doesn't add as a target
 
 	hero = new GerlHero(this, morons, opos, angle, this->data->spriteExtra);
 	morons->herobrother = hero;
 	game->add(hero);
 	hero->set_depth(DEPTH_SHIPS+0.1);
+	//game->add_target(hero); no, cause they'll follow the virtual ship.
 
 	game->add(new WedgeIndicator(morons, 50, makecol(0,0,200)) );
 
@@ -172,7 +177,9 @@ void GerlVirtualship::calculate()
 		Vector2 opos;
 		opos = morons->pos - 100.0 * unit_vector(trajectory_angle(target)/*morons->angle*/);
 		hero = new GerlHero(this, morons, opos, angle, this->data->spriteExtra);
+		morons->herobrother = hero;
 		game->add(hero);
+		//game->add_target(hero); no, cause the virtual ship = target already
 
 		hero->set_depth(DEPTH_SHIPS+0.1);
 
@@ -243,7 +250,7 @@ void GerlVirtualship::calculate()
 			// you can use this, to drag the enemy ship away from the "morons"
 			if ( hero->attached )
 			{
-				double accel_time = 1.0;
+				//double accel_time = 1.0;
 				hero->boardingship->accelerate(hero->boardingship,
 						hero->angle, hero->ship->speed_max * frame_time*1E-3/accel_time, hero->ship->speed_max);
 //						WELL, it's not that much fun :) can just as well when hitting the enemy
@@ -423,6 +430,7 @@ void GerlHero::calculate()
 		collide_flag_anyone = ALL_LAYERS;
 	}
 
+	
 	// check if the ship you're attached to has some sort of (serious) collision
 	// but only if you're all aboard!!
 	// (otherwise you've difficulty to board)
@@ -433,16 +441,17 @@ void GerlHero::calculate()
 			Vector2 dv = boardingship->vel - lastenemyvel;
 			lastenemyvel = boardingship->vel;
 
-			// debug GEO
+			
 			double arate;
 			if (boardingship->isShip())
 				arate = ((Ship*) boardingship)->accel_rate;
 			else
 				arate = 0;
 
-			if ( dv.length() > arate * frame_time * 2 && 
-				dv.length() > this->accel_rate * frame_time * 1.2)
-			// end debug GEO
+//			if ( dv.length() > arate * frame_time * 2 && 
+//				dv.length() > (arate + accel_rate) * frame_time * 2)
+			if ( dv.length() > 0.5 ) 
+			
 			{
 				attached = 0;
 				
@@ -450,6 +459,7 @@ void GerlHero::calculate()
 			}
 		}
 	}
+	
 
 
 	// commands transferred from the virtual ship
@@ -773,6 +783,8 @@ void GerlHero::calculate()
 // (I could've use handle_damage instead).
 void GerlHero::inflict_damage(SpaceObject *other)
 {
+	if (!state)
+		return;
 
 	if ( other->isShip() || other->isAsteroid() )
 	{
@@ -803,6 +815,7 @@ void GerlHero::inflict_damage(SpaceObject *other)
 	if ( other->isPlanet() )
 		state = 0;
 
+	// is already done by handle_damage:
 	if ( state == 0 )
 		mother->ship->crew -= 1;
 
@@ -823,6 +836,8 @@ void GerlHero::soundExplosion() {
 
 int GerlHero::handle_damage(SpaceLocation *other, double normal, double direct)
 {
+	if (!state)
+		return 0;
 
 	armour -= normal + direct;
 
@@ -866,7 +881,7 @@ GerlMorons::GerlMorons(GerlVirtualship *creator, SpaceLocation *brother, Vector2
 //	id = SPACE_SHIP;
 //	attributes |= ATTRIB_SHIP;
 
-	mass  = 10 + (random() % 10);
+	mass  = 15;
 
 	mother = creator;
 
@@ -884,7 +899,6 @@ GerlMorons::GerlMorons(GerlVirtualship *creator, SpaceLocation *brother, Vector2
 	crew_max = creator->crew_max;
 	crew = creator->crew;
 
-//	game->add_target(this);		// so that the AI enemy wants to attack it as well.
 }
 
 void GerlMorons::calculate()
