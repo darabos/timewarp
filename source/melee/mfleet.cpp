@@ -291,7 +291,11 @@ void init_fleet() {STACKTRACE
             if (!tmp1 || !tmp2)
                 return false;
 
-            return (strncmp(tmp1,tmp2,80) > 0);
+            bool result = (strncmp(tmp1,tmp2,80) > 0);
+            free(tmp1);
+            free(tmp2); 
+ 
+            return result;
        }
     };/**/
 
@@ -312,7 +316,13 @@ void init_fleet() {STACKTRACE
             if (!tmp1 || !tmp2)
                 return false;
 
-            return (strncmp(tmp1,tmp2,80) < 0);
+            bool result = (strncmp(tmp1,tmp2,80) < 0);
+
+            free(tmp1);
+            free(tmp2);
+
+            return result;
+
        }
     };/**/
 
