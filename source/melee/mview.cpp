@@ -23,6 +23,19 @@ REGISTER_FILE
 int FULL_REDRAW = 0;
 int camera_hides_cloakers = 0;
 
+
+// GeomanNL : there was a complaint about too large zoom values, so adding constraint here
+static const double max_zoom_value = 6000.0;
+static const double min_zoom_value = 700.0;
+static const double relaxed_zoom_value = 2000.0;
+
+void constrain(double x1, double *x, double x2)
+{
+	if (*x < x1)	*x = x1;
+	if (*x > x2)	*x = x2;
+}
+
+
                               // units
 View  *space_view;
 
@@ -490,6 +503,9 @@ void View_Everything::calculate (Game *game) {STACKTRACE
 	b = map_size.y * view_size.y * c;
 	if (b > a) a = b;
 	camera.z = a;
+
+	constrain(min_zoom_value, &camera.z, max_zoom_value);
+
 	return;
 	}
 
@@ -516,8 +532,11 @@ void View_Hero::calculate (Game *game) {STACKTRACE
 	CameraPosition n = camera;
 	if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
 	if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
-	if (n.z < min) n.z = min;
-	if (n.z > max) n.z = max;
+	//if (n.z < min) n.z = min;
+	//if (n.z > max) n.z = max;
+	
+	constrain(min_zoom_value, &n.z, max_zoom_value);
+
 	if (key_pressed(key_alter1)) f += 0.006 * frame_time;
 	else f -= 0.006 * frame_time;
 	if (f < 0) f = 0;
@@ -549,10 +568,17 @@ void View_Enemy::calculate (Game *game) {STACKTRACE
 			focus(&n, c, c->target);
 			n.z *= 1.4;
 		}
-		else focus(&n, c);
+		else
+		{
+			focus(&n, c);
+			n.z = relaxed_zoom_value;
+		}
 	}
 	else focus(&n, c);
-	if (n.z < 480) n.z = 480;
+
+	constrain(min_zoom_value, &n.z, max_zoom_value);
+
+	//if (n.z < 480) n.z = 480;
 	track(n);
 	return;
 }
@@ -577,10 +603,12 @@ void View_Enemy_Discrete::calculate (Game *game) {STACKTRACE
 	{
 		focus(&n, c);
 		// but, if the target is invisible, you usually want more zoom to plan where to go, right...
-		n.z = 900;
+		//n.z = 900;
+		n.z = relaxed_zoom_value;
 	}
 
-	if (n.z < 480) n.z = 480;
+	constrain(min_zoom_value, &n.z, max_zoom_value);
+	//if (n.z < 480) n.z = 480;
 
 
 	double ref_size = 480;
