@@ -7,6 +7,20 @@
 
   Revision history:
     2004.06.12 yb started
+
+This file is part of "Star Control: TimeWarp" 
+                    http://timewarp.sourceforge.net/
+Copyright (C) 2001-2004  TimeWarp development team
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 */
 
 #ifdef ALLEGRO_MSVC
@@ -28,11 +42,11 @@ REGISTER_FILE
 #include "../melee/mview.h" //for message.out()
 
 #include "AIBusterBot.h"
-#include "AIActions.h"
+#include "AIDefaultActions.h"
 using namespace AIBuster;
 
 AIBusterBot::AIBusterBot(const char *name, int channel) : 
-Control(name, channel)
+Control(name, channel), TimeToQuickRefresh(DefaultTimeToQuickRefresh), TimeToCompleteRefresh(DefaultTimeToCompleteRefresh)
 { 
 	clearPlans();
 }
@@ -61,20 +75,26 @@ void AIBusterBot::calculate()
 
 int AIBusterBot::think() 
 {
+	//nothing to think about if the object being controlled doesn't exist.
+	if (this->ship == NULL ||
+		this->ship->exists() == false)
+		return 0;
+
+	//decide how frequently the AI will perform lengthier procedures
 	static int nextQuickRefresh = game->game_time;
 	static int nextCompleteRefresh = game->game_time;
 
 	if (game->game_time >= nextCompleteRefresh) { 
 
-		nextQuickRefresh = game->game_time + AIBuster::TimeToQuickRefresh;
-		nextCompleteRefresh = game->game_time + AIBuster::TimeToCompleteRefresh ;
+		nextQuickRefresh = game->game_time + TimeToQuickRefresh;
+		nextCompleteRefresh = game->game_time + TimeToCompleteRefresh ;
 		
 		message.print(1000,15,"AI: Complete refresh. %i plans", plans.size());//TODO remove
 
 		this->completeRefreshPlans();
 	}
 	else if (game->game_time >= nextQuickRefresh) {
-		nextQuickRefresh = game->game_time + AIBuster::TimeToQuickRefresh;
+		nextQuickRefresh = game->game_time + TimeToQuickRefresh;
 
 		message.print(1000,15,"AI: Quick refresh. %i plans", plans.size());//TODO remove
 
@@ -164,7 +184,6 @@ AIAction * AIBusterBot::createAction(SpaceObject * object)
 		this->ship != NULL &&
 		object->get_team() != this->ship->get_team())  // asuming that all teams are pair-wise enemies
 	{
-		//action = new AIAction(100, object);
 		action = new AIActionAttack(100, object);
 
 	}
@@ -205,10 +224,6 @@ for (ap.begin (ship, bit (LAYER_CBODIES), planet_safe[state]);
 		}
 	}
 }/**/
-
-	
-
-
 
 
 

@@ -337,7 +337,7 @@ SOURCE=.\source\other\vtarget.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\source\ais\AIActions.h
+SOURCE=.\source\ais\AIAction.h
 # End Source File
 # Begin Source File
 
@@ -346,6 +346,10 @@ SOURCE=.\source\ais\AIBusterBot.cpp
 # Begin Source File
 
 SOURCE=.\source\ais\AIBusterBot.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ais\AIDefaultActions.h
 # End Source File
 # Begin Source File
 
