@@ -1225,23 +1225,21 @@ bool Game::handle_key(int k) {STACKTRACE
 		}
 		break;
 		case KEY_F7: {
-			if (!physics_locked) {
-				if (frame_time < 7) {
-					frame_time = 50;
-				}
-				else if (frame_time < 15) {
-					frame_time = 5;
-				}
-				else if (frame_time < 30) {
-					frame_time = 10;
-				}
-				else {
-					frame_time = 25;
-				}
-				message.print(1000, 15, "Game Tic rate set to %f / second", 1000./frame_time);
-				return true;
+			if (physics_locked) return false;
+			if (frame_time < 7) {
+				frame_time = 50;
 			}
-			return false;
+			else if (frame_time < 15) {
+				frame_time = 5;
+			}
+			else if (frame_time < 30) {
+				frame_time = 10;
+			}
+			else {
+				frame_time = 25;
+			}
+			message.print(1000, 15, "Game Tic rate set to %f / second", 1000./frame_time);
+			return true;
 		}
 		break;
 		case KEY_F8: {

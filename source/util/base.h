@@ -10,6 +10,24 @@
 #	endif
 #endif
 
+//#define TW_MALLOC_CHECK
+#ifdef TW_MALLOC_CHECK
+#	ifdef __cplusplus
+		extern "C" {
+#	endif
+	void *tw_malloc(int size);
+	void *tw_realloc(void *old, int size);
+	void tw_free(void *item);
+#	define malloc  tw_malloc
+#	define realloc tw_realloc
+#	define free    tw_free
+#	ifdef __cplusplus
+		}
+		static inline void *operator new(unsigned int size) {return tw_malloc(size);}
+		static inline void operator delete(void *item) {tw_free(item);}
+#	endif
+#endif
+
 #ifdef __cplusplus
 
 class __call_before_main { 

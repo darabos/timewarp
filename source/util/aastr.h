@@ -21,7 +21,7 @@
 #ifndef __bma_aastr_h
 #define __bma_aastr_h
 
-#include <allegro.h>
+
 
 /*
  * Sub-pixel precision

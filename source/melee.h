@@ -208,6 +208,7 @@ class Game;
 void options_menu (Game *game) ;
 void video_menu (Game *game) ;
 void audio_menu (Game *game) ;
+void view_menu (Game *game) ;
 void config_menu (Game *game) ;
 void physics_menu (Game *game) ;
 

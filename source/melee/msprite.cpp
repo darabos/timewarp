@@ -362,7 +362,7 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 			m[i] = tmp2[i];
 		}
 	}
-	delete tmp;
+	delete tmp2;
 	return;
 }
 

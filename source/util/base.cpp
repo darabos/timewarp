@@ -1,4 +1,5 @@
 
+#include <stdlib.h>
 #include "base.h"
 #include "errors.h"
 
@@ -10,6 +11,31 @@ COMPILE_TIME_ASSERT(sizeof(long)==4);
 __call_before_main::__call_before_main ( void (*func)() ) {
 	func();
 }
+
+#ifdef TW_MALLOC_CHECK
+#	undef malloc
+#	undef realloc
+#	undef free
+	void *tw_malloc(int size) {
+		void *r = malloc(size);
+		if (!r) error_oom();
+		return r;
+	}
+	void *tw_realloc(void *old, int size) {
+		void *r = realloc(old, size);
+		if (!r && size) error_oom();
+		return r;
+	}
+	void tw_free(void *mem) {
+		free(mem);
+	}
+/*	void *operator new(unsigned int size) {
+		return tw_malloc(size);
+	}
+	void operator delete(void *mem) {
+		tw_free(mem);
+	}*/
+#endif
 
 /*------------------------------
 		Base Class

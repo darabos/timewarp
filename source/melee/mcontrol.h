@@ -22,7 +22,7 @@ class Control : public Presence {
 
 	bool temporary;                   //true if this control will delete itself when it's ship dies
 	unsigned char target_sign_color;
-	int already;
+	int already;//this pertains to network traffic - see comment above calculate() in mcontrol.cpp
 	int channel;
 
 
@@ -84,6 +84,9 @@ class Control : public Presence {
 //half-assed network bypass for prediction
 	KeyCode *_prediction_keys;
 	unsigned char _prediction_keys_index;
+
+//for future mid-game lag changes
+	virtual void _event ( Event *e );
 	};
 
 

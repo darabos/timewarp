@@ -232,7 +232,7 @@ void GobGame::init(Log *_log) {
 	add_new_enemy();
 	this->change_view("Hero");
 	//view = get_view ( "Hero", NULL );
-	//view_locked = true;
+	view_locked = true;
 	view->window->locate(
 		0,0,
 		0,0,

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "round.h"
+
 #include "pmask.h"
 
 #ifdef USE_ALLEGRO
@@ -16,6 +16,10 @@
 #	include <SDL_video.h>
 #	include <SDL_endian.h>
 #endif
+
+
+#include "base.h"
+#include "round.h"
 
 
 #define MAX_INTVAL(int_type) ((((unsigned int_type)(-1))-1)/2)

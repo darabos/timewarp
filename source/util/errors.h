@@ -126,6 +126,16 @@ void deinit_error();  //de-initialize error handling routines
  */
 void tw_exit(int errorcode) ;
 
+/*
+ * void error_oom()
+ *
+ * If you have a critical Out Of Memory error, call this function.  
+ * It will quit TW and attempt to notify the user.  
+ *
+ */
+void error_oom();
+
+
 // not for user-code
 //this flag is set to 0 normally, or 1 to bypass error catching
 extern int __error_flag;

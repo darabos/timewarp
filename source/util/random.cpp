@@ -26,7 +26,7 @@ inline Uint32 _rng_dist_32_flat ( Uint32 m, Uint32 r ) {
 		}
 		return r;
 #	elif defined(__GNUC__) && defined(__i386__) && !defined(NO_ASM)
-		asm ("mull %0" : "=d" (r) : "a" (m), "0" (r) );
+		asm ("mull %0" : "=d" (r) : "%a" (m), "0" (r) );
 		return r;
 #	else //add gcc asm sometime
 		return (Uint32)((r * (Uint64)m) >> 32);
@@ -41,7 +41,6 @@ Uint32 RNG_lcg64a::randi(Uint32 max) {
 	return _rng_dist_32_flat(max, raw32());
 }
 Uint32 RNG_lcg64a::raw32() {
-
 #	if defined(_MSC_VER) && defined(__i386__) && !defined(NO_ASM)
 		split_int_64 i64 = s64;
 		_asm { mov eax, [i64.s.high] } 
@@ -55,9 +54,16 @@ Uint32 RNG_lcg64a::raw32() {
 		_asm { mov [i64.s.low], eax } 
 		_asm { mov [i64.s.high], ecx } 
 		s64 = i64;
-#	elif 0
-		//defined(__GNUC__) && !defined(NO_ASM)
-		//haven't written gcc code yet
+#	elif 0 && defined(__GNUC__) && !defined(NO_ASM)
+		Uint32 _blah;
+		asm (
+			"imull %3, %5"	"\n\t"
+			"mull  %3"		"\n\t"
+			"addl  %6, %1"	"\n\t"
+			"adcl  %0, %2"
+			: "=d" (_blah),      "=a" (i64.s.low), "=b" (i64.s.high)
+			: "0"  (MULTIPLIER), "1"  (i64.s.low),  "2" (i64.s.high),  "i" (ADDITIVE) 
+		);
 #	else
 		s64.whole = (s64.whole * MULTIPLIER) + ADDITIVE;
 #	endif

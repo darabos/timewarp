@@ -183,8 +183,8 @@ void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE
 	ship = ship_pointer;
 	if (ship) {
 		ship->control = this;
-		if ((channel != Game::channel_none) && (already != 0) && (already != game->lag_frames)) 
-			tw_error ("Control - known error");
+		if (temporary && (channel != Game::channel_none) && (already != 0) && (already != game->lag_frames)) 
+			tw_error ("Control::select_ship - bad operation (incompatible with networking)");
 		}
 	target_stuff() ;
 	return;
@@ -374,7 +374,21 @@ change:
 done:
 	return;
 	}
+
+/*
+lag / already state:
+
+	name				traffic							mark
+	stable presence		( old lf:1 new )				a = lf
+	buffering			( old a:1 (lf-a):0 new )		a >= 0
+	unbuffering			( old (lf-a):0 a:1 new )		a < 0
+
+
+*/
+
 void Control::calculate() {STACKTRACE
+
+	if (!exists()) return;
 
 	target_stuff();
 
@@ -386,35 +400,38 @@ void Control::calculate() {STACKTRACE
 		else keys = think();
 		}
 	
-	if (!ship) keys = 0;
+	if (!ship) {
+		keys = 0;
+		if (temporary) state = 0;
+		}
 
-	//THIS WILL CRASH
-	//IF A NETWORKED SHIP IS DESTROYED IN THE FIRST FEW FRAMES OF IT'S LIFE
-	//!!!!!!!!
 	if (channel != Game::channel_none) {
-		int lag = game->lag_frames;
-		if (!ship) {
-			lag = 0;
-			if (!already) {
-				if (temporary) this->die();
-				return;
-				}
-			}
+		//prediction stuff
 		_prediction_keys[_prediction_keys_index] = keys;
 		_prediction_keys_index = (_prediction_keys_index + 1) & (_prediction_keys_size-1);
-		if (already == lag) {
-			game->log_short(channel + Game::_channel_buffered, keys);
+		
+		//network prep for dieing (set state to unbuffering)
+		if (!ship && temporary && (already > 0)) already = -already;
+		
+		//network traffic
+		int lf = game->lag_frames;
+		if (0) ;
+		else if (already < 0) {//unbuffering
+			game->log->unbuffer(channel + Game::_channel_buffered, &keys, sizeof(KeyCode));
+			keys = intel_ordering_short(keys);
+			already += 1;
 			}
-		else if (already < lag) {
+		else if (already < lf) {//buffering
 			keys = intel_ordering_short(keys);
 			game->log->buffer(channel + Game::_channel_buffered, &keys, sizeof(KeyCode));
 			keys = intel_ordering_short(keys);
 			already += 1;
 			}
-		else {
-			game->log->unbuffer(channel + Game::_channel_buffered, &keys, sizeof(KeyCode));
-			keys = intel_ordering_short(keys);
-			already -= 1;
+		else if (already > lf) {//stupid error check
+			tw_error("Control::calculate() - inconcievable!");
+			}
+		else {//stable, perform no action
+			game->log_short(channel + Game::_channel_buffered, keys);
 			}
 		}
 
@@ -426,6 +443,10 @@ int Control::think() {STACKTRACE
 char *Control::getDescription() {STACKTRACE
 	return iname;
 	}
+void Control::_event(Event *e) {STACKTRACE
+	//add code for lag increase / decrease here
+	return;
+}
 Control::Control(const char *name, int _channel) : temporary(false), target_sign_color(255), 
 	already(0), channel(_channel), ship(NULL), 
 	target(NULL), index(-1), always_random(0), _prediction_keys(NULL) 

@@ -96,6 +96,15 @@ void log_debug(const char *format, ...) {
 	return;
 }
 
+void error_oom() {
+	if (debug_log_file) {
+		fprintf(debug_log_file, "\nCritical error: OUT OF MEMORY\n");
+		fflush(debug_log_file);
+		fclose(debug_log_file);
+	}
+	tw_exit(1);
+}
+
 #if defined(USE_ALLEGRO) && defined(DO_STACKTRACE)
 #else
 
