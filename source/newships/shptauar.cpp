@@ -1,3 +1,7 @@
+// Modifed by Jad: Changed at *Jumping Peppers*'s request to make this a Behemoth
+// so non-standard things were removed (IE: non-standard batt regen, and crew colors)
+#include <stdio.h>
+
 #include "../ship.h"
 #include "../util/aastr.h"
 #include "../melee/mcbodies.h"
@@ -35,7 +39,11 @@ class TauArchon : public Ship
 	double		specialVelocity, specialRange;
 	double		specialRangeLimiter;
 	double		specialMaxDivergence;
-	int			base_recharge_rate;
+	//int			base_recharge_rate; removed by Jad
+	int			orig_amount; // added by Jad
+	int			numDamage_steps, currentStep;
+	bool		bCoolDownThenCharge; // added by Jad
+	bool*		bDamage_steps;
 
 public:
 	TauArchon(Vector2 opos, double shipAngle,
@@ -45,9 +53,11 @@ public:
 	virtual void calculate_fire_weapon();
 	virtual void calculate_fire_special();
 	virtual void animate(Frame *space);
-	virtual RGB crewPanelColor(int k = 0);
-	virtual RGB battPanelColor(int k = 0);
+//	virtual RGB crewPanelColor(int k = 0); removed by Jad
+//	virtual RGB battPanelColor(int k = 0); also removed by Jad
 	virtual void calculate_hotspots();
+
+	bool ShotTakeBatt();
 
 };
 
@@ -61,6 +71,8 @@ class TauArchonShot : public Shot
 	double		old_range;
 	SpaceLocation	*rotation_base;
 	bool		do_reactive_damage;
+	
+	TauArchon*  owner; //added by Jad
 
 public:
 	TauArchonShot(SpaceLocation *creator, Vector2 opos, double oangle,
@@ -111,32 +123,82 @@ TauArchon::TauArchon(Vector2 opos, double shipAngle, ShipData *shipData, unsigne
 	specialMaxDivergence= get_config_float("Special", "MaxDivergence", 0);
 	specialRangeLimiter	= fabs(get_config_float("Special", "RangeLimiter", 0));
 	if (specialRangeLimiter > 1) specialRangeLimiter = 1;
-	base_recharge_rate	= recharge_rate;
+	
+	//base_recharge_rate	= recharge_rate;	removed by Jad
+	
+	// all code below added by Jad
+	
+	currentStep = 0;
+	
+	orig_amount			= get_config_int("Ship", "RechargeAmount", 0);
+	bCoolDownThenCharge = bool(get_config_int("Ship", "CoolDownThenCharge", 0));
+	
+	numDamage_steps		= get_config_int("Weapon", "DamageSteps", 0);
+
+	bDamage_steps = new bool[numDamage_steps];
+	//char* read = "Step#";
+	char read[6] = "Step#";
+	for(int i=0; i < numDamage_steps;i++)
+	{
+		// portability is in question here...
+		//read[4] = '1' + i;//char(i+1+48);
+		sprintf(read, "Step%i", i+1);
+		bDamage_steps[i] = bool(get_config_int("Weapon", read,0));
+
+	}
+
+	// </Jad's additions>
+}
+
+bool TauArchon::ShotTakeBatt()
+{
+	if(numDamage_steps > 0)
+	{
+		bool bWhat2Do;
+
+		bWhat2Do = bDamage_steps[currentStep];
+
+		currentStep = (currentStep + 1) % numDamage_steps;
+		
+		return bWhat2Do;
+	}
+		
+	return true;
 }
 
 
 void TauArchon::calculate()
 {
 STACKTRACE
+/* Removed by Jad at *Jumping Peppers*'s behest
 	recharge_rate = base_recharge_rate * (1 - batt / (double)batt_max);
 	if (recharge_rate <= frame_time)
 		recharge_rate = frame_time + 1;
 	if (recharge_rate <= 2*weapon_rate)
 		recharge_rate = 2*weapon_rate + 1;
 	recharge_amount = batt_max;
-
+*/
 	Ship::calculate();
 	
-	if ((fire_weapon || fire_special) && (batt >= weapon_drain/(double)special_drain)/* && (weapon_recharge <= 0)*/) {
+	if ((fire_weapon || fire_special) && (batt >= weapon_drain/(double)special_drain)/* && (weapon_recharge <= 0)*/)
+	{
 		weapon_charge_counter += frame_time;
 		if (weapon_charge_counter > weaponChargeTime)
 			weapon_charge_counter = weaponChargeTime;
 //		recharge_step = recharge_rate;
 	}
-	else {
+	else 
+	{
+		if(bCoolDownThenCharge)
+			recharge_amount = 0;
 		weapon_charge_counter -= frame_time;
 		if (weapon_charge_counter < 0)
-			weapon_charge_counter = 0; }
+		{
+			weapon_charge_counter = 0;
+			if(bCoolDownThenCharge)
+				recharge_amount = orig_amount;
+		}
+	}
 
 	if (weapon_sound_timer > 0)
 		weapon_sound_timer -= frame_time;
@@ -152,11 +214,14 @@ STACKTRACE
 
 	if ((fire_weapon || fire_special) && (weapon_charge_counter >= weaponChargeTime))
 
-		while (weapon_recharge <= 0) {
+		while (weapon_recharge <= 0)
+		{
 			
-			if (batt < weapon_drain/(double)special_drain) {
+			if (batt < weapon_drain/(double)special_drain)
+			{
 				weapon_low = true;
-				return; }
+				return; 
+			}
 
 			double rx = tw_random(-12.0, 12.0);
 			double ax = (rx/3.0) * ANGLE_RATIO;
@@ -171,18 +236,21 @@ STACKTRACE
 
 			batt -= (weapon_drain/(double)special_drain);//*0.9999;
 
-			if (batt < 0) batt = 0;
+			if (batt < 0) 
+				batt = 0;
 
 			recharge_step = recharge_rate;
 
 			weapon_recharge += weapon_rate;
 
-			if (weapon_sound_timer <= 0) {
+			if (weapon_sound_timer <= 0) 
+			{
 				if (fire_special)
 					play_sound(data->sampleSpecial[0]);
 				else
 					play_sound(data->sampleWeapon[0]);
-				weapon_sound_timer = weaponSoundTimer * tw_random(0.49, 1.63); }
+				weapon_sound_timer = weaponSoundTimer * tw_random(0.49, 1.63);
+			}
 		}
 	return;
 }
@@ -200,13 +268,19 @@ void TauArchon::animate(Frame *space)
 {
 STACKTRACE
 	int aa = get_tw_aa_mode();
-	if ((weapon_charge_counter > 0) && (aa & AA_BLEND) && !(aa & AA_NO_AA)) {
+	if ((weapon_charge_counter > 0) && (aa & AA_BLEND) && !(aa & AA_NO_AA)) 
+	{
 		int	_old_trans = aa_get_trans();
+		
 		sprite->animate(pos, sprite_index, space);
+
 		aa_set_trans(255.0*(1-weapon_charge_counter/(double)weaponChargeTime));
+
 		if (aa_get_trans() < 255)
 			data->more_sprites[0]->animate(pos, sprite_index, space);
-		aa_set_trans(_old_trans); }
+
+		aa_set_trans(_old_trans); 
+	}
 	else
 		if (weapon_charge_counter > weaponChargeTime/2.0)
 			data->more_sprites[0]->animate(pos, sprite_index, space);
@@ -214,7 +288,7 @@ STACKTRACE
 			sprite->animate(pos, sprite_index, space);
 }
 
-
+/*	Removed by Jad
 RGB TauArchon::crewPanelColor(int k)
 {
 	RGB c = {255, 255, 255};
@@ -227,7 +301,7 @@ RGB TauArchon::battPanelColor(int k)
 	RGB c = {85, 85, 255};
 	return c;
 }
-
+*/
 
 void TauArchon::calculate_hotspots()
 {
@@ -235,7 +309,7 @@ STACKTRACE
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation( this, 
 				normal_pos() - unit_vector(angle) * 15,
-				meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+				data->spriteExtra, 0, 12, time_ratio, DEPTH_HOTSPOTS));
 		hotspot_frame += hotspot_rate; }
 	if (hotspot_frame > 0) hotspot_frame -= frame_time;
 	return;
@@ -286,6 +360,9 @@ TauArchonShot::TauArchonShot(SpaceLocation *creator, Vector2 opos, double oangle
 	else
 		rotation_base = NULL;
 
+	// added by Jad
+	owner = ((TauArchon*)creator);
+
 }
 
 
@@ -324,30 +401,43 @@ void TauArchonShot::inflict_damage(SpaceObject *other)
 STACKTRACE
 	double d_f = damage_factor;
 
-	if (other->isShip()) {
-		double bt = ((Ship*)other)->batt;
-		other->handle_fuel_sap(this, fuel_sap);
-		bt -= ((Ship*)other)->batt;
-		if ((bt > 0) && (fuel_sap > 0)) {
-			bt /= fuel_sap;
-			if (bt < 1)
-				damage_factor *= 1 - bt;
-			else 
-				damage_factor = 0;}
-		if (damage_factor < min_damage)
-			damage_factor = min_damage;
+	if (other->isShip()) 
+	{
+		// added by Jad
+		if(((TauArchon*)owner)->ShotTakeBatt())
+		{	// </addition>
+		
+			double bt = ((Ship*)other)->batt;
+			other->handle_fuel_sap(this, fuel_sap);
+			bt -= ((Ship*)other)->batt;
+			if ((bt > 0) && (fuel_sap > 0)) 
+			{
+				bt /= fuel_sap;
+				if (bt < 1)
+					damage_factor *= 1 - bt;
+				else 
+					damage_factor = 0;
+			}
+			if (damage_factor < min_damage)
+				damage_factor = min_damage;
+		}
 	}
-	else {
+	else 
+	{
 		other->handle_fuel_sap(this, fuel_sap);
-		damage_factor = min_damage; }
+		damage_factor = min_damage; 
+	}
 
 	bool freeze = false;
 
-	if (other->isShip() && do_freeze) {
-		if ((((Ship*)other)->crew <= damage_factor ) && (!other->isProtected())) {
+	if (other->isShip() && do_freeze) 
+	{
+		if ((((Ship*)other)->crew <= damage_factor ) && (!other->isProtected())) 
+		{
 			freeze = true;
 			other->die();
-			game->ship_died(((Ship*)other), this); }
+			game->ship_died(((Ship*)other), this); 
+		}
 	}
 /*	else
 		if (other->isAsteroid()) {
@@ -359,7 +449,8 @@ STACKTRACE
 			freeze = true;
 		}*/
 
-	if (freeze) {
+	if (freeze) 
+	{
 		BITMAP* bmp = other->get_sprite()->get_bitmap_readonly( other->get_sprite_index() );
 		BITMAP* tmp;
 		int mcol = bitmap_mask_color( bmp );
