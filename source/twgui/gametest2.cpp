@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "../melee.h"
 REGISTER_FILE

@@ -31,6 +31,11 @@ BASE_NAMES = $(basename $(notdir $(FILELIST)))
 POBJS = $(addsuffix .o,$(BASE_NAMES))
 PDEPS = $(addsuffix .d,$(BASE_NAMES))
 
+ARCH = $(shell echo `arch`)
+ifeq ($(ARCH),ppc)
+ARCH    = powerpc
+endif
+
 #FILELIST = source /s.cpp
 
 ifdef debug
@@ -38,7 +43,7 @@ ifdef debug
 	OBJDIR := ${addsuffix -debug,$(OBJDIR)}
 	NAME := ${addsuffix -debug,$(NAME)}
 else
-	CFLAGS += -O -mcpu=i686 -s
+	CFLAGS += -O -mcpu=$(ARCH) -s
 endif
 
 ifdef NO_JGMOD
@@ -56,10 +61,10 @@ else
 	CFLAGS += -DLINUX
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
-	LIBS += ${shell allegro-config --libs}
+	LIBS += ${shell allegro-config --libs} -L/usr/X11R6/lib -lfreetype
 endif
 
-CFLAGS += -I./source -I./source/gamex
+CFLAGS += -I./source -I./source/gamex -I/usr/X11R6/include/freetype2
 
 #CFLAGS += ${addprefix -I./, $(VPATH)}
 

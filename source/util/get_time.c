@@ -55,6 +55,7 @@ Three sections:
 #	include "types.h"
 #endif
 #include "get_time.h"
+#include "base.h"
 #include "errors.h"
 
 

@@ -770,7 +770,7 @@ void Surface3D::reset(int planet_diameter, BITMAP *color_map,
 				// observer is perp. to the screen ?
 
 
-				if (fabsl(zz) > 1e-10) {
+				if (fabs(zz) > 1e-10) {
 					if (zz > 0) lon = atan(xx/zz);
 					else lon = PI+atan(xx/zz); }
 				else
