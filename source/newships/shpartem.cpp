@@ -292,6 +292,8 @@ void TempestWave::calculate()
 	if ( (d / range) > (.75) )
 		sprite_index = iround(shit_angle / 5.625) + 192;
 
+	sprite_index &= 255;
+
 	if (!wave_range && tempest->exists()) {
 
 		if (d > (range / tempest->weaponWaves) ) {
