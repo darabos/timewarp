@@ -31,3 +31,4 @@ res = 800
 [FleetInit]
 PlayerAlliance = 0
 EnemyAlliance = 1
+
