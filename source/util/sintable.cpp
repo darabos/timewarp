@@ -12,7 +12,7 @@ void init_sintable() {
 	int i;
 	for (i = 0; i < 1 + (1 << SINTABLE_WIDTH_BITS); i += 1) {
 		double f = i / (double)(1 << SINTABLE_WIDTH_BITS);
-		f = sin(f * 3.14159265358979323 * 2);
+		f = sin(f * PI * 2);
 		_sintable_table[i] = (float)f;
 	}
 	sintable_inited = 1;

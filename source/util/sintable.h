@@ -1,4 +1,4 @@
-
+#include "../melee.h"
 #include "round.h"
 
 #define SINTABLE_WIDTH_BITS 8
@@ -23,16 +23,16 @@ double fixed_sin2(int angle);
 double fixed_cos2(int angle);
 
 inline double fast_sin ( double angle ) {
-	return fixed_sin(iround(angle * ((1 << 23) / 3.14159265358979323)));
+	return fixed_sin(iround(angle * ((1 << 23) / PI)));
 }
 inline double fast_cos ( double angle ) {
-	return fixed_cos(iround(angle * ((1 << 23) / 3.14159265358979323)));
+	return fixed_cos(iround(angle * ((1 << 23) / PI)));
 }
 inline double fast_sin2 ( double angle ) {
-	return fixed_sin2(iround(angle * ((1 << 23) / 3.14159265358979323)));
+	return fixed_sin2(iround(angle * ((1 << 23) / PI)));
 }
 inline double fast_cos2 ( double angle ) {
-	return fixed_cos2(iround(angle * ((1 << 23) / 3.14159265358979323)));
+	return fixed_cos2(iround(angle * ((1 << 23) / PI)));
 }
 
 

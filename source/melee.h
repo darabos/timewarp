@@ -3,13 +3,17 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <allegro.h>
+
 #ifndef PI
-#	define PI 3.14159265358979323846
+//#	define PI 3.14159265358979323846
+#define PI AL_PI
 #endif
 #ifdef PI2
 #	undef PI2
 #endif
 #define PI2 (PI*2)
+
 #ifndef MAXINT
 	#define MAXINT 0x7FFFFFFF
 #endif
@@ -210,8 +214,8 @@ void config_menu (Game *game) ;
 void physics_menu (Game *game) ;
 
 
-#define ANGLE_RATIO     (3.1415926535 / 180.0)//radians per degree
-#define RANGE_RATIO     40.0					//???
+#define ANGLE_RATIO     (PI / 180.0) //radians per degree
+#define RANGE_RATIO     40.0		 //???
 
 extern double distance_ratio;
 extern int time_ratio;

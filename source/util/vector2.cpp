@@ -3,7 +3,7 @@
 #include "vector2.h"
 #include "random.h"
 #include "round.h"
-
+#include "../melee.h"
 
 Vector2::Vector2(Vector2i v2i) : x(v2i.x), y(v2i.y) {}
 Vector2i Vector2::round()
@@ -22,7 +22,7 @@ double Vector2::length () const {
 double Vector2::angle() const {
 	if (*this == 0) return 0;
 	double a = atan2(y, x);
-	if (a < 0) a += 3.14159265358979323846 * 2;
+	if (a < 0) a += PI2;
 	return a;
 }
 

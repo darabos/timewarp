@@ -289,7 +289,7 @@ void BubalosMIRV::calculate() {
 	}
 	else if (target && target->exists()) {
 		if ((distance(target) < MinSplitRadius) || (d >= range)) {
-      SplitRad = this->mirvSplitAngle * 3.14159 / 180;
+      SplitRad = this->mirvSplitAngle * ANGLE_RATIO;
 		  BubalosHMissile *BHMissile;
       BHMissile = (new BubalosHMissile(0,0,this->angle+SplitRad ,mirvVelocity,
 			  mirvDamage, mirvRange, mirvArmour,mirvTurnRate,
@@ -328,14 +328,14 @@ void BubalosBomber::death() {
 	  add(new Animation(this, CenterPoint, data->spriteExtra, 0, 6, 50, LAYER_EXPLOSIONS));
   }
   if(random()%100 < explosionPercentChanceShrapnel) {
-    radInc = 2 * 3.14159 / explosionShrapnelNumber1;
+    radInc = PI2 / explosionShrapnelNumber1;
     for(i=0; i<explosionShrapnelNumber1; i++) {
       M = new Missile(this, CenterPoint, radInc * i, explosionShrapnelSpeed1,
         explosionShrapnelDamage1, explosionShrapnelRange1, explosionShrapnelArmour1,
         this, this->data->spriteExtraExplosion, 0);
       game->add(M);
     }
-    radInc = 2 * 3.14159 / explosionShrapnelNumber2;
+    radInc = PI2 / explosionShrapnelNumber2;
     for(i=0; i<explosionShrapnelNumber2; i++) {
       M = new Missile(this, CenterPoint, radInc * i, explosionShrapnelSpeed2,
         explosionShrapnelDamage2, explosionShrapnelRange2, explosionShrapnelArmour2,

@@ -152,7 +152,7 @@ int ScloreFrigate::activate_weapon() {
   }
   for(i=0;i<weaponMultiplicity;i++) {
     deflection = (random() % (weaponAngleVariance * 2 + 1))-weaponAngleVariance;
-    deflectionRad = (double)deflection * 3.14159 / 180.0;
+    deflectionRad = (double)deflection * ANGLE_RATIO;
     launchPoint = -launchPoint;
     game->add(new ScloreShot(size.y*launchPoint*(0.4), (size.y * 0.35),
       angle+deflectionRad, weaponVelocity, weaponDamage, weaponRange, 

@@ -306,7 +306,7 @@ int VenKekFrigate::activate_weapon() {
   int i;
   for(i=0;i<weaponMultiplicity;i++) {
     deflection = (random() % (weaponAngleVariance * 2 + 1))-weaponAngleVariance;
-    deflectionRad = (double)deflection * 3.14159 / 180.0;
+    deflectionRad = (double)deflection * ANGLE_RATIO;
     launchPoint = -launchPoint;
     game->add(new VenKekShot(size.y*launchPoint*(0.19), (size.y * 0.27),
       angle+deflectionRad, weaponVelocity, weaponDamage, weaponRange, 
@@ -329,7 +329,7 @@ void VenKekFrigate::createThrust(void) {
     Thrust->damagePerSecond = this->thrustDamagePerSecond; 
     return;
   }
-  Thrust = new VenKekThrust(this, Vector2(0,this->size.x * 0.0), this->angle + 3.14159,
+  Thrust = new VenKekThrust(this, Vector2(0,this->size.x * 0.0), this->angle + PI,
     0, 1, -1, 1, this, data->spriteSpecial, 0);
   Thrust->creator = this;
   Thrust->vel = this->vel;
@@ -413,7 +413,7 @@ void VenKekThrust::calculate(void) {
       distMult = 0.90;
       break;
     }
-    rotRad = rotDeg / 180 * 3.14159;
+    rotRad = rotDeg * ANGLE_RATIO;
     relPos = relPos.rotate(rotRad) * distMult;
   }
   if(!launched && creator!=NULL && creator->exists()) {

@@ -113,7 +113,7 @@ YuryulPatriot::YuryulPatriot(Vector2 opos, double angle, ShipData *data, unsigne
   specialDamage   = get_config_int("Special", "Damage", 0);
   specialArmour   = get_config_int("Special", "Armour", 0);
   specialReleaseAngle = get_config_float("Special", "ReleaseAngle", 0);
-  specialReleaseAngleRad = specialReleaseAngle * 3.14159 / 180.0;
+  specialReleaseAngleRad = specialReleaseAngle * ANGLE_RATIO;
   specialDecayFrames = get_config_int("Special", "DecayFrames", 0);
 
   thrustRange    = scale_range(get_config_float("Thrust", "Range", 0));
