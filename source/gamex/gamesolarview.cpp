@@ -1,6 +1,7 @@
 
 #include <allegro.h>
 #include <stdio.h>
+#include <string.h>
 //#include <string.h>
 
 #include "../melee.h"
@@ -17,6 +18,38 @@ REGISTER_FILE
 #include "stuff/space_body.h"
 #include "stuff/backgr_stars.h"
 
+#include "../twgui/twgui.h"
+#include "../twgui/twmenuexamples.h"
+
+#include "general/sprites.h"
+#include "gamestarmap.h"
+
+
+static GameSolarview *gsolar;
+
+
+
+// scan the normal files:
+
+void set_filelist(TextList *tl, char *scanname)
+{
+	int err;
+	al_ffblk info;
+	
+	tl->clear_optionlist();
+	
+	err = al_findfirst(scanname, &info, FA_ARCH);	
+	
+	while (!err)
+	{
+		if (strcmp(info.name, ".") && strcmp(info.name, "..") )
+			tl->add_optionlist(info.name);
+		
+		err = al_findnext(&info);
+	}
+	
+	al_findclose(&info);
+}
 
 
 
@@ -98,7 +131,7 @@ MapObj *MapEditor2::create_mapobj(Vector2 pos)
 
 	SolarBody	*s;
 
-	s = new SolarBody(0, pos, 0.0, Tedit->showspr(), mapcenter, Tedit->isel,
+	s = new SolarBody(0, pos, 0.0, Tedit->tv->makespr(), mapcenter, Tedit->tv->isel,
 		mapcenter+Poffs, R, b, col	// ellips information
 		);
 
@@ -106,34 +139,115 @@ MapObj *MapEditor2::create_mapobj(Vector2 pos)
 }
 
 
-void MapEditor2::calculate()
+
+void MapEditor2::move()
 {
-	MapEditor::calculate();
-
-	if (selection && moveselection)
-	{
+	MapEditor::move();
 
 
-		SolarBody	*s;
-		s = (SolarBody*) selection;
-
-		s->stayhere = s->pos;	// in this case, movement is allowed ...
-
-		Vector2 Poffs;
-		int col;
-		double R;
-
-		ellipsparams(s->pos - mapcenter, s->ellipsb,
-				  R, Poffs, col);
-
-		s->ellipsR = R;
-		s->ellipscol = col;
-		s->ellipscenter = mapcenter + Poffs;
-
-		s->drawshadow();
-	}
+	SolarBody	*s;
+	s = (SolarBody*) selection;
+	
+	s->stayhere = s->pos;	// in this case, movement is allowed ...
+	
+	Vector2 Poffs;
+	int col;
+	double R;
+	
+	ellipsparams(s->pos - mapcenter, s->ellipsb,
+		R, Poffs, col);
+	
+	s->ellipsR = R;
+	s->ellipscol = col;
+	s->ellipscenter = mapcenter + Poffs;
+	
+	s->drawshadow();
 }
 
+
+void MapEditor2::replace()
+{
+	MapEditor::replace();
+
+	isurfacetype = gsolar->tv2->isel;
+
+	colorizeobj((SolarBody*) selection);
+
+	gsolar->save_surface();
+}
+
+
+void MapEditor2::newselection()
+{
+	// if a new planet is selected, read its info from the star file !
+	MapEditor::newselection();
+
+	gsolar->init_surface();
+
+	isurfacetype = gsolar->tv2->isel;
+
+	// also ... the planet picture is ...
+	int k;
+	k = selection->starnum;
+	Tedit->tv->set_sel( gsolar->solarmap->sub[k]->type );
+}
+
+
+
+void MapEditor2::colorizeobj(SolarBody *s)
+{
+	s->drawshadow();
+	// this resets the sprite and adds shade ?
+
+	SpaceSprite *spr = s->get_sprite();
+
+	double rc, gc, bc, r_ref, g_ref, b_ref;
+	avcolor( gsolar->surfacebmp[isurfacetype], &r_ref, &g_ref, &b_ref);
+	double temperature = 5500.0;
+	
+	double rat, gat, bat;	// extra atmospheric weight.
+	rat = 0.7;	// you don't have that on a starship,
+	gat = 0.6;	// but well, this makes it more understandable
+	bat = 0.4;	// for us earthdwellers ... otherwise the sun would look slightly blueish ...
+	// the blue reduction is somewhat exaggerated
+	
+	rc = spec_r(temperature) * rat * r_ref;
+	gc = spec_g(temperature) * gat * g_ref;
+	bc = spec_b(temperature) * bat * b_ref;
+	
+	balance(&rc, &gc, &bc);
+	colorize(spr, rc, gc, bc);
+	brighten(spr);
+}
+
+
+void MapEditor2::add()
+{
+	//GameSolarview *gs = (GameSolarview*)physics;
+
+	MapEditor::add();
+	
+	// you need a new random number (plus check it doesn't exist yet)
+	int id;
+	for (;;)
+	{
+		id = random();
+		// check all things in the list ... but you've to start at the root ?!
+	}
+
+
+	// set other stuff as well ... the surface parameter, eg... and color
+	// the sprite based on this thingy !!
+
+	isurfacetype = gsolar->tv2->isel;
+
+	colorizeobj((SolarBody*) selection);
+
+
+	// write stuff to a .ini file ...
+
+	gsolar->save_surface();
+}
 
 
 
@@ -153,6 +267,7 @@ void GameSolarview::init_menu()
 
 void GameSolarview::init()
 {
+	gsolar = this;
 
 	GameBare::init();
 
@@ -168,14 +283,18 @@ void GameSolarview::init()
 
 
 	// create star objects ?!
-	int istar;
-	MapSpacebody *starmap, *solarmap;
+	
 	starmap = mapeverything.region[0];	// use the starmap of the 1st region
 
 //	playerinfo.istar = 0;
+	int istar;
 	istar = playerinfo.istar;
 	if (istar < 0)
+	{
 		istar = 0;
+		playerinfo.istar = istar;
+	}
+	starnum = istar;
 
 	solarmap = starmap->sub[istar];	// use the solarsystem belonging to that star
 
@@ -204,15 +323,28 @@ void GameSolarview::init()
 	solarbody->collide_flag_sameship = 0;
 
 	// load planet sprites
+	planettypespr = new SpaceSprite* [planettypelist->N];
 	int i;
 	for ( i = 0; i < planettypelist->N; ++i )
 	{
 		char tmp[512];
 		sprintf(tmp, "gamex/solarview/planet_%s_01.bmp", planettypelist->type[i].type_string);
-		planetspr[i] = create_sprite( tmp, SpaceSprite::MASKED );
+		planettypespr[i] = create_sprite( tmp, SpaceSprite::MASKED );
+	}
+
+	// load surface bitmaps
+	surfacebmp = new BITMAP* [surfacetypelist->N];
+	for ( i = 0; i < surfacetypelist->N; ++i )
+	{
+		char tmp[512];
+		sprintf(tmp, "gamex/planetscan/surface_%s_01.bmp", surfacetypelist->type[i].type_string);
+		load_bitmap32(&surfacebmp[i], tmp);
+		scale_bitmap32(&surfacebmp[i], 0.2);
 	}
 
 	// load the planet data
+
+
 	for ( i = 0; i < solarmap->Nsub; ++i )
 	{
 		Vector2 Poffs;
@@ -226,8 +358,38 @@ void GameSolarview::init()
 		int k;
 		k = solarmap->sub[i]->type;
 
-		solarbody = new SolarBody(0, solarmap->sub[i]->position, 0.0, planetspr[k], sunpos, i,
-									sunpos+Poffs, R, b, col	// ellips information
+		planetspr = new SpaceSprite(planettypespr[k]->get_bitmap(0));
+		// change the color according to the surface and the star...
+
+		char tmp[512];
+		sprintf(tmp, "gamex/gamedata/surface/%08X.ini", solarmap->sub[i]->id);
+		set_config_file(tmp);
+		strcpy(tmp, get_config_string(0, "surface", "default"));
+		k = surfacetypelist->get_index(tmp, 0);
+		
+		double rc, gc, bc, r_ref, g_ref, b_ref;
+		avcolor(surfacebmp[k], &r_ref, &g_ref, &b_ref);
+		double temperature = 5500.0;
+
+		double rat, gat, bat;	// extra atmospheric weight.
+		rat = 0.7;	// you don't have that on a starship,
+		gat = 0.6;	// but well, this makes it more understandable
+		bat = 0.4;	// for us earthdwellers ... otherwise the sun would look slightly blueish ...
+		// the blue reduction is somewhat exaggerated
+
+		rc = spec_r(temperature) * rat * r_ref;
+		gc = spec_g(temperature) * gat * g_ref;
+		bc = spec_b(temperature) * bat * b_ref;
+
+		balance(&rc, &gc, &bc);
+		colorize(planetspr, rc, gc, bc);
+		brighten(planetspr);
+
+
+	
+		solarbody = new SolarBody(0, solarmap->sub[i]->position, 0.0,
+			planetspr,
+			sunpos, i, sunpos+Poffs, R, b, col	// ellips information
 									);
 		solarmap->sub[i]->o = solarbody;
 		add(solarbody);
@@ -256,19 +418,45 @@ void GameSolarview::init()
 	ptr = new MousePtr (mousespr);
 	add(ptr);
 
-	Tedit = new IconTV("gamex/interface/starmap/edit", 400, 200, game_screen);
+
+	FONT *usefont = videosystem.get_font(3);
+
+	// Button that displays the name of the planet.
+	starname = new TextEditBox(T, "starname_", usefont, solarmap->name, sizeof(solarmap->name));
+	starname->set_textcolor(makecol(255,255,0));
+	strcpy(oldstarname, solarmap->name);
+
+	
+	Tedit = new IconTV("gamex/interface/planetview/edit", 1400, 900, game_screen);
 	Tedit->exclusive = false;
 	bnew = new Button(Tedit, "new_");
 	breplace = new Button(Tedit, "replace_");
-	Tedit->setsprites(planetspr, planettypelist->N);
+	Tedit->tv->set(planettypespr, planettypelist->N);
+
+	tv2 = new TVarea(Tedit, "plot2_");
+	tv2->set(surfacebmp, surfacetypelist->N);
+
+	ve = new ValueEdit(Tedit, "values_", usefont, 64);
+
+	ve->info->text_color = makecol(200,200,200);
+	ve->edit->text_color = makecol(200,200,200);
+
+	ve->values[0]->set(vtype_float, "atmospheric pressure", 0.0, 100.0);
+	ve->values[1]->set(vtype_float, "radius (es)", 0.1, 100.0);
+	ve->values[2]->set(vtype_float, "density (kg/m3)", 0.5, 6.0);
+	ve->values[3]->set(vtype_float, "day (es))", 0.0, 100.0);
+	ve->values[4]->set(vtype_float, "tilt (degr)", 0.0, 90.0);
+	ve->values[5]->set(vtype_float, "albedo", 0.0, 1.0);
+	ve->values[6]->set(vtype_float, "greenhouse", 0.0, 1.0);
+	ve->values[7]->set(vtype_int, "weather", 0, 9);
+	ve->values[8]->set(vtype_int, "tectonics", 0, 9);
 
 	T->add(Tedit);
 	T->tree_doneinit();
 
 	Tedit->show();
 	Tedit->focus();
-	Tedit->layer = 1;	// shown first
-	T->layer = 2;		// always shown later
+
 
 	mapeditor = new MapEditor2();
 	mapeditor->set_game(this, ptr);
@@ -276,6 +464,73 @@ void GameSolarview::init()
 	mapeditor->set_mapinfo( solarmap, 2, 1.0);
 
 	mapeditor->mapcenter = sunpos;
+
+
+	// initialize the colony placer/editor
+
+
+	Popup *cedit;
+	cedit = new Popup("gamex/interface/planetview/editcol", 200, 500, game_screen);
+
+
+	cnew = new Button(cedit, "new_");
+	crem = new Button(cedit, "rem_");
+	cupdate = new Button(cedit, "update_");
+
+	char *pop_size = new char [16];
+	strcpy(pop_size, "1000");
+	cpop = new TextEditBox(cedit, "population_", usefont, pop_size, 16);
+	cpop->set_textcolor(makecol(255,128,128));
+
+	crace = new TextButton(cedit, "race_", usefont);
+	crace->passive = false;
+
+	cdialogname = new TextButton(cedit, "dialogname_", usefont);
+	cdialogname->passive = false;
+
+	cedit->doneinit();
+
+	T->add(cedit);
+	cedit->show();
+
+	// initialize the racelist popup window ...
+	//PopupList *rpopup;
+
+	// construct a list of races ...
+	RaceInfo *ri;
+	ri = racelist.first;
+	int N = 0;
+	while (ri)
+	{
+		list[N] = ri->id;
+		ri = ri->next;
+		++N;
+	}
+
+	// race selection screen
+	rpopup = new PopupList(crace, "gamex/interface/planetview/list", "list_",
+		10, 10, usefont, 0);
+	rpopup->tbl->set_optionlist(list, N, makecol(200,200,200));
+
+	rpopup->doneinit();
+	T->add(rpopup);
+
+
+	// dialog selection screen
+
+	dpopup = new PopupList(cdialogname, "gamex/interface/planetview/list", "list_",
+		10, 10, usefont, 0);
+	//dpopup->tbl->set_optionlist(dialoglist, N, makecol(200,200,200));
+
+	dpopup->doneinit();
+	T->add(dpopup);
+
+
+	Tedit->layer = 1;	// shown first
+	cedit->layer = 1;	// shown first
+	rpopup->layer = 1;
+	dpopup->layer = 1;
+	T->layer = 2;		// always shown later
 }
 
 
@@ -285,17 +540,36 @@ void GameSolarview::quit()
 	delete playerspr;
 
 	int i;
+	
 	for ( i = 0; i < planettypelist->N; ++i )
-		delete planetspr[i];
+		delete planettypespr[i];
+	delete planettypespr;
+	
+//	for ( i = 0; i < solarmap->Nsub; ++i )
+//		delete planetspr[i];
+//	delete planetspr;
+
+	for ( i = 0; i < surfacetypelist->N; ++i )
+		del_bitmap(&surfacebmp[i]);
+	delete surfacebmp;
 
 	if (!hardexit)	// game is not quitted completely
 	{
+		// set the player position exactly equal to the star for appearing in solar orbit
+		MapSpacebody *starmap;
+		starmap = mapeverything.region[0];
+		playerinfo.pos = starmap->sub[playerinfo.istar]->position * starmap->scalepos;
+		playerinfo.vel = 0;
+
 		playerinfo.istar = -1;	// cause you've left the solar system
 		playerinfo.angle = player->angle;
 	}
 	else
 		playerinfo.sync(player);
 
+
+	if (strcmp(solarmap->name, oldstarname))
+		mapeditor->maphaschanged = true;
 
 	if (mapeditor->maphaschanged)
 	{
@@ -360,6 +634,113 @@ void GameSolarview::calculate()
 	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
 	mapeditor->calculate();
 
+
+	// colony editor stuff
+
+	if (rpopup->ready())
+	{
+		int k;
+		k = rpopup->getvalue();
+		if (k >= 0)
+			crace->set_text(rpopup->tbl->optionlist[k], makecol(200,255,200));
+
+
+		// construct a list of available dialogs for the race ...
+		
+		if (crace->text)
+		{
+			char scanname[512];
+			strcpy(scanname, "gamex/gamedata/races/");
+			strcat(scanname, crace->text);
+			strcat(scanname, "/*.dialog");
+			
+			set_filelist(dpopup->tbl, scanname);
+		}
+	}
+
+	
+	if (dpopup->ready())
+	{
+		int k;
+		k = dpopup->getvalue();
+		if (k >= 0)
+			cdialogname->set_text(dpopup->tbl->optionlist[k], makecol(200,255,200));
+	}
+
+
+	if (mapeditor->selection)
+	{
+		// which location are we at
+		int istar, iplan, imoon;
+
+		istar = starnum;
+		iplan = mapeditor->selection->starnum;
+		imoon = -1;
+
+		// which race are we dealing with
+		RaceInfo *ri = 0;
+		if (crace->text)
+			ri = racelist.get(crace->text);
+
+		if (ri)
+		{
+
+			// check if there's a colony at this location, for the given race
+			RaceColony *rc = 0;
+			rc = ri->find_colony(istar, iplan, imoon);
+			
+			
+			if (cnew->flag.left_mouse_press && rc == 0 && cdialogname->text)
+			{
+				// create a new colony on the selected planet
+				// if it's not yet occupied by this race
+
+				rc = new RaceColony(ri);
+				
+				ri->add(rc);
+				
+				rc->locate(istar, iplan, imoon);
+				
+				rc->set_info( atoi(cpop->get_text()), cdialogname->text );
+				
+				rc->calculate();
+			}
+			
+			
+			
+			if (cupdate->flag.left_mouse_press && rc != 0)
+			{
+				// other function: replace colony info of the specified race
+
+				rc->set_info( atoi(cpop->get_text()), cdialogname->text );
+				rc->calculate();
+
+				// perhaps ... reset an invalid dialog-name in case the race is changed ?
+				rc->changeowner(ri);	// only changes it, if needed.
+			}
+			
+
+			if (crem->flag.left_mouse_press && rc)
+			{
+				// remove the colony from the race's property
+
+				ri->rem(rc);
+
+				// make sure the colony list is updated (note that this approach fails
+				// if the list is empty, but deleting an entire race should not
+				// occur too often)
+				if (ri->firstcol)
+					ri->firstcol->modified = true;
+			}
+
+		}
+		
+
+	}
+
+
+
+	//save_surface();
 }
 
 
@@ -402,6 +783,9 @@ void GameSolarview::animate(Frame *frame)
 
 	GameBare::animate(frame);
 
+	// highlight race colonies
+	racelist.animate_map(frame, 2);
+
 }
 
 
@@ -421,10 +805,127 @@ LocalPlayerInfo(osprite, playinf)
 
 
 
+void GameSolarview::save_surface()
+{
+	if (!mapeditor->selection)
+		return;
+
+	int id;
+	id = solarmap->sub[ mapeditor->selection->starnum ]->id;
+
+	char tmp[512];
+	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
+	set_config_file(tmp);
+
+	/*
+	ve->values[0]->set(vtype_float, "atmospheric pressure", 0.0, 100.0);
+	ve->values[1]->set(vtype_float, "radius (es)", 0.1, 100.0);
+	ve->values[2]->set(vtype_float, "density (kg/m3)", 1.0, 6.0);
+	ve->values[3]->set(vtype_float, "day (es))", 0.0, 100.0);
+	ve->values[4]->set(vtype_float, "tilt (degr)", 0.0, 90.0);
+	ve->values[5]->set(vtype_float, "albedo", 0.0, 1.0);
+	ve->values[6]->set(vtype_float, "greenhouse", 0.0, 1.0);
+	ve->values[7]->set(vtype_int, "weather", 0, 9);
+	ve->values[8]->set(vtype_int, "tectonics", 0, 9);
+	*/
+	set_config_float(0, "atmo",    ve->values[0]->value);
+	set_config_float(0, "radius",  ve->values[1]->value);
+	set_config_float(0, "density", ve->values[2]->value);
+	set_config_float(0, "day",     ve->values[3]->value);
+	set_config_float(0, "tilt",    ve->values[4]->value);
+	set_config_float(0, "albedo",  ve->values[5]->value);
+	set_config_float(0, "greenhouse",    ve->values[6]->value);
+	set_config_int(0, "weather",   (int) ve->values[7]->value);
+	set_config_int(0, "tectonics", (int) ve->values[8]->value);
+
+	// and the surface type string ?
+	char *t;
+	t = surfacetypelist->type[gsolar->tv2->isel].type_string;
+	set_config_string(0, "surface", t);
+
+
+	flush_config_file();
+}
 
 
 
 
+void GameSolarview::init_surface()
+{
+	if (!mapeditor->selection)
+		return;
+
+	int id;
+	id = solarmap->sub[ mapeditor->selection->starnum ]->id;
+
+	char tmp[512];
+	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
+	set_config_file(tmp);
+
+	ve->values[0]->value = get_config_float(0, "atmo", 0);
+	ve->values[1]->value = get_config_float(0, "radius", 0);
+	ve->values[2]->value = get_config_float(0, "density", 0);
+	ve->values[3]->value = get_config_float(0, "day", 0);
+	ve->values[4]->value = get_config_float(0, "tilt", 0);
+	ve->values[5]->value = get_config_float(0, "albedo", 0);
+	ve->values[6]->value = get_config_float(0, "greenhouse", 0);
+	ve->values[7]->value = get_config_int(0, "weather", 0);
+	ve->values[8]->value = get_config_int(0, "tectonics", 0);
+
+	ve->edit_update();
+
+	// and the surface type ?
+	strcpy(tmp, get_config_string(0, "surface", "default"));
+	gsolar->tv2->set_sel ( surfacetypelist->get_index(tmp, 0) );
+
+}
 
 
+void GameSolarview::check_radius()
+{
+	if (!mapeditor->selection)
+		return;
+
+	char *t;
+	t = planettypelist->type[ solarmap->sub[ mapeditor->selection->starnum ]->type ].type_string;
+
+	// check if the planet's radius was changed; if so, check validity
+	double Rmin, Rmax;
+
+	if (strcmp(t, "dwarf") == 0)
+	{
+		Rmin = 0.01;
+		Rmax = 0.1;
+	}
+	if (strcmp(t, "small") == 0)
+	{
+		Rmin = 0.1;
+		Rmax = 0.5;
+	}
+	if (strcmp(t, "medium") == 0)
+	{
+		Rmin = 0.5;
+		Rmax = 2.0;
+	}
+	if (strcmp(t, "big") == 0)
+	{
+		Rmin = 2.0;
+		Rmax = 10.0;
+	}
+	if (strcmp(t, "giant") == 0)
+	{
+		Rmin = 10.0;
+		Rmax = 20.0;
+	}
+
+	double R;
+	R = get_config_float(0, "radius", 0);
+
+	if (R < Rmin || R > Rmax)
+	{
+		R = random(Rmin, Rmax);
+	}
+
+	ve->values[1]->value = R;
+}
 

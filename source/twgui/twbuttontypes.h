@@ -42,6 +42,7 @@ public:
 
 	virtual void changebackgr(char *fname);
 	virtual void changebackgr(BITMAP *newb);
+	virtual void overwritebackgr(BITMAP *newb, double scale, int col);
 
 	virtual void animate();		// shouldn't be changed.
 

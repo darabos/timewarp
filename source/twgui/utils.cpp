@@ -9,6 +9,7 @@
 //#include "area.h"
 //#include "twgui.h"
 
+#include "twwindow.h"
 
 normalmouse Tmouse;
 
@@ -99,7 +100,7 @@ BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem)
 	else
 		blit(convert, dest, 0, 0, 0, 0, W, H);
 
-	destroy_bitmap(convert);
+	del_bitmap(&convert);
 
 
 	
@@ -111,7 +112,7 @@ BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem)
 		if (convert)
 		{
 			blit(dest, convert, 0, 0, 0, 0, W, H);
-//			destroy_bitmap(dest);
+			del_bitmap(&dest);
 			dest = convert;
 		}
 	}

@@ -113,16 +113,30 @@ void Popup::close(int areturnstatus)
 }
 
 
+// call this once (true) to probe if the popup has completed its function; it
+// resets its "ready" status as well.
+bool Popup::ready()
+{
+	if (returnvalueready)
+	{
+		returnvalueready = false;
+		return true;
+	} else
+		return false;
+}
+
+// call this to get a int-value from some selection mechanism (eg a list)
 int Popup::getvalue()
 {
-	if (!returnvalueready)
-		return -1;				// otherwise it's undefined
+//	if (!returnvalueready)
+//		return -1;				// otherwise it's undefined
 
-	returnvalueready = false;
+	ready();
 	return returnstatus;
 }
 
 
+// restore the ability to do calculations and actions
 void Popup::enable()
 {
 	TWindow::enable();
@@ -134,7 +148,7 @@ void Popup::enable()
 void Popup::newscan()
 {
 	show();	// (more general than enable)
-	returnvalueready = false;
+	ready();
 }
 
 

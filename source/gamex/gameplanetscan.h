@@ -10,8 +10,12 @@
 #include "../other/planet3d.h"
 
 
+class Mineral;
+class Lifeform;
+
 class GamePlanetscan : public GameBare
 {
+public:
 	Area *surf_area;
 //	SpaceObject *solarbody;
 
@@ -21,7 +25,16 @@ class GamePlanetscan : public GameBare
 	class ThePlaya : public LocalPlayerInfo
 	{
 	public:
+		double mineral_weight[16], bio_weight, tot_min_weight;
+		double max_weight;
+
 		ThePlaya(SpaceSprite *osprite, PlayerInfo *playinf);
+		void handle_mineral(Mineral *m);
+		void handle_life(Lifeform *l);
+
+		int activate_weapon();
+
+		SpaceSprite *weaponsprite;
 	};
 
 	ThePlaya *player;
@@ -34,8 +47,11 @@ class GamePlanetscan : public GameBare
 	virtual void calculate();
 	virtual void animate(Frame *frame);
 
+	virtual void handle_edge(SpaceLocation *s);
+
 	BITMAP *map_bmp;
 	SpaceSprite *playerspr;		//*planetspr;
+	//double scalesurface;
 
 };
 

@@ -12,6 +12,97 @@ REGISTER_FILE
 #include "sprites.h"
 
 
+void scale_bitmap32(BITMAP **bmp, double a)
+{
+	int w, h;
+
+	w = int((*bmp)->w * a + 0.5);
+	h = int((*bmp)->h * a + 0.5);
+
+	if (w == 0) w = 1;
+	if (h == 0) h = 1;
+
+	BITMAP *tmp;
+	tmp = create_bitmap_ex(32, w, h);
+
+	stretch_blit(*bmp, tmp, 0, 0, (*bmp)->w, (*bmp)->h, 0, 0, w, h);
+
+	destroy_bitmap(*bmp);
+	*bmp = tmp;
+}
+
+
+
+void load_bitmap32(BITMAP **bmp, char *fname)
+{
+	*bmp = load_bitmap(fname, 0);
+
+	// map_bmp should have 32 bit depth, because colors are assumed to come from
+	// a 32 bpp depth image. Loading from disk is sometimes (or often) 24 bit.
+	BITMAP *tmp;
+	tmp = create_bitmap_ex(32, (*bmp)->w, (*bmp)->h);
+	clear_to_color(tmp, makecol32(255,0,255));
+	blit(*bmp, tmp, 0, 0, 0, 0, tmp->w, tmp->h);
+	destroy_bitmap(*bmp);
+	*bmp = tmp;
+}
+
+
+
+
+
+void balance(double *r, double *g, double *b)
+{
+	double max;
+	max = *r;
+	if (*g > max)
+		max = *g;
+	if (*b > max)
+		max = *b;
+
+	*r /= max;
+	*g /= max;
+	*b /= max;
+}
+
+
+void avcolor(BITMAP *bmp, double *r, double *g, double *b)
+{
+	*r = 0;
+	*g = 0;
+	*b = 0;
+	int N = 0;
+
+	int ix, iy;
+	
+	for ( iy = 0; iy < bmp->h; ++iy)
+	{
+		for ( ix = 0; ix < bmp->w; ++ix)
+		{
+
+			int col, rr, gg, bb;
+
+			col = getpixel(bmp, ix, iy);
+			rr = getr32(col);
+			gg = getg32(col);
+			bb = getb32(col);
+
+			if (rr != 255 || gg != 0 || bb != 255)
+			{
+				*r += rr;
+				*g += gg;
+				*b += bb;
+				++N;
+			}
+
+		}
+	}
+
+	*r /= (255 * N);
+	*g /= (255 * N);
+	*b /= (255 * N);
+}
+
 
 void colorize(SpaceSprite *spr, double mr, double mg, double mb)
 {
@@ -38,6 +129,10 @@ void colorize(SpaceSprite *spr, double mr, double mg, double mb)
 				r *= mr;
 				g *= mg;
 				b *= mb;
+
+				if (r > 255)	r = 255;
+				if (g > 255)	g = 255;
+				if (b > 255)	b = 255;
 				
 				col = makecol32(r,g,b);
 				putpixel(bmp, ix, iy, col);
@@ -45,6 +140,41 @@ void colorize(SpaceSprite *spr, double mr, double mg, double mb)
 		}
 	}
 
+}
+
+
+void brighten(SpaceSprite *spr)
+{
+	BITMAP *bmp;
+
+	bmp = spr->get_bitmap(0);
+	
+	int ix, iy;
+
+	int max = 0;
+	
+	for ( iy = 0; iy < bmp->h; ++iy)
+	{
+		for ( ix = 0; ix < bmp->w; ++ix)
+		{
+
+			int col, r, g, b;
+
+			col = getpixel(bmp, ix, iy);
+			r = getr32(col);
+			g = getg32(col);
+			b = getb32(col);
+
+			if (r > max)	max = r;
+			if (g > max)	max = g;
+			if (b > max)	max = b;
+		}
+	}
+
+	double scale;
+	scale = double(255) / double(max);
+
+	colorize(spr, scale, scale, scale);
 }
 
 

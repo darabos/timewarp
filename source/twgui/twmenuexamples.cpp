@@ -42,8 +42,8 @@ PopupT(creator, ident, axshift, ayshift)
 
 PopupTextInfo::~PopupTextInfo()
 {
-	if (tia)
-		delete tia;
+	//if (tia)
+	//	delete tia;
 }
 
 
@@ -117,8 +117,10 @@ PopupList::~PopupList()
 {
 
 	// delete the list
-	if (tbl)
-		delete tbl;
+	// well, no, don't do this, cause it's a button and is deleted as part
+	// of the button list in the twwindow.
+	//if (tbl)
+	//	delete tbl;
 }
 
 
@@ -166,6 +168,8 @@ Popup(ident, axshift, ayshift, outputscreen)
 
 PopupFleetSelection::~PopupFleetSelection()
 {
+	// no ... this is deleted as part of the deletion of the button list in twwindow
+	/*
 	if (icons)
 		delete icons;
 	if (info)
@@ -174,6 +178,7 @@ PopupFleetSelection::~PopupFleetSelection()
 		delete oncerandom;
 	if (alwaysrandom)
 		delete alwaysrandom;
+		*/
 }
 
 // this calls close with return value
@@ -271,4 +276,321 @@ void PopupOk::check_end()
 
 
 
+
+
+
+
+
+
+
+FileBrowser::FileBrowser(EmptyButton *creator, char *ident, int axshift, int ayshift, FONT *afont)
+:
+PopupList(creator, ident, "list_", axshift, ayshift, afont, 0)
+{
+	strcpy(dir, ".");	// you can't get below this (which is the game directory)
+	strcpy(fname, "none");
+
+	downdir = new Button(this, "downdir_");
+
+	selection = false;
+
+	reset_dirlist();
+
+	required_ext[0] = 0;
+}
+
+
+FileBrowser::~FileBrowser()
+{
+	//delete downdir;
+}
+
+
+void FileBrowser::set_dir(char *newdir)
+{
+	strcpy(dir, newdir);
+	reset_dirlist();
+}
+
+
+
+void FileBrowser::set_ext(char *ext)
+{
+	strcpy(required_ext, ".");
+	strcat(required_ext, ext);
+}
+
+
+void FileBrowser::reset_dirlist()
+{
+	int err;
+	al_ffblk info;
+	
+	tbl->clear_optionlist();
+	
+	char scanname[512];
+	strcpy(scanname, dir);
+	strcat(scanname, "/*");
+	
+	// first check the directories, after that the normal files.
+	int i = 0;
+	
+	err = al_findfirst(scanname, &info, FA_DIREC | FA_ARCH);	
+	
+	while (!err)
+	{
+		if (strcmp(info.name, ".") && strcmp(info.name, "..") )
+		{
+			char tmp[512];
+			strcpy(tmp, info.name);
+
+			if ((info.attrib & FA_DIREC) != 0)
+				strcat(tmp, "/");
+
+			else if (required_ext[0] != 0)
+			{
+				// check if this file has a valid extension (if needed)
+				char *ext2 = &tmp[strlen(tmp)-strlen(required_ext)];
+				if (strcmp(required_ext, ext2))
+					tmp[0] = 0;
+			}
+
+			if (tmp[0] != 0)
+			{
+				tbl->add_optionlist(tmp);
+				
+				if (i < 2048)
+					fattr[i] = info.attrib;
+				
+				++i;
+			}
+		}
+		
+		err = al_findnext(&info);
+	}
+	
+	al_findclose(&info);
+}
+
+
+void FileBrowser::calculate()
+{
+	PopupList::calculate();
+
+	if (disabled)
+		return;
+
+	// go down one directory.
+	if (downdir->flag.left_mouse_press)
+	{
+		char *tmp;	// right-most char
+		tmp = strrchr(dir, '/');
+		if (tmp)
+		{
+			tmp[0] = 0;	// remove that sub-dir from the string
+			reset_dirlist();
+		}
+	}
+
+
+	if (tbl->flag.left_mouse_press)
+	{
+		// change directory, OR, select a file ...
+
+		int k;
+		k = tbl->getk();
+
+		if (k >= 0 && tbl->optionlist)	// if the dir is not empty...
+		{
+			if ((fattr[k] & FA_DIREC) != 0)
+			{
+				// change directory... and refresh the filelist
+				strcat(dir, "/");
+				strcat(dir, tbl->optionlist[k]);
+				if (dir[strlen(dir)-1] == '/')	// remove this / again, cause it's only for display
+					dir[strlen(dir)-1] = 0;
+				reset_dirlist();
+			} else
+				// do NOT check for fa_arch here, cause a file is often not an archive
+			{
+				// select the file ...
+				selection = true;
+			}
+
+		}
+	}
+}
+
+
+// this calls close with return value
+void FileBrowser::check_end()
+{
+	if (selection)
+	{
+		selection = false;
+		int k = tbl->getk();
+
+		// to save work elsewhere, construct the filename
+		strcpy(fname, dir);
+		strcat(fname, "/");
+		strcat(fname, tbl->optionlist[k]);
+
+		// also supply the filename-index separately, could be useful sometimes?
+		close(k);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+void ValueStr::set(valuetypes atype, char *adescr, double amin, double amax)
+{
+	type = atype;
+	strncpy(descr, adescr, sizeof(descr)-1);
+	min = amin;
+	max = amax;
+
+	value = 0.0;
+
+	if (atype == vtype_float)
+		strcpy(format, "%10.2f");
+	else
+		strcpy(format, "%10.0f");
+}
+
+double ValueStr::getval()
+{
+	if (type == vtype_float)
+		return value;
+	else
+		return (int)value;
+}
+
+
+
+
+ValueEdit::ValueEdit(TWindow *menu, char *identbranch, FONT *afont, int aNmax)
+:
+EmptyButton(menu, identbranch)
+{
+	Nmax = aNmax;
+	values = new ValueStr* [Nmax];
+
+	int i;
+	for ( i = 0; i < Nmax; ++i )
+	{
+		values[i] = new ValueStr();
+		values[i]->descr[0] = 0;	// an empty description string
+									// indicates the end of the list.
+	}
+
+	// load a text-field, edit-field, and a scrollbar
+
+	char tmp[512];
+
+	strcpy(tmp, identbranch);
+	strcat(tmp, "info_");
+	info = new TextButton(menu, tmp, afont);
+	info->passive = false;
+
+	strcpy(tmp, identbranch);
+	strcat(tmp, "edit_");
+	edit = new TextEditBox(menu, tmp, afont, edit_text, sizeof(edit_text));
+
+	scroll.setup(menu, identbranch);
+
+	isel = 0;
+
+	barpos = -1;
+	do_init = true;
+
+}
+
+ValueEdit::~ValueEdit()
+{
+	int i;
+	for ( i = 0; i < Nmax; ++i )
+		delete values[i];
+
+	delete values;
+}
+
+
+void ValueEdit::edit_update()
+{
+	sprintf(edit->text, values[isel]->format, values[isel]->value);
+}
+
+
+void ValueEdit::calculate()
+{
+	EmptyButton::calculate();
+
+	// the scrollbar:
+	double oldpos = barpos;
+	barpos = scroll.get_relpos();
+	if (barpos > 0.999999)
+		barpos = 0.999999;
+
+	int k = 4;	// power of increase
+
+	if (barpos != oldpos)
+	{
+		double min = values[isel]->min;
+		double max = values[isel]->max;
+
+		double value;
+
+		if (barpos < 1E-5)
+			value = min;
+		else
+			value = min + (max - min) * exp(k * log(barpos));
+
+		values[isel]->value = value;
+		edit_update();
+	}
+
+	// clicking on the info button, changes the selected value that you want
+	// to edit.
+
+	int lastisel = isel;
+
+	if (info->flag.left_mouse_press)
+	{
+		++isel;
+		if (values[isel]->descr[0] == 0 || isel >= Nmax)	// end of the list.
+			isel = 0;
+	}
+
+	if (info->flag.right_mouse_press)
+	{
+		--isel;
+		if (isel < 0)
+			isel = Nmax-1;
+
+		while (values[isel]->descr[0] == 0 && isel > 0)
+			--isel;
+	}
+
+	if (isel != lastisel || do_init)
+	{
+		do_init = false;	// needed because of external manipulation of the lists
+		info->set_text(values[isel]->descr, makecol(250,250,250));
+		edit_update();
+		//sprintf(edit->text, "Hello there !!");
+		edit->text_reset();
+		
+		double min = values[isel]->min;
+		double max = values[isel]->max;
+		double value = values[isel]->value;
+		scroll.set_percent_pos_x(exp( log( (value - min)/(max - min) ) / k));
+	}
+}
 

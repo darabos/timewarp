@@ -36,6 +36,8 @@ public:
 
 
 	virtual Ship *create_ship(const char *id, bool human, Vector2 pos, double angle, int team);
+
+	virtual void ship_died(Ship *who, SpaceLocation *source);
 };
 
 

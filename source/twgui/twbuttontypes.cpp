@@ -30,12 +30,9 @@ GraphicButton(menu, identbranch, asciicode, akeepkey)
 
 Button::~Button()
 {
-	if (bmp_default)
-		destroy_bitmap(bmp_default);
-	if (bmp_focus)
-		destroy_bitmap(bmp_focus);
-	if (bmp_selected)
-		destroy_bitmap(bmp_selected);
+	del_bitmap(&bmp_default);
+	del_bitmap(&bmp_focus);
+	del_bitmap(&bmp_selected);
 }
 
 
@@ -87,8 +84,8 @@ GraphicButton(menu, identbranch, asciicode, akeepkey)
 
 Area::~Area()
 {
-	if (markfordeletion && backgr)
-		destroy_bitmap(backgr);
+	if (markfordeletion)
+		del_bitmap(&backgr);
 }
 
 void Area::changebackgr(char *fname)
@@ -98,8 +95,8 @@ void Area::changebackgr(char *fname)
 
 	if (newb)
 	{
-		if (markfordeletion && backgr)
-			destroy_bitmap(backgr);
+		if (markfordeletion)
+			del_bitmap(&backgr);
 
 		backgr = newb;
 		markfordeletion = true;	// locally initialized, hence locally destroyed...
@@ -111,13 +108,24 @@ void Area::changebackgr(BITMAP *newb)
 {
 	if (newb)
 	{
-		if (markfordeletion && backgr)
-			destroy_bitmap(backgr);		// hmm, well, don't do this, leave that to the program that created it !!
+		if (markfordeletion)
+			del_bitmap(&backgr);		// hmm, well, don't do this, leave that to the program that created it !!
 		
 		backgr = newb;
 		markfordeletion = false;	// not locally initialized, hence not locally destroyed...
 	}
 }
+
+void Area::overwritebackgr(BITMAP *newb, double scale, int col)
+{
+	if (newb && backgr)
+	{
+		clear_to_color(backgr, col);
+		stretch_blit(newb, backgr, 0, 0, newb->w, newb->h,
+			0, 0, newb->w * scale, newb->h * scale);
+	}
+}
+
 
 
 void Area::animate()
@@ -166,8 +174,7 @@ AreaTablet::~AreaTablet()
 {
 	//if (backgr)
 	//	destroy_bitmap(backgr);
-	if (drawarea)
-		destroy_bitmap(drawarea);
+	del_bitmap(&drawarea);
 }
 
 
@@ -222,10 +229,8 @@ GraphicButton(menu, identbranch, asciicode)
 
 SwitchButton::~SwitchButton()
 {
-	if (bmp_on)
-		destroy_bitmap(bmp_on);
-	if (bmp_off)
-		destroy_bitmap(bmp_off);
+	del_bitmap(&bmp_on);
+	del_bitmap(&bmp_off);
 }
 
 void SwitchButton::draw_default()
@@ -327,8 +332,7 @@ AreaTablet(menu, identbranch, 255)
 
 ScrollBar::~ScrollBar()
 {
-	if (button)
-		destroy_bitmap(button);
+	del_bitmap(&button);
 }
 
 

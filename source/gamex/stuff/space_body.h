@@ -14,25 +14,41 @@ void shadowpaintcircle(SpaceSprite *spr, double fi_s);
 #include "../gamedata.h"
 
 
+class TVarea : public Area
+{
+public:
+	BITMAP **blist;
+	int N;
+	int isel;
+	double f;
+
+	Button *bdec, *binc;
+	void set(BITMAP **list, int aN);
+	void set(SpaceSprite **list, int aN);
+
+	BITMAP *show();
+	SpaceSprite *makespr();
+
+	void newlist(int aN);
+	void initnewlist();
+	void set_sel(int newsel);
+
+	TVarea(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
+	virtual ~TVarea();
+
+	virtual void calculate();
+};
+
+
 class IconTV : public Popup
 {
-	SpaceSprite **sprlist;
-	int N;
-
-	Area *tv;
-	Button *bdec, *binc;
 public:
-
-	int isel;
+	TVarea *tv;
 
 	IconTV(char *ident, int xcenter, int ycenter, BITMAP *outputscreen);
 	virtual ~IconTV();
 
 	virtual void calculate();
-
-	void setsprites(SpaceSprite **asprlist, int aN);
-
-	SpaceSprite *showspr();
 };
 
 
@@ -50,6 +66,8 @@ public:
 
 	virtual void animate(Frame *f);
 	virtual void calculate();
+
+	virtual void rem_sprite();
 };
 
 
@@ -58,7 +76,6 @@ public:
 class MapEditor
 {
 protected:
-	MapObj *selection;//*lastselection, 
 
 	GameBare *g;
 	MousePtr *ptr;
@@ -75,12 +92,18 @@ protected:
 	bool	moveselection;
 
 public:
+	MapObj *selection;
+
 	bool	maphaschanged;
 
 	MapEditor();
 	virtual ~MapEditor();
 
 	virtual void calculate();
+	virtual void newselection();
+	virtual void replace();
+	virtual void add();
+	virtual void move();
 
 	void set_game(GameBare *agame, MousePtr *aptr);
 	void set_interface( IconTV *aTedit, Button *abreplace, Button *abnew );
@@ -117,6 +140,7 @@ public:
 	int ellipscol;
 
 	virtual void set_sprite ( SpaceSprite *sprite );
+	virtual void rem_sprite();
 	void drawshadow();
 };
 

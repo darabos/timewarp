@@ -603,7 +603,7 @@ void GraphicButton::locate_by_backgr(char *strid)
 
 	mainwindow->scalepos(&pos);		// is normally called by the other init();
 
-	if (!k)
+	if (!k && mainwindow->autoplace)
 	{
 		tw_error("Could not find the bmp on the background image");
 	}

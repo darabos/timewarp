@@ -16,8 +16,73 @@ REGISTER_FILE
 
 #include "gamestarmap.h"
 
+#include "general/sprites.h"
 
 //#include "gamedata.h"
+
+/*
+
+  colors (in 10E12 Hz)
+  red :		622 - 780
+  green:	492 - 577
+  blue:		455 - 492
+
+  T: in Celcius
+  f: in 10E12 Hz
+*/
+
+double blackbodyspectrum(double L, double T)
+{
+	T += 273.15;	// now in Kelvin
+	L *= 1.0E-9 * 1E+2;	// cause it's in cm
+
+	double h = 6.62606876E-27;		// erg s
+	double c = 2.9979245800E+10;	// cm/s
+	// wave number
+	double k = 1.3806503E-16;		// erg/K
+
+	double a = (2 * h * c*c) / (L*L*L*L*L);
+	double b = exp((h * c) / (L * k * T));
+
+	return a / (b - 1);
+}
+
+static double sqr(double x)
+{
+	return x*x;
+}
+
+double spec_int(double Lmin, double Lmax, double T)
+{
+	int N = 50;
+	int i;
+
+	double I;
+	I = 0;
+
+	for ( i = 0; i < N; ++i )
+		I += blackbodyspectrum(Lmin + i*(Lmax-Lmin)/(N-1), T) *
+				exp( -1 * sqr((i-0.5*N) / (0.5*N)) );
+
+	return I / N;
+}
+
+
+double spec_r(double T)
+{
+	return spec_int(600, 700, T);
+}
+
+double spec_g(double T)
+{
+	return spec_int(520, 580, T);
+}
+
+double spec_b(double T)
+{
+	return spec_int(420, 470, T);
+}
+
 
 
 
@@ -53,17 +118,20 @@ void GameStarmap::init()
 
 
 	// load star sprites
+	startypespr = new SpaceSprite* [startypelist->N];
 	int i;
 	for ( i = 0; i < startypelist->N; ++i )
 	{
 		char tmp[512];
 		sprintf(tmp, "gamex/stars/star_%s_01.bmp", startypelist->type[i].type_string);
-		starspr[i] = create_sprite( tmp, SpaceSprite::MASKED );
+		startypespr[i] = create_sprite( tmp, SpaceSprite::MASKED );
 	}
 
 	// create star objects ?!
 	starmap = mapeverything.region[0];	// use the starmap of the 1st region
 	starmap->scalepos = scalepos;
+
+	starspr = new SpaceSprite* [starmap->Nsub];
 
 	for ( i = 0; i < starmap->Nsub; ++i )
 	{
@@ -71,7 +139,12 @@ void GameStarmap::init()
 		int k;
 
 		k = starmap->sub[i]->type;
-		star = new MapObj(0, starmap->sub[i]->position * scalepos, 0.0, starspr[k]);
+		starspr[i] = new SpaceSprite(startypespr[k]->get_bitmap(0));
+		double T = 6000.0;
+		colorize(starspr[i], spec_r(T), spec_g(T), spec_b(T));
+		brighten(starspr[i]);
+
+		star = new MapObj(0, starmap->sub[i]->position * scalepos, 0.0, starspr[i]);
 		star->starnum = i;
 
 		add(star);
@@ -103,7 +176,7 @@ void GameStarmap::init()
 	Tedit->exclusive = false;
 	bnew = new Button(Tedit, "new_");
 	breplace = new Button(Tedit, "replace_");
-	Tedit->setsprites(starspr, startypelist->N);
+	Tedit->tv->set(starspr, startypelist->N);
 
 
 
@@ -198,7 +271,7 @@ void GameStarmap::animate(Frame *frame)
 
 
 	// draw race territories
-	racelist.animate_starmap(frame);
+	racelist.animate_map(frame, 1);
 
 	// draw a grid ...
 	int ix, iy;
@@ -249,7 +322,12 @@ void GameStarmap::quit()
 
 	int i;
 	for ( i = 0; i < startypelist->N; ++i )
+		delete startypespr[i];
+	delete startypespr;
+
+	for ( i = 0; i < starmap->Nsub; ++i )
 		delete starspr[i];
+	delete starspr;
 
 	if (mapeditor->maphaschanged)
 	{

@@ -18,9 +18,10 @@ REGISTER_FILE
 #include "gamesolarview.h"
 #include "gameplanetview.h"
 
-// the 2 possible subgames :
+// the possible subgames :
 #include "gameplanetscan.h"
 #include "gamemelee.h"
+#include "gamedialogue.h"
 
 #include "stuff/space_body.h"
 #include "stuff/backgr_stars.h"
@@ -68,7 +69,6 @@ void GamePlanetview::init()
 
 	// create star objects ?!
 	int istar, iplanet;
-	MapSpacebody *starmap, *solarmap, *planetmap;
 	starmap = mapeverything.region[0];	// use the starmap of the 1st region
 
 
@@ -80,14 +80,18 @@ void GamePlanetview::init()
 	if (iplanet == -1)
 		iplanet = 0;
 
+	// for testing:
+	playerinfo.istar = istar;
+	playerinfo.iplanet = iplanet;
+
 	solarmap = starmap->sub[istar];	// use the solarsystem belonging to that star
 	planetmap = solarmap->sub[iplanet];	// use the planet (and moons) belonging to that planet orbit.
 
 
 	// Button that displays the name of the planet.
-	TextEditBox *starname;
-	starname = new TextEditBox(T, "starname_", usefont, planetmap->name, 128);
+	starname = new TextEditBox(T, "starname_", usefont, planetmap->name, sizeof(planetmap->name));
 	starname->set_textcolor(makecol(255,255,0));
+	strcpy(oldstarname, planetmap->name);
 	// (on exit, you should copy the (edited) name to the star/planet structure.
 
 
@@ -106,10 +110,15 @@ void GamePlanetview::init()
 
 	// load the planet data
 
-	char txt[512];
-	sprintf(txt, "gamex/planetview/planet_%s_01.bmp",
-					planettypelist->type[planetmap->type].type_string);
-	planetspr = create_sprite( txt, SpaceSprite::MASKED );
+	// load planet/moon sprites
+	planetspr = new SpaceSprite* [planettypelist->N];
+	int i;
+	for ( i = 0; i < planettypelist->N; ++i )
+	{
+		char tmp[512];
+		sprintf(tmp, "gamex/solarview/planet_%s_01.bmp", planettypelist->type[i].type_string);
+		planetspr[i] = create_sprite( tmp, SpaceSprite::MASKED );
+	}
 
 	Vector2 Poffs;
 	int col;
@@ -120,7 +129,9 @@ void GamePlanetview::init()
 
 	Vector2 sunpos;
 	sunpos = centerpos - relplanetpos;	// "offset center" of the ellips.
-	solarbody = new SolarBody(0, centerpos, 0.0, planetspr, sunpos, iplanet,
+	int k;
+	k = planetmap->type;
+	solarbody = new SolarBody(0, centerpos, 0.0, planetspr[k], sunpos, iplanet,
 								sunpos+Poffs, R, b, makecol(115,0,0));
 	
 	planetmap->o = solarbody;
@@ -128,14 +139,6 @@ void GamePlanetview::init()
 	
 	solarbody->id = ID_MAP_PLANET;	// so that it's not editable by the mapeditor
 
-	// load moon sprites
-	int i;
-	for ( i = 0; i < moontypelist->N; ++i )
-	{
-		char tmp[512];
-		sprintf(tmp, "gamex/planetview/moon_%s_01.bmp", moontypelist->type[i].type_string);
-		moonspr[i] = create_sprite( tmp, SpaceSprite::MASKED );
-	}
 
 	// load the star data
 	for ( i = 0; i < planetmap->Nsub; ++i )
@@ -152,7 +155,7 @@ void GamePlanetview::init()
 
 		int k;
 		k = planetmap->sub[i]->type;
-		solarbody = new SolarBody(0, P, 0.0, moonspr[k], centerpos+relplanetpos, i,
+		solarbody = new SolarBody(0, P, 0.0, planetspr[k], centerpos+relplanetpos, i,
 								centerpos+Poffs, R, b, col);
 
 		planetmap->sub[i]->o = solarbody;
@@ -175,8 +178,8 @@ void GamePlanetview::init()
 
 
 	// test
-	player->pos = Vector2(0,0);
-	player->angle = 0.25 * PI;
+//	player->pos = Vector2(0,0);
+//	player->angle = 0.25 * PI;
 
 
 	// an enemy fleet
@@ -203,7 +206,7 @@ void GamePlanetview::init()
 	Tedit->exclusive = false;
 	bnew = new Button(Tedit, "new_");
 	breplace = new Button(Tedit, "replace_");
-	Tedit->setsprites(moonspr, moontypelist->N);
+	Tedit->tv->set(planetspr, planettypelist->N);
 
 	T->add(Tedit);
 	T->tree_doneinit();
@@ -229,16 +232,25 @@ void GamePlanetview::quit()
 	delete fleetspr;
 
 	int i;
-	for ( i = 0; i < moontypelist->N; ++i )
-		delete moonspr[i];
+	for ( i = 0; i < planettypelist->N; ++i )
+		delete planetspr[i];
 
 	if (!hardexit)	// game is not quitted completely
 	{
+		// set the player position exactly equal to the planet for appearing in solar orbit
+		MapSpacebody *solarmap;
+		solarmap = mapeverything.region[0]->sub[playerinfo.istar];
+		playerinfo.pos = solarmap->sub[playerinfo.iplanet]->position * solarmap->scalepos;
+		playerinfo.vel = 0;
+
 		playerinfo.iplanet = -1;	// cause you've left the planet orbit
 		playerinfo.angle = player->angle;
 	}
 	else
-		playerinfo.sync(player);
+		playerinfo.sync2(player);
+
+	if (strcmp(planetmap->name, oldstarname))
+		mapeditor->maphaschanged = true;
 
 	if (mapeditor->maphaschanged)
 	{
@@ -253,7 +265,8 @@ void GamePlanetview::quit()
 
 void GamePlanetview::refocus()
 {
-	playerinfo.sync(player);
+	// not needed here ...
+	//playerinfo.sync(player);
 }
 
 
@@ -352,13 +365,32 @@ void GamePlanetview::checknewgame()
 			else
 				playerinfo.imoon = -1;	// it's not a moon, but the planet then.
 
+			// Now, check if the planet is used by a race (a colony), if so,
+			// we should show a dialog screen; otherwise, we can suffice with
+			// showing the planet surface which you can then explore...
+
 			if (!gamerequest && !next)
 			{
-				GamePlanetscan *g;
-				g = new GamePlanetscan();
+				RaceColony *rc;
+				rc = racelist.findcolony(playerinfo.istar, playerinfo.iplanet, playerinfo.imoon);
 
+				GameBare *g;
+
+				if (rc != 0)
+				{
+					GameAliendialog *ad;
+					ad = new GameAliendialog();
+					ad->set_colony(rc);
+					g = ad;
+				} else {
+					
+					//GamePlanetscan *g;
+					g = new GamePlanetscan();
+				}
+				
 				gamerequest = g;
 			}
+		
 		}
 	}
 

@@ -25,7 +25,7 @@ AreaTabletScrolled::AreaTabletScrolled(TWindow *menu, char *identbranch, int asc
 :
 AreaTablet(menu, identbranch, asciicode, akeepkey)
 {
-	scroll.setup(mainwindow, identbranch, &scroll);
+	scroll.setup(mainwindow, identbranch);//, &scroll);
 }
 
 
@@ -93,7 +93,8 @@ void TextButton::subanimate()
 	ycentre = size.y / 2 - text_height(usefont)/2;
 
 	text_mode(-1);
-	textout_centre(drawarea, usefont, text, xcentre, ycentre, text_color);
+	if (text)
+		textout_centre(drawarea, usefont, text, xcentre, ycentre, text_color);
 }
 
 
@@ -119,10 +120,11 @@ AreaTabletScrolled(menu, identbranch, 255)
 
 	optionlist = 0;
 	N = 0;
+	Nreserved = N;
 
 	selected = false;
 
-	scroll.setup(mainwindow, identbranch, &scroll);
+	scroll.setup(mainwindow, identbranch);//, &scroll);
 	scroll.set(0, 0, 1, 0, 1, 1);
 
 	Nshow = int(size.y / Htxt) - 1;		// -1, because item 0 is also shown...
@@ -176,6 +178,8 @@ void TextList::clear_optionlist()
 	}
 
 	N = 0;
+	Nreserved = N;
+
 	scroll.Ny = 0;
 	scroll.set(0, 0, 1, 0, 1, 1);
 }
@@ -204,20 +208,53 @@ void TextList::set_optionlist(char **aoptionlist, int aN, int color)
 	clear_optionlist();		// note that this resets N .
 
 	N = aN;
+	Nreserved = N;
+
 	if (N == 0)
 		return;				// in case there's an empty list
 
+
 	if (N > 0)
-		optionlist = new char* [N];	// reserve space for that many pointers to strings.
+		optionlist = new char* [Nreserved];	// reserve space for that many pointers to strings.
 	else
 		optionlist = 0;
 
-	for ( i = 0; i < N; ++i )
+	if (optionlist)
 	{
-		optionlist[i] = new char[strlen(aoptionlist[i]) + 1 ];
-		strcpy(optionlist[i], aoptionlist[i]);
+		for ( i = 0; i < N; ++i )
+		{
+			optionlist[i] = new char[strlen(aoptionlist[i]) + 1 ];
+			strcpy(optionlist[i], aoptionlist[i]);
+		}
 	}
 
+	scroll.set(0, 0, 1, N , 1, Nshow);
+}
+
+
+void TextList::add_optionlist(char *newstr)
+{
+	if (!optionlist)
+	{
+		Nreserved = 128;
+		optionlist = new char* [Nreserved];
+	}
+
+	if (N >= Nreserved)
+	{
+		// re-allocate memory ...
+		char **tmp;
+		Nreserved += 128;
+		tmp = new char* [Nreserved];		// reserve new space
+		for ( int i = 0; i < N; ++i )
+			tmp[i] = optionlist[i];			// copy content
+		delete optionlist;					// delete old stuff
+		optionlist = tmp;					// point to the new space
+	}
+
+	optionlist[N] = new char[strlen(newstr) + 1 ];
+	strcpy(optionlist[N], newstr);
+	++N;
 	scroll.set(0, 0, 1, N , 1, Nshow);
 }
 
@@ -314,7 +351,7 @@ void TextList::subanimate()
 			c = makecol(255,255,255);
 		}
 
-		if (optionlist[i] && strlen(optionlist[i]) < 20)
+		if (optionlist[i])// && strlen(optionlist[i]) < 20)
 			textout(drawarea, usefont, optionlist[i], ix, iy, c);
 	}
 	
@@ -340,21 +377,21 @@ TextInfoArea::TextInfoArea(TWindow *menu, char *identbranch, FONT *afont, char *
 AreaTabletScrolled(menu, identbranch, 255)
 {
 	usefont = afont;
-	Htxt = text_height(usefont);
+//	Htxt = text_height(usefont);
 	text_color = makecol(0,0,0);
 
-	maxchars = amaxtext;
+//	maxchars = amaxtext;
 
 	textinfo = 0;
 	localcopy = 0;
 
-	set_textinfo(atext, maxchars);
+	set_textinfo(atext, amaxtext);
 	
 	//scroll = ascroll;
 
 //	scroll.set(0, 0, 1, 0, 1, 1);
 
-	Nshow = int(size.y / Htxt) - 1;		// -1, because item 0 is also shown...
+//	Nshow = int(size.y / Htxt) - 1;		// -1, because item 0 is also shown...
 
 	// just display some passive information. Clicking doesn't need to give action by default.
 	passive = true;
@@ -369,22 +406,35 @@ TextInfoArea::~TextInfoArea()
 		delete localcopy;
 }
 
-
-void TextInfoArea::set_textinfo(char *newtext, int Nchars)
+// the following could be used for editing text that's stored elsewhere
+void TextInfoArea::set_textinfo_unbuffered(char *newtext, int Nchars)
 {
 	if (textinfo)
 		delete textinfo;
+
+	textinfo = new TextInfo(usefont, drawarea, newtext, Nchars);
+
+	textinfo->reset(&scroll);
+	scroll.set_sel(0, 0);
+}
+
+
+// the following is used to display text, and keep it safe from harm by
+// other external factors.
+void TextInfoArea::set_textinfo(char *newtext, int Nchars)
+{
 
 	if (localcopy)
 		delete localcopy;
 
 	localcopy = new char [Nchars+1];
-	strncpy(localcopy, newtext, Nchars);
+	if (newtext)
+		strncpy(localcopy, newtext, Nchars);
+	else
+		localcopy[0] = 0;
 	localcopy[Nchars] = 0;
 
-	textinfo = new TextInfo(usefont, drawarea, localcopy, Nchars);
-	textinfo->reset(&scroll);
-	scroll.set_sel(0, 0);
+	set_textinfo_unbuffered(localcopy, Nchars);
 }
 
 
@@ -464,12 +514,17 @@ TextInfoArea(menu, identbranch, afont, atext, amaxtext)
 {
 	//usefont = afont;
 	text = atext;
-	//maxchars = amaxtext;	// a short line?
+	maxchars = amaxtext;	// a short line?
 
-	textinfo = new TextInfo(afont, drawarea, text, maxchars);
-	textinfo->reset(&scroll);
+	textinfo = 0;
+	//textinfo = new TextInfo(afont, drawarea, text, amaxtext);
+	//textinfo->reset(&scroll);
+	this->set_textinfo_unbuffered(text, amaxtext);
 
-	charpos = strlen(textinfo->textinfo);
+	if (textinfo->textinfo)
+		charpos = strlen(textinfo->textinfo);
+	else
+		charpos = 0;
 
 	int i;
 	for ( i = 0; i < KEY_MAX; ++i )
@@ -479,10 +534,6 @@ TextInfoArea(menu, identbranch, afont, atext, amaxtext)
 
 	lasttime = 0;
 	lastpressed = -1;
-
-	//scroll.set(0, 0, 1, 0, 1, 1);
-
-	//scrollcontrol.ver(this, identbranch, &scroll);
 
 
 	int x, y;
@@ -499,7 +550,9 @@ TextInfoArea(menu, identbranch, afont, atext, amaxtext)
 
 TextEditBox::~TextEditBox()
 {
-	delete textinfo;
+	// the following is deleted in the mother function.
+	//if (textinfo)
+	//	delete textinfo;
 }
 
 
@@ -544,10 +597,12 @@ void TextEditBox::handle_lpress()
 }
 
 
-void TextEditBox::text_reset(char *newtext)
+void TextEditBox::text_reset(char *newtext, int N)
 {
 	textinfo->textinfo = newtext;
 	text = newtext;
+	textinfo->Nchars = N;
+	maxchars = N;
 	text_reset();
 }
 
@@ -555,11 +610,9 @@ void TextEditBox::text_reset()
 {
 
 	textinfo->reset(&scroll);
-	
-	// check if charpos still has an acceptable position.
-	// note that Nchars does not include the zero at the end of the line...
-	if (charpos > textinfo->Nchars)
-		charpos = textinfo->Nchars;
+
+	if (charpos > (int)strlen(text))
+		charpos = strlen(text)-1;
 
 	int xs, ys;
 	textinfo->getxy(charpos, &xs, &ys);
@@ -574,6 +627,7 @@ void TextEditBox::text_reset()
 // this is, where text is detected and entered ... I think ....
 void TextEditBox::calculate()
 {
+	if (textinfo->textinfo != text) {tw_error("text mismatch");}
 
 	TextInfoArea::calculate();
 
@@ -671,7 +725,7 @@ void TextEditBox::calculate()
 //		if (text[charpos-1] == '\n' && charpos > 1)
 //			++m;
 		// nah, don't delete, otherwise you can't undelete a line, purely
-		
+
 		memmove(&text[charpos-m], &text[charpos], (maxchars-m)-charpos);
 		text[maxchars-m] = 0;
 		
@@ -743,7 +797,7 @@ void TextEditBox::subanimate()
 
 //	TextInfoArea::subanimate();
 
-		text_mode(-1);
+	text_mode(-1);
 
 	int i;
 	for ( i = 0; i < textinfo->Nshow; ++i )
@@ -787,7 +841,7 @@ void TextEditBox::subanimate()
 	}
 
 
-	// draw a line at "charpos" ... but how ??
+	// draw a line at "charpos" ... 
 
 	int xc, yc;
 	textinfo->getxy(charpos, &xc, &yc);
@@ -804,7 +858,10 @@ void TextEditBox::subanimate()
 }
 
 
-
+char *TextEditBox::get_text()
+{
+	return text;
+}
 
 
 
@@ -859,10 +916,9 @@ AreaTabletScrolled(menu, identbranch, akey)
 
 MatrixIcons::~MatrixIcons()
 {
-	if (overlay)
-		destroy_bitmap(overlay);
-	if (tmp)
-		destroy_bitmap(tmp);
+	del_bitmap(&overlay);
+	del_bitmap(&tmp);
+
 	if (itemproperty)
 		delete itemproperty;
 }

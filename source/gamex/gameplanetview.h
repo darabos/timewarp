@@ -26,7 +26,10 @@ class GamePlanetview : public GameBare
 	IconTV *Tedit;
 	// contents of Tedit
 	Button *bnew, *breplace;
+	TextEditBox *starname;
+	char oldstarname[128];
 	//int istarselect;
+	MapSpacebody *starmap, *solarmap, *planetmap;
 
 	MapEditor2	*mapeditor;
 
@@ -60,7 +63,7 @@ class GamePlanetview : public GameBare
 
 	virtual void checknewgame();
 
-	SpaceSprite *planetspr, *playerspr, *fleetspr, *moonspr[32];
+	SpaceSprite **planetspr, *playerspr, *fleetspr;
 
 	virtual void init_menu();
 

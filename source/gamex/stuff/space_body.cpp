@@ -1,3 +1,4 @@
+#include <string.h>
 
 #include "../../melee.h"
 
@@ -131,7 +132,7 @@ void shadowpaintcircle(SpaceSprite *spr, double fi_s)
 	int image_size;
 	image_size = bmp->w;
 
-	double min_light = 0.3;
+	double min_light = 0.5;
 	double max_light = 1.0;
 
 	int i, j;
@@ -304,10 +305,60 @@ void MapEditor::set_mapinfo( MapSpacebody *aobjmap, int amaplevel, double ascale
 
 MapObj *MapEditor::create_mapobj(Vector2 pos)
 {
-	return new MapObj(0, pos, 0, Tedit->showspr());
+	return new MapObj(0, pos, 0, Tedit->tv->makespr());
 }
 
 
+void MapEditor::replace()
+{
+	int k;
+	k = selection->starnum;
+
+	objmap->sub[k]->type = Tedit->tv->isel;
+	//delete selection->
+	selection->rem_sprite();
+	selection->set_sprite(Tedit->tv->makespr());
+}
+
+void MapEditor::add()
+{
+	// just make a new selection
+	selection = create_mapobj(ptr->pos);
+	g->add(selection);
+	
+	moveselection = true;
+	
+	// also ... add it to the map ?? with default settings ..
+	selection->starnum = objmap->add(maplevel);	// level 1 = stars
+	
+	int k;
+	k = selection->starnum;
+	objmap->sub[k]->type = Tedit->tv->isel;
+
+	//delete selection->get_sprite();
+	selection->set_sprite(Tedit->tv->makespr());
+}
+
+void MapEditor::move()
+{
+	selection->pos = ptr->pos;
+	staywithin(0, &(selection->pos), map_size);
+	
+	
+	int k;
+	k = selection->starnum;
+	objmap->sub[k]->position = selection->pos / scalepos;
+	
+	maphaschanged = true;
+}
+
+void MapEditor::newselection()
+{
+	selection = (MapObj*) ptr->selection;
+	g->maparea->flag.left_mouse_press = false;
+}
+
+		
 void MapEditor::calculate()
 {
 	// keep track of the last star that was clicked on by the mouse
@@ -321,15 +372,7 @@ void MapEditor::calculate()
 
 	if (selection && moveselection)
 	{
-		selection->pos = ptr->pos;
-		staywithin(0, &(selection->pos), map_size);
-
-	
-		int k;
-		k = selection->starnum;
-		objmap->sub[k]->position = selection->pos / scalepos;
-		
-		maphaschanged = true;
+		move();
 	}
 
 
@@ -355,9 +398,7 @@ void MapEditor::calculate()
 	if ( g->maparea->flag.left_mouse_press && !moveselection &&
 			ptr->selection && ptr->selection->id == MAPOBJ_ID)
 	{
-		selection = (MapObj*) ptr->selection;
-
-		g->maparea->flag.left_mouse_press = false;
+		newselection();
 	}
 
 
@@ -368,32 +409,151 @@ void MapEditor::calculate()
 		// change the picture of the selected star
 		if (selection)
 		{
-			int k;
-			k = selection->starnum;
-			objmap->sub[k]->type = Tedit->isel;
-			selection->set_sprite(Tedit->showspr());
+			replace();
 		}
 	}
 
 	if (bnew->flag.left_mouse_press && !moveselection)
 	{
-		// just make a new selection
-		selection = create_mapobj(ptr->pos);
-		g->add(selection);
-		
-		moveselection = true;
-		
-		// also ... add it to the map ?? with default settings ..
-		selection->starnum = objmap->add(maplevel);	// level 1 = stars
-
-		int k;
-		k = selection->starnum;
-		objmap->sub[k]->type = Tedit->isel;
-		selection->set_sprite(Tedit->showspr());
+		add();
 	}
 
 }
 
+
+
+
+
+
+
+TVarea::TVarea(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
+:
+Area(menu, identbranch, asciicode, akeepkey)
+{
+//	char tmp[512];
+
+//	strcpy(tmp, identbranch);
+//	strcat(tmp, "dec_");
+//	bdec = new Button(menu, tmp);
+//	strcpy(tmp, identbranch);
+//	strcat(tmp, "inc_");
+//	binc = new Button(menu, tmp);
+
+	N = 0;
+	isel = 0;
+
+	blist = 0;
+
+	f = 1.0;
+}
+
+TVarea::~TVarea()
+{
+	if (blist)
+		delete blist;
+
+}
+
+void TVarea::calculate()
+{
+	Area::calculate();
+
+	//if (bdec->flag.left_mouse_press || binc->flag.left_mouse_press)
+	if (flag.left_mouse_press || flag.right_mouse_press)
+	{
+		//if (binc->flag.left_mouse_press)
+		if (flag.left_mouse_press)
+			++isel;
+
+		//if (bdec->flag.left_mouse_press)
+		if (flag.right_mouse_press)
+			--isel;
+
+		if (isel < 0 )
+			isel = N-1;
+		
+		if (isel >= N)
+			isel = 0;
+
+		//changebackgr(blist[isel]);
+		overwritebackgr(blist[isel], f, makecol(0,0,0));
+
+	}
+}
+
+void TVarea::newlist(int aN)
+{
+	if (blist)
+		delete blist;
+
+	N = aN;
+	blist = new BITMAP* [N];
+}
+
+void TVarea::initnewlist()
+{
+	// check the common scaling factor ... cause the biggest bitmap should
+	// still fit in the window ...
+	f = 1.0;
+	int i;
+	for ( i = 0; i < N; ++i )
+	{
+		double x;
+
+		x = double(backgr->w) / double(blist[i]->w);
+		if (x < f)
+			f = x;
+
+		x = double(backgr->h) / double(blist[i]->h);
+		if (x < f)
+			f = x;
+	}
+
+	set_sel(0);
+}
+
+void TVarea::set(BITMAP **list, int aN)
+{
+	newlist(aN);
+
+	int i;
+	for ( i = 0; i < N; ++i )
+		blist[i] = list[i];
+
+	initnewlist();
+}
+
+void TVarea::set(SpaceSprite **list, int aN)
+{
+	newlist(aN);
+
+	int i;
+	for ( i = 0; i < N; ++i )
+		blist[i] = list[i]->get_bitmap(0);
+
+	initnewlist();
+}
+
+void TVarea::set_sel(int newsel)
+{
+	if (!(newsel >= 0 && newsel < N))
+		return;
+
+	isel = newsel;
+	overwritebackgr(blist[isel], f, makecol(0,0,0));	
+}
+
+
+BITMAP *TVarea::show()
+{
+	return blist[isel];
+}
+
+
+SpaceSprite *TVarea::makespr()
+{
+	return new SpaceSprite(blist[isel]);
+}
 
 
 
@@ -401,29 +561,13 @@ IconTV::IconTV(char *ident, int xcenter, int ycenter, BITMAP *outputscreen)
 :
 Popup(ident, xcenter, ycenter, outputscreen)
 {
-	tv = new Area(this, "plot_");
-	bdec = new Button(this, "dec_");
-	binc = new Button(this, "inc_");
-
-	sprlist = 0;
-	N = 0;
-	isel = 0;
+	tv = new TVarea(this, "plot_");
 }
 
 IconTV::~IconTV()
 {
 }
 
-
-void IconTV::setsprites(SpaceSprite **asprlist, int aN)
-{
-	sprlist = asprlist;
-	N = aN;
-
-	isel = 0;
-	
-	tv->changebackgr(sprlist[0]->get_bitmap(0));
-}
 
 
 void IconTV::calculate()
@@ -433,29 +577,8 @@ void IconTV::calculate()
 
 	Popup::calculate();
 
-	if (bdec->flag.left_mouse_press || binc->flag.left_mouse_press)
-	{
-		if (binc->flag.left_mouse_press)
-			++isel;
-
-		if (bdec->flag.left_mouse_press)
-			--isel;
-
-		if (isel < 0 )
-			isel = N-1;
-		
-		if (isel >= N)
-			isel = 0;
-
-		tv->changebackgr(sprlist[isel]->get_bitmap(0));
-
-	}
 }
 
-SpaceSprite *IconTV::showspr()
-{
-	return sprlist[isel];
-}
 
 
 
@@ -491,6 +614,12 @@ void MapObj::calculate()
 }
 
 
+void MapObj::rem_sprite()
+{
+	// removes the sprite that was assigned to it
+	delete sprite;
+}
+
 
 
 
@@ -501,6 +630,10 @@ SolarBody::SolarBody(SpaceLocation *creator, Vector2 opos, double oangle, SpaceS
 :
 MapObj(creator, opos, oangle, osprite)
 {
+	// copy the original sprite, cause it's going to be altered.
+	sprite = 0;
+	set_sprite(osprite);
+
 	layer = LAYER_SHOTS;
 
 	mass = 1E6;
@@ -513,10 +646,6 @@ MapObj(creator, opos, oangle, osprite)
 	stayhere = pos;
 	sunpos = osunpos;
 
-	// copy the original sprite, cause it's going to be altered.
-	sprite = 0;
-	set_sprite(osprite);
-
 	//id = ID_SOLAR_BODY;
 	starnum = bodynum;
 
@@ -528,7 +657,7 @@ MapObj(creator, opos, oangle, osprite)
 
 SolarBody::~SolarBody()
 {
-	if (sprite)
+	if (sprite)			// delete internal copy
 		delete sprite;
 }
 
@@ -551,13 +680,21 @@ void SolarBody::calculate()
 void SolarBody::set_sprite(SpaceSprite *new_sprite)
 {
 	if (sprite)
-		delete sprite;
+		delete sprite;	// delete the internal copy
 
 	origsprite = new_sprite;
 	sprite = new SpaceSprite( *new_sprite );
 	size = new_sprite->size();
 
 	drawshadow();
+}
+
+
+void SolarBody::rem_sprite()
+{
+	// removes the sprite that was assigned to it ... and
+	// that's the one pointed to by origsprite
+	delete origsprite;
 }
 
 

@@ -8,6 +8,8 @@ void replace_color(BITMAP *bmp, int col1, int col2);
 
 void makevideobmp(BITMAP *&bmp);
 
+void createfilelist(char ***list, int *N, char *scanname, int remext);
+
 
 class MousePtr : public SpaceObject
 {
@@ -40,6 +42,7 @@ public:
 	void zoom(double z);
 	void set_zoom(double z);
 	void zoomlimit(double W);
+	void zoomlimit(double min, double max);
 	void scaletowidth(double W);	// zoom out to this width.
 	void testzoom();
 	void edgecorrect();

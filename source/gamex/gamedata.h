@@ -15,7 +15,7 @@ class RaceInfo;
 class ColonyRaceInfo
 {
 public:
-	char		env_type[64];
+	char	env_type[64];
 	double	doubling_period;	// double population in "years"
 	double	start_population_multiplier;
 };
@@ -45,16 +45,22 @@ public:
 class FGPresence : public Presence
 {
 public:
-	virtual void animate_starmap(Frame *f) {};
+	virtual void animate_map(Frame *f, int imap) {};
 };
 
 
 class RaceSettlement : public FGPresence
 {
 protected:
-	RaceInfo	*race;
 
 public:
+	RaceInfo	*race;
+	char		id[80];
+
+	char		dialogname[128];	// name of the file; should be located in the races' subdirectory!!
+
+	bool modified;
+
 	RaceSettlement *next;
 	int istar, iplanet, imoon;
 	
@@ -66,7 +72,8 @@ public:
 	void locate(int astar, int aplanet, int amoon);
 
 	virtual void calculate();
-	virtual void animate_starmap(Frame *f);
+	virtual void animate_map(Frame *f, int imap);
+
 };
 
 
@@ -75,10 +82,17 @@ class RaceColony : public RaceSettlement
 protected:
 
 public:
+	int		hidden;		// if true, the colony has complete-radiosilence and
+	// won't show up; should be possible to activate it (using it's id?).
+
 	RaceColony(RaceInfo *arace);
-	double	population;
+	double	population, initpop;
 
 	virtual void calculate();
+
+	virtual void set_info(double pop, char *adialogname);
+
+	void changeowner(RaceInfo *newrace);
 };
 
 
@@ -86,6 +100,8 @@ public:
 class RaceInfo : public Presence
 {
 public:
+	bool modified;
+
 	RaceInfo	*next;
 
 	RaceInfo(char *arace_id, int acolor);
@@ -105,15 +121,21 @@ public:
 	// this class should clean it up...
 
 	virtual void calculate();
-	virtual void animate_starmap(Frame *f);
+	virtual void animate_map(Frame *f, int imap);
 
 	ColonyRaceInfo cinfo;
 
 	RaceColony *firstcol, *lastcol;
-	void init_colonies(char *ininame);
-	void add(RaceColony *rc);
 
-	char	shipid[16];
+	void init_colonies(char *ininame);
+	void write_colonies(char *ininame);
+
+	void add(RaceColony *rc);
+	void remlist(RaceColony *rc);
+	void rem(RaceColony *rc);
+
+	RaceColony *find_colony(int istar, int iplan, int imoon);
+	char shipid[16];
 };
 
 
@@ -132,7 +154,11 @@ public:
 	void readracelist();
 	void writeracelist();
 
-	virtual void animate_starmap(Frame *f);
+	virtual void animate_map(Frame *f, int imap);
+
+	RaceInfo *get(char *useid);
+
+	virtual RaceColony *findcolony(int istar, int iplan, int imoon);
 };
 
 extern RaceManager racelist;
@@ -145,7 +171,7 @@ class PlayerInfo
 {
 	char *configfilename;
 public:
-	Vector2 pos;
+	Vector2 pos, vel;
 	double angle;
 
 	// <0 means you're in hyperspace
@@ -160,7 +186,15 @@ public:
 
 	void init(char *filename);
 	void write();
+
 	void sync(LocalPlayerInfo *p);
+	void sync2(LocalPlayerInfo *p);
+
+	double RU;	// your pile of money ...
+
+	// cargo bay
+	double mineral_weight[16];
+	double bio_weight;
 };
 
 extern PlayerInfo playerinfo;
@@ -182,10 +216,23 @@ public:
 
 
 
+class MapSpacebody;
+
+class SpacebodyInfo
+{
+public:
+	virtual void init(MapSpacebody *planet) {};
+	virtual void write(MapSpacebody *planet) {};
+};
+
+
+
 // the branches
 class MapSpacebody
 {
 public:
+	SpacebodyInfo *info;
+
 	//char type[32];
 	int type;			// the char version should be in a table - why ... because indexed stuff is easier to work with!!
 	Vector2 position;	// 0,0 = center
@@ -193,6 +240,7 @@ public:
 	SpaceObject *o;
 	double scalepos;
 
+	int id;
 	int Nsub;
 	MapSpacebody **sub;	// at most 3 moons.
 
@@ -237,23 +285,17 @@ struct IndexTypeList
 	int N, max;
 	IndexType *type;
 	
-	IndexTypeList(int max, char *fname);
+	IndexTypeList(char *fname);
 	~IndexTypeList();
 
-	int get_index(char *typestr);
+	int get_index(char *typestr, int defaultval = -1);
 
 };
 
 extern IndexTypeList *startypelist;
 extern IndexTypeList *planettypelist;
-extern IndexTypeList *moontypelist;
-
-const int maxstartypes = 128;
-const int maxplanettypes = 128;
-const int maxmoontypes = 128;
-// also includes the moon types
-
-
+//extern IndexTypeList *moontypelist;	// moons or small planets are not distinguishable
+extern IndexTypeList *surfacetypelist;
 
 #endif
 

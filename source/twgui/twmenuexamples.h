@@ -142,4 +142,71 @@ public:
 
 
 
+class FileBrowser : public PopupList
+{
+public:
+	bool selection;
+	Button *downdir;
+
+	char dir[512];		// max filename length
+	char fname[512];
+	int fattr[2048];	// can handle max 2048 files.
+
+	char required_ext[64];
+	void set_ext(char *ext);
+
+	FileBrowser(EmptyButton *creator, char *ident, int axshift, int ayshift, FONT *afont);
+	virtual ~FileBrowser();
+
+	virtual void calculate();
+
+	void reset_dirlist();
+
+	virtual void check_end();
+
+	void set_dir(char *newdir);
+};
+
+
+
+
+
+enum valuetypes {vtype_int=0, vtype_float=1};
+
+class ValueStr
+{
+public:
+	char format[16];
+	char descr[64];
+	double min, max, value;
+	valuetypes type;	// int or float
+
+	void set(valuetypes atype, char *adescr, double amin, double amax);
+	double getval();
+};
+
+
+class ValueEdit : public EmptyButton
+{
+public:
+	int Nmax, isel;
+	bool do_init;
+	ValueStr **values;
+
+	double barpos;
+	char	edit_text[512];
+
+	TextButton *info;
+	TextEditBox *edit;
+	ScrollControl scroll;
+
+	ValueEdit(TWindow *menu, char *identbranch, FONT *afont, int Nmax);
+	virtual ~ValueEdit();
+
+	void edit_update();
+
+	virtual void calculate();
+};
+
+
 #endif

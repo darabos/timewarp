@@ -10,11 +10,12 @@ REGISTER_FILE
 
 
 #include "gamedata.h"
+#include "gamegeneral.h"
 
 
 IndexTypeList *startypelist;
 IndexTypeList *planettypelist;
-IndexTypeList *moontypelist;
+IndexTypeList *surfacetypelist;
 
 PlayerInfo		playerinfo;
 MapEverything	mapeverything;
@@ -34,6 +35,8 @@ void PlayerInfo::init(char *filename)
 	istar = get_config_int(0, "Star", -1);
 	iplanet = get_config_int(0, "Planet", -1);
 	imoon = get_config_int(0, "Moon", -1);	// of planets and moons
+
+	RU = get_config_float(0, "RU", 0);
 }
 
 
@@ -48,14 +51,30 @@ void PlayerInfo::write()
 	set_config_int(0, "Planet", iplanet);
 	set_config_int(0, "Moon", imoon);
 	//set_config_int(0, "PlanetCode", iplanetcode);
+
+	set_config_float(0, "RU", RU);
 }
 
 
 void PlayerInfo::sync(LocalPlayerInfo *p)
 {
+//	pos = p->pos;
+//	angle = p->angle;
+
+	// this is now turned around, cause "old" settings are forgotten
+	// when you re-appear "there"
+	p->pos = pos;
+	p->angle = angle;
+	p->vel = vel;
+}
+
+void PlayerInfo::sync2(LocalPlayerInfo *p)
+{
 	pos = p->pos;
 	angle = p->angle;
+	vel = p->vel;
 }
+
 
 
 
@@ -107,9 +126,9 @@ void LocalPlayerInfo::inflict_damage(SpaceObject *other)
 
 void MapEverything::init(char *filename)
 {
-	startypelist = new IndexTypeList(maxstartypes, "startypes.txt");
-	planettypelist = new IndexTypeList(maxplanettypes, "planettypes.txt");
-	moontypelist = new IndexTypeList(maxplanettypes, "moontypes.txt");
+	startypelist = new IndexTypeList("gamex/types/star_*.ini");
+	planettypelist = new IndexTypeList("gamex/types/planet_*.ini");
+	surfacetypelist = new IndexTypeList("gamex/planetscan/surface_*.ini");
 	
 	FILE *f = fopen(filename, "rt");
 	if (!f) { tw_error("failed to initialize map info");}
@@ -206,10 +225,12 @@ void MapSpacebody::init(FILE *f, int level)
 		type = planettypelist->get_index(chartype);
 
 	if (level == 3)
-		type = moontypelist->get_index(chartype);
+		type = planettypelist->get_index(chartype);
 
-	fscanf(f, "%lf %lf", &position.x, &position.y);
+	fscanf(f, "%lf %lf %X", &position.x, &position.y, &id);
 	fscanf(f, "%i\n\n", &Nsub);
+
+	if (Nsub < 0 || Nsub > 20) {tw_error("error: invalid system");}
 
 	sub = new MapSpacebody* [Nsub];
 
@@ -249,10 +270,10 @@ void MapSpacebody::save(FILE *f, int level)
 		fprintf(f, "%s %s\n", base, planettypelist->type[this->type].type_string);
 
 	if (level == 3)
-		fprintf(f, "%s %s\n", base, moontypelist->type[this->type].type_string);
+		fprintf(f, "%s %s\n", base, planettypelist->type[this->type].type_string);
 
 
-	fprintf(f, "%s %lf %lf\n", base, position.x, position.y);
+	fprintf(f, "%s %lf %lf %X\n", base, position.x, position.y, id);
 	fprintf(f, "%s %i\n\n", base, Nsub);
 
 	for ( i = 0; i < Nsub; ++i )
@@ -278,6 +299,7 @@ int MapSpacebody::add(int level)
 	sub[Nsub] = new MapSpacebody();
 	sub[Nsub]->init(0, level);	// the level does not matter.
 
+
 	++Nsub;
 
 	return Nsub-1;
@@ -301,43 +323,21 @@ int MapSpacebody::rem(int k)
 
 
 
-IndexTypeList::IndexTypeList(int omax, char *fname)
+IndexTypeList::IndexTypeList(char *scanname)
 {
-	max = omax;
-	type = new IndexType [max];
+	char **templist;
 
-	FILE *f;
-	char line[512];
-	
-	strcpy(line, "gamex/types/");
-	strcat(line, fname);
-	f = fopen(line, "rt");
-	if (!f)
+	createfilelist(&templist, &N, scanname, 1);
+
+	type = new IndexType [N];
+
+	int i;
+	for ( i = 0; i < N; ++i )
 	{
-		error("File does not exist [%s]", line);
-	}
-	
-	N = 0;
-
-	while (fgets(line, 512, f))
-	{
-		// get rid of the \n character as well...
-		int L = strlen(line);
-		if (L > 0 && line[L-1] == '\n')
-		{
-			--L;
-			line[L] = 0;
-		}
-		
-		type[N].type_string = new char [L];
-		strcpy(type[N].type_string, line);
-
-		++N;
-
-		if (N > max){tw_error("init: too many types");}
+		type[i].type_string = templist[i];
 	}
 
-	fclose(f);
+	delete templist;
 }
 
 
@@ -354,7 +354,7 @@ IndexTypeList::~IndexTypeList()
 
 
 
-int IndexTypeList::get_index(char *typestr)
+int IndexTypeList::get_index(char *typestr, int defaultval)
 {
 	int i;
 	for ( i = 0; i < N; ++i )
@@ -364,7 +364,7 @@ int IndexTypeList::get_index(char *typestr)
 	}
 
 	if (i == N)		// no match
-		return -1;
+		return defaultval;
 	else
 		return i;	// a match
 }
@@ -402,6 +402,12 @@ RaceSettlement::RaceSettlement(RaceInfo *arace)
 	istar = 0;
 	iplanet = 0;
 	imoon = 0;
+
+	modified = false;
+
+	dialogname[0] = 0;
+
+	strcpy(id, "none");
 }
 
 RaceSettlement::~RaceSettlement()
@@ -419,24 +425,65 @@ void RaceSettlement::calculate()
 {
 }
 
-void RaceSettlement::animate_starmap(Frame *f)
+void RaceSettlement::animate_map(Frame *f, int imap)
 {
-	if (!patrol.range)
-		return;
-
 	BITMAP *bmp = f->surface;
 
-	// in case of the starmap, show the circles of influence
+	MapSpacebody *starmap = 0, *solarmap = 0, *planetmap = 0;
 
-	int R;
-	Vector2 P;
+	starmap = mapeverything.region[0];
 
-	P = corner(mapeverything.region[0]->sub[istar]->position * mapeverything.region[0]->scalepos);
+	if (istar >= 0)
+		solarmap = starmap->sub[istar];
 
-	R = patrol.range * mapeverything.region[0]->scalepos * space_zoom;
+	if (iplanet >= 0)
+		planetmap = solarmap->sub[iplanet];
 
-	//void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
-	circlefill(bmp, P.x, P.y, R, race->color);
+	switch (imap)
+	{
+	case 1:
+		{
+			// a star map
+			if (!patrol.range || !starmap)
+				return;
+			
+			// in case of the starmap, show the circles of influence
+			
+			int R;
+			Vector2 P;
+			
+			P = corner(starmap->sub[istar]->position * starmap->scalepos);
+			
+			R = patrol.range * starmap->scalepos * space_zoom;
+			
+			//void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
+			circlefill(bmp, P.x, P.y, R, race->color);
+			break;
+		}
+
+	case 2:
+		{
+			// a solar map
+			if (!solarmap || (iplanet >= solarmap->Nsub) || (istar != playerinfo.istar) )
+				return;
+
+			int R;
+			Vector2 P;
+			
+			P = corner(solarmap->sub[iplanet]->position * solarmap->scalepos);
+			
+			R = 80 * space_zoom;
+			
+			//void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
+			circle(bmp, P.x, P.y, R, race->color);
+
+			break;
+		}
+
+		// I suppose we don't need to bother about the planet-view map: that's a bit
+		// useless since the location is pretty obvious or not ?
+
+	}
 }
 
 
@@ -448,10 +495,12 @@ RaceColony::RaceColony(RaceInfo *arace)
 :
 RaceSettlement(arace)
 {
-	// this is a default colony of 10 K individuals (1 million).
-	population = 10;
+	// this is a default colony of 10 K individuals.
+	initpop = 10;
 
-	population *= race->cinfo.start_population_multiplier;
+	population = initpop * race->cinfo.start_population_multiplier;
+
+	hidden = false;
 
 	calculate();
 }
@@ -475,9 +524,32 @@ void RaceColony::calculate()
 }
 
 
+// note that "pop" is the "default population", which is then adjusted ...
+void RaceColony::set_info(double pop, char *adialogname)
+{
+	modified = true;
+
+	initpop = pop;
+	population = initpop * race->cinfo.start_population_multiplier;
+
+	strcpy(dialogname, adialogname);
+}
 
 
+void RaceColony::changeowner(RaceInfo *newrace)
+{
+	// if it's not a new race
+	if (newrace == race)
+		return;
 
+	// it's a new race: the old race loses it in the list, the new one retrieves it
+	race->remlist(this);
+	newrace->add(this);
+
+	race = newrace;
+
+	modified = true;
+}
 
 
 
@@ -495,8 +567,10 @@ RaceInfo::RaceInfo(char *arace_id, int acolor)
 	color = acolor;
 
 	strcpy(cinfo.env_type, "gaia");
-	cinfo.doubling_period = 10.0;	// 10 years to double the population
+	cinfo.doubling_period = 25.0;	// 25 years to double the population
 	cinfo.start_population_multiplier = 1.0;
+
+	modified = false;
 }
 
 
@@ -522,6 +596,41 @@ void RaceInfo::add(RaceColony *rc)
 
 	lastcol = rc;
 
+	rc->modified = true;
+}
+
+void RaceInfo::remlist(RaceColony *rc)
+{
+	RaceSettlement *current;
+
+	if (firstcol == rc)
+		firstcol = (RaceColony*) rc->next;
+	else
+	{
+
+		current = firstcol;
+		while (current && current->next != rc)
+			current = current->next;
+		
+		if (!current)
+			return;
+
+		current->next = rc->next;
+	}
+
+	current = firstcol;
+
+	while (current && current->next)
+		current = current->next;
+
+	lastcol = (RaceColony*)current;
+}
+
+void RaceInfo::rem(RaceColony *rc)
+{
+	remlist(rc);
+
+	delete rc;
 }
 
 void RaceInfo::init_colonies(char *ininame)
@@ -548,21 +657,82 @@ void RaceInfo::init_colonies(char *ininame)
 		imoon = get_config_int(colid, "moon", 0);
 		rc->locate(istar, iplan, imoon);
 
-		rc->population = get_config_float(colid, "population", 0);
+		rc->initpop = get_config_float(colid, "initpop", 0);
+		rc->population =  get_config_float(colid, "population", 0);
+
+		strcpy(rc->dialogname, get_config_string(colid, "dialog", ""));
+
+		rc->hidden = get_config_int(colid, "hidden", 0);
+		strcpy(rc->id, get_config_string(colid, "id", ""));
 
 		rc->calculate();
 	}
 }
 
 
-void RaceInfo::animate_starmap(Frame *f)
+// saves to disk, but only if needed ?
+
+void RaceInfo::write_colonies(char *ininame)
+{
+	set_config_file(ininame);
+
+	bool mod = false;
+	int N = 0;
+
+	RaceColony *rc;
+	rc = firstcol;
+
+	while (rc)
+	{
+		++N;
+		mod |= rc->modified;
+		rc = (RaceColony*)rc->next;
+	}
+
+	if (!mod)
+		return;		// no need to save if there's no change
+
+	// save all the colonies
+
+	set_config_int(0, "N", N);
+	
+	int i = 0;
+
+	rc = firstcol;
+
+	while (rc)
+	{
+
+		char colid[64];
+		sprintf(colid, "colony%03i", i);
+
+		set_config_int(colid, "star", rc->istar);
+		set_config_int(colid, "planet", rc->iplanet);
+		set_config_int(colid, "moon", rc->imoon);
+
+		set_config_float(colid, "initpop", rc->initpop);
+		set_config_float(colid, "population", rc->population);
+
+		set_config_string(colid, "dialog", rc->dialogname);
+
+		set_config_int(colid, "hidden", rc->hidden);
+		set_config_string(colid, "id", rc->id );
+
+		rc = (RaceColony*)rc->next;
+		++i;
+	}
+}
+
+
+
+void RaceInfo::animate_map(Frame *f, int imap)
 {
 	RaceSettlement *current;
 	current = firstcol;
 
 	while (current)
 	{
-		current->animate_starmap(f);
+		current->animate_map(f, imap);
 		current = current->next;
 	}
 }
@@ -570,6 +740,24 @@ void RaceInfo::animate_starmap(Frame *f)
 
 
 
+
+
+// returns true, if this race already has some kind of settlement at this location
+RaceColony *RaceInfo::find_colony(int istar, int iplan, int imoon)
+{
+	RaceColony *current;
+	current = firstcol;
+
+	while (current)
+	{
+		if (current->istar == istar && current->iplanet == iplan && current->imoon == imoon)
+			break;
+		
+		current = (RaceColony*)current->next;
+	}
+
+	return current;
+}
 
 
 
@@ -660,6 +848,8 @@ void RaceManager::readracelist()
 		err = al_findnext(&info);
 	}
 
+	al_findclose(&info);
+
 }
 
 
@@ -672,24 +862,36 @@ void RaceManager::writeracelist()
 	while (current)
 	{
 		char fname[512];
+
+		// this only writes if the basic race info is changed
+		if (current->modified)
+		{
+			strcpy(fname, "gamex/gamedata/races/");
+			strcat(fname, current->id);
+			strcat(fname, "/race.ini");
+			set_config_file(fname);
+			
+			int r, g, b;
+			r = getr(current->color);
+			g = getg(current->color);
+			b = getb(current->color);
+			
+			set_config_int("color", "r", r);
+			set_config_int("color", "g", g);
+			set_config_int("color", "b", b);
+			
+			set_config_float("colony", "doublingperiod", current->cinfo.doubling_period);
+			set_config_float("colony", "startpopmultiplier", current->cinfo.start_population_multiplier);
+			set_config_string("colony", "envtype", current->cinfo.env_type);
+		}
+
+		
+
 		strcpy(fname, "gamex/gamedata/races/");
 		strcat(fname, current->id);
-		strcat(fname, "/race.ini");
-		set_config_file(fname);
-		
-		int r, g, b;
-		r = getr(current->color);
-		g = getg(current->color);
-		b = getb(current->color);
-
-		set_config_int("color", "r", r);
-		set_config_int("color", "g", g);
-		set_config_int("color", "b", b);
-
-		set_config_float("colony", "doublingperiod", current->cinfo.doubling_period);
-		set_config_float("colony", "startpopmultiplier", current->cinfo.start_population_multiplier);
-		set_config_string("colony", "envtype", current->cinfo.env_type);
-		
+		strcat(fname, "/colonies.ini");
+		// this only writes if one of the colonies was modified.
+		current->write_colonies(fname);
 
 		current = current->next;
 	}
@@ -698,15 +900,52 @@ void RaceManager::writeracelist()
 
 
 
-void RaceManager::animate_starmap(Frame *f)
+void RaceManager::animate_map(Frame *f, int imap)
 {
 	RaceInfo *current;
 	current = first;
 
 	while (current)
 	{
-		current->animate_starmap(f);
+		current->animate_map(f, imap);
 		current = current->next;
 	}
 }
 
+
+// return the Raceinfo with the specified id ...
+RaceInfo *RaceManager::get(char *useid)
+{
+	RaceInfo *current;
+	current = first;
+
+	while (current)
+	{
+		if (strcmp(current->id, useid) == 0)
+			return current;
+		current = current->next;
+	}
+
+	return current;
+}
+
+
+
+RaceColony *RaceManager::findcolony(int istar, int iplan, int imoon)
+{
+	RaceInfo *ri;
+	RaceColony *rc;
+
+	rc = 0;
+	ri = first;
+
+	while (ri)
+	{
+		rc = ri->find_colony(istar, iplan, imoon);
+		if (rc)	break;
+
+		ri = ri->next;
+	}
+
+	return rc;
+}

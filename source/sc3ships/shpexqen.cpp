@@ -149,8 +149,9 @@ void ExquivanBarrier::calculate()
 
   if (!(ship && ship->exists()))
   {
+	  state = 0;	// remove the weapon when the ship is destroyed.
 	  ship = 0;
-	return;
+	  return;
   }
 
   if (!(exqship && exqship->exists()))

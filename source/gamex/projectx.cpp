@@ -65,7 +65,9 @@ void ProjectX::init()
 	// start with something ... solar view mode, for example ... (that already exists...)
 	// but before that of course, hyperspace !! They're stacked so that if you
 	// leave solar view, you enter hyper space.
-	
+
+
+	/*
 	add( new GameHyperspace() );
 	
 	if (playerinfo.istar >= 0)
@@ -73,25 +75,28 @@ void ProjectX::init()
 
 	if (playerinfo.iplanet >= 0)
 		add( new GamePlanetview() );
+		*/
+		
 		
 		
 
 //	add( new GameStarmap() );
-//	add( new GameSolarview() );
+	add( new GameSolarview() );
 //	add( new GamePlanetview() );
 //	add( new GamePlanetscan() );
 //	add( new GameMelee() );
 //	add( new GameDialogue() );		// the editor
-//	add( new GameAliendialog() );	// the alien interface
+//	add( new GameAliendialog() );	// the alien interface -- need additional info, can't just load like this.
 //	add( new GameTriggerEdit() );
 //	add( new GameTriggerEdit() );
 	
-
 }
 
 
 void ProjectX::quit()
 {
 	playerinfo.write();
-//	mapwrap = true;		// this is the melee default setting.
+
+	// save edited races info (only saves changes)
+	racelist.writeracelist();
 }

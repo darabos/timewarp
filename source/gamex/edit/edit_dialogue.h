@@ -42,6 +42,8 @@ struct Dialo
 
 	char T[Ntext];	// text
 
+	char id[64];
+
 
 	// text can also activate triggers ... but that's not supported yet ...
 	int Ntriggers;
@@ -53,6 +55,8 @@ struct Dialo
 	int Nbranches;		// child dialogue items
 	Dialo *branch[maxbranches];
 	Dialo *mother;			// the mother
+
+	void discard_branches();
 };
 
 
@@ -66,6 +70,8 @@ class GameDialogue : public GameBare
 	Dialo *dialo, *firstdialo;
 	char *Blist[maxbranches];
 
+	FileBrowser *fb;
+
 	virtual void init();
 	virtual void quit();
 	//virtual bool handle_key(int k);
@@ -76,15 +82,17 @@ class GameDialogue : public GameBare
 
 	void initeditor(Dialo *dialo);
 
+	void init_dialog(char *fname);
+	void save_dialog();
 
 	int Nracepiclist;
 	char *racepiclist[maxracepiclist];
 	
 
-	TextEditBox *Tedit;
+	TextEditBox *Tedit, *nodeid;
 	TextList	*Tlist;
 
-	Button *refresh, *Bplus, *bprev;
+	Button *bload, *bsave, *Bplus, *bprev;
 
 	SwitchButton *dialostatus;
 

@@ -22,6 +22,9 @@ LCONTROL+TAB = navigates between windows.
 
 #include "twbutton.h"
 
+void del_bitmap(BITMAP **bmp);
+
+
 class EmptyButton;
 
 // a menu superstructure ... to manage a bunch of related areas ... in a reserved area/ region
@@ -36,6 +39,11 @@ extern TKeyHandler keyhandler;
 class TWindow
 {
 public:
+
+	int autoplace;
+	// true: then the auto-search is used to place a bitmap somewhere, and also
+	// there's always a check to see if this is needed;
+	// false: then the ini positions are used and neither checked nor updated.
 
 	// managing a list of (related) windows
 	TWindow	*prev, *next;

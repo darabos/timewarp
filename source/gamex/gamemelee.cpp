@@ -261,3 +261,10 @@ GameMelee::~GameMelee()
 
 
 
+void GameMelee::ship_died(Ship *who, SpaceLocation *source)
+{
+	// increase money of the player ...
+	playerinfo.RU += 100;
+}
+
+

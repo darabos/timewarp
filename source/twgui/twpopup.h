@@ -34,6 +34,7 @@ public:
 	virtual void doneinit();
 
 	bool returnvalueready;
+	bool ready();
 
 	virtual void calculate();
 	virtual void check_end();

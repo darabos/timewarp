@@ -15,6 +15,8 @@ REGISTER_FILE
 
 BITMAP *game_screen, *game_screen1, *game_screen2;
 
+static bool usepageflip = false;
+
 
 GameBare::GameBare()
 {
@@ -47,6 +49,17 @@ void GameBare::quit()
 	delete window;
 	
 	state = 0;
+
+	// if there's a window, delete the window.
+	// this also recursively deletes all windows that are connected to it (next/prev)
+	if (T)
+		delete T;
+
+	if (hardexit && prev)
+	{
+		prev->hardexit = true;
+		prev->quit();
+	}
 }
 
 
@@ -60,11 +73,18 @@ bool GameBare::handle_key(int k)
 	switch (k >> 8)
 	{
 	case KEY_ESC:
+		hardexit = false;
 		quit();
 		return true;
 		break;
-		
+
+	case KEY_Q:
+		hardexit = true;
+		quit();
+		return true;
+		break;
 	}
+
 	
 	return false;
 }
@@ -157,7 +177,7 @@ void GameBare::init()
 	hardexit = 0;	// is set to 1 if the player exits the game.
 
 
-	tempframe = new Frame2(1024);
+	tempframe = 0;
 
 	init_menu();
 
@@ -169,6 +189,8 @@ void GameBare::init()
 	// use this for game-drawing to part of the menu
 	if (maparea)
 	{
+		tempframe = new Frame2(1024);
+
 		tempframe->setsurface(maparea->backgr);
 
 		wininfo.init( Vector2(800,800), 800.0, tempframe );
@@ -177,7 +199,9 @@ void GameBare::init()
 	// performance check
 	tic_history = new Histograph(128);
 	render_history = new Histograph(128);
+
 	ti = true;
+	ti = false;
 
 	// enable mouse drawing using the allegro pointer.
 	hideallegromouse = false;
@@ -242,8 +266,6 @@ void GameBare::animate()
 	if (poll_scroll())		//in case you still have to wait for a page flip...
 		return;
 
-	bool usepageflip = false;
-
 	// switch drawing screen
 	if (usepageflip)
 	{
@@ -259,14 +281,19 @@ void GameBare::animate()
 
 	double t = get_time2();
 
-	tempframe->full_redraw = true;
-	FULL_REDRAW = true;
-	tempframe->erase();
-	tempframe->prepare();
-
-	acquire_bitmap(tempframe->surface);
-	animate(tempframe);
-	release_bitmap(tempframe->surface);
+	// Game animation ; is all re-directed to maparea.
+	// (if there's no maparea, game's not animated)
+	if (tempframe)
+	{
+		tempframe->full_redraw = true;
+		FULL_REDRAW = true;
+		tempframe->erase();
+		tempframe->prepare();
+		
+		acquire_bitmap(tempframe->surface);
+		animate(tempframe);
+		release_bitmap(tempframe->surface);
+	}
 
 	acquire_bitmap(game_screen);
 	acquire_bitmap(game_screen2);
@@ -411,6 +438,8 @@ void GameProject::init()
 	// exactly the "global" screen ...
 	game_screen1 = create_video_bitmap(screen->w, screen->h);
 	game_screen2 = create_video_bitmap(screen->w, screen->h);
+	// game_screen2 can also be used to store stuff, which is then blitted at once
+	// onto the game screen.
 	if (!(game_screen1 && game_screen2))
 	{
 		tw_error("Failed to initialize game_screen!");
@@ -427,14 +456,15 @@ void GameProject::init()
 
 void GameProject::quit()
 {
-	if (game_screen1)
-		show_video_bitmap(game_screen1);
+//	if (game_screen1)
+//		show_video_bitmap(game_screen1);
 
-	if (game_screen1)
-		destroy_bitmap(game_screen1);
+	del_bitmap(&game_screen1);
 
-	if (game_screen2)
-		destroy_bitmap(game_screen2);
+	del_bitmap(&game_screen2);
+
+	// AAARGH
+	// don't know how to restore the original "screen" !!
 
 	// result of an empty project: nothing to do, also on exiting it
 }
@@ -691,8 +721,8 @@ void GameBare::show_ticinfo(Frame *f, Histograph *tic_history, Histograph *rende
 	else
 		tmp = "BAD!";
 	message.print(dur, 12, "render time: %.3fms (that's %s)", rt, tmp);
-	message.print(dur, 12, "debug: %d", debug_value);
-	message.print(dur, 12, "shipdatas loaded: %d", shipdatas_loaded);
+	//message.print(dur, 12, "debug: %d", debug_value);
+	//message.print(dur, 12, "shipdatas loaded: %d", shipdatas_loaded);
 
 	message.animate(f);
 	message.flush();

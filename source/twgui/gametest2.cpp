@@ -196,7 +196,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 				// change into 32 bits now?
 				bmp = create_bitmap_ex(32, bmp2->w, bmp2->h);
 				blit(bmp2, bmp, 0, 0, 0, 0, bmp2->w, bmp2->h);
-				destroy_bitmap(bmp2);
+				del_bitmap(&bmp2);
 			} else if (data->type == DAT_BITMAP)	// useful in case you prefer a panel bmp
 			{
 				bmp = (BITMAP*) data->dat;
@@ -231,7 +231,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 			}
 
 			if (data->type == DAT_RLE_SPRITE)
-				destroy_bitmap(bmp);
+				del_bitmap(&bmp);
 			//unload_datafile_object(data);
 		} else {
 			if (i == 0)
@@ -259,7 +259,7 @@ void remove_fleet_bmps(BITMAP **fleet_bmp)
 	while (fleet_bmp[i])
 	{
 		++i;
-		destroy_bitmap(fleet_bmp[i]);
+		del_bitmap(&fleet_bmp[i]);
 	}
 
 	delete fleet_bmp;

@@ -56,6 +56,7 @@ public:
 // This must support a scroll-bar, in case the list does not fit in the box
 class TextList : public AreaTabletScrolled
 {
+	int Nreserved;
 
 public:
 	TextList(TWindow *menu, char *identbranch, FONT *afont);
@@ -72,8 +73,9 @@ public:
 	//int		yselected;	// the selected item.
 
 	void clear_optionlist();
-	void set_optionlist(char **aoptionlist, int color);
+	void set_optionlist(char **aoptionlist, int color);	// overwrite a list.
 	void set_optionlist(char **aoptionlist, int aN, int color);
+	void add_optionlist(char *newstr);		// add one item to an existing list.
 
 	void set_selected(int iy);
 
@@ -99,7 +101,7 @@ public:
 class TextInfoArea : public AreaTabletScrolled
 {
 protected:
-	int maxchars;
+	int maxchars;		// you can't add chars beyond that
 	char *localcopy;
 	TextInfo *textinfo;
 	//scrollpos_str	*scroll;
@@ -111,12 +113,13 @@ public:
 	int		Nlines;
 
 	FONT	*usefont;
-	int		Htxt, Nshow;
+	//int		Htxt, Nshow;
 
 	int		text_color;
 
 	void set_textinfo(char *atextinfo);
 	void set_textinfo(char *atextinfo, int Nchars);
+	void set_textinfo_unbuffered(char *newtext, int Nchars);
 
 	virtual void subanimate();
 	
@@ -129,7 +132,6 @@ public:
 class TextEditBox : public TextInfoArea
 {
 protected:
-	char *text;//[128];	// can hold 1 line of text.
 	int charpos;
 
 	// this is used to record when the last key-press was made (with a resolution
@@ -137,32 +139,31 @@ protected:
 	bool	keypr[KEY_MAX];
 	int		lastpressed;
 	int		repeattime, lasttime;
-	int		text_color;
-
 	
-	//TextInfo *textinfo;
-
 
 public:
+	char *text;//[128];	// can hold 1 line of text.
+	int		text_color;
+
 	TextEditBox(TWindow *menu, char *identbranch, FONT *afont, char *atext, int amaxtext);
 	virtual ~TextEditBox();
-
-	//FONT		*usefont;
 
 	virtual void calculate();
 	virtual void subanimate();
 
 	virtual void handle_lpress();
 
-	void clear_text();
-	void show_text();
+//	void clear_text();
+//	void show_text();
 
 	// set the typematic delay to "atime" milliseconds (default = 100)
 	//void set_repeattime(int atime);
 	void set_textcolor(int c);
 
 	void text_reset();
-	void text_reset(char *newtext);
+	void text_reset(char *newtext, int N);
+
+	char *get_text();
 };
 
 

@@ -4,6 +4,7 @@
 
 #include "gameproject.h"
 #include "edit/edit_dialogue.h"
+#include "gamedata.h"
 
 #include "edit/disk_stuff.h"
 
@@ -40,9 +41,14 @@ class GameAliendialog : public GameBare
 	
 
 	int showline_num, showline_Nlines;
-	char show_line[256];
+	char show_line[2048];
 	char *showline(char *text, int num);
 	int Nlines(char *text);
+
+	void preptext(char *t);
+
+public:
+	void set_colony(RaceColony *rc);
 };
 
 

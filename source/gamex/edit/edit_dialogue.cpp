@@ -11,6 +11,9 @@ REGISTER_FILE
 
 
 
+
+static int current_dialog_version = 0;
+
 // create a dialogue structure
 
 Dialo::Dialo()
@@ -18,10 +21,13 @@ Dialo::Dialo()
 	Nbranches = 0;
 	Ntriggers = 0;
 	mother = 0;
+	id[0] = 0;
 }
 
 Dialo::~Dialo()
 {
+	// if you delete this thing, you also need to delete all the nodes following it.
+	discard_branches();
 }
 
 void Dialo::read(FileStore *fs)
@@ -46,6 +52,13 @@ void Dialo::read(FileStore *fs)
 
 	fs->read(&version);
 
+	// depending on the version, you can tweak the stuff below, in case you're
+	// dealing with an important old dialog ...
+	if (version != current_dialog_version)
+	{
+		tw_error("version conversion is not yet supported");
+	}
+
 	fs->read(&state);
 
 	fs->read(&Nbranches);
@@ -55,6 +68,8 @@ void Dialo::read(FileStore *fs)
 
 	fs->initstring(T, sizeof(T));	// does _not_ create a new char array, only copies info
 	fs->initstring(racepic, sizeof(racepic));
+
+	fs->initstring(id, sizeof(id));
 
 	// also, read all the branches.
 	int i;
@@ -69,6 +84,8 @@ void Dialo::read(FileStore *fs)
 
 void Dialo::write(FileStore *fs)
 {
+	// write the new version.
+	version = current_dialog_version;
 	fs->write(version);
 
 	fs->write(state);
@@ -80,6 +97,8 @@ void Dialo::write(FileStore *fs)
 
 	fs->writestring(T);
 	fs->writestring(racepic);
+
+	fs->writestring(id);
 
 	// also, write all the branches.
 	int i;
@@ -116,6 +135,7 @@ void Dialo::addbranch(Dialo *d)
 }
 
 
+// remove a branch, and all the branches following it...
 void Dialo::rembranch(int index)
 {
 	if (index < 0 || index > Nbranches-1)
@@ -137,8 +157,18 @@ void Dialo::rembranch(int index)
 }
 
 
+// discards all subnodes.
+void Dialo::discard_branches()
+{
+	int i;
+	for (i = 0; i < Nbranches; ++i)
+	{
+		delete branch[i];
+	}
+}
 
-Dialo dialo;
+
+//Dialo dialo;
 
 
 void GameDialogue::init_menu()
@@ -148,18 +178,58 @@ void GameDialogue::init_menu()
 }
 
 
+void GameDialogue::init_dialog(char *fname)
+{	
+	if (fs)
+		delete fs;
+
+	fs = new FileStore(fname);
+
+	if (firstdialo)
+		delete firstdialo;
+
+	firstdialo = new Dialo();
+
+	firstdialo->read(fs);
+
+	dialo = firstdialo;
+
+	// initialize the interface so that you can edit and navigate the dialog tree
+	initeditor(dialo);
+}
+
+
+void GameDialogue::save_dialog()
+{
+	fs->seek(0);		// you've to rewind the file first ...
+	firstdialo->write(fs);
+}
+
+
 void GameDialogue::init()
 {
+	fs = 0;
+	dialo = 0;
+	firstdialo = 0;
+
 	int i;
+
+	if (!window) {
+		window = new VideoWindow();
+		window->preinit();
+	}
+	change_view("Hero"); 
+
+	wininfo.init( Vector2(800,800), 800.0, view->frame );
+	wininfo.zoomlimit(size.x);
+	wininfo.scaletowidth(size.x);	// zoom out to this width.
 
 	scare_mouse();
 
 	GameBare::init();
 
-	double H = 2000;
-	size = Vector2(H, H);
+	size = Vector2(100,100);
 	prepare();
-
 
 	// find somewhere a list of all the available race-dialogue bitmaps
 
@@ -187,16 +257,6 @@ void GameDialogue::init()
 	for ( i = 0; i < maxbranches; ++i )
 		Blist[i] = new char [32];
 
-	// initialize dialogue data:
-	// question
-
-	firstdialo = new Dialo();
-
-	fs = new FileStore("gamex/dialogue/test.dialogue2");
-	firstdialo->read(fs);
-
-	dialo = firstdialo;
-
 
 	// initialize menu system.
 
@@ -218,54 +278,63 @@ void GameDialogue::init()
 	view->frame->prepare();
 
 
-
-
-
-
-
 	
 
 
 	int tcol = makecol(255,255,128);
 
-	//strcpy(Qtext, "a\n b\n c\n d\n e\n f\n g\n h\n i");
-	Tedit = new TextEditBox(T, "text/", usefont, dialo->T, 256);
+	Tedit = new TextEditBox(T, "text/", usefont, 0, 0);
 	Tedit->set_textcolor(tcol);
 
 
 	Tlist = new TextList(T, "branches/", usefont);
 
 	
-	refresh = new Button(T, "refresh_", 0);
+	bload = new Button(T, "load_", 0);
+
+	bsave = new Button(T, "save_", 0);
 
 	Bplus = new Button(T, "addbranch_", 0);
-//	Bmin = new Button(R, "Bmin", 0);
 
 	bprev = new Button(T, "prevbranch_", 0);
-//	bnext = new Button(R, "next", 0);
 
 	dialostatus = new SwitchButton(T, "state_", 0);
 
 	// add a text-button for the race pic, and a popup for the race list selection ?!
 
 	raceselect = new TextButton(T, "race_", usefont);
-	raceselect->set_text(dialo->racepic, makecol(255,255,0));
 	raceselect->passive = false;
+
+	nodeid = new TextEditBox(T, "nodeid_", usefont, 0, 0);
+	nodeid->set_textcolor(tcol);
 
 	popupraceselect = new PopupList(raceselect, "gamex/interface/dialogeditor/raceselect",
 		"text/", -20, -20, usefont, 0);
 	popupraceselect->tbl->set_optionlist(racepiclist, Nracepiclist, makecol(255,255,128));
 	popupraceselect->hide();
-	//popupraceselect->setscreen(T->drawarea);
+
+	fb = new FileBrowser(bload, "gamex/interface/filebrowser", 0, 0, usefont);
+	fb->tbl->text_color = makecol(255,255,0);
+	fb->set_dir("gamex/gamedata/races");
+	fb->set_ext("dialog");
 
 
-//	winman = new WindowManager;
-//	winman->add(R);
 	T->add(popupraceselect);
+	T->add(fb);
 
 	T->tree_doneinit();
 
-	initeditor(dialo);
+	
+	// initialize dialogue data
+
+	char fname[128];
+	strcpy(fname, "gamex/gamedata/races/");
+	strcat(fname, "earthling");		// the race name
+	strcat(fname, "/");
+	strcat(fname, "test.dialog");	// the dialog name
+
+	init_dialog(fname);
+
 
 	// no need for tic-info.
 	ti = false;
@@ -274,11 +343,14 @@ void GameDialogue::init()
 
 void GameDialogue::quit()
 {
-	// update the changes in memory
-	fs->seek(0);		// you've to rewind the file first ...
-	dialo->write(fs);
+	// disable auto-save ? Cause you got a save-button for that...
+//	save_dialog();
 
-	delete fs;
+	if (fs)
+		delete fs;
+
+	if (firstdialo)
+		delete firstdialo;
 
 	int i;
 	for ( i = 0; i < maxbranches; ++i )
@@ -292,9 +364,8 @@ void GameDialogue::quit()
 	scare_mouse();
 	set_mouse_sprite(0);	// the default mouse sprite.
 	show_mouse(screen);	// ????????
-	//show_mouse();
-	GameBare::quit();
 
+	GameBare::quit();
 }
 
 
@@ -309,7 +380,6 @@ void GameDialogue::initeditor(Dialo *dialo)
 		int i;
 		for ( i = 0; i < dialo->Nbranches; ++i )
 		{
-			//d.read(dialo.branch[i], &dstore);
 			d = dialo->branch[i];
 			
 			strncpy(Blist[i], d->T, 31);
@@ -324,9 +394,11 @@ void GameDialogue::initeditor(Dialo *dialo)
 
 	dialostatus->state = dialo->state;
 
-	Tedit->text_reset(dialo->T);
+	Tedit->text_reset(dialo->T, Ntext);
 
 	raceselect->set_text(dialo->racepic, makecol(255,255,0));
+
+	nodeid->text_reset(dialo->id, sizeof(dialo->id));
 }
 
 
@@ -335,32 +407,15 @@ void GameDialogue::calculate()
 	if (next)
 		return;
 
+	wininfo.center(0.5*size);
+
 	GameBare::calculate();
-
-
-	//FULL_REDRAW = true;
-	//R->tree_calculate();
-
-
-	/*
-	// well... save the dialogue when needed (not to disk, but in memory).
-
-	if (refresh->flag.left_mouse_press)
-	{
-		//dialo.write();
-		dialo.refresh(&dstore);
-
-
-		initeditor(dialo);
-	}
-	*/
 
 
 	// create a new branch ...
 
 	if (Bplus->flag.left_mouse_press)
 	{
-		//dialo.write(&dstore);
 
 		Dialo *d = new Dialo();
 
@@ -372,7 +427,6 @@ void GameDialogue::calculate()
 		d->state = dialo->state;				// inherit info
 		strcpy(d->racepic, dialo->racepic);	// inherit info
 		// well, this creates a new dialogue thingy :)
-		//d.write(&dstore);
 
 		dialo->addbranch(d);
 
@@ -390,11 +444,7 @@ void GameDialogue::calculate()
 
 		// load the data from the mother branch (if it's has a mother).
 		if (dialo->mother)
-		{
-			//dialo->write(&dstore);
-
-			//dialo->read(dialo.mother, &dstore);
-	
+		{	
 			dialo = dialo->mother;
 			initeditor(dialo);
 		}
@@ -404,7 +454,6 @@ void GameDialogue::calculate()
 	
 	// go forth to the currently selected branch
 
-	//if (bnext->flag.left_mouse_press)
 	if (Tlist->flag.left_mouse_press)
 	{
 		// load the data from the child branch.
@@ -414,13 +463,7 @@ void GameDialogue::calculate()
 			i = Tlist->gety();//scroll.yselect;
 			if (i >= 0 && i < dialo->Nbranches)	// shouldn't be necessary ?!
 			{
-				// write the current data.
-				//dialo.write(&dstore);
-
 				dialo = dialo->branch[i];
-
-				//dialo.read(k, &dstore);
-
 				initeditor(dialo);
 			}
 		}
@@ -446,6 +489,18 @@ void GameDialogue::calculate()
 	}
 
 
+	// check if a new file is selected
+	// then you load a existing file ...
+	if (fb->ready())
+	{
+		init_dialog(fb->fname);
+	}
+
+	if (bsave->flag.left_mouse_press)
+	{
+		save_dialog();
+	}
+
 }
 
 
@@ -455,13 +510,6 @@ void GameDialogue::animate(Frame *frame)
 		return;
 
 	GameBare::animate(frame);
-
-
-	//show_mouse(frame->surface);
-	//T->tree_setscreen(view->frame->surface);
-	//T->tree_animate();
-	//show_mouse(view->frame->surface);
-	//scare_mouse();
 }
 
 

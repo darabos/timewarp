@@ -432,6 +432,13 @@ void WindowInfo::zoomlimit(double W)
 	maxzoom = framesize.x / refscreenw;
 }
 
+void WindowInfo::zoomlimit(double min, double max)
+{
+	minzoom = min;
+	//maxzoom = 1.0;
+	maxzoom = max;
+}
+
 void WindowInfo::scaletowidth(double W)
 {
 	zoomlevel = framesize.x / W;
@@ -580,3 +587,80 @@ void locate_onedge_aligned_to_center(SpaceLocation *s, Vector2 center, Vector2 w
 	// the position then becomes:
 	s->pos = center + Prel;
 }
+
+
+
+
+void createfilelist(char ***list, int *N, char *scanname, int remext)
+{
+	int err;
+	al_ffblk info;
+	
+
+	// first, a iteration 
+	*N = 0;
+	err = al_findfirst(scanname, &info, FA_ARCH);		
+	while (!err)
+	{
+		if (strcmp(info.name, ".") && strcmp(info.name, "..") )
+			++(*N);
+		err = al_findnext(&info);
+	}	
+	al_findclose(&info);
+
+	// allocate memory for the filenames
+	*list = new char* [(*N)];
+
+
+	// read the filenames
+	int i;
+
+	i = 0;
+	err = al_findfirst(scanname, &info, FA_ARCH);	
+	
+	while (!err)
+	{
+		if (strcmp(info.name, ".") && strcmp(info.name, "..") )
+		{
+			if (!remext)
+			{
+				(*list)[i] = new char [strlen(info.name)+1];
+				strcpy((*list)[i], info.name);
+			} else {
+
+				// copy the "*" wildcard part of the filename, and not the rest.
+				char tmpstr[512], *tmp;
+				int i1, i2;
+
+				tmp = strrchr(scanname, '/');
+				i1 = 0;
+				while (tmp[i1+1] == info.name[i1] && info.name[i1] != 0)
+					++i1;
+
+				int L1, L2;
+				L1 = strlen(scanname);
+				L2 = strlen(info.name);
+
+				i2 = 1;
+				while (scanname[L1-i2] == info.name[L2-i2] && i2 < L1 && i2 < L2)
+					++i2;
+
+				int k;
+				for ( k = i1; k <= L2-i2; ++k )
+				{
+					tmpstr[k-i1] = info.name[k];
+				}
+				tmpstr[k-i1] = 0;
+
+				(*list)[i] = new char [strlen(tmpstr)+1];
+				strcpy((*list)[i], tmpstr);
+			}
+			++i;
+		}
+		
+		err = al_findnext(&info);
+	}
+	
+	al_findclose(&info);
+}
+

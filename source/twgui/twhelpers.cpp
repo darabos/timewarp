@@ -157,6 +157,17 @@ void ScrollControl::set_pos(int xnew, int ynew)
 	check_pos();
 }
 
+// return the horizontal relative position if possible; otherwise the
+// vertical, or a default value.
+double ScrollControl::get_relpos()
+{
+	if (scrollhor)
+		return scrollhor->relpos;
+	if (scrollvert)
+		return scrollvert->relpos;
+	return 0;
+}
+
 
 
 void ScrollControl::calculate()
@@ -234,7 +245,7 @@ void ScrollControl::bind(EmptyButton *aleft, EmptyButton *aright,
 
 // This loads the required buttons.
 
-void ScrollControl::setup_hor(TWindow *A, char *id, ScrollControl *scr)
+void ScrollControl::setup_hor(TWindow *A, char *id)//, ScrollControl *scr)
 {
 
 	// create the buttons and bitmaps, finding graphics in some data file,
@@ -263,12 +274,12 @@ void ScrollControl::setup_hor(TWindow *A, char *id, ScrollControl *scr)
 		A->rem(scrollhor); delete scrollhor; scrollhor = 0;	
 	}
 
-	scr->left = left;
-	scr->right = right;
-	scr->scrollhor = scrollhor;
+//	scr->left = left;
+//	scr->right = right;
+//	scr->scrollhor = scrollhor;
 }
 
-void ScrollControl::setup_ver(TWindow *A, char *id, ScrollControl *scr)
+void ScrollControl::setup_ver(TWindow *A, char *id)//, ScrollControl *scr)
 {
 	char id2[128];
 
@@ -287,26 +298,26 @@ void ScrollControl::setup_ver(TWindow *A, char *id, ScrollControl *scr)
 	scrollvert = new ScrollBar(A, id2);
 	if (!scrollvert->isvalid())	{	A->rem(scrollvert); delete scrollvert; scrollvert = 0;	}
 
-	scr->up = up;
-	scr->down = down;
-	scr->scrollvert = scrollvert;
+//	scr->up = up;
+//	scr->down = down;
+//	scr->scrollvert = scrollvert;
 }
 
 
-void ScrollControl::setup_hor(EmptyButton *A, char *id, ScrollControl *scr)
+void ScrollControl::setup_hor(EmptyButton *A, char *id)//, ScrollControl *scr)
 {
-	setup_hor(A->mainwindow, id, scr);
+	setup_hor(A->mainwindow, id);//, scr);
 }
 
-void ScrollControl::setup_ver(EmptyButton *A, char *id, ScrollControl *scr)
+void ScrollControl::setup_ver(EmptyButton *A, char *id)//, ScrollControl *scr)
 {
-	setup_ver(A->mainwindow, id, scr);
+	setup_ver(A->mainwindow, id);//, scr);
 }
 
-void ScrollControl::setup(TWindow *A, char *id, ScrollControl *scr)
+void ScrollControl::setup(TWindow *A, char *id)//, ScrollControl *scr)
 {
-	setup_hor(A, id, scr);
-	setup_ver(A, id, scr);
+	setup_hor(A, id);//, scr);
+	setup_ver(A, id);//, scr);
 }
 
 
@@ -335,10 +346,12 @@ TextInfo::TextInfo(FONT *afont, BITMAP *abmp, char *atextinfo, int aNchars)
 	textinfo = atextinfo;
 	Nchars = aNchars;
 
-
 	Htxt = text_height(usefont);
 	text_color = makecol(0,0,0);
-	Nshow = int(bmp->h / Htxt) - 1;		// -1, because item 0 is also shown...
+	Nshow = int(bmp->h / Htxt);
+
+	if (Nshow == 0)
+		Nshow = 1;	// force at least 1 line to be displayed, even if text doesn't fit entirely in the window !
 }
 
 TextInfo::~TextInfo()
@@ -355,7 +368,7 @@ void TextInfo::reset(ScrollControl *scroll)
 
 	Nlines = 0;
 	linestart[0] = 0;
-	if (textinfo[0] == 0)	// empty text
+	if (! textinfo || textinfo[0] == 0)	// empty text
 	{
 		Nlines = 1;	// even empty text has 1 line to hold the cursor.
 		linestart[1] = 0;
@@ -463,7 +476,37 @@ void TextInfo::getxy(int charpos, int *x, int *y)
 
 
 
-// map coordinate to character number
+// map (x) coordinate to character number
+int TextInfo::getcharpos(char *scantxt, int x, int max)
+{
+	int i;
+	i = 0;
+
+	double len, charlen, lastcharlen;
+	len = 0;
+	charlen = 0;
+
+	while (scantxt[i] != 0 && i < max)
+	{
+		char txt[2];
+		txt[0] = scantxt[i];
+		txt[1] = 0;
+		
+		lastcharlen = charlen;
+		charlen = text_length(usefont, txt);
+		
+		len += 0.5 * (charlen + lastcharlen);	// so that sensitivity is to the center of the character
+		
+		if (len > x)
+			break;
+
+		++i;
+	}
+
+	return i;
+}
+
+// map (x,y) coordinate to character number
 int TextInfo::getcharpos(int x, int y)
 {
 	int iline;
@@ -481,30 +524,22 @@ int TextInfo::getcharpos(int x, int y)
 	if (iline == Nlines-1)
 	{
 		int n;
-		n = linestart[iline] + x;
-		if (n > (int)strlen(textinfo))
-			n = strlen(textinfo);
+		int n1;
+		n1 = linestart[iline];
+
+		n = n1 + getcharpos(&textinfo[n1], x, 1000);
 
 		return n;
 	}
 
 	// on this line, find the char-position left-closest to the x value
 
-	int n, len;
+	int n;
 
-	len = 0;
 
-	for ( n = linestart[iline]; n < linestart[iline+1]-1; ++n )
-	{
-		char txt[2];
-		txt[0] = textinfo[n];
-		txt[1] = 0;
-
-		len += text_length(usefont, txt);
-
-		if (len > x)
-			return n;
-	}
+	int n1 = linestart[iline];
+	int max = linestart[iline+1] - linestart[iline] - 1;
+	n = n1 + getcharpos(&textinfo[n1], x, max);
 
 
 	return n;

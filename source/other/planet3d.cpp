@@ -438,6 +438,7 @@ Planet( opos, ObjectSprite, 0 )
 	{
 
 		int k = i + image_size/2;
+		if (k >= image_size)	continue;
 		jmin[k] = 100000;
 		jmax[k] = 0;
 
@@ -445,8 +446,9 @@ Planet( opos, ObjectSprite, 0 )
 		{
 			if ((i*i+j*j) < visual_size*visual_size)
 			{
-				int k = i + image_size/2;
+				//-int k = i + image_size/2;
 				int m = j + image_size/2;
+				if (m >= image_size)	continue;
 
 				if (m < jmin[k])
 					jmin[k] = m;
@@ -630,10 +632,14 @@ filter instead.
 			}
 
 			int k = (i+image_size/2) * image_size + j + image_size/2;
+			if (k >= image_size*image_size)
+				k = image_size*image_size - 1;
+
 			int mx2, my2;
 			mx2 = (int)base_map[k].lon;
 			if (mx2 >= mapW) mx2 -= mapW;
 			my2 = (int)base_map[k].lat;
+			if (my2 >= mapH) my2 -= mapH;
 
 			base_map_linear[k] = mx2 + my2 * 2*mapW;	// twice cause there's an extra copy
 														// of the map colors
@@ -696,7 +702,8 @@ void Planet3D::calculate()
 	normalize(theta, 360*ANGLE_RATIO);
 
 	rad += spin * (frame_time/1000.0);
-	while (rad >= 360.0) rad-=360.0;
+	while (rad >= 360 ) rad -= 360;
+	while (rad < 0) rad += 360;		// in case of anti-spin
 
 }
 
@@ -715,6 +722,7 @@ void Planet3D::animate_pre()
 	int i,j;
 
 	double dl = mapW*rad/360.0;
+	while (dl >= mapW) dl -= mapW;
 
 	unsigned int* imageptr = (unsigned int*) image32bit->dat;
 
@@ -744,6 +752,7 @@ void Planet3D::animate_pre()
 
 		//int m = i + jmin[i]*image_size;
 		base_sorted += 2*jmin[i];
+
 
 		for (j = jmin[i]; j <= jmax[i]; j++)
 		{
@@ -910,7 +919,7 @@ void Planet3D::animate_pre()
 			mov bx, ax
 			xor ah, ah
 			mov edx, speccol
-			mov al, byte ptr [edx]
+			mov al, byte ptr [edx]	// THIS CAN CRASH !! (dunno why)
 			mul specshade
 			add ax, bx
 

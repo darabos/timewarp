@@ -13,7 +13,10 @@
 #include "stuff/space_body.h"
 
 
-
+double blackbodyspectrum(double f, double T);
+double spec_r(double T);
+double spec_g(double T);
+double spec_b(double T);
 
 
 
@@ -57,7 +60,7 @@ public:
 	virtual void calculate();
 	virtual void animate(Frame *frame);
 
-	SpaceSprite *starspr[32], *playerspr;
+	SpaceSprite **startypespr, **starspr, *playerspr;
 	//bool maphaschanged;
 
 //	void update_bplot();

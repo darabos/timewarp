@@ -22,6 +22,7 @@ REGISTER_FILE
 
 static const int ID_FLEET_HYPER = 0x09837491;
 
+double r_visual = 40.0;	// size of the radar map; outside this, it's no use to draw/ calculate fleets
 
 inline double sqr(double x)
 {
@@ -70,9 +71,13 @@ void HyperFleet::calculate()
 	angle = trajectory_angle(follow);
 	vel = speed * unit_vector(angle);
 
+	// when the target is out of range (i.e., when the ship's not visible on
+	// radar anymore) then this hyperfleet is deleted.
 	double R;
 	R = distance(follow);
-	if (R > 1000)
+
+	double s = mapeverything.region[0]->scalepos;
+	if (R > s * r_visual * 1.1)
 		state = 0;
 }
 
@@ -103,8 +108,7 @@ void GameHyperspace::calc_enemies()
 
 
 			double r;
-			r -= (P - player->pos / scalepos).length();
-
+			r = (P - player->pos / scalepos).length();
 			
 			if (r < b->patrol.range)
 			{
@@ -113,7 +117,7 @@ void GameHyperspace::calc_enemies()
 				enemyspeed = 0.1;
 
 				density = 0.01;
-				density = 1;
+				density = 0.1;
 
 				chance = (player->vel.length() + enemyspeed) * frame_time / scalepos;
 				chance *= density;
@@ -121,9 +125,13 @@ void GameHyperspace::calc_enemies()
 
 				if (random(1.0) < chance)
 				{
+					Vector2 offset;
+					offset = r_visual * unit_vector(random(PI2));
+					offset *= starmap->scalepos;
+
 					// create a "enemy" object ... but how ?
 					HyperFleet *fl;
-					fl = new HyperFleet(0, player->pos+Vector2(100,100), 0, a->fleetsprite);
+					fl = new HyperFleet(0, player->pos+offset, 0, a->fleetsprite);
 					add(fl);
 					fl->speed = enemyspeed;
 					fl->follow = player;
@@ -511,6 +519,8 @@ void GameHyperspace::init()
 		star_radarspr[i] = create_sprite( tmp, SpaceSprite::MASKED );
 	}
 
+	radarenemyspr = create_sprite( "gamex/hyperspace/radar_enemy_01.bmp", SpaceSprite::MASKED );
+
 	radarplayerspr = create_sprite( "gamex/hyperspace/radar_player_01.bmp", SpaceSprite::MASKED );
 
 
@@ -621,7 +631,7 @@ void GameHyperspace::quit()
 	// exiting the game (should not be needed in other gametypes).
 
 	if (!hardexit)	// game is not quitted completely
-		playerinfo.sync(player);
+		playerinfo.sync2(player);
 
 	delete tic_history; tic_history = NULL;
 	delete render_history; render_history = NULL;
@@ -652,8 +662,7 @@ void GameHyperspace::refocus()
 {
 	if (!hardexit)
 	{
-		player->angle = playerinfo.angle;	// first, update the angle ...
-		playerinfo.sync(player);
+		playerinfo.sync(player);		// info equals local player
 
 		// check if the starmap hasn't changed (by editing)
 		// NOTE: deletion isn't supported (yet).
@@ -716,6 +725,9 @@ void GameHyperspace::calculate()
 	double t = get_time2();
 	double dt = frame_time * 1E-3;
 
+	// just in case you jump to another game and back and this setting can be
+	// changed then ...
+	starmap->scalepos = scalepos;
 
 
 	GameBare::calculate();
@@ -895,6 +907,33 @@ void GameHyperspace::plot_submap(BITMAP *submap)
 		}
 	}
 
+	// draw all (enemy) hyperspace fleets
+
+	for ( i = 0; i < num_items; ++i )
+	{
+		SpaceLocation *o = item[i];
+
+		if (o->id == ID_FLEET_HYPER)
+		{
+			// fleet position relative to player position (in star coord system).
+			Vector2 D;
+			D = (o->pos - player->pos) / scalepos;
+			
+			if ( fabs(D.x) < L  &&  fabs(D.y) < L )
+			{
+				D *= submap->w / double(2*L);		// note, L is the half-width...
+				
+				Vector2 s;
+				s = radarenemyspr->size(0);
+				D -= 0.5 * Vector2(s.x, s.y);
+				
+				D += 0.5 * Vector2(submap->w, submap->h);
+				
+				bmp = radarenemyspr->get_bitmap(0);
+				masked_blit(bmp, submap, 0, 0, D.x, D.y, bmp->w, bmp->h);
+			}
+		}
+	}
 
 
 

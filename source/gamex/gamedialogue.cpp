@@ -12,7 +12,7 @@ REGISTER_FILE
 #include "edit/edit_dialogue.h"
 
 
-
+static const int BlistLen = 128;
 
 
 int GameAliendialog::Nlines(char *text)
@@ -69,13 +69,31 @@ char *GameAliendialog::showline(char *text, int num)
 
 void GameAliendialog::init_menu()
 {
-	T = new TWindow("gamex/interface/aliendialog", 10, 10, game_screen, true);
+	T = new TWindow("gamex/interface/aliendialog", 0, 0, game_screen, true);
 	maparea = 0;
 }
 
 
 void GameAliendialog::init()
 {
+	if (!window) {
+		window = new VideoWindow();
+		window->preinit();
+	}
+	prepare();
+	change_view("Hero"); 
+	//view->window->locate(0,0,0,0,  0,1,0,1);
+
+	size = Vector2(100,100);
+	wininfo.init( Vector2(800,800), 800.0, view->frame );
+	wininfo.zoomlimit(size.x);
+	wininfo.scaletowidth(size.x);	// zoom out to this width.
+
+	int i;
+	for ( i = 0; i < maxbranches; ++i )
+		Blist[i] = new char [BlistLen];
+
+	
 	scare_mouse();
 
 	GameBare::init();
@@ -86,20 +104,6 @@ void GameAliendialog::init()
 
 	ti = false;	// no render/tic time info needed...
 
-
-	int i;
-	for ( i = 0; i < maxbranches; ++i )
-		Blist[i] = new char [128];
-
-
-	// read the root branch !!
-	fs = new FileStore("gamex/dialogue/test.dialogue2");
-	firstdialo = new Dialo();
-
-	firstdialo->read(fs);
-
-	dialo = firstdialo;
-	
 
 
 	// initialize menu system.
@@ -119,45 +123,20 @@ void GameAliendialog::init()
 
 	FONT *usefont = videosystem.get_font(i);
 
-//	view->frame->prepare();
-
-
-	// the background for this race is :
-	
-	strcpy(racefile, "");
-	//strcpy(racefile, "gamex/dialogue/");
-	//strcat(racefile, dialo.racepic);
-	//racepic = load_bitmap(racefile, 0);
-
-
-
-
-
-	
 
 
 	int tcol = makecol(255,255,128);
 
-	// ???
-	showline_num = 0;
-	showline_Nlines = Nlines(dialo->T);
-	//A = new TextEditBox(R, "A", -1, -1, usefont, showline(dialo.A, showline_num), 0);
 	A = new TextInfoArea(T, "A/", usefont, 0, 0);	// all text should fit on 1 window - no scroll needed !!
-	//A->set_textcolor(tcol);
-
-	// ????
-	//A->changebackgr(racefile);
-
+	A->passive = false;
 
 	B = new TextList(T, "B/", usefont);
 
 	
-	//winman = new WindowManager;
-	//winman->add(R);
 	T->tree_doneinit();
 
+	// dialo should be defined BEFORE the game is initialized by a call to set_colony
 	initBlist(dialo);
-
 }
 
 
@@ -170,8 +149,7 @@ void GameAliendialog::quit()
 
 	scare_mouse();
 	set_mouse_sprite(0);	// the default mouse sprite.
-	show_mouse(screen);	// ????????
-	//show_mouse();
+	show_mouse(screen);
 
 	GameBare::quit();
 }
@@ -180,6 +158,9 @@ void GameAliendialog::quit()
 // this should be named "initeditor"
 void GameAliendialog::initBlist(Dialo *dialo)
 {
+	// make small changes, to change e.g. captain name or ship name to the correct on
+	preptext(dialo->T);
+
 	Dialo *d;
 
 	int k;
@@ -198,11 +179,13 @@ void GameAliendialog::initBlist(Dialo *dialo)
 		{
 			//d->read(dialo->branch[i], &dstore);
 			d = dialo->branch[i];
+
+			preptext(d->T);
 			
 			if (d->state)
 			{
-				strncpy(Blist[k], d->T, 127);
-				Blist[k][127] = 0;
+				strncpy(Blist[k], d->T, BlistLen-1);
+				Blist[k][BlistLen-1] = 0;
 				//branchindex[k] = d->n;
 				dialo_selected[k] = d;		// ???
 				++k;
@@ -237,18 +220,22 @@ void GameAliendialog::initBlist(Dialo *dialo)
 
 void GameAliendialog::calculate()
 {
+	if (!dialo)		// if there's no dialogue defined... then it's no use to continue
+	{
+		tw_error("Dialog is missing!");
+		quit();
+		return;
+	}
+
 	if (next)
 		return;
 
+	wininfo.center( 0.5*size );
+	
 	GameBare::calculate();
 
 
-	//FULL_REDRAW = true;
-	//T->tree_calculate();
-
-
-
-	if (A->flag.left_mouse_press)
+	if (A->flag.left_mouse_press || keyhandler.keyhit[KEY_SPACE])
 	{
 
 		// next line to show
@@ -257,43 +244,59 @@ void GameAliendialog::calculate()
 			++showline_num;
 			char *txt = showline(dialo->T, showline_num);
 			A->set_textinfo( txt, strlen(txt) );
+		}
+	}
 
-		} else {
-
-			// change state, and go back to parent
-			dialo->state = 0;
-			//dialo.write(&dstore);	// you've to store in the temp-mem blocks.
+	// this can also happen, if you return from a child node after the last
+	// question has been answered ... in that case, suddenly all subbranches
+	// are "done" and then this node has to collapse as well.
+	if (showline_num == showline_Nlines)
+	{
+		
+		// change state, and go back to parent
+		// hmm, no, only do this if all sub-questions are "done"
+		int i;
+		for ( i = 0; i < dialo->Nbranches; ++i )
+			if (dialo->branch[i]->state)
+				break;
 			
-			//dialo.read(dialo.mother, &dstore);
-			if (dialo->mother)
+			if (i == dialo->Nbranches)
 			{
-				dialo = dialo->mother;
-				// the parent's parent is the real on you've to get (since doing once
-				// goes back to the question node, going back one further goes to
-				// the alien-talk node.
+				dialo->state = 0;
+				
 				if (dialo->mother)
 				{
-					// disable the question node, and go back
-					// (a bit simple ... should really only be done after checking that
-					// all sub-questions are disabled already - but this is a simple
-					// test case).
-					dialo->state = 0;
-
 					dialo = dialo->mother;
-
-					initBlist(dialo);
+					// the parent's parent is the real on you've to get (since doing once
+					// goes back to the question node, going back one further goes to
+					// the alien-talk node.
+					if (dialo->mother)
+					{
+						// disable the question node, and go back
+						// (a bit simple ... should really only be done after checking that
+						// all sub-questions are disabled already - but this is a simple
+						// test case).
+						dialo->state = 0;
+						
+						dialo = dialo->mother;
+						
+						initBlist(dialo);
+						
+						// since you return, that means that the previous
+						// node has already been "done"
+						showline_num = showline_Nlines;
+					}
 				}
 			}
-		}
-
-
 	}
+
+
 
 	
 	// go forth to the currently selected branch
+	// but, you should only enable this, if the "alien" text is completely read
 
-	//if (bnext->flag.left_mouse_press)
-	if (B->flag.left_mouse_press)
+	if (B->flag.left_mouse_press && showline_num == showline_Nlines)
 	{
 		// load the data from the child branch.
 		if (dialo->Nbranches > 0)
@@ -340,6 +343,104 @@ void GameAliendialog::animate(Frame *frame)
 	//show_mouse(view->frame->surface);
 	//scare_mouse();
 }
+
+
+
+void GameAliendialog::set_colony(RaceColony *rc)
+{
+	if (rc->dialogname[0] == 0)		// no filename defined.
+		return;
+
+	// load the dialog for this colony ?!
+
+	char fname [512];
+	strcpy(fname, "gamex/gamedata/races/");
+	strcat(fname, rc->race->id);
+	strcat(fname, "/");
+	strcat(fname, rc->dialogname);
+
+
+	// read the root branch !!
+	fs = new FileStore(fname);
+	firstdialo = new Dialo();
+
+	firstdialo->read(fs);
+
+	dialo = firstdialo;
+
+
+}
+
+
+char playername[64];
+char shipname[64];
+
+struct fgNamePtr
+{
+	char id[64];
+	char *ptr;
+
+	void set(char *newid, char *newptr);
+};
+
+void fgNamePtr::set(char *newid, char *newptr)
+{
+	strcpy(id, newid);
+	ptr = newptr;
+}
+
+
+// NOTE: this does not check for end-of-text...
+void replace_text(char *txt, char *rem, char *ins)
+{
+	int L;
+	L = strlen(txt) + 1;	// include 0.
+
+	int k;
+	k = strlen(ins) - strlen(rem);
+	if (k > 0)
+		memmove(&txt[k], &txt[0], L-k);
+	if (k < 0)
+		memmove(&txt[0], &txt[-k], L+k);
+
+	memcpy(&txt[0], ins, strlen(ins));
+}
+
+
+void GameAliendialog::preptext(char *t)
+{
+	strcpy(playername, "zelnick");
+	strcpy(shipname, "titanic");
+	// <player> insert player name there
+	// <ship> insert ship name there
+
+
+	int N = 2;
+	fgNamePtr ptr[2];
+	
+	ptr[0].set("<player>", playername);
+	ptr[1].set("<ship>", shipname);
+
+	int i = 0;
+	while ( t[i] )
+	{
+		char *id;
+		id = &t[i];
+
+		int k;
+		for ( k = 0; k < N; ++k )
+		{
+			if (strncmp(id, ptr[k].id, strlen(ptr[k].id)) == 0)
+			{
+				// succesful comparison; replace the string
+				replace_text(id, ptr[k].id, ptr[k].ptr);
+			}
+		}
+
+		++i;
+	}
+}
+
 
 
 

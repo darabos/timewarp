@@ -612,6 +612,13 @@ void MainMenu::doit() {STACKTRACE
 
 	meleedata.init();
 
+	///*
+				disable();
+				play_fg(&scp, SCPGUI_MUSIC);
+				enable();
+				showTitle();
+	//*/
+
 	int mainRet;
 	do {
 		//mainRet = popup_dialog(mainDialog, MAIN_DIALOG_MELEE);
@@ -637,14 +644,13 @@ void MainMenu::doit() {STACKTRACE
 				change_teams();
 				showTitle();
 				break;
-//				/*
-			case MAIN_DIALOG_FG:	// for future use (Rob)
+			case MAIN_DIALOG_FG:
 
 				disable();
 				play_fg(&scp, SCPGUI_MUSIC);
 				enable();
+				showTitle();
 				break;
-//				*/
 		}
 	} while((mainRet != MAIN_DIALOG_EXIT) && (mainRet != -1));
 

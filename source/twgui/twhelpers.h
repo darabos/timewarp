@@ -26,6 +26,7 @@ public:
 	void set_pos(int xnew, int ynew);
 	void set_percent_pos_x(double alpha);
 	void set_percent_pos_y(double alpha);
+	double get_relpos();
 	void add(int dx, int dy);
 	void check_pos();
 	void calculate();
@@ -36,12 +37,12 @@ public:
 	void bind(EmptyButton *left, EmptyButton *right, EmptyButton *up, EmptyButton *down,
 				ScrollBar *scrollhor, ScrollBar *scrollvert);
 
-	void setup_hor(TWindow *A, char *id, ScrollControl *scr);
-	void setup_ver(TWindow *A, char *id, ScrollControl *scr);
-	void setup_hor(EmptyButton *A, char *id, ScrollControl *scr);
-	void setup_ver(EmptyButton *A, char *id, ScrollControl *scr);
+	void setup_hor(TWindow *A, char *id);//, ScrollControl *scr);
+	void setup_ver(TWindow *A, char *id);//, ScrollControl *scr);
+	void setup_hor(EmptyButton *A, char *id);//, ScrollControl *scr);
+	void setup_ver(EmptyButton *A, char *id);//, ScrollControl *scr);
 	// set up both the horizontal and vertical bar (provided the graphics exist)
-	void setup(TWindow *A, char *id, ScrollControl *scr);
+	void setup(TWindow *A, char *id);//, ScrollControl *scr);
 
 };
 
@@ -58,7 +59,7 @@ public:
 	char	*textinfo;
 
 	int		linestart[maxlines];
-	int		Nlines, Nchars;
+	int		Nlines, Nchars, maxchars;
 
 	FONT	*usefont;
 	int		W, Htxt, Nshow;
@@ -72,7 +73,9 @@ public:
 
 	//void set_textinfo(char *atextinfo, int Nchars);
 
+	int getcharpos(char *txt, int x, int max);
 	void getxy(int charpos, int *x, int *y);
+
 	int getcharpos(int x, int y);
 	void changeline(int *charpos, int line1, int line2);
 

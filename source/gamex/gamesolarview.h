@@ -8,10 +8,10 @@
 
 #include "../twgui/twbuttontypes.h"
 #include "../twgui/twpopup.h"
+#include "../twgui/twmenuexamples.h"
 
 #include "stuff/space_body.h"
 
-#include "gamesolarview.h"
 
 
 // ellipticity
@@ -24,15 +24,29 @@ extern void ellipsparams(Vector2 relpos, double ellb, double &R, Vector2 &Poffs,
 class MapEditor2 : public MapEditor
 {
 public:
+	int isurfacetype;	// surfacetype of the selected object
+
 	Vector2 mapcenter;
 
 	virtual MapObj *create_mapobj(Vector2 pos);
-	virtual void calculate();
+	virtual void move();
+	virtual void add();
+	virtual void newselection();
+	virtual void replace();
+
+	virtual void colorizeobj(SolarBody *s);
 };
 
 
 class GameSolarview : public GameBare
 {
+public:
+	MapSpacebody *starmap, *solarmap;
+	TextEditBox *starname;
+	char oldstarname[128];
+
+	//IconTV
+	TVarea	*tv2;
 	IconTV *Tedit;
 	// contents of Tedit
 	Button *bnew, *breplace;
@@ -40,8 +54,17 @@ class GameSolarview : public GameBare
 
 	MapEditor2	*mapeditor;
 
+	PopupList *rpopup, *dpopup;
+	TextButton *crace, *cdialogname;
+	Button *cnew, *crem, *cupdate;
+	TextEditBox *cpop;
+	char *list[32];
+
+	ValueEdit *ve;
+	
 	MousePtr *ptr;
 
+	int starnum;
 
 	class ThePlaya : public LocalPlayerInfo
 	{
@@ -61,9 +84,14 @@ class GameSolarview : public GameBare
 
 	virtual void checknewgame();
 
-	SpaceSprite *starspr, *playerspr, *planetspr[32];
+	SpaceSprite *starspr, *playerspr, **planettypespr, *planetspr;
+	BITMAP **surfacebmp;
 
 	virtual void init_menu();
+
+	void save_surface();
+	void init_surface();
+	void check_radius();
 };
 
 

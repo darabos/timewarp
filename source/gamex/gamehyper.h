@@ -77,7 +77,7 @@ public:
 
 
 	SpaceSprite *star_hyperspr[32], *star_radarspr[32],
-				*radarplayerspr;
+				*radarplayerspr, *radarenemyspr;
 
 	//BITMAP *submap;
 	void plot_submap(BITMAP *submap);

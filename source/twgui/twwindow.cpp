@@ -13,6 +13,14 @@ REGISTER_FILE
 #include "twwindow.h"
 
 
+// this destroys the bitmap (if it exists i.e. isn't set to 0),
+// and resets the pointer to 0
+void del_bitmap(BITMAP **bmp)
+{
+	if (*bmp)
+		destroy_bitmap(*bmp);
+	*bmp = 0;
+}
 
 
 
@@ -68,6 +76,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 	set_config_file( configfilename );
 
 	default_W = get_config_int(0, "res", 800);
+	autoplace = get_config_int(0, "autoplace", 1);
 	//default_W = def_W;
 	scale = double(screen->w) / double(default_W);
 	
@@ -86,7 +95,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 	char check_char[128];
 	strcpy(check_char, "none");
 	backgr_forsearch = 0;
-	if (backgr)
+	if (backgr && autoplace != 0)
 	{
 		//BITMAP *b;
 		strcpy(check_char, backgrname);
@@ -147,15 +156,28 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 TWindow::~TWindow()
 {
-	//if (originalscreen)	destroy_bitmap(originalscreen);
-	if (drawarea)		destroy_bitmap(drawarea);
-	if (backgr)			destroy_bitmap(backgr);
+	// remove this window item from the list of windows
+	// also, delete other windows that are in the same list.
+	if (prev)
+	{
+		prev->next = 0;	// so that "prev" doesn't know "this" exists
+		delete prev;
+	}
+	if (next)
+	{
+		next->prev = 0;	// so that "next" doesn't know "this" exists
+		delete next;
+	}
+
+	//if (originalscreen)	del_bitmap(originalscreen);
+	del_bitmap(&drawarea);
+	del_bitmap(&backgr);
 
 	// of course ;) but it's worth checking again, since it's not required to call this,
 	// it's optional
 	doneinit();
 
-	if (backgr_forsearch)	destroy_bitmap(backgr_forsearch);
+	//del_bitmap(backgr_forsearch);
 	//if (datafile)		unload_datafile(datafile);
 
 	// delete associated buttons
@@ -166,10 +188,12 @@ TWindow::~TWindow()
 		EmptyButton *b;
 		b = button;
 		button = button->next;
-		button->prev = 0;	// to avoid disaster as the next button is deleted...
+		if (button)
+			button->prev = 0;	// to avoid disaster as the next button is deleted...
 
 		delete b;
 	}
+
 }
 
 
@@ -366,15 +390,14 @@ BITMAP* TWindow::bmp(char *bmpname, bool vidmem)
 
 	tmpbmp = load_bitmap(objname, 0);
 	bmp = clone_bitmap(bpp, tmpbmp, scale, vidmem);
-	if (tmpbmp)
-		destroy_bitmap(tmpbmp);
+	del_bitmap(&tmpbmp);
 
 	return bmp;
 }
 
 void TWindow::doneinit()
 {
-	if (backgr_forsearch)	destroy_bitmap(backgr_forsearch);
+	del_bitmap(&backgr_forsearch);
 	//if (datafile)			unload_datafile(datafile);
 }
 
@@ -541,7 +564,10 @@ void TWindow::calculate()
 {
 
 	if (disabled)
+	{
+		grabbedmouse = false;	// just to be sure, that if a window is "closed", its value is reset
 		return;
+	}
 
 //	mouse.bmp.restore();	// resets the mouse pointer.
 //	mouse.update();			// stores current mouse settings (x,y,wheel,buttons)
