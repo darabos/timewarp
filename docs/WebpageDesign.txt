@@ -1,0 +1,69 @@
+This doc describes a possible layout of the Timewarp Homepage.
+  2004.01.20 youBastrd! started 
+
+NOT DONE YET!
+
+
+
+Needs:
+
+N1. Show the name of the project "Timewarp."  Show a short summary (one paragraph) of the game.  Show screenshots of what the game looks like.  
+
+N. Show technical overview of the game (2 player internet/LAN, multiplayer hot seat, gametypes).
+
+N2. Allow user to download the software.  Allow user to get the latest official release.  User should be able to download the latest official release within 1-3 clicks, the fewer clicks, the better.
+
+N. USer should be able to find quick solutions to common installation/compilation problems for all supported platforms. (FAQ?)
+
+N. Show credits for everyone that has participated in the project.  This list must be exhaustive in naming people.  Listing each participant's contribution may prove difficult.  Show things like contact info, active status, etc
+
+N. must link to forums.
+
+N. must link to saucecast.  
+
+N. must show news links.  any chance that these can be commented on in the forum?
+
+N. Must have banners required by GameSpy, ClassicGaming, Sourceforge
+
+N. Must have the following keywords in the text and in the head tag: Star Control, StarCon, Timewarp, Star Control 1, Star Control 2, Star Control 3, Ur-Quan Masters, Space Adventure Game
+N. 
+N. 
+
+Wants:
+
+W. Overview of the project's history.
+
+W. 
+W. 
+W. 
+W. 
+W. 
+
+Nice to Have:
+
+H: 
+H: 
+H: 
+H: 
+H: 
+H: 
+H: 
+H: 
+
+Solutions:
+
+S1. 
+S. 
+S. 
+S. 
+S. 
+S. 
+S. 
+
+
+
+
+
+
+
+
