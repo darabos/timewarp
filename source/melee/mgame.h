@@ -146,7 +146,7 @@ public:
 };
 
 extern EventClass events;
-#define EVENT(classname, functionname) {events.reg(new GE<classname>(this, functionname), #functionname);}
+#define EVENT(classname, functionname) {events.reg(new GE<classname>(this, &classname::functionname), #functionname);}
 #define CALL(functionname) {events.request( #functionname );}
 
 
