@@ -240,10 +240,10 @@ void prepareTitleScreenAssets() {
 
   //Music * mymusic = load_mod("scpgui.dat#SCPMUSIC");
 
-  if (!mymusic)
+  if (!mymusic && sound.is_music_supported())
      tw_error("Couldnt load title music");
 
-  sound.play_music( mymusic, TRUE);
+  if (mymusic) sound.play_music( mymusic, TRUE);
 
   {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUACCEPT");
   if (data != NULL && data->type==DAT_SAMPLE) {
@@ -762,18 +762,20 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 	#endif
 
 	log_debug(NULL);
-	log_debug("Log started(%d)\n", 1);
+	time_t start_time = time(NULL);
+	log_debug("Log started at %s\n", asctime(localtime(&start_time)));
 	if (allegro_init() < 0)
 		tw_error_exit("Allegro initialization failed");
 	videosystem.preinit();
-	init_error();
 
 	try {
+		init_time();
+		init_error();
+		init_profiling();
+
 		set_window_title("Star Control : TimeWarp");
 		set_config_file("client.ini");
 
-		init_time();
-		init_profiling();
 
 		int screen_width = 640, screen_height = 480, screen_bpp = 32;
 		int fullscreen = 0;
@@ -798,7 +800,7 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		int inputs = 7;
 
 		// parse command-line arguments
-		for (i = 0; i < argc; i += 1) {
+		for (i = 1; i < argc; i += 1) {
 			if (false) ;
 			else if (!strcmp(argv[i], "-res") && (argc > i + 2)) {
 				log_debug("command-line argument -res\n");
@@ -859,10 +861,10 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		srand(time(NULL));
 		set_color_conversion(COLORCONV_NONE);
 
+		videosystem.set_resolution(screen_width, screen_height, screen_bpp, fullscreen);
 		enable_input(inputs);
 		sound.init();
 		sound.load();
-		videosystem.set_resolution(screen_width, screen_height, screen_bpp, fullscreen);
         
         showLoadingScreen();
 
@@ -2027,6 +2029,44 @@ static DIALOG diagnostics_dialog[] =
 
 
 
+int get_diagnostics_string ( char *dest ) {//returns length of string
+	char * tmp = dest;
+
+#	if defined _DEBUG
+		tmp += sprintf(tmp, "DEBUGGING BUILD!\n");
+#	endif
+	tmp += sprintf(tmp, "ALLEGRO (.h) version   = Allegro %s, %s\n", 
+		ALLEGRO_VERSION_STR, ALLEGRO_PLATFORM_STR);
+	tmp += sprintf(tmp, "ALLEGRO (.dll) version = %s\n", allegro_id);
+	tmp += sprintf(tmp, "Network type = %s\n", NetTCP::network_type());
+	tmp += sprintf(tmp, "Compiler = ");
+#	if defined __MINGW32__
+		tmp += sprintf(tmp, "MINGW (gcc)\n");
+#	elif defined __BORLANDC__
+		tmp += sprintf(tmp, "Borland\n");
+#	elif defined _MSC_VER
+		tmp += sprintf(tmp, "Microsoft Visual C++\n");
+#	elif defined DJGPP
+		tmp += sprintf(tmp, "DJGPP (gcc)\n");
+#	elif defined __GNUC__
+		tmp += sprintf(tmp, "gcc\n");
+#	else
+		tmp += sprintf(tmp, "???\n");
+#	endif
+	tmp += sprintf(tmp, "Blah = %s\n", tw_version());
+	if (sound.is_music_supported()) {
+		tmp += sprintf(tmp, "JGMOD (music) Enabled\n");
+	} else {
+		tmp += sprintf(tmp, "JGMOD (music) Disabled\n");
+	}
+#	if defined DO_STACKTRACE
+		tmp += sprintf(tmp, "DO_STACKTRACE enabled\n");
+#	else
+		tmp += sprintf(tmp, "DO_STACKTRACE disabled\n");
+#	endif
+	return tmp - dest;
+}
+
 // DIAGNOSTICS - dialog function
 void show_diagnostics() {STACKTRACE
 	int i;
@@ -2055,33 +2095,7 @@ void show_diagnostics() {STACKTRACE
 	}
 	diagnostics_dialog[DIAGNOSTICS_DIALOG_MAIN].dp = (void *) buffy3;
 	tmp = buffy3;
-#	if defined _DEBUG
-		tmp += sprintf(tmp, "DEBUGGING BUILD!\n");
-#	endif
-	tmp += sprintf(tmp, "ALLEGRO (.h) version   = Allegro %s, %s\n", 
-		ALLEGRO_VERSION_STR, ALLEGRO_PLATFORM_STR);
-	tmp += sprintf(tmp, "ALLEGRO (.dll) version = %s\n", allegro_id);
-	tmp += sprintf(tmp, "Network type = %s\n", NetTCP::network_type());
-	tmp += sprintf(tmp, "Compiler = ");
-#	if defined __MINGW32__
-		tmp += sprintf(tmp, "MINGW (gcc)\n");
-#	elif defined __BORLANDC__
-		tmp += sprintf(tmp, "Borland\n");
-#	elif defined _MSC_VER
-		tmp += sprintf(tmp, "Microsoft Visual C++\n");
-#	elif defined DJGPP
-		tmp += sprintf(tmp, "DJGPP (gcc)\n");
-#	elif defined __GNUC__
-		tmp += sprintf(tmp, "gcc\n");
-#	else
-		tmp += sprintf(tmp, "???\n");
-#	endif
-	tmp += sprintf(tmp, "Blah = %s\n", tw_version());
-	if (sound.is_music_supported()) {
-		tmp += sprintf(tmp, "JGMOD (music) Enabled\n");
-	} else {
-		tmp += sprintf(tmp, "JGMOD (music) Disabled\n");
-	}
+	tmp += get_diagnostics_string( tmp );
 
 /*	diagnostics_dialog[DIAGNOSTICS_DIALOG_SHIPS].dp = (void *) buffy4;
 	tmp = buffy4;

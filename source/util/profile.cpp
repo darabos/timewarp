@@ -245,11 +245,13 @@ int Profile::print ( int i, char *dest, int max ) {
 	int per = iround(double(data[i].time) * 1000.0 / total_time);
 	if (!runs) runs = 1;
 #ifdef _MSC_VER
-	int r = _snprintf ( 
+	int r = _snprintf ( dest, max, 
+#elif defined VSNPRINTF 
+	int r = snprintf ( dest, max, 
 #else
-	int r = snprintf ( 
+	int r = sprintf ( dest, 
 #endif
-		dest, max, "%3d.%d%%  %8d  %8d  %s", 
+		"%3d.%d%%  %8d  %8d  %s", 
 		per / 10, per % 10,
 		iround(data[i].time / double(runs) * _time_ratio * (1000.0 * 1000.0 * 1000)), //1000ths of microseconds
 		data[i].runs, 

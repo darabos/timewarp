@@ -140,7 +140,7 @@ void DefenderGame::calculate ( ) {
 		sprintf(buffy, "You lost after %d seconds", game_time/1000);
 		message.print(9999000, 15, buffy);
 		switch (tw_alert(buffy, "Exit", "Continue", "Try Again")) {
-		case 1: error ( "quit" );
+		case 1: quit ( "quit" );
 		case 2: break;
 		case 3: restart();
 		}

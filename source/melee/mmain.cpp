@@ -128,12 +128,12 @@ void NormalGame::init_players() {STACKTRACE
 					if (j == 0) ch = channel_server;
 					else ch = channel_client;
 					if (is_local(ch)) {
-						log_file("client.ini");
+						set_config_file("client.ini");//each side determines whether they are using manually specified teams
 						int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
+						const char *simple_config = 
+							"[Player1]\nType=Human\nConfig=0\nTeam=0\n";
 						for (int i = 0; true; i += 1) {
 							char buffy[64];
-							const char *simple_config = 
-								"[Player1]\nType=Human\nConfig=0\nTeam=0\n";
 							sprintf(buffy, "Player%d", i + 1);
 							if (use_teams_menu) set_config_file("scp.ini");
 							else set_config_data(simple_config, strlen(simple_config));

@@ -65,6 +65,7 @@ static FONT *tw_gui_get_font ( int c ) {
 
 void TW_Dialog_Player::redraw() {
 	int i;
+	if (!player) return;
 	for (i = 0; player->dialog[i].proc; i++) player->dialog[i].flags |= D_DIRTY;
 	update();
 	return;

@@ -104,7 +104,7 @@ static void tw_display_switch_in() {
 	if (get_time() > videosystem.last_poll + 1000) {
 		videosystem.redraw();
 	}
-	else videosystem.queued_redraws = 1;
+	else videosystem.screen_corrupted = true;
 }
 static int _gamma = -1;
 static unsigned char _gamma_map[256];
@@ -158,8 +158,8 @@ int tw_color (int r, int g, int b) {
 }
 int VideoSystem::poll_redraw() {
 	last_poll = get_time();
-	if (queued_redraws) {
-		queued_redraws -= 1;
+	if (screen_corrupted) {
+		screen_corrupted = false;
 		videosystem.redraw();
 		return 1;
 	}
@@ -218,7 +218,7 @@ void VideoSystem::preinit() {STACKTRACE
 	}
 	color_effects = gamma_color_effects;
 
-	queued_redraws = 0;
+	screen_corrupted = false;
 	last_poll = -1;
 	window.preinit();
 	window.init( &window );

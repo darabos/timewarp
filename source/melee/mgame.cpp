@@ -45,6 +45,8 @@ REGISTER_FILE
 
 #include <typeinfo>
 
+#include <stdarg.h>
+
 
 static char chat_buf[256];
 static int chat_len = 0;
@@ -375,6 +377,7 @@ void Game::animate(Frame *frame) {_STACKTRACE("Game::animate(Frame*)")
 }
 
 void Game::animate() {_STACKTRACE("Game::animate(void)")
+
 	double t = get_time2();
 	paused_time = 0;
 	int prediction_time = 0;
@@ -390,6 +393,7 @@ void Game::animate() {_STACKTRACE("Game::animate(void)")
 	else view->animate_predict(this, 0);
 	t = get_time2() - t - paused_time;
 	render_history->add_element(pow(t, HIST_POWER));
+
 	return;
 }
 
@@ -423,10 +427,15 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 //static char old_checksum_buf[200][200];
 
 
-void game_create_errorlog(const char *exitmessage = 0)
+//if a game is killed due to an error, this may be executed
+void handle_game_error ( Game *game )
 {
+	log_debug("handle_game_error() executed\n");
+	if (game->log) {
+		game->log->save("error.dmo");
+		log_debug("Demo recording saved to error.dmo\n");
+	}
 /*
-	STACKTRACE;
 	FILE *f;
 
 	f = fopen("error.log", "a");
@@ -513,7 +522,7 @@ void game_create_errorlog(const char *exitmessage = 0)
 	fprintf(f, "----------------- end error log ---------------------\n");
 
 	fclose(f);
-*/
+	*/
 }
 
 
@@ -541,7 +550,6 @@ void Game::compare_checksums() {STACKTRACE
 
 	if (desync)
 	{
-		game_create_errorlog();
 		handle_desynch(local_checksum, server_checksum, client_checksum);
 	}
 }
@@ -726,24 +734,29 @@ void Game::play() {_STACKTRACE("Game::play")
 	catch (int i) {
 		if (i == -1) throw;
 		if (__error_flag & 1) throw;
-		if (i != 0) caught_error ("%s %s caught int %d", __FILE__, __LINE__, i);
+		handle_game_error(this);
+		if (i != 0) {
+			caught_error ("%s %s caught int %d", __FILE__, __LINE__, i);
+		}
 		if (__error_flag & 1) throw;
 	}
 	catch (const char *str) {
 		if (__error_flag & 1) throw;
+		handle_game_error(this);
 		caught_error("message: \"%s\"", str);
 		if (__error_flag & 1) throw;
 	}
 //ArrayIndexOutOfBounds NullPointerException
-/*	catch (exception &e) {
+	catch (exception &e) {
 		if (__error_flag & 1) throw;
-		caught_error ("A predefined exception occured\n%s", e.what());
+		handle_game_error(this);
+		caught_error ("A standard exception occured\n%s", e.what());
 		if (__error_flag & 1) throw;
-		}*/
+		}
 	catch (...) {
 		if (__error_flag & 1) throw;
+		handle_game_error(this);
 		caught_error("Ack(1)!!!\nAn error occured in the game!\nBut I don't know what error (check error log)!");
-		game_create_errorlog();
 		if (__error_flag & 1) throw;
 	}
 	return;

@@ -325,7 +325,7 @@ class VideoSystem : public BaseClass {
 	DATAFILE *font_data; //fonts
 	FONT *basic_font; //font to use if no other is available
 	Color *palette;
-	volatile int queued_redraws;
+	volatile bool screen_corrupted;
 	int last_poll;
 	Surface *surface;
 	VideoWindow window;

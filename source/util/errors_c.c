@@ -8,12 +8,12 @@
 
 int __error_flag = 0;
 
-static void default_error_handler ( const char * file, int line, const char * message ) {
+static void default_error_handler ( int in_catch_statement, const char * file, int line, const char * message ) {
 	log_debug("!!!\nDefault error handler is terminating the program\n");
 	tw_exit(1);
 }
 
-void (*_error_handler) ( const char *file, int line, const char *message) = &default_error_handler;
+void (*_error_handler) ( int in_catch_statement, const char *file, int line, const char *message) = &default_error_handler;
 
 
 static const char *_error_file = NULL;
@@ -35,7 +35,7 @@ static void __error(const char *format, ...) {
 		va_end(those_dots);
 	}
 	else error_string[0] = 0;
-	_error_handler(file, line, error_string);
+	_error_handler( 0, file, line, error_string);
 }
 
 // A helper function used by tw_error()
@@ -71,7 +71,7 @@ void error(const char *format, ...) {
 	}
 	else error_string[0] = 0;
 
-	_error_handler(NULL, -1, error_string);
+	_error_handler(0, NULL, -1, error_string);
 }
 
 

@@ -15,10 +15,6 @@ REGISTER_FILE
 #	define MAX_TRACE_LENGTH 64
 #	define MAX_TRACE_LENGTH_MASK (MAX_TRACE_LENGTH - 1)
 
-	struct TraceData {
-		SOURCE_LINE *srcline;
-		int level;
-	};
 
 	static int _stack_level = 0;
 	static int _trace_calls = 0;
@@ -29,6 +25,26 @@ REGISTER_FILE
 	static void _usth_error() {
 		tw_error("Exceeded maximum stacktrace level");
 	}
+
+	int get_stacktrace_data ( SOURCE_LINE **stack, int max ) {
+		int n = max;
+		n = n < _stack_level ? n : _stack_level;
+		for (int i = 0; i < n; i++) stack[i] = _stack_data[i];
+		return n;
+	}
+
+	int get_trace_data ( TraceData *trace, int max ) {
+		int n = max;
+		n = n < _trace_calls ? n : _trace_calls;
+		n = n < MAX_TRACE_LENGTH ? n : MAX_TRACE_LENGTH;
+		for (int i = 0; i < n; i++) {
+			trace[i] = _trace_data[
+				(_trace_calls - n + i) & MAX_TRACE_LENGTH_MASK
+			];
+		}
+		return n;
+	}
+
 	UserStackTraceHelper::UserStackTraceHelper ( SOURCE_LINE *srcline ) {
 		int i = (_trace_calls++) & MAX_TRACE_LENGTH_MASK;
 		_trace_data[i].srcline = srcline;
@@ -121,8 +137,17 @@ char find_shortcut_key(const char *s) {
 	}
 	return *s;
 }
-int tw_alert(const char *message, const char *b1, const char *b2, const char *b3, const char *b4) {
-	char *s1 = strdup(message);
+
+int _tw_alert ( 
+	bool popup, 
+	char *message, 
+	const char *b1, 
+	const char *b2 = NULL, 
+	const char *b3 = NULL, 
+	const char *b4 = NULL
+) 
+{
+	char *s1 = message;
 	char *s2 = NULL, *s3 = NULL;
 
 	s2 = strchr(s1, '\n');
@@ -159,69 +184,190 @@ int tw_alert(const char *message, const char *b1, const char *b2, const char *b3
 		dialog[5].key = find_shortcut_key(b4);
 	}
 
-	int i = tw_popup_dialog(&videosystem.window, dialog, 2) - 2;
+	int i;
+
+	if (popup) i = tw_popup_dialog(&videosystem.window, dialog, 2) - 2;
+	else       i = tw_do_dialog   (&videosystem.window, dialog, 2) - 2;
 	return i + 1;
 	//return alert3(s1, s2, s3, b1, b2, b3, 0, 0, 0);
 }
 
 
-static void tw_error_handler (const char *file, int line, const char *message) {
+int tw_alert(const char *message, const char *b1, const char *b2, const char *b3, const char *b4) {
+	char *s1 = strdup(message);
+	int r = _tw_alert( true, s1, b1, b2, b3, b4 );
+	free(s1);
+	return r;
+}
+
+
+static void tw_error_handler (
+	int in_catch_statement, 
+	const char *file, 
+	int line, 
+	const char *message
+) 
+{
 	char error_string[4096];
 	int i;
 
-#ifdef DO_STACKTRACE
-	// add GEO:
-	extern void game_create_errorlog(const char *exitmessage = 0);
-#endif
-
-	if (!strncmp(message, "quit", 4)) throw 0;
-	if (!strncmp(message, "Quit", 4)) throw 0;
-	if (!strncmp(message, "QUIT", 4)) throw 0;
-
 	if (__error_flag & 2) return;
 
-	strcpy(error_string, message);
-	if (line >= 0) {
-		sprintf(error_string + strlen(message), 
-				"\n\n%s, Line %d", file, line);
+	char *cp = &error_string[0];
+	if (file) {
+		char *_file = strstr(file, "source");
+		if (_file) file = _file;
 	}
-#ifdef DO_STACKTRACE
-	char *STstring = get_stack_trace_string(8);
-	sprintf(error_string + strlen(message), "\n\n%s", STstring);
-	free(STstring);
 
-	// add GEO:
-	game_create_errorlog(message);
+	log_debug("tw_error_handler invoked: ");
+	int len = strlen(message);
+	memcpy(error_string, message, len);
+	cp += len;
+	if (line >= 0) {//display line # and file name
+		log_debug(        "(from %s, Line %d)\n", file, line);
+		cp += sprintf(cp, "\n(from %s, line %d)\n", file, line);
+	}
+	else {
+		log_debug("(from unspecified file & linenumber)\n");
+		cp += sprintf(cp, "\n");
+	}
+	log_debug("begin error message:\n%s\nend error message\n", message);
+
+#ifdef DO_STACKTRACE
+	//there needs to be enough space for the whole trace...
+	//if it gets printed into error_string
+	enum {TRACE_LENGTH = 16};
+	enum {MAX_STACK = 24};
+
+	if (1) {//always displaying trace
+		log_debug(        "Trace:\n");
+		cp += sprintf(cp, "Trace:\n");
+		TraceData trace[TRACE_LENGTH];
+		int n = get_trace_data(&trace[0], TRACE_LENGTH);
+		char blanks[MAX_STACK];
+		int i;
+		for (i = 0; i < 24; i++) blanks[i] = ' ';
+		for (i = 0; i < n; i++) {
+
+			int level = trace[i].level;
+			if (level > MAX_STACK) {
+				log_debug("maximum stack level exceeded? (stack level = %d\n", level);
+				continue;
+			}
+			blanks[level] = 0;
+			log_debug(        "%2d %2d %s", i, level, blanks);
+			cp += sprintf(cp, "%2d %2d %s", i, level, blanks);
+			blanks[level] = ' ';
+
+			SOURCE_LINE *srcline = trace[i].srcline;
+			if (srcline->name) {
+				log_debug(        "%s, line %d (\"%s\")\n", srcline->file, srcline->line, srcline->name);
+				cp += sprintf(cp, "%s, line %d (\"%s\")\n", srcline->file, srcline->line, srcline->name);
+			}
+			else {
+				log_debug(        "%s, line %d\n", srcline->file, srcline->line);
+				cp += sprintf(cp, "%s, line %d\n", srcline->file, srcline->line);
+			}
+		}
+	}
+
+	if (!in_catch_statement) {//display stack only if it's meaningfull
+		log_debug(        "Stacktrace:\n");
+		cp += sprintf(cp, "Stacktrace:\n");
+		SOURCE_LINE *stack[MAX_STACK];
+		int n = get_stacktrace_data(&stack[0], MAX_STACK);
+		char blanks[MAX_STACK];
+		int i;
+		for (i = 0; i < 24; i++) blanks[i] = ' ';
+		i = n - 8;
+		i = i > 0 ? i : 0;
+		for (; i < n; i++) {
+			
+			int level = i;
+			blanks[level] = 0;
+			log_debug(        "%2d %s", level, blanks);
+			cp += sprintf(cp, "%2d %s", level, blanks);
+			blanks[level] = ' ';
+
+			if (stack[i]->name) {
+				log_debug(        "%s, line %d (\"%s\")\n", stack[i]->file, stack[i]->line, stack[i]->name);
+				cp += sprintf(cp, "%s, line %d (\"%s\")\n", stack[i]->file, stack[i]->line, stack[i]->name);
+			}
+			else {
+				log_debug(        "%s, line %d\n", stack[i]->file, stack[i]->line);
+				cp += sprintf(cp, "%s, line %d\n", stack[i]->file, stack[i]->line);
+			}
+		}
+		//char *STstring = get_stack_trace_string(8);
+		//len += sprintf(error_string + len, "\n\n%s", STstring);
+		//free(STstring);
+	}
 #endif
+
 
 	if (videosystem.width <= 0) {
 		allegro_message("Critical Error$: %s\n", error_string);
+		log_debug("\nUnable to display messge, shutting down\n");
 		throw -1;
 	}
 
-	i = tw_alert(error_string, "&Abort", "&Retry", "&Debug", "&Ignore");
-	if (i == 3) {
+	log_debug("Pressenting graphical error prompt\n");
+
+	const char *es[] = {"&Abort", "&Retry", "&Debug", "&Ignore"};
+	enum {
+		ES_ABORT = 0,
+		ES_RETRY,
+		ES_DEBUG,
+		ES_IGNORE
+	};
+	int selection = -1;
+
+	if ( in_catch_statement ) {
+		int les[] = { ES_ABORT, ES_DEBUG };
+		i = _tw_alert( false, error_string, es[les[0]], es[les[1]] );
+		if (i > 0) selection = les[i - 1];
+	}
+	else {
+		int les[] = { ES_ABORT, ES_RETRY, ES_DEBUG, ES_IGNORE };
+		i = _tw_alert( false, error_string, es[les[0]], es[les[1]], es[les[2]], es[les[3]] );
+		if (i > 0) selection = les[i - 1];
+	}
+	if (selection < 0) selection = ES_ABORT;
+	log_debug("Option \"%s\" selected\n", es[selection]);
+
+	videosystem.screen_corrupted = true;
+
+	if (selection == ES_DEBUG) {//"Debug"
 		__error_flag |= 1;
+		if (in_catch_statement) {
+			return;
+		}
 #		if defined ALLEGRO_MSVC
 			__asm int 3;
-#		elif defined __GNUC__ && defined __I386__
+#		elif defined __GNUC__ && defined __i386__
 			asm("int $0x03");
 #		else
 			if (1) (*((int*)NULL)) = 0;
 #		endif
 		return;
 	}
-	if (i == 4) {
+
+	if (selection == ES_IGNORE) {//"Ignore"
 		__error_flag |= 2;
 		return;
 	}
-	if (i == 2)
+
+	if (selection == ES_RETRY) {//"Retry"
 		return;
-	throw 0;
+	}
+
+	//"Abort"
+	if (in_catch_statement) return;
+	else throw 0;
 }
 static void _register_tw_error_hanlde() {_error_handler = &tw_error_handler;}
 CALL_BEFORE_MAIN(_register_tw_error_hanlde);
-	
+
 
 
 
@@ -241,7 +387,7 @@ void tw_error_exit(const char* message) {
 }
 
 //const int tw_error_str_len = 2048;	// should be pleny of room.
-char tw_error_str[tw_error_str_len];
+//char tw_error_str[tw_error_str_len];
 
 void caught_error(const char *format, ...) {
 	char error_string[4096];
@@ -259,18 +405,15 @@ void caught_error(const char *format, ...) {
 		sprintf(error_string + l, "\n\n%s", STstring);
 
 	// added GEO:
-	strncpy(tw_error_str, STstring, tw_error_str_len-1);
-	tw_error_str[tw_error_str_len-1] = 0;
+	//strncpy(tw_error_str, STstring, tw_error_str_len-1);
+	//tw_error_str[tw_error_str_len-1] = 0;
 	// for later use. This needs to be stored, cause this is the only place where
 	// the stacks lead to the bug location ?? Or not ??
 
 	free(STstring);
 #endif
-	// the following makes calls to subroutines that are monitored; I'll disable
-	// further monitoring by ...
-	int i = tw_alert(error_string, "Okay", "Debug");
-	if (i == 2) __error_flag |= 1;
 
+	_error_handler( 1, NULL, -1, error_string);
 
 	return;
 }

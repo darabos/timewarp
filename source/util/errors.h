@@ -4,6 +4,8 @@
 #define DO_STACKTRACE
 #define USE_ALLEGRO
 
+#define USE_EXCEPTIONS
+
 #define COMPILE_TIME_ASSERT(condition) typedef char _compile_time_assert_type_ ## __LINE__ [(condition) ? 1 : -1];
 
 /*
@@ -19,10 +21,10 @@ int tw_alert(const char *message, const char *b1 = 0, const char *b2 = 0, const 
 // for errors caught in "catch" clauses
 void caught_error(const char *format, ...);
 
-const int tw_error_str_len = 2048;	// should be plenty of room.
-extern char tw_error_str[tw_error_str_len];
-bool get_stacklist_info(int N, const char **filename, int **linenum, int **level);
-bool get_stacktrace_info(int N, const char **filename, int **linenum, int **level);
+//const int tw_error_str_len = 2048;	// should be plenty of room.
+//extern char tw_error_str[tw_error_str_len];
+//bool get_stacklist_info(int N, const char **filename, int **linenum, int **level);
+//bool get_stacktrace_info(int N, const char **filename, int **linenum, int **level);
 
 
 
@@ -44,6 +46,10 @@ struct SOURCE_LINE {
 #include "profile.h"
 
 #if defined  DO_STACKTRACE
+	struct TraceData {
+		SOURCE_LINE *srcline;
+		int level;
+	};
 	class UserStackTraceHelper { public:
 		UserStackTraceHelper( SOURCE_LINE *srcline);
 		~UserStackTraceHelper();
@@ -53,14 +59,16 @@ struct SOURCE_LINE {
 #	define _STACKTRACE(A) static SOURCE_LINE _srcline = { __LINE__, __FILE__, A }; UserStackTraceHelper _stacktrace_ ( &_srcline ); static DIRECT_PROFILE_DATUM _profiler_data_ = { &_srcline, 0, 0 }; const Profiler _profiler_ ( _profiler_data_ );
 //#	define _STACKTRACE(A) static const SOURCE_LINE _srcline = { __LINE__, __FILE__, A }; UserStackTraceHelper _stacktrace_ ( &_srcline );
 	// this is defined locally in subroutines, so it's de-allocated on exit of the subroutine.
-	char *get_stack_trace_string(int max);
 #else
 #	define STACKTRACE
 #	define _STACKTRACE(A)
 #endif
 
 #ifdef DO_STACKTRACE
-char *get_stack_trace_string(int max);
+	int get_stacktrace_data ( SOURCE_LINE **stack, int max );
+	int get_trace_data ( TraceData *trace, int max );
+	
+	char *get_stack_trace_string(int max);
 #endif
 
 
@@ -102,7 +110,12 @@ void deinit_error();  //de-initialize error handling routines
 #	define tw_error _prep_error_func(__FILE__, __LINE__)
 //#	define tw_error _prep_error(__FILE__, __LINE__); _error
 	void error_handler ( const char *message);
-	extern void (*_error_handler) ( const char *src_file, int line, const char *message );
+	extern void (*_error_handler) ( 
+		int in_catch_statement, //"retry" is invalid inside a catch statement
+		const char *src_file, 
+		int line, 
+		const char *message 
+	);
 
 	typedef void (*ERROR_FUNC_TYPE)(const char *fmt, ...);
 
