@@ -875,6 +875,8 @@ void Game::init(Log *_log) {STACKTRACE
 	next_render_time = game_time;
 	next_fps_time = game_time;
 	view_locked = false;
+	physics_locked = false;
+	if (log->type != Log::log_normal || log->playback) physics_locked = true;
 	local_checksum = client_checksum = server_checksum = 0;
 
 	Physics::init();
@@ -896,82 +898,9 @@ void Game::init(Log *_log) {STACKTRACE
 			}
 			break;
 			case Log::log_net1server: {
-
-/*				log->set_all_directions(Log::direction_write | Log::direction_read | NetLog::direction_immediate);
-				log->set_direction(channel_client , Log::direction_read);
-				log->set_direction(channel_client + Game::_channel_buffered, Log::direction_read);
-				log->set_direction(channel_server + Game::_channel_buffered, Log::direction_write | Log::direction_read);
-*/
-			#ifdef REVERSE_CONNECT
-/*				set_config_file("client.ini");
-				char address[128];
-				while (!((NetLog*)log)->net.isConnected()) {
-					strncpy(address, get_config_string("Network", "Address", ""), 127);
-					int port = get_config_int("Network", "Port", 15515);
-					char *addressaddress = address;
-					if (connect_menu(&addressaddress, &port)) {
-						game->quit("Quit - aborted connection");
-						break;
-					}
-					set_config_string("Network", "Address", addressaddress);
-					message.out("...");
-					i = ((NetLog*)log)->net.connect(addressaddress, port, is_escape_pressed);
-					free(addressaddress);
-					if (i) {
-						while (keypressed()) readkey();
-						tw_error("connection failed");
-					}
-				}*/
-			#else
-/*				set_config_file("client.ini");
-				int port = get_config_int("Network", "Port", 15515);
-				while (!((NetLog*)log)->net.isConnected()) {
-					port = listen_menu(window, port);
-					message.out("...");
-					((NetLog*)log)->net.listen(port, is_escape_pressed);
-				}*/
-			#endif
-/*				((NetLog*)log)->net.optimize4latency();
-				message.out("connection established");*/
 			}
 			break;
 			case Log::log_net1client: {
-/*				log->set_all_directions(Log::direction_read);
-				log->set_direction(Game::channel_client , Log::direction_write | Log::direction_read | NetLog::direction_immediate);
-				log->set_direction(Game::channel_client + Game::_channel_buffered, Log::direction_write | Log::direction_read);
-*/
-			#ifndef REVERSE_CONNECT
-/*				set_config_file("client.ini");
-				char address[128];
-				while (!((NetLog*)log)->net.isConnected()) {
-					strncpy(address, get_config_string("Network", "Address", ""), 127);
-					int port = get_config_int("Network", "Port", 15515);
-					char *addressaddress = address;
-					if (connect_menu(window, &addressaddress, &port)) {
-						game->quit("Quit - aborted connection(2)");
-						break;
-					}
-					set_config_string("Network", "Address", addressaddress);
-					message.out("...");
-					i = ((NetLog*)log)->net.connect(addressaddress, port, is_escape_pressed);
-					free(addressaddress);
-					if (i) {
-//						while (is_escape_pressed());
-						while (keypressed()) readkey();
-						tw_error("connection failed");
-					}
-				}*/
-			#else
-/*				set_config_file("client.ini");
-				int port = get_config_int("Network", "Port", 15515);
-				while (!((NetLog*)log)->net.isConnected()) {
-					port = listen_menu(port);
-					message.out("...");
-					((NetLog*)log)->net.listen(port, is_escape_pressed);
-				}*/
-			#endif
-/*				((NetLog*)log)->net.optimize4latency();
-				message.out("connection established");*/
 			}
 			break;
 			default: {
@@ -1293,20 +1222,23 @@ bool Game::handle_key(int k) {STACKTRACE
 		}
 		break;
 		case KEY_F7: {
-			if (frame_time < 7) {
-				frame_time = 50;
+			if (!physics_locked) {
+				if (frame_time < 7) {
+					frame_time = 50;
+				}
+				else if (frame_time < 15) {
+					frame_time = 5;
+				}
+				else if (frame_time < 30) {
+					frame_time = 10;
+				}
+				else {
+					frame_time = 25;
+				}
+				message.print(1000, 15, "Game Tic rate set to %f / second", 1000./frame_time);
+				return true;
 			}
-			else if (frame_time < 15) {
-				frame_time = 5;
-			}
-			else if (frame_time < 30) {
-				frame_time = 10;
-			}
-			else {
-				frame_time = 25;
-			}
-			message.print(1000, 15, "Game Tic rate set to %f / second", 1000./frame_time);
-			return true;
+			return false;
 		}
 		break;
 		case KEY_F8: {

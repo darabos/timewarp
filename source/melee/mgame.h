@@ -138,6 +138,7 @@ public:
 	virtual void decrease_latency();
 
 	bool view_locked;
+	bool physics_locked;
 
 	int num_focuses;
 	int focus_index;
