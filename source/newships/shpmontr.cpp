@@ -128,6 +128,7 @@ MonoTron::MonoTron(Vector2 opos, double shipAngle,
 }
 
 int MonoTron::activate_weapon(){
+	STACKTRACE
   game->add(new MonoMissile(this, 0, size.y/2,
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->spriteWeapon, target));
@@ -135,6 +136,7 @@ int MonoTron::activate_weapon(){
 }
 
 void MonoTron::calculate_fire_special(){
+	STACKTRACE
   if(special_recharge > 0)
     special_recharge -=  frame_time;
 
@@ -173,6 +175,7 @@ void MonoTron::calculate_fire_special(){
 void MonoTron::calculate_gravity() {}
 
 void MonoTron::calculate_turn_left() {
+	STACKTRACE
   if( !turning && turn_left ){
     turn_step = PI*3/2;
     turn_phase = 15.9;
@@ -185,6 +188,7 @@ void MonoTron::calculate_turn_left() {
 }
 
 void MonoTron::calculate_turn_right() {
+	STACKTRACE
   if( !turning && turn_right ){
     turn_step = PI/2;
     turn_phase = 0.1;
@@ -201,6 +205,7 @@ void MonoTron::calculate_thrust() {}
 void MonoTron::calculate_hotspots() {}
 
 void MonoTron::calculate(){
+	STACKTRACE
   int iangle = (int)((angle + PI/4) / (PI/2)) % 4;
   if( last_laser &&(( pos.x != mo.x && iangle % 2 == 1 )||( pos.y != mo.y && iangle % 2 == 0 ))){
     /* this probably means we bumped into something or something moved us */
@@ -235,8 +240,8 @@ void MonoTron::calculate(){
   mo = pos;
 }
 
-int MonoTron::accelerate( SpaceLocation *source, double angle, double velocity,
-  double max_speed ){
+int MonoTron::accelerate( SpaceLocation *source, double angle, double velocity, double max_speed ){
+	STACKTRACE
 
   if( source!=this ) return false;
   return Ship::accelerate(source, angle, velocity, max_speed);
@@ -262,6 +267,7 @@ MonoMissile::MonoMissile( SpaceLocation* creator, double ox, double oy, double o
 }
 
 void MonoMissile::calculate() {
+	STACKTRACE
   Missile::calculate();
   int iangle = (int)((angle + PI/4) / (PI/2)) % 4;
   angle = iangle * PI/2;
@@ -295,10 +301,12 @@ void MonoMissile::calculate() {
 }
 
 void MonoMissile::animate_predict( Frame* space, int time ){
+	STACKTRACE
   Missile::animate_predict( space, time );
 }
 
 void MonoMissile::set_up_beacons(){
+	STACKTRACE
   if( !target || !target->exists() || target->isInvisible() ){
     target = NULL;
   }else{
@@ -329,6 +337,7 @@ MonoLaser::MonoLaser( SpaceLocation* source, MonoLaser* olaser, int odamage )
 }
 
 void MonoLaser::stay(){
+	STACKTRACE
   lpos = new SpaceLocation( this, pos, 0.0 );
   if( laser ){
     if( laser->exists() ){
@@ -339,6 +348,7 @@ void MonoLaser::stay(){
 
 
 void MonoLaser::calculate(){
+	STACKTRACE
   angle = trajectory_angle( endpoint );
   length = distance( endpoint );
   frame -= frame_time; /* we do not want to dissolve */
@@ -348,6 +358,7 @@ void MonoLaser::calculate(){
 }
 
 void MonoLaser::dissolve(){
+	STACKTRACE
   state = 0;
   if( laser ){
     if( laser->exists() ){
@@ -357,6 +368,7 @@ void MonoLaser::dissolve(){
 }
 
 void MonoLaser::inflict_damage( SpaceObject* other ){
+	STACKTRACE
   Laser::inflict_damage( other );
   dissolve();
 }

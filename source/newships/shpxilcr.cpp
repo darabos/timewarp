@@ -90,6 +90,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int XillzCrescent::activate_weapon()
 {	
+	STACKTRACE
 
 	Vector2 rpos;
 	double a, DX;
@@ -115,6 +116,7 @@ int XillzCrescent::activate_weapon()
 
 int XillzCrescent::activate_special()
 {
+	STACKTRACE
 	XillzCrescentOrbiter	*xo;
 
 	xo = new XillzCrescentOrbiter(this, pos, angle+PI, data->spriteSpecial,
@@ -187,6 +189,7 @@ int XillzCrescent::activate_special()
 
 void XillzCrescent::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	// check if orbiters have died:
@@ -225,6 +228,7 @@ SpaceObject(creator, opos, oangle, osprite)
 
 void XillzCrescentOrbiter::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 
 	
@@ -339,6 +343,7 @@ void XillzCrescentOrbiter::calculate()
 
 int XillzCrescentOrbiter::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	double total = normal + direct;
 
 	armour -= total;

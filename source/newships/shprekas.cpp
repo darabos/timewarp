@@ -59,6 +59,7 @@ RekojAssassin::RekojAssassin(Vector2 opos, double angle, ShipData *data, unsigne
 
 int RekojAssassin::activate_weapon()
 {
+	STACKTRACE
 	double shipVelocity = magnitude(vel);	// sqrt(vx*vx + vy*vy);
 
 	add(new Missile(this, Vector2(0.0, get_size().y / 2.0),
@@ -76,6 +77,7 @@ int RekojAssassin::activate_special()
 
 void RekojAssassin::calculate()
 	{
+	STACKTRACE
 
 	Ship::calculate();
 

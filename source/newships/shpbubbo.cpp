@@ -195,6 +195,7 @@ BubalosBomber::BubalosBomber  (Vector2 opos, double shipAngle, ShipData *shipDat
 
 int BubalosBomber::activate_weapon()
 {
+	STACKTRACE
   if (fire_special && shipCanReverseThrusters) return false;
 
   BubalosMIRV* BMIRV;
@@ -279,6 +280,7 @@ BubalosMIRV::BubalosMIRV(double ox,double oy,double oangle, double ov,
 
 
 void BubalosMIRV::calculate() {
+	STACKTRACE
   double SplitRad = 0;
 	Missile::calculate();
 
@@ -308,6 +310,7 @@ void BubalosMIRV::calculate() {
 
 
 void BubalosBomber::death() {
+	STACKTRACE
 	int lastHurrah;
   double radInc;
   int i;
@@ -347,6 +350,7 @@ void BubalosBomber::death() {
 }
 
 int BubalosBomber::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
 
  if (normal > 0) {
     //normal = int(normal * EAS);
@@ -390,6 +394,7 @@ BubalosHMissile::BubalosHMissile(double ox, double oy, double oangle,double ov,
 
 
 int BubalosBomber::activate_special() {
+	STACKTRACE
 
   if ( (!fire_weapon) && shipCanReverseThrusters) return false;
 
@@ -422,6 +427,7 @@ int BubalosBomber::activate_special() {
 
 
 void BubalosEMPSlug::inflict_damage (SpaceObject *other) {
+	STACKTRACE
 	if (other->mass) 
 	{
 		Vector2 D, E;
@@ -462,6 +468,7 @@ void BubalosEMPSlug::inflict_damage (SpaceObject *other) {
 
 
 void BubalosBomber::calculate_hotspots() {
+	STACKTRACE
 
   Ship::calculate_hotspots();
 
@@ -482,6 +489,7 @@ BubalosBomberFlame::BubalosBomberFlame (SpaceLocation *creator, double ox, doubl
 
 void BubalosBomberFlame::calculate()
 {
+	STACKTRACE
   PositionedAnimation::calculate();
   if (state != 0)
     sprite_index = base_frame + get_index(follow->get_angle());
@@ -489,6 +497,7 @@ void BubalosBomberFlame::calculate()
 
 void BubalosBomber::calculate()
 {
+	STACKTRACE
   if(shipCanReverseThrusters) {
   if (fire_special && thrust) {
     if (can_switch) {
@@ -516,6 +525,7 @@ BubalosAccelLimiter::BubalosAccelLimiter(Ship *otarget, double oduration, double
 
 void BubalosAccelLimiter::calculate()
 {
+	STACKTRACE
 	timer += frame_time * 1E-3;
 
 	if ( !(mother && mother->exists()) || ( timer > duration ) )

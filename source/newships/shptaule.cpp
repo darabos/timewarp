@@ -213,6 +213,7 @@ LeviathanMissile::LeviathanMissile(double ox, double oy, double oangle, double o
 void LeviathanMissile::inflict_damage(SpaceObject *other)
 
 {
+	STACKTRACE
 
 	damage (other, damage_factor);
 
@@ -291,6 +292,7 @@ TauLeviathan::TauLeviathan(Vector2 opos, double shipAngle, ShipData *shipData, u
 int TauLeviathan::activate_weapon()
 
 {
+	STACKTRACE
 
     add(new LeviathanSlimeBall(0.0, size.y/2.6, normalize(angle + weaponSpread*(1.0-(random() % 2001)/1000.0), PI2),
 
@@ -307,6 +309,7 @@ int TauLeviathan::activate_weapon()
 int TauLeviathan::activate_special()
 
 {
+	STACKTRACE
 
 	add(new LeviathanMissile(22*missile_side, 5, angle + (PI/12)*missile_side,
 
@@ -327,6 +330,7 @@ int TauLeviathan::activate_special()
 void TauLeviathan::calculate()
 
 {
+	STACKTRACE
 
 	Ship::calculate();
 
@@ -367,6 +371,7 @@ void TauLeviathan::calculate()
 int TauLeviathan::handle_damage(SpaceLocation *source, double normal, double direct)
 
 {
+	STACKTRACE
 
 	if (state == 0) return 0;
 
@@ -393,6 +398,7 @@ int TauLeviathan::handle_damage(SpaceLocation *source, double normal, double dir
 void TauLeviathan::calculate_hotspots()
 
 {
+	STACKTRACE
 
 	if (!fire_special) Ship::calculate_hotspots();
 
@@ -449,6 +455,7 @@ LeviathanSlimeBall::LeviathanSlimeBall(double ox, double oy, double oangle, doub
 void LeviathanSlimeBall::inflict_damage(SpaceObject *other)
 
 {
+	STACKTRACE
 
 	if (other->isShip()) {
 
@@ -515,6 +522,7 @@ LeviathanSlimeFood::LeviathanSlimeFood(double oangle, double ov, int otime,
 void LeviathanSlimeFood::inflict_damage(SpaceObject *other)
 
 {
+	STACKTRACE
 
 	other->handle_damage(this, 0);
 
@@ -525,6 +533,7 @@ void LeviathanSlimeFood::inflict_damage(SpaceObject *other)
 void LeviathanSlimeFood::calculate()
 
 {
+	STACKTRACE
 
 	AnimatedShot::calculate();
 
@@ -583,6 +592,7 @@ LeviathanJammer::LeviathanJammer (SpaceLocation *creator, SpaceLocation *opos, S
 void LeviathanJammer::calculate()
 
 {
+	STACKTRACE
 
 	FixedAnimation::calculate();
 

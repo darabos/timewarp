@@ -24,6 +24,7 @@ KatAssim::KatAssim( Vector2 opos, double shipAngle,
 }
 
 void KatAssim::inflict_damage( SpaceObject* other ){
+	STACKTRACE
   Ship::inflict_damage( other );
   if( special_recharge <= 0 || !other->isShot() || !other->ship ) return;
   if( morph ) {
@@ -46,6 +47,7 @@ void KatAssim::inflict_damage( SpaceObject* other ){
 }
 
 void KatAssim::calculate(){
+	STACKTRACE
   Ship::calculate();
   if( morph ){
     if( batt > morph->batt_max ) batt = morph->batt_max;

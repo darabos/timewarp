@@ -58,6 +58,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int Xaaar::activate_weapon()
 {
+	STACKTRACE
 	// destroy old bombs
 
 	if (xs1)
@@ -107,6 +108,7 @@ int Xaaar::activate_special()
 
 Vector2 Xaaar::bombpos(int side)
 {
+	STACKTRACE
 	// place the bombs on either side.
 
 	Vector2 P1, P2;
@@ -123,6 +125,7 @@ Vector2 Xaaar::bombpos(int side)
 
 void Xaaar::animate(Frame *f)
 {
+	STACKTRACE
 	Ship::animate(f);
 
 	Vector2 dpos;
@@ -150,6 +153,7 @@ void Xaaar::animate(Frame *f)
 
 void Xaaar::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	// check if the bombs still "exist"
@@ -184,6 +188,7 @@ SpaceObject(omother, omother->pos+rpos, omother->angle+rangle, osprite)
 
 void XaaarShot::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 
 	if (!(mother && mother->exists()))
@@ -202,6 +207,7 @@ void XaaarShot::calculate()
 
 int XaaarShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	if (!mother->fire_special && source != mother)
 	{
 		state = 0;
@@ -211,6 +217,7 @@ int XaaarShot::handle_damage(SpaceLocation *source, double normal, double direct
 
 void XaaarShot::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (other == mother)
 		return;
 

@@ -92,51 +92,37 @@ ShipData *data, unsigned int code)
   rawHotspotRate = get_config_float("Ship", "HotspotRate", 0);
 
   shipSpeedMax = scale_velocity(get_config_float("Ship", "SpeedMax",0));
-  shipAccelRate = scale_acceleration(get_config_float("Ship", "AccelRate", 
-0), rawHotspotRate);
+  shipAccelRate = scale_acceleration(get_config_float("Ship", "AccelRate", 0), rawHotspotRate);
   shipTurnRate = scale_turning(get_config_float("Ship", "TurnRate", 0));
-  shipSpeedMaxLossPerTurboUsed = get_config_float("Ship", 
-"SpeedMaxLossPerTurboUsed", 0);
-  shipAccelLossPerTurboUsed = get_config_float("Ship", 
-"AccelLossPerTurboUsed", 0);
-  shipTurnRateGainPerTurboUsed = get_config_float("Ship", 
-"TurnRateGainPerTurboUsed", 0);
+  shipSpeedMaxLossPerTurboUsed = get_config_float("Ship", "SpeedMaxLossPerTurboUsed", 0);
+  shipAccelLossPerTurboUsed = get_config_float("Ship", "AccelLossPerTurboUsed", 0);
+  shipTurnRateGainPerTurboUsed = get_config_float("Ship", "TurnRateGainPerTurboUsed", 0);
   shipSpecialDrain = get_config_int("Ship", "SpecialDrain", 0);
 
   weaponGroupOneActive = get_config_int("Weapon", "GroupOneActive", 0);
   weaponGroupTwoActive = get_config_int("Weapon", "GroupTwoActive", 0);
   weaponHotspotRate = get_config_float("Weapon", "HotspotRate", 0);
   weaponFramesOfCoasting = get_config_int("Weapon", "FramesOfCoasting", 0);
-  weaponVelocity1 = scale_velocity(get_config_float("Weapon", "Velocity1", 
-0));
+  weaponVelocity1 = scale_velocity(get_config_float("Weapon", "Velocity1", 0));
   weaponDamage1   = get_config_int("Weapon", "Damage1", 0);
   weaponArmour1   = get_config_int("Weapon", "Armour1", 0);
-  weaponMaxSpeed = scale_velocity(get_config_float("Weapon", "MaxSpeed", 
-0));
+  weaponMaxSpeed = scale_velocity(get_config_float("Weapon", "MaxSpeed", 0));
   weaponDamage2   = get_config_int("Weapon", "Damage2", 0);
   weaponArmour2   = get_config_int("Weapon", "Armour2", 0);
   weaponRelativity = get_config_float("Weapon", "Relativity", 0);
   weaponFramesToIgnition = get_config_int("Weapon", "FramesToIgnition", 0);
   weaponFramesOfThrust = get_config_int("Weapon", "FramesOfThrust", 0);
-  weaponReleaseAngle1 = get_config_float("Weapon", "ReleaseAngle1", 
-0)*ANGLE_RATIO;
-  weaponReleaseAngle2 = get_config_float("Weapon", "ReleaseAngle2", 
-0)*ANGLE_RATIO;
-  weaponReleaseAngle3 = get_config_float("Weapon", "ReleaseAngle3", 
-0)*ANGLE_RATIO;
-  weaponAcceleration = scale_acceleration(get_config_float("Weapon", 
-"AccelRate",0), weaponHotspotRate);
+  weaponReleaseAngle1 = get_config_float("Weapon", "ReleaseAngle1", 0)*ANGLE_RATIO;
+  weaponReleaseAngle2 = get_config_float("Weapon", "ReleaseAngle2", 0)*ANGLE_RATIO;
+  weaponReleaseAngle3 = get_config_float("Weapon", "ReleaseAngle3", 0)*ANGLE_RATIO;
+  weaponAcceleration = scale_acceleration(get_config_float("Weapon", "AccelRate",0), weaponHotspotRate);
   weaponMass = get_config_float("Weapon", "Mass", 0);
 
-  specialTurnRate  = scale_turning(get_config_int("Special", "TurnRate", 
-0));
-  specialAccelRate = scale_acceleration(get_config_float("Special", 
-"AccelRate", 0), rawHotspotRate);
-  specialSpeedMax    = scale_velocity(get_config_float("Special", 
-"SpeedMax", 0));
+  specialTurnRate  = scale_turning(get_config_int("Special", "TurnRate", 0));
+  specialAccelRate = scale_acceleration(get_config_float("Special", "AccelRate", 0), rawHotspotRate);
+  specialSpeedMax    = scale_velocity(get_config_float("Special", "SpeedMax", 0));
 
-  specialFramesPerBattery   = get_config_int("Special", "FramesPerBattery", 
-0);
+  specialFramesPerBattery   = get_config_int("Special", "FramesPerBattery", 0);
   turboTimeLeft=0;
   numberOfTurbosUsed=0;
   turboOn=0;
@@ -144,6 +130,7 @@ ShipData *data, unsigned int code)
 }
 
 int KoanuaPatrolShip::activate_special() {
+	STACKTRACE
 
   turboTimeLeft=specialFramesPerBattery * batt;
 	framesToRestartSound = specialFramesPerBattery * batt - 4500;
@@ -157,6 +144,7 @@ int KoanuaPatrolShip::activate_special() {
 	}
 
 int KoanuaPatrolShip::activate_weapon() {
+	STACKTRACE
   KoanuaMissile* K;
   if(weaponGroupOneActive) {
   K = new KoanuaMissile(0,
@@ -212,6 +200,7 @@ int KoanuaPatrolShip::activate_weapon() {
 }
 
 void KoanuaPatrolShip::calculate() {
+	STACKTRACE
 
 	if(turboTimeLeft>0) {
 		turboTimeLeft -= frame_time;
@@ -234,49 +223,44 @@ void KoanuaPatrolShip::calculate() {
 
 }
 
-double KoanuaPatrolShip::handle_speed_loss(SpaceLocation *source, double
-normal) {
+double KoanuaPatrolShip::handle_speed_loss(SpaceLocation *source, double normal) {
+	STACKTRACE
   //vux limpets affect both normal speed and turbocharge speed,
   //turbo is not immune to slowdown!
 	double speed_loss = normal;
 	if(speed_loss > 0.0) {
 		double sl = (30/(mass+30)) * speed_loss;
 		if (sl > 1) error ("Speed loss too large\n(%f)", sl);
-		shipAccelRate *= 1 - sl * shipAccelRate / (shipAccelRate + 
-scale_acceleration(2,4));
-		shipSpeedMax *= 1 - sl * shipSpeedMax / (shipSpeedMax + 
-scale_velocity(10));
-		shipTurnRate *=  1 - sl * shipTurnRate / (shipTurnRate + 
-scale_turning(4));
-		specialAccelRate *= 1 - sl * specialAccelRate / (specialAccelRate + 
-scale_acceleration(2,4));
-		specialSpeedMax *= 1 - sl * specialSpeedMax / (specialSpeedMax + 
-scale_velocity(10));
-		specialTurnRate *=  1 - sl * specialTurnRate / (specialTurnRate + 
-scale_turning(4));
+		shipAccelRate *= 1 - sl * shipAccelRate / (shipAccelRate + scale_acceleration(2,4));
+		shipSpeedMax *= 1 - sl * shipSpeedMax / (shipSpeedMax + scale_velocity(10));
+		shipTurnRate *=  1 - sl * shipTurnRate / (shipTurnRate + scale_turning(4));
+		specialAccelRate *= 1 - sl * specialAccelRate / (specialAccelRate + scale_acceleration(2,4));
+		specialSpeedMax *= 1 - sl * specialSpeedMax / (specialSpeedMax + scale_velocity(10));
+		specialTurnRate *=  1 - sl * specialTurnRate / (specialTurnRate + scale_turning(4));
 		speed_loss = 0;
 	}
   return Ship::handle_speed_loss(source, normal);
 }
 
 void KoanuaPatrolShip::calculate_turn_left() {
+	STACKTRACE
   Ship::calculate_turn_left();
 }
 
 void KoanuaPatrolShip::calculate_turn_right() {
+	STACKTRACE
   Ship::calculate_turn_right();
 }
 
 void KoanuaPatrolShip::calculate_thrust() {
+	STACKTRACE
   Ship::calculate_thrust();
 }
 
 KoanuaMissile::KoanuaMissile(Vector2 opos, double oangle, double ov,
-	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite,
-double relativity)
+	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double relativity)
 	:
-	Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship,osprite, 
-relativity)
+	Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship,osprite, relativity)
 	{
 	explosionSprite     = data->spriteWeaponExplosion;
 	isBurning = FALSE;
@@ -286,6 +270,7 @@ relativity)
 	}
 
 void KoanuaMissile::calculate(void) {
+	STACKTRACE
 	if(isBurning==FALSE && isCoasting==FALSE)
 		if(framesToIgnition>=0) {
       framesToIgnition -= frame_time;
@@ -306,8 +291,7 @@ void KoanuaMissile::calculate(void) {
 		if(isBurning==TRUE && isCoasting==FALSE) {
 			if(framesOfBurn>=0) {
 				framesOfBurn -= frame_time;
-          accelerate_gravwhip (this, facingAngle, acceleration / mass, 
-maxSpeed);
+          accelerate_gravwhip (this, facingAngle, acceleration / mass, maxSpeed);
 			}
 			else {
 				framesOfBurn = 0;

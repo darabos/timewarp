@@ -108,10 +108,12 @@ KlisruDragon::KlisruDragon(Vector2 opos, double angle, ShipData *data, unsigned 
 }
 
 void KlisruDragon::death(void) {
+	STACKTRACE
   Ship::death();
 }
 
 int KlisruDragon::activate_weapon() {
+	STACKTRACE
   KlisruTorpedo* KT;
   KT = new KlisruTorpedo(this, Vector2(0, size.y * 0.4), this->angle,
     this->weaponStartVelocity, this->weaponStartVelocity, 
@@ -127,6 +129,7 @@ int KlisruDragon::activate_weapon() {
 }
 
 int KlisruDragon::activate_special() {
+	STACKTRACE
   SpaceObject* SO;
   double launchAngle = this->angle;
   SO = this->FindMissileTarget();
@@ -140,10 +143,12 @@ int KlisruDragon::activate_special() {
 }
 
 void KlisruDragon::calculate(void) {
+	STACKTRACE
   Ship::calculate();
 }
 
 SpaceObject* KlisruDragon::FindMissileTarget(void) {
+	STACKTRACE
   SpaceObject* bestTarget = NULL;
   double bestRange = 999999.9;
 //	for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
@@ -179,24 +184,29 @@ KlisruMissile::KlisruMissile(KlisruDragon* ocreator, Vector2 rpos, double oangle
   }
 
 void KlisruMissile::calculate(void) {
+	STACKTRACE
   HomingMissile::calculate();
 }
 
 void KlisruMissile::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   HomingMissile::inflict_damage(other);
 }
 
 int KlisruMissile::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
   int x;
   x = this->Shot::handle_damage(source, normal, direct);
   return(x);
 }
 
 bool KlisruMissile::die() {
+	STACKTRACE
   return(true);
 }
 
 void KlisruMissile::animate (Frame *frame) {
+	STACKTRACE
   HomingMissile::animate(frame);
 }
 
@@ -224,6 +234,7 @@ Shot(ocreator, rpos, oangle, oStartVelocity, oStartDamage, orange,
 }
 
 void KlisruTorpedo::calculate(void) {
+	STACKTRACE
   double fractionDone = 0.0;
   int spriteToUse = 0;
   Shot::calculate();
@@ -245,10 +256,12 @@ void KlisruTorpedo::calculate(void) {
 }
 
 void KlisruTorpedo::animateExplosion() {
+	STACKTRACE
 	return;
 }
 
 void KlisruTorpedo::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   int x = this->sprite_index;
   Shot::inflict_damage(other);
 	if (other->mass <= 0) return;

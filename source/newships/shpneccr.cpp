@@ -142,30 +142,18 @@ unsigned int code)
   specialMaxSpeed1 = scale_velocity(get_config_float("Special", "MaxSpeed1", 0));
   specialMaxSpeed2 = scale_velocity(get_config_float("Special", "MaxSpeed2", 0));
   specialMaxSpeed3 = scale_velocity(get_config_float("Special", "MaxSpeed3", 0));
-  specialFramesToIgnition1   = get_config_int("Special", 
-"FramesToIgnition1", 0);
-  specialFramesToIgnition2   = get_config_int("Special", 
-"FramesToIgnition2", 0);
-  specialFramesToIgnition3   = get_config_int("Special", 
-"FramesToIgnition3", 0);
-  specialFramesOfThrust1   = get_config_int("Special", "FramesOfThrust1", 
-0);
-  specialFramesOfThrust2   = get_config_int("Special", "FramesOfThrust2", 
-0);
-  specialFramesOfThrust3   = get_config_int("Special", "FramesOfThrust3", 
-0);
-  specialFramesOfCoasting1   = get_config_int("Special", 
-"FramesOfCoasting1", 0);
-  specialFramesOfCoasting2   = get_config_int("Special", 
-"FramesOfCoasting2", 0);
-  specialFramesOfCoasting3   = get_config_int("Special", 
-"FramesOfCoasting3", 0);
-  specialAcceleration1 = scale_acceleration(get_config_float("Special", 
-"Acceleration1", 0), specialHotspotRate);
-  specialAcceleration2 = scale_acceleration(get_config_float("Special", 
-"Acceleration2", 0), specialHotspotRate);
-  specialAcceleration3 = scale_acceleration(get_config_float("Special", 
-"Acceleration3", 0), specialHotspotRate);
+  specialFramesToIgnition1   = get_config_int("Special", "FramesToIgnition1", 0);
+  specialFramesToIgnition2   = get_config_int("Special", "FramesToIgnition2", 0);
+  specialFramesToIgnition3   = get_config_int("Special", "FramesToIgnition3", 0);
+  specialFramesOfThrust1   = get_config_int("Special", "FramesOfThrust1", 0);
+  specialFramesOfThrust2   = get_config_int("Special", "FramesOfThrust2", 0);
+  specialFramesOfThrust3   = get_config_int("Special", "FramesOfThrust3", 0);
+  specialFramesOfCoasting1   = get_config_int("Special", "FramesOfCoasting1", 0);
+  specialFramesOfCoasting2   = get_config_int("Special", "FramesOfCoasting2", 0);
+  specialFramesOfCoasting3   = get_config_int("Special", "FramesOfCoasting3", 0);
+  specialAcceleration1 = scale_acceleration(get_config_float("Special", "Acceleration1", 0), specialHotspotRate);
+  specialAcceleration2 = scale_acceleration(get_config_float("Special", "Acceleration2", 0), specialHotspotRate);
+  specialAcceleration3 = scale_acceleration(get_config_float("Special", "Acceleration3", 0), specialHotspotRate);
   specialReleaseAngle1 = get_config_float("Special", "ReleaseAngle1", 0) * ANGLE_RATIO;
   specialReleaseAngle2 = get_config_float("Special", "ReleaseAngle2", 0) * ANGLE_RATIO;
   specialReleaseAngle3A = get_config_float("Special", "ReleaseAngle3A", 0) * ANGLE_RATIO;
@@ -177,6 +165,7 @@ unsigned int code)
   isDead = FALSE;
 }
 void NechanziCruiser::death(void) {
+	STACKTRACE
   isDead = TRUE;
   if(deathTimer<100) {
     state = 1;
@@ -186,6 +175,7 @@ void NechanziCruiser::death(void) {
 }
 
 int NechanziCruiser::activate_weapon() {
+	STACKTRACE
   game->add(new Missile(this, Vector2(size.y*(0.26), (size.y * -0.15)),
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->spriteWeapon));
@@ -196,13 +186,13 @@ int NechanziCruiser::activate_weapon() {
 }
 
 int NechanziCruiser::activate_special() {
+	STACKTRACE
   if(specialFired)
     return(FALSE);
 
   NechanziMissile* NM;
   NM = new NechanziMissile(size.y*(0.05), (size.y * 0.4),
-    angle+specialReleaseAngle1+turn_step, specialVelocity1, specialDamage1, 
-scale_range(1000), specialArmour1,
+    angle+specialReleaseAngle1+turn_step, specialVelocity1, specialDamage1, scale_range(1000), specialArmour1,
     this, data->spriteSpecial, specialRelativity);
   NM->framesToIgnition = specialFramesToIgnition1;
   NM->framesOfBurn = specialFramesOfThrust1;
@@ -219,8 +209,7 @@ scale_range(1000), specialArmour1,
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(-0.05), (size.y * 0.4),
-    angle-specialReleaseAngle1+turn_step, specialVelocity1, specialDamage1, 
-scale_range(1000), specialArmour1,
+    angle-specialReleaseAngle1+turn_step, specialVelocity1, specialDamage1, scale_range(1000), specialArmour1,
     this, data->spriteSpecial, specialRelativity);
   NM->framesToIgnition = specialFramesToIgnition1;
   NM->framesOfBurn = specialFramesOfThrust1;
@@ -237,8 +226,7 @@ scale_range(1000), specialArmour1,
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(-0.10), (size.y * 0.3),
-    angle-specialReleaseAngle2+turn_step, specialVelocity2, specialDamage2, 
-scale_range(1000), specialArmour2,
+    angle-specialReleaseAngle2+turn_step, specialVelocity2, specialDamage2, scale_range(1000), specialArmour2,
     this, data->spriteSpecial, specialRelativity);
   NM->framesToIgnition = specialFramesToIgnition2;
   NM->framesOfBurn = specialFramesOfThrust2;
@@ -254,8 +242,7 @@ scale_range(1000), specialArmour2,
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(0.00), (size.y * 0.3),
-    angle+turn_step, specialVelocity2, specialDamage2, scale_range(1000), 
-specialArmour2,
+    angle+turn_step, specialVelocity2, specialDamage2, scale_range(1000), specialArmour2,
     this, data->spriteSpecial, specialRelativity);
   NM->framesToIgnition = specialFramesToIgnition2;
   NM->framesOfBurn = specialFramesOfThrust2;
@@ -271,8 +258,7 @@ specialArmour2,
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(0.1), (size.y * 0.3),
-    angle+specialReleaseAngle2+turn_step, specialVelocity2, specialDamage2, 
-scale_range(1000), specialArmour2,
+    angle+specialReleaseAngle2+turn_step, specialVelocity2, specialDamage2, scale_range(1000), specialArmour2,
     this, data->spriteSpecial, specialRelativity);
   NM->framesToIgnition = specialFramesToIgnition2;
   NM->framesOfBurn = specialFramesOfThrust2;
@@ -304,8 +290,7 @@ scale_range(1000), specialArmour3,
   game->add(NM);*/
 
   NM = new NechanziMissile(size.y*(-0.08), (size.y * 0.2),
-    angle-specialReleaseAngle3A+turn_step, specialVelocity3, specialDamage3, 
-scale_range(1000), specialArmour3,
+    angle-specialReleaseAngle3A+turn_step, specialVelocity3, specialDamage3, scale_range(1000), specialArmour3,
     this, data->spriteSpecial, specialRelativity);
   NM->framesToIgnition = specialFramesToIgnition3;
   NM->framesOfBurn = specialFramesOfThrust3;
@@ -320,8 +305,7 @@ scale_range(1000), specialArmour3,
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(0.08), (size.y * 0.2),
-    angle+specialReleaseAngle3A+turn_step, specialVelocity3, specialDamage3, 
-scale_range(1000), specialArmour3,
+    angle+specialReleaseAngle3A+turn_step, specialVelocity3, specialDamage3, scale_range(1000), specialArmour3,
     this, data->spriteSpecial, specialRelativity);
   NM->framesToIgnition = specialFramesToIgnition3;
   NM->framesOfBurn = specialFramesOfThrust3;
@@ -357,6 +341,7 @@ scale_range(1000), specialArmour3,
 }
 
 void NechanziCruiser::calculate(void) {
+	STACKTRACE
   if(isDead) deathTimer += frame_time;
   if(deathTimer>100) state=0;
   Ship::calculate();
@@ -365,13 +350,10 @@ void NechanziCruiser::calculate(void) {
 }
 
 
-NechanziMissile::NechanziMissile(double ox, double oy, double oangle, double 
-ov,
-	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, 
-double relativity)
+NechanziMissile::NechanziMissile(double ox, double oy, double oangle, double ov,
+	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double relativity)
 	:
-	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, 
-oship,osprite, relativity)
+	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship,osprite, relativity)
 	{
 	explosionSprite     = data->spriteWeaponExplosion;
 	isBurning = FALSE;
@@ -385,6 +367,7 @@ oship,osprite, relativity)
 	}
 
 void NechanziMissile::calculate(void) {
+	STACKTRACE
   if(creator==NULL)
     isActivated=1;
   else if(creator->state==0)
@@ -413,8 +396,7 @@ void NechanziMissile::calculate(void) {
 		if(isBurning==TRUE && isCoasting==FALSE) {
 			if(framesOfBurn>=0) {
 				framesOfBurn -= frame_time;
-          accelerate_gravwhip (this, facingAngle, acceleration / mass, 
-maxSpeed);
+          accelerate_gravwhip (this, facingAngle, acceleration / mass, maxSpeed);
 			}
 			else {
 				framesOfBurn = 0;
@@ -433,6 +415,7 @@ maxSpeed);
 }
 
 void NechanziMissile::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   Shot::inflict_damage(other);
   if(missileType==2 && other->isShip() && isActivated) {
     game->add(new NechanziStun((Ship*)other, data->spriteExtra, 64, 50, 
@@ -441,8 +424,7 @@ stunFrames));
 }
 
 
-NechanziStun::NechanziStun(Ship *oship,
-  SpaceSprite *osprite,
+NechanziStun::NechanziStun(Ship *oship, SpaceSprite *osprite,
   int ofcount,
   int ofsize,
   int stunFrames)
@@ -460,6 +442,7 @@ NechanziStun::NechanziStun(Ship *oship,
 }
 
 void NechanziStun::calculate() {
+	STACKTRACE
 	pos = ship->pos;
 	vel = ship->vel;
 	frame_step+= frame_time;

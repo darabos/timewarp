@@ -99,6 +99,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int MoianSpeeder::activate_weapon()
 {	
+	STACKTRACE
 
 	add(new Shot(this, Vector2(0,40), angle,
 					weaponVelocity,	weaponDamage, weaponRange, weaponArmour,
@@ -110,6 +111,7 @@ int MoianSpeeder::activate_weapon()
 
 int MoianSpeeder::activate_special()
 {
+	STACKTRACE
 	add( new SpeedMissile(this, Vector2(0,40), angle,
 			specialVelocity, specialDamage, specialRange, specialArmour, specialTurnRate,
 			this, data->spriteSpecial, target,
@@ -125,6 +127,7 @@ int MoianSpeeder::activate_special()
 
 void MoianSpeeder::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	sprite_index = get_sprite_index();
@@ -160,6 +163,7 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate,
 
 void SpeedMissile::calculate()
 {
+	STACKTRACE
 	// if the mothership dies, you lose the sprites...
 	if (!(ship && ship->exists()))
 	{
@@ -216,6 +220,7 @@ void SpeedMissile::calculate()
 // changes state from a missile to a blob-releaser
 void SpeedMissile::inflict_damage(SpaceObject* other)
 {
+	STACKTRACE
 	blobreleaser = other;
 	HomingMissile::inflict_damage(other);
 	state = 1;
@@ -230,6 +235,7 @@ void SpeedMissile::inflict_damage(SpaceObject* other)
 
 void SpeedMissile::animate(Frame *f)
 {
+	STACKTRACE
 	if (!blobreleaser)
 		HomingMissile::animate(f);
 }
@@ -273,6 +279,7 @@ void SpeedBlob::inflict_damage(SpaceObject* other)
 
 void SpeedBlob::calculate()
 {
+	STACKTRACE
 	if (!(ship && ship->exists()))
 	{
 		ship = 0;

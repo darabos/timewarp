@@ -86,6 +86,7 @@ KoloryFlamer::KoloryFlamer(Vector2 opos, double angle, ShipData *data, unsigned 
 
 int KoloryFlamer::activate_weapon()
 {
+	STACKTRACE
 	weaponVelocity = 0.0;
 
 	// check if the weapons exist
@@ -126,6 +127,7 @@ int KoloryFlamer::activate_special() {
 
 void KoloryFlamer :: calculate ()
 {
+	STACKTRACE
 
 	// check if the weapons exist
 	weapon1 = flamer1 && flamer1->exists();
@@ -185,6 +187,7 @@ void KoloryFlamer :: calculate ()
 
 void KoloryFlamer::calculate_hotspots()
 {
+	STACKTRACE
 	if((thrust) && (hotspot_frame <= 0))
 	{
 		Vector2 P;
@@ -239,6 +242,7 @@ FlameAccel(oaccel)
 
 void Flamer::calculate()
 {
+	STACKTRACE
 	if ( !commandship || !ship || !commandship->exists() || !ship->exists() )
 	{
 		commandship = 0;
@@ -294,6 +298,7 @@ void Flamer::calculate()
 
 int Flamer::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	
 	int totdamage = normal + direct;
 
@@ -315,6 +320,7 @@ int Flamer::handle_damage(SpaceLocation *source, double normal, double direct)
 
 void Flamer::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	SpaceObject::inflict_damage(other);
 
 	return;

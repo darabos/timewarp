@@ -121,6 +121,7 @@ double NaroolLurker::isInvisible() const {
 
 int NaroolLurker::activate_weapon()
 {
+	STACKTRACE
 	double a, relativity = game->shot_relativity;
 	if (target) {
 		a = intercept_angle2(pos, vel * relativity, weaponVelocity, 
@@ -135,6 +136,7 @@ int NaroolLurker::activate_weapon()
 
 void NaroolLurker::calculate_fire_special()
 {
+	STACKTRACE
 	special_low = FALSE;
 
 	if(fire_special) {
@@ -165,12 +167,14 @@ void NaroolLurker::calculate_fire_special()
 
 void NaroolLurker::calculate_hotspots()
 {
+	STACKTRACE
 	if(!cloak)
 		Ship::calculate_hotspots();
 }
 
 void NaroolLurker::calculate()
 {
+	STACKTRACE
 	if((cloak) && (cloak_frame < 300))
 		cloak_frame+= frame_time;
 	if((!cloak) && (cloak_frame > 0))
@@ -187,6 +191,7 @@ void NaroolLurker::calculate()
 
 void NaroolLurker::animate(Frame *space)
 {
+	STACKTRACE
 	if((cloak_frame > 0) && (cloak_frame < 300))
 		sprite->animate_character( pos,
 			sprite_index, pallete_color[cloak_color[(int)(cloak_frame / 100)]], space);
@@ -243,6 +248,7 @@ NaroolGas::NaroolGas(double ox, double oy,double oangle,double ov,int odamage, i
 }
 
 void NaroolGas::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	play_sound2(data->sampleExtra[1]);
 
 	if (other->isShip()) {
@@ -261,6 +267,7 @@ void NaroolGas::animateExplosion() {
 	}
 
 void NaroolGas::soundExplosion() {
+	STACKTRACE
 	if (!hitShip) {
 		play_sound2(data->sampleExtra[1]);
 		}
@@ -289,6 +296,7 @@ NaroolPoison::NaroolPoison(NaroolGas *gas, int nduration, float poison, Ship *ns
 	}
 
 void NaroolPoison::calculate() {
+	STACKTRACE
 	int chance;
 	SpaceObject::calculate();
 
@@ -338,6 +346,7 @@ void NaroolPoison::animate(Frame *space)
 
 void NaroolLurker::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	Ship::inflict_damage(other);
 
 	//you've hit something; activate sparks.
@@ -355,6 +364,7 @@ void NaroolLurker::inflict_damage(SpaceObject *other)
 
 void NaroolLurker::calc_lightning()
 {
+	STACKTRACE
 
 	Vector2 P;
 	P = sparkpos;

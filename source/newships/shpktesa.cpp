@@ -64,6 +64,7 @@ KterbiSaber::KterbiSaber(Vector2 opos, double shipAngle,
 
 void KterbiSaber::calculate_fire_weapon()
 {
+	STACKTRACE
   if ((batt < weapon_drain) && (crew > 1)) {
     crew--;
     batt += batt_max; }
@@ -78,6 +79,7 @@ void KterbiSaber::calculate_fire_weapon()
 
 void KterbiSaber::calculate_fire_special()
 {
+	STACKTRACE
   if ((batt < special_drain) && (crew > 1)) {
     crew--;
     batt += batt_max; }
@@ -92,6 +94,7 @@ void KterbiSaber::calculate_fire_special()
 
 int KterbiSaber::activate_weapon()
 {
+	STACKTRACE
   add(new KterbiIonBlast(Vector2(-size.x*.35, size.y/3),
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour, this,
     data->spriteWeapon, 10 ,1));
@@ -103,6 +106,7 @@ int KterbiSaber::activate_weapon()
 
 int KterbiSaber::activate_special()
 {
+	STACKTRACE
     if (boostlevel < 3) {
     boostlevel++;
     sound.stop(data->sampleExtra[1]);
@@ -137,6 +141,7 @@ int KterbiSaber::activate_special()
 
 void KterbiSaber::calculate()
 {
+	STACKTRACE
   if (((!fire_special) || ((crew == 1) && (batt == 0)) || (crew_max <= 2)) && (boostlevel != 0)) {
       boostlevel = 0;
       recharge_amount = normal_recharge;
@@ -176,7 +181,9 @@ void KterbiSaber::calculate()
   }
 }
 
-int KterbiSaber::handle_speed_loss(SpaceLocation *source, int normal) {
+int KterbiSaber::handle_speed_loss(SpaceLocation *source, int normal)
+{
+	STACKTRACE
     speed_max = normal_speed;
     accel_rate = normal_acc;
     double r = Ship::handle_speed_loss(source, normal);
@@ -206,6 +213,7 @@ KterbiIonBlast::KterbiIonBlast(Vector2 opos, double oangle, double ov,
 
 void KterbiIonBlast::calculate()
 {
+	STACKTRACE
   AnimatedShot::calculate();
   if (d < (range/2))
     damage_factor = min_damage;

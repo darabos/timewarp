@@ -90,6 +90,7 @@ Ship(opos, angle, data, code)
 
 RGB PhedarPatrolShip::crewPanelColor(int k)
 {
+	STACKTRACE
   	// change the crew color, if needed
 	if ( energizepersonalarmour )
 	{
@@ -103,6 +104,7 @@ RGB PhedarPatrolShip::crewPanelColor(int k)
 
 int PhedarPatrolShip::activate_weapon()
 {
+	STACKTRACE
 	
 	game->add(new Laser(this, get_angle(), pallete_color[weaponColor], 
 		weaponRange, weaponDamage, weaponFrames, this, Vector2(0, 0.5*get_size().y), true )); // synching=true
@@ -112,6 +114,7 @@ int PhedarPatrolShip::activate_weapon()
 
 int PhedarPatrolShip::activate_special()
 {
+	STACKTRACE
 	energizepersonalarmour = TRUE;
 	energizetimer = energizetimemax;
 
@@ -122,6 +125,7 @@ int PhedarPatrolShip::activate_special()
 
 void PhedarPatrolShip::calculate()
 {
+	STACKTRACE
 	
 	Ship::calculate();
 
@@ -143,6 +147,7 @@ void PhedarPatrolShip::calculate()
 
 int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double direct)
 {
+	STACKTRACE
 
 	double totdam = normal + direct;
 	// you also have to deal with negative damage, i.e., crew increase - that's
@@ -218,11 +223,13 @@ mother(oship)
 
 int CrewPodPP::sameTeam(SpaceLocation *other)
 {
+	STACKTRACE
 	return true;
 }
 
 void CrewPodPP::calculate()
 {
+	STACKTRACE
 	frame_step += frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
@@ -255,6 +262,7 @@ void CrewPodPP::calculate()
 
 void CrewPodPP::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (other->isShip()) {
 //		sound.stop(data->sampleExtra[0]);
 //		sound.play(data->sampleExtra[0]);
@@ -265,6 +273,7 @@ void CrewPodPP::inflict_damage(SpaceObject *other)
 
 int CrewPodPP::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	state = 0;	// this is extra; eg. if hit by a asteroid or so.
 	return 0;
 }

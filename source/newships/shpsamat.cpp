@@ -138,6 +138,7 @@ Ship(opos, angle, data, code)
 
 int SaMatra::activate_weapon()
 {	
+	STACKTRACE
 	if (Nweapons < weaponNumber)
 	{
 		game->add(new SaMatraBoxer(this, pos, random(PI2), data->spriteWeapon));
@@ -152,6 +153,7 @@ int SaMatra::activate_weapon()
 
 int SaMatra::activate_special()
 {
+	STACKTRACE
 
 	if (Nspecials < specialNumber)
 	{
@@ -167,6 +169,7 @@ int SaMatra::activate_special()
 
 void SaMatra::calculate()
 {
+	STACKTRACE
 
 	Ship::calculate();
 
@@ -191,6 +194,7 @@ void SaMatra::calculate()
 
 int SaMatra::handle_damage(SpaceLocation *src, double normal, double direct)
 {
+	STACKTRACE
 	double total;
 	total = normal + direct;
 
@@ -229,6 +233,7 @@ int SaMatra::handle_damage(SpaceLocation *src, double normal, double direct)
 
 void SaMatra::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (!other->isShip())
 		damage(other, 100000);
 }
@@ -239,6 +244,7 @@ void SaMatra::inflict_damage(SpaceObject *other)
 
 void SaMatra::death()
 {
+	STACKTRACE
 	Ship::death();
 
 
@@ -300,6 +306,7 @@ SpaceObject(ocreator, opos, oangle, osprite)
 
 void SaMatraBoxer::death()
 {
+	STACKTRACE
 
 	if (samatra)
 		--samatra->Nweapons;
@@ -310,6 +317,7 @@ void SaMatraBoxer::death()
 
 void home_in(SpaceLocation *yours, SpaceLocation *target, double *angle, double da_ps)
 {
+	STACKTRACE
 	if ((target && target->exists()) && (!target->isInvisible()))
 	{
 		double a, da;
@@ -349,6 +357,7 @@ void home_in(SpaceLocation *yours, SpaceLocation *target, double *angle, double 
 
 void SaMatraBoxer::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 
 
@@ -386,6 +395,7 @@ void SaMatraBoxer::calculate()
 
 int SaMatraBoxer::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	double total = normal + direct;
 	armour -= total;
 
@@ -412,6 +422,7 @@ int SaMatraBoxer::handle_damage(SpaceLocation *source, double normal, double dir
 
 void SaMatraBoxer::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (!other->exists()) return;
 
 	
@@ -476,6 +487,7 @@ Phaser(ship, opos, _n, ship, sprite, osprite_index, ocolors, onum_colors, ofsize
 
 void SaMatraPhaser::calculate()
 {
+	STACKTRACE
 	Phaser::calculate();
 
 	
@@ -519,6 +531,7 @@ SpaceLocation *SaMatra::get_ship_phaser()
 
 void SaMatra::relocate()
 {
+	STACKTRACE
 	// find the planet.
 
 	int i;
@@ -607,6 +620,7 @@ SaMatraFlame::~SaMatraFlame()
 
 void SaMatraFlame::death()
 {
+	STACKTRACE
 
 	if (samatra)
 		--samatra->Nspecials;
@@ -616,6 +630,7 @@ void SaMatraFlame::death()
 
 void SaMatraFlame::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 
 	if (!(samatra && samatra->exists()))
@@ -647,6 +662,7 @@ void SaMatraFlame::calculate()
 
 void SaMatraFlame::animate(Frame *space)
 {
+	STACKTRACE
 //	sprite->animate(pos, 0, space);
 
 //	return;
@@ -667,6 +683,7 @@ void SaMatraFlame::animate(Frame *space)
 
 void SaMatraFlame::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (!other->exists()) return;
 
 	if (damage_delay > 0)
@@ -687,6 +704,7 @@ void SaMatraFlame::inflict_damage(SpaceObject *other)
 
 int SaMatraFlame::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	double total = normal + direct;
 	armour -= total;
 

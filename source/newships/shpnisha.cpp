@@ -44,12 +44,8 @@ code);
 	//virtual void inflict_damage(SpaceObject *other);
   virtual void calculate();
   //virtual void calculate_gravity();
-  virtual int accelerate(SpaceLocation *source, double angle, double 
-velocity,
-			double max_speed);
-  virtual int accelerate_gravwhip(SpaceLocation *source, double angle, 
-double velocity,
-			double max_speed);
+  virtual int accelerate(SpaceLocation *source, double angle, double velocity, double max_speed);
+  virtual int accelerate_gravwhip(SpaceLocation *source, double angle, double velocity, double max_speed);
   virtual double handle_speed_loss(SpaceLocation* source, double normal);
 };
 
@@ -61,24 +57,19 @@ unsigned int code)
 {
   shipSpeedMax = scale_velocity(get_config_float("Ship", "SpeedMax", 0));
   shipTurnRate = scale_turning(get_config_float("Ship", "TurnRate", 0));
-  shipRechargeRate = scale_frames(get_config_float("Ship", "RechargeRate", 
-0));
+  shipRechargeRate = scale_frames(get_config_float("Ship", "RechargeRate", 0));
 
   weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
-  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 
-0));
+  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
   weaponAngle = get_config_float("Weapon", "Angle", 0) * ANGLE_RATIO;
   weaponTandemFire = get_config_int("Weapon", "TandemFire", 0);
   weaponRelativity = get_config_float("Weapon", "Relativity", 0);
 
-  specialSpeedMax = scale_velocity(get_config_float("Special", "Velocity", 
-0));
-  specialTurnRate = scale_turning(get_config_float("Special", "TurnRate", 
-0));
-  specialRechargeRate = scale_frames(get_config_float("Special", 
-"RechargeRate", 0));
+  specialSpeedMax = scale_velocity(get_config_float("Special", "Velocity", 0));
+  specialTurnRate = scale_turning(get_config_float("Special", "TurnRate", 0));
+  specialRechargeRate = scale_frames(get_config_float("Special", "RechargeRate", 0));
 
   specialToggleMode = get_config_int("Special", "ToggleMode", 0);
   specialIsAutothrust = get_config_int("Special", "IsAutothrust", 0);
@@ -93,21 +84,21 @@ unsigned int code)
 
 int NisskHarasser::activate_weapon()
 {
+	STACKTRACE
   if(gunToFire==1||weaponTandemFire)
   add(new Missile(this, Vector2(size.y*(-0.35), size.y *(0.4)),
-    angle-weaponAngle, weaponVelocity, weaponDamage, weaponRange, 
-weaponArmour,
+    angle-weaponAngle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->spriteWeapon, weaponRelativity));
   if(gunToFire==2||weaponTandemFire)
   add(new Missile(this, Vector2(size.y*(0.35), size.y *(0.4)),
-    angle+weaponAngle, weaponVelocity, weaponDamage, weaponRange, 
-weaponArmour,
+    angle+weaponAngle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->spriteWeapon, weaponRelativity));
   if(gunToFire==1) gunToFire=2; else gunToFire=1;
   return(TRUE);
 }
 
 int NisskHarasser::activate_special() {
+	STACKTRACE
   if(specialToggleMode) {
     if(lastSpecial==currentSpecial) return(FALSE);
     //if(debounce>0) return(FALSE);
@@ -126,6 +117,7 @@ int NisskHarasser::activate_special() {
 }
 
 void NisskHarasser::calculate() {
+	STACKTRACE
   lastSpecial = currentSpecial;
   currentSpecial = this->fire_special;
   oldDriveMode = driveMode;
@@ -180,8 +172,8 @@ void NisskHarasser::calculate() {
 
 	}
 
-double NisskHarasser::handle_speed_loss(SpaceLocation *source, double 
-normal) {
+double NisskHarasser::handle_speed_loss(SpaceLocation *source, double normal) {
+	STACKTRACE
   //vux limpets affect both normal speed and inertialess,
 	double speed_loss = normal;
 	if(speed_loss > 0.0) {
@@ -205,9 +197,9 @@ normal) {
     Ship::calculate_gravity();
 }*/
 
-int NisskHarasser::accelerate(SpaceLocation *source, double angle, double 
-velocity,
+int NisskHarasser::accelerate(SpaceLocation *source, double angle, double velocity,
 		double max_speed) {
+	STACKTRACE
   if(driveMode==0)
     return(Ship::accelerate(source, angle, velocity, max_speed));
 
@@ -216,9 +208,9 @@ velocity,
 	return false;
 	}
 
-int NisskHarasser::accelerate_gravwhip(SpaceLocation *source, double angle, 
-double velocity,
+int NisskHarasser::accelerate_gravwhip(SpaceLocation *source, double angle, double velocity,
 		double max_speed) {
+	STACKTRACE
   if(driveMode==0)
     return(Ship::accelerate_gravwhip(source, angle, velocity, max_speed));
 

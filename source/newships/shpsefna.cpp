@@ -103,6 +103,7 @@ Ship(opos, angle, data, code)
 
 int SefyNautilus::activate_weapon()
 {
+	STACKTRACE
 
 	if ( this->nextkeys & keyflag::special )
 		return FALSE;
@@ -123,6 +124,7 @@ int SefyNautilus::activate_weapon()
 
 int SefyNautilus::activate_special()
 {
+	STACKTRACE
 
 	unrolltime += frame_time * 1E-3;
 
@@ -158,6 +160,7 @@ int SefyNautilus::activate_special()
 
 void SefyNautilus::calculate()
 {
+	STACKTRACE
 	
 	Ship::calculate();
 
@@ -173,6 +176,7 @@ void SefyNautilus::calculate()
 
 int SefyNautilus::handle_damage(SpaceLocation *src, double normal, double direct)
 {
+	STACKTRACE
 	Ship::handle_damage(src, normal, direct);
 
 	return normal + direct;
@@ -221,6 +225,7 @@ SpaceObject(creator, creator->pos+orelpos, creator->angle, osprite)
 
 void Hook::calculate()
 {
+	STACKTRACE
 	exist_time += frame_time * 1E-3;
 	if ( exist_time > life_time )
 		state = 0;
@@ -476,6 +481,7 @@ void Hook::calculate()
 
 int Hook::handle_damage(SpaceLocation *src, double normal, double direct)
 {
+	STACKTRACE
 	if ( src == hooktarget )
 		return 0;
 
@@ -521,6 +527,7 @@ int Hook::handle_damage(SpaceLocation *src, double normal, double direct)
 
 void Hook::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropecol )
 {
+	STACKTRACE
 	int ix1, iy1, ix2, iy2;
 
 	Vector2 co;
@@ -560,6 +567,7 @@ void Hook::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropeco
 
 void Hook::animate ( Frame *space )
 {
+	STACKTRACE
 	SpaceObject::animate(space);
 
 	// also, animate the rope, these are points in space

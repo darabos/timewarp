@@ -137,6 +137,7 @@ Laser(ocreator, langle, lcolor, lrange, ldamage,
 }
 
 void GahmurTractor::inflict_damage(SpaceObject* other) {
+	STACKTRACE
   double x1, x2;
   x1 = (this->normalDamagePerSecond / 1000.0) * (double)frame_time;
   x2 = (this->directDamagePerSecond / 1000.0) * (double)frame_time;
@@ -168,6 +169,7 @@ void GahmurTractor::inflict_damage(SpaceObject* other) {
 }
 
 void GahmurTractor::collide(SpaceObject* other) {
+	STACKTRACE
   if(other->isShot()) return;
   if(other->isLine()) return;
   Laser::collide(other);
@@ -255,6 +257,7 @@ int GahmurMonitor::activate_special()
 
 
 void GahmurMonitor::calculate() {
+	STACKTRACE
   double requiredWeaponEnergy;
   double requiredSpecialEnergy;
   if(this->state==0) {
@@ -388,6 +391,7 @@ void GahmurMonitor::calculate() {
 
 void GahmurMonitor::LaunchPlasma()
 {
+	STACKTRACE
   GahmurPlasma* GP;
   double ta, rta, fracDone;
   Vector2 SV, TV;
@@ -430,6 +434,7 @@ void GahmurMonitor::LaunchPlasma()
 
 void GahmurMonitor::BeamPlasma()
 {
+	STACKTRACE
   double fracDone;
   double weaponBeamDivergenceAngle;
   Vector2 SV, TV;
@@ -457,6 +462,7 @@ void GahmurMonitor::BeamPlasma()
 
 
 void GahmurMonitor::PowerTractor() {
+	STACKTRACE
   double energy;
   if(this->tractorTarget) {
     this->tractorLockTime += frame_time;
@@ -477,6 +483,7 @@ void GahmurMonitor::PowerTractor() {
 }
 
 void GahmurMonitor::DecayTractor() {
+	STACKTRACE
   this->tractorPower -= (this->specialDecayMultiplier / 1000.0) * (double)frame_time;
   if(this->tractorPower<0.0) {
     this->tractorLockTime = 0;
@@ -491,6 +498,7 @@ void GahmurMonitor::DecayTractor() {
 }
 
 void GahmurMonitor::CalculateTractor() {
+	STACKTRACE
   GahmurTractor* GT;
   this->tractorSource->pos = this->pos + unit_vector(this->angle) * this->size.y * 0.3;
   if(this->tractorPower<0.0001) return;
@@ -528,6 +536,7 @@ void GahmurMonitor::CalculateTractor() {
 }
 
 void GahmurMonitor::CalculateTractorEffect() {
+	STACKTRACE
   Vector2 TM;
   double tmass;
   double vtransfer;
@@ -557,6 +566,7 @@ void GahmurMonitor::CalculateTractorEffect() {
 }
 
 int GahmurMonitor::handle_damage(SpaceLocation* source, double normal, double direct) {
+	STACKTRACE
   int x;
   x = Ship::handle_damage(source, normal, direct);
   if(this->crew<=0.0) {
@@ -566,12 +576,14 @@ int GahmurMonitor::handle_damage(SpaceLocation* source, double normal, double di
 }
 
 void GahmurMonitor::death() {
+	STACKTRACE
   //message.print(1000,10,"death!!!!!");
   //this->LaunchPlasma();
   Ship::death();
 }
 
 bool GahmurMonitor::die() {
+	STACKTRACE
   //message.print(1000,11,"die!!!!!");
   //this->LaunchPlasma();
   return Ship::die();
@@ -596,6 +608,7 @@ GahmurPlasma::GahmurPlasma(Vector2 opos, double oangle, double ov,
 
 void GahmurPlasma::calculate()
 {
+	STACKTRACE
   int damageFactorSprite;
   int base_sprite_index;
   HomingMissile::calculate();
@@ -614,6 +627,7 @@ void GahmurPlasma::calculate()
 
 void GahmurPlasma::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
   SpaceObject::inflict_damage(other);
   if (!other->isShot()) {
 	  if (other->exists()) {
@@ -629,6 +643,7 @@ void GahmurPlasma::inflict_damage(SpaceObject *other)
 }
 
 int GahmurPlasma::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
 	double total = (normal + direct)*this->vulnerabilityFactor;
 
 	if (total) {
@@ -640,6 +655,7 @@ int GahmurPlasma::handle_damage(SpaceLocation *source, double normal, double dir
 
 
 void GahmurPlasma::animate (Frame *frame) {
+	STACKTRACE
   sprite_index = sprite_index_override;
   //if there is a better way, TELL ME!!!
   Shot::animate(frame);

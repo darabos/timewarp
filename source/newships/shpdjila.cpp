@@ -114,6 +114,7 @@ DjinniLancer::DjinniLancer(Vector2 opos, double angle, ShipData *data, unsigned 
 
 void DjinniLancer::calculate()
 {
+	STACKTRACE
   if(laserSpark > 0) {
     laserSpark-= frame_time;
     if((laserSpark <= 0) && (laserSpark > -frame_time)) {
@@ -183,12 +184,12 @@ void DjinniLancer::calculate()
 }
 
 
-int DjinniLancer::handle_damage(SpaceLocation *source, double normal, double direct) {
+int DjinniLancer::handle_damage(SpaceLocation *source, double normal, double direct)
+{
 
-
+	STACKTRACE
 
 	if (normal > 0)
-
 	{
 		if ((normal - shield) <= 0) {
 			shield -= normal;
@@ -197,36 +198,26 @@ int DjinniLancer::handle_damage(SpaceLocation *source, double normal, double dir
 			normal -= shield;
 			shield = 0;
 		}
-
 	}
 
 
-
 	crew = crew_real + shield;
-   
    int k = Ship::handle_damage(source, normal, direct);
 
-
-
    // below "real" level you have lost real crew
-
    if (crew < crew_real)
-
 	   crew_real = crew;
-
    
 
    // shield is what is remaining.
-
    shield = crew - crew_real;
-
-
 
    return k;
 }
 
 
 int DjinniLancer::activate_weapon() {
+	STACKTRACE
   add(laser1 = new Laser(this, angle + laserAngle,
       pallete_color[weaponColor], weaponRange, weaponDamage, weapon_rate, this,
       Vector2(-4.0, 2.0), true));
@@ -240,6 +231,7 @@ int DjinniLancer::activate_weapon() {
 }
 
 int DjinniLancer::activate_special() {
+	STACKTRACE
 	int fire = FALSE;
 	SpaceObject *o;
 
@@ -278,24 +270,17 @@ int DjinniLancer::activate_special() {
 
 
 RGB DjinniLancer::crewPanelColor(int k)
-
 {
+	STACKTRACE
 
 	RGB c1 = {32,164,32};
-
 	RGB c2 = {64,64,255};
 
 
-
 	if (k < crew_real)	// it starts counting captain as 0
-
 		return c1;
-
 	else
-
 		return c2;
-
-
 
 }
 

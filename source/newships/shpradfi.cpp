@@ -48,6 +48,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int RadeanFirestorm::activate_weapon()
 {	
+	STACKTRACE
 
 	if (!shipmode)
 	{
@@ -66,6 +67,7 @@ int RadeanFirestorm::activate_weapon()
 
 int RadeanFirestorm::activate_special()
 {
+	STACKTRACE
 	// toggle between 0 and 1.
 	shipmode = !shipmode;
 	return TRUE;
@@ -74,6 +76,7 @@ int RadeanFirestorm::activate_special()
 
 int RadeanFirestorm::handle_damage(SpaceLocation* source, double normal, double direct)
 {
+	STACKTRACE
 	if (shipmode)
 	{
 		// damage also adds to your battery.
@@ -88,6 +91,7 @@ int RadeanFirestorm::handle_damage(SpaceLocation* source, double normal, double 
 
 void RadeanFirestorm::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	sprite_index = get_sprite_index();
@@ -98,6 +102,7 @@ void RadeanFirestorm::calculate()
 
 void RadeanFirestorm::animate(Frame *f)
 {
+	STACKTRACE
 	// animate the ship
 	Ship::animate(f);
 

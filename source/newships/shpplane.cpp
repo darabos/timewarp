@@ -54,6 +54,7 @@ PlanetShip::PlanetShip( Vector2 opos, double shipAngle,
 }
 
 double PlanetShip::isInvisible() const{
+	STACKTRACE
 	return (special_recharge > 0) ? 1 : 0;
 }
 
@@ -66,6 +67,7 @@ void PlanetShip::calculate_hotspots(){
 }
 
 void PlanetShip::calculate(){
+	STACKTRACE
   Ship::calculate();
   if( special_recharge > 0 ){
 //    vx = vy = 0;
@@ -81,20 +83,24 @@ void PlanetShip::calculate(){
 }
 
 void PlanetShip::materialize(){
+	STACKTRACE
   planet->translate( pos );
   game->add( planet );
 }
 
 void PlanetShip::death(){
+	STACKTRACE
   planet->state = 0;
 }
 
 int PlanetShip::handle_damage(SpaceLocation *other, double normal, double direct){
+	STACKTRACE
 //  if( weapon_recharge > 0 ) damage = 0;
   return Ship::handle_damage( other , normal, direct);
 }
 
 void PlanetShip::inflict_damage(SpaceObject *other){
+	STACKTRACE
 	if( weapon_recharge <= 0 ) return;
 	int i = 1;
 	if (other->isShip()) {
@@ -111,6 +117,7 @@ void PlanetShip::inflict_damage(SpaceObject *other){
 
 int PlanetShip::accelerate_gravwhip( SpaceLocation *source, double angle,
   double velocity, double max_speed ){
+	STACKTRACE
 
   Planet *p = nearest_other_planet();
   if( !p ) return SpaceLocation::accelerate( source, angle, velocity, max_speed );
@@ -122,6 +129,7 @@ int PlanetShip::accelerate_gravwhip( SpaceLocation *source, double angle,
 }
 
 Planet *PlanetShip::nearest_other_planet(){
+	STACKTRACE
   Planet *p = NULL;
   double r = 99999999;
   Query q;
@@ -149,6 +157,7 @@ InvisiblePlanet::InvisiblePlanet( SpaceLocation *creator, Vector2 opos,
 void InvisiblePlanet::animate( Frame* space ){}
 
 void InvisiblePlanet::calculate(){
+	STACKTRACE
 // just exclude the PlanetShip from the gravity effect
 
   SpaceObject::calculate();

@@ -90,6 +90,7 @@ ConfederationHornet::ConfederationHornet(Vector2 opos, double shipAngle,
 }
 
 int ConfederationHornet::activate_weapon() {
+	STACKTRACE
   add(new Missile(this, Vector2(7,35),
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->spriteWeapon));
@@ -101,6 +102,7 @@ int ConfederationHornet::activate_weapon() {
 
 int ConfederationHornet::activate_special()
 {
+	STACKTRACE
   add(new TorpedoMissile(0.0, (size.y / 2.0),
     angle, specialVelocity, specialDamage, specialDDamage, specialRange, specialArmour, specialTurnRate, this, this, data->spriteSpecial, target));
   return(TRUE);
@@ -108,6 +110,7 @@ int ConfederationHornet::activate_special()
 
 void ConfederationHornet::calculate()
 {
+	STACKTRACE
    int shield_color = 9; // Blue
    int i, bar_x, bar_y, shield_panel;
 
@@ -151,6 +154,7 @@ void ConfederationHornet::calculate()
 }
 
 int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
    if ((normal - shield) <= 0) {
      shield -= normal;
 	 normal = 0;
@@ -173,6 +177,7 @@ TorpedoMissile::TorpedoMissile(double ox, double oy, double oangle, double ov,
 }
 
 void TorpedoMissile::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	damage(other, 0, Direct_Damage);
   HomingMissile::inflict_damage(other);
 }

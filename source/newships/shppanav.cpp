@@ -90,6 +90,7 @@ armour(oarmour)
 
 void TimedShot::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 
 	if (!(ship && ship->exists()))
@@ -113,6 +114,7 @@ void TimedShot::calculate()
 
 void TimedShot::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	// copied from Shot::infli...
 
 	if (!other->exists()) return;
@@ -131,6 +133,7 @@ void TimedShot::inflict_damage(SpaceObject *other)
 
 int TimedShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	armour -= (normal + direct);
 
 	if (armour <= 0)
@@ -155,6 +158,7 @@ TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
 	
 void PanCohCrystal::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (!state)
 		return;
 
@@ -183,6 +187,7 @@ TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
 
 void PanCohFeather::calculate()
 {
+	STACKTRACE
 	// the velocity of a falling feather is ... somewhat weird.
 
 	/*
@@ -243,6 +248,7 @@ Ship(opos, angle, data, code)
 
 int PanCohAvian::activate_weapon()
 {
+	STACKTRACE
 	//creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage
 	TimedShot *tmp = new PanCohCrystal( this, 
 		Vector2(0.0, size.y / 1.5), 0.0, data->spriteWeapon,
@@ -260,6 +266,7 @@ int PanCohAvian::activate_weapon()
 
 int PanCohAvian::activate_special()
 {
+	STACKTRACE
 	int i;
 
 	for ( i = -1; i < 2; ++i )

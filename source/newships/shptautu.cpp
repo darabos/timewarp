@@ -73,6 +73,7 @@ TauTurbo::TauTurbo(Vector2 opos, double shipAngle, ShipData *shipData, unsigned 
 
 int TauTurbo::activate_weapon()
 {
+	STACKTRACE
 	if (shield) return false;
 
 	game->add(new TauTurboMissile (this, 6, 0, angle, weaponAccel,
@@ -90,6 +91,7 @@ int TauTurbo::activate_weapon()
 
 void TauTurbo::calculate_fire_special()
 {
+	STACKTRACE
 	if (fire_special && shield) {
 		shield = false;
 		recharge_amount = recharge_reserve;
@@ -98,6 +100,7 @@ void TauTurbo::calculate_fire_special()
 
 void TauTurbo::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 	if (fire_frame > 0) fire_frame -= frame_time;
 	if (shield) {
@@ -115,6 +118,7 @@ void TauTurbo::calculate()
 
 void TauTurbo::animate(Frame *space)
 {
+	STACKTRACE
 	if ((fire_frame > 0) && !shield)
 		sprite->animate(pos, sprite_index + 64, space);
 	else    sprite->animate(pos, sprite_index, space);
@@ -122,6 +126,7 @@ void TauTurbo::animate(Frame *space)
 
 void TauTurbo::calculate_hotspots()
 {
+	STACKTRACE
 //	Ship::calculate_hotspots();
 
 	if (extra_hotspot_frame > 0) {
@@ -156,6 +161,7 @@ void TauTurbo::calculate_hotspots()
 
 void TauTurbo::calculate_thrust()
 {
+	STACKTRACE
 	if (!thrust) return;
 
 	double vc = dot_product(vel,unit_vector(angle));//vx*cos(angle) + vy*sin(angle);
@@ -184,6 +190,7 @@ void TauTurbo::calculate_thrust()
 
 int TauTurbo::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	if ((!shield) && (batt > special_drain)) {
 		batt -= special_drain;
 		shield = true;
@@ -198,6 +205,7 @@ int TauTurbo::handle_damage(SpaceLocation *source, double normal, double direct)
 
 void TauTurbo::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if ((!shield) && (batt > special_drain)) {
 		batt -= special_drain;
 		shield = true;
@@ -209,6 +217,7 @@ void TauTurbo::inflict_damage(SpaceObject *other)
 
 double TauTurbo::isProtected() const
 {
+	STACKTRACE
 	return (shield || (batt > special_drain));
 }
 
@@ -240,6 +249,7 @@ TauTurboMissile::TauTurboMissile (SpaceLocation *creator, double ox, double oy, 
 
 void TauTurboMissile::calculate()
 {
+	STACKTRACE
 	Vector2 ovv = vel;
 	double ov = magnitude(vel);
 	double otr = turn_rate;
@@ -277,6 +287,7 @@ void TauTurboMissile::calculate()
 
 void TauTurboMissile::animate(Frame *space)
 {
+	STACKTRACE
 	sprite->animate(pos, sprite_index, space);
 	data->spriteSpecialExplosion->animate(pos, fire_index, space);
 }

@@ -47,6 +47,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int LeiMule::activate_weapon()
 {	
+	STACKTRACE
 	
 
 	Vector2 P0;
@@ -89,6 +90,7 @@ int LeiMule::activate_weapon()
 
 int LeiMule::activate_special()
 {
+	STACKTRACE
 
 	
 	Vector2 P0;

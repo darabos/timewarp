@@ -44,6 +44,7 @@ VirtaoLimb::VirtaoLimb(Vector2 opos, double shipAngle,
 }
 
 int VirtaoLimb::activate_weapon() {
+	STACKTRACE
   add(new VirtaoMissile(
     Vector2(0.0, 0.5*get_size().y), angle, weaponVelocity, weaponDamage, weaponRange,
     weaponArmour, weaponTurnRate, this, data->spriteWeapon));
@@ -51,6 +52,7 @@ int VirtaoLimb::activate_weapon() {
 }
 
 int VirtaoLimb::activate_special() {
+	STACKTRACE
   int fire = FALSE;
 
 	Query q;

@@ -90,6 +90,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int TelluriNova::activate_weapon()
 {
+	STACKTRACE
 	if (shield->power >= specialWeaponCost && (target && target->exists()) )
 	{
 		shield->power -= specialWeaponCost;
@@ -128,6 +129,7 @@ int TelluriNova::activate_weapon()
 
 int TelluriNova::activate_special()
 {
+	STACKTRACE
 
 	if (shield->power_up())
 		return true;
@@ -159,6 +161,7 @@ Missile(creator, rpos, oangle, ov, odamage, orange, 1,
 
 void TelluriNovaMissile::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (game->game_time - inflicttime >= damageperiod*1E3)
 	{
 		inflicttime = game->game_time;
@@ -201,6 +204,7 @@ SpaceObject(creator, 0, 0, osprite)
 
 void TelluriNovaShield::calculate()
 {
+	STACKTRACE
 	if (!(mother && mother->exists()))
 	{
 		mother = 0;
@@ -220,6 +224,7 @@ void TelluriNovaShield::calculate()
 
 void TelluriNovaShield::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	// just the default behaviour.
 	if (game->game_time - inflicttime >= damageperiod*1E3)
 	{
@@ -231,6 +236,7 @@ void TelluriNovaShield::inflict_damage(SpaceObject *other)
 
 int TelluriNovaShield::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	// take at least 1 damage ?
 	double t;
 	t = normal + direct;
@@ -253,6 +259,7 @@ int TelluriNovaShield::handle_damage(SpaceLocation *source, double normal, doubl
 
 bool TelluriNovaShield::power_up()
 {
+	STACKTRACE
 	if (power < maxpower)
 	{
 		++power;

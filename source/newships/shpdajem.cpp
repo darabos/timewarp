@@ -228,6 +228,7 @@ DajielkaCruiser::DajielkaCruiser(Vector2 opos, double angle, ShipData *data, uns
 }
 
 DajielkaCruiser::~DajielkaCruiser(void) {
+	STACKTRACE
   if(sanctuary!=NULL) {
     sanctuary->state = 0;
     sanctuary->creator = NULL;
@@ -235,6 +236,7 @@ DajielkaCruiser::~DajielkaCruiser(void) {
 }
 
 int DajielkaCruiser::activate_special() {
+	STACKTRACE
   if(sanctuary!=NULL) {
     redeployTime += frame_time;
     //message.print (1500, 9, "RDT = %d SRDT = %d", redeployTime, sanctuaryRedeployTime);
@@ -256,6 +258,7 @@ int DajielkaCruiser::activate_special() {
 }
 
 void DajielkaCruiser::calculate(void) {
+	STACKTRACE
   if(!fire_special) redeployTime=0;
   if(accumulatedCharge>shipChargeThreshhold) {
     if(batt<batt_max) {
@@ -284,6 +287,7 @@ void DajielkaCruiser::calculate(void) {
 }
 
 int DajielkaCruiser::activate_weapon() {
+	STACKTRACE
   switch(weaponToFire)
   {
   case 1:
@@ -331,10 +335,12 @@ DajielkaCrTorpedo::DajielkaCrTorpedo(DajielkaCruiser* ocreator, double ox, doubl
 
 void DajielkaCrTorpedo::calculate()
 {
+	STACKTRACE
 	AnimatedShot::calculate();
 }
 
 void DajielkaCrTorpedo::inflict_damage(SpaceObject* other) {
+	STACKTRACE
   //if(other==creator)return;
   AnimatedShot::inflict_damage(other);
 }
@@ -415,6 +421,7 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
 }
 
 DajielkaSanctuary::~DajielkaSanctuary(void) {
+	STACKTRACE
   int i;
   for(i=0; i<30; i++) {
     if(tendril[i]!=NULL) {
@@ -425,6 +432,7 @@ DajielkaSanctuary::~DajielkaSanctuary(void) {
 }
 
 void DajielkaSanctuary::calculate(void) {
+	STACKTRACE
   int i,j;
   int oldSpriteIndex;
   int regenMultiplier;
@@ -460,6 +468,7 @@ void DajielkaSanctuary::calculate(void) {
 }
 
 void DajielkaSanctuary::inflict_damage(SpaceObject *other){
+	STACKTRACE
   int old_damage_factor;
   old_damage_factor = damage_factor;
   if(other==creator) damage_factor=0;;
@@ -470,6 +479,7 @@ void DajielkaSanctuary::inflict_damage(SpaceObject *other){
 }
 
 int DajielkaSanctuary::handle_damage(SpaceLocation *source, double normal, double direct){
+	STACKTRACE
   armour -= normal + direct;
   if(armour<=0) state=0;
   if(normal+direct>0) regenerationCount /= 2;
@@ -478,6 +488,7 @@ int DajielkaSanctuary::handle_damage(SpaceLocation *source, double normal, doubl
 
 
 void DajielkaSanctuary::addEnergy(int energy) {
+	STACKTRACE
   int i, j;
   int damageBefore, damageAfter;
   for(j=1;j<10 && energy>0;j++)
@@ -498,6 +509,7 @@ void DajielkaSanctuary::addEnergy(int energy) {
 }
 
 DajielkaTendril* DajielkaSanctuary::RecreateTendril(DajielkaTendril* DT) {
+	STACKTRACE
   DajielkaTendril* DTN;
   if(DT==NULL) {
     tw_error("Error: Null Tendril.");
@@ -545,6 +557,7 @@ DajielkaTendril::DajielkaTendril(DajielkaSanctuary* osanctuary, int odamage, int
 }
 
 void DajielkaTendril::calculate(void) {
+	STACKTRACE
   if(energyLevel<energyLevelPerDamagePoint) {
     isActive = FALSE;
     length = 0;
@@ -573,12 +586,14 @@ void DajielkaTendril::calculate(void) {
 }
 
 void DajielkaTendril::animate(Frame *space) {
+	STACKTRACE
   if(!isActive) return;
   //length = originalLength;
   SpaceLine::animate(space);
 }
 
 void DajielkaTendril::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   int oldStats, newStats;
   if(other==creator && other!=NULL) {
     creator->redeployTime = 0;

@@ -64,6 +64,7 @@ class EstionPlatform : public SpaceObject {
 	};
 
 int EstionPlatform::handle_damage (SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
 	health -= normal + direct * 2;
 	if (health < 0){
 		state = 0;
@@ -77,6 +78,7 @@ int EstionPlatform::handle_damage (SpaceLocation *source, double normal, double 
 	return normal + 2 * direct;
 	}
 void EstionPlatform::ship_died() {
+	STACKTRACE
 	// display explosion graphics [cyhawk]
 	game->add(new Animation(this, normal_pos(),
 			explosionSprite, 0, explosionFrameCount,
@@ -84,6 +86,7 @@ void EstionPlatform::ship_died() {
 	state = 0;
 	}
 void EstionPlatform::calculate() {
+	STACKTRACE
 	SpaceObject::calculate();
 	rotate_time -= frame_time;
 	while (rotate_time < 0) {
@@ -106,6 +109,7 @@ void EstionPlatform::calculate() {
 	return;
 	}
 void EstionPlatform::death() {
+	STACKTRACE
 	if (!ship) return; //ship is already dead; don't remove platform from list
 	if (ship->data != data) return; //ship is somehow not an Estion; perhaps we've been stolen
 	for (int i = 0; i < ((EstionGunner*)ship)->num_platforms; i += 1) {
@@ -188,6 +192,7 @@ EstionShot::EstionShot(Vector2 opos, double angle, double velocity,
 	}
 
 void EstionShot::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	if (other == last_shooter) return;
 	if (!sameShip(other) || other == mother_ship) {
 		// don't explode on contact, just damage [cyhawk]
@@ -252,6 +257,7 @@ void EstionShot::inflict_damage(SpaceObject *other) {
 	}
 
 int EstionGunner::activate_weapon() {
+	STACKTRACE
 	// cycle weapon graphics [cyhawk]
 	weaponGraphics++;
 	if (weaponGraphics == data->spriteWeapon->frames()) {
@@ -267,6 +273,7 @@ int EstionGunner::activate_weapon() {
 	}
 
 int EstionGunner::activate_special() {
+	STACKTRACE
 	if (num_platforms == max_platforms) {
 		num_platforms -= 1;
 		platform[0]->state = 0;

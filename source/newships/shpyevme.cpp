@@ -121,6 +121,7 @@ YevMech::YevMech(Vector2 opos, double shipAngle,
 
 void YevMech::calculate_turn_left()
 {
+	STACKTRACE
 	if (!SaberDestroyed) {
 		if (SaberOn ) {
 		   if (FrameNotDirection >= DTLowerLimit 
@@ -152,6 +153,7 @@ void YevMech::calculate_turn_left()
 
 void YevMech::calculate_turn_right()
 {
+	STACKTRACE
 
 	if (!SaberDestroyed) {
 		if (SaberOn ) {
@@ -187,6 +189,7 @@ void YevMech::calculate_turn_right()
 
 
 int YevMech::activate_weapon() {
+	STACKTRACE
 	if (!SaberDestroyed) {
 	  if (SaberOn) {
 			SaberSlash = TRUE;
@@ -201,6 +204,7 @@ int YevMech::activate_weapon() {
 
 int YevMech::activate_special()
 {
+	STACKTRACE
 	if (!ShieldDestroyed) {
 	  if (!ShieldOn)  {
 			ShieldAngle = 315 * ANGLE_RATIO; // Start at left side @ 45 degree angle
@@ -214,6 +218,7 @@ int YevMech::activate_special()
 }
 
 void YevMech::calculate() {
+	STACKTRACE
 	if (turn_left) {
 			FramePassedL += frame_time;
 			FramePassedR = 0; 
@@ -276,6 +281,7 @@ calculate();
 }
 
 void YevShield::calculate() {
+	STACKTRACE
 
 	if(!(ship && ship->exists()))
 	{
@@ -294,10 +300,12 @@ void YevShield::calculate() {
 }
 
 int YevShield::canCollide(SpaceLocation* other) {
+	STACKTRACE
   if (ship->ShieldOn) return true;
    else return false;
 }
 void YevShield::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   if (ship->ShieldOn) {
 	  if (!(other->isShip() || other->isAsteroid()) )  {
       damage(other, 9999);
@@ -307,10 +315,12 @@ void YevShield::inflict_damage(SpaceObject *other) {
 }
 
 void YevShield::animate(Frame* space) {
+	STACKTRACE
   if (ship->ShieldOn) SpaceObject::animate(space);
 }
 
 int YevShield::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
 	if (this->state==0) ship->ShieldDestroyed=true;
 	return 0;
 }
@@ -326,6 +336,7 @@ YevSaber::YevSaber(YevMech *oship,SpaceSprite *osprite) :
 }
 
 void YevSaber::calculate() {
+	STACKTRACE
   int		   si;
 
   if(!(ship && ship->exists()))
@@ -371,11 +382,13 @@ void YevSaber::calculate() {
 }
 
 int YevSaber::canCollide(SpaceLocation* other) {
+	STACKTRACE
   if (ship->SaberOn && other != ship) return true;
    else return false;
 }
 
 void YevSaber::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	if (ship != NULL) 
 		if (ship->SaberSlash && ship->SaberOn ) {
 			if (ship->batt > 1) {
@@ -394,11 +407,13 @@ void YevSaber::inflict_damage(SpaceObject *other) {
 }
 
 void YevSaber::animate(Frame* space) {
+	STACKTRACE
   if (!ship->SaberOn) return;
   SpaceObject::animate(space);
 }
 
 int YevSaber::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
 	if (this->state==0) ship->SaberDestroyed=true;
 	return normal + direct;	
 }

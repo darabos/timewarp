@@ -111,6 +111,7 @@ VezlagariBarge::VezlagariBarge(Vector2 opos, double angle, ShipData *data, unsig
 }
 
 void VezlagariBarge::calculate(void) {
+	STACKTRACE
   if(justBorn) {
     Bulkhead = new VezlagariBulkhead(this);
     Bulkhead->resilience = this->specialRepulseResilience;
@@ -122,6 +123,7 @@ void VezlagariBarge::calculate(void) {
 }
 
 int VezlagariBarge::activate_weapon() {
+	STACKTRACE
   game->add(new VezlagariMissile(this, 
     Vector2(get_size().x * 0.32, get_size().y * -0.4), angle + PI2 / 2, weaponVelocity, weaponDamage, weaponRange,
     weaponArmour, this, data->spriteWeapon, -1));
@@ -132,6 +134,7 @@ int VezlagariBarge::activate_weapon() {
 }
 
 int VezlagariBarge::activate_special() {
+	STACKTRACE
   if(Bulkhead && Bulkhead->exists()) {
     if(Bulkhead->damageAbsorbed < 1) return(FALSE);
     Bulkhead->damageAbsorbed -= shipSpecialRegen;
@@ -161,6 +164,7 @@ VezlagariMissile::~VezlagariMissile(void) {
 
 void VezlagariMissile::calculate()
 	{
+	STACKTRACE
 		Missile::calculate();
 		double totalDist;
 		totalDist = d / range;
@@ -202,6 +206,7 @@ MissileCourse::MissileCourse(VezlagariMissile* omissile, int side) {
 }
 
 double MissileCourse::GetCurrentFacing(double fractionTraveled) {
+	STACKTRACE
   double fracDist, totalDist;
   totalDist = 1;
 		if(fractionTraveled<Range1){
@@ -229,6 +234,7 @@ double MissileCourse::GetCurrentFacing(double fractionTraveled) {
 }
 
 void MissileCourse::ScrambleCourse(int iterations) {
+	STACKTRACE
   double R;
   int i;
   for(i=0; i<iterations; i++) {
@@ -267,10 +273,12 @@ VezlagariBulkhead::VezlagariBulkhead(VezlagariBarge* ocreator):
 
 
 VezlagariBulkhead::~VezlagariBulkhead(void) {
+	STACKTRACE
   if(creator) creator->Bulkhead = NULL;
 }
 
-void VezlagariBulkhead::calculate(void) {STACKTRACE
+void VezlagariBulkhead::calculate(void) {
+	STACKTRACE
   int x;
 
   if ( !(creator && creator->exists()) )
@@ -294,6 +302,7 @@ void VezlagariBulkhead::calculate(void) {STACKTRACE
 }
 
 void VezlagariBulkhead::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   int x;
   if(other->isShip() || other->isAsteroid() || other->isPlanet()) {
     damage(other, normal, direct);
@@ -308,6 +317,7 @@ void VezlagariBulkhead::inflict_damage(SpaceObject *other) {
 }
 
 int VezlagariBulkhead::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
   this->damageAbsorbed += normal + direct;
   //message.print(1500,9,"damageAbsorbed = %f",damageAbsorbed);
 

@@ -43,6 +43,7 @@ OstokDisplacer::OstokDisplacer(Vector2 opos, double shipAngle,
 
 int OstokDisplacer::activate_weapon()
 {
+	STACKTRACE
   add(new Missile(this, Vector2(0.0, (size.y / 2.0)),
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->spriteWeapon));
@@ -52,6 +53,7 @@ int OstokDisplacer::activate_weapon()
 
 //this is all from arilou
 void OstokDisplacer::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	if (just_teleported && other->mass) {
 		handle_damage(other, 0, 999);
 		}
@@ -61,6 +63,7 @@ void OstokDisplacer::inflict_damage(SpaceObject *other) {
 
 int OstokDisplacer::activate_special()
 {
+	STACKTRACE
 
 	if ((target != NULL) && (!target->isInvisible()) && (target->mass > 0)) 
 	{
@@ -84,6 +87,7 @@ int OstokDisplacer::activate_special()
 }
 
 void OstokDisplacer::calculate() {
+	STACKTRACE
 	just_teleported = 0;
 	Ship::calculate();
 }

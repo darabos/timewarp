@@ -128,6 +128,7 @@ WasxShot::WasxShot(Vector2 opos, double angle, double velocity,
 	}
 
 void WasxShot::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	if (!sameShip(other)) {
 		Shot::inflict_damage(other);
 		}
@@ -135,11 +136,13 @@ void WasxShot::inflict_damage(SpaceObject *other) {
 	}
 
 double WasxSuperposition::isInvisible() const {
+	STACKTRACE
 	if (num_Clone == max_Clone) return(1);
 	 else return 0;
 } 
 
 int WasxSuperposition::activate_weapon() {
+	STACKTRACE
 
     if (this == NULL 
 	|| !this->exists() 
@@ -223,6 +226,7 @@ int WasxSuperposition::activate_weapon() {
 	}
 
 int WasxSuperposition::activate_special() {
+	STACKTRACE
 
     if (this == NULL 
 		|| !this->exists() 
@@ -393,6 +397,7 @@ CloneIndex(0)
 	}
 
 int WasxClone::activate_weapon() {
+	STACKTRACE
 
 	
     if (this == NULL 
@@ -485,6 +490,7 @@ int WasxClone::activate_weapon() {
 }  */
 
 int WasxClone::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
 		if (this == NULL 
 		|| !this->exists() 
 		|| ship == NULL 
@@ -503,6 +509,7 @@ int WasxClone::handle_damage(SpaceLocation *source, double normal, double direct
 }
  
 void WasxClone::calculate() {
+	STACKTRACE
 
 	// first check for a dead mother; otherwise the control access in the ship::calculate
 	// function may freak out (since the control depends on the mother and if the mother
@@ -610,6 +617,7 @@ void WasxClone::calculate() {
 }
 
 void WasxClone::death() {
+	STACKTRACE
 
 	if (this == NULL 
 	|| !this->exists() 

@@ -87,6 +87,7 @@ Missile(creator, orelpos, orelangle, ovel, odamage, orange, oarmour, creator, os
 	
 void QuaiShot::calculate()
 {
+	STACKTRACE
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -110,6 +111,7 @@ void QuaiShot::calculate()
 
 void QuaiShot::animate(Frame *f)
 {
+	STACKTRACE
 	if (twait >= timedelay)
 		Missile::animate(f);
 }
@@ -134,6 +136,7 @@ SpaceObject(creator, opos, oangle, osprite)
 
 void QuaiEngine::calculate()
 {
+	STACKTRACE
 	if (!(mother && mother->exists()))
 	{
 		mother = 0;
@@ -171,18 +174,12 @@ void QuaiEngine::calculate()
 
 
 int QuaiEngine::handle_damage(SpaceLocation *source, double normal, double direct)
-
 {
-
+	STACKTRACE
 	armour -= normal + direct;
 
-	
-
 	if ( armour < 0 || source->isShip() )
-
 		state = 0;
-
-
 
 	return 0;
 
@@ -215,6 +212,7 @@ Ship(opos, angle, data, code)
 
 int Quai::activate_weapon()
 {
+	STACKTRACE
 
 //	QuaiShot(SpaceLocation *creator, Vector2 orelpos, double orelangle,
 //		double ovel, double odamage, double orange, double oarmour,
@@ -230,6 +228,7 @@ int Quai::activate_weapon()
 int Quai::activate_special()
 {
 
+	STACKTRACE
 	if (!enginereleased)
 	{
 		QuaiEngine *tmp;
@@ -245,34 +244,19 @@ int Quai::activate_special()
 		// but the engine stays on its original course as if nothing happened
 		vel += specialPush * speed_max * unit_vector(angle);
 
-
-
 		// remove this thing from the target list
-
 		game->rem_target(this);
 
-
-
 		// check all existing objects, and if they're targetting
-
 		// this ship, let them target the engine instead.
-
 		int i;
-
 		for ( i = 0; i < physics->num_items; ++i )
-
 		{
-
 			if (physics->item[i]->target == this)
-
 				physics->item[i]->target = tmp;
-
 		}
-
 	} else {
 		enginereleased = 0;
-
-
 
 		// add this thing to the targetlist
 		game->add_target(this);
@@ -285,6 +269,7 @@ int Quai::activate_special()
 
 void Quai::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	if (!state)
@@ -298,6 +283,7 @@ void Quai::calculate()
 
 void Quai::calculate_thrust()
 {
+	STACKTRACE
 	if (!enginereleased)
 		Ship::calculate_thrust();
 }

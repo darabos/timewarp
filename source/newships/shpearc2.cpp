@@ -58,6 +58,7 @@ EarthlingCruiser2::EarthlingCruiser2(Vector2 opos, double shipAngle,
 }
 
 int EarthlingCruiser2::activate_weapon() {
+	STACKTRACE
         add(new EarthlingFusionBlast(0.0, size.y*0.45, angle, weaponVelocity,
                           weaponDamage, weaponRange, weaponArmour, weaponTurnRate, this,
                           target, data->spriteSpecial, 6, 70, weaponFocus));
@@ -71,6 +72,7 @@ int EarthlingCruiser2::activate_weapon() {
 }
 
 int EarthlingCruiser2::activate_special() {
+	STACKTRACE
   int fire = FALSE;
   SpaceObject *o;
 
@@ -110,6 +112,7 @@ EarthlingFusionBlast::EarthlingFusionBlast(double ox, double oy, double oangle, 
 }
 
 void EarthlingFusionBlast::calculate() {
+	STACKTRACE
         Shot::calculate();
         frame_step -= frame_time;
         while (frame_step < 0) {

@@ -138,6 +138,7 @@ ShpHotSpot::ShpHotSpot(Vector2 opos, double angle, ShipData *data, unsigned int 
 
 void ShpHotSpot::calculate()
 {
+	STACKTRACE
 	double a, L;
 
 
@@ -314,6 +315,7 @@ void ShpHotSpot::calculate()
 
 void ShpHotSpot::animate(Frame *frame)
 {
+	STACKTRACE
 	// first, draw the lens and the flame.
 
 	data->spriteWeapon->animate(pos-Vlens, sprite_index, frame);
@@ -330,6 +332,7 @@ void ShpHotSpot::animate(Frame *frame)
 
 int ShpHotSpot::activate_weapon()
 {
+	STACKTRACE
 	if (!(weaponhs && weaponhs->exists()) && corepresent )
 	{
 		weaponhs = new TheHotSpot(
@@ -347,6 +350,7 @@ int ShpHotSpot::activate_weapon()
 
 int ShpHotSpot::activate_special()
 {
+	STACKTRACE
 	if (! (nextkeys & keyflag::fire) )
 		return FALSE;	// you should be pressing a combination of them
 	
@@ -392,6 +396,7 @@ Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship,osprite)
 
 void TheHotSpot::calculate()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -478,6 +483,7 @@ void TheHotSpot::calculate()
 
 void TheHotSpot::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	damage_repeat_time += frame_time;
 
 	if (damage_repeat_time > damage_time )
@@ -491,6 +497,7 @@ void TheHotSpot::inflict_damage(SpaceObject *other)
 
 int TheHotSpot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	// what happens when it hits the planet? it dies !!
 	// why ... I dunno !?
 	// answer: planet sets state=0 for 0-mass objects on impact.
@@ -523,6 +530,7 @@ Shot(creator, rpos, oangle, ov,
 
 void CoreDump::calculate()
 {
+	STACKTRACE
 	Shot::calculate();
 
 	if (!state && num_mirvs < sprite->frames()-1)

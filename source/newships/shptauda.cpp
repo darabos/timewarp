@@ -71,12 +71,14 @@ TauDagger::TauDagger(Vector2 opos, double shipAngle, ShipData *shipData, unsigne
 
 int TauDagger::activate_weapon()
 {
+	STACKTRACE
 	game->add(new TauDaggerBeam(this, Vector2(0,30), weaponRange, weaponDamage, weaponFrameCount, angle));
 	return true;
 }
 
 int TauDagger::activate_special()
 {
+	STACKTRACE
 
 	game->add(new TauDaggerShot(this, Vector2(0,55), angle, specialVelocity,
 			specialDamage, specialRange, specialArmour, data->spriteSpecial));
@@ -112,6 +114,7 @@ TauDaggerBeam::TauDaggerBeam(SpaceLocation *creator, Vector2 rpos, double lrange
 
 void TauDaggerBeam::calculate()
 {
+	STACKTRACE
 	if((frame < frame_count) && (lpos->exists())) {
 		length = base_length;
 		pos = lpos->normal_pos() + rotate(rel_pos, lpos->get_angle() - PI/2);
@@ -130,6 +133,7 @@ void TauDaggerBeam::calculate()
 
 void TauDaggerBeam::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	damage(other, damage_factor*frame_time/frame_count);
 
 	int aa = get_tw_aa_mode();
@@ -144,6 +148,7 @@ void TauDaggerBeam::inflict_damage(SpaceObject *other)
 
 void TauDaggerBeam::animate(Frame *space)
 {
+	STACKTRACE
 	int aa = get_tw_aa_mode();
 	SpaceLine::animate(space);
 	if ((aa & AA_BLEND) && (aa & AA_ALPHA) && !(aa & AA_NO_AA) && (length < base_length*0.9999) && (target)) {
@@ -172,6 +177,7 @@ TauDaggerShot::TauDaggerShot(SpaceLocation *creator, Vector2 opos, double oangle
 
 void TauDaggerShot::animate(Frame *space)
 {
+	STACKTRACE
 	sprite->animate(pos, sprite_index + 64 * s_ind, space);
 	s_ind = (s_ind + 1) % 2;
 }

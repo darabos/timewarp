@@ -104,6 +104,7 @@ class PulseLaser : public SpaceLine {
 
 int skipitems(char *str, int N)
 {
+	STACKTRACE
 	int i, nfound;
 
 	// return the start of the N-th item
@@ -199,6 +200,7 @@ Ship(opos, angle, data, code)
 // This is called just before the first calculate(), after the ship phases into battle
 void RogueSquadron::materialize()
 {
+	STACKTRACE
 	int i;
 
 	formation = 0;
@@ -257,6 +259,7 @@ int RogueSquadron::activate_weapon()
 int RogueSquadron::activate_special()
 {
 
+	STACKTRACE
 	int	i;
 
 	// first of all, clean up the old formation.
@@ -306,6 +309,7 @@ int RogueSquadron::activate_special()
 
 void RogueSquadron::calculate()
 {	
+	STACKTRACE
 	fire_main = 0;	// reset this first.
 
 	int i;
@@ -420,6 +424,7 @@ void RogueSquadron::calculate()
 
 void RogueSquadron::animate(Frame *space)
 {
+	STACKTRACE
 	int a;
 	a = aa_get_trans();
 	aa_set_trans(100);
@@ -481,6 +486,7 @@ Ship(creator, creator->pos, creator->angle, osprite)
 
 SpaceObject* RogueFighter::nearest_location()
 {
+	STACKTRACE
 	SpaceObject *p = NULL;
 	double r = 99999999;
 	Query q;
@@ -504,6 +510,7 @@ SpaceObject* RogueFighter::nearest_location()
 // should be added to SpaceLocation I think !
 void RogueFighter::avoid_location(SpaceObject *o)
 {
+	STACKTRACE
 	double t_a = trajectory_angle(o);
 	double d_a = normalize(t_a - angle, PI2);
 	
@@ -525,6 +532,7 @@ void RogueFighter::avoid_location(SpaceObject *o)
 
 void RogueFighter::calculate()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		state = 0;
@@ -615,6 +623,7 @@ void RogueFighter::calculate()
 
 int RogueFighter::handle_damage(SpaceLocation* source, double normal, double direct)
 {
+	STACKTRACE
 	if (!state)
 		return 0;	// to avoid an infinite feedback with enemy rogue.
 
@@ -683,6 +692,7 @@ PulseLaser::PulseLaser(SpaceLocation *creator, double langle, int lcolor, double
 
 
 void PulseLaser::calculate() {
+	STACKTRACE
 	if((frame < frame_count) && (lpos->exists())) {
 //		pos = lpos->normal_pos() + rotate(rel_pos, lpos->get_angle() - PI/2);
 //		vel = lpos->get_vel();
@@ -696,6 +706,7 @@ void PulseLaser::calculate() {
 
 void PulseLaser::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	// copied from space_line:
 	int i;
 	i = iround_down(damage_factor / 2);

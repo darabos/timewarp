@@ -191,6 +191,7 @@ RGB XXXAssimilator::crewPanelColor(int k)
 int XXXAssimilator::activate_weapon()
 
 { 
+	STACKTRACE
 
 
 
@@ -215,6 +216,7 @@ int XXXAssimilator::activate_weapon()
 int XXXAssimilator::activate_special()
 
 {
+	STACKTRACE
 
 	weaponDamage = orig_Damage;
 
@@ -243,6 +245,7 @@ int XXXAssimilator::activate_special()
 void XXXAssimilator::reload_panel()
 
 	{
+	STACKTRACE
 
 		blit(orig_bmp,spritePanel->get_bitmap(0), 0, 0, 0, 0, 64, 100);
 
@@ -257,6 +260,7 @@ void XXXAssimilator::reload_panel()
 void XXXAssimilator::calculate()
 
 {
+	STACKTRACE
 
 	Ship::calculate();
 
@@ -303,6 +307,7 @@ void XXXAssimilator::calculate()
 void XXXAssimilator::collide(SpaceObject *other)
 
 {
+	STACKTRACE
 
 
 
@@ -355,6 +360,7 @@ void XXXAssimilator::collide(SpaceObject *other)
 void XXXAssimilator::animate(Frame *space)
 
 {
+	STACKTRACE
 
   BodyFrames -= frame_time * 5;
 
@@ -391,6 +397,7 @@ void XXXAssimilator::animate(Frame *space)
 int XXXAssimilator::handle_damage(SpaceLocation *source, double normal, double direct)
 
 {
+	STACKTRACE
 
 	if (source->damage_factor > weaponDamage)
 
@@ -415,6 +422,7 @@ int XXXAssimilator::handle_damage(SpaceLocation *source, double normal, double d
 void XXXAssimilator::calculate_hotspots()
 
 {
+	STACKTRACE
 
 	if((thrust) && (hotspot_frame <= 0)) {
 

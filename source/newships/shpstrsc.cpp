@@ -68,6 +68,7 @@ public:
 //invisible ships.  Note that these missiles are not fired unless a Marker
 //has attached to something.
 void TechMissile::calculate() {
+	STACKTRACE
 	Missile::calculate();
 
 	//This used to be if(target&&!invisible()), or something like that.
@@ -156,6 +157,7 @@ Hilight::Hilight(Marked *otarget, Ship *ocreator, SpaceSprite *osprite,
 
 void Hilight::calculate()
 {
+	STACKTRACE
 	frame_count+=1;
 	if(frame_count>=frame_max)	frame_count=frame_min;
 	sprite_index=frame_count;
@@ -256,6 +258,7 @@ Marker::Marker(Vector2 opos, double ov, double s_angle, Marked *Tag, int Duratio
 
 void Marker::calculate()
 {
+	STACKTRACE
 	state=1;
 
 	//If the mothership is destroyed, any loose beacons also die.
@@ -271,6 +274,7 @@ void Marker::calculate()
 
 void Marker::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	//If the target isn't the right type, don't latch on.
 
 	int IsType=0;
@@ -371,6 +375,7 @@ StrivanarScrutinizer::StrivanarScrutinizer(Vector2 opos, double shipAngle,
 
 void StrivanarScrutinizer::calculate()
 {
+	STACKTRACE
 	/*My code*/
 	static int prev_time[16]={0};
 
@@ -401,6 +406,7 @@ void StrivanarScrutinizer::calculate()
 
 int StrivanarScrutinizer::activate_weapon()
 {
+	STACKTRACE
 	int flag=0;
 
 	for(int Cur_Target=0; Cur_Target<MAX_TARGETS; Cur_Target++)
@@ -430,6 +436,7 @@ int StrivanarScrutinizer::activate_weapon()
 
 int StrivanarScrutinizer::activate_special()
 {
+	STACKTRACE
 	float min=angle-(specialFan/2);
 	float max=angle+(specialFan/2);
 	float step=(max-min)/specialMarkernum;

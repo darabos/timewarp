@@ -162,6 +162,7 @@ GerlVirtualship::GerlVirtualship(Vector2 opos, double angle, ShipData *data, uns
 
 void GerlVirtualship::calculate()
 {
+	STACKTRACE
 
 	if ( crew == 0 )	// this value is manipulated by the moronship and the heroship
 	{
@@ -316,6 +317,7 @@ void GerlVirtualship::calculate()
 
 int GerlVirtualship::activate_weapon()
 {
+	STACKTRACE
 	if ( hero->attached )
 	{
 		hero->activateyourweapon = 1;		// issue order to the hero that he activates his weapon.
@@ -327,6 +329,7 @@ int GerlVirtualship::activate_weapon()
 
 int GerlVirtualship::activate_special()
 {
+	STACKTRACE
 	hero->activateyourspecial = 1;
 	batt += special_drain;	// prevent fuel drain
 
@@ -391,6 +394,7 @@ GerlHero::GerlHero(GerlVirtualship *creator, SpaceLocation *brother, Vector2 opo
 
 void GerlHero::calculate()
 {
+	STACKTRACE
 
 	SpaceObject::calculate();
 
@@ -783,6 +787,7 @@ void GerlHero::calculate()
 // (I could've use handle_damage instead).
 void GerlHero::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (!state)
 		return;
 
@@ -836,6 +841,7 @@ void GerlHero::soundExplosion() {
 
 int GerlHero::handle_damage(SpaceLocation *other, double normal, double direct)
 {
+	STACKTRACE
 	if (!state)
 		return 0;
 
@@ -903,6 +909,7 @@ GerlMorons::GerlMorons(GerlVirtualship *creator, SpaceLocation *brother, Vector2
 
 void GerlMorons::calculate()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -943,6 +950,7 @@ void GerlMorons::calculate()
 
 int GerlMorons::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	int totdamage = normal + direct;
 
 	state = 1;	// just in case it's been changed by the planet !
@@ -1016,6 +1024,7 @@ void GerlMorons::inflict_damage()
 
 int GerlMorons::avoid_planet()
 {
+	STACKTRACE
 	
 	Planet *p;
 	p = nearest_planet();	// this searches within 1600 range
@@ -1037,6 +1046,7 @@ int GerlMorons::avoid_planet()
 // minangle - maxangle is the range of angles used to avoid this position
 void GerlMorons::avoid_location(Vector2 pos, double min_angle, double max_angle)
 {
+	STACKTRACE
 	double a, b, da;
 
 	a = angle;	//atan(vel);

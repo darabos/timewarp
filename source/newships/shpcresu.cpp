@@ -70,6 +70,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int CrewSupplyship::activate_weapon()
 {	
+	STACKTRACE
 	// find the planet
 	int i;
 	for (i = 0; i < physics->num_items; ++i )
@@ -90,6 +91,7 @@ int CrewSupplyship::activate_weapon()
 int CrewSupplyship::activate_special()
 {
 
+	STACKTRACE
 	// change the ships lights
 
 	lightcolor = !lightcolor;
@@ -101,6 +103,7 @@ int CrewSupplyship::activate_special()
 
 void CrewSupplyship::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	sprite_index = get_sprite_index();
@@ -116,6 +119,7 @@ int CrewSupplyship::handle_damage(SpaceLocation* source, double normal, double d
 void CrewSupplyship::animate(Frame *f)
 {
 
+	STACKTRACE
 	sprite->animate(pos, sprite_index, f);
 
 	int i;
@@ -157,6 +161,7 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate,
 
 void SupplyShuttle::calculate()
 {
+	STACKTRACE
 	// if the mothership dies, you lose the sprites...
 	if (!(ship && ship->exists()))
 	{
@@ -181,6 +186,7 @@ void SupplyShuttle::calculate()
 
 void SupplyShuttle::animate(Frame *f)
 {
+	STACKTRACE
 	Vector2 relpos, rel2;
 
 	relpos = 10 * unit_vector(angle-PI/2);

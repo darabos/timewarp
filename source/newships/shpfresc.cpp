@@ -57,6 +57,7 @@ Ship(opos, angle, data, code)
 
 int FreinSchizm::activate_weapon()
 {
+	STACKTRACE
 	Shot *tmp = new Missile( this, 
 		Vector2(0.0, size.y / 1.5), angle, weaponVelocity, weaponDamage, weaponRange, 
 		weaponArmour, this, data->spriteSpecial);
@@ -72,6 +73,7 @@ int FreinSchizm::activate_weapon()
 
 int FreinSchizm::activate_special()
 {
+	STACKTRACE
 
 	Shot *tmp = new SchizmHealingbolt( this, Vector2(0.0, size.y / 2.0),
 		angle, specialVelocity, specialDamage, specialRange, specialArmour, specialTurnRate,
@@ -103,6 +105,7 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, oturnrate, op
 
 void SchizmHealingbolt::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (!(ship && ship->exists()))
 		return;
 

@@ -97,6 +97,7 @@ JyglarStarfarer::JyglarStarfarer( Vector2 opos, double shipAngle,
 }
 
 int JyglarStarfarer::activate_weapon(){
+	STACKTRACE
   Shot *shot;
   SpaceLocation* beacon = new SpaceLocation( this,
 	  pos + unit_vector(angle) * weaponRange / 3, angle );
@@ -126,6 +127,7 @@ int JyglarStarfarer::activate_weapon(){
 }
 
 int JyglarStarfarer::activate_special(){
+	STACKTRACE
   if( numBubbles >= maxBubbles ) return FALSE;
   bubbles[numBubbles] = new JyglarBubble( this, size.x / 5 + random() % (int)(size.x / 3),
     random(PI2), data->spriteWeapon, specialMass);
@@ -135,6 +137,7 @@ int JyglarStarfarer::activate_special(){
 }
 
 void JyglarStarfarer::calculate(){
+	STACKTRACE
   int j = 0;
   for( int i = 0; i < numBubbles; i++ ){
     bubbles[i - j] = bubbles[i];
@@ -146,6 +149,7 @@ void JyglarStarfarer::calculate(){
 }
 
 void JyglarStarfarer::calculate_hotspots(){
+	STACKTRACE
   if( thrust && hotspot_frame <= 0 ){
     game->add( new Animation( this, 
 		normal_pos() - unit_vector(angle) * size.y / 4,
@@ -169,6 +173,7 @@ Shot( creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite,
 }
 
 void JyglarShot::inflict_damage( SpaceObject* other ){
+	STACKTRACE
   if( other->mass && !other->isPlanet() ){
     other->accelerate( this, other->trajectory_angle( beacon ), pull / other->mass, MAX_SPEED );
   }
@@ -176,6 +181,7 @@ void JyglarShot::inflict_damage( SpaceObject* other ){
 }
 
 JyglarShot::~JyglarShot(){
+	STACKTRACE
   if( beacon ) delete beacon;
 }
 
@@ -192,6 +198,7 @@ JyglarShot( creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite,
 }
 
 void JyglarStrayShot::calculate(){
+	STACKTRACE
   Shot::calculate();
   changeDirection( angle + (minturn + random() % (maxturn - minturn + 1)) * frame_time );
 }
@@ -212,6 +219,7 @@ SpaceObject( creator,
 }
 
 void JyglarBubble::calculate(){
+	STACKTRACE
   SpaceObject::calculate();
   if( !ship ){
     countdown -= frame_time;
@@ -233,6 +241,7 @@ void JyglarBubble::calculate(){
 }
 
 int JyglarBubble::handle_damage( SpaceLocation* source, double normal, double direct ){
+	STACKTRACE
   if( normal + direct ){
     state = 0;
     play_sound( data->sampleExtra[random() % data->num_extra_samples], 1000 );

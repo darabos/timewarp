@@ -100,6 +100,7 @@ JnkdwoLazel::JnkdwoLazel(Vector2 opos, double angle, ShipData *data, unsigned in
 
 int JnkdwoLazel::activate_weapon()
 {
+	STACKTRACE
         add(new JnkdwoLazelMissile(this, -6.0, 45.0, angle , weaponVelocity,
                           weaponDamage, weaponRange, weaponArmour, data->spriteWeapon));
         add(new JnkdwoLazelMissile(this, +6.0, 45.0, angle , weaponVelocity,
@@ -109,10 +110,12 @@ int JnkdwoLazel::activate_weapon()
 
 void JnkdwoLazel::calculate_fire_special()
 {
+	STACKTRACE
         if ((!fire_special) || (batt >= special_drain)) special_low = false;
 }
 
 void JnkdwoLazel::materialize() {
+	STACKTRACE
         Ship::materialize();
         for (int i = 0; i <4; i++) {
                 crystal[i]=new JnkdwoLazelCrystal(this,-16.0, 1+(i-1.5)*12, -PI/2);
@@ -135,6 +138,7 @@ JnkdwoLazelCrystal::JnkdwoLazelCrystal (JnkdwoLazel *oship, double ox, double oy
 }
 
 void JnkdwoLazelCrystal::calculate() {
+	STACKTRACE
 
         if (state == 0) return;
         if (!(ship && ship->exists())) {
@@ -201,6 +205,7 @@ void JnkdwoLazelCrystal::calculate() {
 }
 
 int JnkdwoLazel::handle_damage (SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
         int d = Ship::handle_damage(source, normal, direct);
         if (state == 0)
                 for (int i =0; i < 8; i++)
@@ -219,6 +224,7 @@ JnkdwoLazelMissile::JnkdwoLazelMissile(SpaceLocation *creator, double ox, double
 }
 
 void JnkdwoLazelMissile::inflict_damage(SpaceObject *other) {
+	STACKTRACE
         Missile::inflict_damage(other);
         if (other->exists())
                 add(new JnkdwoLazelMarker(this, other));
@@ -235,6 +241,7 @@ JnkdwoLazelMarker::JnkdwoLazelMarker(SpaceLocation *creator, SpaceObject *oo) :
 }
 
 void JnkdwoLazelMarker::calculate() {
+	STACKTRACE
         if (state == 0) return;
         if (!(o && o->exists()))
 		{
@@ -261,6 +268,7 @@ JnkdwoLazelLaser::JnkdwoLazelLaser (SpaceLocation *creator, double langle, doubl
 }
 
 void JnkdwoLazelLaser::calculate() {
+	STACKTRACE
         if (!(lpos && lpos->exists()))
 		{
 			lpos = 0;
@@ -313,6 +321,7 @@ void JnkdwoLazelLaser::calculate() {
 }
 
 void JnkdwoLazelLaser::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 
 //        return;
 

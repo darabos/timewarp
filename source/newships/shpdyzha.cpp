@@ -124,11 +124,13 @@ DyzunHarbringer::DyzunHarbringer(Vector2 opos, double angle, ShipData *data, uns
  }
 
 void DyzunHarbringer::death(void) {
+	STACKTRACE
   Ship::death();
 }
 
 int DyzunHarbringer::activate_weapon()
 {
+	STACKTRACE
 	/*
   if(gunToFire==1 || weaponTandemFire) {
   game->add(new Missile(this, Vector2(size.y*(0.24), (size.y * +0.25)),
@@ -162,6 +164,7 @@ int DyzunHarbringer::activate_weapon()
 }
 
 int DyzunHarbringer::activate_special() {
+	STACKTRACE
   DyzunMissile* NM;
   NM = new DyzunMissile(this, size.y*(0.5), (size.y * 0.6),
     angle+specialReleaseAngle, specialVelocityCoast, specialDamage, -1, specialArmour, specialTurnRate,
@@ -194,6 +197,7 @@ int DyzunHarbringer::activate_special() {
 }
 
 void DyzunHarbringer::calculate(void) {
+	STACKTRACE
   Ship::calculate();
 
   // check if your precious mines were destroyed; update pointers.
@@ -224,6 +228,7 @@ HomingMissile(ocreator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, ot
 }
 
 void DyzunMissile::calculate(void) {
+	STACKTRACE
 	lifetimeTimer += frame_time;
 	if(lifetimeTimer<coastFrames) {
 		wasCoasting = TRUE;
@@ -253,6 +258,7 @@ void DyzunMissile::calculate(void) {
 }
 
 void DyzunMissile::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   Shot::inflict_damage(other);
 }
 
@@ -279,6 +285,7 @@ SpaceObject(creator, opos, oangle, osprite)
 
 int SlownessMine::handle_damage(SpaceLocation* source, double normal, double direct)
 {
+	STACKTRACE
 	armour -= (normal + direct);
 
 	if (armour <= 0)
@@ -289,6 +296,7 @@ int SlownessMine::handle_damage(SpaceLocation* source, double normal, double dir
 
 void SlownessMine::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 
 	if (!(ship && ship->exists()))

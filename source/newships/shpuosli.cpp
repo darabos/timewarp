@@ -90,6 +90,7 @@ UoiSlicer::UoiSlicer(Vector2 opos, double shipAngle,
 
 int UoiSlicer::activate_weapon()
 {	
+	STACKTRACE
 
 	if (fire_special)
 		return FALSE;
@@ -112,6 +113,7 @@ int UoiSlicer::activate_weapon()
 
 int UoiSlicer::activate_special()
 {
+	STACKTRACE
 
 	if ( !fire_weapon )
 		return FALSE;
@@ -128,6 +130,7 @@ int UoiSlicer::activate_special()
 
 void UoiSlicer::animate(Frame *space)
 {
+	STACKTRACE
 	int turret_index;
 		
 	Ship::animate(space);
@@ -140,6 +143,7 @@ void UoiSlicer::animate(Frame *space)
 
 void UoiSlicer::calculate()
 {
+	STACKTRACE
 	/*
 	if ( !(nextkeys & keyflag::special) )
 	{
@@ -180,6 +184,7 @@ void UoiSlicer::calculate()
 
 void UoiSlicer::calculate_turn_turret()
 {
+	STACKTRACE
 
 	if (turn_left)
 		turret_turn_step -= frame_time * turret_turn_rate;
@@ -204,6 +209,7 @@ void UoiSlicer::calculate_turn_turret()
 
 void UoiSlicer::calculate_turn_left()
 {
+	STACKTRACE
 	if ( fire_special )
 		Ship::calculate_turn_left();
 	else
@@ -212,6 +218,7 @@ void UoiSlicer::calculate_turn_left()
 
 void UoiSlicer::calculate_turn_right()
 {
+	STACKTRACE
 	if ( fire_special )
 		Ship::calculate_turn_right();
 	else
@@ -240,6 +247,7 @@ Laser(creator, langle, lcolor, lrange, ldamage,
 
 void RotatingLaser::calculate()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		state = 0;
@@ -274,6 +282,7 @@ void RotatingLaser::calculate()
 
 void RotatingLaser::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	Laser::inflict_damage(other);
 	state = 0;
 }

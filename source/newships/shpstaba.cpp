@@ -51,6 +51,7 @@ StarBase::StarBase(Vector2 opos, double angle, ShipData *data, unsigned int code
 }
 
 int StarBase::activate_weapon() {
+	STACKTRACE
    
 	double a;
 	if (target) {
@@ -70,18 +71,16 @@ int StarBase::activate_weapon() {
 	else a = angle;
 
   game->add(new Missile(this, Vector2(-24.0, 14),
-	 a, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
-	 this, data->spriteWeapon));
+	 a, weaponVelocity, weaponDamage, weaponRange, weaponArmour, this, data->spriteWeapon));
   game->add(new Missile(this, Vector2(24.0, 14),
-	 a, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
-	 this, data->spriteWeapon));
+	 a, weaponVelocity, weaponDamage, weaponRange, weaponArmour, this, data->spriteWeapon));
   game->add(new Missile(this, Vector2(24.0, -14),
-	 a, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
-	 this, data->spriteWeapon));
+	 a, weaponVelocity, weaponDamage, weaponRange, weaponArmour, this, data->spriteWeapon));
   return(TRUE);
 }
 
 int StarBase::activate_special() {
+	STACKTRACE
   int fire = FALSE;
   SpaceObject *o;
 
@@ -104,6 +103,7 @@ int StarBase::activate_special() {
 	}
 
 void StarBase::calculate() {
+	STACKTRACE
 
   int fire = FALSE;
   Ship *o;
@@ -133,6 +133,7 @@ void StarBase::calculate() {
 
 int StarBase::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 		  batt -= normal;
         if (batt < 0) {
                 normal = -batt;

@@ -111,6 +111,7 @@ ShipData *data, unsigned int code)
 }
 
 int KoanuaJavelin::activate_special() {
+	STACKTRACE
   int i;
   double angleShift, velocityShift, rangeShift;
   Shot* S;
@@ -134,6 +135,7 @@ int KoanuaJavelin::activate_special() {
 	}
 
 int KoanuaJavelin::activate_weapon() {
+	STACKTRACE
   KoanuaJavelinMissile* K;
   if(weaponGroupOneActive) {
   K = new KoanuaJavelinMissile(0,
@@ -189,6 +191,7 @@ int KoanuaJavelin::activate_weapon() {
 }
 
 void KoanuaJavelin::calculate() {
+	STACKTRACE
   Ship::calculate();
 
 	if(special_recharge>0)
@@ -200,18 +203,22 @@ void KoanuaJavelin::calculate() {
 
 double KoanuaJavelin::handle_speed_loss(SpaceLocation *source, double 
 normal) {
+	STACKTRACE
   return Ship::handle_speed_loss(source, normal);
 }
 
 void KoanuaJavelin::calculate_turn_left() {
+	STACKTRACE
   Ship::calculate_turn_left();
 }
 
 void KoanuaJavelin::calculate_turn_right() {
+	STACKTRACE
   Ship::calculate_turn_right();
 }
 
 void KoanuaJavelin::calculate_thrust() {
+	STACKTRACE
   Ship::calculate_thrust();
 }
 
@@ -229,6 +236,7 @@ double relativity)
 	}
 
 void KoanuaJavelinMissile::calculate(void) {
+	STACKTRACE
 	if(isBurning==FALSE && isCoasting==FALSE)
 		if(framesToIgnition>=0) {
       framesToIgnition -= frame_time;

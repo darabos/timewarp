@@ -112,6 +112,7 @@ ImperialKatana::ImperialKatana(Vector2 opos, double shipAngle,
 }
 
 int ImperialKatana::activate_weapon(){
+	STACKTRACE
   double rate = (double)batt/(double)batt_max;
   double damage = weaponDamage * rate * rate;
 
@@ -129,6 +130,7 @@ int ImperialKatana::activate_weapon(){
 }
 
 int ImperialKatana::activate_special(){
+	STACKTRACE
 
   bool found = false;
   Query q;
@@ -167,6 +169,7 @@ int ImperialKatana::activate_special(){
 }
 
 void ImperialKatana::calculate_fire_weapon() {
+	STACKTRACE
 	weapon_low = FALSE;
 
 	/* the blade is always visible */
@@ -194,6 +197,7 @@ void ImperialKatana::calculate_fire_weapon() {
 
 void ImperialKatana::calculate()
 {
+	STACKTRACE
   /* the battery discharges with time */
   if(batt > 0) {
     recharge_step -= frame_time;
@@ -236,6 +240,7 @@ void ImperialKatana::calculate()
 }
 
 void ImperialKatana::show_panel( int r ){
+	STACKTRACE
   if( r > 2 ) r = 2;
   spritePanel->overlay( 1, 7 + r, spritePanel->get_bitmap( 2 ));
   spritePanel->overlay( 1, 7 + r, spritePanel->get_bitmap( 3 ));
@@ -247,6 +252,7 @@ void ImperialKatana::show_panel( int r ){
 }
 
 void ImperialKatana::animate(Frame *space){
+	STACKTRACE
 
   Ship::animate(space);
 
@@ -276,6 +282,7 @@ SpaceObject( creator, opos, oangle, osprite ), latched( NULL ), v( ov ), range( 
 }
 
 void ImperialRadioactivity::calculate(){
+	STACKTRACE
   SpaceObject::calculate();
 
   if( !latched ){
@@ -326,11 +333,13 @@ void ImperialRadioactivity::calculate(){
 }
 
 void ImperialRadioactivity::animate( Frame* space ){
+	STACKTRACE
   if( latched ) if( latched->isInvisible() ) return;
   SpaceObject::animate( space );
 }
 
 void ImperialRadioactivity::inflict_damage( SpaceObject* other ){
+	STACKTRACE
   if( !other->isShip() ) return;
 
   Query q;
@@ -371,12 +380,14 @@ Laser( creator, langle, lcolor, lrange, (int)ldamage, lfcount, opos, Vector2(rel
 }
 
 void ImperialBlade::collide( SpaceObject* other ){
+	STACKTRACE
   double old_length = length;
   SpaceLine::collide( other );
   length = old_length;
 }
 
 void ImperialBlade::inflict_damage( SpaceObject *other ){
+	STACKTRACE
   if( !other->exists() ) return;
 
   katana->residualDamage += res;
@@ -538,6 +549,7 @@ SpaceObject( creator, opos, oangle, osprite ), life( olife )
 }
 
 void ImperialHalfObject::calculate(){
+	STACKTRACE
   SpaceObject::calculate();
   life -= frame_time;
   if( life <=0 ){

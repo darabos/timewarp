@@ -48,6 +48,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int Uxjoz::activate_weapon()
 {
+	STACKTRACE
 
 	// shaky
 	double a = 0.04 * PI;
@@ -72,6 +73,7 @@ int Uxjoz::activate_weapon()
 
 int Uxjoz::activate_special()
 {
+	STACKTRACE
 //HomingMissile::HomingMissile(SpaceLocation *creator, Vector2 rpos, 
 //	double oangle, double ov, double odamage, double orange, double oarmour, 
 //	double otrate, SpaceLocation *opos, SpaceSprite *osprite, SpaceObject *otarget) 

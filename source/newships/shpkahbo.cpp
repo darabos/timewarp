@@ -156,6 +156,7 @@ KahrBoomerang::KahrBoomerang(Vector2 opos, double shipAngle,
 
 int KahrBoomerang::activate_weapon()
 {
+	STACKTRACE
   int chance;
   int answer = FALSE;
   if (weaponChoice == SMALL_BOOMERANG) {
@@ -190,6 +191,7 @@ int KahrBoomerang::activate_weapon()
 
 int KahrBoomerang::activate_special()
 {
+	STACKTRACE
   int answer;
   if (weaponChoice == SMALL_BOOMERANG) {
     weapon_drain = weapon2Drain;
@@ -212,6 +214,7 @@ int KahrBoomerang::activate_special()
 
 void KahrBoomerang::calculate()
 {
+	STACKTRACE
   if ((boomerangL != NULL) && (!boomerangL->exists()))
     boomerangL=NULL;
   Ship::calculate();
@@ -227,45 +230,28 @@ void KahrBoomerang::calculate()
 
 void KahrBoomerang::calculate_fire_special()
 {
+	STACKTRACE
   if (weaponChoice == SMALL_BOOMERANG) {
-    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(1), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(2), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(3), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(4), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(5), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(6), 36, 0, 36, 0,
-      19, 30);
+    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(1), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(2), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(3), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(4), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(5), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(6), 36, 0, 36, 0, 19, 30);
   } else if (weaponChoice == MEDIUM_BOOMERANG) {
-    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(1), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(2), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(3), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(4), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(5), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(6), 36, 0, 36, 0,
-      19, 30);
+    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(1), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(2), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(3), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(4), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(5), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(8), this->spritePanel->get_bitmap(6), 36, 0, 36, 0, 19, 30);
   } else if (weaponChoice == LARGE_BOOMERANG) {
-    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(1), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(2), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(3), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(4), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(5), 36, 0, 36, 0,
-      19, 30);
-    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(6), 36, 0, 36, 0,
-      19, 30);
+    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(1), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(2), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(3), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(4), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(5), 36, 0, 36, 0, 19, 30);
+    blit(this->spritePanel->get_bitmap(9), this->spritePanel->get_bitmap(6), 36, 0, 36, 0, 19, 30);
   }
   Ship::calculate_fire_special();
 }
@@ -289,6 +275,7 @@ KahrSmall::KahrSmall(double ox,double oy,double oangle, double ov,
 
 void KahrSmall::calculate()
 {
+	STACKTRACE
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -329,6 +316,7 @@ void KahrSmall::calculate()
 
 void KahrSmall::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (other == ship) {
 		state = 0;
 		mass = 0;
@@ -360,11 +348,13 @@ KahrMedium::KahrMedium(double ox,double oy,double oangle, double ov,
 }
 
 void KahrMedium::death() {
+	STACKTRACE
 	if (ship) ((KahrBoomerang*)ship)->num_medium_boomerangs -= 1;
 	Shot::death();
 	}
 
 void KahrMedium::calculate() {
+	STACKTRACE
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -405,6 +395,7 @@ void KahrMedium::calculate() {
 
 void KahrMedium::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (other == ship) {
 		state = 0;
 		mass = 0;
@@ -437,6 +428,7 @@ KahrLarge::KahrLarge(double ox,double oy,double oangle, double ov,
 
 void KahrLarge::calculate()
 {
+	STACKTRACE
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -475,6 +467,7 @@ void KahrLarge::calculate()
 
 void KahrLarge::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (other == ship) {
 		state = 0;
 		mass = 0;
@@ -489,6 +482,7 @@ void KahrLarge::inflict_damage(SpaceObject *other)
 
 int KahrLarge::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
   return Shot::handle_damage(source, 0, 0);
 }
 

@@ -167,6 +167,7 @@ MissileTrace::~MissileTrace()
 
 void MissileTrace::calculate()
 {
+	STACKTRACE
 	// well ... nothing physical is done, really. It's just visuals :)
 
 	if ( !(mother && mother->exists()) )
@@ -181,6 +182,7 @@ void MissileTrace::calculate()
 
 void MissileTrace::animate(Frame *space)
 {
+	STACKTRACE
 	// add visual goodies ...
 
 	int i;
@@ -521,6 +523,7 @@ Shot(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite, relativ
 
 void GravShot::calculate()
 {
+	STACKTRACE
 
 	Shot::calculate();
 	// this can also make state = 0, if range is exceeded.
@@ -573,6 +576,7 @@ FallingParticles::~FallingParticles()
 
 void FallingParticles::calculate()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -605,6 +609,7 @@ void FallingParticles::calculate()
 
 void FallingParticles::animate(Frame *space)
 {
+	STACKTRACE
 	// inefficient - this draws pixels even if they're off-screen
 	// if (!drawability_box(pos, Rmax)) return;	// if no part of the draw area is on-screen...
 
@@ -662,6 +667,7 @@ SpaceLocation(creator, lpos, langle)
 
 void GravWell::calculate()
 {
+	STACKTRACE
 	Presence::calculate();
 
 	vel = 0;
@@ -765,6 +771,7 @@ Ship(opos, angle, data, code)
 
 int ClowanFlurry::activate_weapon()
 {
+	STACKTRACE
 
 	if (! (nextkeys & keyflag::special) )
 	{
@@ -844,6 +851,7 @@ int ClowanFlurry::activate_weapon()
 
 int ClowanFlurry::activate_special()
 {
+	STACKTRACE
 	if (nextkeys & keyflag::fire )
 		return FALSE;
 
@@ -862,6 +870,7 @@ int ClowanFlurry::activate_special()
 
 void ClowanFlurry::calculate()
 {	
+	STACKTRACE
 	Ship::calculate();
 
 	if ( !(Gshot && Gshot->exists()) )
@@ -877,6 +886,7 @@ void ClowanFlurry::calculate()
 
 int MassShot::accelerate(SpaceLocation *source, double angle, double velocity, double m_speed)
 {
+	STACKTRACE
 	double dt = frame_time * 1E-3;
 	max_speed += gravwhip_vel * dt;
 	m_speed = max_speed;
@@ -894,6 +904,7 @@ int MassShot::accelerate(SpaceLocation *source, double angle, double velocity, d
 
 void MassShot::turn_to_target(double damax, SpaceLocation *t)
 {
+	STACKTRACE
 	double da;
 
 	if(  (!(t && t->exists())
@@ -915,6 +926,7 @@ void MassShot::turn_to_target(double damax, SpaceLocation *t)
 
 void MassShot::calculate()
 {
+	STACKTRACE
 
 	if (!(target && target->exists()) || exist_time > exist_time_max)
 	{
@@ -989,6 +1001,7 @@ void MassShot::calculate()
 
 int MassShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	int i;
 
 	// ok .. if the shot hits a planet, it wont be damaged, but greatly accelerated
@@ -1012,6 +1025,7 @@ int MassShot::handle_damage(SpaceLocation *source, double normal, double direct)
 
 void MassShot::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if ( !other->isPlanet() )
 	{
 		SpaceObject::inflict_damage(other);
@@ -1024,6 +1038,7 @@ void MassShot::inflict_damage(SpaceObject *other)
 // should be added to SpaceLocation I think !
 void MassShot::evade_planet()
 {
+	STACKTRACE
 
 	Planet *spacePlanet = nearest_planet();
 	if (spacePlanet!=NULL)

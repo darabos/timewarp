@@ -67,6 +67,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 Asteroid *Crash::closest_asteroid(double maxrange)
 {
+	STACKTRACE
 	Asteroid *closest = 0;
 
 	int layers = bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) +
@@ -100,6 +101,7 @@ Asteroid *Crash::closest_asteroid(double maxrange)
 // blow an asteroid to bits !
 int Crash::activate_weapon()
 {
+	STACKTRACE
 
 	Asteroid *ast;
 
@@ -139,6 +141,7 @@ int Crash::activate_weapon()
 
 int Crash::activate_special()
 {
+	STACKTRACE
 
 	Asteroid *ast;
 
@@ -158,6 +161,7 @@ int Crash::activate_special()
 
 void Crash::calculate_turn_right()
 {
+	STACKTRACE
 	if(turn_right)
 		turn_step += turn_rate_right * frame_time;
 }
@@ -165,6 +169,7 @@ void Crash::calculate_turn_right()
 
 void Crash::animate(Frame *f)
 {
+	STACKTRACE
 	SpaceSprite *spr;
 	Asteroid *ast;
 
@@ -205,6 +210,7 @@ Asteroid()
 
 void CrashAsteroid::calculate()
 {
+	STACKTRACE
 	Presence::calculate();
 
 	if (!(master && master->exists()))
@@ -238,6 +244,7 @@ void CrashAsteroid::calculate()
 
 void CrashAsteroid::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if ( other != master && other->isShip() )
 	{
 		Asteroid::inflict_damage(other);

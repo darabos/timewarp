@@ -90,6 +90,7 @@ IceciConfusion::IceciConfusion(Vector2 opos, double shipAngle,
 //			SpaceSprite *osprite, SpaceObject *target);
 int IceciConfusion::activate_weapon()
 {
+	STACKTRACE
 
 	double da = 60 * ANGLE_RATIO;
 
@@ -110,6 +111,7 @@ int IceciConfusion::activate_weapon()
 
 int IceciConfusion::activate_special()
 {
+	STACKTRACE
 
 	double da = 60 * ANGLE_RATIO;
 
@@ -137,7 +139,9 @@ HomingMissile (oship, opos,  oangle, ov, 0, orange, oarmour, otrate, oship, ospr
 	confusionLifeTime = oLifeTime;
 }
 
-void ConfusionDart::inflict_damage(SpaceObject *other) {
+void ConfusionDart::inflict_damage(SpaceObject *other)
+{
+	STACKTRACE
 	
     if ( other->isShip() )
 	{
@@ -181,6 +185,7 @@ Confusionator::Confusionator(Ship *target, double olifetime)
 
 void Confusionator::calculate()
 {
+	STACKTRACE
 	lifetime -= frame_time * 1E-3;	// in seconds
 
 	if ( !(t && t->exists()) )

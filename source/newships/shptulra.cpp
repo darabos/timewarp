@@ -124,12 +124,14 @@ Ship( opos, shipAngle, shipData, code )
 }
 
 int TulkonRam::activate_weapon(){
+	STACKTRACE
   if( ram->dist <= TULKON_DEVICE_MIN_DIST ) return FALSE;
   ram->dist -= TULKON_DEVICE_PULL;
   return TRUE;
 }
 
 int TulkonRam::activate_special(){
+	STACKTRACE
   TulkonBomb* TB;
   if( numBombs == maxBombs ){
     bombs[0]->state = 0;
@@ -156,6 +158,7 @@ int TulkonRam::activate_special(){
 }
 
 void TulkonRam::calculate_fire_special(){
+	STACKTRACE
   special_low = FALSE;
 
   if (fire_special) {
@@ -180,6 +183,7 @@ void TulkonRam::calculate_fire_special(){
 }
 
 void TulkonRam::calculate_fire_weapon(){
+	STACKTRACE
   Ship::calculate_fire_weapon();
   if( !fire_weapon && ram->dist != TULKON_DEVICE_MAX_DIST ){
     ram->ramming = true;
@@ -190,6 +194,7 @@ void TulkonRam::calculate_fire_weapon(){
 
 void TulkonRam::calculate()
 {
+	STACKTRACE
   int j = 0;
   for( int i = 0; i < numBombs; i++ ){
     if (j)
@@ -204,6 +209,7 @@ void TulkonRam::calculate()
 }
 
 void TulkonRam::calculate_hotspots(){
+	STACKTRACE
   double xx, yy, tx, ty, sz;
   Vector2 vv;
   sz = (this->size).magnitude();
@@ -231,6 +237,7 @@ int TulkonRam::handle_fuel_sap( SpaceLocation* other, double normal ){
 }
 
 void TulkonRam::materialize(){
+	STACKTRACE
   Ship::materialize();
   game->add( ram );
 }
@@ -260,6 +267,7 @@ dist( odist ), ramming( false ), force( oforce )
 }
 
 void TulkonDevice::calculate(){
+	STACKTRACE
   SpaceObject::calculate();
   if( !(ship && ship->exists()) )
   {
@@ -287,11 +295,13 @@ void TulkonDevice::calculate(){
 }
 
 int TulkonDevice::canCollide( SpaceLocation* other ){
+	STACKTRACE
   if( other == ship ) return FALSE;
   return SpaceObject::canCollide( other );
 }
 
 void TulkonDevice::collide( SpaceObject* other ){
+	STACKTRACE
   if( ramming ){
     // these lines of code execute
     // once a [ramming] frame
@@ -313,6 +323,7 @@ void TulkonDevice::collide( SpaceObject* other ){
 }
 
 void TulkonDevice::inflict_damage( SpaceObject* other ){
+	STACKTRACE
   if( dist < TULKON_DEVICE_MAX_DIST - TULKON_DEVICE_PULL &&
     ( sameShip( other ) || !other->isShot() )) ram( true );
   if( !ramming ){
@@ -339,6 +350,7 @@ void TulkonDevice::inflict_damage( SpaceObject* other ){
 }
 
 int TulkonDevice::handle_damage( SpaceLocation* other, double normal, double direct ){
+	STACKTRACE
 //  if( direct ) {
 //	  ship->damage(other, 0, direct);
 //  }
@@ -355,6 +367,7 @@ int TulkonDevice::handle_damage( SpaceLocation* other, double normal, double dir
 }
 
 void TulkonDevice::ram( bool mode ){
+	STACKTRACE
   if( ramming = mode ){
     mass = 1000 * (TULKON_DEVICE_MAX_DIST - dist);
 //    vx = ship->get_vx() + cos( angle  ) * (TULKON_DEVICE_MAX_DIST - dist) *
@@ -394,6 +407,7 @@ AnimatedShot( ocreator, opos, 0, 0, odamage, -1, oarmour, ocreator, osprite, 64,
 }
 
 void TulkonBomb::calculate(){
+	STACKTRACE
   AnimatedShot::calculate();
 
   /*
@@ -417,6 +431,7 @@ void TulkonBomb::calculate(){
 }
 
 void TulkonBomb::collide( SpaceObject* other ){
+	STACKTRACE
   AnimatedShot::collide( other );
   // by now all collision calculations must have occured either on our side or on the other
   if( rammed ){
@@ -429,8 +444,8 @@ void TulkonBomb::collide( SpaceObject* other ){
   }
 }
 
-int TulkonBomb::handle_damage( SpaceLocation* other, double normal, double 
-direct ){
+int TulkonBomb::handle_damage( SpaceLocation* other, double normal, double direct ){
+	STACKTRACE
   if(other==creator||other==ram)return(0); // creator can't set them off by slamming them with the ram.
 	int s = exists();
   int d= AnimatedShot::handle_damage( other, normal, direct );
@@ -453,6 +468,7 @@ direct ){
 }
 
 void TulkonBomb::soundExplosion(){
+	STACKTRACE
   play_sound2( explosionSample, 1000 );
 }
 

@@ -155,6 +155,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 void WissumTripod::calculate_thrust()
 {
+	STACKTRACE
 	if ( thrust )
 		engineactive[1] = 1;
 	else
@@ -163,6 +164,7 @@ void WissumTripod::calculate_thrust()
 
 void WissumTripod::calculate_turn_right()
 {
+	STACKTRACE
 	turn_step = 0;
 	if ( turn_right )
 		engineactive[0] = 1;
@@ -173,6 +175,7 @@ void WissumTripod::calculate_turn_right()
 
 void WissumTripod::calculate_turn_left()
 {
+	STACKTRACE
 	turn_step = 0;
 	if ( turn_left )
 		engineactive[2] = 1;
@@ -185,6 +188,7 @@ void WissumTripod::calculate_turn_left()
 
 int WissumTripod::fire_guns(int fire_type)
 {
+	STACKTRACE
 	int testfired;
 
 	int ilast = ifiregun;
@@ -233,12 +237,14 @@ int WissumTripod::fire_guns(int fire_type)
 
 int WissumTripod::activate_weapon()
 {
+	STACKTRACE
 	return fire_guns(1);
 }
 
 
 int WissumTripod::activate_special()
 {
+	STACKTRACE
 
 	// this is handled implicitly in activate_weapon, this must return true
 	// so that fire_special is set; this must consume very little fuel,
@@ -336,6 +342,7 @@ int WissumTripod::activate_special()
 
 void WissumTripod::calculate()
 {
+	STACKTRACE
 	int k;
 
 	Ship::calculate();
@@ -392,6 +399,7 @@ void WissumTripod::calculate()
 
 void WissumTripod::calculate_hotspots()
 {
+	STACKTRACE
 	// add hotspots to all active engines
 	int i;
 	
@@ -415,6 +423,7 @@ void WissumTripod::calculate_hotspots()
 
 void WissumTripod::animate_predict(Frame *frame, int time)
 {
+	STACKTRACE
 	// just do the linear prediction (is most stable)
 	SpaceObject::animate_predict(frame, time);
 }
@@ -439,6 +448,7 @@ Shot(creator, rpos, oangle, ov,
 
 void FuelDump::calculate()
 {
+	STACKTRACE
 	Shot::calculate();
 
 	if (!state && num_mirvs < sprite->frames()-1)

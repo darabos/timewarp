@@ -58,6 +58,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int NeoDrain::activate_weapon()
 {	
+	STACKTRACE
 
 	add(new Missile(this, Vector2(36,20), angle,
 		weaponVelocity, weaponDamage, weaponRange, weaponArmour,
@@ -69,6 +70,7 @@ int NeoDrain::activate_weapon()
 
 int NeoDrain::activate_special()
 {
+	STACKTRACE
 
 	add(new LaserDrain(this, angle,
 		pallete_color[specialColor], specialRange, specialDamage, special_rate,
@@ -79,6 +81,7 @@ int NeoDrain::activate_special()
 
 void NeoDrain::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	if (special_recharge > 0)
@@ -103,6 +106,7 @@ Laser(creator, langle, lcolor, lrange, ldamage, lfcount, opos, rpos, osinc_angle
 
 void LaserDrain::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	other->handle_fuel_sap(this, damage_factor);
 }
 

@@ -186,10 +186,12 @@ VenKekFrigate::VenKekFrigate(Vector2 opos, double angle, ShipData *data, unsigne
 
 
 VenKekFrigate::~VenKekFrigate(void) {
+	STACKTRACE
   if(Thrust!=NULL && Thrust->exists()) Thrust->state = 0; // possible crash problem.
 }
 
 void VenKekFrigate::calculate() {
+	STACKTRACE
   double powerNeeded;
   if(afterburner) {
     spark_threshhold = (int)((double)1000 / (double)sparksPerSecondAfterburner);
@@ -238,6 +240,7 @@ void VenKekFrigate::calculate() {
 }
 
 void VenKekFrigate::calculate_thrust(void) {
+	STACKTRACE
   double powerNeeded, totalAccel, totalSpeedMax;
   if(afterburner&&(!turn_left)&&(!turn_right)) thrust=TRUE;
   if(afterburner&&specialNoFullTurn) thrust=TRUE;
@@ -268,6 +271,7 @@ void VenKekFrigate::calculate_thrust(void) {
 
 void VenKekFrigate::calculate_turn_left()
 {
+	STACKTRACE
   double powerNeeded, delta;
   if(afterburner&&specialNoTurn) turn_left = false;
   powerNeeded = frame_time / 1000.0 * thrustPowerPerSecond;
@@ -285,6 +289,7 @@ void VenKekFrigate::calculate_turn_left()
 
 void VenKekFrigate::calculate_turn_right()
 {
+	STACKTRACE
   double powerNeeded, delta;
   if(afterburner&&specialNoTurn) turn_right = false;
   powerNeeded = frame_time / 1000.0 * thrustPowerPerSecond;
@@ -302,6 +307,7 @@ void VenKekFrigate::calculate_turn_right()
 
 
 int VenKekFrigate::activate_weapon() {
+	STACKTRACE
   double deflection, deflectionRad;
   int i;
   for(i=0;i<weaponMultiplicity;i++) {
@@ -316,12 +322,14 @@ int VenKekFrigate::activate_weapon() {
 }
 
 int VenKekFrigate::activate_special() {
+	STACKTRACE
   afterburner = TRUE;
   afterburner_counter = 0;
   return(TRUE);
 }
 
 void VenKekFrigate::createThrust(void) {
+	STACKTRACE
   if(!Thrust==NULL) {
     Thrust->damage_factor = 1;
     Thrust->armour = 1;
@@ -341,6 +349,7 @@ void VenKekFrigate::createThrust(void) {
 }
 
 void VenKekFrigate::destroyThrust(void) {
+	STACKTRACE
   if(Thrust==NULL) return;
   Thrust->state = 0;
   Thrust = NULL;
@@ -369,6 +378,7 @@ VenKekThrust::VenKekThrust(VenKekFrigate* ocreator, Vector2 relPos, double oangl
 }
 
 void VenKekThrust::calculate(void) {
+	STACKTRACE
   int si;
   double rotDeg, rotRad, distMult;
   Vector2 relPos;
@@ -450,6 +460,7 @@ int VenKekThrust::handle_damage(SpaceLocation* source, double normal, double dir
 }
 
 void VenKekThrust::inflict_damage(SpaceObject* other) {
+	STACKTRACE
   damage_factor =  frame_time / 1000.0 * damagePerSecond;
   if(afterburner) damage_factor += frame_time / 1000.0 * creator->specialAddedDamagePerSecond;
   Shot::inflict_damage(other);
@@ -472,10 +483,12 @@ VenKekThrust::~VenKekThrust(void) {
 
 void VenKekShot::calculate()
 {
+	STACKTRACE
 	Missile::calculate();
 }
 
 void VenKekFrigate::createSpark(int n) {
+	STACKTRACE
 //Missile::Missile(SpaceLocation *creator, Vector2 rpos, double oangle, 
 //	double ov, double odamage, double orange, double oarmour, 
 //	SpaceLocation *opos, SpaceSprite *osprite, double relativity) 

@@ -124,6 +124,7 @@ ShipData *data, unsigned int code)
 }
 
 int UlzrakInterceptor::activate_special() {
+	STACKTRACE
   if(this->zoomSequenceInitiated || this->zoomActive)
     return(FALSE);
   //message.print(1000,10,"special");
@@ -132,6 +133,7 @@ int UlzrakInterceptor::activate_special() {
 }
 
 int UlzrakInterceptor::activate_weapon() {
+	STACKTRACE
   UlzrakMissile* UM;
   if(this->zoomActive && this->specialCantFireWhileZooming)
     return(FALSE);
@@ -146,6 +148,7 @@ int UlzrakInterceptor::activate_weapon() {
 }
 
 void UlzrakInterceptor::calculate() {
+	STACKTRACE
   double fracDone;
   if((!zoomActive) && (!zoomSequenceInitiated))
     spriteShift = 0;
@@ -189,10 +192,12 @@ void UlzrakInterceptor::calculate() {
 }
 
 double UlzrakInterceptor::handle_speed_loss(SpaceLocation *source, double normal) {
+	STACKTRACE
   return Ship::handle_speed_loss(source, normal);
 }
 
 void UlzrakInterceptor::calculate_turn_left() {
+	STACKTRACE
   if(this->zoomSequenceInitiated) {
     if(this->specialCantTurnWhileActivating)
       return;
@@ -211,6 +216,7 @@ void UlzrakInterceptor::calculate_turn_left() {
 }
 
 void UlzrakInterceptor::calculate_turn_right() {
+	STACKTRACE
   if(this->zoomSequenceInitiated) {
     if(this->specialCantTurnWhileActivating)
       return;
@@ -229,6 +235,7 @@ void UlzrakInterceptor::calculate_turn_right() {
 }
 
 void UlzrakInterceptor::calculate_thrust() {
+	STACKTRACE
   if(this->zoomSequenceInitiated) {
     if(this->specialCantThrustWhileActivating)
       return;
@@ -247,6 +254,7 @@ void UlzrakInterceptor::calculate_thrust() {
 }
 
 void UlzrakInterceptor::inflict_damage(SpaceObject* other) {
+	STACKTRACE
   if(this->damage_factor<0.0001) return;
   if(other->isShot() || other->isLine()) {
     return;
@@ -287,6 +295,7 @@ void UlzrakInterceptor::inflict_damage(SpaceObject* other) {
 
 
 void UlzrakInterceptor::DrawZoomLines(void) {
+	STACKTRACE
   Laser* L;
   double angleMod;
   if(zoomReversed)
@@ -312,6 +321,7 @@ void UlzrakInterceptor::DrawZoomLines(void) {
 }
 
 void UlzrakInterceptor::UnZoom(void) {
+	STACKTRACE
   //message.print(1000,1,"unzoom");
   this->zoomActive = false;
   this->zoomSequenceInitiated = false;
@@ -344,10 +354,12 @@ double orelativity)
 }
 
 void UlzrakMissile::calculate(void) {
+	STACKTRACE
 		Missile::calculate();
 }
 
 void UlzrakMissile::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   Missile::inflict_damage(other);
   other->vel *= (1 - this->frictionFactor);
 }

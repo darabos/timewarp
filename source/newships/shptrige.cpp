@@ -27,6 +27,7 @@ public:
 
 int TrideminTurret::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	//Redirects any damage from the turret module back
 	//to the ship, but only if it exists.
 	if(ship->exists())
@@ -42,6 +43,7 @@ int TrideminTurret::handle_damage(SpaceLocation *source, double normal, double d
 
 void TrideminTurret::calculate()
 {
+	STACKTRACE
 	if(!ship->exists())
 	{
 		state=0;
@@ -142,6 +144,7 @@ TrideminGemini::TrideminGemini(Vector2 opos, double shipAngle,
 
 int TrideminGemini::activate_weapon()
 {
+	STACKTRACE
 	double turAngle = normalize(angle+turretAngle,PI2);
 
 	add(new Missile(this, Vector2(ARM_LENGTH/32.0,0.0),
@@ -155,6 +158,7 @@ int TrideminGemini::activate_weapon()
 
 int TrideminGemini::activate_special()
 {
+	STACKTRACE
 	if(turn_left&&(turretAngle>turretMin))
 	{
 		turretAngle-=angularSpeed;
@@ -173,6 +177,7 @@ int TrideminGemini::activate_special()
 
 void TrideminGemini::calculate()
 {
+	STACKTRACE
 
 	double Dist=ARM_LENGTH;
 	Vector2 vf;

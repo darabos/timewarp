@@ -117,6 +117,7 @@ RGB QuarKathWraith::crewPanelColor(int k)
 }
 
 double QuarKathWraith::isInvisible() const {
+	STACKTRACE
 	if(cloak_frame >= 300) return(1);
 	return 0;
 	}
@@ -124,6 +125,7 @@ double QuarKathWraith::isInvisible() const {
 
 void QuarKathWraith::calculate()
 {
+	STACKTRACE
 	if (batt == batt_max) cloak=true;
 	 else cloak=false;
 
@@ -139,6 +141,7 @@ void QuarKathWraith::calculate()
 
 int QuarKathWraith::canCollide(SpaceLocation *other)
 { 
+	STACKTRACE
 	/* GEO: removes partial damage
 	int randomNumber = random() % 100;
 	if (cloak) {
@@ -154,6 +157,7 @@ int QuarKathWraith::canCollide(SpaceLocation *other)
 
 
 void QuarKathWraith::animate(Frame *space) {
+	STACKTRACE
 	if((cloak_frame > 0) && (cloak_frame < 300))
 		sprite->animate_character( pos,
 				sprite_index, pallete_color[cloak_color[(int)(cloak_frame / 100)]], space);
@@ -167,6 +171,7 @@ void QuarKathWraith::animate(Frame *space) {
 
 
 void QuarKathWraith::calculate_hotspots() {
+	STACKTRACE
   if(!cloak)
     Ship::calculate_hotspots();
 
@@ -174,6 +179,7 @@ void QuarKathWraith::calculate_hotspots() {
 
 int QuarKathWraith::activate_weapon()
 {
+	STACKTRACE
 
 	SpaceLocation *t = NULL;
 	double r = 99999;
@@ -192,6 +198,7 @@ int QuarKathWraith::activate_weapon()
 
 int QuarKathWraith::activate_special()
 {
+	STACKTRACE
 	if (cloak) 
 		{
 		add(new QuarKathIllusion(
@@ -221,6 +228,7 @@ QuarKathIllusion::QuarKathIllusion(Vector2 opos, double oangle,
 }
 
 void QuarKathIllusion::animate(Frame *space) {
+	STACKTRACE
 		if (!cloak)
 			sprite->animate_character( pos,
 					sprite_index, pallete_color[cloak_color[(int)(cloak_frame / 100)]], space);
@@ -230,6 +238,7 @@ void QuarKathIllusion::animate(Frame *space) {
 
 void QuarKathIllusion::calculate()
 {
+	STACKTRACE
 	if ( !(target && target->exists() && ship && ship->exists()) )
 	{
 		state = 0;
@@ -288,6 +297,7 @@ QuarKathLightning::QuarKathLightning(Ship *lship, SpaceLocation *lroot,
 	}
 
 void QuarKathLightning::calculate() {
+	STACKTRACE
 	Laser::calculate();
 
 	if (frame < (frame_count/2)) length = base_length * (frame) / frame_count;

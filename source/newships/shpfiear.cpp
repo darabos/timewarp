@@ -62,11 +62,13 @@ public:
 };
 
 SpaceLocation *FierasArbiter::get_focus() {
+	STACKTRACE
 	if (weaponObject) return weaponObject;
 	else return this;
 }
 
 void FierasArbiter::animate(Frame *frame) {
+	STACKTRACE
 	Ship::animate(frame);
 
 //////////////////
@@ -131,6 +133,7 @@ FierasArbiter::FierasArbiter(Vector2 opos, double angle, ShipData *data, unsigne
 
 int FierasArbiter::activate_weapon()
 {
+	STACKTRACE
   if(weaponFired)
     return(FALSE);
   weaponObject = new FierasShot(0.0, (size.y / 2.0), angle,
@@ -150,6 +153,7 @@ int FierasArbiter::activate_special()
 
 void FierasArbiter::calculate()
 {
+	STACKTRACE
 	if((weaponObject != NULL) && (!weaponObject->exists()))
 		weaponObject = NULL;
 	if(weaponFired && (!fire_weapon))
@@ -246,6 +250,7 @@ FierasShot::FierasShot(double ox, double oy, double oangle, double ov,
 	spark_counter = 0;
 }
 void FierasShot::calculate() {
+	STACKTRACE
   sprite_index = (get_index(angle) + (0*64));
 	Missile::calculate();
  	sprite_index = (get_index(angle) + (0*64));
@@ -312,6 +317,7 @@ FierasShotSpark::FierasShotSpark (SpaceLocation *creator, double oangle, double 
 
 void FierasShotSpark::calculate()
 {
+	STACKTRACE
 	lifetime -= frame_time;
 	if (lifetime <= 0)
 		die();
@@ -322,6 +328,7 @@ void FierasShotSpark::calculate()
 
 void FierasShotSpark::animate(Frame *space)
 {
+	STACKTRACE
 	drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 
 	double c = lifetime/(double)lifetime_max;

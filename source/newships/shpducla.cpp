@@ -209,12 +209,14 @@ ShipPartManager::ShipPartManager(Ship *creator)
 
 void ShipPartManager::add_part(ShipPart *newpart)
 {
+	STACKTRACE
 	partlist[Nparts] = newpart;
 	++Nparts;
 }
 
 void ShipPartManager::calculate_manager()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -260,6 +262,7 @@ void ShipPartManager::calculate_manager()
 
 void ShipPart::calc_angle()
 {
+	STACKTRACE
 	angle = mother->angle + offset_angle;
 	while (angle < 0  )	angle += PI2;
 	while (angle > PI2)	angle -= PI2;
@@ -268,6 +271,7 @@ void ShipPart::calc_angle()
 
 void ShipPart::calc_pos(Vector2 refpos)
 {
+	STACKTRACE
 	pos = refpos + rotate(offset_pos, mother->angle) - rotate(pivot_point, angle);
 }
 
@@ -318,6 +322,7 @@ mother(creator)
 
 void ShipPart::calculate()
 {
+	STACKTRACE
 	// this should be checked here, too, cause the manager can die as well; if the
 	// parts aren't dead by then, the check will never be made otherwise !!
 	if (!(mother && mother->exists()))
@@ -330,6 +335,7 @@ void ShipPart::calculate()
 
 void ShipPart::calculate_manager(Vector2 refpos, Vector2 refvel)
 {
+	STACKTRACE
 
 	if (!(mother && mother->exists()))
 	{
@@ -351,12 +357,14 @@ void ShipPart::calculate_manager(Vector2 refpos, Vector2 refvel)
 
 void ShipPart::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 
 	damage(other, damage_normal);
 }
 
 int ShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 
 	if (mother && mother->exists())
 	{
@@ -373,6 +381,7 @@ int ShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 
 void ShipPart::animate(Frame *space)
 {
+	STACKTRACE
 
 	SpaceObject::animate(space);
 }
@@ -381,6 +390,7 @@ void ShipPart::animate(Frame *space)
 // an exact copy, with a small modification: it also return a boolean value
 int ShipPart::collide_SpaceObject(SpaceObject *other)
 {
+	STACKTRACE
 //	double dx, dy;
 //	double dvx, dvy;
 	double tmp;
@@ -472,6 +482,7 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 
 void ShipPart::collide(SpaceObject *other)
 {
+	STACKTRACE
 	Vector2 oldpos, oldvel;
 
 	oldpos = pos;
@@ -583,6 +594,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int DuclyLanternjaws::activate_special()
 {
+	STACKTRACE
 
 	if ( lantern->intensity >= 0.9 )
 		return FALSE;
@@ -600,6 +612,7 @@ Vector2 pos_laser_left()
 
 int DuclyLanternjaws::activate_weapon()
 {
+	STACKTRACE
 
 	if ( arm_movement )
 		return TRUE;	// always use some fuel !
@@ -626,6 +639,7 @@ int DuclyLanternjaws::activate_weapon()
 
 void DuclyLanternjaws::calculate()
 {
+	STACKTRACE
 	ManageParts->oldpos = pos;
 	ManageParts->oldvel = vel;
 
@@ -777,6 +791,7 @@ LaserArc::~LaserArc()
 
 void LaserArc::update_lasersegs()
 {
+	STACKTRACE
 	int i;
 	double angle_step;
 
@@ -808,6 +823,7 @@ void LaserArc::update_lasersegs()
 
 void LaserArc::calculate()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -845,6 +861,7 @@ SpaceLine(creator, lpos, langle, llength, lcolor)
 
 void SpaceLineArc::set_props(Vector2 opos, double oangle, double olength)
 {
+	STACKTRACE
 	pos = opos;
 	angle = oangle;
 	length = olength;
@@ -857,6 +874,7 @@ int SpaceLineArc::handle_damage(SpaceLocation *source, double normal, double dir
 
 void SpaceLineArc::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	
 
 	// copied from space_line:
@@ -910,6 +928,7 @@ SpaceLocation(creator, creator->pos, langle)
 
 void Lantern::calculate()
 {
+	STACKTRACE
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -1010,7 +1029,9 @@ PulseLaser2::PulseLaser2(SpaceLocation *creator, double langle, int lcolor, doub
 }
 
 
-void PulseLaser2::calculate() {
+void PulseLaser2::calculate()
+{
+	STACKTRACE
 	if (!lpos && lpos->exists())
 	{
 		lpos = 0;
@@ -1030,6 +1051,7 @@ void PulseLaser2::calculate() {
 
 void PulseLaser2::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	// copied from space_line:
 	int i;
 	i = iround_down(damage_factor / 2);

@@ -60,6 +60,7 @@ ZekfahanShocker::ZekfahanShocker(Vector2 opos, double shipAngle,
 
 int ZekfahanShocker::activate_weapon()
 {
+	STACKTRACE
 	play_sound2(data->sampleWeapon[0]);
   add(new AnimatedShot(this, Vector2(42.0, 15.0), angle , weaponVelocity,
     weaponDamage, weaponRange, weaponArmour, this, data->spriteWeapon, 5, 12, 1.0));
@@ -69,6 +70,7 @@ int ZekfahanShocker::activate_weapon()
 }
 
 int ZekfahanShocker::activate_special() {
+	STACKTRACE
   if(shockingFrames == 0)
   {
 	play_sound2(data->sampleSpecial[0]);
@@ -81,6 +83,7 @@ int ZekfahanShocker::activate_special() {
 
 void ZekfahanShocker::calculate()
 { 
+	STACKTRACE
   if(shockVar == 1)
   {
    if(shockingFrames > 0) {
@@ -128,6 +131,7 @@ Shockwave::Shockwave(Vector2 oposvec, double oangle, double ov,
 }
 
 void Shockwave::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	play_sound2(data->sampleSpecial[2]);
 	damage(other, 0, damage_factor);
 	add( new Animation(this, pos, data->spriteSpecial, 0, 6, 30, LAYER_EXPLOSIONS));

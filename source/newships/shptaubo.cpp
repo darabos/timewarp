@@ -108,6 +108,7 @@ TauBomber::TauBomber(Vector2 opos, double shipAngle, ShipData *shipData, unsigne
 
 int TauBomber::activate_weapon()
 {
+	STACKTRACE
 	if (!can_launch_bomb) return false;
 	add(new TauBomberBomb(this, 0, 0, angle, bombDamage, bombArmour, data->spriteWeapon,
 		bombBlastRange, bombProximity, bombLifetime, bombKick));
@@ -117,6 +118,7 @@ int TauBomber::activate_weapon()
 
 int TauBomber::activate_special()
 {
+	STACKTRACE
 	add(new TauBomberDecoy(this, side*5, -10, angle + side*PI*11/12.0, decoyVelocity,
 		data->spriteSpecial, decoyLifetime, decoyRange, decoySlowdown, decoyEffect));
 	side *= -1;
@@ -125,6 +127,7 @@ int TauBomber::activate_special()
 
 void TauBomber::calculate()
 {
+	STACKTRACE
 	if (!fire_weapon) can_launch_bomb = true;
 	Ship::calculate();
 }
@@ -133,6 +136,7 @@ void TauBomber::calculate()
 
 void TauBomber::calculate_hotspots()
 {
+	STACKTRACE
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation(this, pos - 17*unit_vector(angle),
 			game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
@@ -164,6 +168,7 @@ TauBomberBomb::TauBomberBomb (SpaceLocation *creator, double ox, double oy, doub
 
 void TauBomberBomb::calculate()
 {
+	STACKTRACE
 	if (ship && !active) 
 		if ((!ship->exists()) || (!ship->fire_weapon)) {
 			ship = NULL;
@@ -211,12 +216,14 @@ void TauBomberBomb::calculate()
 
 void TauBomberBomb::animate(Frame *space)
 {
+	STACKTRACE
 	sprite->animate(pos,sprite_index+rotation_index*64,space);
 }
 
 
 void TauBomberBomb::animateExplosion()
 {
+	STACKTRACE
 	if (active) {
 
 		explosionSample = data->sampleWeapon[1];
@@ -264,6 +271,7 @@ TauBomberBombExplosion::TauBomberBombExplosion(Vector2 opos, double ov, int onum
 
 void TauBomberBombExplosion::calculate()
 {
+	STACKTRACE
 	life_counter += frame_time;
 	if (life_counter >= lifetime) {
 		state = 0; return; }
@@ -274,6 +282,7 @@ void TauBomberBombExplosion::calculate()
 
 void TauBomberBombExplosion::animate(Frame *space)
 {
+	STACKTRACE
 	if (state == 0)
 		return;
 	int i, j;
@@ -331,6 +340,7 @@ TauBomberDecoy::TauBomberDecoy (SpaceLocation *creator, double ox, double oy, do
 
 void TauBomberDecoy::calculate()
 {
+	STACKTRACE
 	d = 0.1;
 	Shot::calculate();	
 
@@ -363,6 +373,7 @@ TauBomberJam::TauBomberJam (SpaceObject *creator, SpaceObject *ohost, int olifet
 
 void TauBomberJam::calculate()
 {
+	STACKTRACE
 	if ((lifetime -= frame_time) <= 0) {
 		state = 0; return; }
 	if ( (!(host && host->exists())) || (!(tgt && tgt->exists())) )

@@ -47,6 +47,7 @@ QlonRedeemer::QlonRedeemer(Vector2 opos, double angle, ShipData *data, unsigned 
 }
 
 int QlonRedeemer::activate_weapon() {
+	STACKTRACE
   int fire = FALSE;
   SpaceObject *o;
 
@@ -67,6 +68,7 @@ int QlonRedeemer::activate_weapon() {
 
 int QlonRedeemer::activate_special()
 {
+	STACKTRACE
   add(new QlonLimpet(Vector2(0, get_size().y / 1.0),
     specialVelocity, specialSlowdown, specialRange, specialArmour, this,
     data->spriteSpecial, 100, 5));
@@ -94,6 +96,7 @@ QlonLimpet::QlonLimpet(Vector2 opos, double ov, double slowdown,
 
 void QlonLimpet::calculate()
 {
+	STACKTRACE
 	if(!(ship && ship->exists()))
 	{
 		ship = 0;
@@ -109,7 +112,10 @@ void QlonLimpet::calculate()
 		}
 	AnimatedShot::calculate();
 	}
+
+
 void QlonLimpet::inflict_damage(SpaceObject *other) {
+	STACKTRACE
 	if(!other->isShip()) {
 		if (other->damage_factor || other->mass) state = 0;
 		return;
@@ -153,6 +159,7 @@ void QlonLimpet::inflict_damage(SpaceObject *other) {
 	}
 
 void QlonRedeemer::animate(Frame *space){
+	STACKTRACE
 
         double back_x=get_size().x/3.60, back_y=-get_size().y/2.33,
                frnt_x=get_size().x/5.55, frnt_y=+get_size().y/17.01,

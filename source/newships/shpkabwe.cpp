@@ -162,6 +162,7 @@ KaboWeakener::KaboWeakener(Vector2 opos, double angle, ShipData *data, unsigned 
 
 int KaboWeakener::activate_weapon()
 {
+	STACKTRACE
 	add(new Missile(this, Vector2(0.0, 0.5*get_size().y),
 		angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
 		this, data->spriteWeapon));
@@ -170,6 +171,7 @@ int KaboWeakener::activate_weapon()
 
 int KaboWeakener::activate_special()
 {
+	STACKTRACE
 	if (!pod)
 	{
 		pod = new KaboPod(Vector2(0.0, -0.5*get_size().y),
@@ -211,6 +213,7 @@ hostiletime(ohostiletime)
 
 void KaboMine::calculate()
 {
+	STACKTRACE
 
 	existtime += frame_time * 1E-3;
 
@@ -248,6 +251,7 @@ int KaboMine::handle_damage(SpaceLocation *source, double normal, double direct)
 
 void KaboMine::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 
 	if ( !other->isShip() )	// only attack ships !
 	{
@@ -301,6 +305,7 @@ void KaboHaze::collide(SpaceObject *other)
 
 void KaboHaze::calculate()
 {
+	STACKTRACE
 	SpaceLocation::calculate();	// this sets ship=0 or target=0 if needed.
 
 	if (!(host && host->exists()) )
@@ -359,6 +364,7 @@ void KaboHaze::calculate()
 
 void blit_singlecolor(BITMAP *src, BITMAP *dest, int copycolor)
 {
+	STACKTRACE
 	if ( src->w != dest->w || src->h != dest->h )
 		tw_error("error in copying color in shpysr2");
 
@@ -378,6 +384,7 @@ void blit_singlecolor(BITMAP *src, BITMAP *dest, int copycolor)
 
 void blit_resize( BITMAP* *bmpold, int wnew, int hnew)
 {
+	STACKTRACE
 	int wold = (*bmpold)->w;
 	int hold = (*bmpold)->h;
 
@@ -397,6 +404,7 @@ void blit_resize( BITMAP* *bmpold, int wnew, int hnew)
 // no wonder.
 void blit_blur(BITMAP *src, int R)
 {
+	STACKTRACE
 	int *blurmap;
 
 	if ( R <= 2 )
@@ -658,6 +666,7 @@ SpaceLocation(creator, Vector2(0.0, 0.0), 0.0)
 
 void KaboHaze::animate(Frame *space)
 {
+	STACKTRACE
 	// IMPORTANT: physics must not be changed, that is, NON-LOCAL variable must not
 	// be changed in this subroutine !
 	// Reason: the TimeWarp engine can decide to skip animations in case of low
@@ -823,6 +832,7 @@ Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship, osprite)
 
 void KaboPod::calculate()
 {
+	STACKTRACE
 	if (! (mother && mother->exists()) )
 	{
 		mother = 0;
@@ -871,6 +881,7 @@ void KaboPod::calculate()
 
 void KaboPod::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	Missile::inflict_damage(other);
 	ididdamage = 1;
 

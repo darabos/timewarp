@@ -52,6 +52,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int ToUl::activate_weapon()
 {	
+	STACKTRACE
 
 	int i;
 	double v, x, y;
@@ -73,6 +74,7 @@ int ToUl::activate_weapon()
 
 int ToUl::activate_special()
 {
+	STACKTRACE
 
 	double L;
 	L = specialRange * (0.1 + 0.9 * sin(PI2 * lasertime / laserperiod));
@@ -90,6 +92,7 @@ int ToUl::activate_special()
 
 void ToUl::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	if (!state)

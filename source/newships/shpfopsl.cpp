@@ -61,6 +61,7 @@ FopVob::~FopVob()
 
 int FopVob::activate_weapon()
 {
+	STACKTRACE
 	// add shots to the queue
 	if (Nshots < maxshots )
 	{
@@ -77,6 +78,7 @@ int FopVob::activate_weapon()
 // relative position:
 double FopVob::getY(int i)
 {
+	STACKTRACE
 	double y, t;
 
 	t = physics->game_time * 1E-3;
@@ -88,6 +90,7 @@ double FopVob::getY(int i)
 
 Vector2 FopVob::getP(int i)
 {
+	STACKTRACE
 	Vector2 P;
 	//double y, t;
 
@@ -103,6 +106,7 @@ Vector2 FopVob::getP(int i)
 // relative velocity:
 double FopVob::getV(int i)
 {
+	STACKTRACE
 	double V, t;
 	t = physics->game_time * 1E-3;
 
@@ -119,6 +123,7 @@ double FopVob::getV(int i)
 
 void FopVob::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	if (!fire_special || special_low)
@@ -152,6 +157,7 @@ void FopVob::calculate()
 
 void FopVob::animate(Frame *f)
 {
+	STACKTRACE
 	// animate the ship, as usual:
 	Ship::animate(f);
 

@@ -51,6 +51,7 @@ Ship(opos, shipAngle, shipData, code) {
 
 int Viogen::activate_weapon()
 {
+	STACKTRACE
 	add(new ViogenMissile(
 		Vector2( 20.0, 0.5*get_size().y), -0.5*PI, angle, weaponVelocity, weaponDamage, weaponRange,
 		weaponArmour, this, data->spriteWeapon));
@@ -66,6 +67,7 @@ int Viogen::activate_weapon()
 
 int Viogen::activate_special()
 {
+	STACKTRACE
 
 	if (batt - special_drain > batt_max)
 		return false;
@@ -106,6 +108,7 @@ Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship, osprite)
 
 void ViogenMissile::calculate()
 {
+	STACKTRACE
 	Missile::calculate();
 
 	if (!state)

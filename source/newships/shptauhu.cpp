@@ -134,6 +134,7 @@ TauHunter::TauHunter (Vector2 opos, double shipAngle, ShipData *shipData, unsign
 
 int TauHunter::activate_weapon()
 {
+	STACKTRACE
 #define R1 27.5
 #define R2 5.0
 	
@@ -184,6 +185,7 @@ int TauHunter::activate_weapon()
 
 void TauHunter::jump_in(TauHunterPortal *portal)
 {
+	STACKTRACE
 	double a = normalize(atan(vel) - angle, PI2);
 	if (a > PI) a -= PI2;
 	if (fabs(a) > extraCriticalAngle) return;
@@ -205,6 +207,7 @@ void TauHunter::jump_in(TauHunterPortal *portal)
 
 void TauHunter::calculate_fire_special()
 {
+	STACKTRACE
 	special_low = false;
 	if ( !fire_special ) {
 		holding_spec = false;
@@ -233,6 +236,7 @@ void TauHunter::calculate_fire_special()
 
 void TauHunter::calculate()
 {
+	STACKTRACE
 	just_exited = false;
 
 	if ( batt_delay > 0 ) batt_delay -= frame_time;
@@ -280,6 +284,7 @@ void TauHunter::calculate()
 
 int TauHunter::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	if ( in_jump )
 		return 0;
 	if ( just_exited && source->isPlanet() )
@@ -288,12 +293,14 @@ int TauHunter::handle_damage(SpaceLocation *source, double normal, double direct
 }
 
 int TauHunter::handle_fuel_sap(SpaceLocation *source, double normal) {
+	STACKTRACE
 	if ( in_jump )
 		return 0;
 	return Ship::handle_fuel_sap(source, normal);
 }
 
 double TauHunter::handle_speed_loss(SpaceLocation *source, double normal) {
+	STACKTRACE
 	if ( in_jump )
 		return 0;
 	return Ship::handle_speed_loss(source, normal);
@@ -301,6 +308,7 @@ double TauHunter::handle_speed_loss(SpaceLocation *source, double normal) {
 
 int TauHunter::canCollide(SpaceLocation *other)
 {
+	STACKTRACE
 	if ( in_jump )
 		return false;
 	else
@@ -309,23 +317,27 @@ int TauHunter::canCollide(SpaceLocation *other)
 
 int TauHunter::translate(Vector2 rel_pos)
 {
+	STACKTRACE
 	if ( !in_jump ) return Ship::translate(rel_pos);
 	return false;
 }
 
 int TauHunter::accelerate(SpaceLocation *source, double oangle, double vel, double omax_speed)
 {
+	STACKTRACE
 	if ( !in_jump ) return Ship::accelerate(source, oangle, vel, omax_speed);
 	return false;
 }
 
 void TauHunter::animate(Frame* space)
 {
+	STACKTRACE
 	if ( !in_jump ) Ship::animate(space);
 }
 
 double TauHunter::isProtected() const
 {
+	STACKTRACE
 	if ( in_jump )
 		return 1.0;
 	else   
@@ -334,6 +346,7 @@ double TauHunter::isProtected() const
 
 double TauHunter::isInvisible() const
 {
+	STACKTRACE
 	if ( in_jump )
 		return 1.0;
 	else    
@@ -342,16 +355,19 @@ double TauHunter::isInvisible() const
 
 void TauHunter::calculate_hotspots()
 {
+	STACKTRACE
 	if ( !in_jump ) Ship::calculate_hotspots();
 }
 
 void TauHunter::calculate_turn_left()
 {
+	STACKTRACE
 	if ( exit_countdown <= 0 ) Ship::calculate_turn_left();
 }
 
 void TauHunter::calculate_turn_right()
 {
+	STACKTRACE
 	if ( exit_countdown <= 0 ) Ship::calculate_turn_right();
 }
 
@@ -376,6 +392,7 @@ TauHunterLaser::TauHunterLaser (double ox, double oy, double oangle, double ov, 
 
 void TauHunterLaser::calculate()
 {
+	STACKTRACE
 	double r = (d) / range;
 	double r2 = r*r;
 	double r3 = r2*r;
@@ -391,6 +408,7 @@ void TauHunterLaser::calculate()
 
 void TauHunterLaser::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (d >= range) return;
 	damage_factor *= pow((1-d/range), 0.2);
 	SpaceLine::inflict_damage(other);
@@ -405,6 +423,7 @@ TauHunterPortal::TauHunterPortal(SpaceLocation *creator, double ox, double oy, S
 
 void TauHunterPortal::calculate()
 {
+	STACKTRACE
 	Animation::calculate();
     if ( ship ) {
 		if ( (!ship->exists()) || (!ship->holding_spec) || ship->in_jump ) {
@@ -429,6 +448,7 @@ TauHunterShot::TauHunterShot(double ox, double oy, double oangle, double ov, dou
 
 void TauHunterShot::calculate()
 {
+	STACKTRACE
 	if ( state == 0 ) return;
 	sprite_index = (int)floor(20 * d*d / (range*range));
 	if ( ship ) if ( (!ship->exists()) || (!ship->holding_spec) || ship->in_jump )

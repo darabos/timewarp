@@ -91,6 +91,7 @@ TauMercury::TauMercury(Vector2 opos, double shipAngle, ShipData *shipData, unsig
 
 int TauMercury::activate_weapon()
 {
+	STACKTRACE
 	double da = (1-0.002*(random()%1001));
 	if (da >= 0)
 		da *= da;
@@ -105,6 +106,7 @@ int TauMercury::activate_weapon()
 
 void TauMercury::calculate_turn_right()
 {
+	STACKTRACE
 	if (turn_right) {
 		bank_position += bank_max * frame_time / bank_time;
 		if (!turn_lag)
@@ -113,6 +115,7 @@ void TauMercury::calculate_turn_right()
 
 void TauMercury::calculate_turn_left()
 {
+	STACKTRACE
 	if (turn_left) {
 		bank_position -= bank_max * frame_time / bank_time;
 		if (!turn_lag)
@@ -121,6 +124,7 @@ void TauMercury::calculate_turn_left()
 
 void TauMercury::calculate()
 {
+	STACKTRACE
 	double vl;
 	bool locked_rail = false;
 
@@ -188,6 +192,7 @@ void TauMercury::calculate()
 
 int TauMercury::accelerate(SpaceLocation *source, double angle, double velocity, double max_speed)
 {
+	STACKTRACE
 	double ov;
 	double nvs, nvl;
 
@@ -213,6 +218,7 @@ int TauMercury::accelerate(SpaceLocation *source, double angle, double velocity,
 
 void TauMercury::calculate_hotspots()
 {
+	STACKTRACE
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation( this, 
 				normal_pos() - unit_vector(angle) * 14,
@@ -228,6 +234,7 @@ void TauMercury::calculate_thrust()
 
 void TauMercury::calculate_fire_special()
 {
+	STACKTRACE
 	special_low = FALSE;
 	if (!fire_special)
 		return;
@@ -279,6 +286,7 @@ TauMercuryShot::TauMercuryShot(SpaceLocation *creator, double ox, double oy, dou
 
 void TauMercuryShot::calculate()
 {
+	STACKTRACE
 	int si = sprite_index;
 	AnimatedShot::calculate();
 	
@@ -311,6 +319,7 @@ void TauMercuryShot::calculate()
 
 void TauMercuryShot::animateExplosion()
 {
+	STACKTRACE
 	if (!frags) {
 		Shot::animateExplosion();
 		return; }
@@ -355,6 +364,7 @@ TauMercurySpark::TauMercurySpark (SpaceLocation *creator, double ox, double oy, 
 
 void TauMercurySpark::calculate()
 {
+	STACKTRACE
 	lifetime -= frame_time;
 	if (lifetime <= 0)
 		state = 0;
@@ -364,12 +374,14 @@ void TauMercurySpark::calculate()
 
 void TauMercurySpark::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	SpaceLine::inflict_damage(other);
 	state =0;
 }
 
 void TauMercurySpark::animate(Frame *space)
 {
+	STACKTRACE
 	drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 
 	double c = lifetime/(double)lifetime_max;

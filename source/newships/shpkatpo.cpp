@@ -77,14 +77,17 @@ double  KatPoly::isInvisible() const{
 	return morph ? 1 : 0;
 }
 int KatPoly::handle_damage( SpaceLocation* other, double normal, double direct ){
+	STACKTRACE
   if( !morph ) return Ship::handle_damage( other, normal, direct );
   return 0;
 }
 void KatPoly::animate( Frame* space ){
+	STACKTRACE
   if( !morph ) Ship::animate( space );
 }
 
 void KatPoly::calculate(){
+	STACKTRACE
 	if( morph ){
 		morph->nextkeys &= ~keyflag::special;  // we will handle special so disable the morph's
 		if( !morph->exists() ) {
@@ -104,12 +107,14 @@ void KatPoly::calculate_turn_right(){  if( !morph ) Ship::calculate_turn_right()
 void KatPoly::calculate_fire_weapon(){ if( !morph ) Ship::calculate_fire_weapon(); }
 
 int KatPoly::activate_weapon(){
+	STACKTRACE
   game->add( new KatAnimatedShot( this, Vector2(0, -size.y/2), angle, weaponVelocity, weaponDamage,
     weaponRange, weaponArmour, this, data->spriteWeapon, 64, time_ratio ));
   return true;
 }
 
 void KatPoly::calculate_fire_special(){
+	STACKTRACE
   if( morph ){
     if( morph->type != type ){
       // if in alien form use lower cost
@@ -123,17 +128,20 @@ void KatPoly::calculate_fire_special(){
 }
 
 RGB KatPoly::crewPanelColor(int k){
+	STACKTRACE
   if( morph ) return morph->crewPanelColor(k);
   return Ship::crewPanelColor(k);
 }
 
 RGB KatPoly::battPanelColor(int k){
+	STACKTRACE
   if( morph ) return morph->battPanelColor(k);
   return Ship::battPanelColor(k);
 }
 
 int KatPoly::activate_special()
 {
+	STACKTRACE
 	if( !(target && target->exists()) ) return false;               // we need a target
 	if( !target->isShip()) return false;
 
@@ -192,6 +200,7 @@ AnimatedShot(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite,
 
 void KatAnimatedShot::calculate()
 {
+	STACKTRACE
 	if (!(mother && mother->exists()))
 	{
 		mother = 0;
@@ -204,6 +213,7 @@ void KatAnimatedShot::calculate()
 
 int KatAnimatedShot::handle_damage( SpaceLocation* other, double normal, double direct )
 {
+	STACKTRACE
 	if (other != mother->morph)
 		return AnimatedShot::handle_damage(other, normal, direct);
 	else
@@ -215,6 +225,7 @@ int KatAnimatedShot::handle_damage( SpaceLocation* other, double normal, double 
 
 void KatAnimatedShot::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (other != mother->morph)
 		AnimatedShot::inflict_damage(other);
 }

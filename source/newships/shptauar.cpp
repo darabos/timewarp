@@ -15,6 +15,7 @@ REGISTER_FILE
 void TauArchonFreezeColorEffects (RGB *c)
 
 {
+	STACKTRACE
 
 	int alpha = (c->filler ^ 255) + 1; 
 
@@ -233,6 +234,7 @@ TauArchon::TauArchon(Vector2 opos, double shipAngle, ShipData *shipData, unsigne
 void TauArchon::calculate()
 
 {
+	STACKTRACE
 
 	recharge_rate = base_recharge_rate * (1 - batt / (double)batt_max);
 
@@ -291,6 +293,7 @@ void TauArchon::calculate()
 void TauArchon::calculate_fire_weapon()
 
 {
+	STACKTRACE
 
 	weapon_low = FALSE;
 
@@ -375,6 +378,7 @@ void TauArchon::calculate_fire_weapon()
 void TauArchon::calculate_fire_special()
 
 {
+	STACKTRACE
 
 	special_low = false;
 
@@ -389,6 +393,7 @@ void TauArchon::calculate_fire_special()
 void TauArchon::animate(Frame *space)
 
 {
+	STACKTRACE
 
 	int aa = get_tw_aa_mode();
 
@@ -453,6 +458,7 @@ RGB TauArchon::battPanelColor(int k)
 void TauArchon::calculate_hotspots()
 
 {
+	STACKTRACE
 
 	if((thrust) && (hotspot_frame <= 0)) {
 
@@ -569,6 +575,7 @@ TauArchonShot::TauArchonShot(SpaceLocation *creator, Vector2 opos, double oangle
 void TauArchonShot::calculate()
 
 {
+	STACKTRACE
 
 	Shot::calculate();
 
@@ -613,6 +620,7 @@ void TauArchonShot::calculate()
 void TauArchonShot::animate(Frame *space)
 
 {
+	STACKTRACE
 
 	if (exists())
 
@@ -625,6 +633,7 @@ void TauArchonShot::animate(Frame *space)
 void TauArchonShot::inflict_damage(SpaceObject *other)
 
 {
+	STACKTRACE
 
 	double d_f = damage_factor;
 
@@ -829,6 +838,7 @@ void TauArchonFrozen::inflict_damage(SpaceObject *other)
 void TauArchonFrozen::calculate()
 
 {
+	STACKTRACE
 
 	Shot::calculate();
 
@@ -851,6 +861,7 @@ void TauArchonFrozen::calculate()
 void TauArchonFrozen::animateExplosion()
 
 {
+	STACKTRACE
 
 	if (!exploded_already) {
 

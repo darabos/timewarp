@@ -105,25 +105,18 @@ GarashTyrant::GarashTyrant(Vector2 opos, double shipAngle,
 	weaponDamage					 = get_config_int("Weapon", "Damage", 8);
 	weaponArmour					 = get_config_int("Weapon", "Armour", 8);
 	weaponChargeIncrement	 = get_config_int("Weapon", "ChargeIncrement", 3);
-	weaponVelocity				 = scale_velocity(get_config_float("Weapon", "Velocity", 
-200));
+	weaponVelocity				 = scale_velocity(get_config_float("Weapon", "Velocity", 200));
 	weaponRange						 = scale_range(get_config_float("Weapon", "Range", 54));
-	weaponChargeSpeed      = scale_frames(get_config_int("Weapon", 
-"ChargeSpeed",2));
-	weaponMinTimeLimit		 = 
-scale_frames(get_config_int("Weapon","MinTimeLimit",152));
-	weaponMaxTimeLimit		 = 
-scale_frames(get_config_int("Weapon","MaxTimeLimit",430));
-	weaponChargingDistance = scale_range(get_config_float("Weapon", 
-"ChargingDistance", 9));
-	weaponChargingDistanceDamage = get_config_int("Weapon", 
-"ChargingDistanceDamage", 0);
+	weaponChargeSpeed      = scale_frames(get_config_int("Weapon", "ChargeSpeed",2));
+	weaponMinTimeLimit		 = scale_frames(get_config_int("Weapon","MinTimeLimit",152));
+	weaponMaxTimeLimit		 = scale_frames(get_config_int("Weapon","MaxTimeLimit",430));
+	weaponChargingDistance = scale_range(get_config_float("Weapon", "ChargingDistance", 9));
+	weaponChargingDistanceDamage = get_config_int("Weapon", "ChargingDistanceDamage", 0);
 
 	specialDamage			= get_config_int("Special", "Damage", 4);
 	specialRange			= scale_range(get_config_int("Special", "Range", 9));
 	specialRepulse		= get_config_int("Special","Repulse",80);
-	//specialStunFrames = 
-scale_frames(get_config_int("Special","StunFrames",24));
+	//specialStunFrames = scale_frames(get_config_int("Special","StunFrames",24));
   specialStunFrames = scale_frames(get_config_int("Special","StunTime",24));
 	repulse						= FALSE;
 
@@ -137,6 +130,7 @@ scale_frames(get_config_int("Special","StunFrames",24));
 
 void GarashTyrant::calculate()
 {
+	STACKTRACE
 
 if (!fire_weapon  &&
 		!fire_special &&
@@ -198,8 +192,7 @@ if (repulse)
 
 
 			}
-		add(new FixedAnimation(this,this, data->spriteSpecial, 0, 7, 70, 
-LAYER_EXPLOSIONS));
+		add(new FixedAnimation(this,this, data->spriteSpecial, 0, 7, 70, LAYER_EXPLOSIONS));
 
 		damage(this, 0);
 
@@ -217,6 +210,7 @@ LAYER_EXPLOSIONS));
 }
 
 void GarashTyrant::stun_ship(SpaceObject *other){
+	STACKTRACE
   GarashRepulsarStun* GRS;
   if (other->state==0) return;
 	if (other->isShip()) {
@@ -233,6 +227,7 @@ void GarashTyrant::stun_ship(SpaceObject *other){
 
 void GarashTyrant::calculate_fire_weapon()
 	{
+	STACKTRACE
 	weapon_low = FALSE;
 
 	if (fire_weapon) {
@@ -258,12 +253,12 @@ void GarashTyrant::calculate_fire_weapon()
 
 int GarashTyrant::activate_weapon()
 {
+	STACKTRACE
   if(weaponObject)
     return(FALSE);
 
   add(weaponObject = new GarashShot(
-    Vector2(0.0,size.y/2.60), angle, weaponVelocity, weaponDamage, 
-weaponRange,
+    Vector2(0.0,size.y/2.60), angle, weaponVelocity, weaponDamage, weaponRange,
     weaponArmour, this, data->spriteWeapon, 10, weaponChargeSpeed,
 		weaponChargeIncrement,weaponMinTimeLimit,weaponMaxTimeLimit,
 		weaponChargingDistance, weaponChargingDistanceDamage));
@@ -291,6 +286,7 @@ GarashRepulsarStun::GarashRepulsarStun(Ship *oship,
 }
 
 void GarashRepulsarStun::calculate() {
+	STACKTRACE
   if(!ship) targetIsDead = TRUE;
   else {
     if(!ship->exists()) targetIsDead = TRUE;
@@ -320,8 +316,7 @@ void GarashRepulsarStun::calculate() {
 		return;
 		}
 
-  ship->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | 
-keyflag::special);
+  ship->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special);
 
   stunframe += frame_time;
   if (stunframe >= stunframe_count) state = 0;
@@ -332,8 +327,7 @@ keyflag::special);
 
 
 GarashShot::GarashShot(Vector2 opos, double oangle, double ov,
-  int odamage, double orange, int oarmour, Ship *oship, SpaceSprite 
-*osprite,
+  int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite,
   int ofcount, int ofsize, int oCI, int oMinTL, int oMaxTL,
 	double oChargingDistance, int oChargingDistanceDamage) :
   Shot(oship, opos, oangle, ov, odamage, orange, oarmour, oship, osprite),
@@ -368,6 +362,7 @@ GarashShot::GarashShot(Vector2 opos, double oangle, double ov,
 }
 
 void GarashShot::calculate() {
+	STACKTRACE
 
 	if(released) Shot::calculate();
 	else SpaceObject::calculate();
@@ -447,6 +442,7 @@ void GarashShot::animateExplosion()
 
 void GarashShot::inflict_damage(SpaceObject *other)
 	{
+	STACKTRACE
 
 	int Distance_Travelled = distance_from(StartC, other->normal_pos());
 	int AddDamage = (Distance_Travelled / CD) * CDD;
@@ -489,9 +485,9 @@ void GarashShot::inflict_damage(SpaceObject *other)
 
 
 
-int GarashShot::handle_damage(SpaceLocation *source, double normal, double 
-direct)
+int GarashShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	armour += damage_factor + direct ; // nullify damage
 	if (((!ship_hit && !source->isShip()) ||
 			(ship_hit && source->isShip())) && !released)

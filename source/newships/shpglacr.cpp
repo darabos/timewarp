@@ -86,6 +86,7 @@ GlavriaCruiser::GlavriaCruiser(Vector2 opos, double angle, ShipData *data, unsig
 
 int GlavriaCruiser::activate_special()
 {
+	STACKTRACE
 //	game->add(new GlavriaCrTorpedo(Vector2(0.0, size.y *(-0.3)), angle+PI, specialVelocity,
 //			specialDamage, specialRange, specialArmour, this, data->spriteWeapon,
 //			100, 16, specialRelativity));
@@ -132,14 +133,12 @@ int GlavriaCruiser::activate_special()
 		}
 	}
 
-
-
-
 	return true;
 }
 
 int GlavriaCruiser::activate_weapon()
 {
+	STACKTRACE
 
 	int i;
 
@@ -161,6 +160,7 @@ int GlavriaCruiser::activate_weapon()
 
 void GlavriaCruiser::calculate()
 {
+	STACKTRACE
 	Ship::calculate();
 
 	// check the state of yer weapons in space
@@ -193,6 +193,7 @@ GlavriaCrTorpedo::GlavriaCrTorpedo(Vector2 opos, double oangle, double ov,
 
 void GlavriaCrTorpedo::calculate()
   {
+	STACKTRACE
 	AnimatedShot::calculate();
 	//d += v * frame_time;
 	//if(d >= oorange) state = 0;

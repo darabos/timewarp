@@ -103,6 +103,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 void MeknikPincer::getinformed(int itype, SpaceLocation *other)
 {
+	STACKTRACE
 	// if you've destroyed (i=1) an asteroid, then...
 	if (itype == 1 && other->isAsteroid())
 	{
@@ -123,6 +124,7 @@ int MeknikPincer::special_state()
 
 int MeknikPincer::activate_weapon()
 {	
+	STACKTRACE
 	// activate laser (s)
 
 	int i;
@@ -150,6 +152,7 @@ int MeknikPincer::activate_weapon()
 
 int MeknikPincer::activate_special()
 {
+	STACKTRACE
 	// for re-activation, require minimum batt.
 	if (!saw[0] || !saw[1])
 		if (batt < 4)
@@ -180,6 +183,7 @@ int MeknikPincer::activate_special()
 
 void MeknikPincer::calculate()
 {
+	STACKTRACE
 
 	int i;
 	for ( i = 0; i < 2; ++i )
@@ -196,6 +200,7 @@ void MeknikPincer::calculate()
 
 int MeknikPincer::handle_damage(SpaceLocation* source, double normal, double direct)
 {
+	STACKTRACE
 	/*
 	if (source->isAsteroid())
 	{
@@ -236,6 +241,7 @@ SpaceObject(oship, oship->pos+odist*unit_vector(a), a, ospr)
 
 void MeknikChainsaw::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 
 	if ( !(refship && refship->exists()) )
@@ -288,6 +294,7 @@ void MeknikChainsaw::calculate()
 
 void MeknikChainsaw::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	//SpaceObject::inflict_damage(other);
 	inflict_time += frame_time * 1E-3;
 
@@ -317,6 +324,7 @@ Laser(creator, langle, lcolor, lrange, ldamage, lfcount, opos, rpos, osinc_angle
 
 void LaserInform::calculate()
 {
+	STACKTRACE
 	if (!(mother && mother->exists()))
 	{
 		mother = 0;
@@ -329,6 +337,7 @@ void LaserInform::calculate()
 
 void LaserInform::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	Laser::inflict_damage(other);
 
 	if (!other || !other->exists())
