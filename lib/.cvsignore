@@ -1,0 +1,6 @@
+*.exp
+*.ilk
+*.pdb
+*.def
+*.map
+*.a
