@@ -387,9 +387,9 @@ void JadWarheadExplosion::animate(Frame *space)
 		for (j=3; j>=0; j--) 
 		{
 			if (space_zoom <= 1)
-				set_trans_blender(0, 0, 0, space_zoom * 255 * t * (4-j) / 4.0);
+				set_trans_blender(0, 0, 0, iround(space_zoom * 255 * t * (4-j) / 4.0));
 			else
-				set_trans_blender(0, 0, 0, 1 * 255 * t * (4-j) / 4.0);
+				set_trans_blender(0, 0, 0, (1 * 255 * t * (4-j) / 4.0));
 			xi = iround(x0 - dx * j);
 			yi = iround(y0 - dy * j);
 			putpixel(space->surface, xi, yi, color);

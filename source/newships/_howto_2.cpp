@@ -34,7 +34,7 @@ Ship(opos, shipAngle, shipData, shipCollideFlag)
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
 };
 
-HowTo_2::activate_weapon()
+int HowTo_2::activate_weapon()
 {
 	Missile *m;
 	// how far away from the ship does this missile start its violent existence.

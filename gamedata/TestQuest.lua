@@ -10,11 +10,11 @@ function GAME_EVENT_SHIP_DIE( Type )
 	if shoscKilled == 0 then Complited = 1; PrintMessage("Mission Completed."); end
 end
 
-function GAME_EVENT_ENTER_STATION( locationID )
---	if locationID == QuestSourceLocationID then
+function GAME_EVENT_ENTER_STATION( location, x, y )
+	if location == "Supox" then
 		if Complited == 1 then return Reward() end
 		return HurryLazyPlayer()
---	end
+	end
 end
 
 function Reward()
@@ -22,7 +22,7 @@ DialogStart "gamedata/pkunk-standing.bmp"
 	DialogWrite "Congratulations, those bastards are all dead now! Take 20 bucks"
 	answer = DialogAnswer ( "Thanks!" )
 	AddBuckazoids(20);
-	Exist = 1;
+	Exist = 0;
 DialogEnd()
 end
 

@@ -1109,7 +1109,7 @@ int my_d_button_proc(int msg, DIALOG * d, int c) {
         if (d->flags & D_GOTFOCUS)
 
 
-        break;/**/
+        break;*/
     };
 
     return ret;

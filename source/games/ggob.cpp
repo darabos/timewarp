@@ -340,13 +340,13 @@ void GobGame::init(Log *_log) {
 
 	num_planets = 0;
 	i = 0;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Supox");
 	i = 1;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Orz");
 	i = 2;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Kohr-Ah");
 	i = random() % 3;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i], "Utwig");
 
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 
@@ -436,6 +436,7 @@ void GobGame::init(Log *_log) {
 
 	quest_source = new QuestSource();
 	quest_source->LoadQuestList( "gamedata/TestQuestSource.lua" );
+	quest_source->GetQuest("gamedata/SecretPlanet.lua", gobplayer[0]);
 	return;
 }
 /*! \brief Free game resources */
@@ -464,8 +465,9 @@ GobGame::~GobGame() {
 \param station_sprite ???
 \param builds ???
 \param background ???
+\param sname station name (used for station identification )
 */
-void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background) {
+void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background, std::string sname) {
 	STACKTRACE;
 
 		Planet *p = new Planet (size/2, planet_sprite, planet_index);
@@ -478,7 +480,7 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 	add ( p );
 
 	GobStation *gs = new GobStation(station_sprite, p, builds, 
-		background, "NOT_IMPLEMENTED" );
+		background, sname );
 	gs->collide_flag_sameship = ALL_LAYERS;
 	gs->collide_flag_sameteam = ALL_LAYERS;
 	gs->collide_flag_anyone = ALL_LAYERS;
@@ -606,7 +608,8 @@ GobPlayer *GobGame::get_player(SpaceLocation *what) {
 /*! \brief Create enemy ship
 Create random enemy ship if enemy limit is not riched. Also it patch some of the ships.
 */
-void GobGame::add_new_enemy () {
+void GobGame::add_new_enemy (std::string type, Vector2* pos ) 
+{
 	STACKTRACE;
 
 	
@@ -653,7 +656,25 @@ void GobGame::add_new_enemy () {
 		//if (e > num_enemy_types * 2) e = e % num_enemy_types;
 		e = e;
 	}
-	Ship *ship = create_ship(channel_server, enemy_types[e], "WussieBot", random(size), random(PI2), enemy_team);
+
+	if (type != "")
+	{
+		int i;
+		for (i=0; i<num_enemy_types; i++)
+		{
+			if (type == enemy_types[i])
+			{
+				e = i;
+				break;
+			}
+		}
+	}
+	Ship *ship;
+	if (pos == NULL)
+		ship = create_ship(channel_server, enemy_types[e], "WussieBot", random(size), random(PI2), enemy_team);
+	else
+		ship = create_ship(channel_server, enemy_types[e], "WussieBot", *pos, random(PI2), enemy_team);
+
 	if (!strcmp(enemy_types[e], "shosc")) ((ShofixtiScout*)ship)->specialDamage /= 4;
 	if (!strcmp(enemy_types[e], "zfpst")) ((ZoqFotPikStinger*)ship)->specialDamage /= 2;
 	if (!strcmp(enemy_types[e], "syrpe")) ((SyreenPenetrator*)ship)->specialDamage /= 2;
@@ -909,16 +930,19 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 \param orbit_me ???
 \param ship ???
 \param background ???
+\param sname station name
 */
 GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, 
-						const char *ship, const char *background, 
-						const char * qlist) : 
+						const char *ship, const char *background, std::string sname ) : 
 Orbiter(pic, orbit_me, random() % 200 + 500) 
 {
 	build_type = ship;
 	background_pic = background;
 	layer = LAYER_CBODIES;
 	mass = 99;
+	name = sname;
+	if (sname=="Kohr-Ah")
+		set_team(gobgame->enemy_team);
 }
 
 GobStation::~GobStation()
@@ -950,7 +974,7 @@ static DIALOG station_dialog[] =
 void GobStation::station_screen(GobPlayer *s) {
 	STACKTRACE;
 
-		BITMAP *background = load_bitmap(background_pic, NULL);
+	BITMAP *background = load_bitmap(background_pic, NULL);
 	if (!background) {
 		message.print(1000, 15, "%s", background_pic);
 		error ("couldn't load station background");
@@ -961,11 +985,6 @@ void GobStation::station_screen(GobPlayer *s) {
 		0,0,background->w,background->h, 
 		game->window->x,game->window->y,game->window->w, game->window->h);
 	game->window->unlock();
-
-	EventEnterStation e;
-	e.player  = s;
-	e.station = this;
-	gobgame->GenerateEvent(&e);
 
 	while (true) {
 		sprintf(dialog_string[0], "%03d Starbucks  %03d Buckazoids", s->starbucks, s->buckazoids);
@@ -1069,7 +1088,15 @@ void GobStation::inflict_damage(SpaceObject *other) {
 	a = p->read_pair(buffy);
 	if (a == -1) a = 0;
 	p->write_pair(buffy, a+1);
-	station_screen(p);
+
+	EventEnterStation e;
+	e.player  = p;
+	e.station = this;
+	gobgame->GenerateEvent(&e);
+
+	if (get_team()!=gobgame->enemy_team)
+		station_screen(p);
+
 	gobgame->unpause();
 	return;
 }

@@ -29,12 +29,19 @@ Quest::Quest( const char * szLuaFile, GobPlayer * player )
 	// Register C function
 	lua_register(L, "Dialog",        l_Dialog);
 	lua_register(L, "AddObject",     l_AddObject);
+	lua_register(L, "AddEnemyShip",  l_AddEnemyShip);
+	lua_register(L, "MakeEnemy",     l_MakeEnemy);
+	lua_register(L, "MakeAlly",      l_MakeAlly);
 	lua_register(L, "RemoveObject",  l_RemoveObject);
 	lua_register(L, "AddBuckazoids", l_AddBuckazoids);
 	lua_register(L, "PrintMessage",  l_PrintMessage);
 
 	// Load Quest
-	lua_dofile(L, szLuaFile);
+
+	if ( lua_dofile(L, szLuaFile) != 0)
+	{
+		tw_error("Unable Error in Lua quest file");
+	};
 
 	// Register Events
 	int top = lua_gettop(L);
@@ -134,9 +141,12 @@ void Quest::Process()
 
 void Quest::ProcessEvent ( IEvent* event )
 {
+	Query q;
 	g_player = gob_player;
 	int type = event->GetEventType();
 	int top;
+	Vector2 pos;
+	int x, y;
 	const char * temp;
 	switch ( type )
 	{
@@ -173,11 +183,17 @@ void Quest::ProcessEvent ( IEvent* event )
 			tw_error("Quest script is not contain GAME_EVENT_ENTER_STATION function");
 		};
 
-		lua_pushnumber( L, 1 ); //need to be implemented
+		lua_pushstring( L, (((EventEnterStation*)event)->station->GetStationName()).c_str() ); //reserved
+		pos = ((EventEnterStation*)event)->station->pos;
+		x = iround(pos.x);
+		y = iround(pos.y);
 
-		lua_call(L, 1, 0 );
+		lua_pushnumber (L, x);
+		lua_pushnumber (L, y);
+
+		lua_call(L, 3, 0 );
 		lua_settop(L, top);
-
+		
 		break;
 	default:
 		break;
@@ -193,7 +209,67 @@ int Quest::l_Dialog(lua_State* ls)
 int Quest::l_AddObject(lua_State* ls)
 {
 	gobgame->add_new_enemy();
-	return NOT_IMPLEMENTED;
+	return 0;
+}
+
+int Quest::l_AddEnemyShip(lua_State* ls)
+{
+	int top = lua_gettop(ls);
+	if ( top != 3 )
+	{
+		tw_error ("Wrong argument count for AddEnemyShip");
+	}
+	Vector2 pos;
+	const char * type = lua_tostring(ls, 1);
+	pos.x = lua_tonumber(ls, 2);
+	pos.y = lua_tonumber(ls, 3);
+	
+	gobgame->add_new_enemy(type, &pos);
+	return 0;
+}
+
+int Quest::l_MakeEnemy(lua_State* ls)
+{
+	int top = lua_gettop(ls);
+	if ( top != 2 )
+	{
+		tw_error ("Wrong argument count for AddEnemyShip");
+	}
+	Vector2 pos;
+	pos.x = lua_tonumber(ls, 2);
+	pos.y = lua_tonumber(ls, 3);
+
+	Query q;
+	for (q.begin(g_player->ship, bit(LAYER_CBODIES), 24000); q.current; q.next())
+		{
+			if( (q.current)->pos.round()  == pos.round())
+			{
+				((GobStation*)(q.current))->set_team(gobgame->enemy_team);
+			}
+		}
+	return 0;
+}
+
+int Quest::l_MakeAlly(lua_State* ls)
+{
+	int top = lua_gettop(ls);
+	if ( top != 2 )
+	{
+		tw_error ("Wrong argument count for AddEnemyShip");
+	}
+	Vector2 pos;
+	pos.x = lua_tonumber(ls, 2);
+	pos.y = lua_tonumber(ls, 3);
+
+	Query q;
+	for (q.begin(g_player->ship, bit(LAYER_CBODIES), 24000); q.current; q.next())
+		{
+			if( (q.current)->pos  == pos)
+			{
+				((GobStation*)(q.current))->set_team(g_player->ship->get_team());
+			}
+		}
+	return 0;
 }
 
 int Quest::l_RemoveObject(lua_State* ls)
@@ -219,7 +295,7 @@ int Quest::l_PrintMessage(lua_State*ls)
 		tw_error ("Wrong argument count for PrintMessage");
 	}
 	const char * str = lua_tostring(ls, -1);
-	message.out((char *)str, 10000, makecol(0,255,0));
+	message.out((char *)str, 10000, makecol8(0,255,0));
 	return 0;
 }
 
@@ -319,6 +395,7 @@ Quest* QuestSource::GetQuest ( const char * name, GobPlayer * player )
 {
 	ASSERT(name);
 	Quest * q = new Quest( name, player );
+	questList.push_back(q);
 	return q;
 }
 

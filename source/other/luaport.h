@@ -29,9 +29,9 @@ public:
 // also declares narg, the number of arguments that are to be returned
 // also declares the lua-registry class, which is used to build a list of functions available to lua.
 #define lua_func(func) \
-extern int func(lua_State *L); \
+int func(lua_State *L); \
 lua_func_registry regme##func (#func, func); \
-static int func(lua_State *L) \
+int func(lua_State *L) \
 { \
 int nret = 0;
 

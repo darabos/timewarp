@@ -374,7 +374,7 @@ View::~View() {STACKTRACE
 }
 void View::calculate(Game *game) {}
 
-void message_type::out(char *string, int dur, int c) {STACKTRACE
+void message_type::out(const char *string, int dur, int c) {STACKTRACE
 	ASSERT (c < 256);
 	if (num_messages == max_messages - 1) {
 		messages[0].end_time = -1;

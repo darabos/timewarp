@@ -180,13 +180,13 @@ void AlhordianHalo::calculate()
 	{
 		if (fire_special && this->batt - special_drain >= 0)
 		{
-			currentSweepTime += frame_time * sweepFactor;
-			game->play_sound(data->sampleWeapon[0],this,255,900 + 1500 * (currentSweepTime / specialTime));
+			currentSweepTime += iround(frame_time * sweepFactor);
+			game->play_sound(data->sampleWeapon[0],this,255,900 + iround(1500 * (currentSweepTime / specialTime)));
 		}
 		else
 		{
-			currentSweepTime -= frame_time * sweepFactor;
-			game->play_sound(data->sampleSpecial[0],this,255,900 + 1500 * (currentSweepTime / specialTime));
+			currentSweepTime -= iround(frame_time * sweepFactor);
+			game->play_sound(data->sampleSpecial[0],this,255,900 + iround(1500 * (currentSweepTime / specialTime)));
 		}
 /*		
 		if (!fire_weapon && fire_special)

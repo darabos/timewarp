@@ -1,5 +1,4 @@
-Run twdos.exe in DOS, or twwin.exe in windows, or twlinux in Linux,
-or twbeos on BeOS.  
+Run twwin.exe in windows, or timewarp in Linux.  
 These are the options presented to you in the game:
 
 Melee:  Starts a battle.  In battle the following keys do stuff:

@@ -92,7 +92,7 @@ class GobGame : public Game, public EventHandler {
   virtual void fps ();
   
   
-  void add_new_enemy();
+  void add_new_enemy(std::string type = "", Vector2* pos = NULL);
   
   int next_add_new_enemy_time;
   
@@ -105,7 +105,12 @@ class GobGame : public Game, public EventHandler {
   int num_planets;
   Planet *planet[16];
   GobStation *station[16];
-  void add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background);
+  void add_planet_and_station ( SpaceSprite *planet_sprite, 
+								int planet_index, 
+								SpaceSprite *station_sprite, 
+								const char *builds, 
+								const char *background,
+								std::string sname);
 
   void save_game();
   void load_game();
@@ -115,13 +120,17 @@ class GobGame : public Game, public EventHandler {
 };
 
 class GobStation : public Orbiter {
+  std::string name;
  public:
   const char *build_type;
   const char *background_pic;
   GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, 
 	       const char *ship, const char *background,
-	       const char *qlist );
+		   std::string sname );
   virtual ~GobStation();
+
+  std::string GetStationName(){return name;}
+
   virtual void buy_new_ship_menu(GobPlayer *s) ;
   virtual void inflict_damage(SpaceObject *other);
   virtual void station_screen (GobPlayer *s);

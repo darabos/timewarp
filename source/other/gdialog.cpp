@@ -24,6 +24,8 @@
 static BITMAP * g_btmAlien = NULL;
 static BITMAP * g_btmOld = NULL;
 bool g_bPause = false;
+Music* old_music = NULL;
+Music* music = NULL;
 
 static int alien_image_x = 0;
 static int alien_image_y = 0;
@@ -59,7 +61,9 @@ void InitConversationModule ( lua_State* L )
   ////////////////////////////////////////////////////////
   lua_register(L, "DialogStart",         l_DialogStart);
   lua_register(L, "DialogSetAlienImage", l_DialogSetAlienImage);
+  lua_register(L, "DialogSetMusic",      l_DialogSetMusic);
   lua_register(L, "DialogWrite",         l_DialogWrite);
+  lua_register(L, "DialogKeyPressed",    l_KeyPressed);
   lua_register(L, "DialogAnswer",        l_DialogAnswer);
   lua_register(L, "DialogEnd",           l_DialogEnd );
   
@@ -88,6 +92,9 @@ int l_DialogStart(lua_State* ls)
 	game->window->surface->w,
 	game->window->surface->h );
   game->window->unlock();
+
+  if (sound.is_music_playing())
+	  old_music = sound.looping_music;
 
   return l_DialogSetAlienImage(ls);
 }
@@ -123,6 +130,30 @@ int l_DialogSetAlienImage(lua_State* ls)
    return 0;
 }
 
+int l_DialogSetMusic(lua_State* ls)
+{
+	if ( !lua_isstring(ls, 1) )
+	{
+		tw_error("SetAlienImage was summoned without image string");
+	}
+	const char* mod = lua_tostring(ls, 1);
+
+	if (music)
+	{
+		sound.stop_music();
+		sound.unload_music(music);
+	}
+
+  music = sound.load_music(mod);
+
+  if (!music && sound.is_music_supported())
+     tw_error("Couldnt load music");
+
+  if (music) sound.play_music( music, TRUE);
+
+  return 0;
+}
+
 int l_DialogWrite(lua_State* ls)
 {
   game->window->lock();
@@ -151,6 +182,11 @@ int l_DialogWrite(lua_State* ls)
 }
 
 
+int l_KeyPressed (lua_State* ls)
+{
+	readkey();
+	return 0;
+}
 
 int l_DialogAnswer(lua_State* ls)
 {
@@ -203,6 +239,19 @@ int l_DialogEnd ( lua_State* ls )
   // destroy alien picture
   destroy_bitmap( g_btmAlien );
   g_btmAlien = NULL;
+
+  if (old_music)
+  {
+	  if (music)
+	  {
+		  sound.stop_music();
+		  sound.unload_music(music);
+	  }
+	sound.play_music( old_music, TRUE);
+  }
+
+  old_music = NULL;
+  music = NULL;
 
   if( !g_bPause )
 	  game->unpause();

@@ -27,7 +27,6 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include "gmissions_objects.h"
 
 #include "gplexplr.h"
-#include "dialog.h"
 
 #include <string.h>
 #include <stdio.h>

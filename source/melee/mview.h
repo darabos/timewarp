@@ -123,7 +123,7 @@ class message_type {
 	message_type() {num_messages = ox = oy = 0;}
 	void animate(Frame *frame);
 	void flush();
-	void out(char *string, int dur = 2000, int c = 15);
+	void out(const char *string, int dur = 2000, int c = 15);
 	void print(int dur, int c, const char *format, ...);
 	} extern message;
 

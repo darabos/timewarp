@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GR /GX /Ox /Ot /Og /Oi /Op /Ob2 /I "./include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /YX /FD /c
+# ADD CPP /nologo /MT /W3 /GR /GX /Zi /O1 /Op /Ob2 /I "./include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 ./lib/alleg.lib user32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/lua.lib ./lib/libfreetype.lib /nologo /subsystem:windows /incremental:yes /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin.exe"
+# ADD LINK32 ./lib/alleg.lib user32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/lua.lib ./lib/libfreetype.lib /nologo /subsystem:windows /incremental:yes /map /debug /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin.exe"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "twwin - Win32 Debug"
@@ -343,10 +343,6 @@ SOURCE=.\source\ais\c_wussie.cpp
 # Begin Group "Games"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\games\dialog.cpp
-# End Source File
 # Begin Source File
 
 SOURCE=.\source\games\gamehierarchy.cpp
@@ -1477,10 +1473,6 @@ SOURCE=.\source\other\vtarget.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\source\games\dialog.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\games\gamehierarchy.h
 # End Source File
 # Begin Source File
@@ -1799,6 +1791,10 @@ SOURCE=.\source\ship.h
 # Begin Source File
 
 SOURCE=.\scpwin.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\scpwin.rc
 # End Source File
 # End Group
 # End Target

@@ -8,9 +8,9 @@ FAILED    = 4;
 
 
 quests = {
-			{name = "ShofixtyQuest", file="gamedata/TestQuest.lua", status = UNTOUCHED },
-			{name = "ShofixtyQuest", file="gamedata/TestQuest.lua", status = UNTOUCHED }
-		 }
+		{name = "ShofixtyQuest", file="gamedata/TestQuest.lua", status = UNTOUCHED },
+		{name = "Ur-QuanQuest", file="gamedata/SecretPlanet.lua", status = UNTOUCHED }
+	 }
 -- when quest succesfuly complited,
 -- index - index of complited quest
 function QuestSuccess( index )
@@ -29,7 +29,7 @@ function GetNextQuest()
 		quests[1].status = ASSIGNED
 		return "gamedata/TestQuest.lua";
 	end
-	return "NO_DATA"
+	return "NO_QUEST"
 end
 
 function GetQuest()

@@ -419,7 +419,7 @@ void BasiLink::animate(Frame *space)
 	if ( hurty_time == 0 )
 	{
 		int	_old_trans = aa_get_trans();
-		aa_set_trans ( 255 * ((max_health-health) / (max_health + 1)) );
+		aa_set_trans ( iround(255 * ((max_health-health) / (max_health + 1))) );
 		sprite->animate(pos, sprite_index, space);
 		aa_set_trans(_old_trans);
 	}
@@ -429,7 +429,7 @@ void BasiLink::animate(Frame *space)
 		sprite->animate_character(pos, sprite_index, col, space);
 
 		int	_old_trans = aa_get_trans();
-		aa_set_trans ( 255 * (hurty_time / max_hurt_flash_time));
+		aa_set_trans ( iround(255 * (hurty_time / max_hurt_flash_time)));
 		sprite->animate(pos,sprite_index, space);
 		aa_set_trans(_old_trans);
 	}
@@ -677,7 +677,7 @@ void BChain::animate(Frame *space)
 	if ( hurty_time == 0 )
 	{
 		int	_old_trans = aa_get_trans();
-		aa_set_trans ( 255 * ((max_health-health) / (max_health + 1)) );
+		aa_set_trans ( iround(255 * ((max_health-health) / (max_health + 1)) ));
 		sprite->animate(pos, sprite_index, space);
 		aa_set_trans(_old_trans);
 	}
@@ -687,7 +687,7 @@ void BChain::animate(Frame *space)
 		sprite->animate_character(pos, sprite_index, col, space);
 
 		int	_old_trans = aa_get_trans();
-		aa_set_trans ( 255 * (hurty_time / max_hurt_flash_time));
+		aa_set_trans ( iround(255 * (hurty_time / max_hurt_flash_time)));
 		sprite->animate(pos,sprite_index, space);
 		aa_set_trans(_old_trans);
 	}
@@ -954,7 +954,7 @@ void AstromorphBasilisk::animate(Frame *space)
 		sprite->animate_character(pos, sprite_index, col, space);
 
 		int	_old_trans = aa_get_trans();
-		aa_set_trans ( 255 * (hurty_time / max_hurt_flash_time) );
+		aa_set_trans ( iround(255 * (hurty_time / max_hurt_flash_time) ));
 		sprite->animate(pos,sprite_index, space);
 		aa_set_trans(_old_trans);
 	}
@@ -995,7 +995,7 @@ void AstromorphBasilisk::calculate()
 		
 		add(new BasiliskGas(0.0, 0.0,
 			a, (aimline->target != NULL) ? weaponVelocity*aimBonus : weaponVelocity, 
-			weaponDamage, weaponLife, weaponRange, weaponArmour, 
+			weaponDamage, weaponLife, weaponRange, iround(weaponArmour), 
 			poison, this, data->spriteWeapon, 1.0));
 		
 		aimline->target = NULL;
@@ -1005,7 +1005,7 @@ void AstromorphBasilisk::calculate()
 	// slithering
 	//if(!(turn_left || turn_right || !thrust))
 	{
-		double frac = float(numSegs)/float(specialSegs);
+	  //double frac = float(numSegs)/float(specialSegs);
 		//double frac2 = numSegs/specialSegs;
 		//double frac2 = magnitude(this->vel)/speed_max;
 		double frac2 = 1.0;
@@ -1196,9 +1196,9 @@ void BasiliskAreaHurt::animate(Frame *space)
 		dy = p0.y;
 		for (j=3; j>=0; j--) {
 			if (space_zoom <= 1)
-				set_trans_blender(0, 0, 0, space_zoom * 255 * t * (4-j) / 4.0);
+				set_trans_blender(0, 0, 0, iround(space_zoom * 255 * t * (4-j) / 4.0));
 			else
-				set_trans_blender(0, 0, 0, 1 * 255 * t * (4-j) / 4.0);
+				set_trans_blender(0, 0, 0, iround(1 * 255 * t * (4-j) / 4.0));
 			xi = iround(x0 - dx * j);
 			yi = iround(y0 - dy * j);
 			putpixel(space->surface, xi, yi, color);
@@ -1344,7 +1344,7 @@ void BasiliskPoison::calculate()
 			}
 		}
 		
-		chance = random(1000.0);
+		chance = random(1000);
 		if (chance < frame_time * poison)
 		{
 			play_sound(data->sampleExtra[2]);

@@ -12,7 +12,9 @@ void InitConversationModule ( lua_State* L  );
 
 int l_DialogStart(lua_State* ls);
 int l_DialogSetAlienImage(lua_State* ls);
+int l_DialogSetMusic(lua_State* ls);
 int l_DialogWrite(lua_State* ls);
+int l_KeyPressed (lua_State* ls);
 int l_DialogAnswer(lua_State* ls);
 int l_DialogEnd ( lua_State* ls );
 

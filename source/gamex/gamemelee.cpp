@@ -39,7 +39,6 @@ REGISTER_FILE
 Ship *GameMelee::create_ship(const char *id, bool human, Vector2 pos, double angle, int team)
 {
 	Control *c = 0;
-	int channel = 0;
 
 	if (human)
 	{
