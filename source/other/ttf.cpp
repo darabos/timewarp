@@ -2,6 +2,8 @@
 #include <allegro.h>
 #include "allegro/internal/aintern.h"
 
+#include <ft2build.h> //required by freetype2 headers
+#include FT_FREETYPE_H //required by freetype2 headers
 #include "freetype/freetype.h"
 
 #include "ttf.h"
