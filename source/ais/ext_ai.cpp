@@ -21,7 +21,7 @@ REGISTER_FILE
 
 ExternalAI::ExternalAI(SpaceObject * so, std::string script)
 {
-	ASSERT(shp!=NULL);
+	ASSERT(so!=NULL);
 	space_object = so;
 	L = lua_open();
 	InitConversationModule( L );
