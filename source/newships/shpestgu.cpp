@@ -65,7 +65,7 @@ class EstionPlatform : public SpaceObject {
 
 int EstionPlatform::handle_damage (SpaceLocation *source, double normal, double direct) {
 	STACKTRACE
-	health -= normal + direct * 2;
+	health -= iround(normal + direct * 2);
 	if (health < 0){
 		state = 0;
 		// display explosion graphics [cyhawk]
@@ -75,7 +75,7 @@ int EstionPlatform::handle_damage (SpaceLocation *source, double normal, double 
 		// play explosion sound [cyhawk]
 		play_sound( explosionSample );
 		}
-	return normal + 2 * direct;
+	return iround(normal + 2 * direct);
 	}
 void EstionPlatform::ship_died() {
 	STACKTRACE

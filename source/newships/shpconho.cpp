@@ -82,9 +82,9 @@ ConfederationHornet::ConfederationHornet(Vector2 opos, double shipAngle,
 
   if (crew_max > 2) {
     if  (((int)ceil(crew_max) % 2) == 0) {
-      shield_y -= ((crew_max / 2)*2) - 2;
+      shield_y -= iround(crew_max) - 2;
     } else {
-      shield_y -= ((crew_max / 2)*2);
+      shield_y -= iround(crew_max);
     }
   }
 }
@@ -156,7 +156,7 @@ void ConfederationHornet::calculate()
 int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, double direct) {
 	STACKTRACE
    if ((normal - shield) <= 0) {
-     shield -= normal;
+     shield -= iround(normal);
 	 normal = 0;
    } else {
      normal -= shield;

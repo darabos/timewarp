@@ -162,7 +162,7 @@ BubalosBomber::BubalosBomber  (Vector2 opos, double shipAngle, ShipData *shipDat
   specialDDamage  = get_config_int("Special", "DDamage", 0);
   specialArmour    = get_config_int("Special","Armour",0);
   specialDriftVelocity = get_config_int("Special", "DriftVelocity", 0);
-  specialDriftMaxVelocity = scale_velocity(get_config_float("Special", "DriftMaxVelocity", 0));
+  specialDriftMaxVelocity = iround(scale_velocity(get_config_float("Special", "DriftMaxVelocity", 0)));
   specialTurnRate = scale_turning(get_config_float("Special","TurnRate",0));
 
   explosionPercentChanceBigBoom = get_config_int("Explosion", "PercentChanceBigBoom", 0);
@@ -430,7 +430,7 @@ void BubalosEMPSlug::inflict_damage (SpaceObject *other) {
 	STACKTRACE
 	if (other->mass) 
 	{
-		Vector2 D, E;
+		Vector2 D;
 		double veff, dv, a;
 
 		// after some testing, given physics of timewarp, it's most effective to push ships

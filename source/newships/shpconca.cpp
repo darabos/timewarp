@@ -586,7 +586,6 @@ void ConfedCargotran::inflict_damage(SpaceObject *other)
 	if ( other->id == CARGOCRATE_ID )
 	{
 		// add that crate as a new link at the end of the cargotrain:
-		int Nlinks = 1;
 		if ( Head )
 			Head->addlink(this, angle, data->spriteSpecial, specialSpacing, specialMass );
 		else

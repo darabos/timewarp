@@ -279,12 +279,7 @@ void BathaDeviant::calculate ()
 			Vector2 Vacc = -(Vd/R) * gravforce*bb;
 			
 			if (!o->isPlanet())
-				o->vel += Vacc;
-			else
-				vel -= Vacc;
-
-			vel -= Vacc;
-
+				o->vel += Vacc;			else				vel -= Vacc;				vel -= Vacc;
 			if (vel.length() > speed_max)
 				vel *= speed_max / vel.length();
 

@@ -116,7 +116,7 @@ int AsteroidCenter::canCollide(SpaceLocation *other)
 }
 int AsteroidCenter::handle_damage(SpaceLocation *source, double normal, double direct) 
 {
-	return normal + direct;
+	return iround(normal + direct);
 }
 int AsteroidCenter::isAsteroid()
 {
@@ -240,7 +240,7 @@ AsteroidMissile::AsteroidMissile(double ox, double oy, double oangle,
     int R, int Rm, int G, int Gm, int B, int Bm) :
   HomingMissile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, otrate, 
 		oship, osprite, oship->target), 
-  frame_count(oframe_count) , explosion(game->asteroidExplosionSprite)
+  explosion(game->asteroidExplosionSprite), frame_count(oframe_count) 
 {
 	collide_flag_sameship = bit(LAYER_SHIPS) | bit(LAYER_SHOTS);
 	//	explosionSprite     = game->asteroidExplosionSprite;
@@ -305,7 +305,7 @@ int AsteroidMissile::handle_damage(SpaceLocation *source, double normal, double 
 
 
   state = 0;
-  return direct + normal;  
+  return iround(direct + normal);  
 }
 void AsteroidMissile::death()
 {

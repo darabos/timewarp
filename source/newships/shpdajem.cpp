@@ -347,9 +347,9 @@ void DajielkaCrTorpedo::inflict_damage(SpaceObject* other) {
 
 DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
   :   
-  creator(ocreator),
   SpaceObject((SpaceLocation*) ocreator, 
-    ocreator->normal_pos(), ocreator->angle, ocreator->data->spriteSpecial)
+    ocreator->normal_pos(), ocreator->angle, ocreator->data->spriteSpecial),
+  creator(ocreator)
 {
   DajielkaTendril* DT;
   int i,j;
@@ -385,7 +385,7 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
   regenerationIsTendrilBased = creator->sanctuaryRegenerationIsTendrilBased;
 
   for(i=0; i<3; i++) {
-    DT = new DajielkaTendril(this, 1, range1, (PI2/3) * i, (double)deltaAngle1);
+    DT = new DajielkaTendril(this, 1, iround(range1), (PI2/3) * i, (double)deltaAngle1);
     DT->energyLevelMax = this->energyLevelMax1;
     DT->energyLevelPerDamagePoint = this->energyLevelPerDamagePoint1;
     DT->defenseEfficiency = this->defenseEfficiency;
@@ -393,7 +393,7 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
     game->add(DT);
   }
   for(i=3, j=0; i<8; i++,j++) {
-    DT = new DajielkaTendril(this, 1, range2, (PI2/5) * (double)(2*j), (double)deltaAngle2);
+    DT = new DajielkaTendril(this, 1, iround(range2), (PI2/5) * (double)(2*j), (double)deltaAngle2);
     DT->energyLevelMax = this->energyLevelMax2;
     DT->energyLevelPerDamagePoint = this->energyLevelPerDamagePoint2;
     tendril[i]=DT;
@@ -401,7 +401,7 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
     game->add(DT);
   }
   for(i=8, j=0; i<15; i++,j++) {
-    DT = new DajielkaTendril(this, 1, range3, (PI2 / 7.0) * (double)(3*j), deltaAngle3);
+    DT = new DajielkaTendril(this, 1, iround(range3), (PI2 / 7.0) * (double)(3*j), deltaAngle3);
     DT->energyLevelMax = this->energyLevelMax3;
     DT->energyLevelPerDamagePoint = this->energyLevelPerDamagePoint3;
     tendril[i]=DT;
@@ -409,7 +409,7 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
     game->add(DT);
   }
   for(i=15, j=0; i<30; i++,j++) {
-    DT = new DajielkaTendril(this, 1, range4, (PI2 / 15.0) * (double)(4*j), deltaAngle4);
+    DT = new DajielkaTendril(this, 1, iround(range4), (PI2 / 15.0) * (double)(4*j), deltaAngle4);
     DT->energyLevelMax = this->energyLevelMax4;
     DT->energyLevelPerDamagePoint = this->energyLevelPerDamagePoint4;
     tendril[i]=DT;
@@ -438,10 +438,10 @@ void DajielkaSanctuary::calculate(void) {
   int i,j;
   int oldSpriteIndex;
   int regenMultiplier;
-  DajielkaSanctuary::addEnergy(energyPerFrame*frame_time/25.0); //corrected for click-dependant regeneration. Tau.
+  DajielkaSanctuary::addEnergy( iround(energyPerFrame*frame_time/25.0) ); //corrected for click-dependant regeneration. Tau.
   for(i=0;i<30;i++)
     if(tendril[i]!=NULL)
-      if(tendril[i]->recreateMe = TRUE) {
+      if(tendril[i]->recreateMe == TRUE) {
         //tw_error("Want to recreate!");
         //tendril[i] = this->RecreateTendril(tendril[i]);
       }
@@ -517,9 +517,9 @@ DajielkaTendril* DajielkaSanctuary::RecreateTendril(DajielkaTendril* DT) {
     tw_error("Error: Null Tendril.");
     return NULL;
   }
-  if(DT->state = 0)
+  if(DT->state == 0)
     return NULL;
-  DTN = new DajielkaTendril(this, DT->damage, DT->originalLength,
+  DTN = new DajielkaTendril(this, DT->damage, iround(DT->originalLength),
     DT->angle, DT->rotation);
   DTN->creator = DT->creator;
   DTN->energyLevel = DT->energyLevel;
@@ -538,8 +538,8 @@ DajielkaTendril* DajielkaSanctuary::RecreateTendril(DajielkaTendril* DT) {
 
 DajielkaTendril::DajielkaTendril(DajielkaSanctuary* osanctuary, int odamage, int orange,
     double ostartingAngle, double orotation) :
-  sanctuary(osanctuary),
   creator(osanctuary->creator),
+  sanctuary(osanctuary),
   damage(odamage),
   range(orange),
   originalLength(orange),

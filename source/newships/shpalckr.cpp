@@ -428,7 +428,7 @@ void AlcheroLaser::calculate(){
 AlcheroLaserTrace::AlcheroLaserTrace( SpaceLocation *creator, double langle,
   int lcolor, double lrange, int orate ):
   Laser( creator, langle, pallete_color[lcolor], lrange, 0, 1000, creator, 0, true ),
-  rate( orate ), step( 0 ), color_index( lcolor ){
+  step( 0 ), rate( orate ), color_index( lcolor ){
   collide_flag_anyone = collide_flag_sameship = collide_flag_sameteam = 0;
   vel = 0;//vx = vy = 0;
 }

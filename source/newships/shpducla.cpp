@@ -420,7 +420,7 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 	x2 = (int)(normal_x() - dx - ((other->w) / 2.0));
 	y2 = (int)(normal_y() - dy - ((other->h) / 2.0));*/
 
-	if (!sprite->collide(p1.x, p1.y, sprite_index, p2.x, p2.y, 
+	if (!sprite->collide(iround(p1.x), iround(p1.y), sprite_index, iround(p2.x), iround(p2.y), 
 			other->get_sprite_index(), other->get_sprite() )) 
 		return 0;
 	//sprite->collide(x1, y1, sprite_index, x2, y2, other->sprite_index, other->sprite);
@@ -464,7 +464,7 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 	Vector2 nd;
 	nd = unit_vector(dp);
 	nd /= (mass + other->mass);
-	while (sprite->collide(p1.x, p1.y, sprite_index, p2.x, p2.y, 
+	while (sprite->collide(iround(p1.x), iround(p1.y), sprite_index, iround(p2.x), iround(p2.y), 
 			other->get_sprite_index(), other->get_sprite() )) {
 		pos = normalize(pos + nd * other->mass);
 		other->pos = normalize(other->pos - nd * mass);
@@ -624,7 +624,6 @@ int DuclyLanternjaws::activate_weapon()
 
 	// also, add a growing laser - arc :)
 
-	double per = 10.0;
 	int N = 25;
 
 	int col = makecol(255,0,0);
@@ -973,10 +972,9 @@ void Lantern::calculate()
 		b = mother->lanternColorB + i; if ( b > 255) b = 255;
 		col = makecol(r, g, b);
 
-		double dam, cnt;
+		double dam = mother->lanternDamage;;
+		int cnt = 500;
 		//dam = 1.0;
-		dam = mother->lanternDamage;
-		cnt = 500;
 
 		if (tw_random(1.0) < 0.1)	// 1 in 10 times
 		{

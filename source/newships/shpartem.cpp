@@ -286,11 +286,11 @@ void TempestWave::calculate()
 	double shit_angle = angle * (180 / PI); // FIXME: Goddamn radians
 
 	if ( (d / range) > (.25) )
-		sprite_index = (shit_angle / 5.625) + 64;
+		sprite_index = iround(shit_angle / 5.625) + 64;
 	if ( (d / range) > (.5) )
-		sprite_index = (shit_angle / 5.625) + 128;
+		sprite_index = iround(shit_angle / 5.625) + 128;
 	if ( (d / range) > (.75) )
-		sprite_index = (shit_angle / 5.625) + 192;
+		sprite_index = iround(shit_angle / 5.625) + 192;
 
 	if (!wave_range && tempest->exists()) {
 

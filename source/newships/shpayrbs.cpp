@@ -286,7 +286,7 @@ void AyronBS::calculate()
 
 	// this is the delay time between recharges.
 	if (Nrecharge > 0)
-		recharge_rate = recharge_rate_ref / Nrecharge;
+		recharge_rate = iround(recharge_rate_ref / Nrecharge);
 
 	// detect your death ... weeeeeh :()
 	if (!crew)
@@ -325,7 +325,7 @@ BigShipPart(aowner, orelpos, 0.0, info[otype-1]->spr_crewed, info[otype-1]->spr_
 	crew_max = crew;
 	batt = info[otype-1]->batt;
 	batt_max = batt;
-	recharge_rate = info[otype-1]->dynamo;
+	recharge_rate = iround(info[otype-1]->dynamo);
 
 	recharge_step = recharge_rate;
 	recharge_amount = 1;
@@ -596,7 +596,7 @@ void AyronShipPart::animate(Frame *space)
 	BITMAP *b;
 	b = spr->get_bitmap(sprite_index);
 
-	masked_stretch_blit(b, space->surface, 0, 0, b->w, b->h, P.x, P.y, W.x, W.y);
+	masked_stretch_blit(b, space->surface, 0, 0, b->w, b->h, iround(P.x), iround(P.y), iround(W.x), iround(W.y));
 	space->add_box(P.x, P.y, W.x, W.y);
 }
 

@@ -87,8 +87,8 @@ void FierasArbiter::animate(Frame *frame) {
 		drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 
 		for (i=-specialNumber+1;i<=0;i++) {
-			set_trans_blender(0,0,0,r2*(1-rc)*(specialNumber+i)*255.0/(specialNumber));
-			circle_r = (repulsor_radius+4*i)*space_zoom;
+			set_trans_blender(0,0,0, iround(r2*(1-rc)*(specialNumber+i)*255.0/(specialNumber)));
+			circle_r = iround((repulsor_radius+4*i)*space_zoom);
 			circle(frame->surface,circle_x0,circle_y0, circle_r, makecol(100,100,255));
 			frame->add_circle(circle_x0, circle_y0, circle_r, 0);
 		}
@@ -274,7 +274,7 @@ void FierasShot::calculate() {
 		spark_counter += 25;
 		game->add(new FierasShotSpark(this, PI2*(random()%1000)/1000.0,
 					scale_velocity(5)*(random()%101)/100.0,
-					4800*(1-0.5*(random()%101)/100.0),
+					iround(4800*(1-0.5*(random()%101)/100.0)),
 					160+random()%50, 160+random()%50, 230+random()%25));
 	}
 	spark_counter -= frame_time;
