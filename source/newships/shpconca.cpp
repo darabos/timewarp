@@ -129,8 +129,9 @@ int CargoLink::handle_damage(SpaceLocation *source, double normal, double direct
 		state=0;
 
 		// small chance of causing an explosion here, 1:5
+		// (later changed into a big chance)
 
-		if ( random(5) == 0 )
+		if ( random(1) == 0 )
 		{
 			
 			do_area_damage( );
