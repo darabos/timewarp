@@ -9,19 +9,18 @@
 #include <string>
 #include <map>
 
-#include "../melee.h"
-#include "../melee/mframe.h"
-#include "../melee/mgame.h"
+#include "melee.h"
+#include "melee/mframe.h"
+#include "melee/mgame.h"
 
-#include "../melee/mitems.h"
-#include "../melee/mcbodies.h"
+#include "melee/mitems.h"
+#include "melee/mcbodies.h"
 
-#include "../other/gquest.h"
-#include "../other/gevent.h"
+#include "other/gquest.h"
+#include "other/gevent.h"
 
 class Upgrade;
 class GobStation;
-
 class GobGame;
 
 class GobPlayer {
@@ -82,11 +81,14 @@ class GobGame : public Game, public EventHandler {
   int gobplayers;
   GobPlayer **gobplayer;
   virtual void add_gobplayer(Control *control);
-  virtual GobPlayer *get_player(SpaceLocation *what);
-  int gobenemies, max_enemies;
-  GobEnemy **gobenemy;
-  virtual int get_enemy_index(SpaceLocation *what);
-  
+  virtual GobPlayer* get_player(SpaceLocation *what);
+  unsigned int max_enemies;
+
+  std::list<GobEnemy*> gobenemy;
+
+  //  virtual int get_enemy_index(SpaceLocation *what);
+  virtual GobEnemy* get_enemy(SpaceLocation *what);
+
   //	protected:
   virtual void fps ();
   

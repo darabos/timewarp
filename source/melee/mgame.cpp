@@ -1735,10 +1735,6 @@ EventClass events;
 void Game::register_events()
 {
 	/*
-	EVENT(Game, &Game::chat);
-	EVENT(Game, &Game::change_lag);
-	EVENT(Game, &Game::test_event1);
-	EVENT(Game, &Game::disconnect);
 	this is wrong; the combination between Game and the function is handled
 	in a template, which is hidden behind the EVENT macro. It's impossible
 	to pass class-routines directly by pointer ...

@@ -108,7 +108,7 @@ void Quest::Process()
 
 	// gather information
 	int time = gobgame->game_time;
-	int enemy = gobgame->gobenemies;
+	int enemy = gobgame->gobenemy.size();
 	int kills = gob_player->kills;
 	int x = iround(gob_player->ship->normal_pos().x);
 	int y = iround(gob_player->ship->normal_pos().y);
