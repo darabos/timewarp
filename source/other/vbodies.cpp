@@ -194,7 +194,7 @@ int numSprites, int attribs, int firstSpriteNumber)
 
 //end sprite handling routines
 
-VSpaceInstallation::VSpaceInstallation():SpaceObject(NULL, random(map_size), random(PI2), game->asteroidSprite)
+VSpaceInstallation::VSpaceInstallation():SpaceObject(NULL, random(map_size), random(PI2), meleedata.asteroidSprite)
 {
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = ALL_LAYERS;
@@ -558,7 +558,7 @@ bool VGroundMissileLauncher::BattleAction(void) {
 }
 
 
-VSpaceMine::VSpaceMine():SpaceObject(NULL, random(map_size), random(PI2), game->asteroidSprite)
+VSpaceMine::VSpaceMine():SpaceObject(NULL, random(map_size), random(PI2), meleedata.asteroidSprite)
 {
   this->set_sprite(VSpaceMine::mySprite);
   this->explosionSprite = VSpaceMine::explosionSprite;
@@ -686,7 +686,7 @@ VIonStorm::VIonStorm(void):SpaceObject(NULL, Vector2(0,0), 0, NULL) {
 
 VDustCloud::VDustCloud(void)
 :
-SpaceObject(NULL, random(map_size), random(PI2), game->asteroidSprite)
+SpaceObject(NULL, random(map_size), random(PI2), meleedata.asteroidSprite)
 {
   double speed, angle;
   this->velocityRestoreFactor = 0.00;
@@ -771,7 +771,7 @@ void VDustCloud::calculate(void) {
 
 VGasCloud::VGasCloud(void)
 :
-SpaceObject(NULL, random(map_size), random(PI2), game->asteroidSprite)
+SpaceObject(NULL, random(map_size), random(PI2), meleedata.asteroidSprite)
 {
   double speed, angle;
   this->velocityRestoreFactor = 0.00;
@@ -1151,7 +1151,7 @@ Asteroid()
   armour = VMetalShard::myArmour;
   damage_factor = VMetalShard::myDamage;
   mass = VMetalShard::myMass;
-  explosionSprite = game->sparkSprite;
+  explosionSprite = meleedata.sparkSprite;
   mass = 1;
   this->willRespawn = FALSE;
 }
@@ -1166,7 +1166,7 @@ Asteroid()
   this->set_sprite(mySprite);
   armour = VMetalShard::myArmour;
   damage_factor = VMetalShard::myArmour;
-  explosionSprite = game->sparkSprite;
+  explosionSprite = meleedata.sparkSprite;
   mass = VMetalShard::myMass;
   //
   this->pos = pos;
@@ -1237,7 +1237,7 @@ Asteroid()
   this->set_sprite(mySprite);
   armour = VMetalAsteroid::myArmour;
   damage_factor = VMetalAsteroid::myDamage;
-  explosionSprite = game->sparkSprite;
+  explosionSprite = meleedata.sparkSprite;
   mass = VMetalAsteroid::myMass;
   this->willRespawn = TRUE;
 }
@@ -1328,7 +1328,7 @@ Asteroid()
   this->set_sprite(mySprite);
   armour = VSmallAsteroid::myArmour;
   damage_factor = VSmallAsteroid::damage_factor;
-  explosionSprite = game->sparkSprite;
+  explosionSprite = meleedata.sparkSprite;
   mass = VSmallAsteroid::mass;
   willRespawn = TRUE;
 }
@@ -1340,7 +1340,7 @@ Asteroid()
   this->set_sprite(mySprite);
   armour = 10;
   damage_factor = 0;
-  explosionSprite = game->sparkSprite;
+  explosionSprite = meleedata.sparkSprite;
   mass = 10;
   //
   this->pos = pos;
@@ -1412,7 +1412,7 @@ Asteroid()
   this->set_sprite(mySprite);
   armour = VLargeAsteroid::myArmour;
   damage_factor = VLargeAsteroid::myDamage;
-  explosionSprite = game->sparkSprite;
+  explosionSprite = meleedata.sparkSprite;
   mass = VLargeAsteroid::myMass;
   willRespawn = TRUE;
 }

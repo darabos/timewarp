@@ -207,7 +207,7 @@ void TauGladiusShot::inflict_damage(SpaceObject *other)
 	if(i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
 	play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
 	game->add(new Animation( this, 
-			pos + edge(), game->sparkSprite, 0, 
+			pos + edge(), meleedata.sparkSprite, 0, 
 			SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
 }
 

@@ -109,7 +109,7 @@ class Planet3D : public Planet {
 };
 
 
-
+/*
 class Vector3D
 {
 public:
@@ -155,6 +155,7 @@ void Vector3D::normalize()
 	y /= r;
 	z /= r;
 }
+*/
 
 
 
@@ -191,7 +192,7 @@ Planet *create_planet( Vector2 position )
 	if (planetD == 2)
 	{
 		// create a 2D planet
-		Planet *planet = new Planet (position, game->planetSprite, random(game->planetSprite->frames()));
+		Planet *planet = new Planet (position, meleedata.planetSprite, random(meleedata.planetSprite->frames()));
 		game->add (planet);
 		return planet;
 

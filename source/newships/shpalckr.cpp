@@ -306,7 +306,7 @@ void AlcheroKronos::calculate_hotspots() {
 	  pos - unit_vector(angle) * size.x / 4.5,
 //      normal_x() - cos(angle) * w / 4.5,
 //      normal_y() - sin(angle) * w / 4.5,
-      game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
+      meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
     hotspot_frame += hotspot_rate;
     }
   if (hotspot_frame > 0) hotspot_frame -= frame_time;

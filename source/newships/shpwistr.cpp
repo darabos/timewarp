@@ -410,7 +410,7 @@ void WissumTripod::calculate_hotspots()
 			if ( engineactive[i] )
 				game->add(new Animation(this,
 				normal_pos() - unit_vector(moveangles[i]) * size.x / 2.5,
-				game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+				meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 		}
 
 		hotspot_frame += hotspot_rate;

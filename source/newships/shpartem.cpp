@@ -209,13 +209,13 @@ void ArchTempest::calculate_hotspots() { // My ultra-cool hotspot code.  It 0wnz
 
 				game->add(new Animation(this,
 					normal_pos() - (unit_vector(angle + (PI/2)) * size.y / 2.5),
-					game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+					meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 
 				if (thrust) {
 
 					game->add(new Animation(this,
 						normal_pos() - (unit_vector(angle + (PI/4)) * size.y / 2.5),
-						game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+						meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 
 				}
 
@@ -227,12 +227,12 @@ void ArchTempest::calculate_hotspots() { // My ultra-cool hotspot code.  It 0wnz
 
 				game->add(new Animation(this,
 					normal_pos() - (unit_vector(angle - (PI/2)) * size.y / 2.5),
-					game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+					meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 
 				if (thrust) {
 					game->add(new Animation(this,
 						normal_pos() - (unit_vector(angle - (PI/4)) * size.y / 2.5),
-						game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+						meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 				}
 
 				hotspot_frame += hotspot_rate;
@@ -243,7 +243,7 @@ void ArchTempest::calculate_hotspots() { // My ultra-cool hotspot code.  It 0wnz
 
 				game->add(new Animation(this,
 					normal_pos() - (unit_vector(angle) * size.x / 2.5),
-					game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+					meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 				hotspot_frame += hotspot_rate;
 			}
 		}	
@@ -251,7 +251,7 @@ void ArchTempest::calculate_hotspots() { // My ultra-cool hotspot code.  It 0wnz
 		else if (thrust) {
 			game->add(new Animation(this,
 				normal_pos() - (unit_vector(angle) * size.x / 2.5),
-				game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+				meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 
 			hotspot_frame += hotspot_rate;
 		}

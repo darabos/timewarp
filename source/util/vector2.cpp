@@ -83,3 +83,36 @@ Vector2 unit_vector( Vector2 vec )
 	// result is undetermined.
 }
 
+
+
+
+
+
+
+Vector3D::Vector3D(double ax, double ay, double az)
+{
+	x = ax;
+	y = ay;
+	z = az;
+}
+
+double Vector3D::dot(Vector3D v)
+{
+	return x*v.x + y*v.y + z*v.z;
+}
+
+Vector3D Vector3D::cross(Vector3D b)
+{
+	return Vector3D(y*b.z - z*b.y, -x*b.z + z*b.x, x*b.y - y*b.x);
+}
+
+void Vector3D::normalize()
+{
+	double r;
+	r = sqrt(x*x + y*y + z*z);
+	x /= r;
+	y /= r;
+	z /= r;
+}
+
+

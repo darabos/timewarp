@@ -166,7 +166,7 @@ void SampleGame2::init(Log *_log) {
 	int i;
 	for (i = 0; i < 7; i += 1) add(new Asteroid());
 	//This time, in addition to the asteroids, we'll add a planet
-	SpaceObject *planet = new Planet(Vector2(size.x/4,0), planetSprite, random(3));
+	SpaceObject *planet = new Planet(Vector2(size.x/4,0), meleedata.planetSprite, random(3));
 	//the "random(3)" indicates that it uses one of the 3 normal planet pictures at random
 	add(planet);
 	//now we add an indicator to point towards the planet
@@ -390,7 +390,7 @@ void SampleGame3::pick_new_ships() {
 
 	//We don't add more asteroids here, because the destruction of the old ones 
 	//will automatically generate more asteroids
-	SpaceObject *planet = new Planet(Vector2(size.x/4, 0), planetSprite, random(3));
+	SpaceObject *planet = new Planet(Vector2(size.x/4, 0), meleedata.planetSprite, random(3));
 	add(planet);
 	add(new WedgeIndicator(planet, 150, 4));
 

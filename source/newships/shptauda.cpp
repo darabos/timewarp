@@ -139,7 +139,7 @@ void TauDaggerBeam::inflict_damage(SpaceObject *other)
 	int aa = get_tw_aa_mode();
 	if (!((aa & AA_BLEND) && (aa & AA_ALPHA) && (!got_spark) && !(aa & AA_NO_AA))) {
 		physics->add(new Animation( this, 
-				pos + edge(), game->sparkSprite, 0, 
+				pos + edge(), meleedata.sparkSprite, 0, 
 				SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
 		got_spark = true; }
 

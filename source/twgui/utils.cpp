@@ -263,6 +263,20 @@ void normalmouse::posstr::move(int dx, int dy)
 
 
 
+scrollpos_str::scrollpos_str()
+{
+	x = 0;
+	y = 0;
+
+	left = 0;
+	right = 0;
+	up = 0;
+	down = 0;
+	scrollhor = 0;
+	scrollvert = 0;
+}
+
+
 void scrollpos_str::set(int xscroll, int yscroll, int Nxscroll, int Nyscroll,
 						int Nx_show, int Ny_show)
 {
@@ -330,6 +344,35 @@ void scrollpos_str::add(int dx, int dy)
 
 	check_pos();
 }
+
+
+
+void scrollpos_str::check_sel()
+{
+	if (xselect < x)
+		x = xselect;
+
+	if (xselect > x + Nxshow - 1)
+		x = xselect-Nxshow+1;
+
+	if (yselect < y)
+		y = yselect;
+
+	if (yselect > y + Nyshow - 1)
+		y = yselect-Nyshow+1;
+}
+
+
+
+void scrollpos_str::set_sel(int xsel, int ysel)
+{
+	xselect = xsel;
+	yselect = ysel;
+
+	check_sel();
+	check_pos();
+}
+
 
 
 // alpha is a value between 0 and 1

@@ -311,7 +311,7 @@ void TauMC::calculate_hotspots()
                                   //normal_x() - (cos(angle * ANGLE_RATIO) * w / 2.0),
                                   //normal_y() - (sin(angle * ANGLE_RATIO) * h / 2.0),
 								  normal_pos() - 0.5 * sprite->size().x * unit_vector(angle),
-                                  game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
+                                  meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
                 hotspot_frame += hotspot_rate; }
         if (hotspot_frame > 0) hotspot_frame -= frame_time;
 }

@@ -750,7 +750,7 @@ done:
 	{
 		Planet *c;
 //		c = new Planet (random()%int(width), random()%int(height), kaboomSprite, 1);
-		c = new Planet (tw_random(size), kaboomSprite, 1);
+		c = new Planet (tw_random(size), meleedata.kaboomSprite, 1);
 		c->id=COMET_ID;
 		c->mass = CoMass;
 		c->gravity_force *= 0;

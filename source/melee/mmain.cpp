@@ -445,7 +445,7 @@ bool NormalGame::handle_key(int k)
 		case KEY_F9: {
 			if (log->type != Log::log_normal) return false;
 			message.out("MUHAHAHAHAHA!!!!", 5000, 12);
-			add(new Planet(random(size), planetSprite, random(planetSprite->frames())));
+			add(new Planet(random(size), meleedata.planetSprite, random(meleedata.planetSprite->frames())));
 			return true;
 			}
 		break;

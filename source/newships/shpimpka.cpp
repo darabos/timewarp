@@ -153,7 +153,7 @@ int ImperialKatana::activate_special(){
 	if(i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
 	play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
         game->add(new Animation(this, pos,
-          game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, LAYER_EXPLOSIONS));
+          meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, LAYER_EXPLOSIONS));
       }else{
         for( double alpha = angle + 60; alpha <= angle + 300; alpha += 40 ){
           game->add( new ImperialRadioactivity( this,
@@ -556,7 +556,7 @@ void ImperialHalfObject::calculate(){
     state = 0;
     play_sound( (SAMPLE *)(melee[MELEE_BOOMSHIP].dat), 100 );
     game->add( new Animation(this, pos,
-      game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, LAYER_EXPLOSIONS ));
+      meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, LAYER_EXPLOSIONS ));
   }
 }
 

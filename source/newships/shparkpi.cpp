@@ -642,7 +642,7 @@ void ArkanoidPincer::inflict_damage(SpaceObject *other) {
   collide_flag_anyone = ALL_LAYERS;
 	play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
 	physics->add(new Animation( other, 
-			other->normal_pos(), game->sparkSprite, 0, 
+			other->normal_pos(), meleedata.sparkSprite, 0, 
 			SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
 
   //message.print(1500,15,"ArkanoidPincerInflictDamage2");

@@ -430,7 +430,7 @@ void XXXAssimilator::calculate_hotspots()
 
 				normal_pos() - 11*unit_vector(angle),
 
-				game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
+				meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
 
 
 

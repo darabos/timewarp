@@ -136,4 +136,43 @@ public:
 };
 
 
+
+
+// might look surprising for a 2d game, but a 3d vector calculation sometimes makes
+// since ...
+
+class Vector3D
+{
+public:
+	double x, y, z;
+
+	Vector3D(double ax, double ay, double az);
+
+	double dot(Vector3D v);
+	Vector3D cross(Vector3D b);
+
+	void normalize();
+
+	Vector3D &operator= (_Ignore_Me *nothing) {x = y = z = 0; return *this;}
+};
+
+
+inline Vector3D operator+ (Vector3D a, Vector3D b)
+{
+	return Vector3D(a.x + b.x, a.y + b.y, a.z + b.z);
+};
+
+inline Vector3D operator- (Vector3D a, Vector3D b)
+{
+	return Vector3D(a.x - b.x, a.y - b.y, a.z - b.z);
+};
+
+inline Vector3D operator* (double b, Vector3D a)
+{
+	return Vector3D(a.x*b, a.y*b, a.z*b);
+};
+
+
+
+
 #endif

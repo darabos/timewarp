@@ -3,6 +3,9 @@
 #define __GMISSION_OBJECTS_H__
 
 
+SpaceObject *find_closest_team(SpaceLocation *s, int test_attr, double R, TeamCode team);
+
+
 SpaceSprite *gensprite(char *datafilename, char *dataobjectname, char *ident);
 
 class MissionObject : public SpaceObject
@@ -40,6 +43,7 @@ public:
 
 	double R;
 	double rping;
+	Vector2 center;
 
 	SpaceLineVoid	*line[10];
 
@@ -50,6 +54,16 @@ public:
 	virtual void animate(Frame *space);
 };
 
+
+
+class SpecialAreaTag : public SpecialArea
+{
+public:
+	SpaceLocation *tagship;
+	SpecialAreaTag(SpaceLocation *s, double aR);
+	virtual void calculate();
+	virtual void animate(Frame *space);
+};
 
 
 class AsteroidBelt : public Asteroid
@@ -80,6 +94,39 @@ public:
 	virtual void calculate();
 	virtual void death();
 };
+
+
+
+class MissionMessageBox : public Presence
+{
+public:
+	double time, period;
+	BITMAP *bmp_display;
+	int xpos, ypos;
+
+	MissionMessageBox(BITMAP *bmp, int oxpos, int oypos, double operiod);
+	~MissionMessageBox();
+
+	virtual void calculate();
+	virtual void animate(Frame *space);
+};
+
+
+class MissionPointer : public WedgeIndicator
+{
+private:
+	int hidden;
+	SpaceLocation *missiontarget;
+
+public:
+	MissionPointer(SpaceLocation *otarget);
+	void target(SpaceLocation *otarget);
+	void hide();
+	void show();
+	virtual void calculate();
+	virtual void animate(Frame *frame);
+};
+
 
 
 #endif

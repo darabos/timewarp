@@ -1,3 +1,4 @@
+// missionorder
 
 #include <allegro.h> //allegro library header
 
@@ -15,6 +16,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 
 #include "../melee/manim.h"
 #include "../frame.h"
+#include "../ais.h"
 
 #include "gamehierarchy.h"
 
@@ -23,14 +25,21 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include "gflmelee.h"
 #include "gmissions_objects.h"
 
+#include "gplexplr.h"
+
 #include <string.h>
 #include <stdio.h>
 
 
-//static const titlesize = 64;
-//static const briefingsize = 2048;
-static const int titlesize = 64;      //added int 7/1/2003 Culture20
-static const int briefingsize = 2048; //added int 7/1/2003 Culture20
+static const int titlesize = 64;
+static const int briefingsize = 2048;
+
+
+
+
+
+
+
 
 
 enum UpgradeCode
@@ -69,8 +78,6 @@ MissionObject(opos, datafilename, "OBJUPGRADE_DAT")
 
 int MSupgrade::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
-
 	if (source->isShip())
 	{
 		Ship *s = (Ship*) source;
@@ -98,8 +105,6 @@ int MSupgrade::handle_damage(SpaceLocation *source, double normal, double direct
 
 void MSupgrade::calculate()
 {
-	STACKTRACE
-
 	if (waittimer > 0)
 	{
 		waittimer -= frame_time * 1E-3;
@@ -113,8 +118,6 @@ void MSupgrade::calculate()
 
 void MSupgrade::animate(Frame *space)
 {
-	STACKTRACE
-
 	if (waittimer <= 0)			// disable drawing
 		SpaceObject::animate(space);
 }
@@ -145,8 +148,6 @@ MissionShip(opos, datafilename, "SHPFACTORY_DAT", ininame, "shpfactory", team)
 
 void MSFactory::missioncontrol()
 {
-	STACKTRACE
-
 
 	// simple, always turn around
 	turn_left = TRUE;
@@ -166,8 +167,6 @@ void MSFactory::missioncontrol()
 
 int MSFactory::activate_weapon()
 {
-	STACKTRACE
-
 	double A;
 	Vector2 P;
 
@@ -231,55 +230,92 @@ public:
 // mission descriptions without actually playing the missions.
 // the Play part is allocated when the Briefing has been examined, and the choice is made
 // to actually play the thing.
+struct Briefing
+{
+	char title[titlesize];
+	void define_title(char *t);
+	
+	char briefing[briefingsize];
+	void define_briefing(char *t);
+};
+
+
+
+
+
+struct Play : public SubGame
+{
+	Control		*playercontrol;
+	TeamCode	team_goodguys, team_badguys;
+	
+	SpaceLocation	*gravwell[32];
+	int				Ngravwells;
+	void addgravwell(SpaceLocation *s);
+	virtual Planet *nearest_planet(SpaceLocation *s);
+	
+	
+	int healthtoggle;	// toggles healthbars on/off ?
+	int		event_counter;
+	
+	MissionPointer	*missionpointer;
+	Stars			*stars;
+	
+	int stopgametime;
+	double minutes;
+	
+	//	virtual void debriefing();
+	
+	virtual void calculate();
+	virtual int quit_condition();
+	int quit_value;
+	
+	int enemycount();
+	
+	virtual void init(Log *_log);
+	
+	// stuff you need to set up the map; you're not interested in keeping track of details,
+	// so a void return is enough.
+	Planet *create_planet(double relx, double rely, int index);
+	
+	Ship *create_ship(double relx, double rely, char *shpid, Control *c, TeamCode team);
+	Ship *create_ship(double relx, double rely, char *shpid, char *c, TeamCode team);
+	
+	Ship *create_human_ship(double relx, double rely, char *shpid);
+	Ship *create_allied_ship(double relx, double rely, char *shpid);
+	Ship *create_enemy_ship(double relx, double rely, char *shpid);
+	Ship *create_enemy_ship(double relx, double rely, char *shpid, char *botname);
+
+	void create_enemies(char *id, int N);
+	void create_allies(char *id, int N);
+	void create_enemies(char *id, int N, char *botname);
+	
+	void create_asteroid_belt(Vector2 center, double Rmin, double Rmax, double v, int N);
+	void create_asteroids(int N);
+	
+	void ship_change_crew(Ship *s, double pcrew, double pcrewmax);
+	void ship_change_batt(Ship *s, double pbatt, double pbattmax, double prechargeamount, double prechargerate);
+	void ship_change_speed(Ship *s, double pspeed, double paccel, double pturn);
+	
+	void show_message(char *text, double timesec);
+	
+	// override AI controls, by ordering moves to the ship; by default, aim at going
+	// at max speed
+	void order_move(Ship *shp, Vector2 loc, double pspeed = 100.0);
+	void order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, TeamCode team);
+	void order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, Ship *enemy);
+
+	void set_targets(TeamCode team, SpaceObject *t);
+
+	virtual void ship_died(Ship *victim, SpaceLocation *killer);
+	virtual void handle_death(Ship *victim, SpaceLocation *killer);
+};
+
 
 class mission
 {
 public:
-	
-	struct Briefing
-	{
-		char title[titlesize];
-		void define_title(char *t);
-		
-		char briefing[briefingsize];
-		void define_briefing(char *t);
-	};
-	
-	
-	struct Play : public SubGame
-	{
-		Control		*playercontrol;
-		TeamCode	team_goodguys, team_badguys;
-		
-		int healthtoggle;	// toggles healthbars on/off ?
 
-		int stopgametime;
 
-		//	virtual void debriefing();
-		
-		virtual void calculate();
-		virtual int quit_condition();
-		int quit_value;
-		
-		int enemycount();
-		
-		virtual void init(Log *_log);
-		
-		// stuff you need to set up the map; you're not interested in keeping track of details,
-		// so a void return is enough.
-		void create_planet(double relx, double rely, int index);
-		
-		Ship *create_ship(double relx, double rely, char *shpid, Control *c, TeamCode team);
-		Ship *create_ship(double relx, double rely, char *shpid, char *c, TeamCode team);
-		
-		Ship *create_human_ship(double relx, double rely, char *shpid);
-		Ship *create_allied_ship(double relx, double rely, char *shpid);
-		Ship *create_enemy_ship(double relx, double rely, char *shpid);
-
-		void ship_change_crew(Ship *s, double pcrew, double pcrewmax);
-		void ship_change_batt(Ship *s, double pbatt, double pbattmax, double prechargeamount, double prechargerate);
-		void ship_change_speed(Ship *s, double pspeed, double paccel, double pturn);
-	};
 
 	// give the following no body, so it must be defined by the inheritors ?!
 	virtual Briefing *initbriefing(){return 0;};	// this returns the briefing info (pointer)
@@ -298,12 +334,12 @@ class mission_defeat_vux : public mission
 {
 public:
 
-	struct B : mission::Briefing
+	struct B : Briefing
 	{
 		B();
 	};
 
-	struct P : mission::Play
+	struct P : Play
 	{
 		virtual void init(Log *_log);
 		virtual int quit_condition();
@@ -320,12 +356,12 @@ class mission_defeat_alari : public mission
 {
 public:
 
-	struct B : mission::Briefing
+	struct B : Briefing
 	{
 		B();
 	};
 
-	struct P : mission::Play
+	struct P : Play
 	{
 		virtual void init(Log *_log);
 		virtual int quit_condition();
@@ -340,19 +376,14 @@ public:
 class mission_protect_chenjesu : public mission
 {
 public:
-	struct B : mission::Briefing
+	struct B : Briefing
 	{
 		B();
 	};
 
-	struct P : mission::Play
+	struct P : Play
 	{
 		Ship	*chen;
-		int		event_counter;
-		double	minutes;
-		
-	  //mission_protect_chenjesu();
-	  void mission_protect_chenjesu(); //added void 7/1/2003 Culture20
 		
 		virtual void init(Log *_log);
 		virtual void calculate();
@@ -368,18 +399,15 @@ class mission_escape_from_alcatraz : public mission
 {
 public:
 
-	struct B : mission::Briefing
+	struct B : Briefing
 	{
 		B();
 	};
 	
-	struct P : mission::Play
+	struct P : Play
 	{
 		SpecialArea *specialarea;
 		Ship *playership;
-		
-	  //mission_escape_from_alcatraz(); 
-		void mission_escape_from_alcatraz(); //added void 7/1/2003 Culture20
 		
 		virtual void init(Log *_log);
 		virtual int quit_condition();
@@ -394,12 +422,12 @@ class mission_destroy_factory : public mission
 {
 public:
 
-	struct B : mission::Briefing
+	struct B : Briefing
 	{
 		B();
 	};
 
-	struct P : mission::Play
+	struct P : Play
 	{
 		Ship *factory;
 		
@@ -410,6 +438,201 @@ public:
 	virtual Briefing *initbriefing(){return new B();};	// this returns the briefing info (pointer)
 	virtual Play *initgame(){return playgame = new P();};			// this returns the game info (pointer)
 };
+
+
+class mission_protect_official : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		Ship	*ambassador, *terrorist, *player;
+		Planet	*centralplanet;
+
+		bool	doshipdamage, missioncomplete;
+		
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+		virtual void handle_death(Ship *victim, SpaceLocation *killer);
+	};
+
+	virtual Briefing *initbriefing(){return new B();};	// this returns the briefing info (pointer)
+	virtual Play *initgame(){return playgame = new P();};			// this returns the game info (pointer)
+};
+
+class mission_protect_official02 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+	};
+
+	virtual Briefing *initbriefing(){return new B();};	// this returns the briefing info (pointer)
+	virtual Play *initgame(){return playgame = new P();};			// this returns the game info (pointer)
+};
+
+
+class mission_protect_official03 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		Plsurface	*plsurface;
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+	};
+
+	virtual Briefing *initbriefing(){return new B();};	// this returns the briefing info (pointer)
+	virtual Play *initgame(){return playgame = new P();};			// this returns the game info (pointer)
+};
+
+
+class mission_protect_official04 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		Planet *centralplanet;
+		Ship		*phedar[128];
+		Vector2		guardloc[128];
+		int			Nphedar;
+
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+	};
+
+	virtual Briefing *initbriefing(){return new B();};
+	virtual Play *initgame(){return playgame = new P();};
+};
+
+
+class mission_protect_official05 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		bool missionloss;
+		Ship *informant;
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+		virtual void handle_death(Ship *victim, SpaceLocation *killer);
+	};
+
+	virtual Briefing *initbriefing(){return new B();};
+	virtual Play *initgame(){return playgame = new P();};
+};
+
+
+
+class mission_protect_official06 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+	};
+
+	virtual Briefing *initbriefing(){return new B();};
+	virtual Play *initgame(){return playgame = new P();};
+};
+
+class mission_protect_official07 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+	};
+
+	virtual Briefing *initbriefing(){return new B();};
+	virtual Play *initgame(){return playgame = new P();};
+};
+
+class mission_protect_official08 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+	};
+
+	virtual Briefing *initbriefing(){return new B();};
+	virtual Play *initgame(){return playgame = new P();};
+};
+
+class mission_protect_official09 : public mission
+{
+public:
+	struct B : Briefing
+	{
+		B();
+	};
+
+	struct P : Play
+	{
+		virtual void init(Log *_log);
+		virtual void calculate();
+		virtual int quit_condition();
+	};
+
+	virtual Briefing *initbriefing(){return new B();};
+	virtual Play *initgame(){return playgame = new P();};
+};
+
+
+
 
 
 
@@ -469,7 +692,7 @@ void gmissions::removesubgame(int k)
 void gmissions::set_info_buttons()
 {
 
-	mission::Briefing *briefing;
+	Briefing *briefing;
 	briefing = missionlist[chosenmission]->initbriefing();		// initialize information.
 
 	// something short to remember the mission by.
@@ -496,8 +719,17 @@ void gmissions::init(Log *_log)
 
 	Nmissions = 0;
 
+	// missionorder
 	// well .. start adding missions, and manage them !!!
-
+	add2list( new mission_protect_official() );
+	add2list( new mission_protect_official02() );
+	add2list( new mission_protect_official03() );
+	add2list( new mission_protect_official04() );
+	add2list( new mission_protect_official05() );
+	add2list( new mission_protect_official06() );
+	add2list( new mission_protect_official07() );
+	add2list( new mission_protect_official08() );
+	add2list( new mission_protect_official09() );
 	add2list( new mission_defeat_vux() );
 	add2list( new mission_defeat_alari() );
 	add2list( new mission_protect_chenjesu() );
@@ -533,28 +765,29 @@ void gmissions::init(Log *_log)
 
 	this->view->frame->prepare();
 
-	missionselectmenu = new AreaReserve("SELECTMISSION", 50, 400, "gmissiongui.dat", this->view->frame->surface);
+//	missionselectmenu = new AreaReserve("SELECTMISSION", 50, 400, "gmissiongui.dat", this->view->frame->surface);
+	missionselectmenu = new AreaReserve("interfaces/selectmission/briefing", 50, 400, this->view->frame->surface);
 
-	b_info = new TextButton(missionselectmenu, "INFO", -1, -1, usefont);
+	b_info = new TextButton(missionselectmenu, "info", -1, -1, usefont);
 
-	b_accept = new Button(missionselectmenu, "ACCEPT", -1, -1, KEY_ENTER);
-	b_quit = new Button(missionselectmenu, "QUIT", -1, -1, KEY_ESC);
+	b_accept = new Button(missionselectmenu, "accept", -1, -1, KEY_ENTER);
+	b_quit = new Button(missionselectmenu, "quit", -1, -1, KEY_ESC);
 
-	b_title = new TextButton(missionselectmenu, "TITLE", -1, -1, usefont);
+	b_title = new TextButton(missionselectmenu, "title", -1, -1, usefont);
 
-	b_left = new Button(missionselectmenu, "LEFT", -1, -1, KEY_LEFT);
-	b_right = new Button(missionselectmenu, "RIGHT", -1, -1, KEY_RIGHT);
+	b_left = new Button(missionselectmenu, "left", -1, -1, KEY_LEFT);
+	b_right = new Button(missionselectmenu, "right", -1, -1, KEY_RIGHT);
 
 	b_ghost = new GhostButton(missionselectmenu);
 
-	popupinfo = new PopupTextInfo_toggle(b_ghost, "POPUPINFO", -50, -200, "gmissiongui.dat", usefont, "", 0);
+	popupinfo = new PopupTextInfo_toggle(b_ghost, "interfaces/selectmission/popupinfo", -50, -200, usefont, "", 0);
 	popupinfo->option.disable_othermenu = false;
 	popupinfo->option.place_relative2mouse = false;	// hmm, a bit late, after it's already been placed... oh well, never mind ...
 	popupinfo->show();	// by default it's inactive, but I'd prefer it's active right away.
 //	delete infotext;
 
-	alertlose = new PopupYN("ALERTLOSE", 400, 300, "gmissiongui.dat", this->view->frame->surface);
-	alertwin  = new PopupOk("ALERTWIN",  400, 300, "gmissiongui.dat", this->view->frame->surface);
+	alertlose = new PopupYN("interfaces/selectmission/alertlose", 400, 300, this->view->frame->surface);
+	alertwin  = new PopupOk("interfaces/selectmission/alertwin",  400, 300, this->view->frame->surface);
 
 	winman = new WindowManager;
 	winman->add(missionselectmenu);
@@ -700,20 +933,20 @@ mission::Briefing *mission::initbriefing()
 	return 0;	// this must be overwritten
 }
 
-mission::Play *mission::initgame()
+Play *mission::initgame()
 {
 	return 0;	// this must be overwritten
 }
 */
 
 
-void mission::Briefing::define_title(char *t)
+void Briefing::define_title(char *t)
 {
 	strncpy(title, t, titlesize-1);
 	title[titlesize-1] = 0;
 }
 
-void mission::Briefing::define_briefing(char *t)
+void Briefing::define_briefing(char *t)
 {
 	strncpy(briefing, t, briefingsize-1);
 	briefing[briefingsize-1] = 0;
@@ -721,13 +954,14 @@ void mission::Briefing::define_briefing(char *t)
 
 
 
-void mission::Play::init(Log *_log)
+void Play::init(Log *_log)
 {
 	SubGame::init(_log);
 
 	prepare();
 
-	add(new Stars());
+	stars = new Stars();
+	add(stars);
 
 	team_goodguys = new_team();
 	team_badguys = new_team();
@@ -767,16 +1001,32 @@ void mission::Play::init(Log *_log)
 
 	stopgametime = 0;
 	quit_value = 0;
+	minutes = 0;
+	event_counter = 0;
+
+	missionpointer = new MissionPointer(0);
+	add(missionpointer);
+
+	Ngravwells = 0;
 }
 
 
-void mission::Play::calculate()
+void Play::calculate()
 {
 	SubGame::calculate();
 
 	
 	if ( quit_value != 0)
 	{
+		if (playercontrol && playercontrol->ship)
+		{
+			// make the ship unable to die, so that it will persist till the end of the game
+			playercontrol->ship->collide_flag_anyone = 0;
+			playercontrol->ship->collide_flag_sameship = 0;
+			playercontrol->ship->collide_flag_sameteam = 0;
+			playercontrol->ship->vel *= 0.1;	// slow the ship down.
+		}
+
 		if ( (get_time() - stopgametime)*1E-3 > 3.0)	// stop the game with a delay of 3 sec's
 			quit("quit?");	// this sets game_done, and results in a call to removesubgame
 	}
@@ -785,22 +1035,29 @@ void mission::Play::calculate()
 		quit_value = quit_condition();
 		stopgametime = get_time();
 	}
+
+	minutes = game_time/(1000.0 * 60.0);
 }
 
-int mission::Play::quit_condition()
+int Play::quit_condition()
 {
 	return 0;
 }
 
 
-void mission::Play::create_planet(double relx, double rely, int index)
+Planet *Play::create_planet(double relx, double rely, int index)
 {
-	game->add( new Planet(map_size * Vector2(relx, rely), game->planetSprite, index) );
+	Planet *p;
+	p = new Planet(map_size * Vector2(relx, rely), meleedata.planetSprite, index);
+	//game->add( p );
+	addgravwell(p);	// this adds the planet to a separate gravwell list, for easy location of a planet
+	// to compensate for the large search radius, given the large force field.
+	return p;
 //	Planet(Vector2 location, SpaceSprite *sprite, int index);
 }
 
 
-Ship *mission::Play::create_ship(double relx, double rely, char *shpid, Control *c, TeamCode team)
+Ship *Play::create_ship(double relx, double rely, char *shpid, Control *c, TeamCode team)
 {
 	Ship *s;
 	s = Game::create_ship(shpid, c, map_size*Vector2(relx, rely), random(2*PI), team);
@@ -809,7 +1066,7 @@ Ship *mission::Play::create_ship(double relx, double rely, char *shpid, Control 
 	return s;
 }
 
-Ship *mission::Play::create_ship(double relx, double rely, char *shpid, char *c, TeamCode team)
+Ship *Play::create_ship(double relx, double rely, char *shpid, char *c, TeamCode team)
 {
 	Ship *s;
 	s = Game::create_ship(channel_server, shpid, c, map_size*Vector2(relx, rely), random(2*PI), team);
@@ -818,45 +1075,51 @@ Ship *mission::Play::create_ship(double relx, double rely, char *shpid, char *c,
 	return s;
 }
 
-Ship *mission::Play::create_human_ship(double relx, double rely, char *shpid)
+Ship *Play::create_human_ship(double relx, double rely, char *shpid)
 {
 	return Play::create_ship(relx, rely, shpid, playercontrol, team_goodguys);
 }
 
-Ship *mission::Play::create_allied_ship(double relx, double rely, char *shpid)
+Ship *Play::create_allied_ship(double relx, double rely, char *shpid)
 {
 	return Play::create_ship(relx, rely, shpid, "WussieBot", team_goodguys);
 }
 
-Ship *mission::Play::create_enemy_ship(double relx, double rely, char *shpid)
+Ship *Play::create_enemy_ship(double relx, double rely, char *shpid)
 {
-
 	return Play::create_ship(relx, rely, shpid, "WussieBot", team_badguys);
 }
 
 
-void mission::Play::ship_change_crew(Ship *s, double pcrew, double pcrewmax)
+Ship *Play::create_enemy_ship(double relx, double rely, char *shpid, char *botname)
+{
+	return Play::create_ship(relx, rely, shpid, botname, team_badguys);
+}
+
+
+
+void Play::ship_change_crew(Ship *s, double pcrew, double pcrewmax)
 {
 	s->crew *= pcrew / 100.0;
 	s->crew_max *= pcrewmax / 100.0;
 }
 
-void mission::Play::ship_change_batt(Ship *s, double pbatt, double pbattmax, double prechargeamount, double prechargerate)
+void Play::ship_change_batt(Ship *s, double pbatt, double pbattmax, double prechargeamount, double prechargerate)
 {
-	s->batt *= pbatt / 100;
-	s->batt_max *= pbatt / 100;
-	s->recharge_amount  *= (int)(prechargeamount / 100);
-	s->recharge_rate /= (int)(prechargerate / 100);
+	s->batt *= pbatt / 100.0;
+	s->batt_max *= pbatt / 100.0;
+	s->recharge_amount  *= prechargeamount / 100.0;
+	s->recharge_rate /= prechargerate / 100.0;
 }
 
-void mission::Play::ship_change_speed(Ship *s, double pspeed, double paccel, double pturn)
+void Play::ship_change_speed(Ship *s, double pspeed, double paccel, double pturn)
 {
 	s->speed_max *= pspeed * 0.01;
 	s->accel_rate *= paccel * 0.01;
 	s->turn_step *= pturn * 0.01;
 }
 
-int mission::Play::enemycount()
+int Play::enemycount()
 {
 	int i, count;
 
@@ -875,8 +1138,359 @@ int mission::Play::enemycount()
 
 
 
+void Play::show_message(char *text, double timesec)
+{
+
+	// define some bitmap with text
+	BITMAP *b;
+
+	int i = 2;
+	if (screen->w == 640)
+		i = 2;
+	if (screen->w == 800)
+		i = 3;
+	if (screen->w == 1024)
+		i = 4;					// more pixels available for the same "real-life" size.
+	i += 2;	// choose a larger font, for easier reading.
+
+	FONT *usefont = videosystem.get_font(i);
+
+	int h0, H, L;
+
+	L = text_length(usefont, text)+6*text_length(usefont, " ");
+	h0 = text_height(usefont);
+	H = 1.5 * h0;
+
+	b = create_bitmap_ex(32, L, H);
+	clear_to_color(b, makecol(100,80,60));
+	textout_centre(b, usefont, text, L/2, (H-h0)/2, makecol(255,255,128));
+
+	// add this to the game for a short while
+	int ix, iy;
+	ix = (screen->w - L) / 2;
+	iy = 0.01 * screen->h;
+
+	add( new MissionMessageBox(b, ix, iy, timesec ) );
+}
 
 
+
+void Play::order_move(Ship *shp, Vector2 loc, double pspeed)
+{
+	if (!(shp && shp->exists()))
+		return;
+
+	// reset the keys for this ship
+	shp->nextkeys = 0;
+
+	// re-define the keys
+	double a, da, db, dc;
+	a = min_delta(loc - shp->pos, map_size).atan();
+
+	// direction
+	da = a - shp->vel.atan();
+	while (da < -PI)	da += PI2;
+	while (da >  PI)	da -= PI2;
+
+	db = a - shp->angle;
+	while (db < -PI)	db += PI2;
+	while (db >  PI)	db -= PI2;
+
+	dc = shp->vel.atan() - shp->angle;
+	while (dc < -PI)	dc += PI2;
+	while (dc >  PI)	dc -= PI2;
+
+	// don't turn so quickly that you'd come at a complete stop (180 degr)
+	// but, some anti-thrust can be healthy otherwise you may keep circling?
+	if (fabs(dc) > 0.6 * PI)
+		da = dc;
+	else
+	{
+		a = fabs(da/PI);
+		if (a > 0.5) a = 0.5;
+		da = a*da + (1-a)*db;
+		// for a really big velocity deviation, attention goes to correcting that;
+		// otherwise, the ship's direction should be focus
+	}
+		
+	if (da > 0.01*PI)
+	{
+		shp->nextkeys |= keyflag::right;
+		shp->nextkeys |= keyflag::thrust;	// you _must_ thrust, otherwise you can't steer.
+	}
+	if (da < -0.01*PI)
+	{
+		shp->nextkeys |= keyflag::left;
+		shp->nextkeys |= keyflag::thrust;
+	}
+	
+
+	double d = 1.0;
+
+	if (shp->vel.length() < 0.01*pspeed * d * shp->speed_max)	// move at some percentage of max speed
+		shp->nextkeys |= keyflag::thrust;
+	else
+		shp->vel *= (1 - 0.1*frame_time*1E-3);		// ok, very artificial, but, what the heck ;)
+	/*
+	// thrust if you're going to slow ?
+	double d;
+	d = (shp->pos - loc).length();
+	d -= 250;		// 250 pixels zone of 0 velocity.
+	d /= 500;		// at 500 distance from 0-vel zone slow down, otherwise go for max thrust.
+	if (d > 1)
+		d = 1;
+	if (d < 0)
+		d = 0;
+
+	else if (d < 1)
+	{
+		// invert the controls - so that the ship turns away from the loc. and can slow down.
+		shp->nextkeys &= ~keyflag::right;	// ?????
+		shp->nextkeys &= ~keyflag::thrust;
+	}
+	*/
+}
+
+
+
+
+void Play::addgravwell(SpaceLocation *s)
+{
+	game->add(s);
+	gravwell[Ngravwells] = s;
+	++Ngravwells;
+}
+
+Planet *Play::nearest_planet(SpaceLocation *s)
+{
+//	return Game::nearest_planet(s);
+
+	int i;
+	double Rclosest, Rtest;
+	
+	Rclosest = 1E99;
+	SpaceLocation *oclosest;
+
+	oclosest = 0;
+	if (Ngravwells == 0)
+		oclosest = 0;
+
+	else if (Ngravwells == 1)	// a common case
+		oclosest = gravwell[0];
+
+	else
+	{
+		for ( i = 0; i < Ngravwells; ++i )
+		{
+			Rtest = gravwell[i]->distance(s);
+			if ( Rtest < Rclosest)
+			{
+				Rclosest = Rtest;
+				oclosest = gravwell[i];
+			}
+		}
+	}
+
+	if (oclosest && !oclosest->isPlanet())
+	{
+		tw_error("Found a weird gravwell");
+	}
+
+	return (Planet*) oclosest;
+}
+
+
+void turnto(Ship *shp, Vector2 loc)
+{
+	// re-define the keys
+	double a, da, db, dc;
+	a = min_delta(loc - shp->pos, map_size).atan();
+
+	// direction
+	da = a - shp->vel.atan();
+	while (da < -PI)	da += PI2;
+	while (da >  PI)	da -= PI2;
+
+	db = a - shp->angle;
+	while (db < -PI)	db += PI2;
+	while (db >  PI)	db -= PI2;
+
+	dc = shp->vel.atan() - shp->angle;
+	while (dc < -PI)	dc += PI2;
+	while (dc >  PI)	dc -= PI2;
+
+	// don't turn so quickly that you'd come at a complete stop (180 degr)
+	// but, some anti-thrust can be healthy otherwise you may keep circling?
+	if (fabs(dc) > 0.6 * PI)
+		da = dc;
+	else
+	{
+		a = fabs(da/PI);
+		if (a > 0.5) a = 0.5;
+		da = a*da + (1-a)*db;
+		// for a really big velocity deviation, attention goes to correcting that;
+		// otherwise, the ship's direction should be focus
+	}
+		
+	if (da > 0.01*PI)
+	{
+		shp->nextkeys |= keyflag::right;
+		shp->nextkeys |= keyflag::thrust;	// you _must_ thrust, otherwise you can't steer.
+	}
+	if (da < -0.01*PI)
+	{
+		shp->nextkeys |= keyflag::left;
+		shp->nextkeys |= keyflag::thrust;
+	}
+}
+
+
+// guard against any ship that's closeby (quite inefficient in case there're many ships to check)
+// Move around within the guard area ; once an enemy ship gets in range of attack that you
+// specify, the ship goes to attack.
+void Play::order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, TeamCode team)
+{
+	// check the closest ship-type target
+	Ship *t;
+	t = (Ship*) find_closest_team(shp, ATTRIB_SHIP, Rattack, team);
+
+	order_guard(shp, loc, Rmove, Rattack, t);
+}
+
+// guard against a particular ship (efficient)
+// attack range is relative to the ship itself - it's like, the sight range.
+// move range (the guard area) is around a fixed point in space.
+//   note: this routine takes very little time.
+void Play::order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, Ship *enemy)
+{
+	if (!(enemy && enemy->exists()))
+		return;
+
+	// check your position
+	double Rs, Rt;
+	Rs = min_delta(shp->pos, loc, map_size).length();
+
+	if (enemy && enemy->exists())
+		Rt = min_delta(enemy->pos, shp->pos, map_size).length();
+
+	// just move around in (or return to) the guard area, if the enemy is out of reach
+	// (if the enemy stays in reach, you got a hot pursuit :)
+	if (!enemy || Rt > Rattack)
+	{
+		// reset the keys for this ship
+		shp->nextkeys = 0;
+
+		if (Rs > Rmove)	// move back
+			turnto(shp, loc);
+		else	// something random?
+		{
+			switch (random(3))
+			{
+			case 0:
+				shp->nextkeys |= keyflag::right;
+				break;
+			case 1:
+				shp->nextkeys |= keyflag::left;
+				break;
+			}
+		}
+		shp->nextkeys |= keyflag::thrust;
+
+		return;
+	}
+
+
+	// otherwise ... there's a ship within range...
+	// ... do nothing then : let the normal AI handle it !!
+
+//	shp->AI();
+}
+
+
+void Play::set_targets(TeamCode team, SpaceObject *t)
+{
+	// check all ships with that name, and set their target !
+	int i;
+	for ( i = 0; i < num_targets; ++i )
+	{
+		SpaceObject *s;
+		s = target[i];
+		if (s->get_team() == team)
+			s->target = t;			// now they should go and attack t ?!
+	}
+}
+
+
+
+
+void Play::create_asteroid_belt(Vector2 center, double Rmin, double Rmax, double v, int N)
+{
+	int i;
+	for (i = 0; i < N; ++i)
+		game->add(new AsteroidBelt(center, Rmin, Rmax, v));
+}
+
+
+void Play::create_asteroids(int N)
+{
+	int i;
+	for (i = 0; i < N; ++i)
+		game->add(new Asteroid());
+}
+
+
+void Play::create_enemies(char *id, int N)
+{
+	int i;
+
+	for ( i = 0; i < N; ++i )
+	{
+		create_enemy_ship(random(1.0), random(1.0), id);
+	}
+}
+
+
+void Play::create_enemies(char *id, int N, char *botname)
+{
+	int i;
+
+	for ( i = 0; i < N; ++i )
+	{
+		create_enemy_ship(random(1.0), random(1.0), id, botname);
+	}
+}
+
+
+
+void Play::create_allies(char *id, int N)
+{
+	int i;
+
+	for ( i = 0; i < N; ++i )
+	{
+		create_allied_ship(random(1.0), random(1.0), id);
+	}
+}
+
+
+
+void Play::ship_died(Ship *victim, SpaceLocation *killer)
+{
+	// ... source can be 0
+	if (!killer)
+		return;
+
+	// handle game events based on certain combinations of who/source :
+	handle_death(victim, killer);
+
+	Game::ship_died(victim, killer);
+	return;
+}
+
+void Play::handle_death(Ship *victim, SpaceLocation *killer)
+{
+	// nothing: should be specified per game.
+}
 
 
 // ****************************************************
@@ -1052,7 +1666,7 @@ void mission_protect_chenjesu::P::init(Log *_log)
 	// allied ship
 	chen = create_allied_ship(0.15, 0.1, "chebr");
 	ship_change_crew(chen, 80, 100);		// fewer crew
-//	ship_change_batt(chen, 10, 10, 10, 10);	// little offensive power
+	ship_change_batt(chen, 10, 10, 10, 10);	// little offensive power
 	ship_change_speed(chen, 30, 10, 50);	// very slow
 
 	// enemy ships
@@ -1077,7 +1691,7 @@ void mission_protect_chenjesu::P::calculate()
 	Play::calculate();
 
 	// timed arrival of ships ?!
-	minutes = game_time/(1000.0 * 60.0);
+	//minutes = game_time/(1000.0 * 60.0);
 
 	switch (event_counter)
 	{
@@ -1089,9 +1703,9 @@ void mission_protect_chenjesu::P::calculate()
 	break;
 	case 1:
 		if (minutes < 1.0) break;	// a group of shofixties appear near the planet
-		create_enemy_ship(0.45, 0.45, "shosc");
-		create_enemy_ship(0.45, 0.55, "shosc");
-		create_enemy_ship(0.50, 0.45, "shosc");
+		create_enemy_ship(0.4, 0.4, "shosc");
+		create_enemy_ship(0.4, 0.6, "shosc");
+		create_enemy_ship(0.5, 0.4, "shosc");
 		++event_counter;
 	break;
 	case 2:
@@ -1171,7 +1785,7 @@ void mission_escape_from_alcatraz::P::init(Log *_log)
 
 	// the human player
 	playership = create_human_ship(0.55, 0.55, "shosc");
-//	ship_change_batt(playership, 10, 10, 10, 10);
+	ship_change_batt(playership, 10, 10, 10, 10);
 	ship_change_crew(playership, 20, 100);
 
 	specialarea = new SpecialArea(Vector2(0,0), 50);
@@ -1179,7 +1793,7 @@ void mission_escape_from_alcatraz::P::init(Log *_log)
 	game->add( new WedgeIndicator(specialarea, 50, 2 ) );	// this uses a palette indicator to choose a color
 
 	// enemy ships
-	for (i = 0; i < 12; ++i )
+	for (i = 0; i < 16; ++i )
 	{
 		create_enemy_ship(random(1.0), random(1.0), "druma");
 	}
@@ -1248,14 +1862,15 @@ void mission_destroy_factory::P::init(Log *_log)
 	int i;
 	for ( i = 0; i < 15; ++i )
 	{
-		add( new MSupgrade(map_size*tw_random(Vector2(1.0,1.0)), "gmissionobjects.dat", upgr_crew, 20.0) );
+		add( new MSupgrade(tw_random(map_size), "gmissionobjects.dat", upgr_crew, 20.0) );
 	}
 
 
 	for ( i = 0; i < 3; ++i )
 	{
-		add( new MSupgrade(map_size*tw_random(Vector2(1.0,1.0)), "gmissionobjects.dat", upgr_crewmax, -1) );
+		add( new MSupgrade(tw_random(map_size), "gmissionobjects.dat", upgr_crewmax, -1) );
 	}
+
 }
 
 
@@ -1271,6 +1886,983 @@ int mission_destroy_factory::P::quit_condition()
 	return 0;
 }
 
+
+
+// those were test-missions. Now something which contains more of a story-line.
+// not much done yet.
+
+// ****************************************************
+//                mission 1
+// ****************************************************
+
+
+
+
+mission_protect_official::B::B()
+{
+	define_title("Protect Yehat ambassador.");
+
+	define_briefing("Protect the ambassador on his holiday trip. ");
+}
+
+
+void mission_protect_official::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(10000,10000);
+	prepare();
+
+	//create_asteroid_belt(0.5, 0.5,  0.1, 0.2, 14,  10);	// center, min/max radius, av. vel, number ?!
+	// class : AsteroidBelt ??
+	// other possibilities: AsteroidZone // center, radius, number (a buncha asteroids)
+
+	centralplanet = create_planet(0.5, 0.5, 1 );
+
+	// the human player
+	player = create_human_ship(0.6, 0.5, "yehte");
+	
+	ambassador = create_allied_ship(0.6, 0.52, "yehte");
+	ambassador->crew = 1;
+	missionpointer->target(ambassador);
+
+	terrorist = 0;
+
+	// toggles, to let certain things take place only once in the mission
+	doshipdamage = false;
+	missioncomplete = false;
+
+}
+
+
+void mission_protect_official::P::handle_death(Ship *victim, SpaceLocation *killer)
+{
+	if (!player)
+		return;
+
+	if (ambassador && victim->ally_flag == ambassador->ally_flag && killer->ally_flag == player->ally_flag)
+	{
+		show_message("HOOT! You killed the ambassador! Are ye mad?", 5.0);
+		missioncomplete = true;
+		doshipdamage = false;
+	}
+
+	if (terrorist && victim->ally_flag == terrorist->ally_flag && killer->ally_flag == player->ally_flag)
+	{
+		show_message("HOOT! You killed the terrorist! The Queen is displeased...", 5.0);
+		missioncomplete = true;
+		doshipdamage = false;	// to force a loss.
+	}
+}
+
+
+int mission_protect_official::P::quit_condition()
+{
+	
+	if (!player)
+	{
+		show_message("Dead Yehat don't wear plaid.", 5.0);
+		return 1;		// the player is dead !! loser ;)
+	}
+
+//	if (!terrorist && event_counter > 0)	// you lose; the terrorist occurs from time-point 1 on.
+//	{
+//		show_message("You killed the terrorist in cold blood. The Queen is displeased...", 5.0);
+//		return 1;
+//	}
+
+	if (missioncomplete)
+	{
+		if (doshipdamage)
+			return 2;		// win
+		else
+			return 1;		// lose
+	}
+
+	return 0;
+}
+
+
+
+void mission_protect_official::P::calculate()
+{
+
+	if (terrorist && !terrorist->exists())
+		terrorist = 0;
+	if (ambassador && !ambassador->exists())
+		ambassador = 0;
+	if (player && !player->exists())
+		player = 0;
+
+	switch (event_counter)
+	{
+	case 0:
+		order_move(ambassador, 0.9*map_size, 75);
+		if (minutes < 0.3) break;
+		terrorist = create_enemy_ship(0.90, 0.90, "hydcr");
+		missionpointer->target(terrorist);
+		show_message("HOOT! A ship is sighted, his weapons armed - protect the ambassador!!", 6.0);
+		++event_counter;
+		break;
+
+	case 1:
+		if (ambassador)
+		{
+		//	terrorist->target = ambassador;	// does this work??
+			set_targets(team_badguys, ambassador);
+		}
+
+		order_move(ambassador, 0.9*map_size, 75);
+
+		if (terrorist->ship->crew > 16) break;
+		show_message("AWK! Hold yer fire, the terrorist surrenders. Escort them to the planet.", 6.0);
+
+		switch_team(terrorist->ally_flag, team_goodguys);
+		missionpointer->target(centralplanet);
+
+		ship_change_speed(terrorist, 90, 100, 100);		// make them slightly slower than before
+		++event_counter;
+		break;
+
+	case 2:
+		// order the terrorist to move to the planet (or to follow the player?!)
+		if (player)
+			order_move(terrorist, player->pos);
+		if (terrorist)
+		{
+			if (terrorist->distance(centralplanet) > 500.0) break;
+		}
+		else
+			break;
+		// close to the planet, then the new enemies enter
+		// and the Hydrovar moves away
+		switch_team(terrorist->ally_flag, team_goodguys);
+		missionpointer->target(terrorist);
+
+		create_enemy_ship(0.45, 0.55, "jygst");
+		create_enemy_ship(0.45, 0.45, "jygst");
+		create_enemy_ship(0.55, 0.45, "jygst");
+		show_message("YEEP! UFO's!! Hey, The terrorist is escaping, stay on his tail!", 6.0);
+		++event_counter;
+		break;
+
+	case 3:
+
+		if (player)
+		{
+			// if the fight takes long, create a new ship
+			if (enemycount() == 1 && !doshipdamage)		// only the hydrovar is remaining, and an undamaged player
+			{
+				create_enemy_ship(0.45, 0.45, "jygst");
+				create_enemy_ship(0.55, 0.55, "jygst");
+			}
+
+			// if you've not much health left during fighting, your engines break down.
+			if (!doshipdamage && player->crew <= 6)
+			{
+				ship_change_speed(player, 50, 100, 100);		// crippled
+				show_message("By the Queen, our engines are failing! They are getting away!", 6.0);
+				doshipdamage = true;
+			}
+			
+			// if the enemy is far away from you, and you're alive, you've "completed" the mission
+			order_move(terrorist, normalize(player->pos + 0.3*map_size, map_size));
+			if (terrorist)
+			{
+				if (player->distance(terrorist) < 0.2*map_size.x) break;
+
+			if (doshipdamage)
+				show_message("YIP! The terrorist is out of reach, but you fought valiantly.", 6.0);
+			else
+				show_message("BRAAK! The terrorist is out of reach. Your steering is unworthy.", 6.0);
+			} else
+				show_message("YIP! You let the terrorists die! The Queen awaits YOU for questioning now!.", 6.0);
+			missioncomplete = true;
+			// however, if this happens without you being crippled (ie unable to stay on his tail),
+			// you fail the mission.
+
+			//++event_counter;	// well, there is no other mission ?!
+		}
+
+		break;
+
+	}
+
+
+	// this should come last? So that you can intercept the controls ?
+	Play::calculate();
+
+}
+
+
+
+
+// ****************************************************
+//                mission 2
+// ****************************************************
+
+
+
+
+mission_protect_official02::B::B()
+{
+	define_title("Track down the enemy fleet.");
+
+	define_briefing("BRAAK! The assassins disappeared into hyperspace, escorted by a "
+		"fleet of the mysterious intruders. They've been seen travelling in the direction of Semuri Omega. "
+		"Go there and find out about their identity. High command insists that ye go there alone. "
+		"It looks like yer on a suicide mission; good luck.");
+}
+
+
+
+void mission_protect_official02::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(5000,5000);
+	prepare();
+
+	create_planet(0.5, 0.5, 2 );
+
+	create_asteroid_belt(0.5*map_size, 1500, 2000, 25.0,  50);
+
+	// the human player
+	create_human_ship(0.6, 0.5, "yehte");
+
+	// create some enemy ships (jyglar) :
+	create_enemies("jygst", 6);
+}
+
+
+int mission_protect_official02::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (enemycount() == 0)
+	{
+		return 2;		// you win.
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official02::P::calculate()
+{
+
+
+	switch (event_counter)
+	{
+	case 0:
+		if (minutes < 0.2) break;
+		show_message("YEEP! They are awating ye; ye are trapped, captain.", 6.0);
+		++event_counter;
+		break;
+
+	}
+
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+
+
+
+// ****************************************************
+//                mission 3
+// ****************************************************
+
+
+
+
+mission_protect_official03::B::B()
+{
+	define_title("Destroy the enemy base.");
+
+	define_briefing("YIP! Commander, we've intercepted transmission originating from the "
+		"planet. Ye must destroy their base on the surface.");
+}
+
+
+
+void mission_protect_official03::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	// remove the star bakground
+	// hmm, you must also remove them from the game list ???
+	stars->state = 0;	// ok, this works.
+
+	// initialize the planet surface (and it's accompanied objects/structures)
+	// and set the viewmode to something that's fixed.
+	Plsurface *surf = new Plsurface("gmissionobjects.dat", "SURFACE_01_DAT");
+	size = surf->size();
+
+	prepare();
+
+	add( surf );
+	plsurface = surf;
+
+	change_view("Frozen");
+	// done, the planet surface is ready.
+
+
+	// the human player
+	create_human_ship(0.6, 0.5, "yehte");
+
+	SpaceLocation *s;
+	s = plsurface->findobject("buildinga", 1);	// find the first object with that name (there's only 1).
+	missionpointer->target(s);
+}
+
+
+int mission_protect_official03::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (plsurface->countobjects("buildinga") == 0)
+	{
+		return 2;		// you win.
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official03::P::calculate()
+{
+
+
+	
+	switch (event_counter)
+	{
+	case 0:
+		if (minutes < 0.05) break;
+		show_message("The enemy is located east.", 6.0);
+		++event_counter;
+		break;
+
+	}
+
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+
+
+// ****************************************************
+//                mission 4
+// ****************************************************
+
+
+
+
+mission_protect_official04::B::B()
+{
+	define_title("Siege of Hyaridad.");
+
+	define_briefing("BWAAK! Ye captured a Jyglar commander, and he was very informative. "
+		"He said our enemy is a Hydrovar citizen, who had to be returned to Hydrovar at all cost, and that thanks to yer "
+		"interference, he has escaped! His life is in danger, and he has to be found at all cost.\n"
+		"The commander requested we take him to the nearest Hydrovar colony - planet IV in the system "
+		"of Hyaridad, where he's to meet with the Hydrovar War Council. He says it is a "
+		"matter of life and death. Captain, I think ye are involved into something big!");
+}
+
+
+
+void mission_protect_official04::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(6000,6000);
+	prepare();
+
+	centralplanet = create_planet(0.5, 0.5, 2 );
+
+	create_asteroids(10);	// a few randomly floating asteroids.
+
+	// the human player
+	create_human_ship(0.9, 0.9, "yehte");
+
+	// create some enemy ships (Phedar) :
+	int i;
+	Nphedar = 100;		// should not exceed 128...
+	for ( i = 0; i < Nphedar; ++i )
+	{
+		double a;
+		a = i * PI2 / Nphedar;
+		guardloc[i] = Vector2(0.5 + 0.25 * cos(a), 0.5 + 0.25 * sin(a));
+		phedar[i] = create_enemy_ship(guardloc[i].x, guardloc[i].y, "phepa", "VegetableBot");
+		guardloc[i] = guardloc[i] * map_size;
+		phedar[i]->hashotspots = false;			// disable their hotspot trail -- too many objects.
+		phedar[i]->assigntarget(playercontrol->ship);
+
+		/*
+		// hmm? this makes little difference ??
+		phedar[i]->attributes |= ATTRIB_UNDETECTABLE;
+		phedar[i]->collide_flag_anyone = 0;
+		phedar[i]->collide_flag_sameteam = 0;
+		phedar[i]->collide_flag_sameship = 0;
+		*/
+	}
+
+	missionpointer->target(centralplanet);
+}
+
+
+int mission_protect_official04::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (playercontrol->ship->distance(centralplanet) < 150.0)
+	{
+		return 2;		// you win.
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official04::P::calculate()
+{
+
+	// stable values are:
+	// numitems
+	// num_presences
+//	message.print(1500, 15, "%i", physics->num_listed);
+
+	switch (event_counter)
+	{
+	case 0:
+		if (minutes < 0.1) break;
+		show_message("YEEP! I hope we can reach the planet in 1 piece!", 6.0);
+		++event_counter;
+		break;
+
+	}
+
+	// always impose some AI onto the Phedar?
+	// yeah - otherwise there's chaos instead of a normal "siege"
+	int i;
+	for ( i = 0; i < Nphedar; ++i )
+	{
+		if (!phedar[i])
+			continue;
+
+		// guard against the good guys
+		// needed, otherwise they're all zealots who're running for the player ;)
+		if (playercontrol->ship)
+			order_guard(phedar[i], guardloc[i], 400.0, 400.0, playercontrol->ship);
+
+		// also check if the phedar is still alive ?
+		if (!phedar[i]->exists())
+			phedar[i] = 0;
+	}
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+// ****************************************************
+//                mission 5
+// ****************************************************
+
+
+
+
+mission_protect_official05::B::B()
+{
+	define_title("Engaging the Phedar.");
+
+	define_briefing("HEEP! It's the Phedar who have invaded Hydrovar space! "
+		"Hydrovar command said, the one Hydrovar knowing of the terrorist and his possible whereabouts, is "
+		"currently engaged in combat. Many Hydrovar have already perished in battle, and our "
+		"man may not return in one piece. The commander suggests we wait and hope for the best, but ye must help him!");
+}
+
+
+
+void mission_protect_official05::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(4000,4000);
+	prepare();
+
+	create_planet(0.5, 0.5, 2 );
+
+	create_asteroids(10);	// a few randomly floating asteroids.
+
+	// the human player
+	create_human_ship(0.6, 0.5, "yehte");
+
+	// create some enemy ships (Phedar) :
+	create_enemies("phepa", 12);
+
+	// and some friendly Hydro ships.
+	create_allies("hydcr", 2);
+
+	informant = create_allied_ship(0.1, 0.3, "hydcr");
+
+	game->add( new SpecialAreaTag(informant, 150) );
+	missionpointer->target(informant);
+
+	missionloss = false;
+}
+
+void mission_protect_official05::P::handle_death(Ship *victim, SpaceLocation *killer)
+{
+	if (!playercontrol->ship)
+		return;
+
+	if (informant && victim->ally_flag == informant->ally_flag)
+	{
+		if (killer->ally_flag == playercontrol->ship->ally_flag)
+			show_message("HOOT! You killed the informant! Are ye mad?", 5.0);
+		else
+			show_message("HOOT! You failed to save the informant! Mission failed.", 5.0);
+
+		missionloss = true;
+	}
+
+}
+
+
+int mission_protect_official05::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0 || informant->crew == 0 || missionloss)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (enemycount() == 0)
+	{
+		return 2;		// you win.
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official05::P::calculate()
+{
+
+
+	switch (event_counter)
+	{
+	case 0:
+		if (minutes < 0.1) break;
+		show_message("YEEP! Those Phedar fight without honor!", 6.0);
+		++event_counter;
+		break;
+
+	}
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+
+
+
+// ****************************************************
+//                mission 6
+// ****************************************************
+
+
+
+
+mission_protect_official06::B::B()
+{
+	define_title("Omicron IV");
+
+	define_briefing("YIP! The enemy has been defeated! Our informant, named Hyowo, "
+		"knows the terrorist from several years back, they fought together in the war "
+		"against the Phedar, which was all about possession of the Hyaridad system. He was a friendly fellow, "
+		"Hyowo doesn't believe he's turned into a interstellar terrorist. The last thing he "
+		"heard was that his friend was departing for Omicron; a month later "
+		"the Phedar gave up, but he never saw him again. Omicron is a very "
+		"inhospitable system, he thinks his friend has perished there. Let's "
+		"go there to check!");
+}
+
+
+
+void mission_protect_official06::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(4000,4000);
+	prepare();
+
+	create_planet(0.5, 0.5, 2 );
+
+	create_asteroids(30);	// a few randomly floating asteroids.
+
+	// the human player
+	create_human_ship(0.6, 0.5, "yehte");
+
+	// create some enemy ships (Phedar) :
+	create_enemies("phepa", 10);
+
+	// and some friendly Hydro+Jyglar ships.
+	create_allies("hydcr", 2);
+	create_allies("jygst", 3);
+}
+
+
+int mission_protect_official06::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (enemycount() == 0)
+	{
+		return 2;		// you win.
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official06::P::calculate()
+{
+
+
+	switch (event_counter)
+	{
+	case 0:
+		if (minutes < 0.1) break;
+		show_message("YEEP! Our friendly Hydrovar are in trouble! Ye must help.", 6.0);
+		++event_counter;
+		break;
+	case 1:
+		if (enemycount() > 5) break;
+		// the enemies are losing - they desperately attack the player ?!
+		show_message("WEEP! Ye got their attention!", 6.0);
+		++event_counter;
+		break;
+
+	case 2:
+		set_targets(team_badguys, playercontrol->ship);
+		break;
+	}
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+
+
+// ****************************************************
+//                mission 7
+// ****************************************************
+
+
+
+
+mission_protect_official07::B::B()
+{
+	define_title("Protect the Hydrovar homeworld.");
+
+	define_briefing(
+		"The Phedar have recently invaded the territories of the Hydrovar and Jyglar. "
+		"The Yehat diplomat turns out to be a spy who wanted to sell vital information "
+		"to the Phedar, about a secret alliance that had been forged between the Yehat. "
+		"and the Hydrovar. "
+		"The terrorist was a special agent, who was sent to prevent this.\n"
+		"Wait, incoming message: BRAAK! the Hydrovar homeworld is under attack! "
+		"Yer assistence is required."
+		);
+}
+
+
+
+void mission_protect_official07::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(5000,5000);
+	prepare();
+
+	create_planet(0.5, 0.5, 2 );
+
+	// the human player
+	create_human_ship(0.6, 0.5, "yehte");
+
+	// create some enemy ships (jyglar) :
+	create_enemies("phepa", 20);
+
+	create_allies("hydcr", 8);
+	create_allies("jygst", 8);
+}
+
+
+int mission_protect_official07::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (enemycount() <= 5 && event_counter > 1)
+	{
+		show_message("Cease fire! The enemy wants to negotiate.", 6.0);
+		merge_teams(team_goodguys, team_badguys);	// all become good guys.
+		return 2;		// you "win".
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official07::P::calculate()
+{
+
+
+	switch (event_counter)
+	{
+	case 0:
+		if (minutes < 0.1) break;
+		show_message("They are overwhelming us! Make each shot count!", 6.0);
+		++event_counter;
+		break;
+
+	case 1:
+		// Yehat reinforcements warp in.
+		if (minutes < 0.4) break;
+		show_message("BWAAK! We come to help ye! Kill the Phedar!", 6.0);
+		create_allies("yehte", 10);
+		++event_counter;
+		break;
+
+	}
+
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+// ****************************************************
+//                mission 8
+// ****************************************************
+
+
+
+
+mission_protect_official08::B::B()
+{
+	define_title("Party time.");
+
+	define_briefing("Fights have stopped, but the Phedar fleet commander does not yet surrender. "
+		"He has challenged the most dangerous one of our fleet to a duel to the death, "
+		"and that champion is ye! Ye better win this one, otherwise they will continue to fight to the last Phedar, "
+		"at the cost of many more lives."
+		);
+}
+
+
+
+void mission_protect_official08::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(5000,5000);
+	prepare();
+
+	create_planet(0.5, 0.5, 2 );
+
+	// the human player
+	create_human_ship(0.6, 0.5, "yehte");
+
+	// create some enemy ships (jyglar) :
+	create_enemies("phepa", 1);
+}
+
+
+int mission_protect_official08::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (enemycount() == 0)
+	{
+		return 2;		// you win.
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official08::P::calculate()
+{
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+// ****************************************************
+//                mission 9
+// ****************************************************
+
+
+
+
+mission_protect_official09::B::B()
+{
+	define_title("Home sweet home.");
+
+	define_briefing("After a relaxed flight through hyperspace, very welcome after several days, "
+		"of intense celebrations, you finally reach home, where you'll be waiting a long "
+		"holiday ...");
+}
+
+
+
+void mission_protect_official09::P::init(Log *_log)
+{
+
+	Play::init(_log);
+
+	size = Vector2(5000,5000);
+	prepare();
+
+	create_planet(0.5, 0.5, 2 );
+
+	// the human player
+	create_human_ship(0.6, 0.5, "yehte");
+
+	// create some enemy ships :
+	create_enemies("phepa", 5);
+}
+
+
+int mission_protect_official09::P::quit_condition()
+{
+	
+	if (playercontrol->ship->crew == 0)
+	{
+		return 1;		// the player is dead !! loser ;)
+	}
+
+	if (enemycount() == 0)
+	{
+		return 2;		// you win.
+	}
+
+	return 0;
+}
+
+
+void mission_protect_official09::P::calculate()
+{
+
+
+	switch (event_counter)
+	{
+	case 0:
+		if (minutes < 0.1) break;
+		show_message("YIP! Don't they ever stop? Teach them!", 6.0);
+		++event_counter;
+		break;
+	case 1:
+		if (minutes < 0.5) break;
+		show_message("BRAAK! Home at last!", 6.0);
+		create_allies("yehte", 5);	// others from the fleet are also returning.
+		++event_counter;
+		break;
+	}
+
+
+	// this should come last, So that you can intercept the controls.
+	Play::calculate();
+
+}
+
+
+SpaceObject *find_closest_team(SpaceLocation *s, int test_attr, double R, TeamCode team)
+{
+	Vector2 Dmin;
+	SpaceObject *closest;
+	Query q;
+
+	closest = 0;
+
+	Dmin = Vector2(1E99, 1E99);
+
+	// check for neighbouring (small) objects
+	for (q.begin(s, ALL_LAYERS, R); q.current; q.next())
+	{
+		SpaceObject *o;
+		o = q.currento;
+		if (  ( o->attributes & test_attr) != 0 &&
+			  o->get_team() == team &&
+			  o != s)
+		{
+			//message.out("there is a ship!!");
+			Vector2 D;
+			D = min_delta(s->pos, o->pos, map_size);
+			if (D.x < Dmin.x && D.y < Dmin.y)
+			{
+				if (D.length() < Dmin.length())
+				{
+					Dmin = D;
+					closest = o;
+				}
+			}
+		}
+		
+	}
+	q.end();
+
+	return closest;
+}
 
 
 

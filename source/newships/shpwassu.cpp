@@ -601,7 +601,7 @@ void WasxClone::calculate() {
 				normal_pos() - product(unit_vector(angle), get_size()) / 2.5,
 //				normal_x() - (cos(angle ) * w / 2.5),
 //				normal_y() - (sin(angle ) * h / 2.5),
-				game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
+				meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
 		}
 
 	// Re-acquire target (needed once targetting a new opponent)

@@ -184,12 +184,12 @@ void ShipPanel::animate(Frame *space) {
 		}
 
 	if((!batt_light) && (ship->weapon_low || ship->special_low)) {
-		game->panelSprite->draw(40, 58, 2, panel);
+		meleedata.panelSprite->draw(40, 58, 2, panel);
 		batt_light = TRUE;
 		panel_needs_update = true;
 		}
 	else if(batt_light && (!ship->weapon_low) && (!ship->special_low)) {
-		game->panelSprite->draw(40, 58, 1, panel);
+		meleedata.panelSprite->draw(40, 58, 1, panel);
 		batt_light = FALSE;
 		panel_needs_update = true;
 		}

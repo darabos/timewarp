@@ -86,7 +86,7 @@ void AndrosynthGuardian::inflict_damage(SpaceObject *other) {
 		if (other->mass) {
 			game->add(new Animation(this, 
 					pos + unit_vector(trajectory_angle(other)) * 20.0,
-					game->sparkSprite, 0, SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
+					meleedata.sparkSprite, 0, SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
 			translate(-specialBounceDistance*unit_vector(angle));
 			bounce_status = specialBounceTime;
 			int i = iround_down(damage_factor / 2);

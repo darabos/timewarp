@@ -240,7 +240,7 @@ AsteroidMissile::AsteroidMissile(double ox, double oy, double oangle,
     int R, int Rm, int G, int Gm, int B, int Bm) :
   HomingMissile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, otrate, 
 		oship, osprite, oship->target), 
-  explosion(game->asteroidExplosionSprite), frame_count(oframe_count) 
+  explosion(meleedata.asteroidExplosionSprite), frame_count(oframe_count) 
 {
 	collide_flag_sameship = bit(LAYER_SHIPS) | bit(LAYER_SHOTS);
 	//	explosionSprite     = game->asteroidExplosionSprite;
@@ -481,7 +481,7 @@ int ChoraliExtractor::activate_weapon()
       else
 	{
 	  grabbed->die();
-       	  add(new AsteroidMissile(0.0, (size.y * 1.0), angle, AsteroidMissileVelocity, AsteroidMissileDamage, AsteroidMissileRange, AsteroidMissileArmour, AsteroidMissileTurnRate, this, game->asteroidSprite, 1,
+       	  add(new AsteroidMissile(0.0, (size.y * 1.0), angle, AsteroidMissileVelocity, AsteroidMissileDamage, AsteroidMissileRange, AsteroidMissileArmour, AsteroidMissileTurnRate, this, meleedata.asteroidSprite, 1,
                  tractorR, tractorRmin, tractorG, tractorGmin, tractorB, tractorBmin ));
 	  return(TRUE);
      	}

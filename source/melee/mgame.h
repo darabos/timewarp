@@ -23,6 +23,30 @@ extern GameType **games;
 #define REGISTER_GAME(b, a) static Game *new_ ## b () {return new b();} static GameType ignoreme_ ## b( a, new_ ## b, 0);
 GameType *gametype(const char *name);
 
+
+// these are default data used in ships and game objects, which in principle, should be
+// independent of the (normal) game type.
+class MeleeData
+{
+public:
+	MeleeData();
+
+	void init();
+	void deinit();
+	
+	SpaceSprite *planetSprite;
+	SpaceSprite *asteroidSprite;
+	SpaceSprite *asteroidExplosionSprite;
+	SpaceSprite *sparkSprite;
+	SpaceSprite *hotspotSprite;
+	SpaceSprite *kaboomSprite;
+	SpaceSprite *panelSprite;
+	SpaceSprite *xpl1Sprite;
+
+	Music *planet_victory;
+};
+
+
 class Game : public Physics {
 	public:
 	GameType *type;
@@ -140,8 +164,10 @@ public:
 	virtual void idle(int time = 5);
 
 	virtual void play_music();
+
 	Music *music;
-	Music *planet_victory;
+	//Music *planet_victory;
+	/*
 	SpaceSprite *planetSprite;
 	SpaceSprite *asteroidSprite;
 	SpaceSprite *asteroidExplosionSprite;
@@ -150,6 +176,7 @@ public:
 	SpaceSprite *kaboomSprite;
 	SpaceSprite *panelSprite;
 	SpaceSprite *xpl1Sprite; //added by Tau
+	*/
 
 	public:
 	virtual double get_turbo();

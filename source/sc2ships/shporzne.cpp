@@ -311,7 +311,7 @@ void OrzMarine::calculate() {
 					normal_pos() - product(unit_vector(angle), get_size()) / 2.0,
 //                  normal_x() - (cos(angle) * w / 2.5),
 //			        normal_y() - (sin(angle) * h / 2.5),
-					game->hotspotSprite,
+					meleedata.hotspotSprite,
 			        0, HOTSPOT_FRAMES, 50, DEPTH_HOTSPOTS));
 		        hotspot_frame += hotspot_rate;
 	        }

@@ -21,7 +21,7 @@ Shot::Shot(SpaceLocation *creator, Vector2 rpos, double oangle, double ov,
   d(0.0),
   range(orange),
   armour(oarmour),
-  explosionSprite(game->sparkSprite),
+  explosionSprite(meleedata.sparkSprite),
   explosionSample(NULL),
   explosionFrameCount(SPARK_FRAMES),
   explosionFrameSize(scale_frames(0))

@@ -333,7 +333,7 @@ void AlaryBC::calculate_hotspots()
 			pos - unit_vector(angle)*size.x/3.8,
 //			normal_x() - (cos(angle) * w / 3.8),
 //			normal_y() - (sin(angle) * h / 3.8),
-			game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
+			meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
 		hotspot_frame += hotspot_rate; }
 	if (hotspot_frame > 0) hotspot_frame -= frame_time;
 	return;
@@ -458,7 +458,7 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 			turret[i]->state = 0;
 		play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 		game->add(new Animation(this, pos,
-				game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS, 2.0));
+				meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS, 2.0));
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH) game->ship_died(this, source);
 		state = 0; return 0;
 	}

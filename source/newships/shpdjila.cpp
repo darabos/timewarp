@@ -121,7 +121,7 @@ void DjinniLancer::calculate()
       if ((laser1->damage_factor > 0) && (laser2->damage_factor > 0))
         add(new Animation(this, 
           laser1->normal_pos() + laser1->edge(),
-          game->sparkSprite, 0, SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
+          meleedata.sparkSprite, 0, SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
       laser1 = NULL;
       laser2 = NULL;
     }

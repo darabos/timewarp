@@ -819,7 +819,7 @@ void SpaceLine::inflict_damage(SpaceObject *other) {STACKTRACE
 	damage(other, damage_factor);
 	collide_flag_anyone = collide_flag_sameship = collide_flag_sameteam = 0;
 	physics->add(new Animation( this, 
-			pos + edge(), game->sparkSprite, 0, 
+			pos + edge(), meleedata.sparkSprite, 0, 
 			SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
 	return;
 	}

@@ -15,6 +15,8 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 
 #include "../melee/manim.h"
 #include "../frame.h"
+#include "../util/aastr.h"
+
 
 #include "../twgui/twgui.h"
 
@@ -30,8 +32,6 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 // point to a data-file (inside a data file).
 SpaceSprite *gensprite(char *datafilename, char *dataobjectname, char *ident)
 {
-	STACKTRACE
-
 	DATAFILE *d_raw, *d, *config, *bmpdata;
 
 	d_raw = load_datafile_object(datafilename, dataobjectname);
@@ -73,6 +73,9 @@ SpaceObject(0, opos, random(PI2),
 		gensprite(datafilename, dataobjectname, "object")
 		)
 {
+	set_depth(DEPTH_SPECIAL);
+	
+	layer = LAYER_SPECIAL;	// important that this is specified, otherwise it cannot collide.
 }
 
 
@@ -148,8 +151,6 @@ SpaceSprite *MissionShip::gensprite(char *datafilename, char *dataobjectname)
 
 void MissionShip::calculate()
 {
-	STACKTRACE
-
 	Ship::calculate();
 
 	missioncontrol();
@@ -179,8 +180,6 @@ SpaceLine(creator, lpos, langle, llength, lcolor)
 
 void SpaceLineVoid::setline(Vector2 p1, Vector2 p2)
 {
-	STACKTRACE
-
 	Vector2 seg;
 	
 	seg = p2 - p1;
@@ -199,10 +198,12 @@ SpaceLocation(0, apos, 0)
 	R = aR;
 	rping = 0;
 
+	center = apos;
+
 	int i;
 	for ( i = 0; i < 10; ++i )
 	{
-		line[i] = new SpaceLineVoid(this, pos, 0, 1, makecol(0,128,0));
+		line[i] = new SpaceLineVoid(this, center, 0, 1, makecol(0,128,0));
 		line[i]->vel = 0;
 		game->add(line[i]);
 	}
@@ -211,8 +212,6 @@ SpaceLocation(0, apos, 0)
 
 bool SpecialArea::inreach(SpaceLocation *s)
 {
-	STACKTRACE
-
 	if (distance(s) <= R)
 		return true;
 	else
@@ -222,7 +221,6 @@ bool SpecialArea::inreach(SpaceLocation *s)
 
 void SpecialArea::animate(Frame *space)
 {
-	STACKTRACE
 
 	// create a ring of line segments, growing outward in 1 second:
 	rping += R * frame_time * 1E-3;
@@ -235,7 +233,7 @@ void SpecialArea::animate(Frame *space)
 	{
 		double a;
 		a = i * PI2 / 10;
-		line[i]->pos = rping * unit_vector(a);
+		line[i]->pos = center + rping * unit_vector(a);
 	}
 
 	for ( i = 0; i < 10; ++i )
@@ -289,8 +287,6 @@ Asteroid()
 
 void AsteroidBelt::death()
 {
-	STACKTRACE
-
 
 	Animation *a = new Animation(this, pos,
 			explosion, 0, explosion->frames(), time_ratio, get_depth());
@@ -304,8 +300,6 @@ void AsteroidBelt::death()
 
 Vector2 AsteroidBelt::correction()
 {
-	STACKTRACE
-
 	if (frame_time == 0)
 		return 0;
 
@@ -325,8 +319,6 @@ Vector2 AsteroidBelt::correction()
 
 void AsteroidBelt::calculate()
 {
-	STACKTRACE
-
 	
 	// at a distance R, and vel v, you need the following correction towards the center to maintain orbit:
 
@@ -336,7 +328,7 @@ void AsteroidBelt::calculate()
 	Asteroid::calculate();
 
 	double rtest;
-	rtest = (pos - center).length();
+	rtest = min_delta(pos, center).length();
 	if (rtest < Rmin || rtest > Rmax)
 		state = 0;
 }
@@ -346,8 +338,6 @@ void AsteroidBelt::calculate()
 //	virtual int accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed=MAX_SPEED); //changes an objects velocity by delta_v, to a maximum of max_speed
 int AsteroidBelt::accelerate(SpaceLocation *source, double angle, double vel, double max_speed)
 {
-	STACKTRACE
-
 	if (source->isPlanet())
 		return 0;	// do nothing.
 	else
@@ -356,8 +346,6 @@ int AsteroidBelt::accelerate(SpaceLocation *source, double angle, double vel, do
 
 int AsteroidBelt::accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed)
 {
-	STACKTRACE
-
 	if (source->isPlanet())
 		return 0;	// do nothing.
 	else
@@ -387,8 +375,6 @@ Asteroid()
 
 void AsteroidZone::death()
 {
-	STACKTRACE
-
 
 	Animation *a = new Animation(this, pos,
 			explosion, 0, explosion->frames(), time_ratio, get_depth());
@@ -403,8 +389,6 @@ void AsteroidZone::death()
 void AsteroidZone::calculate()
 {
 	
-	STACKTRACE
-
 	Asteroid::calculate();
 
 	double rtest;
@@ -412,4 +396,145 @@ void AsteroidZone::calculate()
 	if (rtest > Rmax)
 		state = 0;
 }
+
+
+
+
+
+
+
+
+
+MissionMessageBox::MissionMessageBox(BITMAP *bmp, int oxpos, int oypos, double operiod)
+{
+	bmp_display = bmp;
+
+	time = 0;
+	period = operiod;
+
+	xpos = oxpos;
+	ypos = oypos;
+
+	set_depth(999.0);
+}
+
+MissionMessageBox::~MissionMessageBox()
+{
+	destroy_bitmap(bmp_display);
+}
+
+void MissionMessageBox::calculate()
+{
+	Presence::calculate();
+
+	time += frame_time * 1E-3;
+	if (time > period)
+		state = 0;
+}
+
+// some stuff copied from SpaceSprite::draw
+void MissionMessageBox::animate(Frame *space)
+{
+	if (!exists())
+		return;
+
+//	int aa = aa_get_mode();
+//	aa |= AA_MASKED;
+//	aa |= AA_ALPHA;
+//	aa |= AA_NO_AA;
+//	aa_set_mode(aa);
+
+	int aa = 0;
+	aa |= AA_NO_AA;
+//	aa |= AA_BLEND;
+//	aa |= AA_MASKED;
+//	aa |= AA_ALPHA;
+	aa_set_mode(aa);
+
+//	int aat = aa_get_trans();
+//	aa_set_trans(240);
+
+	if ( int(time/0.1) % 2 == 0 || time > 1.0 )		// first 1 second, flicker.
+	aa_stretch_blit(bmp_display, space->surface,
+		0, 0, bmp_display->w, bmp_display->h, 
+		xpos, ypos, bmp_display->w, bmp_display->h);
+
+//	aa_set_trans(aat);
+
+	space->add_box(xpos, ypos, bmp_display->w, bmp_display->h);
+
+}
+
+
+
+
+SpecialAreaTag::SpecialAreaTag(SpaceLocation *s, double aR)
+:
+SpecialArea(s->pos, aR)
+{
+	tagship = s;
+}
+
+void SpecialAreaTag::calculate()
+{
+	if (tagship && tagship->exists())
+		center = tagship->pos;
+	else
+		tagship = 0;
+}
+
+
+void SpecialAreaTag::animate(Frame *space)
+{
+	if (tagship)
+		SpecialArea::animate(space);
+}
+
+
+
+
+
+
+MissionPointer::MissionPointer(SpaceLocation *otarget)
+:
+WedgeIndicator(otarget, 100, 1)
+{
+	hidden = false;
+	missiontarget = otarget;
+}
+
+void MissionPointer::target(SpaceLocation *otarget)
+{
+	missiontarget = otarget;
+	WedgeIndicator::target = missiontarget;
+}
+
+void MissionPointer::hide()
+{
+	hidden = true;
+}
+
+void MissionPointer::show()
+{
+	hidden = false;
+}
+
+
+void MissionPointer::calculate()
+{
+	WedgeIndicator::target = missiontarget;
+
+	if (!(missiontarget && missiontarget->exists() ))
+		missiontarget = 0;
+
+	if (missiontarget && !hidden)
+		WedgeIndicator::calculate();
+}
+
+void MissionPointer::animate(Frame *frame)
+{
+	if (missiontarget && !hidden)
+		WedgeIndicator::animate(frame);
+}
+
 

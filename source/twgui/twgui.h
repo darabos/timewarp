@@ -6,6 +6,11 @@
 #include "area.h"
 
 
+const int maxlines = 1024;
+
+
+
+
 // to implement a button, you add bitmaps-feedback to the box-area control
 
 class Button : public AreaBox
@@ -15,7 +20,7 @@ protected:
 public:
 	// x, y, W, H are inside the draw area
 	Button(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool keepkey = 0);
-	virtual ~Button();
+	~Button();
 
 //	virtual void init(AreaReserve *menu, char *identbranch, int ax, int ay, unsigned char asciicode);
 
@@ -25,11 +30,90 @@ public:
 };
 
 
+// something which has a background, and its own drawing-area
+class AreaTablet : public AreaBox
+{
+protected:
+	BITMAP *backgr, *drawarea;
+
+public:
+
+	AreaTablet(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool akeepkey = 0);
+	AreaTablet::~AreaTablet();
+
+	void initbackgr(bool autoplace);
+	void changebackgr(char *fname);
+
+	void animate();		// shouldn't be changed.
+	virtual void subanimate();
+};
+
+
+
+class ScrollBar : public AreaTablet	// hmm?
+{
+protected:
+	BITMAP	*button;
+public:
+
+	enum {hor = 1, ver= 2}	direction ;
+
+	double relpos;
+
+	int pmin, pmax, bwhalf, bhhalf;	// p = position (can be x or y)
+	int pbutton;
+
+	// x, y, W, H are inside the draw area
+	ScrollBar(AreaReserve *menu, char *identbranch, int ax, int ay);
+	~ScrollBar();
+
+	virtual void handle_lhold();
+
+	virtual void subanimate();
+
+	void setrelpos(double arelpos);
+};
+
+// creates a set of buttons for the control of a scrollpos_str
+class ScrollControl
+{
+public:
+	Button			*left, *right, *up, *down;
+	ScrollBar		*scrollvert, *scrollhor;
+
+	ScrollControl();
+
+	void hor(AreaReserve *A, char *id, scrollpos_str *ascr);
+	void hor(AreaGeneral *A, char *id, scrollpos_str *ascr);
+
+	void ver(AreaReserve *A, char *id, scrollpos_str *ascr);
+	void ver(AreaGeneral *A, char *id, scrollpos_str *ascr);
+};
+
+
+// something which has a background, and its own drawing-area
+class AreaTabletScrolled : public AreaTablet
+{
+protected:
+
+	scrollpos_str	scroll;
+	ScrollControl	scrollcontrol;
+
+public:
+
+	AreaTabletScrolled(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool akeepkey = 0);
+};
+
+
+
+
+
+
+
 class GhostButton : public AreaGeneral
 {
 public:
 	GhostButton(AreaReserve *menu);
-	virtual ~GhostButton();
 };
 
 // a text on top of a button.
@@ -39,7 +123,6 @@ class TextButton : public AreaTablet
 {
 public:
 	TextButton(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
-	virtual ~TextButton();
 
 	FONT		*usefont;
 
@@ -51,13 +134,39 @@ public:
 };
 
 
-
 // a class you can use to edit text
 
-class TextEditBox : public AreaTablet
+class TextInfo
+{
+public:
+	char	*textinfo;
+
+	int		linestart[maxlines];
+	int		Nlines, Nchars;
+
+	FONT	*usefont;
+	int		W, Htxt, Nshow;
+
+	int		text_color;
+
+	BITMAP	*bmp;
+
+	TextInfo(FONT *afont, BITMAP *abmp, char *atextinfo, int Nchars);
+	~TextInfo();
+
+	//void set_textinfo(char *atextinfo, int Nchars);
+
+	void getxy(int charpos, int *x, int *y);
+	int getcharpos(int x, int y);
+	void changeline(int *charpos, int line1, int line2);
+
+	void reset(scrollpos_str *scroll);
+};
+
+class TextEditBox : public AreaTabletScrolled
 {
 protected:
-	char text[128];	// can hold 1 line of text.
+	char *text;//[128];	// can hold 1 line of text.
 	int maxchars;
 	int charpos;
 
@@ -65,26 +174,77 @@ protected:
 
 	// this is used to record when the last key-press was made (with a resolution
 	// of 1 frame at best).
-	int key_time[KEY_MAX];
-	bool keypr[KEY_MAX];
-	int repeattime;
+	bool	keypr[KEY_MAX];
+	int		lastpressed;
+	int		repeattime, lasttime;
+	int		text_color;
+
+	
+	TextInfo *textinfo;
+
 
 public:
-	TextEditBox(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
-	virtual ~TextEditBox();
+	TextEditBox(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont, char *atext, int amaxtext);
+	~TextEditBox();
 
 	FONT		*usefont;
 
+//	scrollpos_str	scroll;
+//	ScrollControl	scrollcontrol;
+
 	virtual void calculate();
 	virtual void subanimate();
+
+	virtual void handle_lpress();
 
 	void clear_text();
 	void show_text();
 
 	// set the typematic delay to "atime" milliseconds (default = 100)
 	void set_repeattime(int atime);
+	void set_textcolor(int c);
+
+	void text_reset();
 };
 
+
+// Draws a list of text strings onto a background
+class TextList : public AreaTablet
+{
+
+public:
+	TextList(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
+	~TextList();
+
+	scrollpos_str	scroll;
+	ScrollControl	scrollcontrol;
+
+	char	**optionlist;
+	int		N;				// number of options
+
+	FONT	*usefont;
+	int		Htxt, Nshow;
+
+	//int		yselected;	// the selected item.
+
+	void clear_optionlist();
+	void set_optionlist(char **aoptionlist, int color);
+	void set_optionlist(char **aoptionlist, int aN, int color);
+
+	void set_selected(int iy);
+
+	int		text_color;
+
+	void initbackgr(bool autoplace);
+
+	virtual void subanimate();
+	
+	virtual void handle_lpress();
+	virtual void handle_rpress();
+	virtual void calculate();
+
+	int getk();
+};
 
 
 
@@ -100,7 +260,7 @@ public:
 	bool	state;	// true=on, false=off
 	// x, y, W, H are inside the draw area
 	SwitchButton(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode);
-	virtual ~SwitchButton();
+	~SwitchButton();
 
 	virtual void calculate();
 
@@ -124,7 +284,7 @@ class TextButtonList : public AreaTablet
 public:
 	TextButtonList(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont,
 					scrollpos_str *ascroll);
-	virtual ~TextButtonList();
+	~TextButtonList();
 
 	char	**optionlist;
 	int		N;				// number of options
@@ -155,44 +315,19 @@ public:
 
 
 
-class ScrollBar : public AreaTablet
-{
-protected:
-	BITMAP	*button;
-public:
-
-	enum {hor = 1, ver= 2}	direction ;
-
-	double relpos;
-
-	int pmin, pmax, bwhalf, bhhalf;	// p = position (can be x or y)
-	int pbutton;
-
-	// x, y, W, H are inside the draw area
-	ScrollBar(AreaReserve *menu, char *identbranch, int ax, int ay);
-	virtual ~ScrollBar();
-
-	virtual void handle_lhold();
-
-	virtual void subanimate();
-
-	void setrelpos(double arelpos);
-};
 
 
 
 // Draw some text into a box... text can consist of many lines. No editing possible.
 // If there's a lot of text, you could scroll.
 
-const int maxlines = 1024;
 
-class TextInfoArea : public AreaTablet
+class TextInfoArea : public AreaTabletScrolled
 {
-	scrollpos_str	*scroll;
+	//scrollpos_str	*scroll;
 public:
-	TextInfoArea(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont,
-					scrollpos_str *ascroll);
-	virtual ~TextInfoArea();
+	TextInfoArea(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
+	~TextInfoArea();
 
 	char	*textinfo;
 
@@ -238,16 +373,17 @@ public:
 
 	AreaGeneral		*trigger;	// this controls the on/off of the menu
 
-	Button			*left, *right, *up, *down;
-	scrollpos_str	*scroll_control;
-	ScrollBar		*scrollvert, *scrollhor;
+//	Button			*left, *right, *up, *down;
+//	ScrollBar		*scrollvert, *scrollhor;
+
+	scrollpos_str	scroll;
+	ScrollControl	scrollcontrol;
 
 	// origin relative to the creators' position
-	PopupGeneral(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename);
-	PopupGeneral::PopupGeneral(char *ident, int axshift, int ayshift,
-								char *datafilename, BITMAP *outputscreen);
-	virtual ~PopupGeneral();
-	virtual void init_components();
+	PopupGeneral(AreaGeneral *creator, char *identbranch, int axshift, int ayshift);
+	PopupGeneral::PopupGeneral(char *identbranch, int axshift, int ayshift, BITMAP *outputscreen);
+	~PopupGeneral();
+	virtual void init_components(char *identbranch);
 
 	// returnstatus can be (usually is) the array index of a selected item in a list.
 	virtual void close(int areturnstatus);
@@ -273,9 +409,9 @@ class PopupTextInfo : public PopupGeneral
 public:
 	TextInfoArea	*tia;
 
-	PopupTextInfo(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename,
+	PopupTextInfo(AreaGeneral *creator, char *ident, int axshift, int ayshift,
 					FONT *afont, char *atext, int aNchar);
-	virtual ~PopupTextInfo();
+	~PopupTextInfo();
 };
 
 
@@ -286,9 +422,10 @@ class PopupTextInfo_toggle : public PopupTextInfo
 {
 public:
 
-	PopupTextInfo_toggle(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename,
+	PopupTextInfo_toggle(AreaGeneral *creator, char *ident, int axshift, int ayshift,
 		FONT *afont, char *atext, int aNchar);
-	virtual ~PopupTextInfo_toggle();
+
+//	~PopupTextInfo();
 
 	virtual void calculate();
 	virtual void check_end();
@@ -317,9 +454,9 @@ public:
 //	char			**optionslist;
 	
 	// origin relative to the creators' position
-	PopupList(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename,
+	PopupList(AreaGeneral *creator, char *ident, int axshift, int ayshift,
 				FONT *afont, char **aaoptionslist);
-	virtual ~PopupList();
+	~PopupList();
 
 	virtual void check_end();
 	//virtual void calculate();
@@ -357,7 +494,7 @@ public:
 
 	MatrixIcons(AreaReserve *menu, char *identbranch, int ax, int ay,
 						scrollpos_str *ascroll, int akey);
-	virtual ~MatrixIcons();
+	~MatrixIcons();
 
 	void set_iconinfo(BITMAP **alistIcon, double ascale);
 
@@ -387,7 +524,7 @@ public:
 								char *datafilename, BITMAP *outputscreen,
 								BITMAP **alistIcon, double ascale, FONT *afont );
 
-	virtual ~PopupFleetSelection();
+	~PopupFleetSelection();
 
 	//virtual void close(int areturnstatus);
 	virtual void check_end();
@@ -409,9 +546,8 @@ class Popup : public AreaReserve
 	bool	inherited;
 
 public:
-	Popup(char *ident, int xcenter, int ycenter, char *datafilename, BITMAP *outputscreen,
+	Popup(char *ident, int xcenter, int ycenter, BITMAP *outputscreen,
 		bool inherited = false);
-	virtual ~Popup();
 
 	bool returnvalueready;
 
@@ -431,9 +567,10 @@ class PopupOk : public Popup
 	Button		*ok;
 public:
 	PopupOk(char *ident, int xcenter, int ycenter,
-						char *datafilename, BITMAP *outputscreen,
+						//char *datafilename,
+						BITMAP *outputscreen,
 							bool inherited = false);
-	virtual ~PopupOk();
+
 	virtual void check_end();
 };
 
@@ -443,15 +580,16 @@ class PopupYN : public Popup
 	Button		*yes, *no;
 public:
 	PopupYN(char *ident, int xcenter, int ycenter,
-						char *datafilename, BITMAP *outputscreen,
+						//char *datafilename,
+						BITMAP *outputscreen,
 							bool inherited = false);
-	virtual ~PopupYN();
+
 	virtual void check_end();
 
 };
 
 
 
-#endif
 
+#endif
 

@@ -139,7 +139,7 @@ int CargoLink::handle_damage(SpaceLocation *source, double normal, double direct
 			do_area_damage( );
 
 			play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
-			game->add(new Animation(this, pos,	game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
+			game->add(new Animation(this, pos,	meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 
 		}
 		

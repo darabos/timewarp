@@ -138,7 +138,7 @@ ChmmrLaser::ChmmrLaser(double langle, double lrange, int ldamage,
 
 ChmmrBeam::ChmmrBeam(Ship *oship, int oframes) :
 	SpaceObject(oship, oship->normal_pos(), oship->get_angle(), 
-    game->sparkSprite),
+    meleedata.sparkSprite),
 	frame(0),
 	frame_count(oframes),
 	ship(oship),
@@ -294,7 +294,7 @@ int ChmmrZapSat::handle_damage(SpaceLocation *source, double normal, double dire
 			armour = 0;
 			state = 0;
 			add(new Animation(this, pos,
-					game->kaboomSprite, 0, KABOOM_FRAMES, 50, DEPTH_EXPLOSIONS));
+					meleedata.kaboomSprite, 0, KABOOM_FRAMES, 50, DEPTH_EXPLOSIONS));
 			sound.stop(data->sampleExtra[0]);
 			sound.play(data->sampleExtra[0]);
 			}

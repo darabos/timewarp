@@ -338,7 +338,7 @@ void JnkdwoLazelLaser::inflict_damage(SpaceObject *other) {
 //        return;
 
 	add(new Animation( this,
-			normal_pos() + edge(), game->sparkSprite, 0, 
+			normal_pos() + edge(), meleedata.sparkSprite, 0, 
 			SPARK_FRAMES, 50, LAYER_EXPLOSIONS));
 	return;
 }

@@ -176,7 +176,7 @@ void SuperArena::pick_new_ships() {
 		}
 	}
 	if (KTS==1) {
-		Pl = new Planet(Vector2(size.x/4+500, size.y*3/4+500), planetSprite, random()%planetSprite->frames());
+		Pl = new Planet(Vector2(size.x/4+500, size.y*3/4+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 		add(Pl);
 		s[1] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[1]);
 		add ( new BlinkyIndicator(s[1], 2) );
@@ -200,7 +200,7 @@ void SuperArena::pick_new_ships() {
 			}
 		}
 		if (KTS==1) {
-			Pl = new Planet(Vector2(size.x/4+500, size.y/4+500), planetSprite, random()%planetSprite->frames());
+			Pl = new Planet(Vector2(size.x/4+500, size.y/4+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 			add(Pl);
 			s[2] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[2]);
 			add ( new BlinkyIndicator(s[2], 4) );
@@ -226,7 +226,7 @@ void SuperArena::pick_new_ships() {
 			}
 		}
 		if (KTS==1) {
-			Pl = new Planet(Vector2(size.x*3/4+500, size.y/4+500), planetSprite, random()%planetSprite->frames());
+			Pl = new Planet(Vector2(size.x*3/4+500, size.y/4+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 			add(Pl);
 			s[3] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[3]);
 			add ( new BlinkyIndicator(s[3], 4) );
@@ -251,7 +251,7 @@ void SuperArena::pick_new_ships() {
 			}
 		}
 		if (KTS==1) {
-			Pl = new Planet(Vector2(size.x*3/4+500, size.y*3/4+500), planetSprite, random()%planetSprite->frames());
+			Pl = new Planet(Vector2(size.x*3/4+500, size.y*3/4+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 			add(Pl);
 			s[4] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[4]);
 			add ( new BlinkyIndicator(s[4], 4) );
@@ -277,7 +277,7 @@ void SuperArena::pick_new_ships() {
 			}
 		}
 		if (KTS==1) {
-			Pl = new Planet(Vector2(size.x/2+500, size.y*3/4+500), planetSprite, random()%planetSprite->frames());
+			Pl = new Planet(Vector2(size.x/2+500, size.y*3/4+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 			add(Pl);
 			s[5] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[5]);
 			add ( new BlinkyIndicator(s[5], 4) );
@@ -302,7 +302,7 @@ void SuperArena::pick_new_ships() {
 			}
 		}
 		if (KTS==1) {
-			Pl = new Planet(Vector2(size.x/4+500, size.y/2+500), planetSprite, random()%planetSprite->frames());
+			Pl = new Planet(Vector2(size.x/4+500, size.y/2+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 			add(Pl);
 			s[6] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[6]);
 			add ( new BlinkyIndicator(s[6], 4) );
@@ -327,7 +327,7 @@ void SuperArena::pick_new_ships() {
 			}
 		}
 		if (KTS==1) {
-			Pl = new Planet(Vector2(size.x/2+500, size.y/4+500), planetSprite, random()%planetSprite->frames());
+			Pl = new Planet(Vector2(size.x/2+500, size.y/4+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 			add(Pl);
 			s[7] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[7]);
 			add ( new BlinkyIndicator(s[7], 4) );
@@ -352,7 +352,7 @@ void SuperArena::pick_new_ships() {
 			}
 		}
 		if (KTS==1) {
-			Pl = new Planet(Vector2(size.x*3/4+500, size.y/2+500), planetSprite, random()%planetSprite->frames());
+			Pl = new Planet(Vector2(size.x*3/4+500, size.y/2+500), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 			add(Pl);
 			s[8] = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/4, size.y*3/4), 1, team[8]);
 			add ( new BlinkyIndicator(s[8], 4) );
@@ -368,7 +368,7 @@ void SuperArena::pick_new_ships() {
 	log_file("sarena.ini");
 	g = get_config_int(NULL, "Planet", 0);
 	if (g > 0) {
-		Pl = new Planet(Vector2(size.x/2, size.y/2), planetSprite, random()%planetSprite->frames());
+		Pl = new Planet(Vector2(size.x/2, size.y/2), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 		add(Pl);
 		s = get_config_int(NULL, "Station", 0);
 		if (s > 0) {
@@ -384,7 +384,7 @@ void SuperArena::pick_new_ships() {
 	g = get_config_int(NULL, "Oplanets", 0);
 	s = get_config_int(NULL, "Ostations", 0);
 	for (m = 0; m < g; m += 1) {
-		Pl = new Planet(Vector2(random() % (int)size.x, random() % (int)size.y), planetSprite, random()%planetSprite->frames());
+		Pl = new Planet(Vector2(random() % (int)size.x, random() % (int)size.y), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
 		add(Pl);
 		if (s>0) {
 			Ship *Station1 = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/2, size.y/2), 1, station_team);
@@ -401,7 +401,7 @@ void SuperArena::pick_new_ships() {
 	log_file("sarena.ini");
 	m = get_config_int(NULL, "Comets", 2);
 	for (g = 1; g < m; g += 1) {
-		c = new Planet (Vector2(random()%int(size.x), random()%int(size.y)), kaboomSprite, 1);
+		c = new Planet (Vector2(random()%int(size.x), random()%int(size.y)), meleedata.kaboomSprite, 1);
 		c->mass = get_config_int(NULL, "Comet_mass", 2);
 		c->gravity_force *= 0;
 		c->gravity_whip = 0;

@@ -1,4 +1,3 @@
-
 #ifndef __GAME_PLANET_VIEW__
 #define __GAME_PLANET_VIEW__
 

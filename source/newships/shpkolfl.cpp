@@ -196,14 +196,14 @@ void KoloryFlamer::calculate_hotspots()
 
 		game->add(new Animation(this,
 			normal_pos() + P,
-			game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+			meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 
 		P = Vector2(+12,20);
 		P = rotate(P, angle+PI/2);
 
 		game->add(new Animation(this,
 			normal_pos() + P,
-			game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+			meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 
 		hotspot_frame += hotspot_rate;
 	}

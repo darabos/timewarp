@@ -218,7 +218,7 @@ void OwaShrapnel::calculate()
   if (hotspot_frame <= 0) {
     add(new Animation(this, 
       normal_pos() - (unit_vector(angle ) * size.x / 2.5),
-      game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
+      meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, LAYER_HOTSPOTS));
     hotspot_frame += hotspot_rate;
   }
   if (hotspot_frame > 0) hotspot_frame -= frame_time;

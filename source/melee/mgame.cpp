@@ -52,6 +52,67 @@ static int chat_on = 0;
 
 int random_seed[2];
 
+MeleeData meleedata;
+
+MeleeData::MeleeData()
+{
+	panelSprite             = NULL;
+	kaboomSprite            = NULL;
+	hotspotSprite           = NULL;
+	sparkSprite             = NULL;
+	asteroidExplosionSprite = NULL;
+	asteroidSprite          = NULL;
+	planetSprite            = NULL;
+	xpl1Sprite              = NULL;
+
+	planet_victory			= NULL;	
+
+	melee = NULL;
+}
+
+
+
+void MeleeData::init()
+{
+	melee = load_datafile("melee.dat");
+	if (!melee) tw_error("Error loading melee data\n");
+
+	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
+	meleedata.kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	meleedata.hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	meleedata.sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED | SpaceSprite::MATCH_SCREEN_FORMAT);
+	meleedata.asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
+	meleedata.asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
+	meleedata.planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
+	meleedata.xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+
+	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
+}
+
+void MeleeData::deinit()
+{
+	panelSprite             = NULL;
+	kaboomSprite            = NULL;
+	hotspotSprite           = NULL;
+	sparkSprite             = NULL;
+	asteroidExplosionSprite = NULL;
+	asteroidSprite          = NULL;
+	planetSprite            = NULL;
+	xpl1Sprite              = NULL;
+
+	planet_victory			= NULL;		
+
+	unload_datafile(melee);
+	
+	melee = NULL;
+}
+
+
+
 
 int interpolate_frames = false;
 
@@ -750,8 +811,9 @@ void Game::fps() {STACKTRACE
 
 void Game::preinit() {STACKTRACE
 	Physics::preinit();
-	planetSprite = asteroidSprite = asteroidExplosionSprite = hotspotSprite = kaboomSprite = panelSprite = sparkSprite = xpl1Sprite = NULL;
-	planet_victory = NULL;
+//	meleedata.planetSprite = meleedata.asteroidSprite = meleedata.asteroidExplosionSprite = meleedata.hotspotSprite = meleedata.kaboomSprite = meleedata.panelSprite = meleedata.sparkSprite = meleedata.xpl1Sprite = NULL;
+// you should reset it here (again), cause there can be subgames of this type.
+//	planet_victory = NULL;
 	log = NULL;
 	tic_history = render_history = NULL;
 
@@ -930,21 +992,25 @@ offset	size	format		data
 	if (!is_paused()) pause();
 
 	text_mode(-1);
+
+	/*
 	if (!melee) melee = load_datafile("melee.dat");
 	if (!melee) tw_error("Error loading melee data\n");
 
-	panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
-	kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
+	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
+	meleedata.kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
 		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
+	meleedata.hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
 		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
+	meleedata.sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
 		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED | SpaceSprite::MATCH_SCREEN_FORMAT);
-	asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
-	asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
-	planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
-	xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
+	meleedata.asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
+	meleedata.asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
+	meleedata.planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
+	meleedata.xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
 		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
+	*/
 /*	panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
 	kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES);
 	hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES);
@@ -953,7 +1019,7 @@ offset	size	format		data
 	asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
 	planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
 	xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES);*/
-	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
+
 
 	set_config_file("client.ini");
 	msecs_per_fps = get_config_int("View", "FPS_Time", 200);
@@ -1068,36 +1134,38 @@ Game::~Game() {STACKTRACE
 	message.out("deleteing histographs");
 	delete tic_history; tic_history = NULL;
 	delete render_history; render_history = NULL;
-	
+
+	/*
 	message.out("deleteing misc. sprites");
 
-	delete xpl1Sprite;
-	delete panelSprite;
-	delete kaboomSprite;
-	delete hotspotSprite;
-	delete sparkSprite;
-	delete asteroidExplosionSprite;
-	delete asteroidSprite;
-	delete planetSprite;
+	delete meleedata.xpl1Sprite;
+	delete meleedata.panelSprite;
+	delete meleedata.kaboomSprite;
+	delete meleedata.hotspotSprite;
+	delete meleedata.sparkSprite;
+	delete meleedata.asteroidExplosionSprite;
+	delete meleedata.asteroidSprite;
+	delete meleedata.planetSprite;
 
-	xpl1Sprite = NULL;
-	panelSprite = NULL;
-	kaboomSprite = NULL;
-	hotspotSprite = NULL;
-	sparkSprite = NULL;
-	asteroidExplosionSprite = NULL;
-	asteroidSprite = NULL;
-	planetSprite = NULL;
+	meleedata.xpl1Sprite = NULL;
+	meleedata.panelSprite = NULL;
+	meleedata.kaboomSprite = NULL;
+	meleedata.hotspotSprite = NULL;
+	meleedata.sparkSprite = NULL;
+	meleedata.asteroidExplosionSprite = NULL;
+	meleedata.asteroidSprite = NULL;
+	meleedata.planetSprite = NULL;
 
-	//planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
+	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
+	*/
 
 	if (music && (music != (Music*)-1)) {
 		sound.stop_music();
 		sound.unload_music(music);
 	}
 
-	message.out("deleteing data file");
-	unload_datafile(melee); melee = NULL;
+//	message.out("deleteing data file");
+//	unload_datafile(melee); melee = NULL;
 
 	message.out("deleteing game objects");
 	destroy_all();

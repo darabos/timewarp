@@ -1,4 +1,3 @@
-
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,8 +21,6 @@ REGISTER_FILE
 
 void IterGame::play_iteration(unsigned int time)
 {
-	STACKTRACE
-
 	// re-initialize screens and game pointers ... very important ...
 	prepare();
 
@@ -69,8 +66,6 @@ void IterGame::play_iteration(unsigned int time)
 
 void MainGame::addsubgame(SubGame *asubgame)
 {
-	STACKTRACE
-
 	asubgame->maingame = this;
 
 	//videosystem.window.lock();
@@ -92,17 +87,15 @@ void MainGame::addsubgame(SubGame *asubgame)
 
 void MainGame::removesubgame(int k)
 {
-	STACKTRACE
-
 	subgame[k]->log->deinit();	// this is empty, dunno why
 
-	DATAFILE *d = melee;	// remember this important pointer.
+//	DATAFILE *d = melee;	// remember this important pointer.
 
 	game = NULL;
 
 	delete subgame[k];	// this _must_ be deleted completely, otherwise the gamedata aren't removed
 
-	melee = d;	// restore this pointer !!
+//	melee = d;	// restore this pointer !!
 
 
 	int i;
@@ -116,8 +109,6 @@ void MainGame::removesubgame(int k)
 
 void MainGame::play()
 {
-	STACKTRACE
-
 	set_resolution(window->w, window->h);
 
 	prepare();
@@ -182,18 +173,20 @@ SubGame::~SubGame()
 	// so, set the pointers to null first ...
 //	if (this != maingame)	// comparison isn't needed, since it's always this type of game.
 //	{
-		
+
+	/*
 		// the purpose of setting those things to NULL is to prevent them
 		// from being deleted.
 
-		panelSprite             = NULL;
-		kaboomSprite            = NULL;
-		hotspotSprite           = NULL;
-		sparkSprite             = NULL;
-		asteroidExplosionSprite = NULL;
-		asteroidSprite          = NULL;
-		planetSprite            = NULL;
-		xpl1Sprite              = NULL;
+		meleedata.panelSprite             = NULL;
+		meleedata.kaboomSprite            = NULL;
+		meleedata.hotspotSprite           = NULL;
+		meleedata.sparkSprite             = NULL;
+		meleedata.asteroidExplosionSprite = NULL;
+		meleedata.asteroidSprite          = NULL;
+		meleedata.planetSprite            = NULL;
+		meleedata.xpl1Sprite              = NULL;
+		
 		planet_victory			= NULL;
 		
 		music = NULL;
@@ -204,6 +197,7 @@ SubGame::~SubGame()
 		// therefore, this pointer restored after the deletion... by the main game
 		// for now, the pointer=0, otherwise the data are deleted physically
 //	}
+		*/
 
 }
 
@@ -211,9 +205,8 @@ SubGame::~SubGame()
 
 void SubGame::init(Log *_log)
 {
-	STACKTRACE
+	//int i;
 
-//	int i;
 
 	game_done = false;
 	log = _log;
@@ -255,6 +248,7 @@ void SubGame::init(Log *_log)
 
 	// start copying stuff ...
 
+	/*
 	//melee = maingame->melee;	// this is a global variable
 
 	panelSprite             = maingame->panelSprite;
@@ -266,6 +260,21 @@ void SubGame::init(Log *_log)
 	planetSprite            = maingame->planetSprite;
 	xpl1Sprite              = maingame->xpl1Sprite;
 	planet_victory			= maingame->planet_victory;
+	*/
+	/*
+	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
+	meleedata.kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	meleedata.hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+	meleedata.sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED | SpaceSprite::MATCH_SCREEN_FORMAT);
+	meleedata.asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
+	meleedata.asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
+	meleedata.planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
+	meleedata.xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
+		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+		*/
 	
 
 	set_config_file("client.ini");

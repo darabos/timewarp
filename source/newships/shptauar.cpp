@@ -466,7 +466,7 @@ void TauArchon::calculate_hotspots()
 
 				normal_pos() - unit_vector(angle) * 15,
 
-				game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+				meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 
 		hotspot_frame += hotspot_rate; }
 

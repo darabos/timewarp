@@ -227,7 +227,6 @@ extern class NormalGame *&normalgame;
 extern class GobGame *&gobgame;
 extern Vector2 map_size;
 
-// added ROB
 extern class MeleeData meleedata;
 
 //melee/mhelpers.cpp

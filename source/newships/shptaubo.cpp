@@ -139,7 +139,7 @@ void TauBomber::calculate_hotspots()
 	STACKTRACE
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation(this, pos - 17*unit_vector(angle),
-			game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+			meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 		hotspot_frame += hotspot_rate;
 	}
 	if (hotspot_frame > 0)

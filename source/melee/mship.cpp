@@ -494,7 +494,7 @@ void Ship::calculate()
 			death_explosion_counter += 25;
 			for (i=0; i<2; i++) {
 				ff = random(25);
-				a = new Animation(this, pos, game->xpl1Sprite,
+				a = new Animation(this, pos, meleedata.xpl1Sprite,
 					ff, 40-ff, 25, DEPTH_EXPLOSIONS);
 				a->transparency = 1.0 / 4;
 				game->add(a);
@@ -703,14 +703,14 @@ int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {ST
 		play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 		//state = 0;
 //modified by Tau - start
-		if (game->xpl1Sprite) {
+		if (meleedata.xpl1Sprite) {
 			death_counter = 0;
 			death_explosion_counter = 0;
 			collide_flag_anyone = collide_flag_sameship = collide_flag_sameteam = 0;
 		}
 		else {
 			state = 0;
-			game->add(new Animation(this, pos, game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
+			game->add(new Animation(this, pos, meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 		}
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH) {
 			game->ship_died(this, source);
@@ -809,7 +809,7 @@ void Ship::calculate_hotspots() {STACKTRACE
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation(this,
 			normal_pos() - unit_vector(angle) * size.x / 2.5,
-			game->hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+			meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
 		hotspot_frame += hotspot_rate;
 	}
 	if (hotspot_frame > 0)

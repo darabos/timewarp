@@ -90,6 +90,8 @@ struct scrollpos_str
 	AreaGeneral *left, *right, *up, *down;
 	ScrollBar *scrollhor, *scrollvert;
 
+	scrollpos_str();
+
 	int	x, y;	// which Icon is visible top left.
 	int Nx, Ny;				// number of Icons that are present.
 	int xselect, yselect;
@@ -103,6 +105,9 @@ struct scrollpos_str
 	void bind(AreaGeneral *left, AreaGeneral *right, AreaGeneral *up, AreaGeneral *down,
 				ScrollBar *scrollhor, ScrollBar *scrollvert);
 	void calculate();
+
+	void set_sel(int xsel, int ysel);
+	void check_sel();
 };
 
 

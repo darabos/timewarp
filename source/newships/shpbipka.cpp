@@ -454,7 +454,7 @@ void BipoleShip::destroyed( SpaceLocation* source ){
 	STACKTRACE
 	play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 	game->add(new Animation(this, pos,
-    game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, LAYER_EXPLOSIONS));
+    meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, LAYER_EXPLOSIONS));
 
 // we do not report ship_died events -- the parent does
 //  game->ship_died(this, source);

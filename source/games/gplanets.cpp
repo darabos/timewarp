@@ -1634,7 +1634,7 @@ void Planets::init_objects()
 	for (num = 0; num < Comets; num++)
 	{
 		Planet *c;
-		c = new Planet (random(size), kaboomSprite, 1);
+		c = new Planet (random(size), meleedata.kaboomSprite, 1);
 		c->id=COMET_ID;
 		c->mass = CoMass;
 		c->gravity_force *= 0;

@@ -185,13 +185,13 @@ void GobGame::init(Log *_log) {
 
 	num_planets = 0;
 	i = 0;
-	add_planet_and_station(planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
 	i = 1;
-	add_planet_and_station(planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
 	i = 2;
-	add_planet_and_station(planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
 	i = random() % 3;
-	add_planet_and_station(planetSprite, i, stationSprite[i], "utwju", station_pic_name[i]);
+	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i]);
 
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 

@@ -114,7 +114,7 @@ void LeagueGame::init_objects() {
 	add( new Boundary( Vector2(LEAGUE_BORDER, size.y-LEAGUE_BORDER), Vector2(LEAGUE_BORDER, size.y/2) ));
 	add( new Boundary( Vector2(LEAGUE_BORDER, size.y/2), Vector2(LEAGUE_BORDER, LEAGUE_BORDER) ));
 
-	ball = new Ball( size/2, 0, asteroidSprite );
+	ball = new Ball( size/2, 0, meleedata.asteroidSprite );
 	add( ball );
 	GoalLine* gl = new GoalLine( Vector2(2 * size.x / 5, size.y / 10), 0, size.x / 5, LEAGUE_GOAL_LINE_DAMAGE, pallete_color[LEAGUE_TEAM_COLOR_1] );
 	add( gl );
@@ -124,13 +124,13 @@ void LeagueGame::init_objects() {
 	add( gl );
 	gl = new GoalLine( Vector2(3 * size.x / 5, 9 * size.y / 10), PI, size.x / 5, LEAGUE_GOAL_LINE_DAMAGE, pallete_color[LEAGUE_TEAM_COLOR_2], 0.5 );
 	add( gl );
-	FixedObject* post = new FixedObject( NULL, Vector2(2 * size.x / 5 - planetSprite->size().x / 2, size.y / 10), 0, planetSprite );
+	FixedObject* post = new FixedObject( NULL, Vector2(2 * size.x / 5 - meleedata.planetSprite->size().x / 2, size.y / 10), 0, meleedata.planetSprite );
 	add( post );
-	post = new FixedObject( NULL, Vector2(3 * size.x / 5 + planetSprite->size().x / 2, size.y / 10), 0, planetSprite );
+	post = new FixedObject( NULL, Vector2(3 * size.x / 5 + meleedata.planetSprite->size().x / 2, size.y / 10), 0, meleedata.planetSprite );
 	add( post );
-	post = new FixedObject( NULL, Vector2(2 * size.x / 5 - planetSprite->size().x / 2, 9 * size.y / 10), 0, planetSprite );
+	post = new FixedObject( NULL, Vector2(2 * size.x / 5 - meleedata.planetSprite->size().x / 2, 9 * size.y / 10), 0, meleedata.planetSprite );
 	add( post );
-	post = new FixedObject( NULL, Vector2(3 * size.x / 5 + planetSprite->width() / 2, 9 * size.y / 10), 0, planetSprite );
+	post = new FixedObject( NULL, Vector2(3 * size.x / 5 + meleedata.planetSprite->width() / 2, 9 * size.y / 10), 0, meleedata.planetSprite );
 	add( post );
 
 	size *= 2;
@@ -170,7 +170,7 @@ void LeagueGame::animate( Frame* frame ){
 	STACKTRACE
 
 	NormalGame::animate( frame );
-	panelSprite->draw( 0, Vector2(PANEL_WIDTH, PANEL_HEIGHT), 0, frame );
+	meleedata.panelSprite->draw( 0, Vector2(PANEL_WIDTH, PANEL_HEIGHT), 0, frame );
 	int colon_w = text_length( font, ":" );
 	textprintf( frame->surface, font, (PANEL_WIDTH - colon_w) / 2, 45, pallete_color[15], ":" );
 	char buf[100];
@@ -252,7 +252,7 @@ void Ball::calculate(){
 				sprite_index = 0;
 				disassembling = false;
 				assembling = false;
-				sprite = game->asteroidSprite;
+				sprite = meleedata.asteroidSprite;
 				collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;
 			}
 		}
@@ -293,7 +293,7 @@ void Ball::reassemble(){
 	collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = 0;
 	step = time_ratio;
 	sprite_index = 0;
-	sprite = game->asteroidExplosionSprite;
+	sprite = meleedata.asteroidExplosionSprite;
 	assembling = false;
 	disassembling = true;
 	vel = 0;

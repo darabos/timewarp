@@ -83,7 +83,7 @@ int ThraddashFlame::handle_damage(SpaceLocation *source, double normal, double d
 	if ((armour <= 0) || (source->isObject() && ((SpaceObject*)source)->mass)) {
 		state = 0;
 		add(new Animation(this, normal_pos(), //normal_x(), normal_y(), 
-				game->sparkSprite, 0, SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
+				meleedata.sparkSprite, 0, SPARK_FRAMES, 50, DEPTH_EXPLOSIONS));
 		}
 	return total;
 	}

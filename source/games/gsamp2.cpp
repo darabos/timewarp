@@ -95,7 +95,7 @@ int DefenderStation::handle_damage ( SpaceLocation *source, double normal, doubl
 	health -= normal;
 	health -= direct;
 	if (health <= 0) {
-		add ( new Animation ( this, pos, game->kaboomSprite, 0, game->kaboomSprite->frames(), 50, DEPTH_EXPLOSIONS) );
+		add ( new Animation ( this, pos, meleedata.kaboomSprite, 0, meleedata.kaboomSprite->frames(), 50, DEPTH_EXPLOSIONS) );
 		state = 0;
 	}
 	return (int)(old-health);
@@ -187,7 +187,7 @@ void DefenderGame::restart() {
 	Ship *ship = create_ship("supbl", player, Vector2(500, 200), 270);
 	add(ship);
 
-	Planet *planet = new Planet ( 0, planetSprite, random(3) );
+	Planet *planet = new Planet ( 0, meleedata.planetSprite, random(3) );
 	add ( planet );
 
 	starbase =  new DefenderStation ( stationsprite, planet);

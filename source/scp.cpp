@@ -60,6 +60,10 @@ REGISTER_FILE
 #include "melee/mship.h" //remove
 #include "melee/mfleet.h"
 
+//#include "gamex/projectx.h"
+// for future use (Rob)
+
+
 #define SCPGUI_MUSIC   0
 #define SCPGUI_TITLE   1
 
@@ -157,7 +161,8 @@ enum {
 	MAIN_DIALOG_TEAMS,
 	MAIN_DIALOG_OPTIONS,
 	MAIN_DIALOG_HELP,
-	MAIN_DIALOG_EXIT
+//	MAIN_DIALOG_FG,
+	MAIN_DIALOG_EXIT,
 };
 
 DIALOG mainDialog[] = {
@@ -169,6 +174,7 @@ DIALOG mainDialog[] = {
   { d_button_proc,     45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
   { d_button_proc,     45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
   { d_button_proc,     45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
+//  { d_button_proc,     500,  400,   50,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"FG" , NULL, NULL },
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 };
@@ -406,6 +412,7 @@ void play_demo ( const char * file_name ) {STACKTRACE
 	return;
 }
 
+
 void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 	bool gui_stuff = false;
 	char gametype_name[1024];
@@ -482,6 +489,36 @@ void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 	}
 	return;
 }
+
+/* for future use (Rob)
+void play_fg()
+{
+	// destroy the gui
+	bool gui_stuff = false;
+	
+	if (scp) {
+		gui_stuff = true;
+		sound.stop_music();
+		if (scp) unload_datafile(scp);
+		scp = NULL;
+	}
+	
+	// the new "thing", for the "big game"
+	ProjectX *px;
+	px = new ProjectX();
+	px->play();
+	//nm = 1;
+	delete px;
+	
+	// re-initialize the gui
+	if (gui_stuff) {
+		scp = load_datafile("scpgui.dat");
+		sound.play_music((Music *)(scp[SCPGUI_MUSIC].dat), TRUE);
+		showTitle();
+	}
+}
+*/
+
 
 
 char dialog_string[20][128];
@@ -600,6 +637,9 @@ void MainMenu::doit() {STACKTRACE
 
 	showTitle();
 	enable();
+
+	meleedata.init();
+
 	int mainRet;
 	do {
 		//mainRet = popup_dialog(mainDialog, MAIN_DIALOG_MELEE);
@@ -625,8 +665,15 @@ void MainMenu::doit() {STACKTRACE
 				change_teams();
 				showTitle();
 				break;
+//			case MAIN_DIALOG_FG:	// for future use (Rob)
+//				disable();
+//				//play_fg();
+//				enable();
+//				break;
 		}
 	} while((mainRet != MAIN_DIALOG_EXIT) && (mainRet != -1));
+
+	meleedata.deinit();
 }
 
 int tw_main(int argc, char *argv[]);
