@@ -1,6 +1,10 @@
 #ifndef __GEVENT_H__
 #define __GEVENT_H__
 
+#ifdef ALLEGRO_MSVC
+	#pragma warning (disable:4786)
+#endif
+
 #include <utility>
 #include <functional>
 #include <memory>
@@ -100,7 +104,7 @@ class EventPlayerDied: public IEvent
 
 class EventHandler;
 
-typedef std::set<EventHandler*> EventHandlerList;
+typedef std::set<class EventHandler*> EventHandlerList;
 
 class EventListner
 {
@@ -114,7 +118,7 @@ class EventListner
   void RegisterEvent( int type, EventHandler * eh );
 };
 
-typedef std::map<EventListner*, std::set<int> > EventListnersList;
+typedef std::map<class EventListner*, std::set<int> > EventListnersList;
 
 /*! \brief Gather event from various sources, and pass them to event listrens */
 class EventHandler
@@ -127,7 +131,6 @@ class EventHandler
   virtual void RegisterEvent( int type, EventListner * listner );
   virtual void UnRegisterEvent (int type, EventListner * listner );
 };
-
 
 
 #endif // __GEVENT_H__

@@ -14,6 +14,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#ifdef ALLEGRO_MSVC
+	#pragma warning (disable:4786)	// identifier was truncated to '255' characters in the browser information
+#endif
+
 extern "C" {
 #	include "lua.h"
 #	include "lualib.h"
@@ -36,9 +40,8 @@ static int l_AddPlanet(lua_State* ls);
 static int l_AddStation(lua_State* ls);
 
 
-#ifdef ALLEGRO_MSVC
-#pragma warning (disable:4786)
-#endif
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //Helper functions

@@ -489,3 +489,4 @@ void SampleGame3::init(Log *_log) {
 	}
 
 REGISTER_GAME(SampleGame3, "Sample 3: Eternal Arena")
+

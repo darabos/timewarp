@@ -1,6 +1,10 @@
 #ifndef __GGOB_H__
 #define __GGOB_H__
 
+#ifdef ALLEGRO_MSVC
+	#pragma warning (disable:4786)	// identifier was truncated to '255' characters in the browser information
+#endif
+
 #include <list>
 #include <string>
 #include <map>

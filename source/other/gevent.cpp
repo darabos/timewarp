@@ -1,9 +1,9 @@
+
 #include <allegro.h>
 
 #ifdef ALLEGRO_MSVC
 	#pragma warning (disable:4786)
 #endif
-
 
 #include "../melee.h"
 REGISTER_FILE
