@@ -519,6 +519,7 @@ void RogueFighter::calculate()
 	if ( !(mother && mother->exists()) )
 	{
 		state = 0;
+		mother = 0;
 		return;
 	}
 
@@ -664,7 +665,11 @@ PulseLaser::PulseLaser(SpaceLocation *creator, double langle, int lcolor, double
 
 	vel = /*lpos->get_vel() +*/ rvelocity * unit_vector(angle);
 
-	if(!lpos->exists()) state = 0;
+	if (!(lpos && lpos->exists()))
+	{
+		lpos = 0;
+		state = 0;
+	}
 }
 
 

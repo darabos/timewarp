@@ -271,9 +271,10 @@ void SlylandroLaserNew::calculate()
 {
 	lifetime += frame_time;
 
-	if ( lifetime > existtime || !mother || !mother->exists() )
+	if ( lifetime > existtime || !(mother && mother->exists()) )
 	{
 		state = 0;
+		mother = 0;		// needed, next iteration mother may be really removed.
 		return;
 	}
 	

@@ -237,14 +237,17 @@ TauEMPJammer::TauEMPJammer(SpaceLocation *creator, Ship *tgt, int jtime) :
 void TauEMPJammer::calculate()
 {
 	SpaceLocation::calculate();
-	if (jamtarget->exists()) {
+	if (jamtarget && jamtarget->exists()) {
 		pos = jamtarget->normal_pos();
 		jamtarget->nextkeys &= ~jamkey;
 		jamtime -= frame_time;
 		if (jamtime <= 0)
 			state = 0; }
 	else
+	{
 		state = 0;
+		jamtarget = 0;
+	}
 }
 
 

@@ -243,6 +243,8 @@ void RotatingLaser::calculate()
 	if ( !(mother && mother->exists()) )
 	{
 		state = 0;
+		mother = 0;
+
 		return;
 	}
 

@@ -277,12 +277,9 @@ calculate();
 
 void YevShield::calculate() {
 
-	if (ship==NULL) {
-		state = 0;
-		return;
-	}
-
-	if(!ship->exists()) {
+	if(!(ship && ship->exists()))
+	{
+		ship = 0;
 		state = 0;
 		return;
 	}
@@ -330,12 +327,9 @@ YevSaber::YevSaber(YevMech *oship,SpaceSprite *osprite) :
 void YevSaber::calculate() {
   int		   si;
 
-  if (ship==NULL) {
-	  state = 0; 
-	  return;
-  }
-
-  if(!ship->exists()) {
+  if(!(ship && ship->exists()))
+  {
+	  ship = 0;
 	  state = 0;
 	  return;
   }

@@ -343,6 +343,7 @@ void Chain::calculate()
 	{	//If the mothership is killed, the chain dies.
 		Uncouple();		//Shatters chain, links become independent
 		state=0;
+		ship = 0;
 		return;
 	}
 

@@ -232,7 +232,8 @@ YuryulRam::~YuryulRam(void) {
 
 void YuryulRam::calculate(void) {
 	// changed GEO
-  if(!(creator && creator->exists()) ) {
+  if(!(creator && creator->exists()) )
+  {
 	  creator = 0;
     state = 0;
     return;

@@ -146,13 +146,13 @@ ChmmrBeam::ChmmrBeam(Ship *oship, int oframes) :
 {
 	set_depth(DEPTH_HOTSPOTS);
 	collide_flag_anyone = 0;
-	if(!ship->exists()) {
+	if(!(ship && ship->exists())) {
 		state = 0;
 		return;
 	}
 
 	target = ship->target;
-	if((target == NULL) || (target->isInvisible())) {
+	if(!(target && target->exists()) || (target->isInvisible())) {
 		state = 0;
 		return;
 	}
@@ -163,13 +163,15 @@ void ChmmrBeam::calculate()
 
 	SpaceLocation::calculate();
 
-	if(!ship) {
+	if(!(ship && ship->exists()))
+	{
+		ship = 0;	// not really needed but well.
 		state = 0;
 		return;
 	}
 	target = ship->target;
 
-	if((!target) || (target->isInvisible())) {
+	if((!(target && target->exists())) || (target->isInvisible())) {
 		state = 0;
 		return;
 	}
@@ -226,14 +228,20 @@ ChmmrZapSat::ChmmrZapSat(double oangle, double orange, int odamage,
 //	y = ship->normal_y() + sin(angle) * 100.0;
 	pos = ship->normal_pos() + unit_vector(angle) * 100.0;
 
-	if(!ship->exists()) state = 0;
+	if(!(ship && ship->exists()))
+	{
+		ship = 0;
+		state = 0;
+	}
 }
 
 void ChmmrZapSat::calculate() {
 
 	SpaceObject::calculate();
 
-	if (!ship) {
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
 		state = 0;
 		return;
 		}

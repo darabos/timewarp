@@ -60,18 +60,21 @@ VuxLimpet::VuxLimpet(Vector2 opos, double ov, double slowdown,
 
   vel    = v * unit_vector(angle);
 
-  if(!ship->exists())
+  if(!(ship && ship->exists()))
+  {
+	  ship = 0;
     state = 0;
+  }
 }
 
 void VuxLimpet::calculate()
 {
-	if(!ship->exists()) {
+	if(!(ship && ship->exists())) {
 		state = 0;
 		return;
 		}
 
-	if(ship && (ship->target) && (!ship->target->isInvisible())) {
+	if((ship->target) && (!ship->target->isInvisible())) {
 		angle = trajectory_angle(ship->target);
 		vel = v * unit_vector(angle);
 		}

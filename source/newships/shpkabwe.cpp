@@ -305,6 +305,7 @@ void KaboHaze::calculate()
 
 	if (!(host && host->exists()) )
 	{
+		host = 0;
 		state = 0;
 		return;
 	}
@@ -824,6 +825,7 @@ void KaboPod::calculate()
 {
 	if (! (mother && mother->exists()) )
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}

@@ -67,6 +67,7 @@ void KatPoly::calculate(){
 	if( morph ){
 		morph->nextkeys &= ~keyflag::special;  // we will handle special so disable the morph's
 		if( !morph->exists() ) {
+			morph = 0;
 			state = 0;      // if the morph died we died as well
 			return;
 		}

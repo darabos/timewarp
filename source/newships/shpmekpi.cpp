@@ -240,12 +240,13 @@ void MeknikChainsaw::calculate()
 
 	if ( !(refship && refship->exists()) )
 	{
+		refship = 0;
 		state = 0;
 		return;
 	}
 
 	// if special is pressed, and batt isn't low.
-	if ( !(refship->fire_special && !refship->special_state()) )
+	if ( !refship->fire_special && !refship->special_state() )
 	{
 		state = 0;
 		return;
@@ -316,8 +317,9 @@ Laser(creator, langle, lcolor, lrange, ldamage, lfcount, opos, rpos, osinc_angle
 
 void LaserInform::calculate()
 {
-	if (!mother->exists())
+	if (!(mother && mother->exists()))
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}

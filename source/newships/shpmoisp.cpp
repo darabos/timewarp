@@ -158,8 +158,13 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate,
 void SpeedMissile::calculate()
 {
 	// if the mothership dies, you lose the sprites...
-	if (!ship->exists())
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
+		ship = 0;	// done explicitly, cause the default calculate isn't always called
 		state = 0;
+		return;
+	}
 
 	// all N blobs were released
 	if (Trelease < 0)
@@ -261,8 +266,12 @@ void SpeedBlob::inflict_damage(SpaceObject* other)
 
 void SpeedBlob::calculate()
 {
-	if (!ship->exists())
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
 		state = 0;
+		return;
+	}
 
 	if (blobtime < 0)
 		state = 0;
@@ -272,6 +281,8 @@ void SpeedBlob::calculate()
 	
 
 	blobtime -= frame_time * 1E-3;
+
+	SpaceObject::calculate();
 }
 
 

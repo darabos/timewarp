@@ -112,7 +112,9 @@ KzerZaFighter::KzerZaFighter (Vector2 opos, double oangle, double ov,
 void KzerZaFighter::calculate() {
 	Missile::calculate();
 
-	if (!ship) {
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;	// not really needed but well.
 		state = 0;
 		return;
 		}

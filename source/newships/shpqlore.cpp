@@ -85,13 +85,18 @@ QlonLimpet::QlonLimpet(Vector2 opos, double ov, double slowdown,
   else
     angle = ship->get_angle() -0;
 
-  if(!ship->exists())
+  if(!(ship && ship->exists()))
+  {
+	  ship = 0;
     state = 0;
+  }
 }
 
 void QlonLimpet::calculate()
 {
-	if(!ship->exists()) {
+	if(!(ship && ship->exists()))
+	{
+		ship = 0;
 		state = 0;
 		return;
 		}

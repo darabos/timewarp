@@ -373,18 +373,12 @@ void VenKekThrust::calculate(void) {
   double rotDeg, rotRad, distMult;
   Vector2 relPos;
 
-  if(creator==NULL) {
+  if(!(creator && creator->exists())) {
     this->state = 0;
+	creator = 0;
     return;
   }
-  if(!creator->exists()) {
-    this->state = 0;
-    return;
-  }
-  if(creator->state == 0) {
-    this->state = 0;
-    return;
-  }
+
   if(creator)  {
   relPos = unit_vector(creator->angle) * creator->size.x;
   switch(facingNumber)

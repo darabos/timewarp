@@ -350,8 +350,9 @@ void SaMatraBoxer::calculate()
 	SpaceObject::calculate();
 
 
-	if (!samatra->exists())
+	if (!(samatra && samatra->exists()))
 	{
+		samatra = 0;
 		state = 0;
 		return;
 	}
@@ -613,8 +614,9 @@ void SaMatraFlame::calculate()
 {
 	SpaceObject::calculate();
 
-	if (!samatra->exists())
+	if (!(samatra && samatra->exists()))
 	{
+		samatra = 0;
 		state = 0;
 		return;
 	}

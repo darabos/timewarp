@@ -183,7 +183,9 @@ osprite)
 	}
 
 	void LyrmristuWaSphere::calculate(){
-	if(!ship->exists()) {
+	if(!(ship && ship->exists()))
+	{
+		ship = 0;	// not really needed
 		state = 0;
 		return;
 		}

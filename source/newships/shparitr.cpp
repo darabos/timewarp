@@ -57,8 +57,9 @@ trapShip::trapShip(Ship *creator, Ship *oship, int drainDelayRate, int drainAmou
 
 void trapShip::calculate()
   {
-    if(!ship->exists())
+    if(!(ship && ship->exists()))
       {
+		ship = 0;		// you've to do it yourself cause you return before the other calculate call !!
         state = 0;
         return;
       }

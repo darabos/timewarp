@@ -525,6 +525,7 @@ void GravShot::calculate()
 
 	if ( !(ship && ship->exists()) )
 	{
+		ship = 0;
 		state = 0;
 		return;
 	}
@@ -572,6 +573,7 @@ void FallingParticles::calculate()
 {
 	if ( !(mother && mother->exists()) )
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}
@@ -914,6 +916,7 @@ void MassShot::calculate()
 
 	if (!(target && target->exists()) || exist_time > exist_time_max)
 	{
+		target = 0;
 		state = 0;
 		return;
 	}

@@ -365,8 +365,13 @@ void TauBomberJam::calculate()
 {
 	if ((lifetime -= frame_time) <= 0) {
 		state = 0; return; }
-	if ((!host->exists()) || (!tgt->exists())) {
-		state = 0; return; }
+	if ( (!(host && host->exists())) || (!(tgt && tgt->exists())) )
+	{
+		state = 0;
+		host = 0;
+		tgt = 0;
+		return;
+	}
 	pos = host->normal_pos();
 	host->target = tgt;
 	if (host->isShip())

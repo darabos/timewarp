@@ -785,8 +785,12 @@ SpaceObject *AlaryBCTurret::get_target(SpaceObject *tgt)
 
 void AlaryBCTurret::calculate()
 {
-	if (!ship->exists()) {
-		state = 0; return; }
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
+		state = 0;
+		return;
+	}
 
 	SpaceLocation::calculate();
 

@@ -105,10 +105,12 @@ void ZoqFotPikTongue::calculate()
 {
   int current_frame = frame;
 
-  if (!ship)
-    {state = 0; return;}
-  if(!ship->exists())
-    {state = 0; return;}
+  if (!(ship && ship->exists()))
+    {
+	  ship = 0;
+	  state = 0;
+	  return;
+  }
 
   frame_step+= frame_time;
   while(frame_step >= frame_size) {

@@ -137,8 +137,9 @@ JnkdwoLazelCrystal::JnkdwoLazelCrystal (JnkdwoLazel *oship, double ox, double oy
 void JnkdwoLazelCrystal::calculate() {
 
         if (state == 0) return;
-        if (!ship->exists()) {
-                state = 0; return; 
+        if (!(ship && ship->exists())) {
+                state = 0;
+				return; 
 		}
 
         angle = normalize(ship->angle + ra, PI2);
@@ -234,7 +235,13 @@ JnkdwoLazelMarker::JnkdwoLazelMarker(SpaceLocation *creator, SpaceObject *oo) :
 
 void JnkdwoLazelMarker::calculate() {
         if (state == 0) return;
-        if (!o->exists()) state = 0;
+        if (!(o && o->exists()))
+		{
+			o = 0;
+			state = 0;
+			return;
+		}
+
 		pos = o->normal_pos();
 }
 
@@ -253,12 +260,19 @@ JnkdwoLazelLaser::JnkdwoLazelLaser (SpaceLocation *creator, double langle, doubl
 }
 
 void JnkdwoLazelLaser::calculate() {
-        if (!lpos->exists()) state = 0;
+        if (!(lpos && lpos->exists()))
+		{
+			lpos = 0;
+			state = 0;
+		}
         if (state == 0) return;
         if (frame < frame_count) frame += frame_time;
         else {
-                if (!tgt) {
-                        state = 0; return; }
+                if (!(tgt && tgt->exists())) {
+					tgt = 0;
+                     state = 0;
+					 return;
+				}
                 frame = 0;
                 if (power_left > 0) {
                         damage_factor = 1; power_left--; }

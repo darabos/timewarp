@@ -287,7 +287,7 @@ void BubalosMIRV::calculate() {
 		if (missileArming <= 0)
 			missileActive = TRUE;
 	}
-	else if (target) {
+	else if (target && target->exists()) {
 		if ((distance(target) < MinSplitRadius) || (d >= range)) {
       SplitRad = this->mirvSplitAngle * 3.14159 / 180;
 		  BubalosHMissile *BHMissile;
@@ -520,6 +520,7 @@ void BubalosAccelLimiter::calculate()
 
 	if ( !(mother && mother->exists()) || ( timer > duration ) )
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}

@@ -305,7 +305,9 @@ void NaroolPoison::calculate() {
 		state = 0;
 		return;
 		}
-	if (!oship->exists()) {
+	if (!(oship && oship->exists()))
+	{
+		oship = 0;
 		state = 0;
 		}
 	else {

@@ -116,7 +116,8 @@ void XchaggerDisable::calculate() {
 		if(sprite_index == (lowerindex + frame_count))
 			sprite_index = lowerindex;
 		}
-	if(!ship->exists()) {
+	if(!(ship && ship->exists())) {
+		ship = 0;		// should be here cause you return before the other call
 		state = 0;
 		return;
 		}

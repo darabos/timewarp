@@ -185,6 +185,7 @@ void Confusionator::calculate()
 
 	if ( !(t && t->exists()) )
 	{
+		t = 0;
 		state = 0;
 		return;
 	}

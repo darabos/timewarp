@@ -289,13 +289,16 @@ void ImperialRadioactivity::calculate(){
   pos = latched->normal_pos();
   vel = latched->get_vel();
 
-  if( !latched->exists() ){
+  if( !(latched && latched->exists()) ){
     state = 0;
+
     for( double alpha = latched->get_angle(); alpha < latched->get_angle() + PI2; alpha += 40 ){
       game->add( new ImperialRadioactivity( this,
 		  pos + unit_vector(alpha) * data->spriteWeaponExplosion->size().x / 2,
         v, alpha, data->spriteWeaponExplosion, range, damage_rate, damage_amount ));
     }
+
+	latched = 0;
     return;
   }
 

@@ -241,6 +241,7 @@ void Flamer::calculate()
 {
 	if ( !commandship || !ship || !commandship->exists() || !ship->exists() )
 	{
+		commandship = 0;
 		state = 0;
 		return;
 	}

@@ -220,8 +220,9 @@ void JyglarBubble::calculate(){
     }
     return;
   }
-  if( !ship->exists() ){
-    ship = NULL;
+  if( !(ship && ship->exists()) )
+  {
+    ship = 0;
     return;
   }
   angle = ship->get_angle() + dangle;

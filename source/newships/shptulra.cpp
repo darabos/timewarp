@@ -257,8 +257,12 @@ SpaceObject( creator, creator->normal_pos(), creator->get_angle(),
 
 void TulkonDevice::calculate(){
   SpaceObject::calculate();
-  if( !ship ){ state = 0; return; }
-  if( !ship->exists() ){ ship = NULL; state = 0; return; }
+  if( !(ship && ship->exists()) )
+  {
+	  ship = 0;		// not really needed
+	  state = 0;
+	  return;
+  }
 
   ram( ramming );
 

@@ -216,7 +216,11 @@ void ShipPartManager::add_part(ShipPart *newpart)
 void ShipPartManager::calculate_manager()
 {
 	if ( !(mother && mother->exists()) )
+	{
+		mother = 0;
 		state = 0;
+		return;
+	}
 
 	int i;
 	for ( i = 0; i < Nparts; ++i )
@@ -314,6 +318,7 @@ void ShipPart::calculate_manager(Vector2 refpos, Vector2 refvel)
 
 	if (!(mother && mother->exists()))
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}
@@ -338,8 +343,13 @@ void ShipPart::inflict_damage(SpaceObject *other)
 int ShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 
-	state = 1;
-	return mother->handle_damage(source, normal, direct);
+	if (mother && mother->exists())
+	{
+		state = 1;
+		return mother->handle_damage(source, normal, direct);
+	}
+	else
+		return 0;
 }
 
 void ShipPart::animate(Frame *space)
@@ -781,6 +791,7 @@ void LaserArc::calculate()
 {
 	if ( !(mother && mother->exists()) )
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}
@@ -882,6 +893,7 @@ void Lantern::calculate()
 {
 	if ( !(mother && mother->exists()) )
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}
@@ -971,11 +983,21 @@ PulseLaser2::PulseLaser2(SpaceLocation *creator, double langle, int lcolor, doub
 
 	vel = /*lpos->get_vel() +*/ rvelocity * unit_vector(angle);
 
-	if(!lpos->exists()) state = 0;
+	if(!(lpos && lpos->exists()))
+	{
+		lpos = 0;
+		state = 0;
+	}
 }
 
 
 void PulseLaser2::calculate() {
+	if (!lpos && lpos->exists())
+	{
+		lpos = 0;
+		state = 0;
+		return;
+	}
 	if((frame < frame_count) && (lpos->exists())) {
 //		pos = lpos->normal_pos() + rotate(rel_pos, lpos->get_angle() - PI/2);
 //		vel = lpos->get_vel();

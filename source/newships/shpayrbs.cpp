@@ -444,6 +444,7 @@ void BigShipPart::calculate()
 {
 	if ( !(owner && owner->exists()) )
 	{
+		owner = 0;
 		state = 0;
 		return;
 	}
@@ -572,7 +573,7 @@ void AutoGun::calculate()
 {
 	BigShipPartDevice::calculate();
 
-	if (!ownerpart->hascrew())
+	if (!(ownerpart && ownerpart->hascrew()))
 		return;
 
 	// find the closest target
@@ -837,6 +838,7 @@ void BigShipPartDevice::calculate()
 {
 	if ( !(ownerpart && ownerpart->exists()) )
 	{
+		ownerpart = 0;
 		state = 0;
 		return;
 	}

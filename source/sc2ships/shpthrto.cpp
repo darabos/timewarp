@@ -62,8 +62,11 @@ ThraddashFlame::ThraddashFlame(Vector2 opos, int odamage, int oarmour,
 	collide_flag_sameteam = ALL_LAYERS;
   damage_factor = odamage;
 
-  if(!ship->exists())
+  if(!(ship && ship->exists()))
+  {
+	  ship = 0;
     state = 0;
+  }
 }
 
 void ThraddashFlame::calculate()

@@ -228,8 +228,9 @@ void XillzCrescentOrbiter::calculate()
 	SpaceObject::calculate();
 
 	
-	if (!ship)
+	if (!(ship && ship->exists()))
 	{
+		ship = 0;
 		state = 0;
 		return;			// orbiters disappear when the ship dies - otherwise it becomes a mess
 	}
@@ -354,7 +355,7 @@ int XillzCrescentOrbiter::handle_damage(SpaceLocation *source, double normal, do
 		return total;
 	}
 
-	if (source && source ->isPlanet())
+	if (source && source->isPlanet())
 	{
 		state = 0;		// the planet should clean up the existing orbiters
 		return total;

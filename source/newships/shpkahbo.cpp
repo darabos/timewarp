@@ -287,10 +287,12 @@ KahrSmall::KahrSmall(double ox,double oy,double oangle, double ov,
   turned = FALSE;
 }
 
-void KahrSmall::calculate() {
-	if (!ship->exists()) {
+void KahrSmall::calculate()
+{
+	if (!(ship && ship->exists()))
+	{
 		state = 0;
-		ship = NULL;
+		ship = 0;
 		return;
 		}
   if (distance(ship) > srange)
@@ -363,9 +365,10 @@ void KahrMedium::death() {
 	}
 
 void KahrMedium::calculate() {
-	if (!ship->exists()) {
+	if (!(ship && ship->exists()))
+	{
 		state = 0;
-		ship = NULL;
+		ship = 0;
 		return;
 		}
   if (distance(ship) > srange)
@@ -434,9 +437,10 @@ KahrLarge::KahrLarge(double ox,double oy,double oangle, double ov,
 
 void KahrLarge::calculate()
 {
-	if (!ship->exists()) {
+	if (!(ship && ship->exists()))
+	{
 		state = 0;
-		ship = NULL;
+		ship = 0;
 		return;
 		}
   if (returning) {

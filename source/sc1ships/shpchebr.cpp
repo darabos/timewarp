@@ -157,7 +157,7 @@ void ChenjesuDOGI::calculate()
 {
 	AnimatedShot::calculate();
 
-	if (ship) {
+	if (ship && ship->exists()) {
 		target = ship->target; }
 	else {
 		state = 0;

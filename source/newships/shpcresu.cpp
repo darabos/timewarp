@@ -158,12 +158,13 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate,
 void SupplyShuttle::calculate()
 {
 	// if the mothership dies, you lose the sprites...
-	if (!ship->exists())
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
 		state = 0;
-
-	// all N blobs were released
-	if (!state)
 		return;
+	}
+
 
 	flashtime += frame_time * 1E-3;
 	if (flashtime > flashperiod)

@@ -115,12 +115,13 @@ released( false ), control( ocontrol ), latched( NULL ){
 }
 
 void YushSpear::calculate(){
-  if( latched ){
-    if( !latched->exists() ){
-      latched = NULL;
+  if( !(latched && latched->exists()) )
+  {
+      latched = 0;
       state = 0;
       return;
     }
+
 //    double tx = cos( (latched->get_angle() + rel_angle)  );
 //    double ty = sin( (latched->get_angle() + rel_angle)  );
 	Vector2 t = unit_vector( latched->get_angle() + rel_angle );
@@ -132,8 +133,7 @@ void YushSpear::calculate(){
 	vel = latched->vel;
     angle = old_angle + latched->get_angle();
     sprite_index = get_index(angle);
-    return;
-  }
+  
   Missile::calculate();
   if( released ) return;
   if( !ship ){ release(); return; }
@@ -141,7 +141,8 @@ void YushSpear::calculate(){
 
 //  double tx = cos( angle  );
 //  double ty = sin( angle  );
-  Vector2 t = unit_vector( -angle );
+  //Vector2
+t = unit_vector( -angle );
   if( ship->turn_left ){
 //    x += control * frame_time * ty;
 //    y -= control * frame_time * tx;

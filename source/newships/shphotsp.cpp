@@ -392,9 +392,11 @@ Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship,osprite)
 
 void TheHotSpot::calculate()
 {
-	if ( !mother || !mother->exists() )
+	if ( !(mother && mother->exists()) )
 	{
+		mother = 0;
 		state = 0;
+
 		return;
 	}
 

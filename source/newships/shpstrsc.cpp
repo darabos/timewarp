@@ -247,7 +247,11 @@ Marker::Marker(Vector2 opos, double ov, double s_angle, Marked *Tag, int Duratio
 				//things like Chmmr Zapsats. >:D
 
 	//If the mothership is dead, so is this loose beacon.
-	if(!ship->exists())	state = 0;
+	if(!(ship && ship->exists()))
+	{
+		ship = 0;
+		state = 0;
+	}
 }
 
 void Marker::calculate()
@@ -255,8 +259,9 @@ void Marker::calculate()
 	state=1;
 
 	//If the mothership is destroyed, any loose beacons also die.
-	if(!ship->exists())
+	if(!(ship && ship->exists()))
 	{
+		ship = 0;
 		state = 0;
 		return;
 	}

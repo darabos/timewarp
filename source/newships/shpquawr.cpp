@@ -233,6 +233,7 @@ void QuarKathIllusion::calculate()
 	if ( !(target && target->exists() && ship && ship->exists()) )
 	{
 		state = 0;
+		target = 0;
 		return;
 	}
 

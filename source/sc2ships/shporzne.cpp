@@ -266,8 +266,12 @@ void OrzMarine::calculate() {
 			sprite_index = 1; }
         }
 	else {
-                if (!ship) {
-                        state = 0; return; }
+                if (!(ship && ship->exists()))
+				{
+					ship = 0;
+                        state = 0;
+						return;
+				}
 
                 if (returning)
                         angle = trajectory_angle(ship);

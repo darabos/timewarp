@@ -154,8 +154,13 @@ VyroIngoSheild::VyroIngoSheild (Vector2 opos, int odamage, int oframes,
 
 void VyroIngoSheild::calculate()
 {
-  if(!ship->exists())
+  if(!(ship && ship->exists()))
+  {
+	  ship = 0;
     state = 0;
+	// ship=0 is done elsewhere
+	return;
+  }
 
   if(frames_left >= frames_total)
     state = 0;

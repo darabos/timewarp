@@ -244,8 +244,10 @@ void CrewPodPP::calculate()
 			vel = unit_vector(trajectory_angle(mother)) * mother->specialVelocity2;
 		else
 			vel = unit_vector(trajectory_angle(mother)) * mother->specialVelocity1;
-	} else
+	} else {
+		mother = 0;
 		state = 0;
+	}
 
 	SpaceObject::calculate();
 

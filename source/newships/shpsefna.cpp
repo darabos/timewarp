@@ -231,7 +231,10 @@ void Hook::calculate()
 
 	// or if the host ship has gone
 	if ( !(ship && ship->exists()) )
+	{
+		ship = 0;
 		state = 0;
+	}
 
 	if ( hooktarget && hooktarget->exists() )
 	{
@@ -240,7 +243,10 @@ void Hook::calculate()
 		sprite_index = get_index(angle);
 		pos = hooktarget->pos + hookfixdist * unit_vector(hooktarget->angle + hookfixorientation);
 	} else if (hooklocked)
+	{
 		state = 0;
+		hooktarget = 0;
+	}
 
 	if ( state == 0 )
 		return;

@@ -264,19 +264,21 @@ VezlagariBulkhead::VezlagariBulkhead(VezlagariBarge* ocreator):
   this->armourEfficiency = creator->specialArmourEfficiency;
 }
 
+
 VezlagariBulkhead::~VezlagariBulkhead(void) {
   if(creator) creator->Bulkhead = NULL;
 }
+
 void VezlagariBulkhead::calculate(void) {STACKTRACE
   int x;
-  if(creator==NULL) {
+
+  if ( !(creator && creator->exists()) )
+  {
     state = 0;
+	creator = 0;
     return;
   }
-  if(creator->state==0) {
-    state = 0;
-    return;
-  }
+
   this->pos = creator->pos;
   this->vel = creator->vel;
   this->angle = creator->angle;
@@ -308,7 +310,8 @@ int VezlagariBulkhead::handle_damage(SpaceLocation *source, double normal, doubl
   this->damageAbsorbed += normal + direct;
   //message.print(1500,9,"damageAbsorbed = %f",damageAbsorbed);
 
-  this->state = 1;
+	state = 1;
+
   return(SpaceObject::handle_damage(source, normal, direct));
 }
 

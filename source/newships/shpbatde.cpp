@@ -441,6 +441,7 @@ void SpriteDrawList::calculate()
 {
 	if ( !(mother && mother->exists()) )
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}

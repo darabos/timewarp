@@ -514,6 +514,7 @@ void WasxClone::calculate() {
 	|| !ship->exists()
 	|| MotherShip == NULL 
 	|| !MotherShip->exists()) {
+		MotherShip = 0;
 	state = 0;
 	return;
 	}
@@ -607,6 +608,7 @@ void WasxClone::death() {
 	|| !ship->exists()
 	|| MotherShip == NULL 
 	|| !MotherShip->exists()) {
+		MotherShip = 0;
 	state = 0;
 	return;
 	}

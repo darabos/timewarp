@@ -205,7 +205,9 @@ void MelnormeDisable::calculate() {
 		if(sprite_index == frame_count)
 			sprite_index = 0;
 		}
-	if(!ship->exists()) {
+	if(!(ship && ship->exists()))
+	{
+		ship = 0;
 		state = 0;
 		return;
 		}

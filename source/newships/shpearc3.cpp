@@ -214,7 +214,13 @@ EarthlingCruiserMk3Beam::EarthlingCruiserMk3Beam(SpaceLocation *creator, Vector2
 	damage_factor = ldamage;
 	angle = trajectory_angle(target);
 	if (!target->canCollide(this) || !canCollide(target)) state = 0;
-	if(!lpos->exists()) state = 0;
+
+	if(!(lpos && lpos->exists()))
+	{
+		lpos = 0;
+		state = 0;
+	}
+
 	color = makecol(100+tw_random()%105,100+tw_random()%105,255);
 	got_spark = false;
 	switch_counter = 0;
@@ -222,7 +228,13 @@ EarthlingCruiserMk3Beam::EarthlingCruiserMk3Beam(SpaceLocation *creator, Vector2
 
 void EarthlingCruiserMk3Beam::calculate()
 {
-	if((frame < frame_count) && (lpos->exists())) {
+	if(!(lpos && lpos->exists()))
+	{
+		lpos = 0;
+		state = 0;
+	}
+
+	if((frame < frame_count) && (lpos && lpos->exists())) {
 		pos = lpos->normal_pos() + rotate(rel_pos, lpos->get_angle() - PI/2);
 		vel = lpos->get_vel();
 		SpaceLine::calculate();

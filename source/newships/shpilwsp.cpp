@@ -176,7 +176,7 @@ IlwrathStop::IlwrathStop( SpaceLocation* creator, SpaceObject* ovictim, int olif
 {
   if( victim ){
     if( !victim->exists() ){
-      victim = NULL;
+      victim = 0;
       state = 0;
     }else{
       if( victim->isShot() ){
@@ -192,9 +192,9 @@ IlwrathStop::IlwrathStop( SpaceLocation* creator, SpaceObject* ovictim, int olif
 void IlwrathStop::calculate()
 {
   SpaceLocation::calculate();
-  if( !victim->exists() )
+  if( !(victim && victim->exists()) )
   {
-    victim = NULL;
+    victim = 0;
     state = 0;
     return;
   }

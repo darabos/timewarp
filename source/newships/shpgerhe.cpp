@@ -209,6 +209,8 @@ void GerlVirtualship::calculate()
 	// the following case should not occur?
 	if ( !(hero && hero->exists()) && !(morons && morons->exists()) )
 	{
+		hero = 0;
+		morons = 0;
 		state = 0;
 		return;
 	}
@@ -385,8 +387,9 @@ void GerlHero::calculate()
 
 	SpaceObject::calculate();
 
-	if ( !mother || !mother->exists() )
+	if ( !(mother && mother->exists()) )
 	{
+		mother = 0;
 		state = 0;
 		return;
 	}
@@ -886,11 +889,13 @@ GerlMorons::GerlMorons(GerlVirtualship *creator, SpaceLocation *brother, Vector2
 
 void GerlMorons::calculate()
 {
-	if ( !mother || !mother->exists() )
+	if ( !(mother && mother->exists()) )
+	{
+		mother = 0;
 		state = 0;
-
-	if ( state == 0 )
 		return;
+	}
+
 
 	double speed_max  = 80 * 1E-3;
 	double accel_rate =  0.1 * 1E-3;
