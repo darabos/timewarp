@@ -59,7 +59,7 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 	public:
 	int type;
 	enum {
-		log_normal = 0, log_net1server = 2, log_net1client = 3
+		log_normal = 0, log_net = 1
 		};
 	bool playback;
 	enum {

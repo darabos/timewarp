@@ -15,6 +15,35 @@ public:
 	Fleet *fleet;
 };
 
+
+
+class DirectConnection
+{
+	int conn_remote;
+
+public:
+
+	bool isserver;
+	
+	bool set(int i);
+	
+	void get(void *data, int N);
+	void send(void *data, int N);
+
+	void exchange(void *data, int N);		// host and client send each other data
+	void server(void *data, int N);		// host sends data (client receives) --> host data are copied
+	void client(void *data, int N);		// client sends data (host receives) --> client data are copied
+
+	void exchange(int &x);
+	void server(int &x);
+	void client(int &x);
+
+
+};
+
+extern DirectConnection direct;
+
+
 class NormalGame : public Game {
 	public:
 	enum { 
@@ -72,7 +101,7 @@ class NormalGame : public Game {
 	int local_player();
 
 
-	void check_file(const char *id);
+	void check_file(const char *id, int iplayer);
 	void download_file(char *filename);
 
 	virtual PlayerInformation *new_player();	// should return a pointer to a new player-class

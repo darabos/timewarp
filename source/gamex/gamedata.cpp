@@ -674,7 +674,7 @@ void RaceManager::readracelist()
 		char *racename;
 		racename = info.name;
 
-		if (strcmp(racename, ".") != 0 && strcmp(racename, "..") != 0)
+		if (racename && racename[0] != '.')
 		{
 			
 			char fname[512];

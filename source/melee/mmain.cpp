@@ -26,6 +26,8 @@ REGISTER_FILE
 #include "../games/gflmelee.h"
 //#include "../other/radar.h"
 
+#include "mnet1.h"
+
 
 
 PlayerInformation *NormalGame::new_player()
@@ -176,8 +178,7 @@ void NormalGame::init_players()
 			num_bots = 0;
 		}
 		break;
-		case Log::log_net1client:
-		case Log::log_net1server: {
+		case Log::log_net: {
 
 			//log_file("server.ini");
 			// isn't needed yet ?!
@@ -513,8 +514,7 @@ void NormalGame::display_stats()
 
 		Fleet *fleet = p->fleet;
 		switch (glog->type) {
-			case Log::log_net1client:
-			case Log::log_net1server: {
+			case Log::log_net: {
 //				if (log->get_direction(player_control[i]->channel) & Log::direction_write) 
 					message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", p->name, fleet->getSize(), fleet->getCost());
 //				else
@@ -597,7 +597,7 @@ void NormalGame::download_file(char *filename)
 {
 	FILE *f;
 	int L;
-	const int N = 1024;
+	const int N = 50000;
 	char fdata[N];
 
 	int count = 0;
@@ -606,62 +606,38 @@ void NormalGame::download_file(char *filename)
 	// first you've to check if you're synched
 	int k = 0;
 
-	log_int(k, channel_server);
 	// this is probably enough --> the server has sent all data to you.
 	// there's nothing you've to send to the server, so it's ok.
 
 	// also, check which socket-connection you should use...
 
-	if (p_local == 0)	// the host
-	{
-		// how does the server determine, who needs the data ?
-		// each should send a value to the server, telling whether
-		// the data are ok, or not ...
-		int p = 0;	// should be opposite player?
-		k = channel_conn_recv[ player[p]->channel + _channel_buffered ];
 
-		// duh, this is getting complicated 
-		
+	if (direct.isserver)	// the host
 		f = fopen(filename, "rb");
+//	else
+//		f = fopen(filename, "wb");
+	
 
-		for (;;)
-		{
-			L = fread(fdata, N, 1, f);
-
-			log_int(L);
-
-			if (L == 0)
-				break;
-			else
-				// this is wrong
-				log_data(fdata, L, channel_file_data);
-	//		glog->net.conn[..]->send(); <-- should be something like this
-
-			count += L;
-			message.print(1500, 15, "sent %i bytes", count);
-			message.animate(0);
-		}
-	}
-	else 
+	for (;;)
 	{
-		f = fopen(filename, "wb");
+		if (direct.isserver)	// the host reads
+			L = fread(fdata, N, 1, f);
+		
 
-		for (;;)
-		{
-			log_int(L);
+		direct.server(L);
+		
+		if (L == 0)
+			break;
+		else
+			direct.server(fdata, L);	// synch data with those on the server
 
-			if (L == 0)
-				break;
-			else
-				// this is wrong
-				log_data(fdata, L, channel_file_data);
 
-			fwrite(fdata, L, 1, f);
-
-			count += L;
-			message.print(1500, 15, "received %i bytes", count);
-			message.animate(0);
-		}
+//		if (!direct.isserver)	// the client writes
+//			fwrite(fdata, L, 1, f);
+		
+		count += L;
+		message.print(1500, 15, "send/received %i bytes", count);
+		message.animate(0);
 	}
 
 	fclose(f);
@@ -669,8 +645,135 @@ void NormalGame::download_file(char *filename)
 }
 
 
-void NormalGame::check_file(const char *id)
+
+//  SERVER CONTROLLED ACTIONS:
+// pause means, the player will wait for the server till it sends some signal
+// continue means, the server sends this signal !!
+void server_pause()
 {
+	int k;
+	if (p_local != 0)
+		log_int(k, channel_server);	// wait for server data
+}
+
+void server_continue()
+{
+	int k;
+	if (p_local == 0)
+		log_int(k, channel_server);	// generate server data
+}
+
+
+
+DirectConnection direct;
+
+// THIS IS SET FROM THE VIEWPOINT OF THE HOST
+// i.e., channel_server is always one of the channels already. You only need
+// to specify the other channel.
+//
+// note, that this always sets a connection between the host/client.
+// the code should take care that, if neither are "local", it's skipped, so
+// that only the true local players are using this ...
+
+bool DirectConnection::set(int i)
+{
+	// if it's not a networked game.
+	if (glog->type != Log::log_net)
+		return false;
+
+	// define a direct connection between the 2 players
+	// you need to check which player is "local" and which
+	// is "remote" and to which channel it belongs...
+
+	int ch = player[i]->channel;
+
+	// the host doesn't need to connect to itself.
+	if (ch == channel_server)
+		return false;
+
+	// neither are "local" to this computer, so skip it...
+	if (!(is_local(channel_server) || is_local(ch) ))
+		return false;
+
+	// create a connection from host to client, or the other way around; in each
+	// case, it's stored in conn_remote.
+
+	// note that this is somewhat dangerous - cause, if different players want
+	// to connect at the same time, you get a mess...
+
+	if (is_local(ch))
+	{
+		conn_remote = channel_conn_recv[ channel_server];
+		isserver = false;
+	}
+	else
+	{
+		conn_remote = channel_conn_recv[ ch ];
+		isserver = true;
+	}
+
+	return true;
+}
+
+
+void DirectConnection::send(void *data, int N)
+{
+	((NetLog*)glog)->net[conn_remote].add2buffer((char*)data, N);
+	((NetLog*)glog)->net[conn_remote].sendall();
+}
+
+void DirectConnection::get(void *data, int N)
+{
+	((NetLog*)glog)->net[conn_remote].recv(N, N, data);
+}
+
+void DirectConnection::exchange(void *data, int N)
+{
+	send(data, N);
+	get(data, N);
+}
+
+void DirectConnection::server(void *data, int N)
+{
+	if (isserver)
+		send(data, N);
+	else
+		get(data, N);
+}
+
+void DirectConnection::client(void *data, int N)
+{
+	if (!isserver)
+		send(data, N);
+	else
+		get(data, N);
+}
+
+
+
+void DirectConnection::exchange(int &x)
+{
+	exchange(&x, sizeof(int));
+}
+
+void DirectConnection::server(int &x)
+{
+	server(&x, sizeof(int));
+}
+
+void DirectConnection::client(int &x)
+{
+	client(&x, sizeof(int));
+}
+
+
+
+void NormalGame::check_file(const char *id, int iplayer)
+{
+	// STILL NEEDS TO BE CHECKED / WRITTEN,
+	// so disabled for now.
+	return;
+
 	ShipType *type = shiptype(id);
 
 	if (type->data->islocked())
@@ -684,20 +787,31 @@ void NormalGame::check_file(const char *id)
 	// compare to the value on the host computer
 	// (assumption here is, that the host has the most recent version)
 
-	log_int(otherfsize, channel_file_data);
-	
-	// so ... if your local version differes from the host version, then ...
-	if (otherfsize != myfsize)
+	if (direct.set(iplayer))
 	{
-	//	int i = tw_alert("File mismatch; download file from server?", "&Ok", "&Abort");
-	//	if ( i == 2)
-	//	{
-			tw_error("DAT files have different size! This may cause a desynch");
-	//	} else {
-	//		download_file(type->data->file);
-	//	}
+		direct.server(otherfsize);	// receive host-filesize, overwrite local setting.
+		
+		// so ... if your local version differes from the host version, then ...
+		int difference = otherfsize - myfsize;
+		direct.client(difference);	// receive client difference
+		
+		if (difference != 0)
+		{
+			int i = tw_alert("File mismatch; download file from server?", "&Ok", "&Abort");
+			direct.client(i);	// the server should also have this value (and wait till it's chosen..)
+			if ( i == 2)
+			{
+				tw_error("DAT files have different size! This may cause a desynch");
+			} else {
+				download_file(type->data->file);
+			}
+			
+		}
 		
 	}
+
+	server_pause();
+	server_continue();
 }
 
 
@@ -786,7 +900,7 @@ void NormalGame::choose_new_ships()
 		}
 
 
-		check_file(fleet->getShipType(slot[i])->id);
+		check_file(fleet->getShipType(slot[i])->id, i);
 		
 
 		Ship *s = create_ship(fleet->getShipType(slot[i])->id, p->control, random(size), random(PI2), p->team);

@@ -415,7 +415,7 @@ void SampleGame3::pick_new_ships() {
 		);
 	add(sp);
 
-	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) { 
+	if (glog->type == Log::log_net) { 
 		log_file("fleets/all.scf");
 		i = human_control[1]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
 		log_int(i, channel_network[1]);
@@ -481,7 +481,7 @@ void SampleGame3::init(Log *_log) {
 	int i;
 	for (i = 0; i < 7; i += 1) add(new Asteroid());
 
-	if (glog->type == Log::log_net1server) fleet.load("fleets/all.scf", "Fleet");
+	if (p_local = 0) fleet.load("fleets/all.scf", "Fleet");
 	log_fleet(channel_server, &fleet);
 	//this time, instead of transmitting the fleet file over the network and then loading 
 	//it on both sides

@@ -546,8 +546,7 @@ bool Game::game_ready() {STACKTRACE
 			return true;
 		}
 		break;
-		case Log::log_net1server:
-		case Log::log_net1client: {
+		case Log::log_net: {
 			int i;
 			bool result = true;
 			for ( i = 0; i < num_network; ++i )
@@ -945,7 +944,7 @@ void Game::play() {_STACKTRACE("Game::play")
 				int n = 1;
 				idle(n);
 				tot_idle_time += n;
-				if (glog->type == Log::log_net1client || glog->type == Log::log_net1server)
+				if (glog->type == Log::log_net)
 				{
 					NetLog *l = (NetLog*) glog;
 					l->recv_noblock();		// receive stuff, if you can
@@ -1016,7 +1015,7 @@ void Game::object_died(SpaceObject *who, SpaceLocation *source)
 
 #include "../util/profile2.h"
 void Game::fps() {STACKTRACE
-	if ((!glog->playback) && ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)))
+	if ((!glog->playback) && (glog->type == Log::log_net))
 	{
 		char tmp[512];
 		int conn;
@@ -1147,10 +1146,7 @@ void Game::init(Log *_log)
 			case Log::log_normal: {
 			}
 			break;
-			case Log::log_net1server: {
-			}
-			break;
-			case Log::log_net1client: {
+			case Log::log_net: {
 			}
 			break;
 			default: {
@@ -1258,7 +1254,7 @@ void Game::init_lag()
 	//message.out("init_lag");
 	//message.animate(0);
 
-	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) {
+	if (glog->type == Log::log_net) {
 		int lag_time = 0;//get_config_int("Network", "Lag", 200);
 		int blah = 0;
 
@@ -1990,7 +1986,8 @@ void Game::remove_player(int i)
 		// remove the connections to all other players
 		int k;
 		for ( k = 0; k < num_network; ++k )
-			((NetLog*)glog)->rem_conn(k);
+			if (glog->type == Log::log_net)
+				((NetLog*)glog)->rem_conn(k);
 	}
 
 

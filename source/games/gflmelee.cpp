@@ -494,7 +494,7 @@ void FlMelee::init(Log *_log)
 	}
 	*/
 
-	if (glog->type == Log::log_net1server || glog->type == Log::log_normal)
+	if (p_local = 0)
 	{
 		start_menu(allyfleet);
 	}

@@ -201,10 +201,10 @@ Log *new_log (int logtype) { STACKTRACE
 			log->init();
 			return log;
 		}
-		case Log::log_net1server: {
+		case Log::log_net: {
 			netlog = new NetLog();
 			netlog->init();
-			netlog->type = Log::log_net1server;
+			netlog->type = Log::log_net;
 			return netlog;
 		}
 		default: {
@@ -786,7 +786,7 @@ void play_net( bool ishost )
 
 	if (ishost)
 	{
-		log->type = Log::log_net1server;
+		log->type = Log::log_net;
 
 		int status = -1;
 		game_host_menu(Nplayers, Nbots, temp_gamename, status);
@@ -907,7 +907,7 @@ void play_net( bool ishost )
 		strcpy(gname, temp_gamename);
 
 	} else {
-		log->type = Log::log_net1client;
+		log->type = Log::log_net;
 
 		// channel_init and such, are all read-only for the clients
 		// uhm, well, actually this is somewhat dangerous, as they're created on-the-fly
@@ -1152,7 +1152,7 @@ void play_net1client ( const char *_address, int _port )
 
 	NetLog *log = new NetLog();
 	log->init();
-	log->type = Log::log_net1client;
+	log->type = Log::log_net;
 
 	log->set_all_directions(Log::direction_read);
 	int p;
@@ -1201,7 +1201,7 @@ void play_net1server(const char *_gametype_name, int _port) {STACKTRACE
 	NetLog *log = new NetLog();
 	log->init();
 
-	log->type = Log::log_net1server;
+	log->type = Log::log_net;
 	log->set_all_directions(Log::direction_write | Log::direction_read | NetLog::direction_immediate);
 	int p;
 	for ( p = 1; p < max_network; ++p )	// note, 0==server.
