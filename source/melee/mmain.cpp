@@ -495,8 +495,7 @@ void NormalGame::choose_new_ships() {STACKTRACE
 	int *slot = new int[num_players];
 	//choose ships and send them across network
 	
-	if (log_totalsize() > 0)
-		tw_error("Log isn't empty (a)");
+	log_test();
 
 	for (i = 0; i < num_players; i += 1) {
 		slot[i] = -2;
@@ -542,8 +541,7 @@ void NormalGame::choose_new_ships() {STACKTRACE
 
 	share_update();
 
-	if (log_totalsize() > 0)
-		tw_error("Log isn't empty (b)");
+	log_test();
 
 	//create the ships that were chosen
 	for (i = 0; i < num_players; i += 1) {
@@ -593,6 +591,9 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		
 
 		}
+
+	log_test();
+
 	delete[] slot;
 	message.out("Finished selecting ships...", 1500);
 	unpause();
@@ -652,6 +653,8 @@ void TeamIndicator::animate_predict(Frame *space, int time)
 
 
 
+
+
 bool NormalGame::player_isalive(int i)
 {
 	return (player_control[i]->ship || player_fleet[i]->getSize() > 0);
@@ -684,15 +687,18 @@ int NormalGame::local_player()
 	return -1;
 }
 
+int NormalGame::log_size_pl(int iplayer)
+{
+	int k = player_control[iplayer]->channel;
+	return game->log->log_len[k] - game->log->log_pos[k];
+}
+
 int NormalGame::log_totalsize()
 {
 	int test = 0;
 	int i;
 	for ( i = 0; i < num_players; ++i )
-	{
-		int k = player_control[i]->channel;
-		test += game->log->log_len[k] - game->log->log_pos[k];
-	}
+		test += log_size_pl(i);
 
 	return test;
 }
@@ -706,10 +712,8 @@ void NormalGame::handle_end()
 	int i;
 	// I guess, you've to make sure, the log-buffer is empty, before writing/reading
 	// values to/from it ..
-
 	
-	if (log_totalsize() > 0)
-		tw_error("Log isn't empty (a)");
+	log_test();
 
 	// I suppose, each player is making/ has made such a choice ...
 	int choices[32];
@@ -746,9 +750,8 @@ void NormalGame::handle_end()
 	share_update();
 
 
-	if (log_totalsize() > 0)
-		tw_error("Log isn't empty (b)");
-	
+	log_test();
+
 
 	// check if all the players want to restart, or quit, if not, give a warning and quit
 	k = 0;
@@ -788,10 +791,41 @@ void NormalGame::handle_end()
 		}
 	}
 
+	// perhaps something goes wrong here, when re-loading the ships ??
+	log_test();
+	
+
 	unpause();
 }
 
 
+/** \brief Checks where the stacked data in the log buffer is cleared in-between
+different network actions. This only applies to the "unbuffered channels", which
+have routines that synchronize the two games explicitly in the code (ie synchronized
+halts). This buffer should be empty most of the time, except in special situations.
+*/
+void NormalGame::log_test()
+{
+#ifdef _DEBUG
+	// synch the 2 games, which should assure that all data are read/written in the meantime
+	int k, m;
+	k = random();
+	m = k;
+	
+	log_int(player_control[0]->channel, k);
+	if ( k != m )
+		tw_error("weird, log stack is probably mixed up");
+
+	log_int(player_control[1]->channel, k);
+	if ( k != m )
+		tw_error("weird, log stack is probably mixed up");
+
+	// check if the "log stack" of data is empty
+	if (log_totalsize() > 0)
+		tw_error("Log isn't empty (A)  %i %i", log_size_pl(0), log_size_pl(1));
+#endif
+// otherwise, it's just an empty routine.
+}
 
 
 REGISTER_GAME(NormalGame, "Melee")

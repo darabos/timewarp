@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include "types.h"
+
 void init_time();      //to initialize time stuff
 void deinit_time();    //to de-initialize time stuff
 

@@ -58,7 +58,9 @@ class NormalGame : public Game {
 	void handle_end();
 	bool player_isalive(int i);
 	int local_player();
+	int log_size_pl(int iplayer);
 	int log_totalsize();
+	void log_test();
 
 	};
 

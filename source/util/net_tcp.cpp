@@ -1,6 +1,8 @@
 //#define NETWORK_NONE
 //uncoment previous line to disable networking
 
+#include "get_time.h"
+// not nice, that this module depends on timewarp this way, but well... I want to use "idle"
 
 
 #if defined NETWORK_NONE
@@ -285,6 +287,9 @@ int NetTCP::send(int size, const void *data) {
 		int tmp = ::send(s, ((char*) data) + sofar, size - sofar, 0);
 		if (tmp > 0) sofar += tmp;
 		if (tmp == SOCKET_ERROR) throw "NetTCP::send - error";
+		if (sofar == size) break;
+		if (sofar > size) throw "NetTCP::send - trying to send more data than requested";
+		idle(1);
 		}
 	return sofar;
 	}
@@ -309,7 +314,9 @@ int NetTCP::recv(int min, int max, void *data) {
 			s = INVALID_SOCKET;
 			throw "NetTCP::recv: Remote Disconnect";
 			}*/
-		if (tmp == SOCKET_ERROR) throw "NetTCP::recv - error";
+		if (tmp == SOCKET_ERROR) throw "NetTCP::recv - socket error";
+		if (tmp == 0) throw "NetTCP::recv other side disconnected";
+		idle(1);
 		}
 	}
 bool NetTCP::isConnected() {
