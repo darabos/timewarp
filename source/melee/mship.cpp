@@ -505,7 +505,11 @@ void Ship::calculate()
 			if(angle >= PI2)
 				angle -= PI2;
 		}
-		sprite_index = get_index(angle);
+
+		// changed GEO - just to be sure you don't exceed #frames.
+		// sprite_index = get_index(angle);
+		sprite_index = get_index(angle, PI/2, sprite->frames());
+
 		SpaceObject::calculate();
 
 		Animation *a;
@@ -523,14 +527,14 @@ void Ship::calculate()
 				game->add(a);
 				a->accelerate(this, vel.angle(), vv, MAX_SPEED);
 				a->accelerate(this, random(PI2),
-					0.01*random(101)*scale_velocity(25)*sqrt((15+mass)/35),
+					random(1.0)*scale_velocity(25)*sqrt((15+mass)/35),
 					MAX_SPEED);
 				a->collide_flag_anyone = a->collide_flag_sameship = a->collide_flag_sameteam = 0;
 			}
 		}
 
 		death_counter += frame_time;
-		if (death_counter > 700 * (15+mass)/35) //smaller ships will make smaller explosions
+		if (death_counter > 700 * (15+mass)/35 || death_counter > 3000) //smaller ships will make smaller explosions ; GEO: but a real upper limit is also good to have
 			state = 0; //die already
 
 		return;
@@ -937,6 +941,11 @@ Phaser::Phaser(
 	mass = 0;
 
 	attributes |= ATTRIB_UNDETECTABLE;
+
+	// extra check
+	// note that if this happens, there's something wrong in the ships' constructor...
+	if (sprite_index >= sprite->frames())
+		sprite_index = 0;
 
 	return;
 }
