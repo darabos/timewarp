@@ -15,6 +15,7 @@ REGISTER_FILE
 #include "mview.h" //remove this
 #include "mfleet.h"
 #include "../scp.h"
+#include "../ais/AIBusterBot.h"
 
 
 
@@ -24,17 +25,19 @@ enum {
 	ai_index_human,
 	ai_index_moron,
 	ai_index_wussie,
+	ai_index_buster,
 	ai_index_vegetable,
 	ai_index_end
 };
 
-const char num_controls = 4;
+const char num_controls = 5;
 static char *gcc_sucks_dick[num_controls + 2] = 
 		{
 	"none", 
 	"Human", 
 	"MoronBot", 
 	"WussieBot", 
+	"BusterBot",
 	"VegetableBot", 
 	NULL};
 char **control_name = gcc_sucks_dick;
@@ -87,6 +90,7 @@ Control *getController(const char *type, const char *name, int channel) {STACKTR
 		case  ai_index_human:     return new ControlHuman(name, channel);
 		case  ai_index_moron:     return new ControlMoron(name, channel);
 		case  ai_index_wussie:    return new ControlWussie(name, channel);
+		case  ai_index_buster:    return new AIBusterBot(name, channel);
 		case  ai_index_vegetable: return new ControlVegetable(name, channel);
 		}
 	return NULL;
