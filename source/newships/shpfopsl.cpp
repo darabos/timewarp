@@ -3,24 +3,24 @@ REGISTER_FILE
 
 
 
-static const int maxshots = 8;
 
 class FopVob : public Ship
 {
 	double	weaponRange;
 	int		weaponDamage;
 	int		weaponArmour;
+	double	weaponVmin;
 	
 	double	specialPeriod;
 	double	specialR;
 
-	int Nshots;
-	double T0[maxshots];
+	int Nshots, maxshots;
+	double *T0;
 
 	
 public:
-	FopVob(Vector2 opos, double shipAngle,
-		ShipData *shipData, unsigned int code);
+	FopVob(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
+	~FopVob();
 
 	virtual void calculate();
 	virtual void animate(Frame *f);
@@ -37,17 +37,26 @@ protected:
 
 FopVob::FopVob(Vector2 opos, double shipAngle,
 				 ShipData *shipData, unsigned int code) 
-				 :
-Ship(opos, shipAngle, shipData, code) {
+:
+Ship(opos, shipAngle, shipData, code)
+{
 	
 	weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
 	weaponDamage   = get_config_int("Weapon", "Damage", 0);
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
+	weaponVmin     = scale_velocity(get_config_float("Weapon", "Vmin", 10));
 	
-	specialPeriod  = get_config_float("Special", "Periode", 1);
+	specialPeriod  = get_config_float("Special", "Period", 1);
 	specialR		= 50.0;	// oscillation wavelength
 	
+	maxshots = get_config_int("Weapon", "MaxShots", 8);
+	T0 = new double [maxshots];
 	Nshots = 0;
+}
+
+FopVob::~FopVob()
+{
+	delete T0;
 }
 
 int FopVob::activate_weapon()
@@ -119,17 +128,23 @@ void FopVob::calculate()
 		{
 			--Nshots;
 
-			Vector2	P;
-			double	V;
+			Vector2	P, Vtot;
+			double	V, a;
 
-			V = getV(Nshots);
+
+			Vtot = getV(Nshots) * unit_vector(angle) + vel;
+			a = Vtot.angle();
+			V = Vtot.length();
+			if (V < weaponVmin)
+				V = weaponVmin;
 			//P = rotate(getP(Nshots), -PI/2);
 			P = Vector2(0, getY(Nshots));
 
 			// make real shots
 			add(new Missile(this,
-				P, angle, V, weaponDamage, weaponRange,
-				weaponArmour, this, data->spriteWeapon, 1.0));
+				P, a, V, weaponDamage, weaponRange,
+				weaponArmour, this, data->spriteWeapon, 0));
+			// don't use relativity in here, otherwise the missiles can travel a loooong distance !!
 		}
 	}
 }

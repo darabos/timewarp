@@ -138,7 +138,11 @@ int TulkonRam::activate_special(){
     }
   }
 
-  TB = new TulkonBomb( this, Vector2(-get_size().x/2-TULKON_BOMB_DROP_DIST, get_size().y/5), specialDamage,
+  Vector2 droppos;
+  //droppos = Vector2(-get_size().x/2-TULKON_BOMB_DROP_DIST, get_size().y/5);
+  // GEO: imo it's strange that they're dropped on the side. Do it on the back
+  droppos = Vector2(0, -0.45*get_size().y - TULKON_BOMB_DROP_DIST);
+  TB = new TulkonBomb( this, droppos, specialDamage,
     specialDRange, specialSRange, specialArmour, specialMass, data->spriteSpecial, 1.0 );
   TB->ram = ram;
   TB->immunity = this->specialImmuneToBombs;
@@ -187,7 +191,8 @@ void TulkonRam::calculate()
 {
   int j = 0;
   for( int i = 0; i < numBombs; i++ ){
-    bombs[i - j] = bombs[i];
+    if (j)
+		bombs[i - j] = bombs[i];
     if( !bombs[i]->exists() ) j++;
   }
   numBombs -= j;
@@ -326,9 +331,12 @@ void TulkonDevice::inflict_damage( SpaceObject* other ){
 }
 
 int TulkonDevice::handle_damage( SpaceLocation* other, double normal, double direct ){
-  if( direct ) {
-	  ship->damage(other, 0, direct);
-  }
+//  if( direct ) {
+//	  ship->damage(other, 0, direct);
+//  }
+	// let the mothership take at least *some* damage, cause permanent armour sucks
+	ship->damage(other, int(1 + 0.5*(normal+direct)) );	// deal at least 1 damage.
+
   normal += direct;
   if( normal > 0 && normal <= 2 ){
      play_sound( data->sampleWeapon[4], 500 );       // play ram_smallhit.wav
@@ -380,9 +388,20 @@ AnimatedShot( ocreator, opos, 0, 0, odamage, -1, oarmour, ocreator, osprite, 64,
 void TulkonBomb::calculate(){
   AnimatedShot::calculate();
 
+  /*
   Query q;
   for( q.begin( this, bit(LAYER_HOTSPOTS), srange ); q.currento; q.next() ){
     if( q.currento->get_sprite() == game->hotspotSprite ){
+		  damage(this, armour);
+    }
+  }
+  q.end();
+  It's dangerous to depend on animations for your physics; animations are intended for eye-candy,
+  */
+
+  Query q;
+  for( q.begin( this, OBJECT_LAYERS, srange ); q.currento; q.next() ){
+    if( q.currento->isObject() && !q.currento->sameShip(this) ){
 		  damage(this, armour);
     }
   }
