@@ -156,6 +156,21 @@ void Game::add_target(SpaceObject *new_target) {STACKTRACE
 	new_target->attributes |= ATTRIB_TARGET;
 }
 
+void Game::rem_target(SpaceObject *r)
+{
+	int i;
+	for ( i = 0; i < num_targets; ++i )
+		if (target[i] == r)
+			break;
+
+	if (i == num_targets)
+		return;
+
+	target[i]->attributes &= ~ATTRIB_TARGET;
+	target[i] = target[num_targets-1];
+	-- num_targets;
+}
+
 void Game::prepare() {
 #ifdef _MSC_VER
 	_asm { finit }

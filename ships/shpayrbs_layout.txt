@@ -1,12 +1,12 @@
 
 7
-llaser     5 0 0 0 0
-head       9 5 2 0 0
-rlaser     5 0 0 0 0
-lhull      3 0 0 1 0
-chull      2 5 2 0 0
-rhull      3 0 0 1 0
-engine     6 5 8 0 1
+llaser     8 0 0 0 0
+head      14 5 2 0 0
+rlaser     8 0 0 0 0
+lhull      4 0 0 1 0
+chull      6 5 2 0 0
+rhull      4 0 0 1 0
+engine     9 5 8 0 1
 
 3 8
 1	2	3

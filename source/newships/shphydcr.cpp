@@ -279,8 +279,7 @@ int HydrovarCruiser::activate_special()
 //    F->range			= 9999999;
     F->numberOfShots	= specialNumberOfShots;
 	if (specialFiringTakesFuel && specialFuelFull)
-		F->shot_fuel_cost	= (specialFuelFull - specialFuelCritical) / 
-specialNumberOfShots;
+		F->shot_fuel_cost	= (specialFuelFull - specialFuelCritical) / specialNumberOfShots;
 	else
 		F->shot_fuel_cost	= 0;
 	F->fuel					= specialFuelFull;

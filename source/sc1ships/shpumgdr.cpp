@@ -51,7 +51,7 @@ int UmgahDrone::activate_special()
 
 void UmgahDrone::calculate_thrust()
 {
-  if(special_recharge == 0)
+  if(special_recharge <= 0)
     Ship::calculate_thrust();
 }
 

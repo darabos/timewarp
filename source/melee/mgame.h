@@ -123,6 +123,7 @@ public:
 	int num_targets;
 	SpaceObject **target;
 	virtual void add_target (SpaceObject *target);
+	virtual void rem_target(SpaceObject *r);
 
 
 	virtual Control *create_control (int channel, const char *type, char *config = "Config0", char *file = "scp.ini") ;

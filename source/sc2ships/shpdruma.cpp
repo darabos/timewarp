@@ -36,7 +36,7 @@ int DruugeMauler::activate_weapon() {
 
 void DruugeMauler::calculate_fire_special() {
   if((fire_special) && (crew > 1) && (batt < batt_max) &&
-    (special_recharge == 0)) {
+    (special_recharge <= 0)) {
 
     batt += special_drain;
     if(batt > batt_max)
