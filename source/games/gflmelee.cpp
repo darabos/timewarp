@@ -185,10 +185,11 @@ public:
 	char alliancename[2][512];
 	TeamCode alliance[2];
 	Control *playercontrols[2];
-	Control *oldcontrol;	// remember the original control when you take possession of a ship
+	Control *oldcontrol[2];	// remember the original control when you take possession of a ship
 	ShipPanelBmp *player_panel[2];
 
-	int		localplayer;	// which player number is "local" ... is this needed at all ?
+	int		localplayer, remoteplayer;
+	// which player number is "local" ... is this needed at all ?
 
 	int		toggle_showstats, toggle_playership, toggle_healthbars, toggle_fleetlist, toggle_radar, toggle_panel, toggle_radarpos;
 	int		lastkey_playership[2], lastkey_healthbars, lastkey_fleetlist, lastkey_radar, lastkey_panel, lastkey_radarpos, lastkey_radarlayout;
@@ -505,29 +506,50 @@ void FlMelee::init(Log *_log)
 		start_menu(allyfleet);
 	}
 	// send (or receive) ... channel_server is locally either the server, or the client.
+	// fleet numbers are fixed: fleet 0 vs fleet 1
 	log_int(channel_server, allyfleet[0]);
 	log_int(channel_server, allyfleet[1]);
 
+	// team-numbers are fixed : fleet 0 vs fleet 1.
+	alliance[0] = new_team();
+	alliance[1] = new_team();
+
 
 	// initialize server/client controls.
-	localplayer = 0;
+	// this is not fixed, game-host should have fleet 0, game-client fleet 1
+	// note that channel_server/ channel_client are always local vs. remote,
+	// log->type is host vs client.
+	if (log->type == Log::log_net1server || log->type == Log::log_normal)
+	{
+		localplayer = 0;
+		remoteplayer = 1;
+	} else {
+		localplayer = 0;
+		remoteplayer = 1;
+	}
+	// it is ... identical !! WHY should it be this way ??
 
 	Control *c;
 	
 	// create the local player
 	c = create_control(channel_server, "Human");
-	playercontrols[0] = c;
+	playercontrols[localplayer] = c;
 	add_focus(c, c->channel);
+	
 	
 	// create the remote player
 	if (log->type == Log::log_net1server || log->type == Log::log_net1client)
 	{
 		// it's "client" from local perspective ???
 		c  = create_control(channel_client, "Human");
-		playercontrols[1] = c;
+		playercontrols[remoteplayer] = c;
 		add_focus(c, c->channel);
 	} else
-		playercontrols[1] = 0;
+		playercontrols[remoteplayer] = 0;	// computer player.
+
+	// add a focus ?
+//	if (playercontrols[localplayer])
+//		add_focus(playercontrols[localplayer], playercontrols[localplayer]->channel);
 
 	// player 0 = local ?
 	// player 1 = remote ?
@@ -539,14 +561,11 @@ void FlMelee::init(Log *_log)
 	statsmanager = new StatsManager;
 
 
-	alliance[0] = new_team();
-	alliance[1] = new_team();
-
 //	if (!playercontrols[0])
 
 //	playercontrols[1] = 0;
 
-	Ship *takeovership = 0;
+	//Ship *takeovership = 0;
 
 	for ( iplayer = 0; iplayer < 2; ++iplayer )
 	{
@@ -608,18 +627,7 @@ void FlMelee::init(Log *_log)
 
 			Ship *s;
 
-			/*
-			if ( iplayer == 0 && iship == 0 )
-			{
-				Control *c  = create_control(channel_server, "Human");
-				playercontrols[iplayer] = c;
-				// see gsample - this tracks the player position, whatever ship
-				// he controls ;)
-				add_focus(c, c->channel);
-			}
-			*/
-
-
+			
 			//s = create_ship(shipname, "Wussiebot", P, a, alliance[iplayer]);
 			s = create_ship(channel_none, shipname, "WussieBot", P, a, alliance[iplayer]);
 			add(s->get_ship_phaser());
@@ -630,8 +638,13 @@ void FlMelee::init(Log *_log)
 			// do not add this to the game:
 			statsmanager->addship(s, 1);
 
-			if ( iplayer == 0 && iship == 0 )
-				takeovership = s;
+			if ( iship == 0 && playercontrols[iplayer] )
+			{
+				// take over a ship with the human controls (overriding the AI)
+				//takeovership = s;
+				oldcontrol[iplayer] = s->control;	// remember :)
+				playercontrols[iplayer]->select_ship(s, "none");
+			}
 			
 			
 
@@ -641,15 +654,15 @@ void FlMelee::init(Log *_log)
 
 
 		}
+
+		if (playercontrols[iplayer])
+			playercontrols[iplayer]->set_target(-1);
 	}
 
-	playercontrols[0]->set_target(-1);
 	
-	if(	takeovership == NULL )		
-		tw_error("takeovership is used without initialization");
+	//if(	takeovership == NULL )		
+	//	tw_error("takeovership is used without initialization");
 	
-	oldcontrol = takeovership->control;	// remember :)
-	playercontrols[0]->select_ship(takeovership, "none");
 
 	healthbartoggle = 1;	// show health bars for the ships.
 
@@ -939,90 +952,187 @@ void FlMelee::calculate()
 
 	Game::calculate();
 
-	Control *c = playercontrols[0];
-
-
-	// check death ...
-
-	// not if the player is captain of one fixed vessel: a command ship
-	int PlayerIsCaptain = 0;
-	if ( !(c->exists() && c->ship && c->ship->exists()) && !PlayerIsCaptain )
+	Control *c;
+	
+	
+	int iplayer;
+	
+	for ( iplayer = 0; iplayer < 2; ++iplayer )
 	{
-		c->state = 1;
+		c = playercontrols[iplayer];
 
-		for ( int itarget = 0; itarget < num_targets; ++itarget )
+		if (!c)
+			continue;
+		
+		
+		// check death ...
+		
+		// not if the player is captain of one fixed vessel: a command ship
+		int PlayerIsCaptain = 0;
+		if ( !(c->exists() && c->ship && c->ship->exists()) && !PlayerIsCaptain )
 		{
-			SpaceObject *o = game->target[itarget];
+			c->state = 1;
 			
-			if ( o->isShip() && o != c->ship && is_in_team(o, alliance[0]) )
+			for ( int itarget = 0; itarget < num_targets; ++itarget )
 			{
-				Ship *shp = (Ship*) o;
-
-				// the name doesn't really matter
-				oldcontrol = shp->control;
-				c->select_ship(shp, "none");	// also takes care of the ship's pointer :)
-
-				break;
+				SpaceObject *o = game->target[itarget];
+				
+				if ( o->isShip() && o != c->ship && is_in_team(o, alliance[iplayer]) )
+				{
+					Ship *shp = (Ship*) o;
+					
+					// the name doesn't really matter
+					oldcontrol[iplayer] = shp->control;
+					c->select_ship(shp, "none");	// also takes care of the ship's pointer :)
+					
+					break;
+				}
 			}
 		}
-	}
-	// if you're still dead after this check, the game ends
-	if ( !(c->exists() && c->ship && c->ship->exists()) )
-	{
-		show_ending(0);
-	}
-
-	// check if the target has changed:
-
-	if ( (c->target && c->target->exists()) )
-	{
-
-		if ( !target_indicator )
+		// if you're still dead after this check, the game ends
+		if ( !(c->exists() && c->ship && c->ship->exists()) )
 		{
-			target_indicator = new ImIndicator(c->target);
-			game->add(target_indicator);
+			// but only if you're the local player
+			if (iplayer == localplayer)
+				show_ending(0);
+			else
+				show_ending(1);	// cause if the local player loses, the remote player wins.
 		}
-
-		if ( c->target != target_indicator->showme )
+		
+		// check if the target has changed:
+		
+		if ( (c->target && c->target->exists()) )
 		{
-			target_indicator->newtarget(c->target);
-		}
-
-	} else {
-		// choose a new target !
-		int i;
-		for ( i = 0; i < num_targets; ++i )
-		{
-			if (c->valid_target(game->target[i]))
-			{
-				c->set_target(i);
-				break;
-			}
-		}
-
-		SpaceObject *s = c->target;
-		if ( s )
-		{
+			
 			if ( !target_indicator )
 			{
-				target_indicator = new ImIndicator(s);
+				target_indicator = new ImIndicator(c->target);
 				game->add(target_indicator);
 			}
-			target_indicator->newtarget(c->target);
+			
+			if ( c->target != target_indicator->showme )
+			{
+				target_indicator->newtarget(c->target);
+			}
+			
+		} else {
+			// choose a new target !
+			int i;
+			for ( i = 0; i < num_targets; ++i )
+			{
+				if (c->valid_target(game->target[i]))
+				{
+					c->set_target(i);
+					break;
+				}
+			}
+			
+			SpaceObject *s = c->target;
+			if ( s )
+			{
+				if ( !target_indicator )
+				{
+					target_indicator = new ImIndicator(s);
+					game->add(target_indicator);
+				}
+				target_indicator->newtarget(c->target);
+			}
+		}
+		if ( !c->target)
+		{
+			//		{tw_error("what the ...?! We won! Hurray !");}
+			// I guess you win ;)
+			// but only if you're the local player
+			if (iplayer == localplayer)
+				show_ending(1);
+			else
+				show_ending(0);	// cause if the local player wins, the remote player loses.
 		}
 	}
-	if ( !c->target)
-	{
-//		{tw_error("what the ...?! We won! Hurray !");}
-		// I guess you win ;)
-		show_ending(1);
-	}
 
+	// player control of the ships... jumping to another ship, or not ...
+
+	for ( iplayer = 0; iplayer < 2; ++iplayer )
+	{
+		if (!playercontrols[iplayer])
+			continue;
+
+		int k = playercontrols[iplayer]->keys;
+		
+		// next player ship
+		if (!lastkey_playership[iplayer] && (k & keyflag::extra1) )
+			toggle_playership = 1;
+
+		// previous player ship
+		else if (!lastkey_playership[iplayer] && (k & keyflag::extra2) )
+			toggle_playership = -1;
+
+		else
+			toggle_playership = 0;
+
+		lastkey_playership[iplayer] = k & (keyflag::extra1 | keyflag::extra2);
+		
+		
+		if ( playercontrols[iplayer]->ship && toggle_playership )
+		{
+			c = playercontrols[iplayer];
+
+			// jump to the ship in this list:
+			int itarget, lastitarget;
+			
+			itarget = 0;
+			while ( game->target[itarget] != c->ship && itarget < num_targets-1 )
+				++itarget;
+			
+			lastitarget = itarget;
+			
+			// then start searching for the next entry;
+			itarget = lastitarget + toggle_playership;
+			while ( itarget != lastitarget )
+			{
+				
+				if ( itarget > num_targets-1 )
+					itarget -= num_targets;
+				if ( itarget < 0 )
+					itarget += num_targets;
+				
+				SpaceObject *o = game->target[itarget];
+				
+				//			Control *c = playercontrols[0];	// is already done earlier
+				
+				if ( o->isShip() && is_in_team(o, alliance[iplayer]) )
+				{
+					Ship *shp = (Ship*) o;
+					
+					Control *c1, *c2;
+					Ship *s1, *s2;
+					
+					c1 = shp->control;
+					s1 = shp;
+					
+					c2 = playercontrols[iplayer];
+					s2 = c2->ship;
+					
+					oldcontrol[iplayer]->select_ship(s2, "none");	// re-assign original control ai.
+					oldcontrol[iplayer] = s1->control;		// remember control ai of the new ship
+					playercontrols[iplayer]->select_ship(s1, "none");	// take over the new ship
+					
+					
+					break;
+				}
+				
+				itarget += toggle_playership;
+			}
+			
+		}
+		
+	}
 
 	// jump to the next available ship if your ship dies
 
 //	Control *c = playercontrols[0];
 
+	// LOCAL DISPLAY OPTIONS
 
 	if (key[KEY_S])
 		toggle_showstats = 1;
@@ -1131,83 +1241,10 @@ void FlMelee::calculate()
 	}
 	lastkey_radarlayout = key[KEY_L];
 
+	// END OF LOCAL DISPLAY OPTIONS
 
-	int iplayer;
-	for ( iplayer = 0; iplayer < 2; ++iplayer )
-	{
-		if (!playercontrols[iplayer])
-			continue;
 
-		int k = playercontrols[iplayer]->keys;
-		
-		// next player ship
-		if (!lastkey_playership[iplayer] && (k & keyflag::extra1) )
-			toggle_playership = 1;
 
-		// previous player ship
-		else if (!lastkey_playership[iplayer] && (k & keyflag::extra2) )
-			toggle_playership = -1;
-
-		else
-			toggle_playership = 0;
-
-		lastkey_playership[iplayer] = k & (keyflag::extra1 | keyflag::extra2);
-		
-		
-		if ( playercontrols[iplayer]->ship && toggle_playership )
-		{
-			c = playercontrols[iplayer];
-
-			// jump to the ship in this list:
-			int itarget, lastitarget;
-			
-			itarget = 0;
-			while ( game->target[itarget] != c->ship && itarget < num_targets-1 )
-				++itarget;
-			
-			lastitarget = itarget;
-			
-			// then start searching for the next entry;
-			itarget = lastitarget + toggle_playership;
-			while ( itarget != lastitarget )
-			{
-				
-				if ( itarget > num_targets-1 )
-					itarget -= num_targets;
-				if ( itarget < 0 )
-					itarget += num_targets;
-				
-				SpaceObject *o = game->target[itarget];
-				
-				//			Control *c = playercontrols[0];	// is already done earlier
-				
-				if ( o->isShip() && is_in_team(o, alliance[iplayer]) )
-				{
-					Ship *shp = (Ship*) o;
-					
-					Control *c1, *c2;
-					Ship *s1, *s2;
-					
-					c1 = shp->control;
-					s1 = shp;
-					
-					c2 = playercontrols[iplayer];
-					s2 = c2->ship;
-					
-					oldcontrol->select_ship(s2, "none");	// re-assign original control ai.
-					oldcontrol = s1->control;		// remember control ai of the new ship
-					playercontrols[iplayer]->select_ship(s1, "none");	// take over the new ship
-					
-					
-					break;
-				}
-				
-				itarget += toggle_playership;
-			}
-			
-		}
-		
-	}
 
 	// check if the player panel(s) still exist (shouldn't be needed, since
 	// the panel's calculate function isn't called):
@@ -1269,22 +1306,22 @@ void FlMelee::show_ending(int didwewin)
 	rectfill(dest, 0, 0, dest->w, dest->h, makecol(50,40,30));
 
 	// show the player ship
-	if (playercontrols[0]->ship)
+	if (playercontrols[localplayer]->ship)
 	{
-		SpaceSprite *s = playercontrols[0]->ship->data->spriteShip;
+		SpaceSprite *s = playercontrols[localplayer]->ship->data->spriteShip;
 		s->draw(Vector2(0,0), Vector2(dest->w, dest->h), 0, view->frame);
 	}
 
 	// show some text
 	if ( didwewin )
 	{
-		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[0]);
+		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[localplayer]);
 		textprintf( dest, font, 50, 25, pallete_color[14], "CRUSHED");
-		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[1]);
+		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[remoteplayer]);
 	} else {
-		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[1]);
+		textprintf( dest, font, 50, 10, pallete_color[15], alliancename[remoteplayer]);
 		textprintf( dest, font, 50, 25, pallete_color[14], "CRUSHED");
-		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[0]);
+		textprintf( dest, font, 50, 40, pallete_color[15], alliancename[localplayer]);
 	}
 
 	// display stats of the ships
