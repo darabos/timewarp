@@ -10,7 +10,7 @@
 ;Configuration
 
 OutFile timewarp-${VER_VERSION}.${VER_SUBVERSION}u${VER_BUILD}.exe
-SetCompressor bzip2
+SetCompressor lzma
 
 InstallDir $PROGRAMFILES\TimeWarp
 InstallDirRegKey HKLM SOFTWARE\TimeWarp ""

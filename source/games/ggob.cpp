@@ -609,8 +609,8 @@ Create random enemy ship if enemy limit is not riched. Also it patch some of the
 void GobGame::add_new_enemy () {
 	STACKTRACE;
 
-		const int num_enemy_types = 19;
-	static char *enemy_types[num_enemy_types] = {
+	
+	static char *enemy_types[] = {
 		"thrto", "zfpst", "shosc", "dragr", 
 			"ktesa", "kahbo", "ilwsp", 
 			"syrpe", "kzedr", "mmrxf", 
@@ -618,6 +618,8 @@ void GobGame::add_new_enemy () {
 			"yehte", "herex", "virli", 
 			"chmav", "plopl", "narlu"
 	};
+	const int num_enemy_types = sizeof(enemy_types)/sizeof(enemy_types[0]);
+
 
 	if (gobenemies == max_enemies) return;
 	GobEnemy *ge = new GobEnemy();

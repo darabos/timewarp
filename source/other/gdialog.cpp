@@ -16,6 +16,8 @@
 #include "../util/aautil.h"
 #include "../util/aastr.h"
 
+#include <string>
+
 #define gobgame ((GobGame*)game)
 
 /*! \brief Alien Picture */
@@ -26,6 +28,26 @@ bool g_bPause = false;
 static int alien_image_x = 0;
 static int alien_image_y = 0;
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// Helper functions
+///////////////////////////////////////////////////////////////////////////////////////////
+/*! \brief split string by words
+	\param source string
+	\chars maximum length of returned string
+	\return result string
+*/
+std::string SplitString(std::string source, int chars)
+{
+	std::string strResult;
+	if (source.length()<chars+1)
+		return source;
+
+	int size = source.rfind(' ', chars);
+	source.resize(size+1);
+	return source;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
 void InitConversationModule ( lua_State* L )
 {
 	ASSERT ( L != NULL );
@@ -112,10 +134,23 @@ int l_DialogWrite(lua_State* ls)
     }
   const char* text = lua_tostring(ls, 1);
 
-  textout(game->window->surface, font, text, 10, 10, -1);
+  std::string strText = text;
+  std::string strTemp;
+  int k = 15;
+  while(strText.length() != 0 )
+  {
+	  std::string strTmp;
+	  strTemp = SplitString(strText, 60);
+	  textout(game->window->surface, font, strTemp.c_str(), 10, k, -1);
+	  strText.erase(strText.begin(), strText.begin() + strTemp.length());
+	  k+=15;
+  }
+
   game->window->unlock();
   return 0;
 }
+
+
 
 int l_DialogAnswer(lua_State* ls)
 {
