@@ -140,6 +140,8 @@ void SlylandroProbe::calculate_turn_right()
 
 void SlylandroProbe::calculate()
 {
+	if (!(SlyLaser && SlyLaser->exists()) )
+		SlyLaser = 0;
 	
 	last_turn_left = turn_left;
 	last_turn_right = turn_right;
