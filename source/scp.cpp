@@ -1204,14 +1204,14 @@ void edit_fleet(int player) {STACKTRACE
         fleetDialog[FLEET_DIALOG_SORTBY_BUTTON1].dp = Fleet::getSortingMethodName(sortMethod1);
         fleetDialog[FLEET_DIALOG_SORTBY_BUTTON2].dp = Fleet::getSortingMethodName(sortMethod2);
         if (sortAscending1)
-            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "^";
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = (void *)"^";
         else
-            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "v";
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = (void *)"v";
         
         if (sortAscending2)
-            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "^";
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = (void *)"^";
         else
-            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "v";        
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = (void *)"v";        
 
 		fleetRet = tw_do_dialog(NULL, fleetDialog, -1);
 
@@ -1234,9 +1234,9 @@ void edit_fleet(int player) {STACKTRACE
                sortAscending1 = 1 - sortAscending1;
                reference_fleet->Sort( sortMethod1, sortAscending1 );
                if (sortAscending1)
-                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "^";
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = (void *)"^";
                else
-                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "v";
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = (void *)"v";
                break;
 
            case FLEET_DIALOG_FLEET_SHIPS_LIST: break;
@@ -1267,9 +1267,9 @@ void edit_fleet(int player) {STACKTRACE
                sortAscending2 = 1 - sortAscending2;
                fleet->Sort( sortMethod2, sortAscending2 );
                if (sortAscending2)
-                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "^";
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = (void *)"^";
                else
-                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "v";
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = (void *)"v";
                break;
 
            case FLEET_DIALOG_ADD_ALL_BUTTON: break;
