@@ -13,6 +13,16 @@ char *fleetListboxGetter(int index, int *list_size, class Fleet *fleet) ;
 char *fleetpointsListboxGetter(int index, int *list_size, class Fleet *fleet) ;
 
 
+//button proc with standard SC sounds :)
+int my_d_button_proc(int msg, DIALOG * d, int c);
+
+// this is a flag for buttons which specifies that its activate sound should be special.
+// you should OR this with the button's flags to enable it.
+#define D_SPECIAL_BUTTON (D_USER*2)
+
+
+
+
 /*
 TimeWarps own custom GUI
 */

@@ -25,6 +25,7 @@ REGISTER_FILE
 #include "../melee/mlog.h"
 #include "../melee/manim.h"
 #include "../melee/mfleet.h"
+#include "../gui.h"
 
 #include "../util/aastr.h"
 
@@ -785,10 +786,10 @@ GobStation::~GobStation()
 static DIALOG station_dialog[] =
 {// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
   { d_button_proc,     385,  50,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Depart Station" , NULL, NULL },
-  { d_button_proc,     385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },
-  { d_button_proc,     385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },
-  { d_button_proc,     385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },
-  { d_button_proc,     385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },
+  { my_d_button_proc,  385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },
+  { my_d_button_proc,  385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },
+  { my_d_button_proc,  385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },
+  { my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },
   { d_text_proc,       185,  420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
@@ -942,7 +943,7 @@ char *upgradeListboxGetter(int index, int *list_size) {
 #define UPGRADE_DIALOG_LIST 3
 static DIALOG upgrade_dialog[] =
 {// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
-  { d_button_proc,     10,  415,  170,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Station menu" , NULL, NULL },
+  { my_d_button_proc,  10,  415,  170,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Station menu" , NULL, NULL },
   { d_textbox_proc,    20,  40,   250,  40,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Menu", NULL, NULL },
   { d_text_proc,       10,  100,  540,  20,   255,  0,    0,    D_EXIT,     0,    0,    (void *)" # Starbucks Buckazoids Description                     ", NULL, NULL },
   { d_list_proc,       10,  120,  540,  280,  255,  0,    0,    D_EXIT,     0,    0,    (void *) upgradeListboxGetter, NULL, NULL },

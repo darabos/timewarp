@@ -70,6 +70,8 @@ REGISTER_FILE
 #include "melee/mship.h" //remove
 #include "melee/mfleet.h"
 
+#include "util/sounds.h"
+
 #include "jgmod.h"
 
 
@@ -146,14 +148,15 @@ enum {
 DIALOG mainDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { d_shadow_box_proc, 40,   40,   180,  215,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_button_proc,     45,   45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Melee" , NULL, NULL },
-  { d_button_proc,     45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
-  { d_button_proc,     45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
-  { d_button_proc,     45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
-  { d_button_proc,     45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
-  { d_button_proc,     45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
+  { my_d_button_proc,  45,   45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Melee" , NULL, NULL },
+  { my_d_button_proc,     45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
+  { my_d_button_proc,     45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
+  { my_d_button_proc,     45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
+  { my_d_button_proc,     45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
+  { my_d_button_proc,     45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
 #ifdef INCLUDE_GAMEX
-  { d_button_proc,     550,  440,   50,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"FG" , NULL, NULL },
+  { my_d_button_proc,     550,  440,   50,  30,   255,  0,    0,    D_EXIT | D_SPECIAL_BUTTON,
+                                                                             0,    0,    (void *)"FG" , NULL, NULL },
 #endif
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
@@ -171,7 +174,7 @@ DIALOG fleet_titleDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { d_box_proc,        180,  210,  280,  60,   255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { d_edit_proc,       190,  220,  260,  10,   255,  0,    0,    0,       80,   0,    (void *) title_str, NULL, NULL },
-  { d_button_proc,     255,  240,  60,   18,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"OK", NULL, NULL },
+  { my_d_button_proc,  255,  240,  60,   18,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"OK", NULL, NULL },
   { d_button_proc,     325,  240,  60,   18,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Cancel", NULL, NULL },
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
@@ -220,6 +223,12 @@ char *detect_gametype( Log *_log ) { STACKTRACE
 	return strdup(buffy);
 }
 
+
+
+SAMPLE * menuAccept = NULL;
+SAMPLE * menuFocus = NULL;
+SAMPLE * menuDisabled = NULL;
+SAMPLE * menuSpecial = NULL;
 /** 
   loads up the title screen and music, and starts playing the background menu music. 
 */
@@ -233,6 +242,27 @@ void prepareTitleScreenAssets() {
      tw_error("Couldnt load title music");
 
   sound.play_music( mymusic, TRUE);
+
+  {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUACCEPT");
+  if (data != null && data->type==DAT_SAMPLE) {
+      menuAccept = (SAMPLE*) data->dat;
+  }}
+
+  {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUFOCUS");
+  if (data != null && data->type==DAT_SAMPLE) {
+      menuFocus = (SAMPLE*) data->dat;
+  }}
+
+  {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUDISABLED");
+  if (data != null && data->type==DAT_SAMPLE) {
+      menuDisabled = (SAMPLE*) data->dat;
+  }}
+
+  {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUSPECIAL");
+  if (data != null && data->type==DAT_SAMPLE) {
+      menuSpecial = (SAMPLE*) data->dat;
+  }}
+  
 }
 
 /** clears the screen, and displays a loading message to the user.
@@ -309,7 +339,7 @@ static DIALOG connect_dialog[] = {
   { d_box_proc,        48,   248,  464,  34,   255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { d_edit_proc,       50,   250,  460,  30,   255,  0,    0,    0,       75,   0,    dialog_string[1], NULL, NULL },
 //{ d_check_proc,      50,   290,  160,  20,   255,  0,    0,    0,       0,    0,    (void *)"Two Local Players", NULL, NULL },
-  { d_button_proc,     50,   320,  160,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Connect", NULL, NULL },
+  { my_d_button_proc,  50,   320,  160,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Connect", NULL, NULL },
   { d_button_proc,     350,  320,  160,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Abort", NULL, NULL },
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
@@ -344,7 +374,7 @@ static DIALOG listen_dialog[] =
   { d_box_proc,        178,  138,  124,  29,   255,  0,    0,    0,          0,    0,    NULL, NULL, NULL },
   { d_edit_proc,       180,  140,  120,  25,   255,  0,    0,    0,          5,    0,    dialog_string[1], NULL, NULL },
 //{ d_check_proc,      140,  170,  160,  20,   255,  0,    0,    0,          0,    0,    (void *)"Two Local Players", NULL, NULL },
-  { d_button_proc,     140,  200,  120,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void*) "OK", NULL, NULL },
+  { my_d_button_proc,  140,  200,  120,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void*) "OK", NULL, NULL },
   { d_button_proc,     280,  200,  120,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void*) "Cancel", NULL, NULL },
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
@@ -968,15 +998,15 @@ enum {
 DIALOG melee_ex_dialog[] = {
   // (dialog proc)     (x)  (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { d_shadow_box_proc, 40,  40,   240,  300,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_button_proc,     50,   50,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Play Game" , NULL, NULL },
-  { d_button_proc,     50,   75,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Play Game / Net1 Server" , NULL, NULL },
-  { d_button_proc,     50,  100,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Play Game / Net1 Client" , NULL, NULL },
-  { d_button_proc,     50,  125,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Playback Demo Recording" , NULL, NULL },
-  { d_button_proc,     50,  150,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Save Demo Recording" , NULL, NULL },
-  { d_button_proc,     50,  175,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Clear State", NULL, NULL },
-  { d_button_proc,     50,  200,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Key Tester", NULL, NULL },
-  { d_button_proc,     50,  225,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Ship Info", NULL, NULL },
-  { d_button_proc,     50,  250,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Diagnostics", NULL, NULL },
+  { my_d_button_proc,  50,   50,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Play Game" , NULL, NULL },
+  { my_d_button_proc,  50,   75,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Play Game / Net1 Server" , NULL, NULL },
+  { my_d_button_proc,  50,  100,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Play Game / Net1 Client" , NULL, NULL },
+  { my_d_button_proc,  50,  125,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Playback Demo Recording" , NULL, NULL },
+  { my_d_button_proc,  50,  150,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Save Demo Recording" , NULL, NULL },
+  { my_d_button_proc,  50,  175,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Clear State", NULL, NULL },
+  { my_d_button_proc,  50,  200,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Key Tester", NULL, NULL },
+  { my_d_button_proc,  50,  225,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Ship Info", NULL, NULL },
+  { my_d_button_proc,  50,  250,  190,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Diagnostics", NULL, NULL },
   { d_button_proc,     80,  280,  190,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Main Menu", NULL, NULL },
   { d_tw_yield_proc,   0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
@@ -1082,11 +1112,11 @@ DIALOG teamsDialog[] = {
   { d_list_proc,       40,   85,   240,  145,  255,  0,    0,    D_EXIT,  0,    0,    (void *)playerListboxGetter, NULL, NULL },
   { d_list_proc,       290,  70,   160,  160,  255,  0,    0,    D_EXIT,  0,    0,    (void *)controlListboxGetter, NULL, NULL },
   { d_check_proc,      100,  236,  120,  20,   255,  0,    0,    0,       1,    0,    (void *)"Teams in Net Games",    NULL, NULL },
-  { d_button_proc,     295,  240,  150,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select Controller", NULL, NULL },
-  { d_button_proc,     50,   255,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Team #", NULL, NULL },
-  { d_button_proc,     50,   285,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Config #", NULL, NULL },
-  { d_button_proc,     50,   315,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Config", NULL, NULL },
-  { d_button_proc,     50,   345,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Fleet", NULL, NULL },
+  { my_d_button_proc,  295,  240,  150,  20,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select Controller", NULL, NULL },
+  { my_d_button_proc,  50,   255,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Team #", NULL, NULL },
+  { my_d_button_proc,  50,   285,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Change Config #", NULL, NULL },
+  { my_d_button_proc,  50,   315,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Config", NULL, NULL },
+  { my_d_button_proc,  50,   345,  220,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Fleet", NULL, NULL },
   { d_button_proc,     90,   380,  220,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Main Menu", NULL, NULL },
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
@@ -1286,12 +1316,12 @@ DIALOG fleetDialog[] = {
   { d_list_proc2,      390, 141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEET_SHIPS_LIST
 
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_button_proc,     390,  10,   240,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Player 1 Fleet", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON
-  { d_button_proc,     390,  40,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Fleet Title", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_TITLE
-  { d_button_proc,     518,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE_BUTTON
-  { d_button_proc,     574,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Load", NULL, NULL },//FLEET_DIALOG_LOAD_BUTTON
+  { my_d_button_proc,  390,  10,   240,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Player 1 Fleet", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON
+  { my_d_button_proc,  390,  40,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Fleet Title", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_TITLE
+  { my_d_button_proc,  518,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE_BUTTON
+  { my_d_button_proc,  574,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Load", NULL, NULL },//FLEET_DIALOG_LOAD_BUTTON
   { d_textbox_proc,    390,  60,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Point Limit", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_TEXT
-  { d_button_proc,     518,  60,   112,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"300\0              ", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_BUTTON
+  { my_d_button_proc,  518,  60,   112,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"300\0              ", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_BUTTON
   { d_textbox_proc,    390,  80,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Current Points", NULL, NULL },//FLEET_DIALOG_CURRENT_POINTS_TEXT
   { d_textbox_proc,    518,  80,   112,  20,   255,  0,    0,     0,       0,    0,    (void *)"100\0              ", NULL, NULL },//FLEET_DIALOG_CURRENT_POINTS_VALUE
   { d_textbox_proc,    390, 120,    64,  20,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT2
@@ -1299,10 +1329,10 @@ DIALOG fleetDialog[] = {
   { d_button_proc,     582, 120,    16,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING2
 
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)  
-  { d_button_proc,     270, 210,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add", NULL, NULL },//FLEET_DIALOG_ADD_BUTTON
-  { d_button_proc,     270, 235,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add All", NULL, NULL },//FLEET_DIALOG_ADD_ALL_BUTTON
-  { d_button_proc,     270, 265,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
-  { d_button_proc,     270, 290,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove All", NULL, NULL },//FLEET_DIALOG_CLEARALL
+  { my_d_button_proc,  270, 210,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add", NULL, NULL },//FLEET_DIALOG_ADD_BUTTON
+  { my_d_button_proc,  270, 235,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add All", NULL, NULL },//FLEET_DIALOG_ADD_ALL_BUTTON
+  { my_d_button_proc,  270, 265,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
+  { my_d_button_proc,  270, 290,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove All", NULL, NULL },//FLEET_DIALOG_CLEARALL
   { scp_fleet_dialog_bitmap_proc,
                         10, 372,   85,   85,   255,  0,    0,    0,       0,    0,    (void *)NULL, NULL, NULL },//FLEET_DIALOG_SHIP_PICTURE_BITMAP
 
@@ -1555,10 +1585,6 @@ void edit_fleet(int player) {STACKTRACE
 }
 
 
-//int lastFleetItemShown = 0;
-
-//extern void _handle_scrollable_scroll(DIALOG *d, int listsize, int *index, int *offset);
-
 int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 
 	static int next_anim_time = get_time();
@@ -1781,8 +1807,8 @@ char *sorttypes[] = { "Name", "Cost", "Origin", "Coders", NULL };
 DIALOG shipviewDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { d_textbox_proc,    5,    5,    220,  40,   255,  0,    0,    0,       0,    0,    (void *)"Select a ship to examine", NULL, NULL },
-  { d_button_proc,     300,  5,    120,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Done", NULL, NULL },
-  { d_button_proc,     300,  45,   120,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Font Size", NULL, NULL },
+  { my_d_button_proc,  300,  5,    120,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Done", NULL, NULL },
+  { my_d_button_proc,  300,  45,   120,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Font Size", NULL, NULL },
   { d_list_proc2,      430,  5,    120,  60,   255,  0,    0,    D_EXIT,  0,    0,    (void *) genericListboxGetter, NULL, sorttypes },
   { d_list_proc2,      5,    50,   220,  420,  255,  0,    0,    D_EXIT,  0,    0,    (void *) fleetListboxGetter, NULL, NULL },
   { d_textbox_proc,    230,  110,  400,  160,  255,  0,    0,    0,       0,    0,    (void *) NULL, NULL, NULL },

@@ -65,12 +65,12 @@ enum {
 DIALOG options_dialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg) (bg) (key) (flags)  (d1)  (d2)  (dp)
   { d_box_proc,        40,    30,  190,  270,   255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_button_proc,     70,    40,  110,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Done", NULL, NULL },
-  { d_button_proc,     50,    90,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Video Mode", NULL, NULL },
-  { d_button_proc,     50,   130,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Audio Settings", NULL, NULL },
-  { d_button_proc,     50,   170,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Game && Rendering", NULL, NULL },
-//  { d_button_proc,     50,   210,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Physics Settings", NULL, NULL },
-//  { d_button_proc,     50,   250,  170,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Restore Defaults", NULL, NULL },
+  { my_d_button_proc,  70,    40,  110,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Done", NULL, NULL },
+  { my_d_button_proc,  50,    90,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Video Mode", NULL, NULL },
+  { my_d_button_proc,  50,   130,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Audio Settings", NULL, NULL },
+  { my_d_button_proc,  50,   170,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Game && Rendering", NULL, NULL },
+//  { my_d_button_proc,  50,   210,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Physics Settings", NULL, NULL },
+//  { my_d_button_proc,  50,   250,  170,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Restore Defaults", NULL, NULL },
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,     0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 	};
@@ -122,7 +122,7 @@ bool confirmVideoChanges() {
         // (dialog proc)     (x)   (y)   (w)   (h)   (fg) (bg) (key) (flags)  (d1)  (d2)  (dp)
         { d_box_proc,       120,  140,  368,  90,   255,  0,    0,     0,       0,    0,    NULL, NULL, NULL },
         { d_text_proc,      130,  150,  348,  30,   255,  0,    0,     0,       0,    0,    (void *)"Do you want to keep these settings?", NULL, NULL },
-        { d_button_proc,    130,  190,  174,  30,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Yes", NULL, NULL },
+        { my_d_button_proc, 130,  190,  174,  30,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Yes", NULL, NULL },
         { d_button_proc,    294,  190,  174,  30,   255,  0,    0,D_EXIT,       0,    0,    (void *)"No", NULL, NULL },
         { NULL,               0,    0,    0,   0,    255,  0,    0,     0,       3,    0,    NULL, NULL, NULL }
     };
@@ -179,8 +179,8 @@ DIALOG video_dialog[] = {
   { d_list_proc2,      30,  310,  100, 100,   255,  0,    0,D_EXIT,       0,    0,    (void *) genericListboxGetter, NULL, color_depth },//DIALOG_VIDEO_BPPLIST
 
   { d_button_proc,      32,  30,  100,   35,   255,  0,   0,D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },//DIALOG_VIDEO_EXIT
-  { d_button_proc,     143,  30,  260,  35,   255,  0,    0,D_EXIT,  0,    0,    (void *)"Restore Default", NULL, NULL },//DIALOG_VIDEO_GET_DEFAULT
-  { d_button_proc,      32,  70,  100,   35,   255,  0,   0,D_EXIT,  0,    0,    (void *)"Ok", NULL, NULL },//DIALOG_VIDEO_SET_DEFAULT
+  { my_d_button_proc,  143,  30,  260,  35,   255,  0,    0,D_EXIT,  0,    0,    (void *)"Restore Default", NULL, NULL },//DIALOG_VIDEO_GET_DEFAULT
+  { my_d_button_proc,   32,  70,  100,   35,   255,  0,   0,D_EXIT,  0,    0,    (void *)"Ok", NULL, NULL },//DIALOG_VIDEO_SET_DEFAULT
 
   { d_text_proc,       170,  310,  160,  20,   255,  0,   0,     0,       0,    0,    (void *)"Gamma Correction", NULL, NULL },//DIALOG_VIDEO_GAMMA_TEXT
   { d_slider_proc,     170,  330,  160,  15,   255,  0,   0,     0,       255,  0,    NULL, (void *)handleGammaSliderChange, NULL  },//DIALOG_VIDEO_GAMMA_SLIDER
@@ -341,7 +341,7 @@ enum {
 DIALOG audio_dialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg) (bg) (key) (flags)  (d1)  (d2)  (dp)
   { d_box_proc,        30,   50,  410, 140,   255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_button_proc,     100,  60,  80,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"OK", NULL, NULL },
+  { my_d_button_proc,  100,  60,  80,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"OK", NULL, NULL },
   { d_button_proc,     200,  60,  80,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Cancel", NULL, NULL },
   { d_check_proc,      40,  110,  160,  20,   255,  0,    0,    0,       0,    0,    (void *)"Sound Volume ", NULL, NULL },  
   { d_slider_proc,     205, 110,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, (void *)handleSoundSliderChange, NULL },
@@ -461,7 +461,7 @@ DIALOG old_optionsDialog[] =
    { d_check_proc,    40,  190, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"3D Planet",         NULL, NULL          },	//OPTIONS_DIALOG_3DPLANET,
    { d_text_proc,     292, 244, 120, 20,  255, 0,   0,    0,      0,   0,   (void *)"View",             NULL, NULL          },
    { d_list_proc,     284, 264, 180, 90,  255, 0,   0,    0,      0,   0,   (void *) viewListboxGetter, NULL, NULL          },
-   { d_button_proc,   400, 60,  80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"OK",               NULL, NULL          },
+   { my_d_button_proc,400, 60,  80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"OK",               NULL, NULL          },
    { d_button_proc,   400, 116, 80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"Cancel",           NULL, NULL          },
 
    { d_text_proc,      40, 216, 120, 20,  255, 0,   0,    0,      1,   0,   (void *)"Rendering Quality:", NULL, NULL          },

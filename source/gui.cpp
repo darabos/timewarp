@@ -6,6 +6,7 @@
 #include "melee.h"
 REGISTER_FILE
 
+#include "scp.h" // for menu sounds
 #include "gui.h"
 #include "melee/mgame.h"
 #include "melee/mfleet.h"
@@ -1068,3 +1069,42 @@ int d_list_proc2(int msg, DIALOG *d, int c)
 
    return D_O_K;
 }
+
+/**
+*/
+int my_d_button_proc(int msg, DIALOG * d, int c) {
+    int ret = 0;
+
+    ret = d_button_proc(msg, d, c);
+    
+    switch (msg) {
+    case MSG_END:
+        if (d->flags & D_DISABLED) {
+            if (menuDisabled != NULL)
+                sound.play(menuDisabled, 128);
+        }
+        else {
+            if (menuAccept != NULL)
+                sound.play(menuAccept, 64);
+        }
+
+        //if (d->flags & D_SPECIAL_BUTTON) {
+           //if (menuSpecial != NULL) 
+             // sound.play(menuSpecial, 128);
+        //}
+        break;
+
+    case MSG_GOTFOCUS:
+        if (menuFocus != NULL)
+            sound.play(menuFocus, 128);
+        break;
+
+    };
+    return ret;
+}
+
+
+
+
+
+
