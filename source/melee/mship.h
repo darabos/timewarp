@@ -81,6 +81,8 @@ class Ship : public SpaceObject {
 
 	public:
 	ShipType *type;
+	virtual ShipType *get_shiptype();
+
 	ShipClass *code;
 
 	int death_counter;

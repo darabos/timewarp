@@ -66,9 +66,12 @@ class BipoleShip : public Ship {
 
   protected:
   bool         shooting;
-  Ship*        parent;
+  Ship         *parent;
 
   public:
+  Ship *sibling;
+
+
   BipoleShip(Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code, Ship* oparent, SpaceSprite* osprite);
 
@@ -82,6 +85,8 @@ class BipoleShip : public Ship {
 //  virtual void calculate_hotspots();
   virtual int handle_damage( SpaceLocation* source, double normal, double direct );
   virtual void destroyed( SpaceLocation* source );
+
+  virtual ShipType *get_shiptype();
 };
 
 SpaceLocation* BipoleKatamaran::get_ship_phaser() {
@@ -126,6 +131,9 @@ BipoleKatamaran::BipoleKatamaran(Vector2 opos, double shipAngle,
   game->add_target( right );
   left->shooting = true;
   id = 0; /* this is nothing */
+
+  left->sibling = right;
+  right->sibling = left;
 }
 
 double BipoleKatamaran::isInvisible() const{
@@ -159,7 +167,7 @@ void BipoleKatamaran::calculate(){
   if( left ) if( !left->exists() ){
     left = NULL;
     if( right ){
-      right->parent = NULL;
+      right->sibling = NULL;
       BITMAP *bmp = spritePanel->get_bitmap(0);
       blit( spritePanel->get_bitmap(8), bmp, 0, 0, 0, 0, 63, 99);
       update_panel = TRUE;
@@ -168,7 +176,7 @@ void BipoleKatamaran::calculate(){
   if( right ) if( !right->exists() ){
     right = NULL;
     if( left ){
-      left->parent = NULL;
+      left->sibling = NULL;
       BITMAP *bmp = spritePanel->get_bitmap(0);
       blit( spritePanel->get_bitmap(7), bmp, 0, 0, 0, 0, 63, 99);
       update_panel = TRUE;
@@ -184,8 +192,6 @@ void BipoleKatamaran::calculate(){
     batt = left->batt;
     crew = left->crew;
 	pos = left->normal_pos();
-//    x = left->normal_x();
-//    y = left->normal_y();
     angle = left->angle;
     Ship::calculate();
     return;
@@ -193,8 +199,6 @@ void BipoleKatamaran::calculate(){
   if( !left ){
     batt = right->batt;
     crew = right->crew;
-//    x = right->normal_x();
-//    y = right->normal_y();
 	pos = right->normal_pos();
     angle = right->angle;
     Ship::calculate();
@@ -397,19 +401,19 @@ int BipoleShip::activate_special(){
 }
 
 void BipoleShip::calculate_fire_weapon(){
-  if( !parent ) Ship::calculate_fire_weapon();
+  if( !sibling ) Ship::calculate_fire_weapon();
 }
 void BipoleShip::calculate_fire_special(){
-  if( !parent ) Ship::calculate_fire_special();
+  if( !sibling ) Ship::calculate_fire_special();
 }
 void BipoleShip::calculate_thrust(){
-  if( !parent ) Ship::calculate_thrust();
+  if( !sibling ) Ship::calculate_thrust();
 }
 void BipoleShip::calculate_turn_left(){
-  if( !parent ) Ship::calculate_turn_left();
+  if( !sibling ) Ship::calculate_turn_left();
 }
 void BipoleShip::calculate_turn_right(){
-  if( !parent ) Ship::calculate_turn_right();
+  if( !sibling ) Ship::calculate_turn_right();
 }
 
 /*void BipoleShip::calculate_hotspots() {
@@ -438,5 +442,15 @@ void BipoleShip::destroyed( SpaceLocation* source ){
 // we do not report ship_died events -- the parent does
 //  game->ship_died(this, source);
 }
+
+
+ShipType *BipoleShip::get_shiptype()
+{
+	// this is necessary, otherwise the Kat Poly ship crashes.
+	// also, "type" cannot be redirected inside the constructor, cause the
+	// parents' type is declared outside of its constructor (bad?).
+	return parent->type;
+};
+
 
 REGISTER_SHIP(BipoleKatamaran)

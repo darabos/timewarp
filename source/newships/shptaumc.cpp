@@ -478,7 +478,7 @@ void TauMCTorpedo::animateExplosion()
         exploded = true;
         if (old_range < blast_range) {
                 Query q;
-                double r, d, dam, ddam;
+                double r, d;
                 for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next()) {
                         r = distance(q.currento) / blast_range;
 						if (r > 1)

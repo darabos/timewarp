@@ -885,6 +885,11 @@ double Ship::get_angle_ex() const
 	return normalize(angle + turn_step, PI2);
 }
 
+ShipType *Ship::get_shiptype()
+{
+	return type;
+}
+
 
 Phaser::Phaser(
 	SpaceLocation *creator, Vector2 opos, Vector2 _rpos, 

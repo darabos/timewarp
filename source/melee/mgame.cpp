@@ -43,6 +43,8 @@ REGISTER_FILE
 #include "mnet1.h"
 #include "mfleet.h"
 
+#include <typeinfo>
+
 
 static char chat_buf[256];
 static int chat_len = 0;
@@ -380,6 +382,46 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 //static int old_frame;
 //static char old_checksum_buf[200][200];
 
+
+void game_create_errorlog()
+{
+	FILE *f;
+
+	f = fopen("error.log", "a");
+	if (!f) return;
+
+	fprintf(f, "\n\n--------error report, showing in-game objects posx/y velx/y--------\n");
+
+	time_t t;
+	tm *td;
+	t = ::time(0);
+	td = ::localtime(&t);
+	fprintf(f, "%i-%02i-%02i %02i:%02i\n", td->tm_mday, td->tm_mon, td->tm_year,
+		td->tm_hour, td->tm_min);
+
+	int i;
+	for (i = 0; i < physics->num_items; i += 1)
+	{
+		SpaceLocation *s;
+		s = physics->item[i];
+
+		if (!(s && s->exists() && s->detectable()))
+			continue;
+
+		Vector2 p = s->normal_pos();
+		Vector2 v = s->vel;
+
+		// set "enable run-type information" for this feature
+		// (rebuild all after changing that option)
+		fprintf(f, "%30s %8.1e %8.1e %8.1e %8.1e\n",
+			typeid(*s).name(), p.x, p.y, v.x, v.y );
+	}
+
+	fclose(f);
+
+}
+
+
 void Game::compare_checksums() {STACKTRACE
 	unsigned char local_checksum = checksum() & 255;
 	unsigned char client_checksum = local_checksum;
@@ -402,7 +444,11 @@ void Game::compare_checksums() {STACKTRACE
 	this->client_checksum = client_checksum;
 	this->server_checksum = server_checksum;
 
-	if (desync) handle_desynch(local_checksum, server_checksum, client_checksum);
+	if (desync)
+	{
+		game_create_errorlog();
+		handle_desynch(local_checksum, server_checksum, client_checksum);
+	}
 }
 
 void Game::do_game_events() {STACKTRACE
@@ -604,7 +650,8 @@ void Game::play() {STACKTRACE
 		}*/
 	catch (...) {
 		if (__error_flag & 1) throw;
-		caught_error("Ack(1)!!!\nAn error occured in the game!\nBut I don't know what error!");
+		game_create_errorlog();
+		caught_error("Ack(1)!!!\nAn error occured in the game!\nBut I don't know what error (check error log)!");
 		if (__error_flag & 1) throw;
 	}
 	return;

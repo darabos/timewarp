@@ -132,45 +132,49 @@ RGB KatPoly::battPanelColor(int k){
   return Ship::battPanelColor(k);
 }
 
-int KatPoly::activate_special(){
-  ShipType* morph_target;
+int KatPoly::activate_special()
+{
+	if( !(target && target->exists()) ) return false;               // we need a target
+	if( !target->isShip()) return false;
 
-  if( morph ){                                // if we have already morphed
-    if( morph->type == type ){    // if we are in natural form
-      if( !target ) return false;             // we need a target
-	  if( !target->isShip()) return false;
-      morph_target = ((Ship*)target)->type;      // we will morph to it
-    }else{                                    // if we are in alien form
-      morph_target = type;              // morph to natural form
-    }
-    pos = morph->normal_pos();                    // get it's stats
-    vel = morph->get_vel();
-    angle = morph->get_angle();
-    crew = morph->crew;
-    batt = morph->batt;
-    morph->state = 0;                         // kill last morph
-  }else{                                      // if we have never yet morphed
-    if( !target ) return false;               // we need a target
-    if( !target->isShip()) return false;
-    morph_target = ((Ship*)target)->type;      // we will morph to it
+	ShipType* morph_target;
+	
+	if( morph )
+	{                                // if we have already morphed
+		if( morph->type == type ){    // if we are in natural form
+			morph_target = ((Ship*)target)->get_shiptype();      // we will morph to it
+		}else{                                    // if we are in alien form
+			morph_target = get_shiptype();              // morph to natural form
+		}
+		pos = morph->normal_pos();                    // get it's stats
+		vel = morph->get_vel();
+		angle = morph->get_angle();
+		crew = morph->crew;
+		batt = morph->batt;
+		morph->state = 0;                         // kill last morph
 
-//    int i;                                    // remove ourselves from the game as a target
-//    for( i = 0; game->target[i] != this; i++ );
-//    game->num_targets--;
-//    game->target[i] = game->target[game->num_targets];
-	game->rem_target(this);
-    collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = 0;
-    id = 0;                                   // get immaterial
-  }
-  // create the new ship
-  morph = game->create_ship( morph_target->id, control, pos, angle, get_team() );
-  game->add( morph );              // add the ship
-  morph->materialize();                // materialize it
-  morph->crew = crew;                  // set it's attributes
-  morph->batt = batt - special_drain;  // [battery has to be decreased now]
-  morph->vel = vel;
-  update_panel = true;                 // maybe the colors changed
-  return true;                         // we did it
+	} else {                                      // if we have never yet morphed
+
+		morph_target = ((Ship*)target)->get_shiptype();      // we will morph to it
+		
+		//    int i;                                    // remove ourselves from the game as a target
+		//    for( i = 0; game->target[i] != this; i++ );
+		//    game->num_targets--;
+		//    game->target[i] = game->target[game->num_targets];
+		game->rem_target(this);
+		collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = 0;
+		id = 0;                                   // get immaterial
+	}
+	// create the new ship
+	// error: morph_target *can* be 0x000
+	morph = game->create_ship( morph_target->id, control, pos, angle, get_team() );
+	game->add( morph );              // add the ship
+	morph->materialize();                // materialize it
+	morph->crew = crew;                  // set it's attributes
+	morph->batt = batt - special_drain;  // [battery has to be decreased now]
+	morph->vel = vel;
+	update_panel = true;                 // maybe the colors changed
+	return true;                         // we did it
 }
 
 
