@@ -16,6 +16,10 @@
 *.opt
 Debug/*
 Release/*
+*.plg
+*.sbr
+*.pch
+
 
 #other files that we probably don't want
 *.old
