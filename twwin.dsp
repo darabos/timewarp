@@ -930,6 +930,10 @@ SOURCE=.\source\newships\shpvezba.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpvioge.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpvirli.cpp
 # End Source File
 # Begin Source File
