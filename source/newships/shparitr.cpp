@@ -55,6 +55,17 @@ trapShip::trapShip(SpaceLocation *creator, Ship *oship, int drainDelayRate, int 
     drainDelay = drainDelayRate;
     drainAmount = drainAmountof;
     soundDelay = 0;
+
+	// limiting case, where the enemy recharges faster than the weapon drains.
+	while (drainAmount * ship->recharge_rate < ship->recharge_amount * drainDelay*frame_time)
+	{
+		drainDelay -= 1;
+		if (drainDelay < 1)
+		{
+			drainDelay = 1;
+			break;
+		}
+	}
   }
 
 void trapShip::calculate()
@@ -69,12 +80,14 @@ void trapShip::calculate()
       {
         pos = ship->normal_pos();
         ship->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::special | keyflag::thrust | keyflag::back | keyflag::fire | keyflag::altfire);
-        if(drainRate < drainDelay)
-          drainRate++;
-        else
+
+		// must be unconditional, outside the loop (otherwise virtually 1 extra loop/waittime is added)
+         ++drainRate;
+        if(drainRate >= drainDelay)
           {
             ship->batt -= drainAmount;
-            drainRate = 0;
+            //drainRate = 0;
+			drainRate -= drainDelay;
           }
       }
     else

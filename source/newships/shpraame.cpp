@@ -307,6 +307,12 @@ void RaalrithPoison::calculate() {
 	return;
   }
 
+  if (!(owner && owner->exists()))
+  {
+	  owner = 0;
+	  // don't worry about the state
+  }
+
 	  //  x = oship->normal_x();
 //  y = oship->normal_y();
   pos = oship->normal_pos();
@@ -322,21 +328,21 @@ void RaalrithPoison::calculate() {
     return;
   }
 
-  if (owner != NULL)
-    if (owner->latched)
-      duration = owner->poisonDuration;
-
-    if (start) {
+  if (owner && owner->latched)
+	  duration = owner->poisonDuration;
+  
+  if (start) {
       start = FALSE;
 	  data->spriteExtra->draw(16, 18, 0, oship->spritePanel->get_bitmap(0));
       oship->update_panel = TRUE;
-    }
-    chance = random() % 2000;
-    if (chance < frame_time) {
+  }
+
+  chance = random() % 2000;
+  if (chance < frame_time) {
       damage(oship, 0, 1);
       sound.play(data->sampleExtra[0]);
-    }
-
+  }
+  
   return;
 }
 

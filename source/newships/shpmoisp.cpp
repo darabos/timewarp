@@ -12,7 +12,7 @@ class MoianSpeeder : public Ship
 	double	specialRange, specialVelocity, specialDamage, specialArmour, specialTurnRate;
 	double	specialN, speedFraction;
 	int		specialT;
-	double	bloblifetime;
+	double	bloblifetime, blobrange;
 	
 	
 public:
@@ -35,14 +35,14 @@ class SpeedMissile : public HomingMissile
 	SpaceSprite *blobsprite;
 	double	Trelease, Tnextreleasetime, releaseinterval;
 	int		Nblobs;
-	double	blobspeedFraction, bloblifetime;
+	double	blobspeedFraction, bloblifetime, blobrange;
 
 public:
 	SpeedMissile(SpaceLocation *creator, Vector2 rpos, 
 			double oangle, double ov, double odamage, double orange, double oarmour, 
 			double otrate, SpaceLocation *opos, SpaceSprite *osprite, SpaceObject *otarget,
 			double oTrelease, int oNblobs, SpaceSprite *oblobsprite,
-			double oblobspeedFraction, double obloblifetime);
+			double oblobspeedFraction, double obloblifetime, double oblobrange);
 
 	virtual void calculate();
 
@@ -56,10 +56,10 @@ public:
 class SpeedBlob : public SpaceObject
 {
 	Vector2 accelvel;
-	double	blobtime;
+	double	blobtime, blobrange;
 public:
 	SpeedBlob(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite,
-		Vector2 oaccelvel, double olifetime);
+		Vector2 oaccelvel, double olifetime, double orange);
 
 	virtual void inflict_damage(SpaceObject* other);
 	virtual void calculate();
@@ -93,6 +93,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 	speedFraction = get_config_float("Speedblob", "speedfraction", 0);
 	bloblifetime = get_config_float("Speedblob", "lifetime", 0);
+	blobrange = scale_range(get_config_float("Speedblob", "Range", 0));
 }
 
 
@@ -112,7 +113,8 @@ int MoianSpeeder::activate_special()
 	add( new SpeedMissile(this, Vector2(0,40), angle,
 			specialVelocity, specialDamage, specialRange, specialArmour, specialTurnRate,
 			this, data->spriteSpecial, target,
-			specialT, specialN, data->spriteSpecialExplosion, speedFraction, bloblifetime
+			specialT, specialN, data->spriteSpecialExplosion,
+			speedFraction, bloblifetime, blobrange
 			)
 		);
 
@@ -137,7 +139,7 @@ SpeedMissile::SpeedMissile(SpaceLocation *creator, Vector2 rpos,
 			double oangle, double ov, double odamage, double orange, double oarmour, 
 			double otrate, SpaceLocation *opos, SpaceSprite *osprite, SpaceObject *otarget,
 			double oTrelease, int oNblobs, SpaceSprite *oblobsprite,
-			double oblobspeedFraction, double obloblifetime)
+			double oblobspeedFraction, double obloblifetime, double oblobrange)
 :
 HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate,
 			  opos, osprite, otarget)
@@ -146,6 +148,7 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate,
 	Trelease = oTrelease;
 	Nblobs = oNblobs;
 	blobspeedFraction = oblobspeedFraction;
+	blobrange = oblobrange;
 
 	Tnextreleasetime = Trelease;
 	releaseinterval = Trelease / Nblobs;
@@ -193,14 +196,14 @@ void SpeedMissile::calculate()
 
 			Vector2 dv, P;
 
-			dv = blobspeedFraction * blobreleaser->vel;
+			dv = blobspeedFraction * blobreleaser->vel / 1000;	// per second
 
 			P = blobreleaser->pos + blobreleaser->get_sprite()->size(0).y *
 				unit_vector(blobreleaser->vel.atan() + PI + random(2.0)-1.0);
 
 			add(
 				new SpeedBlob(this, P, 0.0,
-				blobsprite, dv, bloblifetime)
+								blobsprite, dv, bloblifetime, blobrange)
 				);
 		}
 
@@ -236,31 +239,35 @@ void SpeedMissile::animate(Frame *f)
 
 
 SpeedBlob::SpeedBlob(SpaceLocation *creator, Vector2 opos, double oangle,
-					 SpaceSprite *osprite, Vector2 ovel, double olifetime)
+					 SpaceSprite *osprite, Vector2 ovel, double olifetime, double orange)
 :
 SpaceObject(creator, opos, oangle, osprite)
 {
 	accelvel = ovel;
+	blobrange = orange;
 
 	layer = LAYER_SPECIAL;
 	mass = 0;
 
 	blobtime = olifetime;
+	blobrange = orange;
 
-	collide_flag_anyone = ALL_LAYERS;
-	collide_flag_sameteam = ALL_LAYERS;
-	collide_flag_sameship = ALL_LAYERS;
+	collide_flag_anyone = 0;
+	collide_flag_sameteam = 0;
+	collide_flag_sameship = 0;
+
+	attributes |= ATTRIB_UNDETECTABLE;
 }
 
 
 void SpeedBlob::inflict_damage(SpaceObject* other)
 {
 
-	if ( other && other->exists() )
-	{
-		other->vel += accelvel;		// deliver the speed boost
-		state = 0;					// and die
-	}
+//	if ( other && other->exists() )
+//	{
+//		other->vel += accelvel;		// deliver the speed boost
+//		state = 0;					// and die
+//	}
 }
 
 
@@ -281,6 +288,14 @@ void SpeedBlob::calculate()
 	
 
 	blobtime -= frame_time * 1E-3;
+
+	// easiest, check if your ship is close ...
+	double R;
+	R = distance(ship);
+	if (R < blobrange)
+	{
+		ship->vel += accelvel * frame_time;		// deliver the speed boost
+	}
 
 	SpaceObject::calculate();
 }

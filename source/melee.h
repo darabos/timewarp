@@ -417,6 +417,12 @@ void color_correct_bitmap(BITMAP *bmp, int masked) ;
 void set_tw_aa_mode( int a );
 int get_tw_aa_mode();
 
+
+// added equivalent routines as a space-sprites', which treat a bmp directly (used by tau mc)
+void animate_bmp(BITMAP *bmp, Vector2 p, Vector2 s, Frame *space);
+void animate_bmp(BITMAP *bmp, Vector2 pos, Frame *space);
+
+
 class SpaceSprite {
 	public:
 	static int mip_min, mip_max, mip_bias;
@@ -483,6 +489,7 @@ class SpaceSprite {
 	// added GEO
 	virtual void animate(Vector2 pos, int index, Frame *space, double scale = 1);
 	void animate_character(Vector2 pos, int index, int color, Frame *space, double scale = 1);
+
 
 	void draw_character(int x, int y, int index, int color, Surface *bmp);
 	void draw_character(int x, int y, int index, int color, Frame *space);

@@ -840,6 +840,37 @@ void SpaceSprite::overlay (int index1, int index2, BITMAP *dest) {
 	return;
 }
 
+
+
+void animate_bmp(BITMAP *bmp, Vector2 p, Vector2 s, Frame *space)
+{
+	int ix, iy, iw, ih;
+
+	if (p.x + s.x < 0) return;
+	if (p.x >= space->surface->w) return;
+	if (p.y + s.y < 0) return;
+	if (p.y >= space->surface->h) return;
+	
+	ix = iround(p.x);
+	iy = iround(p.y);
+	iw = iround(s.x);
+	ih = iround(s.y);
+	
+	aa_stretch_blit(bmp, space->surface, 0,0,bmp->w,bmp->h, ix, iy, iw, ih);
+	space->add_box(ix, iy, iw, ih);
+}
+
+void animate_bmp(BITMAP *bmp, Vector2 pos, Frame *space)
+{
+	Vector2 s = Vector2(bmp->w, bmp->h);
+	Vector2 p = corner(pos, s );
+	s *= space_zoom;
+
+	animate_bmp(bmp, p, s, space);
+}
+	
+
+
 void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, BITMAP *surface) {
 	STACKTRACE
 	if (index >= count) {tw_error("SpaceSprite::draw - index %d > count %d", index, count); index = 0;}

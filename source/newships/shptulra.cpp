@@ -13,113 +13,114 @@ class TulkonDevice;
 * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
 */
 class TulkonRam : public Ship {
-// the body of the ship
-
-  double        weaponForce;
-  int           weaponDamage;
-
-  int           specialDamage;
-  int           specialArmour;
-  double        specialMass;
-  double        specialDRange;
-  double        specialSRange;
-  int           specialImmuneToBombs;
-
-  TulkonDevice *ram;
-
-  SpaceObject** bombs;
-  int           numBombs;
-  int           maxBombs;
-
-  public:
-  TulkonRam( Vector2 opos, double shipAngle,
-    ShipData *shipData, unsigned int code );
-
-  virtual int activate_weapon();         // furthers the ramming device
-  virtual int activate_special();        // ejects a mine
-  virtual void calculate_fire_weapon();  // releases the ramming device when needed
-  virtual void calculate_fire_special(); // sound tweak
-  virtual void calculate();              // keeps bomb registry up to date
-  virtual void calculate_hotspots();     // places two streams of blue hotspots
-  virtual int handle_fuel_sap( SpaceLocation* source, double normal );
-  virtual void materialize();            // places the ramming device into game space
+	// the body of the ship
+	
+	double		weaponForce;
+	int			weaponDamage;
+	double		weaponShieldFraction;
+	
+	int			specialDamage;
+	int			specialArmour;
+	double		specialMass;
+	double		specialDRange;
+	double		specialSRange;
+	int			specialImmuneToBombs;
+	
+	TulkonDevice *ram;
+	
+	SpaceObject** bombs;
+	int           numBombs;
+	int           maxBombs;
+	
+public:
+	TulkonRam( Vector2 opos, double shipAngle,
+		ShipData *shipData, unsigned int code );
+	
+	virtual int activate_weapon();         // furthers the ramming device
+	virtual int activate_special();        // ejects a mine
+	virtual void calculate_fire_weapon();  // releases the ramming device when needed
+	virtual void calculate_fire_special(); // sound tweak
+	virtual void calculate();              // keeps bomb registry up to date
+	virtual void calculate_hotspots();     // places two streams of blue hotspots
+	virtual int handle_fuel_sap( SpaceLocation* source, double normal );
+	virtual void materialize();            // places the ramming device into game space
 };
 
 class TulkonDevice : public SpaceObject {
-// the ramming device
-
-//  double px, py;
-//  double pvx, pvy;
-  Vector2 P, PV;
-
-  double force;
-
-  void ram( bool mode );
-
-  public:
-  TulkonDevice( Ship* creator, SpaceSprite* osprite, double odist, int 
-odamage,
-    double oforce );
-
-  double dist;                                        // distance of ship and device
-  bool   ramming;                                     // if we are ramming this frame
-
-  virtual void calculate();                           // follows ship movement
-  virtual int canCollide( SpaceLocation* other );     // prevents collision with ship
-  virtual void collide( SpaceObject* other );         // forwards kinetic energy to ship
-  virtual void inflict_damage( SpaceObject* other );  // rams on contact and damages
-  virtual int handle_damage( SpaceLocation* other, double normal, double direct ); // forwards directDamage and play sfx
+	// the ramming device
+	
+	//  double px, py;
+	//  double pvx, pvy;
+	Vector2 P, PV;
+	
+	double force;
+	
+	void ram( bool mode );
+	
+public:
+	TulkonDevice( Ship* creator, SpaceSprite* osprite, double odist,
+		int odamage, double oforce, double ofraction );
+	
+	double dist;                                        // distance of ship and device
+	bool   ramming;                                     // if we are ramming this frame
+	double ShieldFraction;								// fractional damage of the RAM shield
+	
+	virtual void calculate();                           // follows ship movement
+	virtual int canCollide( SpaceLocation* other );     // prevents collision with ship
+	virtual void collide( SpaceObject* other );         // forwards kinetic energy to ship
+	virtual void inflict_damage( SpaceObject* other );  // rams on contact and damages
+	virtual int handle_damage( SpaceLocation* other, double normal, double direct ); // forwards directDamage and play sfx
 };
 
 class TulkonBomb : public AnimatedShot {
-// bombs
-
-  friend class TulkonDevice;
-
-  SpaceLocation* creator;
-  double damageInflicted;
-  double drange;
-  double srange;
-  bool   exploding;
-  protected:
-  bool   rammed;
-
-  public:
-  int immunity;
-
-  SpaceLocation* ram;
-  TulkonBomb( SpaceLocation* ocreator, Vector2 opos, int odamage, double odrange,
-    double osrange, double oarmour, double omass, SpaceSprite* osprite,
-    double orelativity = game->shot_relativity );
-
-  virtual void calculate();                            // checks sensory range for heat
-  virtual void inflict_damage( SpaceObject* other );   // does not inflict damage
-  virtual void collide( SpaceObject* other );          // if rammed flies straight
-  virtual int handle_damage( SpaceLocation* source, double normal, double direct );  // if destroyed explodes
-  virtual void soundExplosion();                       // Forevian's sound needs to be laud
+	// bombs
+	
+	friend class TulkonDevice;
+	
+	SpaceLocation* creator;
+	double damageInflicted;
+	double drange;
+	double srange;
+	bool   exploding;
+protected:
+	bool   rammed;
+	
+public:
+	int immunity;
+	
+	SpaceLocation* ram;
+	TulkonBomb( SpaceLocation* ocreator, Vector2 opos, int odamage, double odrange,
+		double osrange, double oarmour, double omass, SpaceSprite* osprite,
+		double orelativity = game->shot_relativity );
+	
+	virtual void calculate();                            // checks sensory range for heat
+	virtual void inflict_damage( SpaceObject* other );   // does not inflict damage
+	virtual void collide( SpaceObject* other );          // if rammed flies straight
+	virtual int handle_damage( SpaceLocation* source, double normal, double direct );  // if destroyed explodes
+	virtual void soundExplosion();                       // Forevian's sound needs to be laud
 };
 
 TulkonRam::TulkonRam( Vector2 opos, double shipAngle,
-  ShipData *shipData, unsigned int code ):
-  Ship( opos, shipAngle, shipData, code )
+					 ShipData *shipData, unsigned int code ):
+Ship( opos, shipAngle, shipData, code )
 {
-  weaponForce   = get_config_float( "Weapon", "Force", 0 );
-  weaponDamage  = get_config_int( "Weapon", "Damage", 0 );
-
-  specialDamage = get_config_int( "Special", "Damage", 0 );
-  specialArmour = get_config_int( "Special", "Armour", 0 );
-  specialMass   = get_config_float( "Special", "Mass", 0 );
-  specialDRange = scale_range( get_config_float( "Special", "DamageRange", 0 ));
-  specialSRange = scale_range( get_config_float( "Special", "SensorRange", 0 ));
-  specialImmuneToBombs = get_config_int("Special", "ImmuneToBombs", 0);
-
-  ram = new TulkonDevice( this, data->spriteWeapon, TULKON_DEVICE_MAX_DIST, 
-weaponDamage,
-    weaponForce );
-
-  numBombs = 0;
-  maxBombs = get_config_int("Special", "Number", 10);
-  bombs = new SpaceObject*[maxBombs];
+	weaponForce   = get_config_float( "Weapon", "Force", 0 );
+	weaponDamage  = get_config_int( "Weapon", "Damage", 0 );
+	weaponShieldFraction = get_config_float( "Weapon", "ShieldFraction", 0 );
+	
+	specialDamage = get_config_int( "Special", "Damage", 0 );
+	specialArmour = get_config_int( "Special", "Armour", 0 );
+	specialMass   = get_config_float( "Special", "Mass", 0 );
+	specialDRange = scale_range( get_config_float( "Special", "DamageRange", 0 ));
+	specialSRange = scale_range( get_config_float( "Special", "SensorRange", 0 ));
+	specialImmuneToBombs = get_config_int("Special", "ImmuneToBombs", 0);
+	
+	ram = new TulkonDevice( this, data->spriteWeapon, TULKON_DEVICE_MAX_DIST, 
+		weaponDamage, weaponForce, weaponShieldFraction );
+	
+	numBombs = 0;
+	maxBombs = get_config_int("Special", "Number", 10);
+	bombs = new SpaceObject*[maxBombs];
 }
 
 int TulkonRam::activate_weapon(){
@@ -234,12 +235,13 @@ void TulkonRam::materialize(){
   game->add( ram );
 }
 
-TulkonDevice::TulkonDevice( Ship* creator, SpaceSprite* osprite, double 
-odist,
-  int odamage, double oforce ):
-SpaceObject( creator, creator->normal_pos(), creator->get_angle(),
-  osprite ), dist( odist ), ramming( false ), force( oforce )
+TulkonDevice::TulkonDevice( Ship* creator, SpaceSprite* osprite,
+			double odist, int odamage, double oforce, double ofraction )
+:
+SpaceObject( creator, creator->normal_pos(), creator->get_angle(), osprite ),
+dist( odist ), ramming( false ), force( oforce )
 {
+	ShieldFraction = ofraction;
 	layer = LAYER_SPECIAL;
   collide_flag_sameship = collide_flag_sameteam = ALL_LAYERS;
 
@@ -341,7 +343,7 @@ int TulkonDevice::handle_damage( SpaceLocation* other, double normal, double dir
 //	  ship->damage(other, 0, direct);
 //  }
 	// let the mothership take at least *some* damage, cause permanent armour sucks
-	ship->damage(other, int(1 + 0.5*(normal+direct)) );	// deal at least 1 damage.
+	ship->handle_damage(other, int(ShieldFraction*(normal+direct)) );
 
   normal += direct;
   if( normal > 0 && normal <= 2 ){

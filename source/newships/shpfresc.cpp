@@ -103,13 +103,22 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, oturnrate, op
 
 void SchizmHealingbolt::inflict_damage(SpaceObject *other)
 {
+	if (!(ship && ship->exists()))
+		return;
+
 	// check if the "other" is a ship, and already at max capacity, otherwise, damage
-	// your own ship
-	if (other->isShip() && ((Ship*)other)->crew == ((Ship*)other)->crew_max
-					&& ship && ship->exists())
+	// your own ship NO, THAT SUCKED.
+	// different strategy now: if either has <max crew, add 1 crew to the schizm and
+	// 1 to the enemy (to save the balance of birth and rebirth in the universe). The
+	// lost and restless souls of those that died in battle, are revived that way.
+
+	if (other->isShip() &&
+					((Ship*)other)->crew <= ((Ship*)other)->crew_max - 1
+					&& ship->crew <= ship->crew_max - 1 )
+	{
 		HomingMissile::inflict_damage(ship);
-	else
 		HomingMissile::inflict_damage(other);
+	}
 
 //	add(new Animation(this, pos, data->spriteSpecial, 
 //						0, data->spriteSpecial->frames(), 100, DEPTH_EXPLOSIONS, specialScale));
