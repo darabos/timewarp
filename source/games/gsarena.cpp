@@ -45,15 +45,18 @@ void SuperArena::calculate() {
 	if (respawn_time == -1) {
 	  //	int i, humans = 0, enemies = 0;
 		int i, t1=0, t2=0, t3=0, t4=0, t5=0, t6=0, t7=0, t8=0;
-		for (i = 0; i < num_targets; i += 1) {
-			if (target[i]->get_team() == team[1])  t1 += 1;
-			if (target[i]->get_team() == team[2])  t2 += 1;
-			if (target[i]->get_team() == team[3])  t3 += 1;
-			if (target[i]->get_team() == team[4])  t4 += 1;
-			if (target[i]->get_team() == team[5])  t5 += 1;
-			if (target[i]->get_team() == team[6])  t6 += 1;
-			if (target[i]->get_team() == team[7])  t7 += 1;
-			if (target[i]->get_team() == team[8])  t8 += 1;
+		for (i = 0; i < gametargets.N; i += 1)
+		{
+			SpaceObject *o = gametargets.item[i];
+
+			if (o->get_team() == team[1])  t1 += 1;
+			if (o->get_team() == team[2])  t2 += 1;
+			if (o->get_team() == team[3])  t3 += 1;
+			if (o->get_team() == team[4])  t4 += 1;
+			if (o->get_team() == team[5])  t5 += 1;
+			if (o->get_team() == team[6])  t6 += 1;
+			if (o->get_team() == team[7])  t7 += 1;
+			if (o->get_team() == team[8])  t8 += 1;
 		}
 		//if either team has no targetable items remaining (generally ships), pick new ships
 	  //		if (humans = 0) respawn_time = game_time + 5000; //5000 milliseconds is 10 seconds
@@ -75,9 +78,9 @@ void SuperArena::calculate() {
 			for (int num=1; num<=num_teams; num+=1) {
 				if ( (died[num]!=1) && (!s[num]->exists()) ) {
 					message.print( 4000, 4000, "Team %d starbase was destroyed", num+1 ); //("Player's 1 Starbase was destroyed", 3000);
-					for (i = 0; i < num_targets; i += 1) {
-						if (target[i]->get_team() == team[num]) {
-							target[i]->handle_damage(NULL, 0, 999);
+					for (i = 0; i < gametargets.N; i += 1) {
+						if (gametargets.item[i]->get_team() == team[num]) {
+							gametargets.item[i]->handle_damage(NULL, 0, 999);
 							//target[i]->handle_damage(target[i]);
 						}
 					}

@@ -5,6 +5,8 @@
 #ifndef _MGAME_H
 #define _MGAME_H
 
+#include "mtarget.h"
+
 extern int random_seed[2];
 extern int interpolate_frames;
 
@@ -145,13 +147,7 @@ public:
 	Presence **focus;
 	virtual void add_focus (Presence *focus, int channel = -1);
 
-	int num_targets;
-	SpaceObject **target;
-	virtual void add_target (SpaceObject *target);
-
-	virtual void rem_target(SpaceObject *r);
-
-
+	Targets gametargets;
 
 
 

@@ -177,7 +177,7 @@ int KatPoly::activate_special()
 		//    for( i = 0; game->target[i] != this; i++ );
 		//    game->num_targets--;
 		//    game->target[i] = game->target[game->num_targets];
-		game->rem_target(this);
+		targets->rem(this);
 		collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = 0;
 		id = 0;                                   // get immaterial
 	}

@@ -1159,10 +1159,10 @@ int Play::enemycount()
 
 	count = 0;
 
-	for ( i = 0; i < num_targets; ++i )
+	for ( i = 0; i < gametargets.N; ++i )
 	{
-		if (target[i] && target[i]->get_team() == team_badguys )
-			if (target[i]->ship && target[i]->ship->crew > 0)
+		if (gametargets.item[i] && gametargets.item[i]->get_team() == team_badguys )
+			if (gametargets.item[i]->ship && gametargets.item[i]->ship->crew > 0)
 				++count;
 	}
 
@@ -1445,10 +1445,10 @@ void Play::set_targets(TeamCode team, SpaceObject *t)
 {
 	// check all ships with that name, and set their target !
 	int i;
-	for ( i = 0; i < num_targets; ++i )
+	for ( i = 0; i < gametargets.N; ++i )
 	{
 		SpaceObject *s;
-		s = target[i];
+		s = gametargets.item[i];
 		if (s->get_team() == team)
 			s->target = t;			// now they should go and attack t ?!
 	}
@@ -1889,7 +1889,7 @@ void mission_destroy_factory::P::init(Log *_log)
 	factory = new MSFactory(Vector2(0,0), "gmissionobjects.dat", "gmissionobjects.ini",
 								team_badguys);
 	add( factory );
-	add_target(factory);	// so that UQ fighters (and homingmissiles?) also see it as a target.
+	gametargets.add(factory);	// so that UQ fighters (and homingmissiles?) also see it as a target.
 	add(new HealthBar(factory, &healthtoggle));
 
 	// place a few crew upgrades (randomly)	// quite a few, since it's a big map

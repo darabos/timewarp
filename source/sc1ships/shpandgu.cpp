@@ -167,8 +167,8 @@ void AndrosynthBubble::calculate()
 		// a de-synch between the two calculations (!exists() lags the control->ship) ?
 
 		if (ship && ship->exists() && ship->control && ship->control->ship) {
-			for (i = 0; i < game->num_targets; i += 1) {
-				SpaceObject *s = game->target[i];
+			for (i = 0; i < targets->N; i += 1) {
+				SpaceObject *s = targets->item[i];
 				if (ship->control->valid_target(s) && (distance(s) < r) && !s->isInvisible()) {
 					r = distance(s);
 					newAngle = trajectory_angle(s);
@@ -176,8 +176,8 @@ void AndrosynthBubble::calculate()
 				}
 			}
 		else {
-			for (i = 0; i < game->num_targets; i += 1) {
-				SpaceObject *s = game->target[i];
+			for (i = 0; i < targets->N; i += 1) {
+				SpaceObject *s = targets->item[i];
 				if (s->sameTeam(this) && (distance(s) < r) && !s->isInvisible()) {
 					r = distance(s);
 					newAngle = trajectory_angle(s);

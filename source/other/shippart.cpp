@@ -12,43 +12,6 @@ REGISTER_FILE
 
 
 
-// perhaps this should be a Game routine...
-
-bool isintargetlist(SpaceObject *o)
-{
-	STACKTRACE
-
-	int i;
-
-	for (i = 0; i < game->num_targets; i += 1)
-	{
-		if (game->target[i] == o)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/*
-void removefromtargetlist(SpaceObject *o)
-{
-	int i;
-
-	for (i = 0; i < game->num_targets; i += 1)
-	{
-		if (game->target[i] == o)
-		{
-			game->num_targets -= 1;
-			game->target[i] = game->target[game->num_targets];
-			break;
-		}
-	}
-}
-*/
-
-
 
 
 BigShip::BigShip(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code)
@@ -70,9 +33,9 @@ void BigShip::calculate()
 	STACKTRACE
 
 	// make sure the "ship" is not a real target
-	if (isintargetlist(this))
+	if (targets->isintargetlist(this))
 		//removefromtargetlist(this);
-		game->rem_target(this);
+		targets->rem(this);
 
 	Ship::calculate();
 
@@ -176,7 +139,7 @@ Ship(aowner, 0, 0, spr)
 	// check if you've collided with something.
 	collider = 0;
 
-	game->add_target(this);
+	targets->add(this);
 }
 
 

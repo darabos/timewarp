@@ -5,7 +5,7 @@
 
 
 //void removefromtargetlist(SpaceObject *o);
-bool isintargetlist(SpaceObject *o);
+//bool isintargetlist(SpaceObject *o);
 
 
 class BigShipPart;

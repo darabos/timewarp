@@ -279,7 +279,7 @@ int WasxSuperposition::activate_special() {
 		add(tmp);
 		SpecialActivated = TRUE;
 
-		game->add_target(tmp);
+		targets->add(tmp);
 
 	}
 	if (!SpecialActivated) return(FALSE);

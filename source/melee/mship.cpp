@@ -584,12 +584,12 @@ void Ship::calculate()
 	int i;
 	if (target_pressed && (!target_pressed_prev) && control) {
 		if (target_next) {
-			if (control && game->num_targets) {
+			if (control && targets->N) {
 				i = control->index;
 				if (i < 0) i = 0;
 				while (1) {
-					i = (i + 1) % game->num_targets;
-					if (control->valid_target(game->target[i])) {
+					i = (i + 1) % targets->N;
+					if (control->valid_target(targets->item[i])) {
 						control->set_target(i);
 						break;
 					}
@@ -603,12 +603,12 @@ void Ship::calculate()
 			}				
 		}
 		else if (target_prev) {
-			if (control && game->num_targets) {
+			if (control && targets->N) {
 				i = control->index;
 				if (i < 0) i = 0;
 				while (1) {
-					i = (i + game->num_targets - 1) % game->num_targets;
-					if (control->valid_target(game->target[i])) {
+					i = (i + targets->N - 1) % targets->N;
+					if (control->valid_target(targets->item[i])) {
 						control->set_target(i);
 						break;
 					}
@@ -623,13 +623,13 @@ void Ship::calculate()
 			}				
 		}
 		else if (target_closest) {
-			if (control && game->num_targets) {
+			if (control && targets->N) {
 				int i, j = -1;
 				double r = 99999;
 				double d;
-				for (i = 0; i < game->num_targets; i += 1) {
-					if (control->valid_target(game->target[i])) {
-						d = distance(game->target[i]);
+				for (i = 0; i < targets->N; i += 1) {
+					if (control->valid_target(targets->item[i])) {
+						d = distance(targets->item[i]);
 						if (d < r) {
 							r = d;
 							j = i;

@@ -378,7 +378,7 @@ int AyronShipPart::handle_damage(SpaceLocation *source, double normal, double di
 
 		// remove this thing from the game target list.
 		//removefromtargetlist(this);
-		game->rem_target(this);
+		targets->rem(this);
 
 	} else
 		t = 0;	// all damage absorbed.
@@ -415,8 +415,8 @@ void AyronShipPart::recrew(int howmany)
 
 	
 		// add it back to the target list of the game
-		if (!isintargetlist(this))
-			game->add_target(this);
+		if (!targets->isintargetlist(this))
+			targets->add(this);
 	}
 
 	crew += howmany;

@@ -319,9 +319,9 @@ void SampleGame3::calculate() {
 	Game::calculate();
 	if (respawn_time == -1) {
 		int i, humans = 0, enemies = 0;
-		for (i = 0; i < num_targets; i += 1) {
-			if (target[i]->get_team() == human_team) humans += 1;
-			if (target[i]->get_team() == enemy_team) enemies += 1;
+		for (i = 0; i < gametargets.N; i += 1) {
+			if (gametargets.item[i]->get_team() == human_team) humans += 1;
+			if (gametargets.item[i]->get_team() == enemy_team) enemies += 1;
 			}
 		//if either team has no targetable items remaining (generally ships), pick new ships
 		if (!humans || !enemies) respawn_time = game_time + 5000; //5000 milliseconds is 5 seconds

@@ -309,22 +309,22 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
 }
 void Control::set_target(int i) {
 	STACKTRACE;
-	if (i >= game->num_targets) {tw_error("oscar hamburger!!!!!!!!!");}
+	if (i >= targets->N) {tw_error("oscar hamburger!!!!!!!!!");}
 	if (i == -1) {
 		index = i;
 		target = NULL;
 		return;
 		}
-	if (!valid_target(game->target[i])) {tw_error("oscer hambuger");}
+	if (!valid_target(targets->item[i])) {tw_error("oscer hambuger");}
 	index = i;
-	target = game->target[index];
+	target = targets->item[index];
 	return;
 	}
 void Control::target_stuff() {STACKTRACE
 	if (index == -1) {
-		if (game->num_targets) {
-			index = random() % game->num_targets;
-			target = game->target[index];
+		if (targets->N) {
+			index = random() % targets->N;
+			target = targets->item[index];
 			goto validate;
 			}
 		else {
@@ -332,8 +332,8 @@ void Control::target_stuff() {STACKTRACE
 			}
 		}
 blah:
-	if (index >= game->num_targets) {
-		if (game->num_targets) {
+	if (index >= targets->N) {
+		if (targets->N) {
 			index -= 1;
 			if (index < 0) index = 0;
 			goto blah;
@@ -344,15 +344,15 @@ blah:
 			goto change;
 			}
 		}
-	if (target == game->target[index]) {
+	if (target == targets->item[index]) {
 		goto done;
 		}
 	else goto search;
 search:
 	int o;
 	o = index;
-	for (index = 0; index < game->num_targets; index += 1) {
-		if (game->target[index] == target) {
+	for (index = 0; index < targets->N; index += 1) {
+		if (targets->item[index] == target) {
 			goto done;
 			}
 		}
@@ -363,15 +363,15 @@ validate:
 		}
 	int start;
 	start = index;
-	while (!valid_target(game->target[index])) {
-		index = (index + 1) % game->num_targets;
+	while (!valid_target(targets->item[index])) {
+		index = (index + 1) % targets->N;
 		if (index == start) {
 			index = -1;
 			target = NULL;
 			goto change;
 			}
 		}
-	target = game->target[index];
+	target = targets->item[index];
 change:
 done:
 	return;
@@ -492,7 +492,7 @@ void Control::animate(Frame *space) {STACKTRACE
 	if (!ship) return;
 	if (!target || target->isInvisible()) return;
 	if (!(attributes & ATTRIB_ACTIVE_FOCUS)) return;
-	if (game->num_targets < 3) return;
+	if (targets->N < 3) return;
 	if (target_sign_color == 255) return;
 
 	int i = target_sign_color;

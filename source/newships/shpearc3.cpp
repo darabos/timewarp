@@ -95,8 +95,8 @@ void EarthlingCruiserMk3::calculate()
 	
 	pos += unit_vector(angle) * 28;	//!!!
 	int i;
-	for (i=0; i < game->num_targets; i++) {
-		tgt = game->target[i];
+	for (i=0; i < targets->N; i++) {
+		tgt = targets->item[i];
 		if ((tgt != this) && (!tgt->sameShip(this)) && (!tgt->sameTeam(this))
 				&& (!tgt->isInvisible()) && (distance(tgt) <= 1.2*(weaponRange + abs(vel)*game->shot_relativity))) {
 

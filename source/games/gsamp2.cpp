@@ -193,7 +193,7 @@ void DefenderGame::restart() {
 	starbase =  new DefenderStation ( stationsprite, planet);
 	add ( starbase );
 	starbase->change_owner ( ship );
-	add_target (starbase);
+	gametargets.add (starbase);
 
 	time_for_next_attack = game_time + 3 * 1000;//first attack in 3 seconds from now
 	time_between_attacks = 24 * 1000;//24 seconds between attacks

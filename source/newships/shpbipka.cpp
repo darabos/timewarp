@@ -127,8 +127,8 @@ BipoleKatamaran::BipoleKatamaran(Vector2 opos, double shipAngle,
     pos.y+(range/2)*cos( angle ),*/ angle, data, code, this, data->spriteSpecial );
   left->change_owner( this );
   right->change_owner( this );
-  game->add_target( left );
-  game->add_target( right );
+  targets->add( left );
+  targets->add( right );
   left->shooting = true;
   id = 0; /* this is nothing */
 
@@ -349,7 +349,7 @@ void BipoleKatamaran::materialize(){
 //  for( i = 0; game->target[i] != this; i++ );
 //  game->num_targets--;
 //  game->target[i] = game->target[game->num_targets];
-	game->rem_target(this);
+	targets->rem(this);
   left->control = control;
   right->control = control;
   game->add( left->get_ship_phaser() );

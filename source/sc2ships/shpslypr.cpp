@@ -217,8 +217,8 @@ int SlylandroProbe::activate_weapon()
 	SpaceLocation *t = NULL;
 	double r = 99999;
 	int i;
-	for (i = 0; i < game->num_targets; i += 1) {
-		SpaceObject *s = game->target[i];
+	for (i = 0; i < targets->N; i += 1) {
+		SpaceObject *s = targets->item[i];
 		if (s && s->exists() && control->valid_target(s) && (distance(s) < r)) {
 			t = s;
 			r = distance(t);

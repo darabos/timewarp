@@ -212,27 +212,6 @@ void Game::add_focus(Presence *new_focus, int channel) {
 	if (focus_index == -1) focus_index = 0;
 }
 
-void Game::add_target(SpaceObject *new_target) {STACKTRACE
-	num_targets += 1;
-	target = (SpaceObject **) realloc(target, sizeof(SpaceObject *) * num_targets);
-	target[num_targets - 1] = new_target;
-	new_target->attributes |= ATTRIB_TARGET;
-}
-
-void Game::rem_target(SpaceObject *r)
-{
-	int i;
-	for ( i = 0; i < num_targets; ++i )
-		if (target[i] == r)
-			break;
-
-	if (i == num_targets)
-		return;
-
-	target[i]->attributes &= ~ATTRIB_TARGET;
-	target[i] = target[num_targets-1];
-	-- num_targets;
-}
 
 void Game::prepare() {
 #ifdef _MSC_VER
@@ -242,6 +221,7 @@ void Game::prepare() {
 #endif
 	Physics::prepare();
 	::game = this;
+	::targets = &gametargets;
 	return;
 }
 
@@ -281,7 +261,7 @@ Ship *Game::create_ship(const char *id, Control *c, Vector2 pos, double angle, i
 	Ship *s = type->get_ship(pos, angle, get_code(new_ship(), team));
 	if (c)
 		c->select_ship(s, id);
-	add_target(s);
+	gametargets.add(s);
 	s->attributes |= ATTRIB_NOTIFY_ON_DEATH;
 	return s;
 }
@@ -687,13 +667,8 @@ void Game::calculate() {STACKTRACE
 
 	if (active_focus_destroyed && (focus_index >= 0))
 		focus[focus_index]->attributes |= ATTRIB_ACTIVE_FOCUS;
-	for (i = 0; i < num_targets; i += 1) {
-		if (!target[i]->exists()) {
-			num_targets -= 1;
-			target[i] = target[num_targets];
-			i -= 1;
-		}
-	}
+
+	gametargets.calculate();
 
 
 	Physics::calculate();
@@ -850,8 +825,9 @@ void Game::preinit() {STACKTRACE
 	num_focuses = 0;
 	focus_index = 0;
 	focus = NULL;
-	num_targets = 0;
-	target = NULL;
+//	num_targets = 0;
+//	target = NULL;
+	gametargets.reset();
 	view = NULL;
 	window = NULL;
 	music = NULL;

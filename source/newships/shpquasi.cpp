@@ -239,7 +239,7 @@ int Quai::activate_special()
 		enginereleased = 1;
 		add(tmp);
 
-		game->add_target(tmp);
+		targets->add(tmp);
 
 		// separation from the engine pushes the ship it away a little
 
@@ -247,7 +247,7 @@ int Quai::activate_special()
 		vel += specialPush * speed_max * unit_vector(angle);
 
 		// remove this thing from the target list
-		game->rem_target(this);
+		targets->rem(this);
 
 		// check all existing objects, and if they're targetting
 		// this ship, let them target the engine instead.
@@ -261,7 +261,7 @@ int Quai::activate_special()
 		enginereleased = 0;
 
 		// add this thing to the targetlist
-		game->add_target(this);
+		targets->add(this);
 
 	}
 

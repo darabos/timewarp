@@ -55,8 +55,8 @@ int SyreenPenetrator::activate_special() {
 	double minDist;
 	minDist = specialRange + (size.x / 2.0);
 	int j;
-	for (j = 0; j < game->num_targets; j += 1) {
-		Ship *target = (Ship*) game->target[j];
+	for (j = 0; j < targets->N; j += 1) {
+		Ship *target = (Ship*) targets->item[j];
 		if (!target->isShip()) continue;
 		if (!control->valid_target(target)) continue;
 		int callDamage;

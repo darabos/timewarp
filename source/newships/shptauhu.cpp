@@ -203,7 +203,7 @@ void TauHunter::jump_in(TauHunterPortal *portal)
 //	for(i=0; game->target[i] != this; i++);
 //	game->num_targets--;
 //	game->target[i] = game->target[game->num_targets];
-	game->rem_target(this);
+	targets->rem(this);
 }
 
 void TauHunter::calculate_fire_special()
@@ -257,7 +257,7 @@ void TauHunter::calculate()
 				just_exited = true;
 				recharge_amount = 0;
 //restore target
-				game->add_target(this);
+				targets->add(this);
 				pos = ee;
 				batt = 0;
 				if (batt_delay < extra_delay)

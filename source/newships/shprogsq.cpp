@@ -220,7 +220,7 @@ void RogueSquadron::materialize()
 		fighter[i]->idealpos = player_pos + fighter[i]->idealrelpos;
 
 		game->add(fighter[i]);
-		game->add_target(fighter[i]);		// make this targetable (isn't done by default?)
+		targets->add(fighter[i]);		// make this targetable (isn't done by default?)
 
 		fighter[i]->pos = fighter[i]->idealpos;
 		fighter[i]->angle = player_angle;
@@ -241,7 +241,7 @@ void RogueSquadron::materialize()
 //	for(i=0; game->target[i] != this; i++);
 //	game->num_targets--;
 //	game->target[i] = game->target[game->num_targets];
-	game->rem_target(this);
+	targets->rem(this);
 
 	// not used in queries
 	attributes |= ATTRIB_UNDETECTABLE;

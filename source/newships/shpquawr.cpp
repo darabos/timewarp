@@ -184,9 +184,9 @@ int QuarKathWraith::activate_weapon()
 	SpaceLocation *t = NULL;
 	double r = 99999;
 	int i;
-	for (i = 0; i < game->num_targets; i += 1) {
-		if (control->valid_target(game->target[i]) && (distance(game->target[i]) < r)) {
-			t = game->target[i];
+	for (i = 0; i < targets->N; i += 1) {
+		if (control->valid_target(targets->item[i]) && (distance(targets->item[i]) < r)) {
+			t = targets->item[i];
 			r = distance(t);
 			}
 		}

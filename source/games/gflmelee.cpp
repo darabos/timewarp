@@ -799,9 +799,9 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 		
 		ssize = Vector2(30,30);
 		
-		for ( int itarget = 0; itarget < num_targets; ++itarget )
+		for ( int itarget = 0; itarget < gametargets.N; ++itarget )
 		{
-			SpaceObject *o = game->target[itarget];
+			SpaceObject *o = gametargets.item[itarget];
 			
 			if ( o->isShip() )
 			{
@@ -980,9 +980,9 @@ void FlMelee::calculate()
 		{
 			c->state = 1;
 			
-			for ( int itarget = 0; itarget < num_targets; ++itarget )
+			for ( int itarget = 0; itarget < gametargets.N; ++itarget )
 			{
-				SpaceObject *o = game->target[itarget];
+				SpaceObject *o = gametargets.item[itarget];
 				
 				if ( o->isShip() && o != c->ship && is_in_team(o, alliance[iplayer]) )
 				{
@@ -1025,9 +1025,9 @@ void FlMelee::calculate()
 		} else {
 			// choose a new target !
 			int i;
-			for ( i = 0; i < num_targets; ++i )
+			for ( i = 0; i < gametargets.N; ++i )
 			{
-				if (c->valid_target(game->target[i]))
+				if (c->valid_target(gametargets.item[i]))
 				{
 					c->set_target(i);
 					break;
@@ -1088,7 +1088,7 @@ void FlMelee::calculate()
 			int itarget, lastitarget;
 			
 			itarget = 0;
-			while ( game->target[itarget] != c->ship && itarget < num_targets-1 )
+			while ( gametargets.item[itarget] != c->ship && itarget < gametargets.N-1 )
 				++itarget;
 			
 			lastitarget = itarget;
@@ -1098,12 +1098,12 @@ void FlMelee::calculate()
 			while ( itarget != lastitarget )
 			{
 				
-				if ( itarget > num_targets-1 )
-					itarget -= num_targets;
+				if ( itarget > gametargets.N-1 )
+					itarget -= gametargets.N;
 				if ( itarget < 0 )
-					itarget += num_targets;
+					itarget += gametargets.N;
 				
-				SpaceObject *o = game->target[itarget];
+				SpaceObject *o = targets->item[itarget];
 				
 				//			Control *c = playercontrols[0];	// is already done earlier
 				

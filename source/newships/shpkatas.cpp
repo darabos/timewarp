@@ -41,7 +41,7 @@ void KatAssim::inflict_damage( SpaceObject* other ){
 //  for( i = 0; game->target[i] != morph; i++ );
 //  game->num_targets--;
 //  game->target[i] = game->target[game->num_targets];
-  game->rem_target(morph);
+  targets->rem(morph);
   update_panel = true;
 
   control->select_ship( this, type->id );
