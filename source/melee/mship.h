@@ -97,10 +97,10 @@ class Ship : public SpaceObject {
 	virtual void assigntarget(SpaceObject *otarget);
 
 	virtual void materialize();
-	float    crew;
-	float    crew_max;
-	float    batt;
-	float    batt_max;
+	double crew;
+	double crew_max;
+	double batt;
+	double batt_max;
 	double turn_rate;
 	double turn_step;
 	double speed_max;
