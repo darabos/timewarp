@@ -89,9 +89,9 @@ public:
 
 
 ShpHotSpot::ShpHotSpot(Vector2 opos, double angle, ShipData *data, unsigned int code) 
-	:
-	Ship(opos, angle, data, code) 
-	{
+:
+Ship(opos, angle, data, code) 
+{
 	weaponRange         = scale_range(get_config_float("Weapon", "Range", 0));
 	weaponVelocity      = scale_velocity(get_config_float("Weapon", "Velocity", 0));
 	weaponDamage        = get_config_int("Weapon", "Damage", 0);
@@ -133,13 +133,17 @@ ShpHotSpot::ShpHotSpot(Vector2 opos, double angle, ShipData *data, unsigned int 
 	// you can fire again, even though you've not mucho battery
 
 	coremaketime = 0.0;
-	}
+}
 
 
 void ShpHotSpot::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
 	double a, L;
+
+	if ( !(weaponhs && weaponhs->exists()) )
+		weaponhs = 0;
 
 
 	Vector2 U = vel;
@@ -181,7 +185,7 @@ void ShpHotSpot::calculate()
 		//vel = U;	// avoid that the ship thrusts (if you use thrust/backthrust keys)
 //		angle = a;	// avoid that the ship turns (if you use left/right keys)
 
-	if ( weaponhs && weaponhs->exists() )
+	if ( weaponhs )
 	{
 		batt = prev_batt;	// override the recharging.
 		batt -= extradrain;	// include drain from the special
@@ -290,7 +294,7 @@ void ShpHotSpot::calculate()
 	focus_loc = 80.0 + lens_loc * weaponRange;	//1000.0;
 
 
-	if ( weaponhs && weaponhs->exists() )
+	if ( weaponhs )
 	{
 		//if ( weaponhs->autofocus )
 			drain_time += frame_time;
@@ -396,7 +400,8 @@ Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship,osprite)
 
 void TheHotSpot::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -483,7 +488,7 @@ void TheHotSpot::calculate()
 
 void TheHotSpot::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	STACKTRACE;
 	damage_repeat_time += frame_time;
 
 	if (damage_repeat_time > damage_time )
@@ -497,10 +502,17 @@ void TheHotSpot::inflict_damage(SpaceObject *other)
 
 int TheHotSpot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	STACKTRACE;
 	// what happens when it hits the planet? it dies !!
 	// why ... I dunno !?
 	// answer: planet sets state=0 for 0-mass objects on impact.
+
+	if (!state)
+	{
+		state = 1;
+		hidefromview = true;
+	}
+
 
 	// don't do anything - it exists, until the source flame dies.
 	return true;

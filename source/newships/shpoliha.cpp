@@ -182,12 +182,14 @@ BigShipPart(omother, orelpos, orelangle, osprite, 0)
 	collide_flag_sameship = 0;
 
 	collide_flag_sameship = bit(LAYER_SPECIAL);
+
+	relangle = 0;
 }
 
 
 void OlidandeeArm::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	if (!(owner && owner->exists()))
 	{
 		owner = 0;
@@ -204,7 +206,24 @@ void OlidandeeArm::calculate()
 	da += 0.25 * PI;
 	da *= direction;
 
-	relangle = da;
+
+
+	da = da - relangle;		// what should be added to relangle to achieve new position
+	while (da > PI)		da -= PI2;
+	while (da < -PI)	da += PI2;
+
+	double damax;
+	damax = 0.5 * PI * frame_time * 1E-3;
+
+	if (da > damax)
+		da = damax;
+
+	if (da < -damax)
+		da = -damax;
+
+
+
+	relangle += da;
 
 	BigShipPart::calculate();
 

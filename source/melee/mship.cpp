@@ -318,6 +318,8 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	turn_step = 0;
 	angle = floor(oangle / (PI2/64)) * (PI2/64);
 	sprite_index = get_index(angle);
+
+	hashotspots = true;
 }
 
 Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally_flag) :
@@ -412,6 +414,8 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 
 	angle = floor(shipAngle / (PI2/64)) * (PI2/64);
 	sprite_index = get_index(angle);
+
+	hashotspots = true;
 }
 
 void Ship::death() {STACKTRACE

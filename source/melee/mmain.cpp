@@ -543,6 +543,7 @@ void NormalGame::choose_new_ships() {STACKTRACE
 
 
 
+		
 		// CHECK FILE SIZES !! to intercept desynch before they happen.
 
 		int myfsize, otherfsize;
@@ -558,6 +559,8 @@ void NormalGame::choose_new_ships() {STACKTRACE
 			// the player who loads the ship doesn't get this message, cause his own file is identical by default
 			tw_error("DAT files have different size! This may cause a desynch. Press Retry to continue");
 		}
+		
+
 		}
 	delete slot;
 	message.out("Finished selecting ships...", 1500);

@@ -62,7 +62,7 @@ class BathaDeviant : public Ship
 	double weaponRange, weaponVelocity, weaponTurnRate, weaponTailDelay, weaponMass;
 	int    weaponDamage, weaponArmour;
 
-	double cloudLifeTime;
+	double	cloudLifeTime, cloudDamage;
 
 	double	gravforce, gravforce_default, gravRange;
 
@@ -117,9 +117,10 @@ public:
 	double existtime, lifetime, spr_changetime, spr_time;
 
 	BathaCloud(SpaceLocation *creator, Vector2 opos, double oangle,
-					SpaceSprite *osprite, double olifetime);
+					SpaceSprite *osprite, double olifetime, double odamage);
 
 	virtual void calculate();
+	virtual int handle_damage(SpaceLocation *source, double normal, double direct = 0);
 };
 
 
@@ -138,6 +139,7 @@ Ship(opos, angle, data, code)
 	weaponTailDelay     = get_config_float("Weapon", "TailDelay", 0);
 	
 	cloudLifeTime = get_config_float("Special", "LifeTime", 0);
+	cloudDamage = get_config_float("Special", "Damage", 0);
 	
 	// properties of this ship are :
 	
@@ -195,7 +197,7 @@ int BathaDeviant::activate_special()
 	double R = tw_random(50, 100);
 	D = R * unit_vector(tw_random(PI2));
 
-	bc = new BathaCloud(this, pos+D, angle, data->spriteSpecial, cloudLifeTime);
+	bc = new BathaCloud(this, pos+D, angle, data->spriteSpecial, cloudLifeTime, cloudDamage);
 	game->add(bc);
 
 	return(true);
@@ -279,7 +281,11 @@ void BathaDeviant::calculate ()
 			Vector2 Vacc = -(Vd/R) * gravforce*bb;
 			
 			if (!o->isPlanet())
-				o->vel += Vacc;			else				vel -= Vacc;				vel -= Vacc;
+				o->vel += Vacc;
+			else
+				vel -= Vacc;
+	
+			vel -= Vacc;
 			if (vel.length() > speed_max)
 				vel *= speed_max / vel.length();
 
@@ -531,13 +537,15 @@ void SpriteDrawList::animate(Frame *frame)
 
 
 BathaCloud::BathaCloud(SpaceLocation *creator, Vector2 opos, double oangle,
-				SpaceSprite *osprite, double olifetime)
+				SpaceSprite *osprite, double olifetime, double odamage)
 :
 SpaceObject(creator, opos, oangle, osprite)
 {
 	layer = LAYER_SHOTS;
 	vel = 0;
-	isblockingweapons = true;
+	isblockingweapons = false;//true;  don't block; just deal damage.
+
+	damage_factor = odamage;
 
 	lifetime = olifetime;
 	existtime = 0;
@@ -564,6 +572,7 @@ SpaceObject(creator, opos, oangle, osprite)
 	sprite_index = 0;
 }
 
+
 void BathaCloud::calculate()
 {
 	STACKTRACE
@@ -587,5 +596,10 @@ void BathaCloud::calculate()
 }
 
 
+int BathaCloud::handle_damage(SpaceLocation *source, double normal, double direct)
+{
+	state = 0;	// just disappear.
+	return true;
+}
 
 REGISTER_SHIP ( BathaDeviant )
