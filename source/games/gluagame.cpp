@@ -188,6 +188,14 @@ void LuaGame::quit(const char *message)
 void LuaGame::calculate()
 {
 	Game::calculate();
+
+	// also execute the calculate() function in the lua script,
+	// if such a function exists that is ...
+
+	lua_pushstring(L, "calculate");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_call(L, 0, 0);	// 0 arguments, 0 results
+
 }
 
 

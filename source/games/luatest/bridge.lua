@@ -2,6 +2,18 @@
 -- this is a bridge between the Lua and C++ worlds.  Very experimental-like!
 --
 
+nast = 0;
+
+function calculate()
+
+	if nast < 30 then
+		addAsteroid();
+		nast = nast + 1
+	end
+end
+
+
+-- JUST THE INITIALIZATION...
 
 --require "StarClasses"
 --require "SampleUniverse"
