@@ -24,3 +24,21 @@
 # character to interpose another module into the current module.  This
 # can be useful for creating a module that consists of many directories
 # spread out over the entire source repository.
+
+#get only source code
+source src 
+
+#get visual studio specifc source code
+vcsource &src MSVC doc bin/*.ini
+
+#get linux specific source code
+linuxsource &src TWmake doc bin/*.ini
+
+
+#get binaries only
+binaries bin data
+
+#get files suitible for release
+release &binaries doc fleet
+
+
