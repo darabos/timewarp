@@ -14,7 +14,7 @@ class PopupTextInfo : public PopupT
 {
 public:
 	TextInfoArea	*tia;
-	Button			*closebutton;
+	::Button			*closebutton;
 
 	PopupTextInfo(EmptyButton *creator, char *ident, char *id2, int axshift, int ayshift,
 					FONT *afont, char *atext, int aNchar);
@@ -45,7 +45,7 @@ public:
 
 // A popup-list consists of several components, which you've to initialize:
 // (most of it is automatically initialized from the shape of the menu screen-
-// the button images should be present on it as well)
+// the ::Button images should be present on it as well)
 class PopupList : public PopupT
 {
 public:
@@ -89,7 +89,7 @@ class PopupFleetSelection : public Popup
 public:
 	MatrixIcons		*icons;
 	TextButton		*info;
-	Button			*oncerandom, *alwaysrandom;
+	::Button			*oncerandom, *alwaysrandom;
 
 	PopupFleetSelection(EmptyButton *creator, char *ident, int axshift, int ayshift, char *datafilename,
 				BITMAP **alistIcon, double ascale, FONT *afont );
@@ -118,7 +118,7 @@ public:
 
 class PopupOk : public Popup
 {
-	Button		*ok;
+	::Button		*ok;
 public:
 	PopupOk(char *ident, int xcenter, int ycenter,
 						//char *datafilename,
@@ -131,7 +131,7 @@ public:
 
 class PopupYN : public Popup
 {
-	Button		*yes, *no;
+	::Button		*yes, *no;
 public:
 	PopupYN(char *ident, int xcenter, int ycenter,
 						//char *datafilename,
@@ -150,7 +150,7 @@ class FileBrowser : public PopupList
 {
 public:
 	bool selection;
-	Button *downdir;
+	::Button *downdir;
 
 	char dir[512];		// max filename length
 	char fname[512];

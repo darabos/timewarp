@@ -9,11 +9,6 @@
 #include "../include/MASkinG/settings.h"
 #include <allegro.h>
 
-#ifdef ALLEGRO_MSVC
-#pragma warning (disable: 4786)
-#pragma warning (disable: 4788)
-#endif
-
 static const int nTimers = 8;
 
 /* user timer counters */

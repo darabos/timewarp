@@ -5,11 +5,6 @@
 //                  http://sourceforge.net/projects/masking                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef ALLEGRO_MSVC
-#pragma warning (disable: 4786)
-#pragma warning (disable: 4788)
-#endif
-
 #include "../include/MASkinG/textarea.h"
 
 #include <fstream>

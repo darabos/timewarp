@@ -47,6 +47,7 @@ MAS::MouseState MAS::Dialog::mouseState;
 MAS::ScreenUpdate *MAS::Dialog::driver = NULL;
 MAS::Mouse *MAS::Dialog::mouse = NULL;
 int MAS::Dialog::tickTimerID = -2;
+MAS::Widget *previousFocusObject = NULL;
 
 bool just_switched_in = false;
 void mas_switch_callback() {
@@ -612,12 +613,14 @@ bool MAS::Dialog::MsgWantfocus() {
 void MAS::Dialog::MsgGotfocus() {
 	SetFlag(D_GOTFOCUS);
 	GetParent()->HandleEvent(*this, MSG_GOTFOCUS);
+	if (previousFocusObject) GiveFocusTo(previousFocusObject);
 }
 
 
 void MAS::Dialog::MsgLostfocus() {
 	ClearFlag(D_GOTFOCUS);
 	GetParent()->HandleEvent(*this, MSG_LOSTFOCUS);
+	GiveFocusTo(NULL);
 }
 
 
@@ -877,53 +880,6 @@ void MAS::Dialog::UpdateSize() {
 void MAS::Dialog::MsgMousemove(const MAS::Point& d) {
 	Widget::MsgMousemove(d);
 
-	// send a MSG_MOUSEMOVE message to the widget with the mouse/focus
-	if (focusObject && focusObject != mouseObject) {
-		if (focusObject->Flags() & D_PRESSED) {
-			focusObject->MsgMousemove(d);
-		}
-	}
-	if (mouseObject) {
-		mouseObject->MsgMousemove(d);
-	}
-
-	// see which widget is under the mouse
-	MAS::Widget *newMouseObject = FindMouseObject();
-	
-	// see if mouse object has changed
-	if (newMouseObject != mouseObject) {
-		MoveMouse(mouseObject, newMouseObject);
-		
-		// switch input focus if necessary
-		switch (skin->focus) {
-			case 0:
-				if (mouseObject != focusObject) {
-					if ((focusObject && (!(focusObject->Flags() & D_PRESSED))) || !focusObject) {
-						MoveFocus(focusObject, mouseObject);
-					}
-				}
-				break;
-
-			case 1:
-				if (mouseObject != focusObject) {
-					if ((focusObject && (!(focusObject->Flags() & D_PRESSED))) || !focusObject) {
-						if (mouseObject && mouseObject->MsgWantfocus()) {
-							MoveFocus(focusObject, mouseObject);
-						}
-					}
-				}
-				break;
-
-			case 2:
-				break;
-		};
-		
-		// let it know the mouse moved
-		if (mouseObject) {
-			mouseObject->MsgMousemove(d);
-		}
-	}
-
 	// move or resize the dialog
 	if (TestFlag(D_PRESSED)) {
 		Rect oldRect = *this;
@@ -1009,6 +965,53 @@ void MAS::Dialog::MsgMousemove(const MAS::Point& d) {
 	}
 	else {
 		SelectAction(GetAction());
+	}
+
+	// send a MSG_MOUSEMOVE message to the widget with the mouse/focus
+	if (focusObject && focusObject != mouseObject) {
+		if (focusObject->Flags() & D_PRESSED) {
+			focusObject->MsgMousemove(d);
+		}
+	}
+	if (mouseObject) {
+		mouseObject->MsgMousemove(d);
+	}
+
+	// see which widget is under the mouse
+	MAS::Widget *newMouseObject = FindMouseObject();
+	
+	// see if mouse object has changed
+	if (newMouseObject != mouseObject) {
+		MoveMouse(mouseObject, newMouseObject);
+		
+		// switch input focus if necessary
+		switch (skin->focus) {
+			case 0:
+				if (mouseObject != focusObject) {
+					if ((focusObject && (!(focusObject->Flags() & D_PRESSED))) || !focusObject) {
+						MoveFocus(focusObject, mouseObject);
+					}
+				}
+				break;
+
+			case 1:
+				if (mouseObject != focusObject) {
+					if ((focusObject && (!(focusObject->Flags() & D_PRESSED))) || !focusObject) {
+						if (mouseObject && mouseObject->MsgWantfocus()) {
+							MoveFocus(focusObject, mouseObject);
+						}
+					}
+				}
+				break;
+
+			case 2:
+				break;
+		};
+		
+		// let it know the mouse moved
+		if (mouseObject) {
+			mouseObject->MsgMousemove(d);
+		}
 	}
 }
 
@@ -1302,7 +1305,8 @@ void MAS::Dialog::TakeFocusFrom(MAS::Widget *w) {
 		w->GetParent()->focusObject = NULL;
 		w->MsgLostfocus();
 		
-		//focusObject = NULL;
+		previousFocusObject = focusObject;
+		focusObject = NULL;
 
 		if (w->GetParent() != this) {
 			TakeFocusFrom(w->GetParent());

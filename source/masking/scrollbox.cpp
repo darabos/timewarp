@@ -10,9 +10,13 @@
 #include "../include/MASkinG/scrollbox.h"
 using namespace MAS;
 
-ScrollBoxHelper::ScrollBoxHelper(ScrollBox *p) : parent (p) {
+ScrollBoxHelper::ScrollBoxHelper() : parent (NULL) {
 }
 
+
+void ScrollBoxHelper::SetScrollBox(ScrollBox *p) {
+	parent = p;
+}
 
 void ScrollBoxHelper::Draw (Bitmap &canvas) {
 	if (parent) parent->HelperDraw (canvas);
@@ -155,10 +159,11 @@ void ScrollBox::SetScrollOption (int newhopt, int newvopt) {
 }
 
 
-ScrollBox::ScrollBox()  : Dialog(), helper (this),
+ScrollBox::ScrollBox()  : Dialog(),
 	scrollWidth (0), scrollHeight (0), scrollX (0), scrollY (0), 
 	hopt (SCROLLER_AUTO), vopt (SCROLLER_AUTO), hashscroller (false), hasvscroller (false)
 {
+	helper.SetScrollBox(this);
 	Add(clrscr);
 	hScroller.SetOrientation(1);
 	vScroller.SetOrientation(0);

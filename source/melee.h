@@ -325,7 +325,7 @@ class VideoSystem : public BaseClass {
 	int fullscreen;
 	DATAFILE *font_data; //fonts
 	FONT *basic_font; //font to use if no other is available
-	Color *palette;
+	::Color *palette;
 	volatile bool screen_corrupted;
 	int last_poll;
 	Surface *surface;

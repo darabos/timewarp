@@ -149,14 +149,6 @@ class ListView : public Widget {
 		*/
 		bool MsgWantfocus();
 		/**
-			Plays a sample to indicate the list got input focus.
-		*/
-		void MsgGotfocus();
-		/**
-			Plays a sample to indicate the list lost input focus.
-		*/
-		void MsgLostfocus();
-		/**
 			Handles keyboard input. The list can be navigated with the cursor keys,
 			home, end, page up and page down. In multiselect mode items can be
 			selected and deselected with spacebar. If enter is pressed (or space
@@ -309,7 +301,6 @@ class ListBox : public Dialog {
 			listbox itself is resized.
 		*/
 		void UpdateSize();
-		void MsgGotfocus();
 	
 	public:
 		ListBox();

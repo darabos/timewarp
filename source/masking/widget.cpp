@@ -224,8 +224,21 @@ bool MAS::Widget::MsgUChar(int c)	{ GetParent()->HandleEvent(*this, MSG_UCHAR, c
 bool MAS::Widget::MsgXChar(int xc)	{ GetParent()->HandleEvent(*this, MSG_XCHAR, xc);	return false; }
 bool MAS::Widget::MsgWantfocus()	{ GetParent()->HandleEvent(*this, MSG_WANTFOCUS);	return false; }
 bool MAS::Widget::MsgWantmouse()	{ GetParent()->HandleEvent(*this, MSG_WANTMOUSE);	return true; }
-void MAS::Widget::MsgGotfocus()		{ SetFlag(D_GOTFOCUS); Redraw(); GetParent()->HandleEvent(*this, MSG_GOTFOCUS); }
-void MAS::Widget::MsgLostfocus()	{ ClearFlag(D_GOTFOCUS); Redraw(); GetParent()->HandleEvent(*this, MSG_LOSTFOCUS); }
+
+void MAS::Widget::MsgGotfocus()		{
+	SetFlag(D_GOTFOCUS);
+	Redraw(); 
+	GetParent()->HandleEvent(*this, MSG_GOTFOCUS);
+	PlaySample(Skin::SAMPLE_GOTFOCUS);
+}
+
+void MAS::Widget::MsgLostfocus()	{
+	ClearFlag(D_GOTFOCUS);
+	Redraw();
+	GetParent()->HandleEvent(*this, MSG_LOSTFOCUS);
+	PlaySample(Skin::SAMPLE_LOSTFOCUS);
+}
+
 void MAS::Widget::MsgGotmouse()		{ SetFlag(D_GOTMOUSE); GetParent()->HandleEvent(*this, MSG_GOTMOUSE); }
 void MAS::Widget::MsgLostmouse()	{ ClearFlag(D_GOTMOUSE); GetParent()->HandleEvent(*this, MSG_LOSTMOUSE); }
 void MAS::Widget::MsgIdle() {}

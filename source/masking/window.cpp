@@ -206,6 +206,8 @@ void MAS::Window::MsgInitSkin() {
 	// The samples
 	SetSample(Skin::SAMPLE_GOTFOCUS, Skin::SAMPLE_GOTFOCUS);
 	SetSample(Skin::SAMPLE_LOSTFOCUS, Skin::SAMPLE_LOSTFOCUS);
+	SetSample(Skin::SAMPLE_OPEN, Skin::SAMPLE_OPEN);
+	SetSample(Skin::SAMPLE_CLOSE, Skin::SAMPLE_CLOSE);
 	iconMax.SetSample(Skin::SAMPLE_OPEN, Skin::SAMPLE_ACTIVATE);
 	iconMin.SetSample(Skin::SAMPLE_CLOSE, Skin::SAMPLE_ACTIVATE);
 
@@ -354,7 +356,6 @@ void MAS::Window::MsgGotfocus() {
 	bGrip.SendMessage(MSG_GOTFOCUS);
 	textBack.SendMessage(MSG_GOTFOCUS);
 	UpdateWindowProperties();
-	PlaySample(Skin::SAMPLE_GOTFOCUS);
 }
 
 
@@ -367,7 +368,6 @@ void MAS::Window::MsgLostfocus() {
 	bGrip.SendMessage(MSG_LOSTFOCUS);
 	textBack.SendMessage(MSG_LOSTFOCUS);
 	UpdateWindowProperties();
-	PlaySample(Skin::SAMPLE_LOSTFOCUS);
 }
 
 
@@ -507,6 +507,19 @@ void MAS::Window::HandleEvent(MAS::Widget &obj, int msg, int arg1, int arg2) {
 		}
 		else if (obj == iconMax) {
 			Maximize();
+		}
+	}
+	else if (msg == MSG_DCLICK) {
+		if (obj == bGrip || obj == textBack || obj == title) {
+			if (TestFlag(D_RESIZABLE)) {
+				if (extraFlags & W_MAXIMIZED) {
+					PlaySample(Skin::SAMPLE_CLOSE);
+				}
+				else {
+					PlaySample(Skin::SAMPLE_OPEN);
+				}
+				Maximize();
+			}
 		}
 	}
 	else if (msg == MSG_CLOSE && obj == *clientArea) {

@@ -894,4 +894,4 @@ void MAS::Bitmap::MaskedVerticalTile(Bitmap &dst, int section, int destx, int de
 */
 
 
-MAS::Bitmap MAS::Bitmap::null;
+MAS::Bitmap MAS::Bitmap::null2;

@@ -52,6 +52,8 @@ void MAS::MenuItem::MsgInitSkin() {
 		SetFont(skin->fnt[Skin::INFO_MENU][i], i);
 	}
 	SetTextMode(-1);
+	SetSample(Skin::SAMPLE_GOTFOCUS, Skin::SAMPLE_GOTFOCUS);
+	SetSample(Skin::SAMPLE_LOSTFOCUS, Skin::SAMPLE_LOSTFOCUS);
 }
 
 
@@ -246,6 +248,9 @@ void MAS::Menu::MsgInitSkin() {
 	back.SetBitmap(Skin::MENU_BACK);
 	UpdateSize();
 	SetAnimationProperties(skin->menuAnimationLength, skin->menuAnimationType);
+	SetSample(Skin::SAMPLE_ACTIVATE, Skin::SAMPLE_ACTIVATE);
+	SetSample(Skin::SAMPLE_OPEN, Skin::SAMPLE_OPEN);
+	SetSample(Skin::SAMPLE_CLOSE, Skin::SAMPLE_CLOSE);
 }
 
 
@@ -509,6 +514,7 @@ void MAS::Menu::HandleEvent(Widget& obj, int msg, int arg1, int arg2) {
 							if (topBar && skin->focus != 2) {
 								CloseChildMenu();
 								obj.Deselect();
+								PlaySample(Skin::SAMPLE_CLOSE);
 							}
 						}
 						else {
@@ -516,20 +522,24 @@ void MAS::Menu::HandleEvent(Widget& obj, int msg, int arg1, int arg2) {
 								CloseChildMenu();
 								OpenChildMenu(item);
 								obj.Select();
+								PlaySample(Skin::SAMPLE_OPEN);
 							}
 						}
 					}
 					else {
 						OpenChildMenu(item);
 						obj.Select();
+						PlaySample(Skin::SAMPLE_OPEN);
 					}
 				}
 				else if (item->callbackID >= 0) {
 					if (parentMenu) {
 						parentMenu->GetParent()->HandleEvent(*this, MSG_ACTIVATE);
+						PlaySample(Skin::SAMPLE_ACTIVATE);
 					}
 					else {
 						Close();
+						PlaySample(Skin::SAMPLE_CLOSE);
 					}
 					//GetParent()->HandleEvent(obj, item->callbackID);
 					GetParent()->HandleEvent(*GetRootMenu(), item->callbackID);
@@ -544,6 +554,10 @@ void MAS::Menu::HandleEvent(Widget& obj, int msg, int arg1, int arg2) {
 				
 				if (item->child) {
 					OpenChildMenu(item);
+					PlaySample(Skin::SAMPLE_OPEN);
+				}
+				else {
+					PlaySample(Skin::SAMPLE_CLOSE);
 				}
 				
 				if (topBar) {
@@ -760,6 +774,7 @@ void MAS::Menu::Popup(MAS::Dialog *parentDialog, MAS::MenuItem *parentMenu, int 
 	UpdateSize();
 	Animate();
 	Redraw();
+	PlaySample(Skin::SAMPLE_OPEN);
 }
 
 

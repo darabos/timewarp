@@ -100,16 +100,12 @@ void MAS::Button::Toggle() {
 
 void MAS::Button::MsgGotfocus() {
 	Widget::MsgGotfocus();
-	PlaySample(Skin::SAMPLE_GOTFOCUS);
-	Redraw();
 	Animate();
 }
 
 
 void MAS::Button::MsgLostfocus() {
 	Widget::MsgLostfocus();
-	PlaySample(Skin::SAMPLE_LOSTFOCUS);
-	Redraw();
 	Animate();
 }
 
@@ -168,6 +164,11 @@ void MAS::Button::Setup(int x, int y, int w, int h, int key, int flags, const ch
 	Widget::Setup(x, y, w, h, key, flags);
 }
 
+void MAS::Button::SetupNormalized(int x, int y, int w, int h, int key, int flags, const char *text) {
+	SetText(text);
+	Widget::Setup(x, y, w, h, key, flags);
+	Widget::Shape(x, y, w, h, true);
+}
 
 void MAS::Button::UpdateSize() {
 	if (TestFlag(D_AUTOSIZE)) {

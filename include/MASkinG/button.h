@@ -1,9 +1,9 @@
-////////////////////////////////////////////////////////////////////////////////
+// ************************************************************************** //
 //         MASkinG - Miran Amon's Skinnable GUI Library for Allegro           //
 //    Copyright (c) 2002-2003 Miran Amon (miranamon@users.sourceforge.net)    //
 //          Project websites: http://ferisrv5.uni-mb.si/~ma0747               //
 //                  http://sourceforge.net/projects/masking                   //
-////////////////////////////////////////////////////////////////////////////////
+// ************************************************************************** //
 
 #ifndef			MASKING_BUTTON_H
 #define			MASKING_BUTTON_H
@@ -116,6 +116,10 @@ class Button : public Label {
 		On a button the text is always centered.
 		*/
 		void Setup(int x, int y, int w, int h, int key, int flags, const char *text);
+		/**
+		Like Button::Setup() with the exception that the dimentions are nromalized
+		*/
+		void SetupNormalized(int x, int y, int w, int h, int key, int flags, const char *text);
 };
 }
 

@@ -9,7 +9,8 @@
 #define			MASKING_H
 
 #ifdef ALLEGRO_MSVC
-#pragma warning (disable:4786,4788)
+#pragma warning (disable:4786)
+#pragma warning (disable:4788)
 #endif
 
 #include <alfont.h>

@@ -1204,7 +1204,7 @@ void MAS::Skin::PlaySample(int i) {
 
 
 MAS::Error MAS::Skin::GetError() { return lastError; }
-MAS::Bitmap& MAS::Skin::GetBitmap(int i) const { return (i>=0 && i<nBitmapsEx) ? *bmpList[i] : Bitmap::null; }
+MAS::Bitmap& MAS::Skin::GetBitmap(int i) const { return (i>=0 && i<nBitmapsEx) ? *bmpList[i] : Bitmap::null2; }
 MAS::Cursor& MAS::Skin::GetCursor(int i) const { return *curList[i]; }
 MAS::Font& MAS::Skin::GetFont(int i) const { return *fntList[i]; }
 MAS::Sample& MAS::Skin::GetSample(int i) const { return *smpList[i]; }

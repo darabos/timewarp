@@ -1,9 +1,9 @@
-////////////////////////////////////////////////////////////////////////////////
+// ************************************************************************** //
 //         MASkinG - Miran Amon's Skinnable GUI Library for Allegro           //
 //    Copyright (c) 2002-2003 Miran Amon (miranamon@users.sourceforge.net)    //
 //          Project websites: http://ferisrv5.uni-mb.si/~ma0747               //
 //                  http://sourceforge.net/projects/masking                   //
-////////////////////////////////////////////////////////////////////////////////
+// ************************************************************************** //
 
 #ifndef			MASKING_EDITBOX_H
 #define			MASKING_EDITBOX_H
@@ -103,14 +103,6 @@ class EditBox : public Label {
 		Returns true.
 		*/
 		bool MsgWantfocus();
-		/**
-		These play mathich rollover sounds and redraw the widget.
-		*/
-		void MsgGotfocus();
-		/**
-		See MsgGotfocus()
-		*/
-		void MsgLostfocus();
 
 	public:
 		EditBox();

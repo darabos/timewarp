@@ -10,11 +10,6 @@
 
 #include "../MASkinG.h"
 
-#ifdef ALLEGRO_MSVC
-#pragma warning (disable: 4786)
-#pragma warning (disable: 4788)
-#endif
-
 namespace MAS {
 /**
 	Internal helper widget for the FileSelector.

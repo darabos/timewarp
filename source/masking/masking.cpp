@@ -8,11 +8,6 @@
 #include "../include/MASkinG.h"
 #include <allegro/internal/aintern.h>
 
-#ifdef ALLEGRO_MSVC
-#pragma warning (disable:4786)
-#pragma warning (disable:4788)
-#endif
-
 #ifdef	MASKING_GL
 #include <alleggl.h>
 #endif

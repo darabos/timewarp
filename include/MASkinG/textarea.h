@@ -1,23 +1,16 @@
-// **********************************************************
+// ************************************************************************** //
 //         MASkinG - Miran Amon's Skinnable GUI Library for Allegro           //
 //    Copyright (c) 2002-2003 Miran Amon (miranamon@users.sourceforge.net)    //
 //          Project websites: http://ferisrv5.uni-mb.si/~ma0747               //
 //                  http://sourceforge.net/projects/masking                   //
 //            TextArea written by Martijn "amarillion" van Iersel             //
-// **********************************************************
+// ************************************************************************** //
 #ifndef TEXTAREA_H
 #define TEXTAREA_H
-
-
-#ifdef ALLEGRO_MSVC
-#pragma warning (disable: 4786)
-#pragma warning (disable: 4788)
-#endif
 
 #include "scrollbox.h"
 #include <vector>
 #include <string>
-
 
 namespace MAS {
 /**

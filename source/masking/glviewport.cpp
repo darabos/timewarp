@@ -26,7 +26,7 @@ void MAS::GLViewport::MsgDraw() {
 	glEnable(GL_SCISSOR_TEST);
 
 	// clear the GL context
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// draw the contents of the vieport
 	Draw(viewport);

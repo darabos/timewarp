@@ -120,12 +120,12 @@ MAS::ListView::~ListView() {
 
 
 void MAS::ListView::MsgInitSkin() {
+	Widget::MsgInitSkin();
 	SetBitmap(Skin::LIST);
 	SetSample(Skin::SAMPLE_GOTFOCUS, Skin::SAMPLE_GOTFOCUS);
 	SetSample(Skin::SAMPLE_LOSTFOCUS, Skin::SAMPLE_LOSTFOCUS);
 	SetSample(Skin::SAMPLE_ACTIVATE, Skin::SAMPLE_ACTIVATE);
 	SetSample(Skin::SAMPLE_SCROLL, Skin::SAMPLE_SCROLL);
-	Widget::MsgInitSkin();
 }
 
 
@@ -203,19 +203,7 @@ void MAS::ListView::Draw(Bitmap &canvas) {
 
 bool MAS::ListView::MsgWantfocus() {
 	Widget::MsgWantfocus();
-	return true;
-}
-
-
-void MAS::ListView::MsgGotfocus() {
-	Widget::MsgGotfocus();
-	PlaySample(Skin::SAMPLE_GOTFOCUS);
-}
-
-
-void MAS::ListView::MsgLostfocus() {
-	Widget::MsgLostfocus();
-	PlaySample(Skin::SAMPLE_LOSTFOCUS);
+	return (TotalItems() > 0);
 }
 
 
@@ -256,6 +244,7 @@ bool MAS::ListView::MsgChar(int c) {
 			if (focus >= 0 && focus < items.size()) {
 				if (multiSelect) {
 					items[focus]->selected = !items[focus]->selected;
+					PlaySample(Skin::SAMPLE_SCROLL);
 					Redraw();
 				}
 				else {
@@ -303,7 +292,10 @@ void MAS::ListView::MsgLPress() {
 	int mouseItem = FindMouseItem();
 	if (!multiSelect) {
 		if (mouseItem >= 0 && mouseItem < items.size() && mouseItem != focus) {
-			SetFocus(mouseItem);
+			if (mouseItem != focus) {
+				SetFocus(mouseItem);
+				PlaySample(Skin::SAMPLE_SCROLL);
+			}
 		}
 	}
 	else {
@@ -313,6 +305,7 @@ void MAS::ListView::MsgLPress() {
 		else {
 			Select(mouseItem);
 		}
+		PlaySample(Skin::SAMPLE_SCROLL);
 	}
 
 	Redraw();
@@ -562,6 +555,7 @@ MAS::ListBox::ListBox() : MAS::Dialog() {
 	Add(box);
 	Add(list);
 	Add(vScroller);
+	//MoveFocusTo(&list);
 }
 
 
@@ -757,12 +751,6 @@ void MAS::ListBox::Dump() {
 		TRACE((*i)->GetText());
 		TRACE("\n");
 	}
-}
-
-
-void MAS::ListBox::MsgGotfocus() {
-	Dialog::MsgGotfocus();
-	MoveFocusTo(&list);
 }
 
 

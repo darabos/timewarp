@@ -39,7 +39,7 @@ char *MAS::GLDriverDRS::GetDescription() {
 void MAS::GLDriverDoubleBuffer::Redraw() {
 	blit(canvas, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
 	allegro_gl_flip();
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
 

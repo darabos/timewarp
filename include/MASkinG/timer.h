@@ -8,11 +8,6 @@
 #ifndef			MASKING_TIMER_H
 #define			MASKING_TIMER_H
 
-#ifdef ALLEGRO_MSVC
-#pragma warning (disable: 4786)
-#pragma warning (disable: 4788)
-#endif
-
 namespace MAS {
 /**
 	The timer system.

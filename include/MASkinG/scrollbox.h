@@ -25,7 +25,8 @@ class ScrollBoxHelper : public Widget {
 		ScrollBox *parent;
 
 	public:
-		ScrollBoxHelper(ScrollBox *p);
+		ScrollBoxHelper();
+		virtual void SetScrollBox(ScrollBox *p);
 		virtual void Draw(Bitmap &canvas);
 };
 

@@ -8,8 +8,9 @@
 #ifndef		MASKING_DEFINES_H
 #define		MASKING_DEFINES_H
 
+#ifndef MAXINT////////////////////////
 #define		MAXINT			32768
-
+#endif/////////////////////////
 /**
 	sent whenever a timer has ticked
 */

@@ -1,9 +1,9 @@
-////////////////////////////////////////////////////////////////////////////////
+// ************************************************************************** //
 //         MASkinG - Miran Amon's Skinnable GUI Library for Allegro           //
 //    Copyright (c) 2002-2003 Miran Amon (miranamon@users.sourceforge.net)    //
 //          Project websites: http://ferisrv5.uni-mb.si/~ma0747               //
 //                  http://sourceforge.net/projects/masking                   //
-////////////////////////////////////////////////////////////////////////////////
+// ************************************************************************** //
 
 #ifndef			MASKING_CLEARSCREEN_H
 #define			MASKING_CLEARSCREEN_H

@@ -98,7 +98,11 @@ class Bitmap {
 		bool	IsSystem()	const { return is_system_bitmap(data)?true:false; }
 		bool	IsVideo()	const { return is_video_bitmap(data)?true:false; }
 		void	SetClip(const Rect &r)	{ SetClip(r.x(), r.y(), r.x2(), r.y2()); }
+#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1 && ALLEGRO_WIP_VERSION >= 13)
+		void	SetClip(int x1, int y1, int x2, int y2)	{ set_clip_rect(data, x1,y1,x2,y2); }
+#else
 		void	SetClip(int x1, int y1, int x2, int y2)	{ set_clip(data, x1,y1,x2,y2); }
+#endif
 		Rect	GetClip()	const { return Rect(data->cl, data->ct, data->cr - data->cl, data->cb - data->ct); }
 		void Show() const { show_video_bitmap(data); }
 
@@ -115,7 +119,7 @@ class Bitmap {
 		void	Circlefill(const Point &p, int r, const Color &c) {	Circlefill(p.x(), p.y(), r, c); }
 		void	Ellipse(const Point &p, const Size &s, const Color &c) { ellipse(data, p.x(), p.y(), s.w(), s.h(), c); }
 		void	Ellipsefill(const Point &p, const Size &s, const Color &c) { ellipsefill(data, p.x(), p.y(), s.w(), s.h(), c); }
-		void	Arc(const Point &p, fixed a1, fixed a2, int r, const Color &c) { arc(data, p.x(), p.y(), a1, a2, r, c); }
+		void	Arc(const Point &p, long a1, long a2, int r, const Color &c) { arc(data, p.x(), p.y(), a1, a2, r, c); }
 		void	Spline(const int points[8], const Color &c) { spline(data, points, c); }
 		void	Floodfill(const Point &p, const Color &c) { floodfill(data, p.x(), p.y(), c); }
 
@@ -131,7 +135,7 @@ class Bitmap {
 		void	Circlefill(int x, int y, int r, int c) { circlefill(data, x, y, r, c); }
 		void	Ellipse(int x, int y, int rx, int ry, int c) { ellipse(data, x, y, rx, ry, c); }
 		void	Ellipsefill(int x, int y, int rx, int ry, int c) { ellipsefill(data, x, y, rx, ry, c); }
-		void	Arc(int x, int y, fixed a1, fixed a2, int r, int c) { arc(data, x, y, a1, a2, r, c); }
+		void	Arc(int x, int y, long a1, long a2, int r, int c) { arc(data, x, y, a1, a2, r, c); }
 		void	Floodfill(int x, int y, int c) { floodfill(data, x, y, c); }
 
 		// blitting functions
@@ -155,14 +159,14 @@ class Bitmap {
 		void	DrawTransSprite(const Bitmap &sprite, const Point &p) { draw_trans_sprite(data, sprite.data, p.x(), p.y()); }
 		void	DrawLitSprite(const Bitmap &sprite, const Point &p, const Color &c) { draw_lit_sprite(data, sprite.data, p.x(), p.y(), c); }
 		void	DrawGouraoudSprite(const Bitmap &sprite, const Point &p, const Color &c1, const Color &c2, const Color &c3, const Color &c4) { draw_gouraud_sprite(data, sprite.data, p.x(), p.y(), c1,c2,c3,c4); }
-		void	RotateSprite(const Bitmap &sprite, const Point &p, fixed angle) { rotate_sprite(data, sprite.data, p.x(), p.y(), angle); }
-		void	RotateSpriteVFlip(const Bitmap &sprite, const Point &p, fixed angle) { rotate_sprite_v_flip(data, sprite.data, p.x(), p.y(), angle); }
-		void	RotateScaledSprite(const Bitmap &sprite, const Point &p, fixed angle, fixed scale) { rotate_scaled_sprite(data, sprite.data, p.x(), p.y(), angle, scale); }
-		void	RotateScaledSpriteVFlip(const Bitmap &sprite, const Point &p, fixed angle, fixed scale) { rotate_scaled_sprite_v_flip(data, sprite.data, p.x(), p.y(), angle, scale); }
-		void	PivotSprite(const Bitmap &sprite, const Point &p, const Point &cp, fixed angle) { pivot_sprite(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle); }
-		void	PivotSpriteVFlip(const Bitmap &sprite, const Point &p, const Point &cp, fixed angle) { pivot_sprite_v_flip(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle); }
-		void	PivotScaledSprite(const Bitmap &sprite, const Point &p, const Point &cp, fixed angle, fixed scale) { pivot_scaled_sprite(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle, scale); }
-		void	PivotScaledSpriteVFlip(const Bitmap &sprite, const Point &p, const Point &cp, fixed angle, fixed scale) { pivot_scaled_sprite_v_flip(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle, scale); }
+		void	RotateSprite(const Bitmap &sprite, const Point &p, long angle) { rotate_sprite(data, sprite.data, p.x(), p.y(), angle); }
+		void	RotateSpriteVFlip(const Bitmap &sprite, const Point &p, long angle) { rotate_sprite_v_flip(data, sprite.data, p.x(), p.y(), angle); }
+		void	RotateScaledSprite(const Bitmap &sprite, const Point &p, long angle, long scale) { rotate_scaled_sprite(data, sprite.data, p.x(), p.y(), angle, scale); }
+		void	RotateScaledSpriteVFlip(const Bitmap &sprite, const Point &p, long angle, long scale) { rotate_scaled_sprite_v_flip(data, sprite.data, p.x(), p.y(), angle, scale); }
+		void	PivotSprite(const Bitmap &sprite, const Point &p, const Point &cp, long angle) { pivot_sprite(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle); }
+		void	PivotSpriteVFlip(const Bitmap &sprite, const Point &p, const Point &cp, long angle) { pivot_sprite_v_flip(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle); }
+		void	PivotScaledSprite(const Bitmap &sprite, const Point &p, const Point &cp, long angle, long scale) { pivot_scaled_sprite(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle, scale); }
+		void	PivotScaledSpriteVFlip(const Bitmap &sprite, const Point &p, const Point &cp, long angle, long scale) { pivot_scaled_sprite_v_flip(data, sprite.data, p.x(), p.y(), cp.x(), cp.y(), angle, scale); }
 		void	StretchSprite(const Bitmap &sprite, const Rect &r) { stretch_sprite(data, sprite.data, r.x(), r.y(), r.w(), r.h()); }
 		
 		void	DrawSprite(const Bitmap &sprite, int x, int y) { draw_sprite(data, sprite.data, x, y); }
@@ -172,14 +176,14 @@ class Bitmap {
 		void	DrawTransSprite(const Bitmap &sprite, int x, int y) { draw_trans_sprite(data, sprite.data, x, y); }
 		void	DrawLitSprite(const Bitmap &sprite, int x, int y, int c) { draw_lit_sprite(data, sprite.data, x, y, c); }
 		void	DrawGouraoudSprite(const Bitmap &sprite, int x, int y, int c1, int c2, int c3, int c4) { draw_gouraud_sprite(data, sprite.data, x, y, c1,c2,c3,c4); }
-		void	RotateSprite(const Bitmap &sprite, int x, int y, fixed angle) { rotate_sprite(data, sprite.data, x, y, angle); }
-		void	RotateSpriteVFlip(const Bitmap &sprite, int x, int y, fixed angle) { rotate_sprite_v_flip(data, sprite.data, x, y, angle); }
-		void	RotateScaledSprite(const Bitmap &sprite, int x, int y, fixed angle, fixed scale) { rotate_scaled_sprite(data, sprite.data, x, y, angle, scale); }
-		void	RotateScaledSpriteVFlip(const Bitmap &sprite, int x, int y, fixed angle, fixed scale) { rotate_scaled_sprite_v_flip(data, sprite.data, x, y, angle, scale); }
-		void	PivotSprite(const Bitmap &sprite, int x, int y, int cx, int cy, fixed angle) { pivot_sprite(data, sprite.data, x, y, cx, cy, angle); }
-		void	PivotSpriteVFlip(const Bitmap &sprite, int x, int y, int cx, int cy, fixed angle) { pivot_sprite_v_flip(data, sprite.data, x, y, cx, cy, angle); }
-		void	PivotScaledSprite(const Bitmap &sprite, int x, int y, int cx, int cy, fixed angle, fixed scale) { pivot_scaled_sprite(data, sprite.data, x, y, cx, cy, angle, scale); }
-		void	PivotScaledSpriteVFlip(const Bitmap &sprite, int x, int y, int cx, int cy, fixed angle, fixed scale) { pivot_scaled_sprite_v_flip(data, sprite.data, x, y, cx, cy, angle, scale); }
+		void	RotateSprite(const Bitmap &sprite, int x, int y, long angle) { rotate_sprite(data, sprite.data, x, y, angle); }
+		void	RotateSpriteVFlip(const Bitmap &sprite, int x, int y, long angle) { rotate_sprite_v_flip(data, sprite.data, x, y, angle); }
+		void	RotateScaledSprite(const Bitmap &sprite, int x, int y, long angle, long scale) { rotate_scaled_sprite(data, sprite.data, x, y, angle, scale); }
+		void	RotateScaledSpriteVFlip(const Bitmap &sprite, int x, int y, long angle, long scale) { rotate_scaled_sprite_v_flip(data, sprite.data, x, y, angle, scale); }
+		void	PivotSprite(const Bitmap &sprite, int x, int y, int cx, int cy, long angle) { pivot_sprite(data, sprite.data, x, y, cx, cy, angle); }
+		void	PivotSpriteVFlip(const Bitmap &sprite, int x, int y, int cx, int cy, long angle) { pivot_sprite_v_flip(data, sprite.data, x, y, cx, cy, angle); }
+		void	PivotScaledSprite(const Bitmap &sprite, int x, int y, int cx, int cy, long angle, long scale) { pivot_scaled_sprite(data, sprite.data, x, y, cx, cy, angle, scale); }
+		void	PivotScaledSpriteVFlip(const Bitmap &sprite, int x, int y, int cx, int cy, long angle, long scale) { pivot_scaled_sprite_v_flip(data, sprite.data, x, y, cx, cy, angle, scale); }
 		void	StretchSprite(const Bitmap &sprite, int x, int y, int w, int h) { stretch_sprite(data, sprite.data, x, y, w, h); }
 
 		// special drawing functions
@@ -225,7 +229,7 @@ class Bitmap {
 		void MaskedHorizontalTile(Bitmap &dest, int i, int x, int y, int w, int count);
 		void MaskedVerticalTile(Bitmap &dest, int i, int x, int y, int h, int count);
 		
-		static Bitmap null;
+		static MAS::Bitmap null2;
 };
 }
 

@@ -313,20 +313,6 @@ void MAS::EditBox::MsgGotmouse() {
 }
 
 
-void MAS::EditBox::MsgGotfocus() {
-	PlaySample(Skin::SAMPLE_GOTFOCUS);
-	Redraw();
-	Widget::MsgGotfocus();
-}
-
-
-void MAS::EditBox::MsgLostfocus() {
-	PlaySample(Skin::SAMPLE_LOSTFOCUS);
-	Redraw();
-	Widget::MsgLostfocus();
-}
-
-
 void MAS::EditBox::MsgLostmouse() {
 	SetCursor(Skin::MOUSE_NORMAL);
 	Widget::MsgLostmouse();
