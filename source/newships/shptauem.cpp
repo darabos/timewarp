@@ -126,7 +126,7 @@ void TauEMP::calculate_fire_special()
 			if (specialJamFriendly || !o->sameTeam(this)) {
 				if (o->isShip()) {
 					if (((Ship*)o)->nextkeys!=0)
-						game->add(new TauEMPJammer(this, (Ship*)o, (1-pow(distance(o)/specialRange, 1/specialAttenuation)) * specialJamTime));
+						game->add(new TauEMPJammer(this, (Ship*)o, iround(1-pow(distance(o)/specialRange, 1/specialAttenuation)) * specialJamTime));
 				}
 				else
 					o->target = t; } }
@@ -175,7 +175,7 @@ void TauEMP::animate(Frame *space)
 		drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 		int i;
 		for (i=-specialNumber+1;i<=0;i++) {
-			set_trans_blender(0,0,0,r2*(1-rc)*(specialNumber+i)*255.0/(specialNumber));
+			set_trans_blender(0,0,0,iround(r2*(1-rc)*(specialNumber+i)*255.0/(specialNumber)));
 			circle_r = (wave_radius+3*i)*space_zoom;
 			circle(space->surface,circle_x0,circle_y0, circle_r, makecol(100,100,255));
 			space->add_circle(circle_x0, circle_y0, circle_r, 0); }

@@ -125,7 +125,7 @@ void GameAliendialog::init()
 
 
 
-	int tcol = makecol(255,255,128);
+	//int tcol = makecol(255,255,128);
 
 	A = new TextInfoArea(T, "A/", usefont, 0, 0);	// all text should fit on 1 window - no scroll needed !!
 	A->passive = false;

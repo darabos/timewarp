@@ -238,7 +238,7 @@ int AktunComSat::handle_damage(SpaceLocation* source, double normal, double dire
 	double tot;
 	tot = normal+direct;
 	if ( tot > 0 ) {
-		armour -= tot;
+		armour -= iround(tot);
 		
 		if(armour <= 0) {
 			armour = 0;

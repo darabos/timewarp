@@ -600,7 +600,7 @@ void TeamIndicator::animate_predict(Frame *space, int time)
 	if (mother->isInvisible())
 		return;
 
-	Vector2i co1, co2, D;
+	Vector2i co1, co2;
 
 	co1 = corner(mother->pos - 0.5 * mother->size).round();
 	co2 = corner(mother->pos + 0.5 * mother->size).round();

@@ -417,7 +417,7 @@ void YevSaber::animate(Frame* space) {
 int YevSaber::handle_damage(SpaceLocation *source, double normal, double direct) {
 	STACKTRACE
 	if (this->state==0) ship->SaberDestroyed=true;
-	return normal + direct;	
+	return iround(normal + direct);	
 }
 
 

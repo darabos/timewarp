@@ -207,7 +207,7 @@ int Quest::l_AddBuckazoids(lua_State*ls)
 	{
 		tw_error ("Wrong argument count for AddBuckazoids");
 	}
-	int money = lua_tonumber(ls, -1);
+	int money = (int)lua_tonumber(ls, -1);
 	g_player->buckazoids += money;
 	return 0;
 }
@@ -280,6 +280,7 @@ int QuestSource::LoadQuestList ( const char* qlist )
 	{
 		tw_error("QuestSuccess failed");
 	};
+	lua_settop(Lquest, top);
 	return true;
 }
 

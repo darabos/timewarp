@@ -168,7 +168,7 @@ void GlathrielSpot::animate(Frame *space)
 	STACKTRACE
 	if (state == 0) return;
 	double r = life_counter/(double)lifetime;
-	int rr = 80 * r * space_zoom;
+	int rr = iround(80 * r * space_zoom);
 	set_trans_blender(0,0,0,255*(1-r)*(1-r));
 	drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 	Vector2 p0 = corner(pos);

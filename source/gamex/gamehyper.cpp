@@ -85,7 +85,7 @@ void HyperFleet::animate(Frame *f)
 {
 	Vector2 s = sprite->size(sprite_index);
 	Vector2 p = corner(pos, s );
-	sprite->draw_character(p.x, p.y, sprite_index, makecol(0,0,0), f);
+	sprite->draw_character(iround(p.x), iround(p.y), sprite_index, makecol(0,0,0), f);
 
 }
 
@@ -177,7 +177,7 @@ AnimationHyper::AnimationHyper(WindowInfo *owininfo, Vector2 opos, SpaceSprite *
 			Vector2 ovisiblerange)
 :
 Animation(0, opos, osprite, first_frame, num_frames,
-		  1000 * (period / (num_frames - first_frame)), depth, 1.0)
+		  iround(1000 * (period / (num_frames - first_frame))), depth, 1.0)
 {
 	level = olevel;
 	wininfo = owininfo;
@@ -195,7 +195,7 @@ Animation(0, opos, osprite, first_frame, num_frames,
 	if (waittime < 0)
 	{
 		// you're within a period.
-		frame_step = -waittime;
+		frame_step = iround(-waittime);
 		//sprite_index = frame1 - Nframes * waittime / period;
 		//if (sprite_index >= frame1 + Nframes)
 			//sprite_index = frame1 + Nframes - 1;
@@ -221,7 +221,7 @@ void AnimationHyper::animate(Frame *space)
 	{
 		//draw(, s * space_zoom, index, space);
 		masked_blit(sprite->get_bitmap(sprite_index), space->surface,
-			0, 0,  p.x, p.y,  s.x, s.y);
+			0, 0,  iround(p.x), iround(p.y),  iround(s.x), iround(s.y));
 	}
 }
 

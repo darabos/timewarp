@@ -118,9 +118,9 @@ SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, in
 		if (scale != 1)
 		{
 			if (vidmem)
-				tmpbmp = create_video_bitmap(bmplist[i]->w * scale, bmplist[i]->h * scale);
+				tmpbmp = create_video_bitmap(iround(bmplist[i]->w * scale), iround(bmplist[i]->h * scale));
 			else
-				tmpbmp = create_bitmap_ex(bpp, bmplist[i]->w * scale, bmplist[i]->h * scale);
+				tmpbmp = create_bitmap_ex(bpp, iround(bmplist[i]->w * scale), iround(bmplist[i]->h * scale));
 
 			stretch_blit(bmplist[i], tmpbmp, 0, 0, bmplist[i]->w, bmplist[i]->h,
 				0, 0, tmpbmp->w, tmpbmp->h);
@@ -258,8 +258,8 @@ void MousePtr::animate(Frame *f)
 	Vector2 P;
 	P = corner(pos);
 
-	x = P.x - 0.5 * w;
-	y = P.y - 0.5 * h;
+	x = iround(P.x - 0.5 * w);
+	y = iround(P.y - 0.5 * h);
 
 	sprite->draw(x, y, 0, f->surface);
 	f->add_box(x, y, w, h);
@@ -273,11 +273,11 @@ void MousePtr::animate(Frame *f)
 
 		P = corner(selection->pos, Vector2(w,h));
 
-		w *= space_zoom;
-		h *= space_zoom;
+		w *= iround(space_zoom);
+		h *= iround(space_zoom);
 
-		rect( f->surface, P.x, P.y, P.x+w, P.y+h, makecol(128,128,0) );
-		f->add_box(P.x, P.y, w, h);
+		rect( f->surface, iround(P.x), iround(P.y), iround(P.x+w), iround(P.y+h), makecol(128,128,0) );
+		f->add_box(iround(P.x), iround(P.y), w, h);
 
 		/*
 		P = uncorner(pos);

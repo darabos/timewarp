@@ -188,6 +188,10 @@ BlockStore::BlockStore()
 {
 }
 
+BlockStore::~BlockStore()
+{
+}
+
 
 void BlockStore::fread(char *fname, int minsize)
 {

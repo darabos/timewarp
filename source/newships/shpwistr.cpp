@@ -9,11 +9,12 @@ REGISTER_FILE
 
 #include "../frame.h"
 
-
+/*
 static double cross_product( Vector2 a, Vector2 b )
 {
 	return a.x*b.y - a.y*b.x;	// this is the z-value of a vector (0,0,z). I assume z-value of a and b = 0
 }
+*/
 
 class WissumTripod : public Ship
 {

@@ -308,7 +308,7 @@ void VezlagariBulkhead::inflict_damage(SpaceObject *other) {
     damage(other, normal, direct);
     //SpaceObject::inflict_damage(other);
     if(creator) {
-      x = 1 - (damageAbsorbed / resilience);
+      x = iround(1 - (damageAbsorbed / resilience));
       if(x<0)x=0;
 		  if(!other->isPlanet()) other->accelerate (other, creator->trajectory_angle(other), creator->specialRepulse / other->mass, MAX_SPEED);
       creator->accelerate (creator, other->trajectory_angle(creator), creator->specialRepulse / creator->mass, MAX_SPEED);

@@ -297,7 +297,7 @@ void showLoadingScreen() {
             float ratio = logo->w / logo->h;
             
             int h = screen->h/4;
-            int w = ratio * h;                
+            int w = iround(ratio * h);                
 
             stretch_blit(logo, screen, 
                 0,0, 
@@ -1657,7 +1657,7 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
             if (type->data->spriteShip) {
                 float r = rotationFrame;
                 float s = type->data->spriteShip->frames();
-                float t = r / s;
+                //float t = r / s;
 
                 fractionRotated = (float)((float)rotationFrame / (float)(type->data->spriteShip->frames()));
             }
@@ -1723,7 +1723,7 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
             stretch_blit(bmp, tmp, 
                          0, 0, bmp->w, bmp->h,
                          0, 0, fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
-                                        fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);/**/
+			 fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);*//*
 			//unload_datafile_object(data);
 
 			/*char obj[32];

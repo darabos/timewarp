@@ -331,7 +331,7 @@ void Mineral::init(char *section, MineralType *t)
 	weight = get_config_int(section, "weight", 1);
 
 
-	sprite_index = weight/5;
+	sprite_index = iround(weight/5);
 	if (sprite_index > 2)
 		sprite_index = 2;
 }
@@ -370,8 +370,8 @@ void Mineral::animate(Frame *f)
 	{
 		//MapObj::animate(frame2);
 		double s = bmpframe2->w / 400.0;
-		int x = pos.x * s / scalesurface - 0.5*sprite->get_bitmap(0)->w;
-		int y = pos.y * s / scalesurface - 0.5*sprite->get_bitmap(0)->h;
+		int x = iround(pos.x * s / scalesurface - 0.5*sprite->get_bitmap(0)->w);
+		int y = iround(pos.y * s / scalesurface - 0.5*sprite->get_bitmap(0)->h);
 		sprite->draw(x, y, sprite_index, bmpframe2);
 	}
 }
@@ -512,8 +512,8 @@ void Lifeform::animate(Frame *f)
 	{
 		//MapObj::animate(frame2);
 		double s = bmpframe2->w / 400.0;
-		int x = pos.x * s / scalesurface - 0.5*sprite->get_bitmap(0)->w;
-		int y = pos.y * s / scalesurface - 0.5*sprite->get_bitmap(0)->h;
+		int x = iround(pos.x * s / scalesurface - 0.5*sprite->get_bitmap(0)->w);
+		int y = iround(pos.y * s / scalesurface - 0.5*sprite->get_bitmap(0)->h);
 		sprite->draw(x, y, sprite_index, bmpframe2);
 	}
 }
@@ -653,7 +653,7 @@ void GamePlanetscan::init()
 
 	int totfrac = 0;
 	for ( i = 0; i < mineraltypelist->N; ++i )
-		totfrac += frac[i];
+		totfrac += iround(frac[i]);
 
 	for ( i = 0; i < mineraltypelist->N; ++i )
 		frac[i] /= totfrac;
@@ -850,8 +850,8 @@ void GamePlanetscan::animate(Frame *frame)
 		// draw the rotating planet, but only if you're not actually
 		// exploring it...
 		int x, y;
-		x = (maparea->backgr->w - rotatingplanet->size.x) / 2;
-		y = (maparea->backgr->h - rotatingplanet->size.y) / 2;
+		x = iround((maparea->backgr->w - rotatingplanet->size.x) / 2);
+		y = iround((maparea->backgr->h - rotatingplanet->size.y) / 2);
 		rotatingplanet->animate_pre();
 		rotatingplanet->get_sprite()->draw(x, y, 0, maparea->backgr);
 
@@ -861,8 +861,8 @@ void GamePlanetscan::animate(Frame *frame)
 		
 		int x, y, w, h;
 
-		w = (map_bmp->w * scalesurface) * space_zoom;
-		h = (map_bmp->h * scalesurface) * space_zoom;
+		w = iround((map_bmp->w * scalesurface) * space_zoom);
+		h = iround((map_bmp->h * scalesurface) * space_zoom);
 
 		x = -space_center.x * space_zoom + 0.5 * space_view_size.x;
 		y = -space_center.y * space_zoom + 0.5 * space_view_size.y;
@@ -886,8 +886,8 @@ void GamePlanetscan::animate(Frame *frame)
 		P /= scalesurface;
 		int d = 5;
 		int c = makecol(250,50,50);
-		hline(bmpframe2, P.x-d, P.y, P.x+d, c);
-		vline(bmpframe2, P.x, P.y-d, P.y+d, c);
+		hline(bmpframe2, iround(P.x-d), iround(P.y), iround(P.x+d), c);
+		vline(bmpframe2, iround(P.x), iround(P.y-d), iround(P.y+d), c);
 
 	}
 
@@ -990,7 +990,7 @@ void GamePlanetscan::handle_ranmin()
 	int N;
 	char txt[512];
 
-	N = random(nmin, nmax);
+	N = random(iround(nmin), iround(nmax));
 
 	for ( i = 0; i < N; ++i )
 	{

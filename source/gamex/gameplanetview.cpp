@@ -340,7 +340,7 @@ void GamePlanetview::calculate()
 
 	// editor stuff
 
-	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
+	ptr->newpos(iround(mouse_x - maparea->pos.x), iround(mouse_y - maparea->pos.y));
 	mapeditor->calculate();
 
 }

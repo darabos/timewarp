@@ -72,7 +72,7 @@ TauDagger::TauDagger(Vector2 opos, double shipAngle, ShipData *shipData, unsigne
 int TauDagger::activate_weapon()
 {
 	STACKTRACE
-	game->add(new TauDaggerBeam(this, Vector2(0,30), weaponRange, weaponDamage, weaponFrameCount, angle));
+	game->add(new TauDaggerBeam(this, Vector2(0,30), weaponRange, weaponDamage, iround(weaponFrameCount), angle));
 	return true;
 }
 

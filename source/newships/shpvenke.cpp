@@ -330,7 +330,7 @@ int VenKekFrigate::activate_special() {
 
 void VenKekFrigate::createThrust(void) {
 	STACKTRACE
-  if(!Thrust==NULL) {
+  if(Thrust!=NULL) {
     Thrust->damage_factor = 1;
     Thrust->armour = 1;
     Thrust->state = 1;

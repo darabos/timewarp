@@ -240,9 +240,9 @@ void XXXAssimilator::calculate()
 
 			TheSpotAngle        = normalize(TheSpotAngle,PI2);
 
-			RelX = (cos(-TheSpotAngle+PI/2) * TheSpotRadius);
+			RelX = iround(cos(-TheSpotAngle+PI/2) * TheSpotRadius);
 
-			RelY = (sin(-TheSpotAngle+PI/2) * TheSpotRadius);
+			RelY = iround(sin(-TheSpotAngle+PI/2) * TheSpotRadius);
 
 
 

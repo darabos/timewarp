@@ -14,7 +14,7 @@ struct MemStore
 	int dsize, maxdata;
 	char *data;
 
-	~MemStore();
+	virtual ~MemStore();
 
 	void reset(int N);
 
@@ -51,6 +51,7 @@ class BlockStore : public MemStore
 public:
 
 	BlockStore();
+	virtual ~BlockStore();
 
 	virtual void fread(char *fname, int minsize);
 

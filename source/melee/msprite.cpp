@@ -377,7 +377,7 @@ Vector2 SpaceSprite::size(int i)  const
 
 SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attributes, int rotations) {
 	STACKTRACE
-	int i, j, obpp;
+	int i, j, obpp=0;
 	BITMAP *bmp, *tmp = NULL;
 
 	if (_attributes == -1) _attributes = string_to_sprite_attributes(NULL);

@@ -294,10 +294,10 @@ void RaceSettlement::animate_map(Frame *f, int imap)
 			
 			P = corner(starmap->sub[istar]->position * starmap->scalepos);
 			
-			R = patrol.range * starmap->scalepos * space_zoom;
+			R = iround(patrol.range * starmap->scalepos * space_zoom);
 			
 			//void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
-			circlefill(bmp, P.x, P.y, R, race->color);
+			circlefill(bmp, iround(P.x), iround(P.y), R, race->color);
 			break;
 		}
 
@@ -312,10 +312,10 @@ void RaceSettlement::animate_map(Frame *f, int imap)
 			
 			P = corner(solarmap->sub[iplanet]->position * solarmap->scalepos);
 			
-			R = 80 * space_zoom;
+			R = iround(80 * space_zoom);
 			
 			//void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
-			circle(bmp, P.x, P.y, R, race->color);
+			circle(bmp, iround(P.x), iround(P.y), R, race->color);
 
 			break;
 		}
@@ -358,9 +358,9 @@ void RaceColony::calculate()
 	if (patrol.range > 100)
 		patrol.range = 100;
 
-	patrol.numsystemfleets = population / 10;
-	patrol.numhyperfleets = population / 1E3;
-	patrol.numcapitalfleets = population / 1E6;
+	patrol.numsystemfleets  = iround(population / 10);
+	patrol.numhyperfleets   = iround(population / 1E3);
+	patrol.numcapitalfleets = iround(population / 1E6);
 }
 
 

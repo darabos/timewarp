@@ -413,25 +413,35 @@ void MapEditor2::check_radius()
 		Rmin = 0.01;
 		Rmax = 0.1;
 	}
+	else
 	if (strcmp(t, "small") == 0)
 	{
 		Rmin = 0.1;
 		Rmax = 0.5;
 	}
+	else
 	if (strcmp(t, "medium") == 0)
 	{
 		Rmin = 0.5;
 		Rmax = 2.0;
 	}
+	else
 	if (strcmp(t, "big") == 0)
 	{
 		Rmin = 2.0;
 		Rmax = 10.0;
 	}
+	else
 	if (strcmp(t, "giant") == 0)
 	{
 		Rmin = 10.0;
 		Rmax = 20.0;
+	}
+	else
+	{
+	  Rmin = 0;
+	  Rmax = 0;
+	  tw_error("Undefined planet type");
 	}
 
 	double R;
@@ -815,7 +825,7 @@ void GameSolarview::calculate()
 
 	// editor stuff
 
-	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
+	ptr->newpos( iround(mouse_x - maparea->pos.x), iround(mouse_y - maparea->pos.y));
 	mapeditor->calculate();
 
 
