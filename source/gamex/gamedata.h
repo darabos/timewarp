@@ -186,7 +186,7 @@ public:
 	PlayerFleet();
 
 	void add(const char *id);
-	void config(bool option);	// use these options: CONF_READ or CONF_WRITE
+	void config();
 };
 
 

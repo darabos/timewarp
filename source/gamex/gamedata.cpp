@@ -47,17 +47,16 @@ void PlayerFleet::add(const char *id)
 }
 
 
-void PlayerFleet::config(bool option)
+void PlayerFleet::config()
 {
 	int i;
 
-	config_read = option;
-
 	section = "Fleet";
+
 	conf("N", N);
 
-	if (option == CONFIG_READ)
-		for (i = 0; i < N; ++i)
+	if (config_read)
+		for ( i = 0; i < N; ++i )
 			fr[i] = new PlayerFleetRec("none");
 
 	for ( i = 0; i < N; ++i )
@@ -73,10 +72,9 @@ void PlayerFleet::config(bool option)
 
 void PlayerInfo::config(char *filename, bool option)
 {
-	//configfilename = filename;
-	set_conf(filename);
 
-	config_read = option;
+	set_conf(filename, option);
+
 	section = 0;
 
 	conf("PosX", pos.x);
@@ -94,7 +92,8 @@ void PlayerInfo::config(char *filename, bool option)
 	conf("player", playername, "nobody");
 	conf("ship", shipname, "dustbin");
 	
-	fleet.config(option);
+	fleet.config();
+
 }
 
 

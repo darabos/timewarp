@@ -52,20 +52,24 @@ void play_fg(DATAFILE **scp, int scpguimusic, const char *id)
 char new_init_dir[512];
 char new_source_dir[512];
 char new_target_dir[512];
+char new_temp_dir[512];
 
 void ProjectX::init()
 {
 	GameProject::init();
 
 	// setup directories for default/ loading/ saving.
-	strcpy(new_init_dir, "gamex");
+	strcpy(new_init_dir, "gamex/gamedata");
 	init_dir = new_init_dir;
 
-	strcpy(new_source_dir, "gamex");
+	strcpy(new_source_dir, "gamex/save/save01");
 	source_dir = new_source_dir;
 
-	strcpy(new_target_dir, "gamex"); // /save/save01");
+	strcpy(new_target_dir, "gamex/save/save01");
 	target_dir = new_target_dir;
+
+	strcpy(new_temp_dir, "gamex/save/temp");
+	temp_dir = new_temp_dir;
 
 
 

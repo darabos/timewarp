@@ -83,6 +83,7 @@ GameBare()
 {
 	dialo = 0;
 	racefile[0] = 0;
+	dialofilename[0] = 0;
 }
 
 
@@ -229,7 +230,7 @@ void GameAliendialog::init()
 
 	if (!dialo)
 	{
-		set_dialog("gamex/gamedata/races/earthling/colony.dialog");
+		set_dialog("races/earthling/colony.dialog");
 		race_id = "earthling";
 	}
 
@@ -272,19 +273,9 @@ void GameAliendialog::init()
 
 
 
-char constr_savename_return[512];
-char *construct_savename(char *savename, char *ext)
-{
-	char *fname = constr_savename_return;
 
-	strcpy(fname, target_dir);
-	strcat(fname, "/");
-	strcat(fname, savename);
-	strcat(fname, ".");
-	strcat(fname, ext);
 
-	return fname;
-}
+
 
 void GameAliendialog::quit()
 {
@@ -301,12 +292,19 @@ void GameAliendialog::quit()
 
 	lua_close(L);
 
-//	FILE *outfile = savefile("...../... .dialogstate");
-//	firstdialo->save_state(outfile);
+	// save the dialog node states
+	FILE *outfile = getsavefile( replext(dialofilename, "bin") );
+	if (outfile)
+	{
+		firstdialo->save_state(outfile);
+		fclose(outfile);
+	}
 
 	// stop the ttf
-//	antialias_exit();
+	// or, should this be part of the twgui code ??
 	//destroy_font(ttf);
+
+	delete fs;
 }
 
 
@@ -539,7 +537,7 @@ void GameAliendialog::set_colony(RaceColony *rc)
 	// load the dialog for this colony ?!
 
 	char fname [512];
-	strcpy(fname, "gamex/gamedata/races/");
+	strcpy(fname, "races/");
 	strcat(fname, rc->race->id);
 	strcat(fname, "/");
 	strcat(fname, rc->dialogname);
@@ -554,12 +552,23 @@ void GameAliendialog::set_colony(RaceColony *rc)
 void GameAliendialog::set_dialog(char *fname)
 {
 	// read the root branch !!
-	fs = new FileStore(fname);
+	strcpy(dialofilename, fname);
+	fs = new FileStore(construct_loadname(fname));
 	firstdialo = new Dialo();
 
 	firstdialo->read(fs);
 
 	dialo = firstdialo;
+
+
+	// load/overwrite the dialog node states
+	FILE *inpfile = getloadfile( replext(fname, "bin") );
+	if (inpfile)
+	{
+		firstdialo->read_state(inpfile);
+		fclose(inpfile);
+	}
+
 }
 
 

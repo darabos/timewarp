@@ -8,7 +8,7 @@
 
 #include "edit/disk_stuff.h"
 
-#include "../twgui/twgui.h"
+#include "twgui.h"
 
 #include "../other/luaport.h"
 
@@ -65,6 +65,8 @@ public:
 	void set_dialog(char *fname);
 
 	Dialo *firstdialo;
+
+	char dialofilename[512];
 };
 
 

@@ -837,7 +837,8 @@ void GamePlanetscan::init()
 
 	
 	//size = Vector2(H, H*tempframe->ratio);
-	size = surf_area->size;	// the planet surface has that many pixels.
+	size.x = surf_area->size.x;	// the planet surface has that many pixels.
+	size.y = surf_area->size.y;
 	size *= scalesurface;		// the planet surface is "extra big" for melee-type purpose
 	prepare();
 

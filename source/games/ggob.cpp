@@ -355,7 +355,7 @@ void GobGame::init(Log *_log) {
 	if (!lag_frames)
 	{
 		// check a menu to see what the player wants ... how ??
-		ichoice = tw_alert("Continue game?", "&YES", "&NO");
+		ichoice = tw_alert("Continue saved game?", "&YES", "&NO");
 	}
 
 	if (ichoice == 2)

@@ -26,8 +26,7 @@ REGISTER_FILE
 #include "stuff/space_body.h"
 #include "stuff/backgr_stars.h"
 
-#include "../twgui/twgui.h"
-#include "../twgui/twpopup.h"
+#include "twgui.h"
 
 #include "general/sprites.h"
 

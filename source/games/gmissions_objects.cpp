@@ -18,7 +18,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include "../util/aastr.h"
 
 
-#include "../twgui/twgui.h"
+#include "twgui.h"
 
 #include "gmissions_objects.h"
 

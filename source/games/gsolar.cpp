@@ -91,7 +91,7 @@ public:
 
 void distribute_time_ran(double *x, int N, double xmax)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	int i;
 	int imax = 1000;
@@ -142,7 +142,7 @@ Missile( oship,opos, oangle, ov, odamage, orange, 0, oship,
 
 void CometPlasma::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	
 	
@@ -183,7 +183,7 @@ void CometPlasma::calculate()
 
 void CometPlasma::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	
 	SpaceObject::inflict_damage(other);
@@ -194,7 +194,7 @@ void CometPlasma::inflict_damage(SpaceObject *other)
 
 int CometPlasma::handle_damage(SpaceLocation *source, int normal, int direct)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	
 	int total = normal + direct;
@@ -233,7 +233,7 @@ SpaceObject(NULL, p, 0.0, sprite_comet)
 
 
 void Comet::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	STACKTRACE;
 
 	int i = 1;
 	if (other->isShip()) {
@@ -251,7 +251,7 @@ void Comet::inflict_damage(SpaceObject *other) {
 
 
 void Comet::calculate() {
-	STACKTRACE
+	STACKTRACE;
 
 	SpaceObject::calculate();
 	
@@ -314,7 +314,7 @@ void Comet::calculate() {
 
 void Solar::init_comets ()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	
 
@@ -376,7 +376,7 @@ void Solar::init_comets ()
 
 SpaceSprite *Solar::GetSprite(char *fileName, char *spriteName)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	char msgStr[100];
 	DATAFILE *tmpdata;
@@ -405,7 +405,7 @@ SpaceSprite *Solar::GetSprite(char *fileName, char *spriteName)
 
 bool Solar::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	SpaceSprite *spr;
 	char dataStr[100];
@@ -428,7 +428,7 @@ bool Solar::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int nu
 
 void Solar::init_objects()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	add(new Stars());
 	char starName[100];

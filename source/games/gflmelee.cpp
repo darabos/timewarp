@@ -46,6 +46,9 @@ REGISTER_FILE
 
 #include "../melee/mlog.h"
 
+#include "twgui.h"
+
+
 
 #define Num_Planet_Pics 7
 
@@ -1968,8 +1971,6 @@ void ImIndicator::animate(Frame *frame)
 	frame->add_box(S.x, S.y, iw, ih);
 }
 
-
-#include "../twgui/twgui.h"
 
 void FlMelee::start_menu(int *select)
 {

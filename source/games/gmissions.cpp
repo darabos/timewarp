@@ -20,8 +20,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 
 #include "gamehierarchy.h"
 
-#include "../twgui/twgui.h"
-#include "../twgui/twmenuexamples.h"
+#include "twgui.h"
 
 #include "gflmelee.h"
 #include "gmissions_objects.h"

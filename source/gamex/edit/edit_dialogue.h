@@ -7,8 +7,7 @@
 
 #include "disk_stuff.h"
 
-#include "../../twgui/twgui.h"
-#include "../../twgui/twmenuexamples.h"
+#include "twgui.h"
 
 const int Ntext = 2048;
 const int maxbranches = 16;

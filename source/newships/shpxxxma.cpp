@@ -229,63 +229,65 @@ int XXXMangler::activate_special()
 
 void XXXMangler::calculate()
 {
-	STACKTRACE
-
-   if(tentacleFrames > 0) {
-		 
-     tentacleFrames -= frame_time;
-     if ((tentacleFrames <= 0) && (!latched)) {
-       play_sound2(data->sampleWeapon[0]);
-      }
+	STACKTRACE;
+	
+	if(tentacleFrames > 0) {
+		
+		tentacleFrames -= frame_time;
+		if ((tentacleFrames <= 0) && (!latched)) {
+			play_sound2(data->sampleWeapon[0]);
+		}
     }
-   else latched = FALSE;
-
-
-   if (grabbed != NULL ) {
-
-			// additional criteria here: as suggested by Tau
-
-			 if (!grabbed ->exists() || !grabbed->canCollide(this)) {
-				 latched = FALSE;
-				 grabbed = NULL;
-			 }
-
-		 }
-
-
-   if (latched) {
-		  recharge_step=0;
-			recharge_rate=999;
-			recharge_amount=0;
-
-      damageFrameLeft-=frame_time;
-      if (damageFrameLeft <=0) {
-        damageFrameLeft += damageFrameAmount;
-        if (tentacleDamageLeft < tentacleDamagePerDamageFrame)
-          damage (grabbed, tentacleDamageLeft);
-        else {
-          damage (grabbed, tentacleDamagePerDamageFrame);
-          tentacleDamageLeft -= tentacleDamagePerDamageFrame; }
-        }
-      grabangle = grabbed->get_angle() - grabshipangle + grabangle;
-			grabangle = normalize(grabangle,PI2);
-      angle=grabangle;
-      grabshipangle = normalize(grabbed->get_angle(),PI2);
-
-      nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special | keyflag::fire);
-
-//      x = grabbed->normal_x()- (cos(grabangle ) * grabdistance);
-//      y = grabbed->normal_y()- (sin(grabangle ) * grabdistance);
-
-	  pos = grabbed->normal_pos() - grabdistance * unit_vector(grabangle);
-      
-		 } else {
-				recharge_rate=normal_rate;
-				recharge_amount=normal_recharge;
-
-				SeparateSpit=TRUE;
-
-			 }
+	else latched = FALSE;
+	
+	
+	if (grabbed != NULL )
+	{
+		
+		// additional criteria here: as suggested by Tau
+		
+		if (!grabbed ->exists() || !grabbed->canCollide(this))
+		{
+			latched = FALSE;
+			grabbed = NULL;
+		}
+		
+	}
+	
+	
+	if (latched) {
+		recharge_step=0;
+		recharge_rate=999;
+		recharge_amount=0;
+		
+		damageFrameLeft-=frame_time;
+		if (damageFrameLeft <=0) {
+			damageFrameLeft += damageFrameAmount;
+			if (tentacleDamageLeft < tentacleDamagePerDamageFrame)
+				damage (grabbed, tentacleDamageLeft);
+			else {
+				damage (grabbed, tentacleDamagePerDamageFrame);
+				tentacleDamageLeft -= tentacleDamagePerDamageFrame; }
+		}
+		grabangle = grabbed->get_angle() - grabshipangle + grabangle;
+		grabangle = normalize(grabangle,PI2);
+		angle=grabangle;
+		grabshipangle = normalize(grabbed->get_angle(),PI2);
+		
+		nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special | keyflag::fire);
+		
+		//      x = grabbed->normal_x()- (cos(grabangle ) * grabdistance);
+		//      y = grabbed->normal_y()- (sin(grabangle ) * grabdistance);
+		
+		pos = grabbed->normal_pos() - grabdistance * unit_vector(grabangle);
+		
+	} else {
+		recharge_rate=normal_rate;
+		recharge_amount=normal_recharge;
+		
+		SeparateSpit=TRUE;
+		
+	}
 
 //   int j = 0;
 //
@@ -298,11 +300,12 @@ void XXXMangler::calculate()
 
    Ship::calculate();
 
+    angle = normalize(angle);
 
 }
 int XXXMangler::canCollide(SpaceObject *other)
 {
-	STACKTRACE
+	STACKTRACE;
   if ((latched) && (grabbed!=NULL) && (grabbed->exists())) {
     if (grabbed == other)
       return (FALSE);
@@ -312,12 +315,11 @@ int XXXMangler::canCollide(SpaceObject *other)
  
 void XXXMangler::animate(Frame *space)
 {
-	STACKTRACE
+	STACKTRACE;
   BodyFrames -= frame_time * 5;
 
   if ((tentacleFrames > 0) && (latched)) {
     int RandFrame = rand() % 4;
-    angle = normalize(ship->get_angle(),PI2);
 //    double TentacleX = ship->normal_x() + (cos(angle ) * height() * .75);
 //    double TentacleY = ship->normal_y() + (sin(angle ) * width()  * .75);
 
@@ -348,38 +350,45 @@ void XXXMangler::animate(Frame *space)
 
 void XXXMangler::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
-  if (tentacleFrames > 0)
-    if (!latched)
-      if ((!(sameTeam(other))) &&
-        (other->isShip())) {
-          latched=TRUE;
-
-          grabbed= (Ship *) other;
-          grabangle= (trajectory_angle(other) );
-          grabdistance = (distance(other) * 1.075);
-          grabshipangle = (other->get_angle());
-          tentacleDamageLeft = weaponDamage;
-          play_sound2(data->sampleExtra[1]);
-          if ((tentacleFrames / frame_time)< weaponDamage) {
-            tentacleDamagePerDamageFrame = (weaponDamage/tentacleFrames)
-              + ((weaponDamage % tentacleFrames) > 0.00001);
-            damageFrameLeft = 1;
-            damageFrameAmount = 1;
-          } else {
-            damageFrameAmount = (tentacleFrames/weaponDamage);
-            damageFrameLeft = damageFrameAmount;
-            tentacleDamagePerDamageFrame = 1;
-            }
-    }
-		if (SeparateSpit) {
-				if (other != NULL)
-					if (!sameTeam(other) && other->isShip())
-						other->accelerate (other, angle, weaponDartThrust  / (other->mass / 20), MAX_SPEED);
-				accelerate(this,angle+PI,weaponDartThrust  / mass,MAX_SPEED);
-				SeparateSpit = false;
+	STACKTRACE;
+	if (tentacleFrames > 0)
+	{
+		if (!latched)
+		{
+			if ((!(sameTeam(other))) &&
+				(other->isShip())) {
+				latched=TRUE;
+				
+				grabbed= (Ship *) other;
+				grabangle= (trajectory_angle(other) );
+				grabdistance = (distance(other) * 1.075);
+				grabshipangle = (other->get_angle());
+				tentacleDamageLeft = weaponDamage;
+				play_sound2(data->sampleExtra[1]);
+				if ((tentacleFrames / frame_time)< weaponDamage) {
+					tentacleDamagePerDamageFrame = (weaponDamage/tentacleFrames)
+						+ ((weaponDamage % tentacleFrames) > 0.00001);
+					damageFrameLeft = 1;
+					damageFrameAmount = 1;
+				} else {
+					damageFrameAmount = (tentacleFrames/weaponDamage);
+					damageFrameLeft = damageFrameAmount;
+					tentacleDamagePerDamageFrame = 1;
+				}
 			}
-  Ship::inflict_damage(other);
+		}
+	}
+	
+	if (SeparateSpit)
+	{
+		if (other != NULL)
+			if (!sameTeam(other) && other->isShip())
+				other->accelerate (other, angle, weaponDartThrust  / (other->mass / 20), MAX_SPEED);
+			accelerate(this,angle+PI,weaponDartThrust  / mass,MAX_SPEED);
+			SeparateSpit = false;
+	}
+
+	Ship::inflict_damage(other);
 }
 
 
