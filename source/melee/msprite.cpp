@@ -16,6 +16,443 @@ REGISTER_FILE
 
 #include "mview.h"
 
+BITMAP *bmp_rot(BITMAP *ref, double a);
+
+bool showshademaps = false;
+
+const int RotAngles = 64;	// number of rotation-angles
+const int RotSize = 128;	// max size of the image, should be a power of 2 ?
+int xy_rotation_table[2*RotAngles*RotSize*RotSize];
+
+bool initialized_rotations = false;
+void init_rotation_table();
+
+bool use_shademaps = false;
+
+
+
+// should really be an array of angles/factors
+BITMAP *SpaceSprite::add_shades(BITMAP *ref, double amb, Light *light, int Nlights, double ref_angle)
+{
+	if (!shademap)
+		return 0;
+
+	int w, h;
+
+
+	w = ref->w;
+	h = ref->h;
+
+	if (w > 125 || h > 125)
+		return 0;
+
+	double *totlight = new double [w*h];	// rough first version, should be r,g,b
+
+	int ilight;
+	for ( ilight = 0; ilight < Nlights; ++ilight )
+	{
+		double a = light[ilight].angle + ref_angle;
+		while (a < 0)
+			a += PI2;
+		while (a >= PI2)
+			a -= PI2;
+
+		int index;
+		index = a * count / PI2;
+
+		//message.print(1500, 15, "index[%i]", index);
+
+		int k;
+		k = index * w * h;
+
+		int m = 0;
+
+		int ix, iy;
+		for ( iy = 0; iy < h; ++iy )
+		{
+			for ( ix = 0; ix < w; ++ix )
+			{
+				if (ilight == 0)
+					totlight[m] = 0;
+
+				totlight[m] += light[ilight].intensity * shademap[k];
+
+				++k;
+				++m;
+			}
+		}
+	}
+
+	BITMAP *dest = create_bitmap_ex(32, w, h);
+	clear_to_color(dest, makecol(255,0,255));
+
+	int m;
+	m = 0;
+
+	int ix, iy;
+	for ( iy = 0; iy < h; ++iy )
+	{
+		for ( ix = 0; ix < w; ++ix )
+		{
+			// only needed to skip transparent colors.
+			int col;
+			col = getpixel(ref, ix, iy);
+			if (col == makecol(255,0,255))
+			{
+				++m;
+				continue;
+			}
+			
+			// the average (or reference, ambient-only image), and the extra
+			// lights hitting the ship (casting shadows)
+			int r, g, b;
+			r = amb*rmap[m] + totlight[m] * rmap[m];
+			g = amb*gmap[m] + totlight[m] * gmap[m];
+			b = amb*bmap[m] + totlight[m] * bmap[m];
+
+			if (r > 255) r = 255;
+			if (g > 255) g = 255;
+			if (b > 255) b = 255;
+
+			putpixel(dest, ix, iy, makecol(r, g, b));
+
+			++m;
+		}
+	}
+
+	delete[] totlight;
+
+	return dest;
+}
+
+
+void SpaceSprite::init_shademaps()
+{
+	if (!initialized_rotations)
+	{
+		initialized_rotations = true;
+		init_rotation_table();
+	}
+
+	
+	shademap = new double [count * w * h];
+
+	// the reference intensity of the different colors, needed to scale the
+	// light that falls on the ship.
+	rmap = new double [w * h];
+	gmap = new double [w * h];
+	bmap = new double [w * h];
+
+	int n;
+
+	int k;
+
+
+	// first, create an average intensity map of the ship:
+	double *Iref = new double [w*h];
+
+	for ( n = 0; n < count; ++n )
+	{
+		k = 0;
+		BITMAP *bmp = bmp_rot(b[0][n], -n*PI2/count);
+
+		int ix, iy;
+		for ( iy = 0; iy < h; ++iy )
+		{
+			for ( ix = 0; ix < w; ++ix )
+			{
+				int col;
+				col = getpixel(bmp, ix, iy);
+
+				int r, g, b;
+				r = getr(col);
+				g = getg(col);
+				b = getb(col);
+
+				double t;
+				if (r == 255 && g == 0 && b == 255)
+				{
+					r = 0;
+					g = 0;
+					b = 0;
+				}
+
+				t = r + g + b;
+
+				if (n == 0)
+				{
+					Iref[k] = 0;
+					rmap[k] = 0;
+					gmap[k] = 0;
+					bmap[k] = 0;
+				}
+
+				Iref[k] += t/3;
+
+				rmap[k] += r;
+				gmap[k] += g;
+				bmap[k] += b;
+
+				if (n == count-1)
+				{
+					Iref[k] /= count;
+					rmap[k] /= 256 * count;		// scaled between 0 and 1
+					gmap[k] /= 256 * count;
+					bmap[k] /= 256 * count;
+				}
+
+				++k;
+			}
+		}
+
+		destroy_bitmap(bmp);
+	}
+
+	// visual test
+	BITMAP *bmp_av = create_bitmap_ex(32, b[0][0]->w, b[0][0]->h);	
+
+	// create rotated shade maps from the images in the .dat file.
+	k = 0;
+	for ( n = 0; n < count; ++n )
+	{
+		BITMAP *bmp = bmp_rot(b[0][n], -n*PI2/count);
+
+		BITMAP *test = create_bitmap_ex(32, bmp->w, bmp->h);
+		clear_to_color(test, 0);
+
+		int m = 0;
+		int ix, iy;
+		for ( iy = 0; iy < h; ++iy )
+		{
+			for ( ix = 0; ix < w; ++ix )
+			{
+				//int refcol;
+				//refcol = getpixel(b[0][0], ix, iy);
+
+				int newcol;
+				newcol = getpixel(bmp, ix, iy);
+
+				double t1, t2;
+
+				int r, g, b;
+				r = getr(newcol);
+				g = getg(newcol);
+				b = getb(newcol);
+
+				if (r == 255 && g== 0 && b == 255)	// transparent color.
+				{
+					shademap[k] = 0;
+					++k;
+					++m;
+					continue;
+				}
+
+				t1 =  r + g + b;
+				//t2 = getr(refcol) + getg(refcol) + getb(refcol);
+				t2 = Iref[m] * 3;
+
+				shademap[k] = t1 / t2;
+
+
+				// for testing
+				int c = 150*shademap[k];
+				if (c > 255) c = 255;
+				putpixel(test, ix, iy, makecol(c,c,c));
+
+				c = Iref[m];
+				putpixel(bmp_av, ix, iy, makecol(c,c,c));
+				// end testing
+
+				++k;
+				++m;
+			}
+		}
+
+		// test is disabled
+		if (false && showshademaps && bmp->w > 60)
+		{
+			int x = 120;
+			blit(b[0][0], screen, 0, 0, x,100, bmp->w, bmp->h);
+			x += bmp->w;
+			blit(bmp, screen, 0, 0, x,100, bmp->w, bmp->h);
+			x += bmp->w;
+			blit(bmp_av, screen, 0, 0, x,100, bmp->w, bmp->h);
+			x += bmp->w;
+			blit(test, screen, 0, 0, x,100, bmp->w, bmp->h);
+			readkey();
+		}
+
+		destroy_bitmap(bmp);
+	}
+
+	destroy_bitmap(bmp_av);
+
+	delete[] Iref;
+
+
+	/* this does not work well - it's too unstable, cause the
+	original data suck
+	// enhance shadows, cause often they're hardly visible !!!!
+
+	double min = 1E6;
+	double max = 0;
+	for ( k = 0; k < count*w*h; ++k )
+	{
+		if (shademap[k] > 0)
+		{
+			if (shademap[k] < min)
+				min = shademap[k];
+			if (shademap[k] > max)
+				max = shademap[k];
+		}
+	}
+	
+	if (showshademaps && w > 60)
+	{
+		int x = 1;
+	}
+
+	if (max > 1)
+		max = 1;
+
+	for ( k = 0; k < count*w*h; ++k )
+	{
+		shademap[k] = (shademap[k] - min) / (max - min);
+	}
+	*/
+}
+
+
+void SpaceSprite::destroy_shademaps()
+{
+	delete[] shademap;
+}
+
+
+//const int RotAngles = 64;	// number of rotation-angles
+//const int RotSize = 128;	// max size of the image, should be a power of 2 ?
+//int xy_rotation_table[2*RotAngles*RotSize*RotSize];
+
+//bool initialized_rotations = false;
+void init_rotation_table()
+{
+	int w = RotSize / 2;
+
+	int k = 0;
+
+	int ia;
+	for (ia = 0; ia < RotAngles; ++ia)
+	{
+		double a = ia * PI2 / RotAngles;
+
+		int ix, iy;
+		for ( iy = -w; iy < w; ++iy )
+		{
+			for ( ix = -w; ix < w; ++ix )
+			{
+				double x, y;
+				x = ix + 0.5;
+				y = iy + 0.5;
+
+				int px, py;
+				px = iround( x * cos(-a) - y * sin(-a) );
+				py = iround( y * cos(-a) + x * sin(-a) );
+
+				xy_rotation_table[k] = px;
+				++k;
+
+				xy_rotation_table[k] = py;
+				++k;
+			}
+		}
+	}
+	
+}
+
+
+BITMAP *bmp_rot(BITMAP *ref, double a)
+{
+	if (!ref)
+		return 0;
+	
+	while (a < 0)
+		a += PI2;
+	while (a >= PI2)
+		a -= PI2;
+
+	if (!initialized_rotations)
+	{
+		initialized_rotations = true;
+		init_rotation_table();
+	}
+
+	int w, h;
+	w = ref->w;
+	h = ref->h;
+
+	BITMAP *dest;
+	dest = create_bitmap_ex(32, w, h);
+	clear_to_color(dest, makecol(255,0,255));
+
+
+	if (w > RotSize || h > RotSize)
+	{
+		blit(ref, dest, 0, 0, 0, 0, w, h);
+		return dest;
+	}
+
+	// rotate a bitmap ...
+
+	int ia;
+	ia = iround(a * 64 / PI2);
+	
+	if (ia < 0)
+		ia = 0;
+	
+	if (ia > RotAngles - 1)
+		ia = RotAngles - 1;
+
+	int k;
+	k = 2 * ia*RotSize*RotSize;
+
+	// the default rotation picture is usually too big - get the difference here.
+	int dx1, dy1, dx2, dy2;
+	dx1 = (RotSize - w) / 2;
+	dy1 = (RotSize - h) / 2;
+	dx2 = RotSize - w - dx1;
+	dy2 = RotSize - h - dy1;
+
+	k += 2 * dy1 * RotSize;
+
+	int ix, iy;
+	for ( iy = 0; iy < h; ++iy )
+	{
+		k += 2 * dx1;
+
+		for ( ix = 0; ix < w; ++ix )
+		{
+			int px, py;
+			px = xy_rotation_table[k] + w/2;
+			++k;
+			py = xy_rotation_table[k] + h/2;
+			++k;
+
+			if (px > 0 && px < w && py > 0 && py < h)
+			{
+				int col;
+				col = getpixel(ref, px, py);
+				putpixel(dest, ix, iy, col);
+			}
+		}
+
+		k += 2 * dx2;
+	}
+
+
+	return dest;
+}
+
+
 int tw_aa_mode = 0;
 void set_tw_aa_mode ( int a) {
 	tw_aa_mode = a;
@@ -380,6 +817,8 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	int i, j, obpp=0;
 	BITMAP *bmp, *tmp = NULL;
 
+	shademap = 0;
+
 	if (_attributes == -1) _attributes = string_to_sprite_attributes(NULL);
 
 	count = sprite_count * rotations;
@@ -518,6 +957,10 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			}
 		}*/
 	}
+
+
+	if (use_shademaps)
+		init_shademaps();
 
 	return;//end of normal/masked/autorotated
 
@@ -893,6 +1336,8 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, BITMAP *surface) {
 	return;
 }
 
+#include "mgame.h"
+
 void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 	STACKTRACE
 	if (index >= count) {tw_error("SpaceSprite::draw - index %d > count %d", index, count); index = 0;}
@@ -905,8 +1350,31 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 	int ix, iy, iw, ih;
 	//if (ix >= frame->frame->w) return;
 	//if (iy >= frame->frame->h) return;
+	
 	int mip = find_mip_level(size.x / this->w, highest_mip);
-	BITMAP *bmp = b[mip][index];
+	BITMAP *bmp = 0;
+	if (use_shademaps)
+	{
+		int mip = 0;
+		
+		Light light[2];
+		
+		light[0].angle = 0.0;//random(PI2);//PI2 * frame_time * 1E-3;
+		light[0].intensity = 0;
+		
+		light[1].angle = (game->game_time/10000.0) * PI2;
+		light[1].intensity = 200;
+		//	message.print(1500, 15, "angle[%i]", int(light[1].angle * 180 / PI));
+		
+		double ambient = 0.0;
+		
+		BITMAP *tmp = add_shades(b[mip][0], ambient, light, 2, index * PI2 / 64.0);
+		bmp = bmp_rot(tmp, index*PI2/64.0 );//b[mip][index];
+		destroy_bitmap(tmp);
+	} else
+		bmp = b[mip][index];
+	if (!bmp) return;
+
 	aa_set_mode(find_aa_mode(general_attributes));
 	if (tw_aa_mode & AA_NO_ALIGN) {
 		ix = iround_down(pos.x);
@@ -925,6 +1393,10 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 			ix, iy, iw, ih);
 	}
 	frame->add_box(ix, iy, iw, ih);
+
+	if (use_shademaps)
+		destroy_bitmap(bmp);
+
 	return;
 }
 
