@@ -11,4 +11,11 @@
 *.lib
 *.a
 
+#temporary visual c++ files
+*.ncb
+*.opt
 
+#other files that we probably don't want
+*.old
+old.*
+*.tmp
