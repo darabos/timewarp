@@ -194,11 +194,11 @@ void SampleGame2::init(Log *_log) {
 	log_int(channel_server, i);
 	//necessary for networking... because i would otherwise be different on the 2 computers...
 	//channel_server is used instead of channel_client becaues we want the servers value to override the clients
-	if (i == -1) i = random(fleet.size);
+	if (i == -1) i = random(fleet.getSize());
 	//handles the case where random or always random was used
 
 	//now we're back to the way we were in SampleGame1 for a little bit
-	Ship *s = create_ship(fleet.ship[i]->id, c, Vector2(size.x/2 + 100, size.y), 0, humans);
+	Ship *s = create_ship(fleet.getShipType(i)->id, c, Vector2(size.x/2 + 100, size.y), 0, humans);
 	add(s->get_ship_phaser());
 
 	add_focus(s, channel_server);
@@ -243,8 +243,8 @@ void SampleGame2::init(Log *_log) {
 		//we can re-use the same fleet, since we never modified it and both players use the same fleet
 		i = c->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
 		log_int(channel_client, i);
-		if (i == -1) i = random() % fleet.size;
-		Ship *s = create_ship(fleet.ship[i]->id, c, size/2+Vector2(100,0), PI, humans);
+		if (i == -1) i = random() % fleet.getSize();
+		Ship *s = create_ship(fleet.getShipType(i)->id, c, size/2+Vector2(100,0), PI, humans);
 		add(s->get_ship_phaser());
 		add_focus(s, channel_client);
 		ShipPanel *sp = new ShipPanel(s);
@@ -343,8 +343,8 @@ void SampleGame3::pick_new_ships() {
 	//player 1 selects a new ship
 	i = human_control[0]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % reference_fleet->size;
-	Ship *s = create_ship(reference_fleet->ship[i]->id, human_control[0], size/2 + Vector2(100, 0), 0, human_team);
+	if (i == -1) i = random() % reference_fleet->getSize();
+	Ship *s = create_ship(reference_fleet->getShipType(i)->id, human_control[0], size/2 + Vector2(100, 0), 0, human_team);
 	add(s->get_ship_phaser());
 	//notice that we DON'T call add_focus on the ship here?
 	//that's because there's a focus on the ships controller already
@@ -363,8 +363,8 @@ void SampleGame3::pick_new_ships() {
 		log_file("fleets/all.scf");
 		i = human_control[1]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
 		log_int(channel_client, i);
-		if (i == -1) i = random() % reference_fleet->size;
-		Ship *s = create_ship(reference_fleet->ship[i]->id, human_control[1], size/2 + Vector2(100, 0), 180, human_team);
+		if (i == -1) i = random() % reference_fleet->getSize();
+		Ship *s = create_ship(reference_fleet->getShipType(i)->id, human_control[1], size/2 + Vector2(100, 0), 180, human_team);
 		add(s->get_ship_phaser());
 		ShipPanel *sp = new ShipPanel(s);
 		sp->window->init(window);

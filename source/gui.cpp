@@ -690,44 +690,44 @@ int d_tw_yield_proc(int msg, DIALOG *d, int c)
 
 
 
-char *genericListboxGetter(int index, int *list_size, char **list) 
+char *genericListboxGetter(int index, int *list_size, char **_list) 
 {
   if(index < 0) {
 		index = 0;
-		while (list[index]) index += 1;
+		while (_list[index]) index += 1;
     *list_size = index;
     return NULL;
   } else {
-    return(list[index]);
+    return(_list[index]);
   }
 }
 char *shipListboxGetter(int index, int *list_size)
 {
   if(index < 0) {
-    *list_size = reference_fleet->size;
+    *list_size = reference_fleet->getSize();
     return NULL;
   } else
-	  if (reference_fleet->ship[index]) return (char *) reference_fleet->ship[index]->name;
+	  if (reference_fleet->getShipType(index)) return (char *) reference_fleet->getShipType(index)->name;
 	  else return "(none)";
 }
 char *shippointsListboxGetter(int index, int *list_size)
 {
 	static char buffy[256];
 	if(index < 0) {
-		*list_size = reference_fleet->size;
+		*list_size = reference_fleet->getSize();
 		return NULL;
 	} else {
-		sprintf(buffy, "%3d %s", reference_fleet->ship[index]->cost, reference_fleet->ship[index]->name);
+		sprintf(buffy, "%3d %s", reference_fleet->getShipType(index)->cost, reference_fleet->getShipType(index)->name);
 	}
 	return buffy;
 }
 char *fleetListboxGetter(int index, int *list_size, Fleet *fleet)
 {
   if(index < 0) {
-    *list_size = fleet->size;
+    *list_size = fleet->getSize();
     return NULL;
   } else
-	  if (fleet->ship[index]) return (char *) fleet->ship[index]->name;
+	  if (fleet->getShipType(index)) return (char *) fleet->getShipType(index)->name;
 	  else return "(none)";
 }
 char *fleetpointsListboxGetter(int index, int *list_size, Fleet *fleet)
@@ -737,8 +737,8 @@ char *fleetpointsListboxGetter(int index, int *list_size, Fleet *fleet)
     *list_size = MAX_FLEET_SIZE;
     return NULL;
   } else
-	  if (fleet->ship[index]) {
-		  sprintf(buffy, "%3d %s", fleet->ship[index]->cost, fleet->ship[index]->name);
+	  if (fleet->getShipType(index)) {
+		  sprintf(buffy, "%3d %s", fleet->getShipType(index)->cost, fleet->getShipType(index)->name);
 		  return buffy;
 	  }
 	  else return "(none)";

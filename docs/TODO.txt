@@ -17,6 +17,15 @@ Expected completetion values are: ?? (unknown, for unassigned tasks), an actual 
 
 ----------------------------------------------------------
 
+Add a title "Star Control: Timewarp" to the title screen.
+
+Show the version number in the title screen.
+
+Show "Selecting ships" when playing over a multiplayer game and the remote player is selecting a ship.
+
+
+
+
 Task #: 10002
 Status: assigned
 Task: determine the minimal set of library files is and get rid of the rest, including .dll, .lib and .a files.

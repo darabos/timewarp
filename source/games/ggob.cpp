@@ -904,9 +904,9 @@ void RainbowRift::calculate() {
 				int i = 0;
 				i = p->control->choose_ship(game->window, "You found the Rainbow Rift!", reference_fleet);
 				game->log_int(p->channel, i);
-				if (i == -1) i = random(reference_fleet->size);
+				if (i == -1) i = random(reference_fleet->getSize());
 				game->redraw();
-				if (reference_fleet->ship[i] == p->ship->type) {
+				if (reference_fleet->getShipType(i) == p->ship->type) {
 					p->starbucks += random() % 80;
 					p->buckazoids += random() % 80;
 					game->add(new RainbowRift());
@@ -914,7 +914,7 @@ void RainbowRift::calculate() {
 				else {
 					p->starbucks += random() % (1+p->value_starbucks);
 					p->buckazoids += random() % (1+p->value_buckazoids);
-					p->new_ship(reference_fleet->ship[i]);
+					p->new_ship(reference_fleet->getShipType(i));
 				}
 				die();
 			}

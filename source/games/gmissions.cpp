@@ -1042,7 +1042,7 @@ void mission_protect_chenjesu::P::init(Log *_log)
 	// allied ship
 	chen = create_allied_ship(0.15, 0.1, "chebr");
 	ship_change_crew(chen, 80, 100);		// fewer crew
-	ship_change_batt(chen, 10, 10, 10, 10);	// little offensive power
+//	ship_change_batt(chen, 10, 10, 10, 10);	// little offensive power
 	ship_change_speed(chen, 30, 10, 50);	// very slow
 
 	// enemy ships
@@ -1161,7 +1161,7 @@ void mission_escape_from_alcatraz::P::init(Log *_log)
 
 	// the human player
 	playership = create_human_ship(0.55, 0.55, "shosc");
-	ship_change_batt(playership, 10, 10, 10, 10);
+//	ship_change_batt(playership, 10, 10, 10, 10);
 	ship_change_crew(playership, 20, 100);
 
 	specialarea = new SpecialArea(Vector2(0,0), 50);

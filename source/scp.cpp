@@ -1110,27 +1110,27 @@ int scp_fleet_dialog_bitmap_proc(int msg, DIALOG* d, int c);
 // FLEET - dialog structure
 DIALOG fleetDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_textbox_proc,    390,  40,   240,  60,   255,  0,    0,    0,       0,    0,    (void *)fleetTitleString, NULL, NULL },
-  { d_list_proc2,      390,  110,  240,  280,  255,  0,    0,    D_EXIT,  0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },
+  { d_textbox_proc,    390,  40,   240,  60,   255,  0,    0,    0,       0,    0,    (void *)fleetTitleString, NULL, NULL },//FLEET_DIALOG_FLEETTITLE
+  { d_list_proc2,      390,  110,  240,  280,  255,  0,    0,    D_EXIT,  0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEETLIST
   { scp_fleet_dialog_text_list_proc,
-                       10,   90,   240,  380,  255,  0,    0,    D_EXIT,  0,    0,    (void *)shippointsListboxGetter, NULL, NULL },
-  { d_button_proc,     256,  220,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)">>", NULL, NULL },
-  { d_button_proc,     256,  270,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"<<", NULL, NULL },
-  { d_button_proc,     256,  330,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Info", NULL, NULL },
-  { d_textbox_proc,    390,  10,   240,  30,   255,  0,    0,    0,       0,    0,    (void *)fleetPlayer, NULL, NULL },
-  { d_button_proc,     400,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Save", NULL, NULL },
-  { d_button_proc,     520,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Load", NULL, NULL },
-  { d_button_proc,     25,   10,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by name", NULL, NULL },
-  { d_button_proc,     135,  10,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by cost", NULL, NULL },
-  { d_button_proc,     400,  440,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Title", NULL, NULL },
-  { d_button_proc,     256,  430,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Main", NULL, NULL },
+                       10,   90,   240,  380,  255,  0,    0,    D_EXIT,  0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_SHIPLIST
+  { d_button_proc,     256,  220,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)">>", NULL, NULL },//FLEET_DIALOG_SELECT
+  { d_button_proc,     256,  270,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"<<", NULL, NULL },//FLEET_DIALOG_CLEAR
+  { d_button_proc,     256,  330,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Info", NULL, NULL },//FLEET_DIALOG_INFO
+  { d_textbox_proc,    390,  10,   240,  30,   255,  0,    0,    0,       0,    0,    (void *)fleetPlayer, NULL, NULL },//FLEET_DIALOG_PLAYERTEXT
+  { d_button_proc,     400,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE
+  { d_button_proc,     520,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Load", NULL, NULL },//FLEET_DIALOG_LOAD
+  { d_button_proc,     25,   10,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by name", NULL, NULL },//FLEET_DIALOG_SORTBYNAME
+  { d_button_proc,     135,  10,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by cost", NULL, NULL },//FLEET_DIALOG_SORTBYCOST
+  { d_button_proc,     400,  440,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Title", NULL, NULL },//FLEET_DIALOG_TITLE
+  { d_button_proc,     256,  430,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Main", NULL, NULL },//FLEET_DIALOG_MAIN
   { scp_fleet_dialog_bitmap_proc,
-                       256,  10,   128,  200,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_button_proc,     520,  440,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Clear", NULL, NULL },
-  { d_button_proc,     25,   50,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by origin", NULL, NULL },
-  { d_button_proc,     135,  50,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by coders", NULL, NULL },
+                       256,  10,   128,  200,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },//FLEET_DIALOG_FLEETBITMAP
+  { d_button_proc,     520,  440,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Clear", NULL, NULL },//FLEET_DIALOG_CLEARALL
+  { d_button_proc,     25,   50,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by origin", NULL, NULL },//FLEET_DIALOG_SORTBYORIGIN
+  { d_button_proc,     135,  50,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by coders", NULL, NULL },//FLEET_DIALOG_SORTBYCODERS
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
+  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }//FLEET_DIALOG_NULL
 };
 
 
@@ -1149,25 +1149,32 @@ void edit_fleet(int player) {STACKTRACE
 
 	int fleetRet;
 	do {
-		sprintf(title_str, fleet->title);
-		sprintf(fleetTitleString, "%s\n%d points", fleet->title, fleet->cost);
+		sprintf(title_str, fleet->getTitle());
+		sprintf(fleetTitleString, "%s\n%d points", fleet->getTitle(), fleet->getCost());
 
 		fleetDialog[FLEET_DIALOG_FLEETLIST].dp3 = fleet;
 		fleetRet = tw_do_dialog(NULL, fleetDialog, FLEET_DIALOG_SHIPLIST);
 
 		if ((fleetRet == FLEET_DIALOG_SELECT) ||
 				(fleetRet == FLEET_DIALOG_SHIPLIST)) {
-			fleet->select_slot(
+            
+            int selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_SHIPLIST].d1));
+            fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = selectedSlot;
+            //fleetDialog[FLEET_DIALOG_FLEETLIST].d1++;
+
+			//replaced by above line
+            /*fleet->select_slot(
 				fleetDialog[FLEET_DIALOG_FLEETLIST].d1,
-				reference_fleet->ship[fleetDialog[FLEET_DIALOG_SHIPLIST].d1]);
-			fleetDialog[FLEET_DIALOG_FLEETLIST].d1++;
+				reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_SHIPLIST].d1));*/
+			
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETLIST], MSG_DRAW, 0);
 		}
 
 		if ((fleetRet == FLEET_DIALOG_CLEAR) ||
 				(fleetRet == FLEET_DIALOG_FLEETLIST)) {
 			fleet->clear_slot(fleetDialog[FLEET_DIALOG_FLEETLIST].d1);
-			fleetDialog[FLEET_DIALOG_FLEETLIST].d1++;
+            if (fleet->getSize() <= 0)
+                fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = 0;
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETLIST], MSG_DRAW, 0);
 		}
 
@@ -1180,8 +1187,8 @@ void edit_fleet(int player) {STACKTRACE
 		if(fleetRet == FLEET_DIALOG_LOAD) {
 			sprintf(path, "fleets/");
 			if(file_select("Load Fleet", path, "scf")) fleet->load(path, "Fleet");
-			sprintf(title_str, fleet->title);
-			sprintf(fleetTitleString, "%s\n%d points", fleet->title, fleet->cost);
+			sprintf(title_str, fleet->getTitle());
+			sprintf(fleetTitleString, "%s\n%d points", fleet->getTitle(), fleet->getCost());
 			showTitle();
 		}
 
@@ -1216,7 +1223,7 @@ void edit_fleet(int player) {STACKTRACE
 
 		if(fleetRet == FLEET_DIALOG_TITLE) {
 			if(do_dialog(fleet_titleDialog, FLEET_TITLE_DIALOG_BOX) == FLEET_TITLE_DIALOG_OK)
-				sprintf(fleet->title, title_str);
+				sprintf(fleet->getTitle(), title_str);
 			showTitle();
 		}
 
@@ -1238,8 +1245,9 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 	int ret = d_text_list_proc( msg, d, c );
 
 	if ( d->d1 != old_d1 || msg == MSG_START || (msg == MSG_IDLE && next_anim_time < get_time()) ) {
-		next_anim_time = get_time() + 500 + rand() % 3500;
-		ShipType* type = reference_fleet->ship[d->d1];
+        next_anim_time = get_time() + 50 + rand() % 200;		
+        //next_anim_time = get_time() + 500 + rand() % 3500;
+		ShipType* type = reference_fleet->getShipType(d->d1);
 
 		BITMAP* panel = NULL;
 		DATAFILE* data = NULL;
@@ -1374,7 +1382,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 				sprintf(dialog_string[1], "(Null)");
 			}
 			else {
-				ShipType *type = reference_fleet->ship[si];
+				ShipType *type = reference_fleet->getShipType(si);
 				PACKFILE *f;
 				//DATAFILE *d;
 

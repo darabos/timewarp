@@ -533,9 +533,9 @@ void Vanguard::pick_new_ships() {
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	HumanPlayer1 = create_ship(fleet.ship[i]->id, human_control[0], tw_random(Vector2(width, height)));rand()%(int)width, rand()%(int)height, 0, human_team);
-	HumanPlayer1 = create_ship(fleet.ship[i]->id, human_control[0], tw_random(size), 0, human_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	HumanPlayer1 = create_ship(fleet.getShipType(i)->id, human_control[0], tw_random(Vector2(width, height)));rand()%(int)width, rand()%(int)height, 0, human_team);
+	HumanPlayer1 = create_ship(fleet.getShipType(i)->id, human_control[0], tw_random(size), 0, human_team);
 	add(HumanPlayer1->get_ship_phaser());
 	human_panel[0] = new ShipPanel(HumanPlayer1);
 	human_panel[0]->window->init(window);
@@ -548,9 +548,9 @@ void Vanguard::pick_new_ships() {
 		LOAD_FLEET
 		i = human_control[1]->choose_ship(window, "Hey You Player!\nPick a ship!", &fleet);
 		log_int(channel_client, i);
-		if (i == -1) i = random() % fleet.size;
-//		Ship *s = create_ship(fleet.ship[i]->id, human_control[1], width/2 + 100, height/2, PI, human_team);
-		Ship *s = create_ship(fleet.ship[i]->id, human_control[1], size/2 + Vector2(100,0), PI, human_team);
+		if (i == -1) i = random() % fleet.getSize();
+//		Ship *s = create_ship(fleet.getShipType(i)->id, human_control[1], width/2 + 100, height/2, PI, human_team);
+		Ship *s = create_ship(fleet.getShipType(i)->id, human_control[1], size/2 + Vector2(100,0), PI, human_team);
 		add(s->get_ship_phaser());
 		add_focus(s, channel_client);
 		human_panel[1] = new ShipPanel(s);
@@ -565,57 +565,57 @@ void Vanguard::pick_new_ships() {
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You AI1!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", width/4, height/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", size/4, random(PI2), enemy_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width/4, height/4, random(PI2), enemy_team);
+	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size/4, random(PI2), enemy_team);
 	add(e->get_ship_phaser());
 
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You AI2!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", width*3/4, height/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", size*Vector2(3.0,1.0)/4.0, random(PI2), enemy_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width*3/4, height/4, random(PI2), enemy_team);
+	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size*Vector2(3.0,1.0)/4.0, random(PI2), enemy_team);
 	add(e->get_ship_phaser());
 
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You AI3!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", width*3/4, height*3/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", size*3.0/4.0, random(PI2), enemy_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width*3/4, height*3/4, random(PI2), enemy_team);
+	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size*3.0/4.0, random(PI2), enemy_team);
 	add(e->get_ship_phaser());
 
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You AI4!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", width/4, height*3/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", size*Vector2(1.0,3.0)/4.0, random(PI2), enemy_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width/4, height*3/4, random(PI2), enemy_team);
+	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size*Vector2(1.0,3.0)/4.0, random(PI2), enemy_team);
 	add(e->get_ship_phaser());
 
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You AI5!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", rand()%(int)width, rand()%(int)height, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", rand()%(int)width, rand()%(int)height, random(PI2), enemy_team);
+	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
 	add(e->get_ship_phaser());
 
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You AI6!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", random()%(int)width, random()%(int)height, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", random()%(int)width, random()%(int)height, random(PI2), enemy_team);
+	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
 	add(e->get_ship_phaser());
 
 	LOAD_FLEET
 	i = human_control[0]->choose_ship(window, "Hey You AI7!\nPick a ship!", &fleet);
 	log_int(channel_server, i);
-	if (i == -1) i = random() % fleet.size;
-//	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", random()%(int)width, random()%(int)height, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.ship[i]->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
+	if (i == -1) i = random() % fleet.getSize();
+//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", random()%(int)width, random()%(int)height, random(PI2), enemy_team);
+	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
 	add(e->get_ship_phaser());
 
 //Solar system object code

@@ -130,11 +130,11 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 	DATAFILE	*data; //, *data_cached;
 	
 	
-	fleet_bmp = new BITMAP* [fleet->size+1];
+	fleet_bmp = new BITMAP* [fleet->getSize()+1];
 
-	for ( i = 0; i < fleet->size; ++i )
+	for ( i = 0; i < fleet->getSize(); ++i )
 	{
-		type = fleet->ship[i];
+		type = fleet->getShipType(i);
 		
 		DATAFILE *alldata = NULL;
 
@@ -264,7 +264,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 			unload_datafile( alldata );
 	}
 
-	fleet_bmp[fleet->size] = 0;		// indicates the last element.
+	fleet_bmp[fleet->getSize()] = 0;		// indicates the last element.
 
 
 	return fleet_bmp;
@@ -704,7 +704,7 @@ void TWgui::choose_new_ships()
 	k = 0;
 	for ( i = 0; i < num_players; ++i )
 	{
-		if (player_fleet[i]->size != 0)
+		if (player_fleet[i]->getSize() != 0)
 		{
 			++k;
 			m = i;
@@ -735,9 +735,9 @@ void TWgui::choose_new_ships()
 				//			player_panel[i] = NULL;
 				sprintf (tmp, "Player%d", i+1);
 				Fleet *fleet = player_fleet[i];
-				if (fleet->size == 0) continue;
+				if (fleet->getSize() == 0) continue;
 				char buffy[512];
-				sprintf(buffy, "%s\n%s\n%d of ??? points", player_name[i], fleet->title, fleet->cost);
+				sprintf(buffy, "%s\n%s\n%d of ??? points", player_name[i], fleet->getTitle(), fleet->getCost());
 				
 				
 				// -------- CHOOSE A SHIP -----------
@@ -808,8 +808,8 @@ void TWgui::choose_new_ships()
 		sprintf (tmp, "Player%d", i+1);
 		//fleet->load("./fleets.tmp", tmp);
 		Fleet *fleet = player_fleet[i];
-		if (slot[i] == -1) slot[i] = random() % fleet->size;
-		Ship *s = create_ship(fleet->ship[slot[i]]->id, player_control[i], random(size), random(PI2), player_team[i]);
+		if (slot[i] == -1) slot[i] = random() % fleet->getSize();
+		Ship *s = create_ship(fleet->getShipType(slot[i])->id, player_control[i], random(size), random(PI2), player_team[i]);
 		fleet->clear_slot(slot[i]);
 		fleet->sort();
 		//fleet->save("./fleets.tmp", tmp);

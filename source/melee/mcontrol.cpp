@@ -241,7 +241,7 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 	Fleet *fleet = (Fleet*)d->dp3;
 	int ret = d_list_proc2( msg, d, c );
 	if( d->d1 != old_d1 || msg == MSG_START ){
-		ShipType* type = fleet->ship[d->d1];
+		ShipType* type = fleet->getShipType(d->d1);
 
 		BITMAP* panel = NULL;
 		DATAFILE* data = load_datafile_object( type->data->file, "SHIP_P00_PCX" );
@@ -268,7 +268,7 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 }
 int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {STACKTRACE
 	int ret = -1, slot = 0;
-	if (fleet->size == 0) tw_error ("Empty fleet! (prompt:%s)", prompt);
+	if (fleet->getSize() == 0) tw_error ("Empty fleet! (prompt:%s)", prompt);
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
 	sprintf(selectTitleString, "%s", prompt);
 	slot = -1;

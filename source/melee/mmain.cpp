@@ -74,8 +74,8 @@ int NormalGame::add_player (Control *c, int team_index, const char *name, const 
 	set_config_string(sect, "Type", c->getTypeName());
 	set_config_int(sect, "Team", team_index);
 	set_config_int(sect, "Channel", c->channel);
-	set_config_int(sect, "StartingFleetCost", player_fleet[i]->cost);
-	set_config_int(sect, "StartingFleetSize", player_fleet[i]->size);
+	set_config_int(sect, "StartingFleetCost", player_fleet[i]->getCost());
+	set_config_int(sect, "StartingFleetSize", player_fleet[i]->getSize());
 	player_fleet[i]->save(NULL, sect);
 	player_fleet[i]->save("fleets.tmp", sect);
 	return i;
@@ -377,13 +377,13 @@ void NormalGame::display_stats() {STACKTRACE
 			case Log::log_net1client:
 			case Log::log_net1server: {
 //				if (log->get_direction(player_control[i]->channel) & Log::direction_write) 
-					message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", player_name[i], fleet->size, fleet->cost);
+					message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", player_name[i], fleet->getSize(), fleet->getCost());
 //				else
 //					message.print(6000, 15, "%s status: : %d / %d points", buffy, fleet->cost, player_total_fleet[i]);
 			}
 			break;
 			default: {
-				message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", player_name[i], fleet->size, fleet->cost);
+				message.print(6000, 15, "%s status: : %d / ?? Ships, %d / ??? points", player_name[i], fleet->getSize(), fleet->getCost());
 			}
 			break;
 		}
@@ -457,9 +457,9 @@ void NormalGame::choose_new_ships() {STACKTRACE
 //			player_panel[i] = NULL;
 			sprintf (tmp, "Player%d", i+1);
 			Fleet *fleet = player_fleet[i];
-			if (fleet->size == 0) continue;
+			if (fleet->getSize() == 0) continue;
 			char buffy[512];
-			sprintf(buffy, "%s\n%s\n%d of ??? points", player_name[i], fleet->title, fleet->cost);
+			sprintf(buffy, "%s\n%s\n%d of ??? points", player_name[i], fleet->getTitle(), fleet->getCost());
 			slot[i] = player_control[i]->choose_ship(window, buffy, fleet);
 			if (player_control[i]->channel != channel_none) {
 				slot[i] = intel_ordering(slot[i]);
@@ -484,8 +484,8 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		sprintf (tmp, "Player%d", i+1);
 		//fleet->load("./fleets.tmp", tmp);
 		Fleet *fleet = player_fleet[i];
-		if (slot[i] == -1) slot[i] = random() % fleet->size;
-		Ship *s = create_ship(fleet->ship[slot[i]]->id, player_control[i], random(size), random(PI2), player_team[i]);
+		if (slot[i] == -1) slot[i] = random() % fleet->getSize();
+		Ship *s = create_ship(fleet->getShipType(slot[i])->id, player_control[i], random(size), random(PI2), player_team[i]);
 		fleet->clear_slot(slot[i]);
 		fleet->sort();
 		//fleet->save("./fleets.tmp", tmp);
@@ -506,16 +506,28 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		add(new HealthBar(s, &indhealthtoggle));
 		add(new TeamIndicator(s, &indteamtoggle));
 
+
+
 		// CHECK FILE SIZES !! to intercept desynch before they happen.
+
 		int myfsize, otherfsize;
+
 		myfsize = file_size(s->type->data->file);
+
 		otherfsize = myfsize;
+
 		log_int(player_control[i]->channel, otherfsize);
 
+
+
 		if (otherfsize != myfsize)
+
 		{
+
 			// the player who loads the ship doesn't get this message, cause his own file is identical by default
+
 			tw_error("DAT files have different size! This may cause a desynch. Press Retry to continue");
+
 		}
 		}
 	delete slot;
