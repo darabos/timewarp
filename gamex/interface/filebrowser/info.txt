@@ -1,0 +1,12 @@
+gamex/interface/filebrowser/downdir_default_y = 8
+gamex/interface/filebrowser/downdir_default_x = 7
+gamex/interface/filebrowser/list_barver_backgr_y = 67
+gamex/interface/filebrowser/list_barver_backgr_x = 225
+gamex/interface/filebrowser/list_down_default_y = 374
+gamex/interface/filebrowser/list_down_default_x = 224
+gamex/interface/filebrowser/list_up_default_y = 40
+gamex/interface/filebrowser/list_up_default_x = 221
+gamex/interface/filebrowser/list_backgr_y = 41
+gamex/interface/filebrowser/list_backgr_x = 5
+res = 1024
+

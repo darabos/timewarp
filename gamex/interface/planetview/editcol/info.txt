@@ -1,0 +1,12 @@
+gamex/interface/planetview/editcol/dialogname_backgr_y = 97
+gamex/interface/planetview/editcol/dialogname_backgr_x = 21
+gamex/interface/planetview/editcol/update_default_y = 145
+gamex/interface/planetview/editcol/update_default_x = 88
+gamex/interface/planetview/editcol/rem_default_y = 137
+gamex/interface/planetview/editcol/rem_default_x = 0
+gamex/interface/planetview/editcol/race_backgr_y = 14
+gamex/interface/planetview/editcol/race_backgr_x = 21
+gamex/interface/planetview/editcol/population_backgr_y = 57
+gamex/interface/planetview/editcol/population_backgr_x = 19
+gamex/interface/planetview/editcol/new_default_y = 122
+gamex/interface/planetview/editcol/new_default_x = 317
