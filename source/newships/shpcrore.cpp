@@ -135,7 +135,7 @@ void Crome::calculate()
 
         if (special_recharge > 0) {
                 Query q;
-                double r, p, t, xp, xt, ps, ts,  ov, nv, ta;
+                double r, p, t, xp, xt, ov, nv, ta;
 				Vector2 nvel, ovel;
 
                 for (q.begin(this, OBJECT_LAYERS, specialRange); q.currento; q.next()) {
