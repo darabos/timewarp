@@ -114,47 +114,53 @@ Missile( creator, opos, oangle, ov, odamage, orange, oarmour, oposloc, osprite, 
 released( false ), control( ocontrol ), latched( NULL ){
 }
 
-void YushSpear::calculate(){
-  if( !(latched && latched->exists()) )
-  {
-      latched = 0;
-      state = 0;
-      return;
-    }
+void YushSpear::calculate()
+{
 
-//    double tx = cos( (latched->get_angle() + rel_angle)  );
-//    double ty = sin( (latched->get_angle() + rel_angle)  );
-	Vector2 t = unit_vector( latched->get_angle() + rel_angle );
-//    x = latched->normal_x() + rel_dist * tx;
-//    y = latched->normal_y() + rel_dist * ty;
-	pos = latched->normal_pos() + rel_dist * t;
-//    vx = latched->vx;
-//    vy = latched->vy;
-	vel = latched->vel;
-    angle = old_angle + latched->get_angle();
-    sprite_index = get_index(angle);
-  
-  Missile::calculate();
-  if( released ) return;
-  if( !ship ){ release(); return; }
-  if( !ship->exists() ){ ship = NULL; release(); return; }
-
-//  double tx = cos( angle  );
-//  double ty = sin( angle  );
-  //Vector2
-t = unit_vector( -angle );
-  if( ship->turn_left ){
-//    x += control * frame_time * ty;
-//    y -= control * frame_time * tx;
-	pos -= control * frame_time * t;
-
-  }
-  if( ship->turn_right ){
-//    x -= control * frame_time * ty;
-//    y += control * frame_time * tx;
-	pos += control * frame_time * t;
-
-  }
+	if (latched)
+	{
+		// if it's attached to some host, and the host suddenly dies ...
+		if( latched && !latched->exists() )
+		{
+			latched = 0;
+			state = 0;
+			return;
+		}
+		
+		//    double tx = cos( (latched->get_angle() + rel_angle)  );
+		//    double ty = sin( (latched->get_angle() + rel_angle)  );
+		Vector2 t = unit_vector( latched->get_angle() + rel_angle );
+		//    x = latched->normal_x() + rel_dist * tx;
+		//    y = latched->normal_y() + rel_dist * ty;
+		pos = latched->normal_pos() + rel_dist * t;
+		//    vx = latched->vx;
+		//    vy = latched->vy;
+		vel = latched->vel;
+		angle = old_angle + latched->get_angle();
+		sprite_index = get_index(angle);
+		
+	}
+	
+	Missile::calculate();
+	if( released ) return;
+	if( !ship ){ release(); return; }
+	if( !ship->exists() ){ ship = NULL; release(); return; }
+	
+	//  double tx = cos( angle  );
+	//  double ty = sin( angle  );
+	Vector2 t = unit_vector( -angle );
+	if( ship->turn_left ){
+		//    x += control * frame_time * ty;
+		//    y -= control * frame_time * tx;
+		pos -= control * frame_time * t;
+		
+	}
+	if( ship->turn_right ){
+		//    x -= control * frame_time * ty;
+		//    y += control * frame_time * tx;
+		pos += control * frame_time * t;
+		
+	}
 }
 
 void YushSpear::release(){

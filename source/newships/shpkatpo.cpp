@@ -152,6 +152,7 @@ int KatPoly::activate_special()
 		crew = morph->crew;
 		batt = morph->batt;
 		morph->state = 0;                         // kill last morph
+		morph->crew = 0;
 
 	} else {                                      // if we have never yet morphed
 

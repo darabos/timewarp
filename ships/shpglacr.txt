@@ -1,8 +1,15 @@
 This is a slow, but potentially very dangerous cruiser.  The main gun fires
 a spread of five high damage unguided torpedoes that are all but immune to
-point defense systems.  The rear firing weapon compensates somewhat for the
-sluggish maneuvering.
+point defense systems.
 
 fire = torpedo spread (5 x 2 point warheads) cost 10 power.  2 damage each, 
 4 armour each
-special = fires a single rear torpedo, cost 2 power. 2 damage, 4 armour
+
+Changed by GeomanNL:
+
+Special increases the spread of the 5 missiles.
+Special in combination with fire decrease their spread.
+As long as special is pressed, count-down is frozen, so they live longer.
+
+Rear-fire torpedo removed, turn-rate increased.
+
