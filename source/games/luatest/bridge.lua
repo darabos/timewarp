@@ -10,13 +10,14 @@ addAsteroid();
 addAsteroid();
 addAsteroid();
 
-addAsteroid("Wakko");
-addAsteroid("Yakko");
-addAsteroid("Dot");
+addSpecialAsteroid("Wakko");
+addSpecialAsteroid("Yakko");
+addSpecialAsteroid("Dot");
 
 
 
 addPlanet(100,100);
+
 --addPlanet(150,150);
 --addPlanet(200,200);
 --addPlanet(250,250);
