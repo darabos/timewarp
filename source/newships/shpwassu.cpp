@@ -275,6 +275,8 @@ int WasxSuperposition::activate_special() {
 		add(tmp);
 		SpecialActivated = TRUE;
 
+		game->add_target(tmp);
+
 	}
 	if (!SpecialActivated) return(FALSE);
 	 return(TRUE);
@@ -293,10 +295,15 @@ int WasxSuperposition::activate_special() {
 
 	} */
 
+//WasxClone::WasxClone(Vector2 opos, double shipAngle,
+//		ShipData *shipData, Control *cntrl, WasxSuperposition *MotherShip) :
+//		Ship(opos, shipAngle, shipData, MotherShip->ally_flag),
+//		CloneIndex(0)
+//Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite)
 WasxClone::WasxClone(Vector2 opos, double shipAngle,
 		ShipData *shipData, Control *cntrl, WasxSuperposition *MotherShip) :
-		Ship(opos, shipAngle, shipData, MotherShip->ally_flag),
-		CloneIndex(0)
+Ship(MotherShip, MotherShip->pos, shipAngle, shipData->spriteShip),
+CloneIndex(0)
 	{
 
 	if (this == NULL 
@@ -307,6 +314,42 @@ WasxClone::WasxClone(Vector2 opos, double shipAngle,
 	|| !MotherShip->exists()) return;
 			
 			
+	// extra stuff
+
+	data = shipData;
+	data->lock();
+
+	crew     = MotherShip->crew;
+	crew_max = MotherShip->crew_max;
+	batt     = MotherShip->batt;
+	batt_max = MotherShip->batt_max;
+
+	recharge_amount  = MotherShip->recharge_amount;
+	recharge_rate    = MotherShip->recharge_rate;
+	recharge_step    = MotherShip->recharge_step;
+	weapon_drain     = MotherShip->weapon_drain;
+	weapon_rate      = MotherShip->weapon_rate;
+	weapon_sample    = MotherShip->weapon_sample;
+	weapon_recharge  = MotherShip->weapon_recharge;
+	weapon_low       = MotherShip->weapon_low;
+	special_drain    = MotherShip->special_drain;
+	special_rate     = MotherShip->special_rate;
+	special_sample   = MotherShip->special_sample;
+	special_recharge = MotherShip->special_recharge;
+	special_low      = FALSE;
+
+	hotspot_rate  = MotherShip->hotspot_rate;
+	hotspot_frame = MotherShip->hotspot_frame;
+	turn_rate     = MotherShip->turn_rate;
+	speed_max     = MotherShip->speed_max;
+	accel_rate    = MotherShip->accel_rate;
+	mass          = MotherShip->mass;
+
+	control = cntrl;
+	ship = this;
+
+	// end extra stuff
+
 	layer = LAYER_SHIPS;
  	
 	initialVelocity = TRUE;
@@ -461,7 +504,7 @@ int WasxClone::handle_damage(SpaceLocation *source, double normal, double direct
  
 void WasxClone::calculate() {
 
-	SpaceObject::calculate();
+	//SpaceObject::calculate();
 
 	Ship::calculate();
 
@@ -494,7 +537,7 @@ void WasxClone::calculate() {
 
 		} 
 		if (MotherShip->thrust) initialVelocity = FALSE;
-	}  else if (MotherShip->thrust) accelerate(this, angle, accel_rate * frame_time , speed_max);
+	}  //else if (MotherShip->thrust) accelerate(this, angle, accel_rate * frame_time , speed_max);
 
 	// Try to retain a certain distance to gain formation from Mothership
 	if (MotherShip->SpawnFormation == 1) {
