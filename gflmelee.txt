@@ -4,7 +4,11 @@ Player and enemy fleets are defined in the ini file. Set -1 there to choose a ra
 
 You can toggle certain options. Currently the keys are hard-coded to:
 
-C,V	choose next ship in your fleet
+Extra1	choose next ship in your fleet
+Extra2	choose prev ship in your fleet
+(these extra 1/2 keys are defined in the config menu for player 0)
+
+
 A	fleet display
 S	show stats while S is pressed
 D	healthbars

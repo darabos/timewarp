@@ -5,7 +5,10 @@ REGISTER_FILE
 
 #include "../melee/mview.h"
 
-class XXXManglerMine;
+#include "shpilwsp.h"
+
+
+//class XXXManglerMine;
 
 class XXXMangler : public Ship {
 
@@ -25,13 +28,19 @@ class XXXMangler : public Ship {
 
   double		weaponSuperSpeed;
   
-  double       specialLaunch;
-  double       specialRange;
-  double       specialVelocity;
-  int          specialDamage;
-  int          specialArmour;
-  int          specialArming;
-  XXXManglerMine **weaponObject;
+//  double       specialLaunch;
+//  double       specialRange;
+//  double       specialVelocity;
+//  int          specialDamage;
+//  int          specialArmour;
+//  int          specialArming;
+//  XXXManglerMine **weaponObject;
+    double       specialVelocity;
+    int          specialNumber;
+    double       specialSpread;
+    int          specialLifeTime;
+    double       specialRandomness;
+    int          specialStopTime;
 
   int          BodyFrames;
   int          CurrBodyFrame;
@@ -56,10 +65,14 @@ class XXXMangler : public Ship {
   virtual void animate(Frame *space);
   virtual void inflict_damage(SpaceObject *other);
   
-  int numSeeds;
-  int maxSeeds;
+//  int numSeeds;
+//  int maxSeeds;
 };
 
+
+
+
+/*
 class XXXManglerMine : public AnimatedShot {
 
   double       missileVelocity;
@@ -105,6 +118,7 @@ class XXXWebEffect : public SpaceObject {
 
   virtual void calculate();
 };
+*/
 
 
 XXXMangler::XXXMangler(Vector2 opos, double shipAngle,
@@ -119,6 +133,7 @@ XXXMangler::XXXMangler(Vector2 opos, double shipAngle,
   weaponDartThrust = get_config_int("Weapon", "DartThrust",0);
   weaponSuperSpeed = scale_velocity(get_config_float("Weapon", "SuperSpeed", 0));
 
+  /*
   specialRange    = scale_range(get_config_float("Special", "Range", 0));
   specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
   specialDamage   = get_config_int("Special", "Damage", 0);
@@ -126,6 +141,14 @@ XXXMangler::XXXMangler(Vector2 opos, double shipAngle,
   specialArmour   = get_config_int("Special", "Armour", 0);
   specialArming   = get_config_int("Special","Arming",0);
   specialLaunch   = scale_velocity(get_config_int("Special","Launch",0));
+  */
+  specialVelocity   = scale_velocity(get_config_float("Special", "Velocity", 0));
+  specialNumber     = get_config_int("Special", "Number", 0);
+  specialSpread     = get_config_float("Special", "Spread", 0) * ANGLE_RATIO;
+  specialLifeTime   = get_config_int("Special", "LifeTime", 0);
+  specialRandomness = get_config_float("Special", "Randomness", 0);
+  specialStopTime   = get_config_int("Special", "StopTime", 0);
+
   latched         = FALSE;
   grabbed         = NULL;
 
@@ -137,12 +160,12 @@ XXXMangler::XXXMangler(Vector2 opos, double shipAngle,
 	normal_rate				= recharge_rate;
 	SeparateSpit			= FALSE;
 
-  numSeeds=0;
-  maxSeeds=8;
-  weaponObject = new XXXManglerMine*[maxSeeds];
-  for (int i = 0; i < maxSeeds; i += 1) {
-    weaponObject[i] = NULL;
-		}
+//  numSeeds=0;
+//  maxSeeds=8;
+//  weaponObject = new XXXManglerMine*[maxSeeds];
+//  for (int i = 0; i < maxSeeds; i += 1) {
+//    weaponObject[i] = NULL;
+//		}
 
 }
 
@@ -168,7 +191,9 @@ int XXXMangler::activate_weapon()
 
 int XXXMangler::activate_special()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	/*
 	if (numSeeds == maxSeeds) {
 		weaponObject[0]->state = 0;
 		numSeeds -= 1;
@@ -183,6 +208,23 @@ int XXXMangler::activate_special()
 	add(weaponObject[numSeeds]);
 	numSeeds += 1;
 	return(TRUE);
+	*/
+
+	double alpha = specialSpread / specialNumber;
+    double beta = normalize( angle + PI - 0.5 * specialSpread + random(alpha), PI2 );
+    double tx = cos( angle );
+    double ty = sin( angle );
+    double ox = pos.x + ILWRATH_SPECIAL_REL_Y * tx - ILWRATH_SPECIAL_REL_X * ty;
+    double oy = pos.y + ILWRATH_SPECIAL_REL_Y * ty + ILWRATH_SPECIAL_REL_X * tx;
+
+    int i;
+    for (i = 0; i < specialNumber; i++)
+    {
+	game->add( new IlwrathSpiderMine( this, ox, oy, beta + alpha * i, specialVelocity, specialLifeTime, specialRandomness, specialStopTime, data->spriteSpecial ));
+    }
+  
+    return i;
+
 }
 
 void XXXMangler::calculate()
@@ -245,14 +287,14 @@ void XXXMangler::calculate()
 
 			 }
 
-   int j = 0;
-
-   for (int i = 0; i < numSeeds; i += 1) {
-    weaponObject[i-j] = weaponObject[i];
-    if (!weaponObject[i]->exists()) j += 1;
-      if (j) weaponObject[i] = NULL;
-    }
-    numSeeds -= j;
+//   int j = 0;
+//
+//   for (int i = 0; i < numSeeds; i += 1) {
+//    weaponObject[i-j] = weaponObject[i];
+//    if (!weaponObject[i]->exists()) j += 1;
+//      if (j) weaponObject[i] = NULL;
+//    }
+//    numSeeds -= j;
 
    Ship::calculate();
 
@@ -340,6 +382,8 @@ void XXXMangler::inflict_damage(SpaceObject *other)
   Ship::inflict_damage(other);
 }
 
+
+/*
 XXXManglerMine::XXXManglerMine(Vector2 opos, double ov, double oangle, int odamage,
   int oarmour,XXXMangler *oship, SpaceSprite *osprite, int ofcount, int ofsize, double misv,
   double misr, int misd, int misa,int misaf) :
@@ -465,7 +509,7 @@ void XXXWebEffect::calculate() {
         if (webframe >= webframe_count) state = 0;
 		SpaceObject::calculate();
 	}
-
+*/
 
 
 

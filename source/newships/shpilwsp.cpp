@@ -1,6 +1,9 @@
 #include "../ship.h"
 REGISTER_FILE
 
+#include "shpilwsp.h"
+
+/*
 #define ILWRATH_FIRE_ANIM_RATE           50
 #define ILWRATH_MINE_FIRST_WHIRL_INDEX   13
 // #define ILWRATH_MINE_LAST_WHIRL_INDEX    22
@@ -9,6 +12,7 @@ REGISTER_FILE
 #define ILWRATH_MINE_SLOWDOWN_RATE       0.95
 #define ILWRATH_SPECIAL_REL_X            0
 #define ILWRATH_SPECIAL_REL_Y            (-size.y * 0.3)
+*/
 
 class IlwrathSpider : public Ship {
     double       weaponRange;
@@ -33,6 +37,7 @@ protected:
     virtual int  activate_special();
 };
 
+/*
 class IlwrathSpiderMine : public SpaceObject {
     int    step;
     int    life;
@@ -55,6 +60,7 @@ public:
     IlwrathStop( SpaceLocation* creator, SpaceObject* ovictim, int olife );
     virtual void calculate();
 };
+*/
 
 IlwrathSpider::IlwrathSpider(Vector2 opos, double shipAngle,
 		ShipData *shipData, unsigned int code) :
@@ -89,7 +95,7 @@ int IlwrathSpider::activate_weapon()
 
 int IlwrathSpider::activate_special()
 {
-	STACKTRACE
+	STACKTRACE;
     double alpha = specialSpread / specialNumber;
     double beta = normalize( angle + PI - 0.5 * specialSpread + random(alpha), PI2 );
     double tx = cos( angle );

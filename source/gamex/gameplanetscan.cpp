@@ -11,6 +11,8 @@ REGISTER_FILE
 #include "../melee/mview.h"
 #include "../melee/mitems.h"
 
+#include "../melee/manim.h"
+
 #include "../scp.h"
 #include "../util/history.h"
 
@@ -18,6 +20,8 @@ REGISTER_FILE
 #include "gamesolarview.h"
 //#include "gameplanetview.h"
 #include "gameplanetscan.h"
+
+#include "gamedialogue.h"
 
 #include "stuff/space_body.h"
 
@@ -30,12 +34,154 @@ static GamePlanetscan::ThePlaya *localplayer;
 
 
 
-
 static bool useframe1 = true;//false;		// the big area with the planet
 static bool useframe2 = true;		// the smaller area: the scan surface
 BITMAP *bmpframe2 = 0;;
 
 double scalesurface = 8.0;
+
+
+class AnimatedObject : public Animation
+{
+public:
+
+	AnimatedObject(SpaceLocation *creator, Vector2 opos,
+					SpaceSprite *osprite, double frame_length);
+
+	virtual void animate(Frame *f);
+	virtual void inflict_damage(SpaceObject *other);
+};
+
+// spawns some object for a short time, can also "walk" a little.
+class Spawner : public SpaceLocation
+{
+public:
+	SpaceSprite *spawnsprite;
+	double framelen;
+	Periodics *per_life, *per_spawn;
+
+	Spawner(SpaceLocation *creator, Vector2 lpos, double langle, SpaceSprite *aspawnsprite,
+					double frame_length, double alifetime, double aspawninterval);
+	void spawnit();
+	virtual void calculate();
+	virtual void animate(Frame *f);
+};
+
+
+
+
+AnimatedObject::AnimatedObject(SpaceLocation *creator, Vector2 opos,
+					SpaceSprite *osprite, double frame_length)
+:
+Animation(creator, opos, 
+	osprite, 0, osprite->frames(), frame_length, 
+	DEPTH_SHIPS, 1)
+{
+
+	attributes &= ~(ATTRIB_UNDETECTABLE);
+
+	damage_factor = 0.1;
+
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameship = 0;
+	collide_flag_sameteam = 0;
+
+	layer = LAYER_SHIPS;
+	set_depth(DEPTH_SHIPS);
+}
+
+
+void AnimatedObject::animate(Frame *f)
+{
+	BITMAP *bmp;
+	bmp = sprite->get_bitmap(sprite_index);
+	Vector2 P;
+	P = corner(pos, size);
+	masked_blit(bmp, f->surface,
+		0, 0,
+		//pos.x - 0.5*bmp->w - space_center.x, pos.y - 0.5*bmp->h - space_center.y,
+		P.x, P.y,
+		bmp->w, bmp->h);
+}
+
+void AnimatedObject::inflict_damage(SpaceObject *other)
+{
+	Animation::inflict_damage(other);
+	state = 0;
+}
+
+
+
+Spawner::Spawner(SpaceLocation *creator, Vector2 lpos, double langle, SpaceSprite *aspawnsprite,
+				 double frame_length, double alifetime, double aspawninterval)
+:
+SpaceLocation(creator, lpos, langle)
+{
+	framelen = frame_length;
+	spawnsprite = aspawnsprite;
+	per_life = new Periodics(alifetime);
+	per_spawn = new Periodics(aspawninterval);
+}
+
+
+void Spawner::spawnit()
+{
+	physics->add(new AnimatedObject(this, pos, spawnsprite, framelen));
+}
+
+void Spawner::calculate()
+{
+	if (per_life->update())
+	{
+		state = 0;
+		return;
+	}
+
+	if (per_spawn->update())
+		spawnit();
+}
+
+void Spawner::animate(Frame *f)
+{
+	// nothing
+}
+
+
+
+
+class FireStorm : public Spawner
+{
+public:
+
+	double v, Rran, Aran;
+
+	FireStorm(SpaceLocation *creator, Vector2 lpos, double langle, SpaceSprite *aspawn,
+				 double frame_length, double alifetime, double aspawninterval,
+				 double av, double aRran, double aAran);
+
+	virtual void calculate();
+};
+
+FireStorm::FireStorm(SpaceLocation *creator, Vector2 lpos, double langle,
+					SpaceSprite *aspawn,
+					double frame_length, double alifetime, double aspawninterval,
+					double av, double aRran, double aAran)
+:
+Spawner(creator, lpos, langle, aspawn, frame_length, alifetime, aspawninterval)
+{
+	v = av;
+	Rran = aRran;	// scattered positioning
+	Aran = aAran;	// change in angle
+}
+
+void FireStorm::calculate()
+{
+	Spawner::calculate();
+
+	pos += v * frame_time * unit_vector(angle) + Vector2(random(-Rran,Rran), random(-Rran,Rran));
+	angle += random(-Aran, Aran);
+}
+
 
 
 
@@ -45,6 +191,8 @@ id.ini
 id.bmp
 id.dialogue
 */
+
+const int ID_STRUCTURE = 0x06b03d8a1;
 
 class StructureType
 {
@@ -72,7 +220,7 @@ void StructureType::init(char *aid)
 	char fname[512];
 
 	sprintf(fname, "gamex/gamedata/structuretypes/%s_01.bmp", id);
-	sprite = create_sprite( fname, SpaceSprite::MASKED, 1 );
+	sprite = create_sprite( fname, SpaceSprite::MASKED );
 }
 
 
@@ -99,6 +247,16 @@ void init_structuretypes()
 		structuretype[i] = st;
 	}
 }
+
+
+StructureType *get_structuretype(char *id)
+{
+	int i;
+	i = structuretypelist->get_index(id, 0);
+
+	return structuretype[i];
+}
+
 
 
 
@@ -150,13 +308,12 @@ void MineralType::init(char *aid, int k)
 	strcpy(fname, "gamex/gamedata/mineraltypes/");
 	strcat(fname, id);
 	strcat(fname, "_01.bmp");
-	sprite = create_sprite( fname, SpaceSprite::MASKED, 3 );
+	sprite = create_sprite( fname, SpaceSprite::MASKED );
 
 }
 
 
 const int ID_LIFEFORM = 0x0a9e0b3fe;
-
 
 class LifeformType
 {
@@ -205,7 +362,7 @@ void LifeformType::init(char *aid)
 	strcpy(fname, "gamex/gamedata/lifeformtypes/");
 	strcat(fname, id);
 	strcat(fname, "_01.bmp");
-	sprite = create_sprite( fname, SpaceSprite::MASKED, 3 );
+	sprite = create_sprite( fname, SpaceSprite::MASKED );
 
 }
 
@@ -377,6 +534,7 @@ void Mineral::animate(Frame *f)
 }
 
 
+/*
 Mineral *init_mineral(char *section, Vector2 pos)
 {
 	char s[512];
@@ -391,6 +549,7 @@ Mineral *init_mineral(char *section, Vector2 pos)
 
 	return m;
 }
+*/
 
 
 
@@ -546,20 +705,109 @@ Lifeform *init_lifeform(char *section, Vector2 pos)
 
 
 
-// SPECIAL STRUCTURES ON THE PLANET SURFACES
-// like ... what ?
-// Well, anything that spawns a dialog and can result in some special actions.
-
 class Structure : public MapObj
 {
 public:
-	double	damage;
-	char	*type;
+	StructureType	*type;
+	GamePlanetscan *g;
 
 	Structure(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite);
 	virtual void calculate();
-	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+	virtual void inflict_damage(SpaceObject *other);
+
+	void init(char *section, StructureType *t, GamePlanetscan *ag);
+
+	virtual void animate(Frame *f);
+
 };
+
+Structure::Structure(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite)
+:
+MapObj(creator, opos, oangle, osprite)
+{
+	id = ID_STRUCTURE;
+
+	layer = LAYER_SHIPS;
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = ALL_LAYERS;
+
+	g = 0;
+}
+
+void Structure::init(char *section, StructureType *t, GamePlanetscan *ag)
+{
+	g = ag;
+	type = t;
+	sprite_index = 0;
+}
+
+void Structure::calculate()
+{
+}
+
+
+void Structure::inflict_damage(SpaceObject *other)
+{
+	if (other == localplayer)
+	{
+		//damage_factor = 0;
+		//MapObj::inflict_damage(other);	// it's left to "other" to see if it's a structure through the ID
+
+		//localplayer->handle_mineral(this);
+		//state = 0;	// this is done by the localplayer.
+
+		char txt[512];
+		sprintf(txt, "gamex/gamedata/structuretypes/%s.dialog", type->id);
+
+		GameAliendialog *ad;
+		ad = new GameAliendialog();
+		ad->set_dialog(txt);
+		g->gamerequest = ad;
+
+		collide_flag_anyone = 0;
+		collide_flag_sameteam = 0;
+		collide_flag_sameship = 0;
+	}
+}
+
+
+void Structure::animate(Frame *f)
+{
+	if (useframe1)
+		MapObj::animate(f);
+
+	// show the bitmap on the scan-map.
+	if (useframe2)
+	{
+		//MapObj::animate(frame2);
+		double s = bmpframe2->w / 400.0;
+		int x = pos.x * s / scalesurface - 0.5*sprite->get_bitmap(0)->w;
+		int y = pos.y * s / scalesurface - 0.5*sprite->get_bitmap(0)->h;
+		sprite->draw(x, y, sprite_index, bmpframe2);
+	}
+}
+
+/*
+Structure *init_structure(char *section, Vector2 pos, GamePlanetscan *ag)
+{
+	char s[512];
+	strcpy(s, get_config_string(section, "type", "common"));
+	StructureType	*type;
+	type = get_structuretype(s);
+
+	Structure *m;
+	m = new Structure(0, pos, 0, type->sprite);
+	
+	m->init(section, type, ag);	// handles the rest of the ini file ...
+
+	return m;
+}
+*/
+
+
+
+
 
 
 
@@ -621,6 +869,7 @@ void GamePlanetscan::init()
 
 	init_mineraltypes();
 	init_lifeformtypes();
+	init_structuretypes();
 
 	//SpaceSprite *spr;
 
@@ -685,6 +934,9 @@ void GamePlanetscan::init()
 	localplayer = player;
 
 
+	team_player = new_team();
+	team_enemy  = new_team();
+	player->set_team(team_player);
 
 
 	
@@ -763,6 +1015,37 @@ void GamePlanetscan::init()
 	}
 
 
+	// read the structures
+	N = get_config_int("structures", "N", 0);
+
+	for ( i = 0; i < N; ++i )
+	{
+		char id[512];
+		char val[512];
+
+		sprintf(id, "structure%03i", i);
+		strcpy(val, get_config_string("structures", id, ""));
+
+		double x, y;
+		sscanf(val, "%lf %lf %s", &x, &y, id);
+
+		int k;
+		k = structuretypelist->get_index(id, 0);
+	
+		SpaceSprite *spr;
+		spr = structuretype[k]->sprite;
+
+		Structure *st;
+		st = new Structure(0, Vector2(x,y) * scalesurface, 0, spr);
+		st->type = structuretype[k];
+		st->g = this;
+
+		add(st);
+	}
+
+
+
+
 	// an extra window, with "random" buttons so that you can re-randomize the minerals
 	// and lifeform map (given the constraints in the surface.ini file)
 
@@ -783,6 +1066,14 @@ void GamePlanetscan::init()
 	Pran->focus();
 
 	branmin->bind(new BEvent<GamePlanetscan>(this, &GamePlanetscan::handle_ranmin, 0));
+
+
+	// hazards ...
+	spr[0] = create_sprite("gamex/planetscan/hazards/fireball_01.bmp", SpaceSprite::MASKED);
+	spr[1] = create_sprite("gamex/planetscan/hazards/firewall_01.bmp", SpaceSprite::MASKED);
+	spr[2] = create_sprite("gamex/planetscan/hazards/lightning_01.bmp", SpaceSprite::MASKED);
+	spr[3] = create_sprite("gamex/planetscan/hazards/quake_01.bmp", SpaceSprite::MASKED);
+	spr[4] = create_sprite("gamex/planetscan/hazards/whirl_01.bmp", SpaceSprite::MASKED);
 }
 
 
@@ -805,6 +1096,9 @@ void GamePlanetscan::quit()
 
 void GamePlanetscan::calculate()
 {
+	if (next)
+		return;
+
 	// this viewtype needs no zoom, and always centers on the center of the planet system map.
 	double d, dmin;
 	d = player->pos.y;
@@ -842,6 +1136,9 @@ void GamePlanetscan::calculate()
 
 void GamePlanetscan::animate(Frame *frame)
 {
+	if (next)
+		return;
+
 	// redraw the planet background.
 	blit(map_bmp, surf_area->backgr, 0, 0, 0, 0, map_bmp->w, map_bmp->h);
 
@@ -889,6 +1186,7 @@ void GamePlanetscan::animate(Frame *frame)
 		hline(bmpframe2, iround(P.x-d), iround(P.y), iround(P.x+d), c);
 		vline(bmpframe2, iround(P.x), iround(P.y-d), iround(P.y+d), c);
 
+		handle_env();
 	}
 
 	ti = true;
@@ -1056,3 +1354,99 @@ void GamePlanetscan::handle_ranmin()
 
 
 }
+
+
+
+
+//	Spawner(SpaceLocation *creator, Vector2 lpos, double langle, SpaceSprite *aspawnsprite,
+//					double frame_length, double alifetime, double aspawninterval);
+void GamePlanetscan::handle_env()
+{
+	FireStorm *fs = 0;
+
+	// meteors
+	if (random(10) == 0)
+	{
+		
+		double a = random(0.1 * PI2, 0.2 * PI2);
+		double da = 1.0;
+		double ra = 1000.0;
+		double v = 0.2;
+
+
+		fs = new FireStorm(0, player->pos+Vector2(random(-400,400),random(-200,200)), 
+			a, spr[0], 75, 1.5, 0.05,
+			v, 1.0, 0.0);
+
+	}
+
+	// firewall
+	if (random(20) == 0)
+	{
+		
+		double a = random(PI2);
+		double da = 1.0;
+		double ra = 1000.0;
+		double v = 0.1;
+
+
+		fs = new FireStorm(player, player->pos+Vector2(random(-400,400),random(-200,200)), 
+			a, spr[1], 50, 3.0, 0.05,
+			v, 2.0, 0.1*PI);
+
+	}
+
+	// lightning
+	if (random(20) == 0)
+	{
+		
+		double a = random(PI2);
+		double da = 1.0;
+		double ra = 1000.0;
+		double v = 0;
+
+
+		fs = new FireStorm(player, player->pos+Vector2(random(-400,400),random(-200,200)), 
+			a, spr[2], 50, 0.5, 0.05,
+			v, 16.0, 0.0);
+	}
+
+	// quake
+	if (random(20) == 0)
+	{
+		
+		double a = random(PI2);
+		double da = 1.0;
+		double ra = 1000.0;
+		double v = 0.2;
+
+
+		fs = new FireStorm(player, player->pos+Vector2(random(-400,400),random(-200,200)), 
+			a, spr[3], 100, 2.0, 0.05,
+			v, 2.0, 0.1*PI);
+	}
+
+	// whirl
+	if (random(20) == 0)
+	{
+		
+		double a = random(PI2);
+		double da = 1.0;
+		double ra = 1000.0;
+		double v = 0.0;
+
+
+		fs = new FireStorm(player, player->pos+Vector2(random(-400,400),random(-200,200)), 
+			a, spr[4], 100, 0.55, 0.05,
+			v, 4.0, 0);
+
+	}
+
+	if (fs)
+	{
+		add(fs);
+		fs->set_team(team_enemy);
+	}
+}
+
+

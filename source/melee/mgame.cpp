@@ -466,7 +466,7 @@ void game_create_errorlog(const char *exitmessage = 0)
 				continue;
 			
 			int is = s->state;
-			Vector2 p = s->normal_pos();
+			Vector2 p = s->pos;
 			Vector2 v = s->vel;
 			
 			// set "enable run-type information" for this feature
