@@ -102,6 +102,7 @@ Section "TimeWarp Core (required)"
   File "..\*.html"
   File "..\*.ini"
   File "..\*.txt"
+  File "..\palette"
 
   SetOutPath $INSTDIR\docs
   File "..\docs\*.*"
