@@ -311,6 +311,7 @@ int ControlWussie::think ()
 		return action;
 	}
 
+	distance = ship->distance (ship->target);
 	for (j = 0; j < 2; j++)
 	{
 		fireoption[j] = FALSE;
