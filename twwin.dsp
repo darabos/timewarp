@@ -784,6 +784,10 @@ SOURCE=.\source\newships\shpcresu.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpcrore.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpdajem.cpp
 # End Source File
 # Begin Source File
