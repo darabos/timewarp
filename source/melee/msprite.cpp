@@ -787,7 +787,7 @@ BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 	// changed ROB
 	//if (general_attributes & MIPMAPED) if (highest_mip > 0) 
 	//	{tw_error ("get_bitmap on a mipmaped sprite!\n(retry likely to work)");}
-	if (general_attributes & MIPMAPED) if (miplevel >= highest_mip) 
+	if (general_attributes & MIPMAPED) if (miplevel > highest_mip) 
 		{tw_error ("get_bitmap on undefined mipmap level");}
 	if (index >= count) {tw_error("SpaceSprite::get_bitmap - index %d > count %d", index, count);}
 	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);}

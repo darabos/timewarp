@@ -1135,7 +1135,15 @@ SOURCE=.\source\games\gamehierarchy.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\games\gflmelee.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\games\ggob.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\gplexplr.h
 # End Source File
 # Begin Source File
 

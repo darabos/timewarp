@@ -108,7 +108,7 @@ class YRadar : public Presence
 
 	Vector2	location;	// where it's drawn on the screen
 
-	YRadar(Control *ocontroller, double Size, TeamCode hteam, DATAFILE *dat,
+	YRadar(Control *ocontroller, double Size, TeamCode hteam, char *datafilename,
 			bool rel, int shape);
 	~YRadar();
 
@@ -128,6 +128,8 @@ class YRadar : public Presence
 //	double shiftscale(double r_center, double v_center, double scale, double n);
 	Vector2 shiftscale(Vector2 r_center, Vector2 v_center, double scale, Vector2 n);
 
+	void initbmp(char *datafilename);
+
 	void setTarget(SpaceLocation *target);
 	void setSize(double Size);
 	void toggleActive();
@@ -140,7 +142,8 @@ static const int StatsMax_Nkilled = 32;
 class StatsManager
 {
 	BITMAP	*list_bmp[StatsMax_Nships];	// at most 512 interesting different objects (ships)?
-	int		Nlist, list_allyflag[StatsMax_Nships];
+	int		Nlist;
+	unsigned int list_allyflag[StatsMax_Nships];
 
 	public:
 	int Nships;
@@ -161,7 +164,7 @@ class StatsManager
 	void addship ( Ship *statship, int ofordisplay );	// add to the stats list
 	void updatestats(SpaceLocation *killer, Ship *victim);
 	void showstats(Frame *frame);
-	int list_item(int flag);
+	int list_item(unsigned int flag);
 };
 
 
@@ -172,12 +175,14 @@ class FlMelee : public Game
 {
 public:
 
-	DATAFILE	*FlmeleeData;
+	//DATAFILE	*FlmeleeData;
 
 	double	radar_sizes[Nradarmodes];
 	int		radar_mode;
 	BITMAP *blankRadar;						//Image of the blank RADAR screen
 	YRadar	*radar;
+	int		radarlayout;
+
 
 	ImIndicator *target_indicator;
 	int healthbartoggle;
@@ -188,7 +193,7 @@ public:
 	ShipPanelBmp *player_panel[2];
 
 	int		toggle_showstats, toggle_playership, toggle_healthbars, toggle_fleetlist, toggle_radar, toggle_panel, toggle_radarpos;
-	int		lastkey_playership, lastkey_healthbars, lastkey_fleetlist, lastkey_radar, lastkey_panel, lastkey_radarpos;
+	int		lastkey_playership, lastkey_healthbars, lastkey_fleetlist, lastkey_radar, lastkey_panel, lastkey_radarpos, lastkey_radarlayout;
 	StatsManager	*statsmanager;
 
 	int radar_pos_id;
@@ -211,6 +216,8 @@ public:
 	int is_in_team(SpaceLocation *o, TeamCode team);
 	void show_ending(int didwewin);
 	void animate_onscreen_shiplist( Frame* frame );
+
+	virtual void quit(const char *message);
 };
 
 
@@ -253,6 +260,12 @@ void HealthBar::draw_bar(Ship *s, double yoffs, int len, int H, double fraction,
 	d = iround(len * fraction);
 
 	H -= 1;		// for plotting, pixel 0 also counts
+
+	if (ix > space->surface->w) return;
+	if (iy > space->surface->h) return;
+	if (ix+len < 0) return;
+	if (iy+H < 0) return;
+
 	if (d > 0)
 		rectfill(space->surface, ix, iy, ix+d-1, iy+H, col1);
 	rectfill(space->surface, ix+d, iy, ix+len, iy+H, col2);
@@ -587,6 +600,7 @@ void FlMelee::init(Log *_log)
 
 	healthbartoggle = 1;	// show health bars for the ships.
 
+
 	//if (num_targets != 14 ) {tw_error("Oh man ...");} OK this works fine !
 
 //	if (playercontrols[0]->target)
@@ -597,20 +611,24 @@ void FlMelee::init(Log *_log)
 		target_indicator = 0;
 
 
-
 	toggle_showstats = 0;
 	toggle_playership = 0;
-	toggle_healthbars = 1;
-	toggle_fleetlist = 1;
-	toggle_radar = 0;
-	toggle_panel = 1;
-	toggle_radarpos = 0;
 	lastkey_playership = 0;
 	lastkey_healthbars = 0;
 	lastkey_fleetlist = 0;
 	lastkey_radar = 0;
 	lastkey_panel = 0;
 	lastkey_radarpos = 0;
+	lastkey_radarlayout = 0;
+	toggle_radarpos = 0;
+
+	set_config_file("gflmelee.ini");
+	radarlayout = get_config_int("GameSetting", "RadarLayout", 0);
+	toggle_healthbars = get_config_int("GameSetting", "ToggleHealthBar", 1);
+	toggle_fleetlist = get_config_int("GameSetting", "ToggleFleetList", 1);
+	toggle_radar = get_config_int("GameSetting", "ToggleRadar", 1);
+	toggle_panel = get_config_int("GameSetting", "TogglePanel", 1);
+	radar_pos_id = get_config_int("GameSetting", "Radarpos", 1);
 
 	//BITMAP *BlankSlate, Presence *target, double Size
 //	blankRadar = GetBitmap(VanDat,"Scope");		//Load blank RADAR image
@@ -618,18 +636,20 @@ void FlMelee::init(Log *_log)
 //	clear_to_color(blankRadar, makecol(100,100,100));
 //	if (!blankRadar) error("Can't load scope image.");
 
-	radar_sizes[0] = 100;		// is toggled off, then
-	radar_sizes[1] = size.x;
-	radar_sizes[2] = 4000;
+	radar_sizes[0] = size.x/8;		// is toggled off, then
+	radar_sizes[1] = size.x/4;
+	radar_sizes[2] = size.x/2;
 	// this is a decreasing order - is best for fighting I think.
 
-	radar_mode = 1;		// area of the map you see (is fitted onto the clean image)
+	radar_mode = 0;		// area of the map you see (is fitted onto the clean image)
 //	TeamCode tc = playercontrols[0]->ship->get_team();
-	FlmeleeData = load_datafile("gflmelee.dat");
-	radar = new YRadar(playercontrols[0], radar_sizes[radar_mode], alliance[0], FlmeleeData, 0, 2);
+	//FlmeleeData = load_datafile("gflmelee01.dat");
+	char txt[512];
+	sprintf(txt, "gflmelee%02i.dat", radarlayout+1);
+	radar = new YRadar(playercontrols[0], radar_sizes[radar_mode], alliance[0], txt, 0, 2);
 	game->add(radar);
-	radar_pos_id = 0;
 	radar->location = Vector2(0, 0.5*window->surface->h - 100);
+	//unload_datafile(FlmeleeData);
 
 //	vradar->addTeam(human_team,makecol(65,255,128));	//A pleasant green
 //	vradar->addTeam(enemy_team,makecol(255,65,0));		//A violent red
@@ -641,8 +661,27 @@ void FlMelee::init(Log *_log)
 }
 
 
+
+void FlMelee::quit(const char *message)
+{
+	// save the game settings.
+	set_config_file("gflmelee.ini");
+	set_config_int("GameSetting", "RadarLayout", radarlayout);
+	set_config_int("GameSetting", "ToggleHealthBar", toggle_healthbars);
+	set_config_int("GameSetting", "ToggleFleetList", toggle_fleetlist);
+	set_config_int("GameSetting", "ToggleRadar", toggle_radar);
+	set_config_int("GameSetting", "TogglePanel", toggle_panel);
+	set_config_int("GameSetting", "Radarpos", radar_pos_id);
+
+	Game::quit(message);
+}
+
+
 int FlMelee::is_in_team(SpaceLocation *o, TeamCode team)
 {
+	if (!(o && o->exists() ))
+		return 0;
+
 	return ((o->ally_flag & SpaceLocation::team_mask) == (team << SpaceLocation::team_shift));
 }
 
@@ -841,7 +880,7 @@ void FlMelee::calculate()
 
 	// not if the player is captain of one fixed vessel: a command ship
 	int PlayerIsCaptain = 0;
-	if ( !(c->exists() && c->ship->exists()) && !PlayerIsCaptain )
+	if ( !(c->exists() && c->ship && c->ship->exists()) && !PlayerIsCaptain )
 	{
 		c->state = 1;
 
@@ -862,7 +901,7 @@ void FlMelee::calculate()
 		}
 	}
 	// if you're still dead after this check, the game ends
-	if ( !(c->exists() && c->ship->exists()) )
+	if ( !(c->exists() && c->ship && c->ship->exists()) )
 	{
 		show_ending(0);
 	}
@@ -955,11 +994,12 @@ void FlMelee::calculate()
 
 		++radar_mode;
 		if ( radar_mode >= Nradarmodes )
-			radar_mode = 0;
+			radar_mode = -1;
 
+		if (radar_mode >= 0)
 		radar->setSize(radar_sizes[radar_mode]);
 	}
-	if ( radar_mode != 0 )
+	if ( radar_mode != -1 )
 		radar->active = 1;
 	else
 		radar->active = 0;
@@ -997,6 +1037,33 @@ void FlMelee::calculate()
 	lastkey_panel = key[KEY_F];
 
 
+	if (!lastkey_radarlayout && key[KEY_L])
+	{
+		for (;;)
+		{
+			++radarlayout;
+
+			char txt[512];
+			sprintf(txt, "gflmelee%02i.dat", radarlayout+1);
+			FILE *testfile;
+			testfile = fopen(txt, "rb");
+			if (testfile)
+			{
+				fclose(testfile);
+				radar->initbmp(txt);
+
+				break;
+
+			} else {
+
+				radarlayout = -1;	// restart the loop.
+				continue;
+			}
+		}
+	}
+	lastkey_radarlayout = key[KEY_L];
+
+
 
 	if ( playercontrols[0]->ship && toggle_playership )
 	{
@@ -1010,12 +1077,14 @@ void FlMelee::calculate()
 		lastitarget = itarget;
 
 		// then start searching for the next entry;
-		itarget = lastitarget + 1;
+		itarget = lastitarget + toggle_playership;
 		while ( itarget != lastitarget )
 		{
 
 			if ( itarget > num_targets-1 )
 				itarget -= num_targets;
+			if ( itarget < 0 )
+				itarget += num_targets;
 		
 			SpaceObject *o = game->target[itarget];
 			
@@ -1042,7 +1111,7 @@ void FlMelee::calculate()
 				break;
 			}
 
-			++itarget;
+			itarget += toggle_playership;
 		}
 
 	}
@@ -1093,19 +1162,24 @@ void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 void FlMelee::show_ending(int didwewin)
 {
 	// show some bmp
-	
-	SpaceSprite *s = playercontrols[0]->ship->data->spriteShip;
+
 	BITMAP *dest = view->frame->surface;
 
 
 //	view->prepare(view->frame);
 //	not really needed here: handles zoom
 
+	view->frame->full_redraw = 1;
+
 	// clear the screen
 	rectfill(dest, 0, 0, dest->w, dest->h, makecol(50,40,30));
 
 	// show the player ship
-	s->draw(Vector2(0,0), Vector2(dest->w, dest->h), 0, view->frame);
+	if (playercontrols[0]->ship)
+	{
+		SpaceSprite *s = playercontrols[0]->ship->data->spriteShip;
+		s->draw(Vector2(0,0), Vector2(dest->w, dest->h), 0, view->frame);
+	}
 
 	// show some text
 	if ( didwewin )
@@ -1132,7 +1206,7 @@ void FlMelee::show_ending(int didwewin)
 	// wait till the player presses ENTER
 	while (! (readkey() >> 8 == KEY_ENTER) ) {};
 
-	game->quit("THE END");
+	quit("THE END");
 }
 
 
@@ -1200,9 +1274,9 @@ void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 	int k = 0;
 	for ( i = 0; i < Nlist; ++i )
 	{
-		if ( list_allyflag[i] == (int)killer->ally_flag )
+		if ( list_allyflag[i] == killer->ally_flag )
 			++k;
-		if ( list_allyflag[i] == (int)victim->ally_flag )
+		if ( list_allyflag[i] == victim->ally_flag )
 			++k;
 	}
 
@@ -1299,7 +1373,7 @@ void StatsManager::showstats(Frame *frame)
 }
 
 
-int StatsManager::list_item(int flag)
+int StatsManager::list_item(unsigned int flag)
 {
 	int i;
 
@@ -1317,7 +1391,7 @@ FlMelee::~FlMelee()
 	// this is handled outside normal game scope.
 	delete statsmanager;
 
-	unload_datafile(FlmeleeData);
+	//unload_datafile(FlmeleeData);
 }
 
 StatsManager::~StatsManager()
@@ -1424,15 +1498,20 @@ void YRadar::Paint(BITMAP *Slate, Vector2 T)
 }
 
 
-YRadar::YRadar(Control *ocontroller, double Size, TeamCode hteam, DATAFILE *dat, bool rel, int shape)
+void YRadar::initbmp(char *datafilename)
 {
-	relative_angle = rel;
-	display_shape = shape;
+	DATAFILE *dat;
+	dat = load_datafile(datafilename);
 
-	controller = ocontroller;
-	size = Size;
-	active = TRUE;
-	set_depth(DEPTH_STARS + 0.1);
+	if (!ship_f_icon)	destroy_bitmap(ship_f_icon);
+	if (!ship_e_icon)	destroy_bitmap(ship_e_icon);
+	if (!cbody_icon)	destroy_bitmap(cbody_icon);
+	if (!planet_icon)	destroy_bitmap(planet_icon);
+	if (!target_icon1)	destroy_bitmap(target_icon1);
+	if (!target_icon2)	destroy_bitmap(target_icon2);
+	if (!backgr_bmp)	destroy_bitmap(backgr_bmp);
+	if (!foregr_bmp)	destroy_bitmap(foregr_bmp);
+	if (!Painted)		destroy_bitmap(Painted);
 
 	ship_f_icon = copybmp( (BITMAP*) find_datafile_object(dat, "radar_ship_f")->dat );
 	ship_e_icon = copybmp( (BITMAP*) find_datafile_object(dat, "radar_ship_e")->dat );
@@ -1444,6 +1523,8 @@ YRadar::YRadar(Control *ocontroller, double Size, TeamCode hteam, DATAFILE *dat,
 	backgr_bmp = copybmp( (BITMAP*) find_datafile_object(dat, "radar_backgr")->dat );
 	foregr_bmp = copybmp( (BITMAP*) find_datafile_object(dat, "radar_foregr")->dat );
 
+	unload_datafile(dat);
+
 	Painted = create_bitmap_ex(bitmap_color_depth(screen),backgr_bmp->w,backgr_bmp->h);
 
 	if ( !(ship_f_icon && ship_e_icon && cbody_icon && planet_icon &&
@@ -1451,6 +1532,31 @@ YRadar::YRadar(Control *ocontroller, double Size, TeamCode hteam, DATAFILE *dat,
 	{
 		tw_error("Failed to load one of the radar icons");
 	}
+
+}
+
+YRadar::YRadar(Control *ocontroller, double Size, TeamCode hteam, char *datafilename, bool rel, int shape)
+{
+	relative_angle = rel;
+	display_shape = shape;
+
+	controller = ocontroller;
+	size = Size;
+	active = TRUE;
+	set_depth(DEPTH_STARS + 0.1);
+
+	ship_f_icon = 0;
+	ship_e_icon = 0;
+	cbody_icon  = 0;
+	planet_icon = 0;
+	target_icon1 = 0;
+	target_icon2 = 0;
+	backgr_bmp = 0;
+	foregr_bmp = 0;
+	
+	Painted = 0;
+
+	initbmp(datafilename);
 
 	homeplayer_team = hteam;
 

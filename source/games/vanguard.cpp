@@ -313,7 +313,7 @@ Vanguard::~Vanguard()
 	for(num=0; num<Num_Moon_Pics; num++)	delete MoonPics[num];
 	for(num=0; num<Num_Giant_Pics; num++)	delete GiantPics[num];
 	for(num=0; num<Num_Star_Pics; num++)	delete StarPics[num];
-	delete vradar;
+	//delete vradar;	// don't do this, it's already added to the game.
 	destroy_bitmap(blankRadar);
 
 }

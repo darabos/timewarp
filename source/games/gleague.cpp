@@ -137,17 +137,20 @@ void LeagueGame::init_objects() {
 
 void LeagueGame::init( Log *_log ){
 	score[0] = score[1] = 0;
-	old_melee = melee;
-	melee = load_datafile( "league.dat" );
-	if( !melee ) error( "Error loading league data\n" );
+	// changed GEO. The data-file of this game is outdated. It works with
+	// the default melee data file.
+//	old_melee = melee;
+//	melee = load_datafile( "league.dat" );
+//	if( !melee ) error( "Error loading league data\n" );
 	NormalGame::init( _log );
 	turbo *= 1.414;
 	player_team[2] = player_team[0];
 }
 
 LeagueGame::~LeagueGame(){
-	if( melee && melee != old_melee ) unload_datafile( melee );
-	melee = old_melee;
+	// change GEO
+//	if( melee && melee != old_melee ) unload_datafile( melee );
+//	melee = old_melee;
 }
 
 void LeagueGame::set_resolution( int screen_x, int screen_y ){
