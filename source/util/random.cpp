@@ -26,7 +26,7 @@ inline Uint32 _rng_dist_32_flat ( Uint32 m, Uint32 r ) {
 		}
 		return r;
 #	elif defined(__GNUC__) && defined(__i386__) && !defined(NO_ASM)
-		asm ("mull %0" : "=d" (r) : "a" (m), "0" (r) )
+		asm ("mull %0" : "=d" (r) : "a" (m), "0" (r) );
 		return r;
 #	else //add gcc asm sometime
 		return (Uint32)((r * (Uint64)m) >> 32);
