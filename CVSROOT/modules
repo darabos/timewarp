@@ -25,6 +25,9 @@
 # can be useful for creating a module that consists of many directories
 # spread out over the entire source repository.
 
+#get everything
+all .
+
 #get only source code
 source src 
 
