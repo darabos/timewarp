@@ -32,6 +32,7 @@ using namespace Interface;
 #include "PlayOnlineMenu.h"
 #include "OverlayMenu.h"
 #include "GameSessionConfiguration.h"
+#include "OptionsMenu.h"
 
 #include "../scp.h"
 
@@ -59,6 +60,7 @@ void doMyEngine() {
 	MyMainMenu * mainMenu = new MyMainMenu(&config, buffer, QUIT);
 	PlayLocalMenu * playLocalMenu = new PlayLocalMenu(&config, buffer, MAIN_MENU);
 	PlayOnlineMenu * playOnlineMenu = new PlayOnlineMenu(&config, buffer, MAIN_MENU);
+	OptionsMenu * optionsMenu = new OptionsMenu(&config, buffer, MAIN_MENU);
 
 	OverlayDialog * currentMenu = mainMenu;
 
@@ -126,6 +128,7 @@ void doMyEngine() {
 				break;
 
 			case OPTIONS:
+				currentMenu = optionsMenu;
 				break;
 
 			case QUIT:
