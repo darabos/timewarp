@@ -28,4 +28,5 @@ Release/*
 old.*
 *.tmp
 *.log
+tmp.*
 
