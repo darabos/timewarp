@@ -132,7 +132,7 @@ void CrewPod::calculate() {
 
 void CrewPod::inflict_damage(SpaceObject *other)
 {
-  if (other->isShip()) {
+  if (other->isShip() && other->damage_factor == 0) {
     sound.stop(data->sampleExtra[0]);
     sound.play(data->sampleExtra[0]);
 	damage(other, 0, -1);

@@ -370,28 +370,23 @@ void TauLeviathan::calculate()
 
 
 int TauLeviathan::handle_damage(SpaceLocation *source, double normal, double direct)
-
 {
 	STACKTRACE
 
 	if (state == 0) return 0;
 
 	if (source->getID() == LEVIATHAN_SLIME_FOOD) {
-
 		damage(this, -1); source->state = 0;
-
 		play_sound(data->sampleExtra[0]);
-
-		return 0; }
+		return 0;
+	}
 
 	if (normal + direct < 0) {
-
 		batt += food2batt * -(normal + direct);
-
-		if (batt > batt_max) batt = batt_max; }
+		if (batt > batt_max) batt = batt_max;
+	}
 
 	return Ship::handle_damage(source, normal, direct);
-
 }
 
 
@@ -493,29 +488,19 @@ void LeviathanSlimeBall::inflict_damage(SpaceObject *other)
 
 
 LeviathanSlimeFood::LeviathanSlimeFood(double oangle, double ov, int otime,
-
 		SpaceLocation *creator, SpaceLocation *opos,
-
 		SpaceSprite *osprite, int ofcount, int ofsize) :
-
 	AnimatedShot(creator, 0, oangle , ov, 0, 99999999, 1, creator, osprite, ofcount, ofsize)
-
 {
-
 	id = LEVIATHAN_SLIME_FOOD;
 
 	layer = LAYER_SHOTS;
-
 	collide_flag_anyone = ALL_LAYERS;
-
 	collide_flag_sameship = bit(LAYER_SHIPS);
-
 	collide_flag_sameteam = bit(LAYER_SHIPS);
 
 	lifetime = otime;
-
 //        mass = 0.001;
-
 };
 
 
@@ -600,29 +585,19 @@ void LeviathanJammer::calculate()
 	if (!exists()) return;
 
 	if (victim) {
-
-		if (!victim->exists()) {
-
+		if (!victim->exists())
+		{
 			victim = NULL; return; }
-
 		((Ship*)victim)->nextkeys &= ~(keyflag::left + keyflag::right + keyflag::thrust);
-
 		Vector2 vv = victim->get_vel();
-
 		double vvv = magnitude(vv);
-
 		if (vvv < 1e-5) return;
-
 		vvv = (vvv - ((Ship*)victim)->accel_rate * frame_time) / vvv;
-
 		if (vvv < 0) vvv = 0;
-
 		vv *= (vvv - 1);
-
 		vvv = magnitude(vv);
-
-		victim->accelerate(victim, atan(vv), vvv, MAX_SPEED); }
-
+		victim->accelerate(victim, atan(vv), vvv, MAX_SPEED);
+	}
 }
 
 
