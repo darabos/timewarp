@@ -1178,11 +1178,11 @@ DIALOG fleetDialog[] = {
   { d_button_proc,     518,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE_BUTTON
   { d_button_proc,     574,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Load", NULL, NULL },//FLEET_DIALOG_LOAD_BUTTON
   { d_textbox_proc,    390,  60,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Point Limit", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_TEXT
-  { d_button_proc,     518,  60,   112,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"300", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_BUTTON
+  { d_button_proc,     518,  60,   112,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"300\0              ", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_BUTTON
   { d_textbox_proc,    390,  80,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Current Points", NULL, NULL },//FLEET_DIALOG_CURRENT_POINTS_TEXT
-  { d_textbox_proc,    518,  80,   112,  20,   255,  0,    0,     0,       0,    0,    (void *)"100", NULL, NULL },//FLEET_DIALOG_CURRENT_POINTS_VALUE
+  { d_textbox_proc,    518,  80,   112,  20,   255,  0,    0,     0,       0,    0,    (void *)"100\0              ", NULL, NULL },//FLEET_DIALOG_CURRENT_POINTS_VALUE
   { d_textbox_proc,    390, 120,    64,  20,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT2
-  { d_button_proc,     454, 120,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost TODO", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON2
+  { d_button_proc,     454, 120,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost\0             ", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON2
   { d_button_proc,     582, 120,    16,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING2
 
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)  
@@ -1193,9 +1193,9 @@ DIALOG fleetDialog[] = {
   { scp_fleet_dialog_bitmap_proc,
                        256,  10,  128,  200,   255,  0,    0,    0,       0,    0,    (void *)NULL, NULL, NULL },//FLEET_DIALOG_SHIP_PICTURE_BITMAP
   { d_textbox_proc,     10, 372,  310,   85,   255,  0,    0,     0,       0,    0,    (void *)"SHIP PICTURE TODO", NULL, NULL },//FLEET_DIALOG_SHIP_STATS_BITMAP
-  { d_textbox_proc,    325, 372,  305,   85,   255,  0,    0,     0,       0,    0,    (void *)"Summary Text", NULL, NULL },//FLEET_DIALOG_SHIP_SUMMARY_TEXT
+  { d_textbox_proc,    325, 372,  305,   85,   255,  0,    0,     0,       0,    0,    (void *)"Summary Text\0                                                                  ", NULL, NULL },//FLEET_DIALOG_SHIP_SUMMARY_TEXT
   { d_button_proc,      10, 460,   64,   20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Back", NULL, NULL },//FLEET_DIALOG_BACK_BUTTON
-  { d_textbox_proc,     74, 460,  556,   20,   255,  0,    0,     0,       0,    0,    (void *)"Help Text", NULL, NULL },//FLEET_DIALOG_HELP_TEXT
+  { d_textbox_proc,     74, 460,  556,   20,   255,  0,    0,     0,       0,    0,    (void *)"Help Text\0                                                                     ", NULL, NULL },//FLEET_DIALOG_HELP_TEXT
 
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,     0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,     0,       0,    0,    NULL, NULL, NULL }/**/
@@ -1205,6 +1205,8 @@ DIALOG fleetDialog[] = {
 void edit_fleet(int player) {STACKTRACE
 	char tmp[40];
 	char path[80];
+    char fleetCostString[80] = "";
+    
 
     static Fleet::SortingMethod sortMethod1 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT,
         sortMethod2 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT;
@@ -1232,6 +1234,10 @@ void edit_fleet(int player) {STACKTRACE
         fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].dp3 = fleet;
         fleetDialog[FLEET_DIALOG_SORTBY_BUTTON1].dp = Fleet::getSortingMethodName(sortMethod1);
         fleetDialog[FLEET_DIALOG_SORTBY_BUTTON2].dp = Fleet::getSortingMethodName(sortMethod2);
+
+        sprintf(fleetCostString,"%d", fleet->getCost());
+        fleetDialog[FLEET_DIALOG_CURRENT_POINTS_VALUE].dp = fleetCostString;
+
         if (sortAscending1)
             fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = (void *)"^";
         else
@@ -1275,6 +1281,7 @@ void edit_fleet(int player) {STACKTRACE
                selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].d1));
                if (selectedSlot != -1)
                    fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1 = selectedSlot;
+               
                break;
 
            case FLEET_DIALOG_PLAYER_FLEET_BUTTON: break;
@@ -1282,10 +1289,15 @@ void edit_fleet(int player) {STACKTRACE
            case FLEET_DIALOG_SAVE_BUTTON: break;
            case FLEET_DIALOG_LOAD_BUTTON: break;
            case FLEET_DIALOG_POINT_LIMIT_TEXT: break;
-           case FLEET_DIALOG_POINT_LIMIT_BUTTON: break;
+           case FLEET_DIALOG_POINT_LIMIT_BUTTON: 
+
+
+               break;
+
            case FLEET_DIALOG_CURRENT_POINTS_TEXT: break;
            case FLEET_DIALOG_CURRENT_POINTS_VALUE: break;
            case FLEET_DIALOG_SORTBY_TEXT2: break;
+
            case FLEET_DIALOG_SORTBY_BUTTON2: 
                sortMethod2 = Fleet::cycleSortingMethod(sortMethod2);
                fleet->Sort( sortMethod2, sortAscending2 );
