@@ -29,18 +29,36 @@ public:
 
 
 
-// something which has a background, and its own drawing-area
-class AreaTablet : public GraphicButton
+class Area : public GraphicButton
 {
 protected:
 
 public:
-	BITMAP *backgr, *drawarea;
+	BITMAP *backgr;
+
+	Area(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
+	virtual ~Area();
+
+	virtual void changebackgr(char *fname);
+
+	virtual void animate();		// shouldn't be changed.
+
+	virtual bool hasmouse();
+	virtual bool isvalid();
+};
+
+
+
+// something which has a background, and its own drawing-area
+class AreaTablet : public Area
+{
+protected:
+
+public:
+	BITMAP *drawarea;
 
 	AreaTablet(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
 	virtual ~AreaTablet();
-
-	void changebackgr(char *fname);
 
 	virtual void animate();		// shouldn't be changed.
 	virtual void subanimate();

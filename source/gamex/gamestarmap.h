@@ -64,6 +64,7 @@ public:
 	bool maphaschanged;
 
 	void update_bplot();
+	void mapeditor_stuff();
 };
 
 

@@ -26,7 +26,8 @@ void GameSolarview::init_menu()
 	// drawing; the game draws onto part of the menu.
 	T = new TWindow("gamex/interface/planetview", 0, 0, game_screen, true);
 
-	maparea = new AreaTablet(T, "map_");
+	maparea = new Area(T, "map_");
+	makevideobmp(maparea->backgr);	// for faster drawing (I think ...)
 }
 
 
@@ -252,10 +253,10 @@ void GameSolarview::animate(Frame *frame)
 	if (next)
 		return;
 
-	FULL_REDRAW = 1;
+//	FULL_REDRAW = 1;
 
-	::space_zoom = wininfo.zoomlevel;
-	::space_center = wininfo.mapcenter;
+//	::space_zoom = wininfo.zoomlevel;
+//	::space_center = wininfo.mapcenter;
 
 
 	GameBare::animate(frame);

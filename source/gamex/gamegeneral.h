@@ -6,6 +6,8 @@
 Vector2 uncorner ( Vector2 pos );
 void replace_color(BITMAP *bmp, int col1, int col2);
 
+void makevideobmp(BITMAP *&bmp);
+
 
 class MousePtr : public SpaceObject
 {
@@ -57,7 +59,7 @@ public:
 
 
 //SpaceSprite *create_sprite(char *bmpfilename, int _attributes);
-SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations = 1, int bpp=32, double scale = 1);
+SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations = 1, int bpp=32, double scale = 1, bool vidmem = false);
 
 
 

@@ -37,7 +37,7 @@ void GamePlanetview::init_menu()
 	// drawing; the game draws onto part of the menu.
 	T = new TWindow("gamex/interface/planetview", 0, 0, game_screen, true);
 
-	maparea = new AreaTablet(T, "map_");
+	maparea = new Area(T, "map_");
 }
 
 
@@ -358,38 +358,7 @@ void GamePlanetview::checknewgame()
 
 void GamePlanetview::animate()
 {
-
-	//idle(20);
-	
-	/*
-	::space_zoom = wininfo.zoomlevel;
-	::space_center = wininfo.mapcenter;
-	::space_view_size = wininfo.framesize;
-
-	// override the use of the "default" screen, instead re-route everything to the
-	// menu bitmaps.
-
-	tempframe->full_redraw = true;
-	FULL_REDRAW = true;
-	tempframe->erase();
-	tempframe->prepare();
-
-
-//	message.print(1500, 14, "%p %p %p", T->drawarea, T->backgr, ::screen);
-
-	animate(tempframe);
-	
-
-
-	//T->tree_setscreen(game_screen);
-	T->tree_animate();
-	*/
-
 	GameBare::animate();
-
-
-
-	//show_mouse(game_screen);
 }
 
 

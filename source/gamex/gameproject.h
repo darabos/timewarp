@@ -56,7 +56,7 @@ public:
 
 	Frame2	*tempframe;
 	TWindow *T;
-	AreaTablet *maparea;	// for game drawing
+	Area	*maparea;	// for game drawing
 
 	WindowInfo wininfo;
 

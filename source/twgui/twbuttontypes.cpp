@@ -75,38 +75,21 @@ bool Button::isvalid()
 
 
 
-// an additional class, which has its own background and drawing area, which
-// can be used to create custom representations of information (eg., text or smaller
-// bitmaps))
-// name#backgr.bmp
-
-
-
-AreaTablet::AreaTablet(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
+Area::Area(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
 :
 GraphicButton(menu, identbranch, asciicode, akeepkey)
 {
-
 	init_pos_size(&backgr, "backgr");
-
-	if (size.x != 0)
-		drawarea = create_bitmap_ex(bitmap_color_depth(mainwindow->drawarea), size.x, size.y);
-	else
-		drawarea = 0;
-
 }
 
 
-AreaTablet::~AreaTablet()
+Area::~Area()
 {
 	if (backgr)
 		destroy_bitmap(backgr);
-	if (drawarea)
-		destroy_bitmap(drawarea);
 }
 
-
-void AreaTablet::changebackgr(char *fname)
+void Area::changebackgr(char *fname)
 {
 	BITMAP *newb;
 	newb = getbmp(fname);
@@ -119,6 +102,57 @@ void AreaTablet::changebackgr(char *fname)
 }
 
 
+void Area::animate()
+{
+	draw(backgr);
+}
+
+
+bool Area::hasmouse()
+{
+	// the first rough check whether it's in the boxed bitmap area
+	return GraphicButton::hasmouse(backgr);
+}
+
+
+bool Area::isvalid()
+{
+	return backgr != 0;
+};
+
+
+
+// an additional class, which has its own background and drawing area, which
+// can be used to create custom representations of information (eg., text or smaller
+// bitmaps))
+// name#backgr.bmp
+
+
+
+AreaTablet::AreaTablet(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
+:
+Area(menu, identbranch, asciicode, akeepkey)
+{
+
+	//init_pos_size(&backgr, "backgr");
+
+	if (size.x != 0)
+		drawarea = create_bitmap_ex(bitmap_color_depth(mainwindow->drawarea), size.x, size.y);
+	else
+		drawarea = 0;
+
+}
+
+
+AreaTablet::~AreaTablet()
+{
+	//if (backgr)
+	//	destroy_bitmap(backgr);
+	if (drawarea)
+		destroy_bitmap(drawarea);
+}
+
+
 void AreaTablet::animate()
 {
 	blit(backgr, drawarea, 0, 0, 0, 0, size.x, size.y);
@@ -126,6 +160,7 @@ void AreaTablet::animate()
 	subanimate();
 
 	draw(drawarea);
+//	draw(backgr);
 }
 
 

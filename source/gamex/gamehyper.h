@@ -35,7 +35,7 @@ class GameHyperspace : public GameBare
 {
 public:
 
-	AreaTablet	*bradar;
+	Area	*bradar;
 
 	MousePtr *ptr;
 //	MapEverything *map;

@@ -223,15 +223,9 @@ void GameBare::animate(Frame *frame)
 
 	Physics::animate(frame);
 
-	if (T && !prev)
-	{
-		T->tree_animate();
-	}
-
 	// (and the game frame then draws to video memory?)
 	if (ti)
 		show_ticinfo(frame, tic_history, render_history, 4.0);
-
 
 }
 
@@ -242,38 +236,23 @@ void GameBare::animate()
 	if (next)
 		return;
 
+	if (poll_scroll())		//in case you still have to wait for a page flip...
+		return;
+
+	bool usepageflip = false;
+
 	// switch drawing screen
-	if (game_screen == game_screen1)
-		game_screen = game_screen2;
-	else
+	if (usepageflip)
+	{
+		if (game_screen == game_screen1)
+			game_screen = game_screen2;
+		else
+			game_screen = game_screen1;
+	} else
 		game_screen = game_screen1;
 	//clear_to_color(game_screen, 0);
 
-	/*
 
-	int predtime = 0;
-
-	Frame *f = view->frame;
-
-	if (FULL_REDRAW)
-		f->full_redraw = true;
-
-	f->erase();
-	view->prepare(f, predtime);
-
-	if (f->surface)
-	{
-		if (f->surface)
-			animate(f);
-
-		//message.animate(frame);	// displays messages that're stored somewhere
-	}
-
-	scare_mouse();
-	f->draw();
-	unscare_mouse();
-	return;
-	*/
 
 	double t = get_time2();
 
@@ -286,18 +265,33 @@ void GameBare::animate()
 	tempframe->erase();
 	tempframe->prepare();
 
+	acquire_bitmap(tempframe->surface);
 	animate(tempframe);
+	release_bitmap(tempframe->surface);
 
-	T->tree_setscreen(game_screen);		// game_screen can change value...
-	T->tree_animate();
+	acquire_bitmap(game_screen);
+	if (T && !next)
+	{
+		T->tree_setscreen(game_screen);		// game_screen can change value...
+		T->tree_animate();
+	}
+	release_bitmap(game_screen);
 
 	show_mouse(game_screen);
 
-	// when drawing is finished, do a page flip to the new screen.
-	show_video_bitmap(game_screen);
-
+	// when drawing is finished, you could do a page flip to the new screen.
+	// but this can take as much as 8 ms, which is a long time ... cause it has to
+	// wait for a vertical retrace sync of the monitor. So ... since the picture varies only
+	// slightly in-between updates, and updating the video memory goes very fast (<2 ms),
+	// page-flip isn't really needed...
+	if (usepageflip)
+	{
+		show_video_bitmap(game_screen);	// if you've to wait explicitly for a retrace ...
+	}
 
 	t = get_time2() - t;// - paused_time;
+
+
 	render_history->add_element(pow(t, 4.0));
 }
 

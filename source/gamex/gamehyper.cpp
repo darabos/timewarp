@@ -78,6 +78,7 @@ Animation(0, opos, osprite, first_frame, num_frames,
 
 void AnimationHyper::animate(Frame *space)
 {
+	
 //	scale = 1;
 //	sprite->animate(pos, sprite_index, space, scale);
 	Vector2 p, s;
@@ -201,7 +202,8 @@ void StarHyper::animate(Frame *f)
 	{
 		int bpp;
 		bpp = bitmap_color_depth(bmp);
-		bmpcache[sprite_index] = create_bitmap_ex(bpp, s.x, s.y);
+		//bmpcache[sprite_index] = create_bitmap_ex(bpp, s.x, s.y);
+		bmpcache[sprite_index] = create_video_bitmap(s.x, s.y);		// for faster drawing.
 
 		stretch_blit(bmp, bmpcache[sprite_index],
 			0, 0,  bmp->w, bmp->h,
@@ -302,10 +304,12 @@ void GameHyperspace::init_menu()
 	// drawing; the game draws onto part of the menu.
 	T = new TWindow("gamex/interface/hyperspace", 0, 0, game_screen, true);
 
-	maparea = new AreaTablet(T, "map_");
+	maparea = new Area(T, "map_");
+	makevideobmp(maparea->backgr);	// for (much) faster drawing? Cause we're dealing with a large area here!
 
 
-	bradar = new AreaTablet(T, "radar_");
+	bradar = new Area(T, "radar_");
+	makevideobmp(bradar->backgr);
 }
 
 
@@ -456,7 +460,9 @@ void GameHyperspace::init()
 		strcat(sprname, "_01.bmp");
 
 		// this defaults to a 32 bit depth (doh) !!
-		spr[i] = create_sprite( sprname, SpaceSprite::MASKED | SpaceSprite::IRREGULAR, N, 32, sprscale );
+		bool vidmem = true;	// try to store the sprites in video-memory, for speed
+		// too bad; true or false makes no difference...
+		spr[i] = create_sprite( sprname, SpaceSprite::MASKED | SpaceSprite::IRREGULAR, N, 32, sprscale, vidmem );
 		//sprA = create_sprite( "gamex/hyperspace/star_blobA_01.bmp", SpaceSprite::MASKED | SpaceSprite::IRREGULAR, 6 );
 		//sprB = create_sprite( "gamex/hyperspace/star_blobB_01.bmp", SpaceSprite::MASKED | SpaceSprite::IRREGULAR, 6 );
 		//sprC = create_sprite( "gamex/hyperspace/star_blobC_01.bmp", SpaceSprite::MASKED | SpaceSprite::IRREGULAR, 1 );
@@ -641,9 +647,6 @@ void GameHyperspace::animate(Frame *frame)
 
 	GameBare::animate(frame);
 
-
-
-	
 }
 
 

@@ -11,6 +11,24 @@ REGISTER_FILE
 #include "gamegeneral.h"
 
 
+void makevideobmp(BITMAP *&bmp)
+{
+	BITMAP *newbmp;
+	int w, h;
+
+	w = bmp->w;
+	h = bmp->h;
+
+	newbmp = create_video_bitmap(w, h);
+
+	if (newbmp)
+	{
+		destroy_bitmap(bmp);
+		bmp = newbmp;
+	}
+}
+
+
 /*
 // to be used by the game: it's a preprocessing operation
 SpaceSprite *create_sprite(char *bmpfilename, int _attributes)
@@ -69,7 +87,7 @@ char *replace01(char *txt, int newnum)
 // to be used by the game: it's a preprocessing operation
 
 
-SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, int bpp, double scale )
+SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, int bpp, double scale, bool vidmem )
 {
 	RGB pal[256];
 	BITMAP **bmplist;
@@ -88,13 +106,22 @@ SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, in
 
 		// load the bitmap data in the correct color depth (since then you
 		// can use the masked_blit operation without problems).
-		bmplist[i] = create_bitmap_ex(bpp, tmpbmp->w, tmpbmp->h);
+		bmplist[i] = 0;
+		if (vidmem)
+			create_video_bitmap(tmpbmp->w, tmpbmp->h);
+		if (!bmplist[i])
+			bmplist[i] = create_bitmap_ex(bpp, tmpbmp->w, tmpbmp->h);
+
 		blit(tmpbmp, bmplist[i], 0, 0,  0, 0,  tmpbmp->w, tmpbmp->h);
 		destroy_bitmap(tmpbmp);
 
 		if (scale != 1)
 		{
-			tmpbmp = create_bitmap_ex(bpp, bmplist[i]->w * scale, bmplist[i]->h * scale);
+			if (vidmem)
+				tmpbmp = create_video_bitmap(bmplist[i]->w * scale, bmplist[i]->h * scale);
+			else
+				tmpbmp = create_bitmap_ex(bpp, bmplist[i]->w * scale, bmplist[i]->h * scale);
+
 			stretch_blit(bmplist[i], tmpbmp, 0, 0, bmplist[i]->w, bmplist[i]->h,
 				0, 0, tmpbmp->w, tmpbmp->h);
 

@@ -237,11 +237,15 @@ void TWindow::tree_animate()
 
 	// the fist one should plot on top, and therefore, should be plotted last ...
 
+	acquire_bitmap(screen);
+	
 	while (current)
 	{
 		current->animate();
 		current = current->prev;
 	}
+
+	release_bitmap(screen);
 }
 
 
@@ -661,15 +665,16 @@ void TWindow::animate()
 	scare_mouse();	// otherwise it'll leave artifacts when things are drawn.
 
 
+	// release for in-game drawing
+	acquire_bitmap(drawarea);
+	
 	if (!disabled)
 	{
 		
 		// draw the background
 		// also copy transparent color!
 
-		// release for in-game drawing
-		//release_bitmap(drawarea);
-	
+		// this takes about 1 ms
 		blit(backgr, drawarea, 0, 0, 0, 0, W, H);
 
 		// draw the buttons
@@ -677,6 +682,8 @@ void TWindow::animate()
 		button = button_first;
 		while (button)
 		{
+			// "hyperspace" --> this takes 10 ms !! That's a lot for just that bitmap ...
+			// it's slow cause it goes from RAM to video-memory.
 			button->animate();
 			button = button->next;
 		}
@@ -686,15 +693,15 @@ void TWindow::animate()
 		// ignore transparent color
 		if (screen)
 		{
-			//acquire_bitmap(screen);
+			// this takes about 2 ms.
 			masked_blit(drawarea, screen, 0, 0, x, y, W, H);
-			//release_bitmap(screen);
 		}
 
 	} else
 		//draw_lit_sprite(drawarea, screen, x, y, makecol(100,100,100));
 		masked_blit(drawarea, screen, 0, 0, x, y, W, H);
 
+	release_bitmap(drawarea);
 
 	unscare_mouse();
 }

@@ -106,7 +106,7 @@ void GameMelee::init_menu()
 	// drawing; the game draws onto part of the menu.
 	T = new TWindow("gamex/interface/melee", 0, 0, game_screen, true);
 
-	maparea = new AreaTablet(T, "map_");
+	maparea = new Area(T, "map_");
 }
 
 

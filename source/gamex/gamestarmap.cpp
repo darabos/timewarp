@@ -57,7 +57,7 @@ void GameStarmap::init_menu()
 	// drawing; the game draws onto part of the menu.
 	T = new TWindow("gamex/interface/starmap", 0, 0, game_screen, true);
 
-	maparea = new AreaTablet(T, "map_");
+	maparea = new Area(T, "map_");
 }
 
 
@@ -157,38 +157,8 @@ void GameStarmap::update_bplot()
 }
 
 
-void GameStarmap::calculate()
+void GameStarmap::mapeditor_stuff()
 {
-	if (next)
-		return;
-
-	::space_view_size = wininfo.framesize;
-	::space_zoom = wininfo.zoomlevel;
-	::space_center = wininfo.mapcenter;
-
-	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
-
-
-	GameBare::calculate();
-
-	if ( mouseper->update() && (mouse_b & 2) )
-	{
-		if (view && view->frame && view->frame->window && view->frame->window->surface)
-			wininfo.centermove((mouse_x - maparea->pos.x - 0.5*view->frame->window->surface->w) / space_zoom,
-								(mouse_y - maparea->pos.y - 0.5*view->frame->window->surface->h) / space_zoom);
-		//wininfo.center(Vector2(0,0));
-	}
-
-
-	double dt = frame_time * 1E-3;
-
-	if (key[KEY_EQUALS])
-		wininfo.zoom(1 + 1*dt);
-
-	if (key[KEY_MINUS])
-		wininfo.zoom(1 / (1 + 1*dt));
-
-
 	// keep track of the last star that was clicked on by the mouse
 	if (ptr->selection && (ptr->selection->id == STAR_ID))
 	{
@@ -312,6 +282,41 @@ void GameStarmap::calculate()
 		update_bplot();
 
 	}
+}
+
+void GameStarmap::calculate()
+{
+	if (next)
+		return;
+
+	::space_view_size = wininfo.framesize;
+	::space_zoom = wininfo.zoomlevel;
+	::space_center = wininfo.mapcenter;
+
+	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
+
+
+	GameBare::calculate();
+
+	if ( mouseper->update() && (mouse_b & 2) )
+	{
+		if (view && view->frame && view->frame->window && view->frame->window->surface)
+			wininfo.centermove((mouse_x - maparea->pos.x - 0.5*view->frame->window->surface->w) / space_zoom,
+								(mouse_y - maparea->pos.y - 0.5*view->frame->window->surface->h) / space_zoom);
+		//wininfo.center(Vector2(0,0));
+	}
+
+
+	double dt = frame_time * 1E-3;
+
+	if (key[KEY_EQUALS])
+		wininfo.zoom(1 + 1*dt);
+
+	if (key[KEY_MINUS])
+		wininfo.zoom(1 / (1 + 1*dt));
+
+
+	mapeditor_stuff();
 
 }
 
