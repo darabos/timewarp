@@ -1,35 +1,88 @@
-; timewarp.nsi
-;
-; This script is based on example2.nsi.
-;
-; It will install TimeWarp into a directory that the user selects.
+;NSIS Setup Script
+
+!define VER_VERSION 0
+!define VER_SUBVERSION 05
+!define VER_BUILD 9
+
+!define PRODUCT_NAME "Star Control: TimeWarp"
 
 ;--------------------------------
+;Configuration
 
-!define VER_MAJOR 0.05
-!define VER_MINOR 8
-
-; The name of the installer
-Name "TimeWarp"
+OutFile timewarp-${VER_VERSION}.${VER_SUBVERSION}u${VER_BUILD}.exe
 SetCompressor bzip2
 
-; The file to write
-OutFile "timewarp-${VER_MAJOR}u${VER_MINOR}.exe"
-
-; The default installation directory
 InstallDir $PROGRAMFILES\TimeWarp
-
-; Registry key to check for directory (so if you install again, it will
-; overwrite the old one automatically)
-InstallDirRegKey HKLM SOFTWARE\TimeWarp "Install_Dir"
-
-; The text to prompt the user to enter a directory
-ComponentText "This will install Star Control: TimeWarp ${VER_MAJOR}u${VER_MINOR} on your computer. Select which optional components you want installed."
-
-; The text to prompt the user to enter a directory
-DirText "Choose a directory to install to:"
+InstallDirRegKey HKLM SOFTWARE\TimeWarp ""
 
 ;--------------------------------
+
+;Include Modern UI
+!include "MUI.nsh"
+
+;--------------------------------
+;Configuration
+
+;Names
+Name "TimeWarp"
+Caption "${PRODUCT_NAME} ${VER_VERSION}.${VER_SUBVERSION}u${VER_BUILD} Setup"
+
+;Interface Settings
+!define MUI_ABORTWARNING
+!define MUI_HEADERIMAGE
+!define MUI_ICON "..\scpwin.ico"
+!define MUI_UNICON "..\scpwin.ico"
+
+!define MUI_COMPONENTSPAGE_SMALLDESC
+
+;Pages
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PRODUCT_NAME}.\r\n\r\n\r\n$_CLICK"
+
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "license.txt"
+!insertmacro MUI_PAGE_COMPONENTS
+Page custom CreateShortCutF
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+
+!define MUI_FINISHPAGE_LINK "Visit the ${PRODUCT_NAME} website for the latest news"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://www.classicgaming.com/starcontrol/timewarp/"
+
+!define MUI_FINISHPAGE_RUN "$INSTDIR\twwin.exe"
+!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\readme.html
+
+!define MUI_FINISHPAGE_NOREBOOTSUPPORT
+
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+;--------------------------------
+
+
+;Reserve Files
+  
+  ;These files should be inserted before other files in the data block
+  ;Keep these lines before any File command
+  ;Only for BZIP2 (solid) compression
+  
+  ReserveFile "timewarp.ini"
+  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+
+;--------------------------------
+;Variables
+
+  Var INI_VALUE
+
+;--------------------------------
+;Languages
+
+!insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Installer Sections
+
+!define SF_SELECTED 1
 
 ; The stuff to install
 Section "TimeWarp Core (required)"
@@ -52,24 +105,20 @@ Section "TimeWarp Core (required)"
 
   SetOutPath $INSTDIR\docs
   File "..\docs\*.*"
-
   SetOutPath $INSTDIR\fleets
-  File "..\fleets\*.scf"
-
+  File /r "..\fleets\*.*"
   SetOutPath $INSTDIR\scrshots
-  File "..\scrshots\*.*"
-  
+  File /r "..\scrshots\*.*"
   SetOutPath $INSTDIR\ships
-  File "..\ships\*.*"
-
-  SetOutPath $INSTDIR\ships\sc1
-  File "..\ships\sc1\*.*"
-
-  SetOutPath $INSTDIR\ships\sc2
-  File "..\ships\sc2\*.*"
-
-  SetOutPath $INSTDIR\ships\sc3
-  File "..\ships\sc3\*.*"
+  File /r "..\ships\*.*"
+  SetOutPath $INSTDIR\gamex
+  File /r "..\gamex\*.*"
+  SetOutPath $INSTDIR\gamedata
+  File /r "..\gamedata\*.*"
+  SetOutPath $INSTDIR\interfaces
+  File /r "..\interfaces\*.*"
+  SetOutPath $INSTDIR\util
+  File /r "..\util\*.*"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\TimeWarp "Install_Dir" "$INSTDIR"
@@ -78,55 +127,29 @@ Section "TimeWarp Core (required)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TimeWarp" "DisplayName" "TimeWarp (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TimeWarp" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteUninstaller "uninstall.exe"
+
+  WriteUninstaller "uninstall.exe"
+
+!insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "timewarp.ini" "Field 3" "State" 
+StrCmp $INI_VALUE "1" "" +2
+CreateShortCut "$DESKTOP\TimeWarp.lnk" "$INSTDIR\twwin.exe"
+  
+!insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "timewarp.ini" "Field 2" "State"
+ StrCmp $INI_VALUE "1" "" +5
   CreateDirectory "$SMPROGRAMS\TimeWarp"
   CreateShortCut "$SMPROGRAMS\TimeWarp\Uninstall.lnk" "$INSTDIR\uninstall.exe"  "Uninstall"
   CreateShortCut "$SMPROGRAMS\TimeWarp\readme.lnk" "$INSTDIR\readme.html" "Readme.html"
   CreateShortCut "$SMPROGRAMS\TimeWarp\timewarp.lnk" "$INSTDIR\twwin.exe" "Star Control: TimeWarp"
+
 SectionEnd
 
-; optional section (can be disabled by the user)
-Section "Sources"
-  SetOutPath $INSTDIR
-  File "..\*."
-  File "..\*.ico"
-  File "..\*.rc"
-  
-
+Section "Source"
   SetOutPath $INSTDIR\source
-  File "..\source\*.*"
-  SetOutPath $INSTDIR\source\ais
-  File "..\source\ais\*.*"
-  SetOutPath $INSTDIR\source\games
-  File "..\source\games\*.*"
-  SetOutPath $INSTDIR\source\melee
-  File "..\source\melee\*.*"
-  SetOutPath $INSTDIR\source\newships
-  File "..\source\newships\*.*"
-  SetOutPath $INSTDIR\source\other
-  File "..\source\other\*.*"
-  SetOutPath $INSTDIR\source\sc1ships
-  File "..\source\sc1ships\*.*"
-  SetOutPath $INSTDIR\source\sc2ships
-  File "..\source\sc2ships\*.*"
-  SetOutPath $INSTDIR\source\sc3ships
-  File "..\source\sc3ships\*.*"
-  SetOutPath $INSTDIR\source\twgui
-  File "..\source\twgui\*.*"
-  SetOutPath $INSTDIR\Util
-  File "..\Util\*.html"
-  File "..\Util\*.nsi"
-  File "..\Util\*.pl"
-    
-
+  File /r "..\source\*.*"
 SectionEnd
-
 ;--------------------------------
 
 ; Uninstaller
-
-UninstallText "This will uninstall Star Control: Time Warp. Hit next to continue."
-
-; Uninstall section
 
 Section "Uninstall"
   
@@ -134,70 +157,26 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TimeWarp"
   DeleteRegKey HKLM SOFTWARE\TimeWarp
 
+
+  RMDir  /r "$INSTDIR"
+
+  ; remove group used
+  RMDir /r "$SMPROGRAMS\TimeWarp"
   ; remove shortcuts, if any
-  Delete "$SMPROGRAMS\TimeWarp\*.*"
-
-  Delete "$INSTDIR\docs\*.*"  
-  RMDir  "$INSTDIR\docs"
-
-  Delete "$INSTDIR\fleets\*.*"
-  RMDir  "$INSTDIR\fleets"
-
-  Delete "$INSTDIR\scrshots\*.*"
-  RMDir  "$INSTDIR\scrshots"
-
-  Delete "$INSTDIR\ships\sc1\*.*"
-  RMDir  "$INSTDIR\ships\sc1"
-
-  Delete "$INSTDIR\ships\sc2\*.*"
-  RMDir  "$INSTDIR\ships\sc2"
-
-  Delete "$INSTDIR\ships\sc3\*.*"
-  RMDir  "$INSTDIR\ships\sc3"
-
-  Delete "$INSTDIR\ships\*.*"
-  RMDir  "$INSTDIR\ships"
-
-  Delete "$INSTDIR\source\ais\*.*"
-  RMDir  "$INSTDIR\source\ais"
-
-  Delete "$INSTDIR\source\games\*.*"
-  RMDir  "$INSTDIR\source\games"
-
-  Delete "$INSTDIR\source\melee\*.*"
-  RMDir  "$INSTDIR\source\melee"
-
-  Delete "$INSTDIR\source\newships\*.*"
-  RMDir  "$INSTDIR\source\newships"
-
-  Delete "$INSTDIR\source\other\*.*"
-  RMDir  "$INSTDIR\source\other"
-
-  Delete "$INSTDIR\source\sc1ships\*.*"
-  RMDir  "$INSTDIR\source\sc1ships"
-
-  Delete "$INSTDIR\source\sc2ships\*.*"
-  RMDir  "$INSTDIR\source\sc2ships"
-
-  Delete "$INSTDIR\source\sc3ships\*.*"
-  RMDir  "$INSTDIR\source\sc3ships"
-
-  Delete "$INSTDIR\source\twgui\*.*"
-  RMDir  "$INSTDIR\source\twgui"
-
-  Delete "$INSTDIR\source\util\*.*"
-  RMDir  "$INSTDIR\source\util"
-
-  Delete "$INSTDIR\source\*.*"
-  RMDir  "$INSTDIR\source"
-
-  Delete "$INSTDIR\util\*.*"
-  RMDir  "$INSTDIR\util"
-
-  Delete "$INSTDIR\*.*"
-  RMDir  "$INSTDIR"
-
-  ; remove directories used
-  RMDir "$SMPROGRAMS\TimeWarp"
+  Delete "$DESKTOP\TimeWarp.lnk"
 
 SectionEnd
+
+;--------------------------------
+;Installer Functions
+
+Function .onInit
+  ;Extract InstallOptions INI files
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "timewarp.ini"
+FunctionEnd
+
+Function CreateShortCutF
+  !insertmacro MUI_HEADER_TEXT "${PRODUCT_NAME} Option" ""
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "timewarp.ini"
+FunctionEnd
+

@@ -1,9 +1,5 @@
-This is an alpha version of Star Control: TimeWarp that
-comes after version 0.05u7 (tw05u7.zip) and before
-version 0.05u8 (which does not yet exist at the time
-of this writting).  This alpha version was finalized at
+This is an beta version of Star Control: 0.05u9
 
-Sat 10/25/2003  (month/day/year).  
+23 november 2003
 
-This is build number: 
-2
+
