@@ -23,6 +23,7 @@ class MelnormeShot : public Shot {
   virtual void calculate();
   virtual void animateExplosion();
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+  virtual void inflict_damage(SpaceObject *other);
 };
 
 class MelnormeDisable : public SpaceObject {
@@ -181,6 +182,22 @@ int MelnormeShot::handle_damage(SpaceLocation *source, double normal, double dir
   int r = Shot::handle_damage(source, normal, direct);
   if (!released && (armour > 0)) armour = old;
   return old - armour;
+}
+
+void MelnormeShot::inflict_damage(SpaceObject *other)
+{
+	if (!other->exists()) return;
+	damage(other, damage_factor);
+
+	// this can only die on enemy non-shots, if it's not red ...
+	if (charge_phase < 3) 
+		if (other->isblockingweapons) state = 0;
+
+	if (state == 0) {
+	animateExplosion();
+	soundExplosion(); 
+	}
+	return;
 }
 
 MelnormeDisable::MelnormeDisable(Ship *creator, Ship *oship, SpaceSprite *osprite,
