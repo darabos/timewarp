@@ -39,7 +39,6 @@
 #visual c++ stuff
 *.rc -k 'b'
 *.ico -k 'b'
-*.dsp -k 'b'
 *.dsw -k 'b'
 *.ncb -k 'b'
 *.opt -k 'b'
