@@ -17,9 +17,11 @@ class KatPoly : public Ship {
                                           // while morphing back only costs
                                           // shipSpecialDrain
 
-  Ship* morph;                            // the ship we are currently morphed into
 
   public:
+  
+  Ship* morph;                            // the ship we are currently morphed into
+
   KatPoly( Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code );
 
@@ -38,6 +40,22 @@ class KatPoly : public Ship {
   virtual int  activate_special();        // morph
 };
 
+class KatAnimatedShot : public AnimatedShot
+{
+public:
+	KatPoly *mother;
+
+	KatAnimatedShot(KatPoly *creator, Vector2 rpos, 
+	double oangle, double ov, double odamage, double orange, double oarmour, SpaceLocation *opos,
+	SpaceSprite *osprite, int ofcount, int ofsize, double relativity = 0);
+
+	virtual int handle_damage( SpaceLocation* other, double normal, double direct );
+	virtual void inflict_damage(SpaceObject *other);
+	virtual void calculate();
+};
+
+
+
 KatPoly::KatPoly( Vector2 opos, double shipAngle,
   ShipData *shipData, unsigned int code ):
   Ship( opos, shipAngle, shipData, code )
@@ -51,6 +69,9 @@ KatPoly::KatPoly( Vector2 opos, double shipAngle,
 
   morph = NULL;  // start unmorphed
 }
+
+
+
 
 double  KatPoly::isInvisible() const{
 	return morph ? 1 : 0;
@@ -83,7 +104,7 @@ void KatPoly::calculate_turn_right(){  if( !morph ) Ship::calculate_turn_right()
 void KatPoly::calculate_fire_weapon(){ if( !morph ) Ship::calculate_fire_weapon(); }
 
 int KatPoly::activate_weapon(){
-  game->add( new AnimatedShot( this, Vector2(0, -size.y/2), angle, weaponVelocity, weaponDamage,
+  game->add( new KatAnimatedShot( this, Vector2(0, -size.y/2), angle, weaponVelocity, weaponDamage,
     weaponRange, weaponArmour, this, data->spriteWeapon, 64, time_ratio ));
   return true;
 }
@@ -133,10 +154,11 @@ int KatPoly::activate_special(){
     if( !target->isShip()) return false;
     morph_target = ((Ship*)target)->type;      // we will morph to it
 
-    int i;                                    // remove ourselves from the game as a target
-    for( i = 0; game->target[i] != this; i++ );
-    game->num_targets--;
-    game->target[i] = game->target[game->num_targets];
+//    int i;                                    // remove ourselves from the game as a target
+//    for( i = 0; game->target[i] != this; i++ );
+//    game->num_targets--;
+//    game->target[i] = game->target[game->num_targets];
+	game->rem_target(this);
     collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = 0;
     id = 0;                                   // get immaterial
   }
@@ -149,6 +171,47 @@ int KatPoly::activate_special(){
   morph->vel = vel;
   update_panel = true;                 // maybe the colors changed
   return true;                         // we did it
+}
+
+
+
+KatAnimatedShot::KatAnimatedShot(KatPoly *creator, Vector2 rpos, 
+	double oangle, double ov, double odamage, double orange, double oarmour, SpaceLocation *opos,
+	SpaceSprite *osprite, int ofcount, int ofsize, double relativity) 
+:
+AnimatedShot(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite,
+			 ofcount, ofsize, relativity)
+{
+	mother = creator;
+}
+
+void KatAnimatedShot::calculate()
+{
+	if (!(mother && mother->exists()))
+	{
+		mother = 0;
+		state = 0;
+		return;
+	}
+
+	AnimatedShot::calculate();
+}
+
+int KatAnimatedShot::handle_damage( SpaceLocation* other, double normal, double direct )
+{
+	if (other != mother->morph)
+		return AnimatedShot::handle_damage(other, normal, direct);
+	else
+	{
+		state = 0;
+		return 0;
+	}
+}
+
+void KatAnimatedShot::inflict_damage(SpaceObject *other)
+{
+	if (other != mother->morph)
+		AnimatedShot::inflict_damage(other);
 }
 
 REGISTER_SHIP(KatPoly)
