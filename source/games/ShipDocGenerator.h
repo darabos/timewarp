@@ -55,7 +55,6 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 
 #include <stdio.h>
 
-
 static Ship * ship = NULL;
 
 enum { timeBeforeScreenshots = 4000 };
@@ -183,6 +182,27 @@ public:
 		autoBots = new_team();
 
 		::remove("scrshots/output.html");
+
+	    FILE * fileshipNames = fopen("scrshots/shipnames.txt", "w");
+		char shipNames[5000] = "";
+
+		for (int i=0; i<num_shiptypes; i++) {
+			ShipType * shiptype = &shiptypes[i];
+			if (shiptype) {
+
+				strcat(shipNames, shiptype->name);
+				strcat(shipNames, "\n");
+
+				char * space = NULL;
+				while ((space = strchr(shipNames,' ')) != NULL) {
+					space[0] = '_';
+				}
+			}
+		}
+		fwrite(shipNames,sizeof(char), strlen(shipNames),fileshipNames);
+		fclose(fileshipNames);/**/
+
+		//message.out(shipNames);
 	}
 
 	
@@ -228,6 +248,7 @@ public:
 				static int shipCounter = 0;
 
 				ShipType * shiptype = &shiptypes[shipCounter];
+				ASSERT(shiptype);
 				
 				shipCounter ++;
 				if (shipCounter >= num_shiptypes) {
@@ -245,7 +266,7 @@ public:
 					Vector2(
 					rand()%(int)size.x,
 					rand()%(int)size.y),
-					rand()%(int)(PI2 * 10000)/10000,
+					PI2 - PI/8,
 					autoBots);
 				
 				add(ship);
@@ -261,7 +282,7 @@ public:
 	    
 	    pause();
 
-		sprintf(path, "./scrshots/%s_%02i.bmp", filename, i);
+		sprintf(path, "./scrshots/%s-%02i.bmp", filename, i);
 
 	    //replace ' ' characters with '_'
 		char * space = NULL;
@@ -294,9 +315,9 @@ public:
 		ASSERT(type);
 		ASSERT(datafile);
 		
-		char stats[3000] = "";
+		char stats[7000] = "";
 
-		char textDesc[2000] = "";
+		char textDesc[5000] = "";
 		
 
 		{
@@ -309,29 +330,10 @@ public:
 				::fread(textDesc,1,lSize,descFile);
 				::fclose(descFile);
 			}
-
-			
-
-			/*
-			//replace double newlines with <br/> tags
-			char temp[2000] = "";
-			while (char * next = strstr(textDesc,"\n\n")) {
-				strcpy(temp,"");
-				//if (next-textDesc > 0)
-				//   strncpy(temp, textDesc, next-textDesc);
-				strncat(temp, textDesc, (next-textDesc));
-				strcat(temp,"<br/>");
-				strcat(temp, &next[2]);
-				//memcpy(textDesc, temp, 2000);
-
-				strcpy(textDesc,temp);
-			}/**/
 		}
 
 		char imageFilename[2000] = "";
-
 		sprintf(imageFilename, "%s.gif", ship->type->name);
-		
 		char * space = NULL;
 		while ((space = strchr(imageFilename,' ')) != NULL) {
 			space[0] = '_';
@@ -371,6 +373,8 @@ public:
 		fwrite(stats, 1, strlen(stats), file);
 		//fprintf(file, stats);
 		fclose(file);
+
+
 		/*		double crew;
 		double crew_max;
 		double batt;
