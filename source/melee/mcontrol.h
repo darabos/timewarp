@@ -18,6 +18,8 @@ Control *getController(const char *type, const char *name, int channel);
 class Control : public Presence {	
 	public:
 
+	virtual bool die(); // controls CANNOT arbitrarily be killed off, because the deal with networking directly
+
 	bool temporary;                   //true if this control will delete itself when it's ship dies
 	unsigned char target_sign_color;
 	int already;

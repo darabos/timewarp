@@ -161,6 +161,9 @@ int control2number(const char *name) {STACKTRACE
 	}
 
 Control *getController(const char *type, const char *name, int channel) {STACKTRACE
+	if ((channel != -1) && (channel & Game::_channel_buffered)) {
+		error("getController - invalid channel # %d", channel);
+	}
 	switch (control2number(type)) {
 		case  ai_index_human:     return new ControlHuman(name, channel);
 		case  ai_index_moron:     return new ControlMoron(name, channel);
@@ -209,6 +212,7 @@ enum {
 };
 char selectPlayer[18] = "";
 char selectTitleString[100] = "";
+
 char selectShipPrompt[100] = "";
 
 int my_list_proc( int msg, DIALOG* d, int c );
@@ -241,15 +245,15 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 	int ret = d_list_proc2( msg, d, c );
 	if( d->d1 != old_d1 || msg == MSG_START ){
 		ShipType* type = fleet->getShipType(d->d1);
+
         ASSERT(type != NULL);
-        
+
         selectDialog[SELECT_DIALOG_TITLE].flags |= D_DIRTY;
         sprintf(selectTitleString, "%s\n%s\n%d of %d points", 
             selectShipPrompt,
             (type != NULL) ? type->name : 0,
             (type != NULL) ? type->cost : 0,
             fleet->getCost());
-
 
 		BITMAP* panel = NULL;
 		DATAFILE* data = load_datafile_object( type->data->file, "SHIP_P00_PCX" );
@@ -278,11 +282,14 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {STAC
 	int ret = -1, slot = 0;
 	if (fleet->getSize() == 0) tw_error ("Empty fleet! (prompt:%s)", prompt);
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
+
     strcpy(selectShipPrompt,prompt);
+
 
 	slot = -1;
 	while (!always_random) {
 		while (key[KEY_ENTER] || key[KEY_SPACE]) poll_keyboard();
+
 
 		ret = tw_do_dialog(window, selectDialog, SELECT_DIALOG_LIST);
 		if (ret == SELECT_DIALOG_INFO) {
@@ -429,11 +436,23 @@ Control::Control(const char *name, int _channel) : temporary(false), target_sign
 		attributes |= ATTRIB_LOGGED;
 		_prediction_keys = new KeyCode[_prediction_keys_size];
 		_prediction_keys_index = 0;
+		if (channel & Game::_channel_buffered) {
+			error("Control::Control - invalid channel!");
+		}
 	}
 	iname = strdup(name);
 	}
 Control::~Control() { STACKTRACE
 	if (_prediction_keys) delete _prediction_keys;
+	}
+bool Control::die() {
+	if (channel == Game::channel_none) return Presence::die();
+	// controls CANNOT arbitrarily be killed off, because the deal with networking directly
+	error("controls cannot be killed");
+	//the error can be removed eventually... 
+	//I just want to find out if anything is actually calling this
+	//because before this function was added, that would have resulted in a desynch
+	return false;
 	}
 bool Control::valid_target(SpaceObject *t) {
 	// GEO: this error sometimes occur, unknown why.
