@@ -7,10 +7,8 @@ REGISTER_FILE
 #include <stdio.h>
 
 #include "../frame.h"
+#include "../other/shippart.h"
 
-
-static void removefromtargetlist(SpaceObject *o);
-static bool isintargetlist(SpaceObject *o);
 
 
 class AyronBS;
@@ -18,66 +16,37 @@ class AutoGun;
 
 
 // this is read separately from the layout file - to keep things organized ?
-struct BigShipPartOrigInfo
+struct AyronShipPartInfo
 {
 	double	crewmax, crew, batt, dynamo, turning, thrusting;
 	SpaceSprite	*spr_crewed, *spr_uncrewed;
 };
 
-class BigShipPartOrig : public SpaceObject
+class AyronShipPart : public BigShipPart
 {
 
-protected:
-
-
-	Vector2 oldpos;
-	Vector2 oldvel;
-
-	AyronBS *owner;
-	Vector2	relpos;
-
-	SpaceSprite *sprite_uncrewed;
 
 public:
 
 	double	crewmax, crew, batt, dynamo, turning, thrusting;
 
-	Vector2 relposrot;
-	SpaceObject *collider;
-	Vector2 Pcoll, Vcoll;
-
-//	BigShipPartOrig(AyronBS *aowner, Vector2 orelpos,
-//				double acrew, double abatt, double adynamo,
-//				double aturning, double athrusting,
-//				SpaceSprite *spr, SpaceSprite *spr_uncrewed);
-
-	BigShipPartOrig(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartOrigInfo **info);
+	AyronShipPart(AyronBS *aowner, Vector2 orelpos, int otype, AyronShipPartInfo **info);
 	
 
 	virtual void animate(Frame *space);
-	virtual void calculate();
+	//virtual void calculate();
+	
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct=0);
-	virtual void inflict_damage(SpaceObject *other);
-	//virtual void collide(SpaceObject *other);
+
+	virtual bool isdisabled();
 	virtual bool hascrew();
 	virtual void recrew(int howmany);
-	void syncpos();
 };
 
 
-class BigShipPartOrigDevice : public SpaceObject
-{
-protected:
-	BigShipPartOrig *ownerpart;
-
-public:
-	BigShipPartOrigDevice(BigShipPartOrig *aownerpart, SpaceSprite *ospr);
-	virtual void calculate();
-	virtual void animate(Frame *space);
-};
 
 
-class AutoGun : public BigShipPartOrigDevice
+class AutoGun : public BigShipPartDevice
 {
 
 	double shotrange, shotvel, shotdamage, shotarmour, shotdrain;
@@ -87,23 +56,22 @@ class AutoGun : public BigShipPartOrigDevice
 
 public:
 
-	AutoGun(BigShipPartOrig *aowner, Vector2 orelpos, double centerangle, double moveangle,
+	AutoGun(AyronShipPart *aowner, Vector2 orelpos, double centerangle, double moveangle,
 		SpaceSprite *spr, SpaceSprite *osprshot);
 	//virtual void animate(Frame *space);
 	virtual void calculate();
 //	virtual int handle_damage(SpaceLocation *source, double normal, double direct=0);
 };
 
-class AyronBS : public Ship
+class AyronBS : public BigShip
 {
+	AyronShipPart **ayronparts;
 public:
-	int		N, Nx, Ny, Ntypes;
+	int		Nx, Ny, Ntypes;
 	double	w;
-	BigShipPartOrig **parts;
-//	int **parts;
 
 	int		nBSinfo;
-	BigShipPartOrigInfo **BSinfo;
+	AyronShipPartInfo **BSinfo;
 
 	double	recharge_rate_ref, accel_rate_ref, turn_rate_ref;
 
@@ -112,12 +80,10 @@ public:
 	
 	AyronBS(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
 	
-	virtual void animate(Frame *space);
 	virtual void calculate();
-	virtual int handle_damage(SpaceLocation *source, double normal, double direct=0);
 
 	// you can overload this to load a different type of ship-part into the AyronBS.
-	virtual BigShipPartOrig *init_part(Vector2 orelpos, int otype, BigShipPartOrigInfo **info);
+	virtual AyronShipPart *init_part(Vector2 orelpos, int otype, AyronShipPartInfo **info);
 
 	virtual int activate_weapon();
 	virtual int activate_special();
@@ -125,11 +91,11 @@ public:
 };
 
 
-BigShipPartOrig *AyronBS::init_part(Vector2 orelpos, int otype, BigShipPartOrigInfo **info)
+AyronShipPart *AyronBS::init_part(Vector2 orelpos, int otype, AyronShipPartInfo **info)
 {
 
 	if (otype > 0)
-		return new BigShipPartOrig(this, orelpos, otype, info);
+		return new AyronShipPart(this, orelpos, otype, info);
 	else
 		return 0;
 }
@@ -138,7 +104,7 @@ BigShipPartOrig *AyronBS::init_part(Vector2 orelpos, int otype, BigShipPartOrigI
 
 AyronBS::AyronBS(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code)
 :
-Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
+BigShip(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 {
 
 	int i;
@@ -156,11 +122,11 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 	Ntypes = nBSinfo;
 
-	BSinfo = new BigShipPartOrigInfo* [nBSinfo];
+	BSinfo = new AyronShipPartInfo* [nBSinfo];
 
 	for ( i = 0; i < nBSinfo; ++i )
 	{
-		BSinfo[i] = new BigShipPartOrigInfo();
+		BSinfo[i] = new AyronShipPartInfo();
 
 		fscanf(inp, "%*10c %lf %lf %lf %lf %lf",
 			 &BSinfo[i]->crew, &BSinfo[i]->batt, &BSinfo[i]->dynamo,
@@ -171,29 +137,30 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 	}
 
 	fscanf(inp, "%i %i\n", &Nx, &Ny);
-	N = Nx * Ny;
+	Nparts = Nx * Ny;
 
-//	parts = new (BigShipPartOrig*) [N];
-	parts = new BigShipPartOrig* [N];
+//	ayronparts = new (AyronShipPart*) [N];
+	ayronparts = new AyronShipPart* [Nparts];
+	parts = (BigShipPart**) ayronparts;
 
 
 	int *itype, *iweapon;
 	double *anglecenter, *moveangle;
 
-	itype = new int [N];
-	iweapon = new int [N];
-	anglecenter = new double [N];
-	moveangle = new double [N];
+	itype = new int [Nparts];
+	iweapon = new int [Nparts];
+	anglecenter = new double [Nparts];
+	moveangle = new double [Nparts];
 
 	// the ship hull sprites
-	for ( i = 0; i < N; ++i )
+	for ( i = 0; i < Nparts; ++i )
 	{
 		fscanf(inp, "%i",
 			&itype[i]);
 	}
 
 	// the ship weapons
-	for ( i = 0; i < N; ++i )
+	for ( i = 0; i < Nparts; ++i )
 	{
 		fscanf(inp, "%i %lf %lf", &iweapon[i], &anglecenter[i], &moveangle[i]);
 		anglecenter[i] *= PI / 180.0;
@@ -212,7 +179,7 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 	// is empty.
 	w /= 1.5;
 
-	// initialize the ship parts.
+	// initialize the ship ayronparts.
 	for ( iy = 0; iy < Ny; ++iy )
 	{
 		for ( ix = 0; ix < Nx; ++ix )
@@ -224,14 +191,14 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 			relpos = w * Vector2(0.5*(Ny-1) - iy, ix - 0.5*(Nx-1));
 			
-			parts[k] = init_part(relpos, itype[k], BSinfo);
-			if (parts[k])
-				physics->add(parts[k]);
+			ayronparts[k] = init_part(relpos, itype[k], BSinfo);
+			if (ayronparts[k])
+				physics->add(ayronparts[k]);
 
 
 			//	AutoGun(AyronBS *aowner, Vector2 orelpos, int otype, SpaceSprite *spr);
 			if (iweapon[k] == 1)
-				game->add(new AutoGun(parts[k], relpos,
+				game->add(new AutoGun(ayronparts[k], relpos,
 				anglecenter[k], moveangle[k],
 				data->spriteWeapon, data->spriteWeaponExplosion));
 		}
@@ -258,16 +225,16 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 
 	// remove this from the physics interaction
-	//mass = 0; this value is needed by the ship parts
+	//mass = 0; this value is needed by the ship ayronparts
 	collide_flag_anyone = 0;
 	collide_flag_sameship = 0;
 	collide_flag_sameteam = 0;
 	attributes |= ATTRIB_UNDETECTABLE;
 
-	// also, add the ship's parts to the physics target list
+	// also, add the ship's ayronparts to the physics target list
 //	for (i = 0; i < N; ++i )
-//		if (parts[i])
-//			game->add_target(parts[i]);
+//		if (ayronparts[i])
+//			game->add_target(ayronparts[i]);
 	// update: no need to this here anymore, it's done in the part-constructor.
 }
 
@@ -276,58 +243,8 @@ void AyronBS::calculate()
 {
 	int i;
 
-	// make sure the "ship" is not a real target
-	if (isintargetlist(this))
-		removefromtargetlist(this);
 
-	// check if any of the ship parts has collided.
-	// if one has collided, adjust position and velocity to keep away from the
-	// collided object.
-
-	bool updateneeded;
-
-	updateneeded = false;
-
-	for ( i = 0; i < N; ++i )
-	{
-		if (!parts[i])
-			continue;
-
-		SpaceObject *o;
-		o = parts[i]->collider;
-
-		if (o && !sameShip(o))
-		{
-			
-			if (parts[i]->pos != parts[i]->Pcoll || parts[i]->vel != parts[i]->Vcoll)
-			{
-				pos = parts[i]->pos - parts[i]->relposrot;
-				vel = parts[i]->vel;
-			}
-
-			updateneeded = true;
-		}
-
-		if (o)
-			parts[i]->collider = 0;
-
-	}
-
-	if (updateneeded)
-	{
-		for ( i = 0; i < N; ++i )
-		{
-			if (!parts[i])
-				continue;
-
-			parts[i]->syncpos();
-		}
-	}
-
-
-
-
-	// re-calculate the total ship stats from all of its little parts
+	// re-calculate the total ship stats from all of its little ayronparts
 
 	crew = 0;
 	batt_max = 0;
@@ -337,32 +254,32 @@ void AyronBS::calculate()
 
 	double Nrecharge = 0;
 
-	for ( i = 0; i < N; ++i )
+	for ( i = 0; i < Nparts; ++i )
 	{
-		if (!parts[i])
+		if (!ayronparts[i])
 			continue;
 
-		if (!parts[i]->exists())
+		if (!ayronparts[i]->exists())
 		{
-			parts[i] = 0;
+			ayronparts[i] = 0;
 			continue;
 		}
 
 		// NOTE:
 		// this should not occur.
-		// the ship parts should always be "there",
+		// the ship ayronparts should always be "there",
 		// except that they'll go inert (and grey) if they're "dead"
 		// (unless they were never added in the first place of course)
 
 		// add the stats of this part to the total stats
-		if (parts[i]->hascrew())
+		if (ayronparts[i]->hascrew())
 		{
-			crew += parts[i]->crew;
-			batt_max += parts[i]->batt;
-			//recharge_rate += parts[i]->dynamo * recharge_rate_ref;
-			Nrecharge += parts[i]->dynamo;
-			turn_rate += parts[i]->turning * turn_rate_ref;
-			accel_rate += parts[i]->thrusting * accel_rate_ref;
+			crew += ayronparts[i]->crew;
+			batt_max += ayronparts[i]->batt;
+			//recharge_rate += ayronparts[i]->dynamo * recharge_rate_ref;
+			Nrecharge += ayronparts[i]->dynamo;
+			turn_rate += ayronparts[i]->turning * turn_rate_ref;
+			accel_rate += ayronparts[i]->thrusting * accel_rate_ref;
 		}
 	}
 
@@ -377,44 +294,24 @@ void AyronBS::calculate()
 		return;
 	}
 
-	Ship::calculate();
+	BigShip::calculate();
 
 }
 
-void AyronBS::animate(Frame *space)
-{
-	return;
-}
-
-
-int AyronBS::handle_damage(SpaceLocation *source, double normal, double direct)
-{
-	// nothing: all is handled by the ship parts ?
-	return Ship::handle_damage(source, normal, direct);
-}
 
 
 
 
 
-//BigShipPartOrig::BigShipPartOrig(AyronBS *aowner, Vector2 orelpos,
+//AyronShipPart::AyronShipPart(AyronBS *aowner, Vector2 orelpos,
 //				double acrew, double abatt, double adynamo,
 //				double aturning, double athrusting,
 //				SpaceSprite *spr, SpaceSprite *spr_uncrewed)
 
-BigShipPartOrig::BigShipPartOrig(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartOrigInfo **info)
+AyronShipPart::AyronShipPart(AyronBS *aowner, Vector2 orelpos, int otype, AyronShipPartInfo **info)
 :
-SpaceObject(aowner, 0, 0, info[otype-1]->spr_crewed)
+BigShipPart(aowner, orelpos, 0.0, info[otype-1]->spr_crewed, info[otype-1]->spr_uncrewed)
 {
-	owner = aowner;
-	relpos = orelpos;
-
-	layer = LAYER_SHIPS;
-	set_depth(DEPTH_SHIPS-0.1);		// the ship should come first in calculations.
-	mass = owner->mass;
-
-	oldpos = pos;
-	oldvel = vel;
 
 	crew      = info[otype-1]->crew;
 	crewmax   = info[otype-1]->crew;
@@ -422,94 +319,18 @@ SpaceObject(aowner, 0, 0, info[otype-1]->spr_crewed)
 	dynamo    = info[otype-1]->dynamo;
 	turning   = info[otype-1]->turning;
 	thrusting = info[otype-1]->thrusting;
-
-	sprite_uncrewed = info[otype-1]->spr_uncrewed;
-
-	relposrot = rotate(relpos, angle + owner->turn_step);
-
-	collide_flag_sameship = 0;
-	collide_flag_sameteam = ALL_LAYERS;
-	collide_flag_anyone = ALL_LAYERS;
-
-	// check if you've collided with something.
-	collider = 0;
-
-	game->add_target(this);
 }
-
-
-
-// this is in a separate routine, so that it can be called (again) by
-// the owner if necessary (collision)
-
-void BigShipPartOrig::syncpos()
-{
-	// maintain (relative) position wrt the ship
-	angle = owner->angle;	// this is the discrete angle (64 values).
-	sprite_index = get_index(angle);
-
-	// for positioning, use the accurate angle.
-	oldpos = pos;
-
-	relposrot = rotate(relpos, angle + owner->turn_step);
-	pos = owner->pos + relposrot;
-
-	// the overall ship velocity
-	oldvel = vel;
-	vel = owner->vel;
-}
-
-void BigShipPartOrig::calculate()
-{
-	if ( !(owner && owner->exists()) )
-	{
-		owner = 0;
-		state = 0;
-		return;
-	}
-
-	// reset this here.
-	// NO: this must only be reset by the owner, so that you're sure he's seen it.
-	//hascollided = false;
-
-	if (!collider)
-		syncpos();
-	// otherwise, you shouldn't touch the current ship-part settings,
-	// instead let the owner handle this case. The vel/ pos are needed
-	// to update the ship and all the other parts velocities ...
-
-	/*
-	// rotational velocity
-	double angrate;
-
-	angrate = 0;
-	if (owner->turn_left)
-		angrate = -owner->turn_rate;
-	if (owner->turn_right)
-		angrate = owner->turn_rate;
-
-	double v;
-	v = relpos.length() * angrate;
-
-	Vector2 norm;
-	norm = Vector2(-relposrot.y, relposrot.x);
 	
-	if (norm.length() > 0)
-		vel += v * unit_vector(norm);
-	*/
 
 
-	SpaceObject::calculate();
-
-}
 
 
-int BigShipPartOrig::handle_damage(SpaceLocation *source, double normal, double direct)
+int AyronShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 	// transmit damage to the ship owner ...
 	//return owner->handle_damage(source, normal, direct);
 	// no ...
-	// handle damage locally. The big ship can test all parts to calculate its global
+	// handle damage locally. The big ship can test all ayronparts to calculate its global
 	// parameters (like total crew left, total thrust, etc)...
 
 	if (!hascrew())
@@ -527,7 +348,7 @@ int BigShipPartOrig::handle_damage(SpaceLocation *source, double normal, double 
 		crew = 0;
 
 		// make this ship part inert.
-		// (thus exposing other, perhaps more vulnerable, parts of the ship)
+		// (thus exposing other, perhaps more vulnerable, ayronparts of the ship)
 		collide_flag_anyone = 0;
 		collide_flag_sameship = 0;
 		collide_flag_sameteam = 0;
@@ -548,25 +369,47 @@ int BigShipPartOrig::handle_damage(SpaceLocation *source, double normal, double 
 
 
 
-void BigShipPartOrig::inflict_damage(SpaceObject *other)
+
+bool AyronShipPart::hascrew()
 {
-	SpaceObject::inflict_damage(other);
+	return crew != 0;
+}
 
-	// this routine is called because there's a collision going on. Store
-	// the current position and velocity, which are affected by the collision.
+bool AyronShipPart::isdisabled()
+{
+	return !hascrew();
+}
 
-	Pcoll = normal_pos();
-	Vcoll = vel;
-	collider = other;
+void AyronShipPart::recrew(int howmany)
+{
+	if (crew == 0 && howmany > 0)
+	{
+		// restore physical interaction
+		collide_flag_anyone = ALL_LAYERS;
+		collide_flag_sameteam = ALL_LAYERS;
+
+		mass = owner->mass;
+
+		attributes &= ~ATTRIB_UNDETECTABLE;
+
+	
+		// add it back to the target list of the game
+		if (!isintargetlist(this))
+			game->add_target(this);
+	}
+
+	crew += howmany;
+	if (crew > crewmax)
+		crew = crewmax;
 }
 
 
 
 
-AutoGun::AutoGun(BigShipPartOrig *aowner, Vector2 orelpos, double centerangle, double moveangle,
+AutoGun::AutoGun(AyronShipPart *aowner, Vector2 orelpos, double centerangle, double moveangle,
 				 SpaceSprite *spr, SpaceSprite *osprshot)
 :
-BigShipPartOrigDevice(aowner, spr)
+BigShipPartDevice(aowner, spr)
 {
 	sprshot = osprshot;
 
@@ -591,9 +434,9 @@ BigShipPartOrigDevice(aowner, spr)
 
 void AutoGun::calculate()
 {
-	BigShipPartOrigDevice::calculate();
+	BigShipPartDevice::calculate();
 
-	if (!(ownerpart && ownerpart->hascrew()))
+	if (!(ownerpart && !ownerpart->isdisabled()))
 		return;
 
 	// find the closest target
@@ -649,7 +492,7 @@ void AutoGun::calculate()
 
 				// required movement is relative to the gun's current position
 				// note that at this moment, you cannot use the value of "angle"
-				// which is overridden by the call to BigShipPartOrig::calculate; so,
+				// which is overridden by the call to AyronShipPart::calculate; so,
 				// use "b" instead.
 				b += a_track;
 				da_track = a - b;
@@ -714,7 +557,7 @@ void AutoGun::calculate()
 
 
 
-void BigShipPartOrig::animate(Frame *space)
+void AyronShipPart::animate(Frame *space)
 {
 	SpaceSprite *spr;
 
@@ -750,12 +593,12 @@ int AyronBS::activate_weapon()
 	dy = Ny/2 * w - 25;
 
 	// a big laser ?
-	if (parts[0] && parts[0]->hascrew())
+	if (ayronparts[0] && ayronparts[0]->hascrew())
 		add(new Laser(this, angle,
 			pallete_color[weaponColor], weaponRange, weaponDamage, weapon_rate,
 			this, Vector2(-dx, dy), true));
 
-	if (parts[Nx-1] && parts[Nx-1]->hascrew())
+	if (ayronparts[Nx-1] && ayronparts[Nx-1]->hascrew())
 		add(new Laser(this, angle,
 			pallete_color[weaponColor], weaponRange, weaponDamage, weapon_rate,
 			this, Vector2(dx, dy), true));
@@ -772,8 +615,8 @@ int AyronBS::activate_special()
 	int i, Ndead;
 
 	Ndead = 0;
-	for ( i = 0; i < N; ++i )
-		if (parts[i] && parts[i]->crew < parts[i]->crewmax)
+	for ( i = 0; i < Nparts; ++i )
+		if (ayronparts[i] && ayronparts[i]->crew < ayronparts[i]->crewmax)
 			++Ndead;
 
 	if (!Ndead)
@@ -784,9 +627,9 @@ int AyronBS::activate_special()
 	
 	k = random(Ndead) + 1;
 
-	for ( i = 0; i < N; ++i )
+	for ( i = 0; i < Nparts; ++i )
 	{
-		if (parts[i] && parts[i]->crew < parts[i]->crewmax)
+		if (ayronparts[i] && ayronparts[i]->crew < ayronparts[i]->crewmax)
 		{
 			--k;
 			if (k <= 0)
@@ -794,9 +637,9 @@ int AyronBS::activate_special()
 		}
 	}
 
-	if (i < N)
+	if (i < Nparts)
 	{
-		parts[i]->recrew(1);
+		ayronparts[i]->recrew(1);
 	}
 
 
@@ -806,152 +649,6 @@ int AyronBS::activate_special()
 }
 
 
-bool BigShipPartOrig::hascrew()
-{
-	return crew != 0;
-}
-
-void BigShipPartOrig::recrew(int howmany)
-{
-	if (crew == 0 && howmany > 0)
-	{
-		// restore physical interaction
-		collide_flag_anyone = ALL_LAYERS;
-		collide_flag_sameteam = ALL_LAYERS;
-
-		mass = owner->mass;
-
-		attributes &= ~ATTRIB_UNDETECTABLE;
-
-	
-		// add it back to the target list of the game
-		if (!isintargetlist(this))
-			game->add_target(this);
-	}
-
-	crew += howmany;
-	if (crew > crewmax)
-		crew = crewmax;
-}
-
-
-
-BigShipPartOrigDevice::BigShipPartOrigDevice(BigShipPartOrig *aownerpart, SpaceSprite *ospr)
-:
-SpaceObject(aownerpart, aownerpart->pos, aownerpart->angle, ospr)
-{
-	ownerpart = aownerpart;
-
-	layer = LAYER_SHIPS;
-	set_depth(DEPTH_SHIPS+0.01);	// for plotting?
-
-	// such a device shouldn't block things - impacts and damage should be handled
-	// by the ship-part that owns this device.
-	
-	collide_flag_anyone = 0;
-	collide_flag_sameship = 0;
-	collide_flag_sameteam = 0;
-	mass = 0;
-
-}
-
-
-void BigShipPartOrigDevice::calculate()
-{
-	if ( !(ownerpart && ownerpart->exists()) )
-	{
-		ownerpart = 0;
-		state = 0;
-		return;
-	}
-
-	if (!ownerpart->hascrew())
-		return;
-
-	angle = ownerpart->angle;
-	pos = ownerpart->pos;
-	vel = ownerpart->vel;
-
-	SpaceObject::calculate();
-}
-
-void BigShipPartOrigDevice::animate(Frame *space)
-{
-	if (!ownerpart->hascrew())
-		return;
-
-	SpaceObject::animate(space);
-}
-
-
-/*
-// PROBLEM:
-// this works only in half the cases, where YOU collide with something else;
-// alternatively, something else can collide with you, in which case the
-// result is not influenced by any of this below.
-// in that case ...
-// you'll need to hack into inflict_damage(other),
-// since at least that routine is always called then ....
-
-void BigShipPartOrig::collide(SpaceObject *other)
-{
-	if (sameShip(other))
-		return;
-
-	if (other->ship == owner)
-		return;
-
-	Vector2 P, V;
-
-	P = normal_pos();
-	V = vel;
-
-	SpaceObject::collide(other);
-	
-	// check for a positional or velocity change
-
-	if (pos != P || vel != V)
-	{
-		owner->pos = pos - relposrot;
-		owner->vel = vel;
-	}
-
-}
-*/
-
-
-
-// perhaps this should be a Game routine...
-
-bool isintargetlist(SpaceObject *o)
-{
-	int i;
-
-	for (i = 0; i < game->num_targets; i += 1)
-	{
-		if (game->target[i] == o)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void removefromtargetlist(SpaceObject *o)
-{
-	int i;
-
-	for (i = 0; i < game->num_targets; i += 1)
-	{
-		if (game->target[i] == o)
-		{
-			game->num_targets -= 1;
-			game->target[i] = game->target[game->num_targets];
-			break;
-		}
-	}
-}
 
 
 REGISTER_SHIP(AyronBS)
