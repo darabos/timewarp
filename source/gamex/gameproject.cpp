@@ -13,6 +13,7 @@ REGISTER_FILE
 #include "gamedialogue.h"
 
 
+
 GameBare::GameBare()
 {
 	prev = 0;
@@ -531,3 +532,39 @@ void GameBare::checknewgame()
 
 
 
+
+void GameBare::show_ticinfo(Frame *f, Histograph *tic_history, Histograph *render_history, double hist_power)
+{
+	
+	// show the render time ...
+	int dur = 1;
+
+	double tt = pow(tic_history->get_average(0, 1000/frame_time), 1/hist_power);
+	double rt = pow(render_history->get_average(0, 1000/frame_time), 1/hist_power);
+	char *tmp;
+	
+	if (tt*8 < frame_time)
+		tmp = "good";
+	else if (tt*2 < frame_time)
+		tmp = "ok";
+	else if (tt < frame_time)
+		tmp = "bad";
+	else
+		tmp = "BAD!";
+	message.print(dur, 12, "tic time: %.3fms (that's %s)", tt, tmp);
+	
+	if (rt < 2)
+		tmp = "good";
+	else if (rt < 20)
+		tmp = "ok";
+	else if (rt < 50)
+		tmp = "bad";
+	else
+		tmp = "BAD!";
+	message.print(dur, 12, "render time: %.3fms (that's %s)", rt, tmp);
+	message.print(dur, 12, "debug: %d", debug_value);
+	message.print(dur, 12, "shipdatas loaded: %d", shipdatas_loaded);
+
+	message.animate(f);
+	message.flush();
+}

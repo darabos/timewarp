@@ -21,16 +21,22 @@ typedef short KeyCode;
 #define KEYFLAG_CLOSEST  512
 struct keyflag {
 	enum { 
-		left = 1, 
-		right = 2, 
-		thrust = 4, 
-		back = 8,
-		fire = 16, 
-		special = 32, 
-		altfire = 64, 
-		next = 128, 
-		prev = 256, 
-		closest = 512
+		left =		0x0001,
+		right =		0x0002,
+		thrust =	0x0004,
+		back =		0x0008,
+		fire =		0x0010,
+		special =	0x0020,
+		altfire =	0x0040,
+		next =		0x0080,
+		prev =		0x0100,
+		closest =	0x0200,
+		extra1 =	0x0400,
+		extra2 =	0x0800,
+		extra3 =	0x01000,
+		extra4 =	0x02000,
+		extra5 =	0x04000,
+		extra6 =	0x08000
 		};
 	};
 

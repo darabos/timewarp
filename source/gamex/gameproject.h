@@ -4,6 +4,7 @@
 #include "../melee/mframe.h"
 #include "../melee/mview.h"
 #include "../frame.h"
+#include "../util/history.h"
 
 
 
@@ -19,16 +20,15 @@ class GameProject;
 
 class GameBare : public Physics
 {
-private:
+protected:
 
 	double next_tic_time;
 	double msecs_per_render;
 	double next_render_time;
 	
-	virtual void idle(int time = 5);
-
 	double escapetime;
 
+	virtual void idle(int time = 5);
 public:
 
 	GameBare *prev, *next, *gamerequest;
@@ -91,6 +91,9 @@ public:
 
 	virtual void calc_kinetic(SpaceLocation *s);
 	virtual void handle_edge(SpaceLocation *s);
+
+
+	void GameBare::show_ticinfo(Frame *f, Histograph *tic_history, Histograph *render_history, double hist_power);
 };
 
 

@@ -385,11 +385,10 @@ void message_type::out(char *string, int dur, int c) {STACKTRACE
 	else messages[num_messages].end_time = 0 + dur;
 	messages[num_messages].color = palette_color[c];
 	num_messages += 1;
-	// added GEO (uncommented that one line just below)
-	// cause such a basic thing shouldn't depend on one Game type.
-	animate(NULL);clean();return;
-	if (!game) animate(NULL);
-	else if (game->is_paused()) animate(NULL);
+	// change GEO: best if there's no "uncontrolled" animation ...
+//	animate(NULL);clean();return;
+//	if (!game) animate(NULL);
+//	else if (game->is_paused()) animate(NULL);
 	clean();
 	return;
 	}
@@ -431,6 +430,10 @@ void message_type::flush() {STACKTRACE
 	}
 
 void message_type::animate(Frame *frame) {STACKTRACE
+
+	if (num_messages <= 0)
+		return;
+
 	int i, x = 0, y = 0, tmp;
 	BITMAP *bmp;
 	if (frame) {
@@ -450,8 +453,8 @@ void message_type::animate(Frame *frame) {STACKTRACE
 		if (x < tmp) x = tmp;
 		y += text_height(font);
 		}
-	if (frame) frame->add_box(0, 0, x, y);	
-	else videosystem.window.unlock();
+	if (frame && !frame->full_redraw) frame->add_box(0, 0, x, y);	
+	if (!frame) videosystem.window.unlock();
 	ox = x;
 	oy = y;
 	return;

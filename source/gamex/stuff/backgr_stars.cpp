@@ -53,7 +53,10 @@ void StarBackgr::init(int N, Frame *frame)
 
 
 	Vector2 framesize;
-	framesize = Vector2(frame->window->surface->w, frame->window->surface->h);
+	if (frame->surface)
+		framesize = Vector2(frame->surface->w, frame->surface->h);
+	else
+		framesize = Vector2(frame->window->surface->w, frame->window->surface->h);
 
 
 	// minimum of the zoom - the whole map is visible at ref map distance. Then:
