@@ -712,7 +712,7 @@ void NormalGame::handle_end()
 		tw_error("Log isn't empty (a)");
 
 	// I suppose, each player is making/ has made such a choice ...
-	int choices[16];
+	int choices[32];
 	int k;
 	for ( k = 0; k < num_players; ++k )
 	{
@@ -728,7 +728,7 @@ void NormalGame::handle_end()
 				endmessage = "Game Over";
 			
 			char tmp[512];
-			sprintf(tmp, "%s  num = %i  channel = %i", endmessage, k, player_control[k]->channel);
+			sprintf(tmp, "%s  num = %i  channel = %i framenum = %i", endmessage, k, player_control[k]->channel, frame_number);
 			
 			ichoice = tw_alert(tmp, "&QUIT", "&RESTART");
 		}
@@ -753,7 +753,7 @@ void NormalGame::handle_end()
 	// check if all the players want to restart, or quit, if not, give a warning and quit
 	k = 0;
 	for ( i = 0; i < num_players; ++i )
-		if (k += choices[i])
+		k += choices[i];
 
 	// disagreement
 	if ( k != 1*num_players && k != 2*num_players )
@@ -762,12 +762,12 @@ void NormalGame::handle_end()
 		if (choices[ local_player() ] == 2)
 			tw_alert("Someone aborted", "&Continue");
 
-		quit("none");
+		quit("none");		// THIS IS DESYNCHED ?!
 	}
 	// agreement on quitting
 	else if ( k == 1*num_players )
 	{
-		quit("none");
+		quit("none");		// THIS IS DESYNCHED ?!
 	}
 	// agreement on restarting
 	else

@@ -265,6 +265,7 @@ int NetTCP::ready2send() {
 	tmv.tv_usec = 0;
 	FD_SET ( s, &write_set);
 	r = select (s+1, &read_set, &write_set, &except_set, &tmv);
+	if (r == SOCKET_ERROR) throw "NetTCP::select - error";
 	FD_CLR ( s, &write_set);
 	return r;
 	}
@@ -275,6 +276,7 @@ int NetTCP::ready2recv() {
 	FD_SET ( s, &read_set);
 	r = select (s+1, &read_set, &write_set, &except_set, &tmv);
 	FD_CLR ( s, &read_set);
+	if (r == SOCKET_ERROR) throw "NetTCP::select - error";
 	return r;
 	}
 int NetTCP::send(int size, const void *data) {
@@ -282,6 +284,7 @@ int NetTCP::send(int size, const void *data) {
 	while (sofar < size) {
 		int tmp = ::send(s, ((char*) data) + sofar, size - sofar, 0);
 		if (tmp > 0) sofar += tmp;
+		if (tmp == SOCKET_ERROR) throw "NetTCP::send - error";
 		}
 	return sofar;
 	}
@@ -306,6 +309,7 @@ int NetTCP::recv(int min, int max, void *data) {
 			s = INVALID_SOCKET;
 			throw "NetTCP::recv: Remote Disconnect";
 			}*/
+		if (tmp == SOCKET_ERROR) throw "NetTCP::recv - error";
 		}
 	}
 bool NetTCP::isConnected() {
