@@ -6,7 +6,7 @@
 
 int log_size_pl(int netnum);
 int log_totalsize();
-void log_test();
+void log_test(char *comment);
 
 // normal player information.
 class NPI : public PlayerInformation

@@ -146,6 +146,46 @@ void Log::init() {STACKTRACE
 	return;
 }
 
+
+
+void Log::deinit()
+{
+	STACKTRACE;
+
+	if (log_data)
+	{
+		for (int i = 0; i < log_num; i += 1)
+			free(log_data[i]);
+	}
+
+	if (log_len) free(log_len);
+	log_len = 0;
+
+	if (log_size) free(log_size);
+	log_size = 0;
+
+	if (log_pos) free(log_pos);
+	log_pos = 0;
+
+	if (log_data) free(log_data);
+	log_data = 0;
+
+	if (log_dir) free(log_dir);
+	log_dir = 0;
+
+	log_num = 0;
+
+	return;
+}
+
+
+Log::~Log()
+{
+	STACKTRACE;
+
+	deinit();
+}
+
 void Log::set_r(int ch)
 {
 	set_direction(ch , direction_read);
@@ -186,17 +226,6 @@ void Log::set_all_directions ( char direction ) {STACKTRACE
 	return;
 }
 
-Log::~Log() {STACKTRACE
-	if (log_data) for (int i = 0; i < log_num; i += 1) {
-		free(log_data[i]);
-	}
-	free(log_len);
-	free(log_size);
-	free(log_pos);
-	free(log_data);
-	free(log_dir);
-	log_num = 0;
-}
 
 void Log::log ( int channel, void *data, int size)
 {
@@ -318,21 +347,6 @@ int Log::ready(int channel) {
 
 
 
-void Log::deinit()
-{
-	STACKTRACE;
-
-	// set all channelinfo to 0
-
-	int i;
-	for ( i = 0; i < log_num; ++i )
-	{
-		log_len[i] = 0;
-		log_pos[i] = 0;
-	}
-
-	return;
-}
 
 bool Log::buffer ( int channel, void *data, int size ) {STACKTRACE
 	char zeros[128];

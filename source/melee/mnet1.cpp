@@ -149,14 +149,15 @@ void NetLog::deinit()
 	Log::deinit();
 
 	// set all channelinfo to 0
-	for ( i = 0; i < log_num; ++i )
-		log_transmitted[i] = 0;
+	if (log_transmitted) free(log_transmitted);
+	log_transmitted = 0;
+
+	//delete buffy;
+	if (buffy) free(buffy);
+	buffy = 0;
 
 	for ( i = 0; i < max_connections; ++i )
 		net[i].deinit();
-
-	//delete buffy;
-	free(buffy);
 
 }
 
@@ -164,7 +165,7 @@ NetLog::~NetLog()
 {
 	STACKTRACE;
 
-	free (log_transmitted);
+	deinit();//free (log_transmitted);
 }
 
 

@@ -142,6 +142,7 @@ void NetTCP::deinit() {
 	if (isConnected()) disconnect();
 	
 	free(buffer);
+	buffer = 0;
 
 	return;
 	}

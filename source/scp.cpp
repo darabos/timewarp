@@ -751,6 +751,10 @@ void play_net( bool ishost )
 
 	// STEP ONE, SETTING / RETRIEVING DATA
 
+	// you've to delete a single-player thingy I suppose... if it exists at all.
+	if (glog)
+		delete glog;
+
 	NetLog *log = new NetLog();
 	log->init();
 	set_global(log);	// this sets glog
@@ -996,13 +1000,13 @@ void play_net( bool ishost )
 		//gname = detect_gametype(log);
 	}
 
-	log_test();
+	log_test("a1");
 
 	log_resetmode();
 
 	log->reset();
 
-	log_test();
+	log_test("a2");
 
 	// find out, how many hotseat players there are on this computer
 	// this is done by checking the local player-settings.
@@ -1077,7 +1081,7 @@ void play_net( bool ishost )
 	
 	share_string(gname);
 
-	log_test();
+	log_test("b1");
 
 	message.print(1500,15, "gname [%s]", gname);
 	message.animate(0);
@@ -1087,7 +1091,7 @@ void play_net( bool ishost )
 	log->optimize4latency();
 	//message.out("connection established");
 	
-	log_test();
+	log_test("b2");
 
 	// NOTE
 	// that it's possible that, just before a reset, a remote computer is already
@@ -1102,7 +1106,7 @@ void play_net( bool ishost )
 	// work. Utter chaos I think ...
 	log->reset();
 
-	log_test();
+	log_test("c");
 
 	play_game(gname, log);
 
@@ -1264,7 +1268,7 @@ void play_game(const char *_gametype_name, Log *_log)
 
 	if (!_log) {
 		_log = new Log();
-		_log->init();
+		_log->init();		// initialization is done further below.
 		set_global(_log);
 	}
 
@@ -1297,7 +1301,10 @@ void play_game(const char *_gametype_name, Log *_log)
 		new_game->window->locate(0,0,0,0,0,1,0,1);
 		new_game->init(_log);
 		new_game->play();
-		glog->deinit();
+
+		if (glog) delete glog;
+		glog = 0;
+
 		game = NULL;
 		new_game->game_done = true;
 		old_game = new_game;

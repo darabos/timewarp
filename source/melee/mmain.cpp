@@ -182,7 +182,7 @@ void NormalGame::init_players()
 			//log_file("server.ini");
 			// isn't needed yet ?!
 
-			log_test();
+			log_test("mmain(a)");
 
 			int count = 0;
 
@@ -733,9 +733,9 @@ void NormalGame::choose_new_ships()
                 sprintf(buffy, "%s\n", p->name);
 
 			// humans can choose ships
-//			if (p->channel != channel_none)
-//				slot[i] = p->control->choose_ship(window, buffy, fleet);
-//			else
+			if (p->channel != channel_none)
+				slot[i] = p->control->choose_ship(window, buffy, fleet);
+			else
 				// bots choose "randomly" (but synched randomly so don't use rand() !!).
 				// this is needed, otherwise a bot would need its own channel, while this way,
 				// they can use channel_none.
@@ -1036,7 +1036,7 @@ different network actions. This only applies to the "unbuffered channels", which
 have routines that synchronize the two games explicitly in the code (ie synchronized
 halts). This buffer should be empty most of the time, except in special situations.
 */
-void log_test()
+void log_test(char *comment)
 {
 #ifdef _DEBUG
 	// synch the 2 games, which should assure that all data are read/written in the meantime
@@ -1049,8 +1049,8 @@ void log_test()
 	{
 		log_int(k, channel_network[i]);
 		if ( k != m )
-			tw_error("log stack is probably mixed up on computer [%i] channel [%i]",
-						i, channel_network[i]);
+			tw_error("[%s] log stack is probably mixed up on computer [%i] channel [%i]",
+						comment, i, channel_network[i]);
 	}
 
 	// check if the "log stack" of data is empty
