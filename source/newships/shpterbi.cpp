@@ -198,6 +198,7 @@ class TeronDrone : public Ship {
   int    resource;
 
   TeronBuilder* docked;
+
   enum {  build,
           dock,
           collect
@@ -225,8 +226,9 @@ class TeronDrone : public Ship {
 };
 
 class TeronDroneLaser : public Laser {
+  SpaceObject* collecting;  
   TeronDrone*  drone;
-  SpaceObject* collecting;
+  
 
   public:
   TeronDroneLaser( TeronDrone *creator, double langle, int lcolor, double lrange, int ldamage, int lfcount,
@@ -699,8 +701,8 @@ void TeronBuilder::request_clearance( TeronDrone* drone ){
 TeronDrone::TeronDrone( TeronBuilder *creator, Vector2 opos,
   double shipAngle, SpaceSprite *osprite ):
 Ship( creator, opos, shipAngle, osprite ),
-docked( NULL ), goal( dock ), just_docked( false ),
-resource( 0 ){
+just_docked( false ), resource( 0 ), docked( NULL ), goal( dock ) 
+{
   set_depth( (double)LAYER_SHIPS + 0.01 );
   layer = LAYER_SHIPS;
 
@@ -825,10 +827,10 @@ void TeronDrone::dock_clearance_to( int number ){
   mass        = 0;
   just_docked = true;
   if( resource ){
-    int b = docked->getBatt();
+    int b = iround(docked->getBatt());
     //docked->fuel_sap -= resource;
 	docked->handle_fuel_sap(this, -resource);
-    resource -= docked->getBatt() - b;
+    resource -= iround(docked->getBatt() - b);
   }
 }
 void TeronDrone::roger(){

@@ -249,7 +249,7 @@ STACKTRACE
 					play_sound(data->sampleSpecial[0]);
 				else
 					play_sound(data->sampleWeapon[0]);
-				weapon_sound_timer = weaponSoundTimer * tw_random(0.49, 1.63);
+				weapon_sound_timer = iround(weaponSoundTimer * tw_random(0.49, 1.63));
 			}
 		}
 	return;
@@ -274,7 +274,7 @@ STACKTRACE
 		
 		sprite->animate(pos, sprite_index, space);
 
-		aa_set_trans(255.0*(1-weapon_charge_counter/(double)weaponChargeTime));
+		aa_set_trans(iround(255*(1-weapon_charge_counter/(double)weaponChargeTime)));
 
 		if (aa_get_trans() < 255)
 			data->more_sprites[0]->animate(pos, sprite_index, space);
@@ -453,7 +453,6 @@ STACKTRACE
 	{
 		BITMAP* bmp = other->get_sprite()->get_bitmap_readonly( other->get_sprite_index() );
 		BITMAP* tmp;
-		int mcol = bitmap_mask_color( bmp );
 
 		DATAFILE* image = new DATAFILE;
 		image->type = DAT_RLE_SPRITE;

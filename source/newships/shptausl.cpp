@@ -195,7 +195,7 @@ int TauSlider::handle_damage(SpaceLocation *source, int normal, int direct) {
         if (in_jump) {
                 return 0; }
         if (just_exited && source->isPlanet())
-                normal = crew;
+                normal = iround(crew);
         return Ship::handle_damage(source, normal, direct);
 }
 

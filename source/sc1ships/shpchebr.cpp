@@ -63,7 +63,7 @@ int ChenjesuBroodhome::activate_weapon()
 	if(weaponFired)
 		return(FALSE);
 	weaponObject = new ChenjesuShot(Vector2(0.0, (size.y / 2.0)), angle,
-		weaponVelocity, weaponDamage, weaponArmour, this, data->spriteWeapon);
+		weaponVelocity, iround(weaponDamage), iround(weaponArmour), this, data->spriteWeapon);
 	game->add(weaponObject);
 	weaponFired = TRUE;
 	return(TRUE);
@@ -75,7 +75,7 @@ int ChenjesuBroodhome::activate_special()
 		return(FALSE);
 	ChenjesuDOGI* DOGI; //added by Varith
 	DOGI = (new ChenjesuDOGI( Vector2(0.0, -size.y / 1.5),
-		angle + PI, specialVelocity, specialFuelSap, specialArmour,
+		angle + PI, specialVelocity, iround(specialFuelSap), iround(specialArmour),
 		specialAccelRate, specialMass, this, data->spriteSpecial,
 		&specialNumDOGIs));
 	DOGI->avoidanceFactor = specialAvoidanceFactor;

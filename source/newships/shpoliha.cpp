@@ -74,15 +74,15 @@ BigShip(opos,  shipAngle, shipData, code)
 	specialRechargerange  = scale_range(get_config_float("Special", "RechargeRange", 0));
 	specialCrewuse        = get_config_int("Special", "CrewUse", 0);
 	specialBatt           = get_config_int("Special", "Batt", 0);
-	specialRecrewtime     = get_config_float("Special", "Recrewtime", 0);
+	specialRecrewtime     = get_config_int("Special", "Recrewtime", 0);
 	max_special            = get_config_int("Special", "N", 0);
 	Nspecial = 0;
 	
 	laserColor  = get_config_int("Laser", "Color", 0);
 	laserRange  = scale_range(get_config_float("Laser", "Range", 0));
 	laserDamage = get_config_int("Laser", "Damage", 0);
-	laserDrain  = get_config_float("Laser", "Drain", 0);
-	laserPeriod = get_config_float("Laser", "Period", 0);
+	laserDrain  = get_config_int("Laser", "Drain", 0);
+	laserPeriod = get_config_int("Laser", "Period", 0);
 	
 	//collide_flag_anyone = 0;
 	//collide_flag_sameteam = 0;
@@ -330,7 +330,7 @@ void OlidandeeHabitat::calculate()
 		angle = trajectory_angle(o);
 		add(new Laser(this, angle,
 			pallete_color[mother->laserColor], mother->laserRange, mother->laserDamage,
-			t_laser * 1E3, this, Vector2(0,15), false));
+			iround(t_laser * 1E3), this, Vector2(0,15), false));
 //		Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, double ldamage,
 //  int lfcount, SpaceLocation *opos, Vector2 rpos, bool osinc_angle) 
 

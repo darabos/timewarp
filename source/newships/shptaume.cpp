@@ -44,7 +44,7 @@ public:
 
 class TauMercurySpark : public SpaceLine
 {
-	int lifetime, lifetime_max, r, b, g;
+	int lifetime, lifetime_max, r, g, b;
 
 public:
 
@@ -171,9 +171,9 @@ void TauMercury::calculate()
 	int ic = 0;
 	if (fabs(bank_position)>0.5) {
 		if (bank_position > 0)
-			ic = 6 + floor(bank_position + 0.5);
+			ic = iround(6 + floor(bank_position + 0.5));
 		else
-			ic = floor(-bank_position + 0.5);
+			ic = iround(floor(-bank_position + 0.5));
 	}
 
 	sprite_index += ic*64;
@@ -251,15 +251,15 @@ void TauMercury::calculate_fire_special()
 //		int i;
 
 //		for (i=0; i<1; i++) {
-		game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random()%1000)/1000.0,
-					scale_velocity(2)*(random()%101)/100.0,
-					800*(1-0.5*(random()%101)/100.0),
-					190+random()%50, 190+random()%50, 200+random()%55,
+		game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random(1000))/1000.0,
+					scale_velocity(2)*(random(101))/100.0,
+					iround(800*(1-0.5*(random(101))/100.0)),
+					190+random(50), 190+random(50), 200+random()%55,
 					DEPTH_EXPLOSIONS, 1.0, 1));
 		game->add(new TauMercurySpark(this, 26, -3.5, PI2*(random()%1000)/1000.0,
-					scale_velocity(2)*(random()%101)/100.0,
-					800*(1-0.5*(random()%101)/100.0),
-					190+random()%50, 190+random()%50, 200+random()%55,
+					scale_velocity(2)*(random(101))/100.0,
+					iround(800*(1-0.5*(random(101))/100.0)),
+					190+random(50), 190+random(50), 200+random(55),
 					DEPTH_EXPLOSIONS, 1.0, 1)); //}
 /*		for (i=0; i<1; i++) {
 			game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random()%1000)/1000.0,
@@ -308,16 +308,16 @@ void TauMercuryShot::calculate()
 	if (si > 0) {
 		int i;
 		for (i=0; i<2; i++)
-			game->add(new TauMercurySpark(this, 0, 0, PI2*(random()%1000)/1000.0,
-						scale_velocity(20)*(random()%101)/100.0,
-						800*(1-0.5*(random()%101)/100.0),
-						160+random()%50, 160+random()%50, 200+random()%55,
+			game->add(new TauMercurySpark(this, 0, 0, PI2*(random(1000))/1000.0,
+						scale_velocity(20)*(random(101))/100.0,
+						iround(800*(1-0.5*(random(101))/100.0)),
+						160+random(50), 160+random(50), 200+random(55),
 						DEPTH_HOTSPOTS, 1.0));
 		for (i=0; i<2; i++)
-			game->add(new TauMercurySpark(this, 0, 0, PI2*(random()%1000)/1000.0,
-						scale_velocity(20)*(random()%101)/100.0,
-						800*(1-0.5*(random()%101)/100.0),
-						160+random()%50, 160+random()%50, 200+random()%55,
+			game->add(new TauMercurySpark(this, 0, 0, PI2*(random(1000))/1000.0,
+						scale_velocity(20)*(random(101))/100.0,
+						iround(800*(1-0.5*(random(101))/100.0)),
+						160+random(50), 160+random(50), 200+random(55),
 						DEPTH_HOTSPOTS, 0.0));
 
 	}
@@ -401,9 +401,9 @@ void TauMercurySpark::animate(Frame *space)
 	y0 = iround(p0.y);
 
 	if (space_zoom <= 1)
-		set_trans_blender(0, 0, 0, space_zoom * 255 * c);
+		set_trans_blender(0, 0, 0, iround(space_zoom * 255 * c));
 	else
-		set_trans_blender(0, 0, 0, 1 * 255 * c);
+		set_trans_blender(0, 0, 0, iround(1 * 255 * c));
 
 	putpixel(space->surface, x0, y0, color);
 	space->add_pixel(x0, y0);

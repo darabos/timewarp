@@ -39,7 +39,7 @@ endif
 #FILELIST = source /s.cpp
 
 ifdef debug
-	CFLAGS += -g -DDEBUGMODE
+	CFLAGS += -pg -g -DDEBUGMODE
 	OBJDIR := ${addsuffix -debug,$(OBJDIR)}
 	NAME := ${addsuffix -debug,$(NAME)}
 else
@@ -61,10 +61,10 @@ else
 	CFLAGS += -DLINUX
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
-	LIBS += ${shell allegro-config --libs} -L/usr/X11R6/lib -lfreetype
+	LIBS += ${shell allegro-config --libs} ${shell freetype-config --libs}
 endif
 
-CFLAGS += -I./source -I./source/gamex -I/usr/X11R6/include/freetype2
+CFLAGS += -I./source ${shell freetype-config --cflags}
 
 #CFLAGS += ${addprefix -I./, $(VPATH)}
 

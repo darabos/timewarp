@@ -68,7 +68,8 @@ lua_func(addPlanet)	// initialize the function, and add some overhead for regist
 	arg_double(y);
 	
 	Vector2 v(x, y);
-	Planet * planet = create_planet(v);
+	//Planet * planet = create_planet(v);
+	create_planet(v);
 }
 lua_ret	// end the function, in a way that lua likes
 

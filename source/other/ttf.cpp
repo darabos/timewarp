@@ -1,9 +1,12 @@
 
 #include <allegro.h>
 #include "allegro/internal/aintern.h"
+
 #include "freetype/freetype.h"
 
 #include "ttf.h"
+
+#include "util/round.h"
 
 // copy ttf bitmap onto an allegro bitmap
 static void my_draw_bitmap( FT_Bitmap *src, BITMAP *dest, int dx, int dy )
@@ -156,7 +159,7 @@ FONT* load_ttf_font (const char* filename, const int points, const int smooth)
 	
 	ymin = face->bbox.yMin;		// the bounding box for all chars in this font.
 	ymax = face->bbox.yMax;		// this actually defines the origin position...
-	yorigin = points_h * double(ymax) / double(ymax - ymin);
+	yorigin = iround(points_h * double(ymax) / double(ymax - ymin));
 	
 	//char c;
 	for ( c = begin; c <= end; ++c )

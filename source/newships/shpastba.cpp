@@ -299,7 +299,7 @@ class BasiliskPoison : public SpaceObject
 {
 	public:
 
-	float poison;
+	double poison;
 	int duration;
 	int start;
 	Ship *oship;
@@ -1283,9 +1283,9 @@ void BasiliskGas::soundExplosion()
 
 BasiliskPoison::BasiliskPoison(BasiliskGas *gas, int nduration, float poison, Ship *nship, SpaceSprite *osprite) :
   SpaceObject (gas, nship->normal_pos(), 0.0, osprite),
-	duration(nduration),
-	oship(nship),
-	poison(poison)
+  poison(poison),
+  duration(nduration),
+  oship(nship)
 {
 	target = oship;
 	id |= BASILISK_POISON_ID;

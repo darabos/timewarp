@@ -20,7 +20,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 
 #include "gamehierarchy.h"
 
-#include "twgui.h"
+#include "twgui/twgui.h"
 
 #include "gflmelee.h"
 #include "gmissions_objects.h"
@@ -1140,8 +1140,8 @@ void Play::ship_change_batt(Ship *s, double pbatt, double pbattmax, double prech
 {
 	s->batt *= pbatt / 100.0;
 	s->batt_max *= pbatt / 100.0;
-	s->recharge_amount  *= prechargeamount / 100.0;
-	s->recharge_rate /= prechargerate / 100.0;
+	s->recharge_amount  = iround(s->recharge_amount * prechargeamount / 100);
+	s->recharge_rate = iround(s->recharge_rate * 100/ prechargerate);
 }
 
 void Play::ship_change_speed(Ship *s, double pspeed, double paccel, double pturn)
@@ -1191,7 +1191,7 @@ void Play::show_message(char *text, double timesec)
 
 	L = text_length(usefont, text)+6*text_length(usefont, " ");
 	h0 = text_height(usefont);
-	H = 1.5 * h0;
+	H = iround(1.5 * h0);
 
 	b = create_bitmap_ex(32, L, H);
 	clear_to_color(b, makecol(100,80,60));
@@ -1200,7 +1200,7 @@ void Play::show_message(char *text, double timesec)
 	// add this to the game for a short while
 	int ix, iy;
 	ix = (screen->w - L) / 2;
-	iy = 0.01 * screen->h;
+	iy = iround(0.01 * screen->h);
 
 	add( new MissionMessageBox(b, ix, iy, timesec ) );
 }

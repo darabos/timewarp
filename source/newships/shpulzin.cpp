@@ -140,7 +140,7 @@ int UlzrakInterceptor::activate_weapon() {
   if(this->zoomSequenceInitiated && this->specialCantFireWhileActivating)
     return(FALSE);
   UM = new UlzrakMissile(Vector2(0,0), this->angle, this->weaponVelocity, 
-  this->weaponDamage, this->weaponRange, this->weaponArmour, this, this->data->spriteWeapon,
+  iround(this->weaponDamage), this->weaponRange, iround(this->weaponArmour), this, this->data->spriteWeapon,
   this->weaponRelativity);
   UM->frictionFactor = this->weaponFrictionEffect;
   game->add(UM);

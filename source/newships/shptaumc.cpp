@@ -199,22 +199,22 @@ void TauMC::animate(Frame *space)
         ty = sin(ra);
 
         if (torpedo_ready[0])
-                data->spriteExtraExplosion->draw(44.5 + 16*tx + 20*ty, 44.5 + 16*ty - 20*tx, 1, bmp);
-        else    data->spriteExtraExplosion->draw(44.5 + 16*tx + 20*ty, 44.5 + 16*ty - 20*tx, 0, bmp);
+                data->spriteExtraExplosion->draw(iround(44.5 + 16*tx + 20*ty), iround(44.5 + 16*ty - 20*tx), 1, bmp);
+        else    data->spriteExtraExplosion->draw(iround(44.5 + 16*tx + 20*ty), iround(44.5 + 16*ty - 20*tx), 0, bmp);
         if (torpedo_ready[1])
-                data->spriteExtraExplosion->draw(44.5 + 16*tx - 20*ty, 44.5 + 16*ty + 20*tx, 1, bmp);
-        else    data->spriteExtraExplosion->draw(44.5 + 16*tx - 20*ty, 44.5 + 16*ty + 20*tx, 0, bmp);
+                data->spriteExtraExplosion->draw(iround(44.5 + 16*tx - 20*ty), iround(44.5 + 16*ty + 20*tx), 1, bmp);
+        else    data->spriteExtraExplosion->draw(iround(44.5 + 16*tx - 20*ty), iround(44.5 + 16*ty + 20*tx), 0, bmp);
 
         int l_i = 1;
 
         if (lock_count == 0)
-                data->spriteExtraExplosion->draw(44.5 + 38*tx - current_blinker*12*ty, 44.5 + 38*ty + current_blinker*12*tx, l_i, bmp);
+                data->spriteExtraExplosion->draw(iround(44.5 + 38*tx - current_blinker*12*ty), iround(44.5 + 38*ty + current_blinker*12*tx), l_i, bmp);
         else
                 if (((lock_count < lock_ticks) && (blinker_recharge > blinker_rate*blinker_dark_rate))
                     || (lock_count >= lock_ticks)) {
                         if (target && (lock_count >= lock_ticks)) if (distance(target) < weaponBlastRange * 2) l_i = 0;
-                        data->spriteExtraExplosion->draw(44.5 + 38*tx - 12*ty, 44.5 + 38*ty + 12*tx, l_i, bmp);
-                        data->spriteExtraExplosion->draw(44.5 + 38*tx + 12*ty, 44.5 + 38*ty - 12*tx, l_i, bmp);
+                        data->spriteExtraExplosion->draw(iround(44.5 + 38*tx - 12*ty), iround(44.5 + 38*ty + 12*tx), l_i, bmp);
+                        data->spriteExtraExplosion->draw(iround(44.5 + 38*tx + 12*ty), iround(44.5 + 38*ty - 12*tx), l_i, bmp);
                 }
 
         

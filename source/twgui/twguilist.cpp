@@ -9,10 +9,10 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include <stdio.h>
 #include <string.h>
 
-#include "twgui.h"
+#include "twgui/twgui.h"
 #include "twwindow.h"
 
-
+#include "util/round.h"
 
 // ------------ AND NOW THE GRAPHICAL PART ---------------
 
@@ -85,8 +85,8 @@ void TextButton::subanimate()
 {
 	int xcentre, ycentre;
 
-	xcentre = size.x / 2;
-	ycentre = size.y / 2 - text_height(usefont)/2;
+	xcentre = iround(size.x / 2);
+	ycentre = iround(size.y / 2 - text_height(usefont)/2);
 
 	text_mode(-1);
 	if (text)
@@ -263,7 +263,7 @@ void TextList::handle_lpress()
 
 	int iy;
 	
-	iy = mainwindow->mpos.y - pos.y;
+	iy = iround(mainwindow->mpos.y - pos.y);
 
 	iy /= Htxt;		// # of item relative to the top
 
@@ -296,7 +296,7 @@ void TextList::handle_rpress()
 	
 	int iy;
 	
-	iy = mainwindow->mpos.y - pos.y;
+	iy = iround(mainwindow->mpos.y - pos.y);
 
 	iy /= Htxt;		// # of item relative to the top
 
@@ -484,7 +484,7 @@ void TextInfoArea::subanimate()
 		int k;
 		for ( k = 0; k < L; ++k )
 		{
-			if (txt[k] < 20 || txt[k] > 128 )
+			if (txt[k] < 20 || txt[k] > 127 )
 				txt[k] = ' ';
 		}
 
@@ -572,8 +572,8 @@ void TextEditBox::handle_lpress()
 
 	int ix, iy;
 	
-	iy = mainwindow->mpos.y - pos.y;
-	ix = mainwindow->mpos.x - pos.x;
+	iy = iround(mainwindow->mpos.y - pos.y);
+	ix = iround(mainwindow->mpos.x - pos.x);
 
 	iy += scroll.y * textinfo->Htxt;	// scroll->y = 1st item at the top
 
@@ -835,7 +835,7 @@ void TextEditBox::subanimate()
 		int k;
 		for ( k = 0; k < L; ++k )
 		{
-			if (txt[k] < 20 || txt[k] > 128 )
+			if (txt[k] < 20 || txt[k] > 127 )
 				txt[k] = ' ';
 		}
 
@@ -909,8 +909,8 @@ AreaTabletScrolled(menu, identbranch, akey)
 	Wicon = overlay->w;
 	Hicon = overlay->h;
 
-	Nxshow = round( size.x / double(Wicon) );
-	Nyshow = round( size.y / double(Hicon) );
+	Nxshow = iround( size.x / double(Wicon) );
+	Nyshow = iround( size.y / double(Hicon) );
 
 	itemproperty = 0;
 }
@@ -940,7 +940,7 @@ void MatrixIcons::set_iconinfo(BITMAP **alistIcon, double ascale)
 		++maxitems;
 	
 	// create the most "optimal" square map (minimum x,y positions means least search trouble (I think)).
-	Nx = round( sqrt((double)maxitems) );
+	Nx = iround( sqrt((double)maxitems) );
 	Ny = maxitems/Nx + 1;
 
 	if (Nx*Ny >= maxitems + Nx)
@@ -980,8 +980,8 @@ void MatrixIcons::subcalculate()
 	if (hasmouse() && Tmouse.vx() != 0 && Tmouse.vy() != 0)
 	{
 		// control is handled by the mouse
-		scroll.xselect = scroll.x + (mainwindow->mpos.x - pos.x) / Wicon;	// mouse coordinate within the matrix area
-		scroll.yselect = scroll.y + (mainwindow->mpos.y - pos.y) / Hicon;
+		scroll.xselect = iround(scroll.x + (mainwindow->mpos.x - pos.x) / Wicon);	// mouse coordinate within the matrix area
+		scroll.yselect = iround(scroll.y + (mainwindow->mpos.y - pos.y) / Hicon);
 	}
 
 }
@@ -1010,8 +1010,8 @@ void MatrixIcons::subanimate()
 			yoverlay = (iy - scroll.y) * Hicon;
 
 			int w0, h0;
-			w0 = round(listIcon[k]->w * mainwindow->scale * extrascale);
-			h0 = round(listIcon[k]->h * mainwindow->scale * extrascale);
+			w0 = iround(listIcon[k]->w * mainwindow->scale * extrascale);
+			h0 = iround(listIcon[k]->h * mainwindow->scale * extrascale);
 
 			// create a intermediate icon
 			xicon =  (Wicon - w0) / 2;
@@ -1041,7 +1041,7 @@ void MatrixIcons::subanimate()
 	double a;
 	//a = 0.5 + 0.5 * sin(areareserve->menu_time * 1E-3 * 2*PI / 10);
 	a = 0.5;
-	rect(drawarea, i*Wicon, j*Hicon, (i+1)*Wicon-1, (j+1)*Hicon-1, makecol(20*a,100*a,200*a));
+	rect(drawarea, i*Wicon, j*Hicon, (i+1)*Wicon-1, (j+1)*Hicon-1, makecol(iround(20*a),iround(100*a),iround(200*a)));
 }
 
 
@@ -1051,11 +1051,11 @@ void MatrixIcons::handle_rpress()
 	int mx, my;
 	
 	// mouse position relative to the center of the item window:
-	mx = mainwindow->mpos.x - pos.x - size.x / 2;
-	my = mainwindow->mpos.y - pos.y - size.y / 2;
+	mx = iround(mainwindow->mpos.x - pos.x - size.x / 2);
+	my = iround(mainwindow->mpos.y - pos.y - size.y / 2);
 
 	// velocity depends on how far you're away from the center.
-	scroll.add(mx / (size.x/8), my / (size.y/8));
+	scroll.add(iround(mx / (size.x/8)), iround(my / (size.y/8)));
 }
 
 

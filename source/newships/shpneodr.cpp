@@ -86,9 +86,9 @@ void NeoDrain::calculate()
 
 	if (special_recharge > 0)
 		// special is being used
-		weapon_drain = 2 * weapon_drain_ref;
+		weapon_drain = iround(2 * weapon_drain_ref);
 	else
-		weapon_drain = weapon_drain_ref;
+		weapon_drain = iround(weapon_drain_ref);
 }
 
 

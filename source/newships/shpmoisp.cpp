@@ -115,7 +115,7 @@ int MoianSpeeder::activate_special()
 	add( new SpeedMissile(this, Vector2(0,40), angle,
 			specialVelocity, specialDamage, specialRange, specialArmour, specialTurnRate,
 			this, data->spriteSpecial, target,
-			specialT, specialN, data->spriteSpecialExplosion,
+			specialT, iround(specialN), data->spriteSpecialExplosion,
 			speedFraction, bloblifetime, blobrange
 			)
 		);

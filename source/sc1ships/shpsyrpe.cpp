@@ -70,10 +70,10 @@ int SyreenPenetrator::activate_special() {
 			callDamage = (int)(r * (double)(specialDamage) / specialRange);
 			if (callDamage > specialDamage) callDamage = specialDamage;
 			callDamage += (random() % specialDamage);
-			if ((target->getCrew() - callDamage) < 1) callDamage = target->getCrew() - 1;
-			int old = target->getCrew();
+			if ((target->getCrew() - callDamage) < 1) callDamage = iround(target->getCrew() - 1);
+			int old = iround(target->getCrew());
 			damage(target, 0, callDamage);
-			callDamage = old - target->getCrew();
+			callDamage = iround(old - target->getCrew());
 			for(int i = 0; i < callDamage; i++) {
 				add(new CrewPod(
 						target->normal_pos() + (unit_vector(trajectory_angle(target) - PI) * 

@@ -159,7 +159,7 @@ void KterbiSaber::calculate()
         crew_max -= 2;
         if (crew > crew_max)
           crew = crew_max;
-			   blit(spritePanel->get_bitmap(7), spritePanel->get_bitmap(0),0,0,3,50 - (crew_max),9,4);
+			   blit(spritePanel->get_bitmap(7), spritePanel->get_bitmap(0),0,0,3,iround(50 - (crew_max)),9,4);
       ship->update_panel = TRUE;
       sound.stop(data->sampleExtra[0]);
       sound.play(data->sampleExtra[0]);
@@ -198,7 +198,7 @@ int KterbiSaber::handle_speed_loss(SpaceLocation *source, int normal)
       else if (boostlevel == HYPER_SPEED) {
           speed_max = normal_speed * 2.5;
           accel_rate = normal_acc * 2.5; } 
-	  return r;
+	  return iround(r);
 }
 
 

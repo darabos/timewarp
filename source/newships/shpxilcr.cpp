@@ -359,16 +359,16 @@ int XillzCrescentOrbiter::handle_damage(SpaceLocation *source, double normal, do
 	{
 		damage(source, 0, 4);
 		state = 0;
-		return total;
+		return iround(total);
 	}
 
 	if (source && source->isPlanet())
 	{
 		state = 0;		// the planet should clean up the existing orbiters
-		return total;
+		return iround(total);
 	}
 
-	return total;
+	return iround(total);
 }
 
 

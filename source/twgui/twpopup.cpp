@@ -12,7 +12,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include "twbutton.h"
 #include "twpopup.h"
 
-
+#include "util/round.h"
 
 
 
@@ -181,8 +181,8 @@ Popup(identbranch, axshift, ayshift, outputscreen)
 
 	init_components(identbranch);
 
-	xshift = round(axshift * scale);
-	yshift = round(ayshift * scale);
+	xshift = iround(axshift * scale);
+	yshift = iround(ayshift * scale);
 }
 
 PopupT::PopupT(EmptyButton *atrigger, char *identbranch, int axshift, int ayshift)
@@ -195,8 +195,8 @@ Popup(identbranch,
 
 	init_components(identbranch);
 
-	xshift = round(axshift * scale);
-	yshift = round(ayshift * scale);
+	xshift = iround(axshift * scale);
+	yshift = iround(ayshift * scale);
 }
 
 
@@ -261,8 +261,8 @@ void PopupT::calculate()
 		// but where exactly : near the mouse !!
 		if (option.place_relative2mouse)
 		{
-			x = trigger->mainwindow->x + trigger->mainwindow->mpos.x + xshift;
-			y = trigger->mainwindow->y + trigger->mainwindow->mpos.y + yshift;
+			x = iround(trigger->mainwindow->x + trigger->mainwindow->mpos.x + xshift);
+			y = iround(trigger->mainwindow->y + trigger->mainwindow->mpos.y + yshift);
 		} else if (option.place_relative2window) {
 			x = trigger->mainwindow->x + xshift;
 			y = trigger->mainwindow->y + yshift;

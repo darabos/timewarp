@@ -246,7 +246,7 @@ TulkonDevice::TulkonDevice( Ship* creator, SpaceSprite* osprite,
 			double odist, int odamage, double oforce, double ofraction )
 :
 SpaceObject( creator, creator->normal_pos(), creator->get_angle(), osprite ),
-dist( odist ), ramming( false ), force( oforce )
+force( oforce ), dist( odist ), ramming( false )
 {
 	ShieldFraction = ofraction;
 	layer = LAYER_SPECIAL;
@@ -327,7 +327,7 @@ void TulkonDevice::inflict_damage( SpaceObject* other ){
   if( dist < TULKON_DEVICE_MAX_DIST - TULKON_DEVICE_PULL &&
     ( sameShip( other ) || !other->isShot() )) ram( true );
   if( !ramming ){
-    int odf = damage_factor;
+    int odf = iround(damage_factor);
     damage_factor = 0;
     SpaceObject::inflict_damage( other );
     damage_factor = odf;
@@ -363,7 +363,7 @@ int TulkonDevice::handle_damage( SpaceLocation* other, double normal, double dir
   }else if( normal > 2 ){
      play_sound( data->sampleWeapon[5], 500 );       // play ram_largehit.wav
   }
-  return normal;
+  return iround(normal);
 }
 
 void TulkonDevice::ram( bool mode ){

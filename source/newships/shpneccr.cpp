@@ -205,7 +205,7 @@ int NechanziCruiser::activate_special() {
   NM->mass = specialMass;
   NM->maxSpeed = specialMaxSpeed1;
   NM->missileType = 2;
-  NM->stunFrames = specialStunFrames;
+  NM->stunFrames = iround(specialStunFrames);
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(-0.05), (size.y * 0.4),
@@ -222,7 +222,7 @@ int NechanziCruiser::activate_special() {
   NM->mass = specialMass;
   NM->maxSpeed = specialMaxSpeed1;
   NM->missileType = 2;
-  NM->stunFrames = specialStunFrames;
+  NM->stunFrames = iround(specialStunFrames);
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(-0.10), (size.y * 0.3),

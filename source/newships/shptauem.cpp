@@ -126,7 +126,7 @@ void TauEMP::calculate_fire_special()
 			if (specialJamFriendly || !o->sameTeam(this)) {
 				if (o->isShip()) {
 					if (((Ship*)o)->nextkeys!=0)
-						game->add(new TauEMPJammer(this, (Ship*)o, iround(1-pow(distance(o)/specialRange, 1/specialAttenuation)) * specialJamTime));
+						game->add(new TauEMPJammer(this, (Ship*)o, iround(1-pow(distance(o)/specialRange, 1/specialAttenuation) * specialJamTime)));
 				}
 				else
 					o->target = t; } }
@@ -176,7 +176,7 @@ void TauEMP::animate(Frame *space)
 		int i;
 		for (i=-specialNumber+1;i<=0;i++) {
 			set_trans_blender(0,0,0,iround(r2*(1-rc)*(specialNumber+i)*255.0/(specialNumber)));
-			circle_r = (wave_radius+3*i)*space_zoom;
+			circle_r = iround((wave_radius+3*i)*space_zoom);
 			circle(space->surface,circle_x0,circle_y0, circle_r, makecol(100,100,255));
 			space->add_circle(circle_x0, circle_y0, circle_r, 0); }
 		drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0); }
@@ -186,7 +186,7 @@ void TauEMP::animate(Frame *space)
 	if (DoAlphaBlending && (get_tw_aa_mode() & AA_BLEND) && !(get_tw_aa_mode() & AA_NO_AA) && (flash_counter > 0)) {
 		int	_old_trans = aa_get_trans();
 		sprite->animate(pos, sprite_index+64, space);
-		aa_set_trans((255.0*flash_counter)/specialFlashTime);
+		aa_set_trans(iround((255.0*flash_counter)/specialFlashTime));
 		if (aa_get_trans() < 255)
 			sprite->animate(pos, sprite_index, space);
 		aa_set_trans(_old_trans); }

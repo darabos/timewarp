@@ -163,7 +163,7 @@ void TrugGame::preinit() {
 }
 
 TrugGame::~TrugGame() {
-	int i;
+	unsigned int i;
 	for (i = 0; i < players.size(); i += 1) delete players[i];
 	if (gui) delete gui;
 	gui = NULL;

@@ -9,7 +9,7 @@ REGISTER_FILE
 #include "../melee/mcbodies.h"
 #include "../melee/mview.h"
 
-#include "twgui.h"
+#include "twgui/twgui.h"
 
 #include "../melee/mlog.h"
 

@@ -13,7 +13,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include "twwindow.h"
 #include "twhelpers.h"
 
-
+#include "util/round.h"
 
 ScrollControl::ScrollControl()
 {
@@ -130,13 +130,13 @@ void ScrollControl::set_sel(int xsel, int ysel)
 // alpha is a value between 0 and 1
 void ScrollControl::set_percent_pos_x(double alpha)
 {
-	x = round( (Nx-1) * alpha );
+	x = iround( (Nx-1) * alpha );
 	check_pos();
 }
 
 void ScrollControl::set_percent_pos_y(double alpha)
 {
-	y = round( (Ny-1) * alpha );
+	y = iround( (Ny-1) * alpha );
 	check_pos();
 }
 

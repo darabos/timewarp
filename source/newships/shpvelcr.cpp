@@ -359,7 +359,7 @@ int VelronCrBolt::handle_damage(SpaceLocation* source, double normal, double dir
 		if (relative_damage >= 1)
 			return Shot::handle_damage(this, 9999, 9999);
 		else
-			return(normal + direct);
+			return iround(normal + direct);
 	}
 	return 0;
 }

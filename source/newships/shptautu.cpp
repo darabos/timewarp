@@ -251,7 +251,7 @@ void TauTurboMissile::calculate()
 {
 	STACKTRACE
 	Vector2 ovv = vel;
-	double ov = magnitude(vel);
+	magnitude(vel);
 	double otr = turn_rate;
 	if (d < range) turn_rate *= d / range;
 	HomingMissile::calculate();

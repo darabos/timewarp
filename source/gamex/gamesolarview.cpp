@@ -18,7 +18,7 @@ REGISTER_FILE
 #include "stuff/space_body.h"
 #include "stuff/backgr_stars.h"
 
-#include "twgui.h"
+#include "twgui/twgui.h"
 
 #include "general/sprites.h"
 #include "gamestarmap.h"

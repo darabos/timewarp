@@ -480,14 +480,14 @@ void init_fleet() {STACKTRACE
         }
     }
 
-    int Fleet::getNextFleetEntryByCharacter(int currentShip, char c) {
+    int Fleet::getNextFleetEntryByCharacter(unsigned int currentShip, char c) {
         
         ASSERT(ships.at(currentShip) != NULL);
         ASSERT(currentShip < ships.size());
         ASSERT(currentShip >=0);
         c = toupper(c);
 	
-	int i;
+	unsigned int i;
         for (i=currentShip+1; i<ships.size(); i++) {
             MyFleetShipType temp = ships.at(i);
             ASSERT(temp!=NULL);

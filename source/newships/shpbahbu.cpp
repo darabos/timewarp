@@ -99,8 +99,8 @@ int BahaoidBuzzsaw::activate_weapon()
 	double yone = 0.5;
 
 	int w, h;
-	w = size.x;
-	h = size.y;
+	w = iround(size.x);
+	h = iround(size.y);
 
 	double da;
 	da = 60.0 * ANGLE_RATIO;
@@ -228,7 +228,7 @@ void BahaoidBabyBuzzsaw::calculate()
 			MineRange); a.current; a.next())
 	{
 		o = a.currento;
-		if (!o->sameTeam(this) && !o->isInvisible() && (distance(o) < oldrange) && (o->ally_flag != -1) || (o->getID() == ID_ASTEROID))
+		if (!o->sameTeam(this) && !o->isInvisible() && (distance(o) < oldrange) && (o->ally_flag != (unsigned int)-1) || (o->getID() == ID_ASTEROID))
 		{
 			t = o;
 			oldrange = distance(o);
@@ -246,8 +246,8 @@ void BahaoidBabyBuzzsaw::calculate()
 		double yone = 0.5;
 
 		int w, h;
-		w = size.x;
-		h = size.y;
+		w = iround(size.x);
+		h = iround(size.y);
 
 		double da;
 		da = 60.0 * ANGLE_RATIO;

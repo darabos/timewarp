@@ -244,7 +244,7 @@ public:
         @return the index of the ship whose name starts with c, and is next in the list, 
         relative to currentShip.
     */
-    int getNextFleetEntryByCharacter(int currentShip, char c);
+    int getNextFleetEntryByCharacter(unsigned int currentShip, char c);
 
 
 

@@ -175,7 +175,7 @@ LyrmristuWaSphere **P)
 	PP=P;
 	if(armour<damage_factor) damage_factor=armour;
 	if(damage_factor<armour) armour=damage_factor;
-    sprite_index = (damage_factor - 1)/ 2;
+    sprite_index = iround((damage_factor - 1)/ 2);
 	if(sprite_index>9) sprite_index=9;
 	if(sprite_index<0) sprite_index=0;
 	}
@@ -197,7 +197,7 @@ LyrmristuWaSphere **P)
 	vel = ship->get_vel();
 	Shot::calculate();
 	if(state!=0) {
-		sprite_index = damage_factor - 1;
+		sprite_index = iround(damage_factor - 1);
 		if(sprite_index>15) sprite_index=15;
 		if(sprite_index<0) sprite_index=0;
 	}
@@ -222,16 +222,16 @@ void LyrmristuWaSphere::inflict_damage(SpaceObject *other) {
   int startingTargetArmour=0, endingTargetArmour=0;
 	int originalCrew=-1;
 	int originalStrength;
-	originalStrength = this->damage_factor;
+	originalStrength = iround(this->damage_factor);
 	Ship* S1;
 	if(other->isShip()) {
 		S1 = (Ship*)other;
-		originalCrew = S1->crew;
+		originalCrew = iround(S1->crew);
 	}
-  if(other->isShot()) startingTargetArmour = ((Shot*)other)->armour;
+  if(other->isShot()) startingTargetArmour = iround(((Shot*)other)->armour);
 	Shot::inflict_damage(other);
   if(other->isShot()) {
-    endingTargetArmour = ((Shot*)other)->armour;
+    endingTargetArmour = iround(((Shot*)other)->armour);
     ((Shot*)other)->damage_factor -= (startingTargetArmour - endingTargetArmour);
     if(((Shot*)other)->damage_factor<0) ((Shot*)other)->damage_factor = 0;
   }

@@ -191,9 +191,9 @@ KaboMine::KaboMine (Vector2 opos, double oangle, double ov, double oturnrate,
 	SpaceLocation *ocreator, SpaceSprite *osprite) 
 :
 SpaceObject(ocreator, ocreator->pos+rotate(opos,oangle-PI/2), oangle, osprite),
-Haze_basepower(obasepower),
 lifetime(olifetime),
-hostiletime(ohostiletime)
+hostiletime(ohostiletime),
+Haze_basepower(obasepower)
 {
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
@@ -336,14 +336,14 @@ void KaboHaze::calculate()
 	// check damage taken this turn ... increase that damage !
 
 	oldcrew = newcrew;
-	newcrew = host->getCrew();
+	newcrew = iround(host->getCrew());
 	if ( newcrew < oldcrew  )
 	{
 		// add extra damage !!
 		//... but how ... fractional, or what ??
 
 		//int extradeaths = int( (oldcrew - newcrew) * ( power - 1 ) );	// this would be a damage amplifier
-		int extradeaths = power;		// simple, an additional damage on top of other damage, each frame
+		int extradeaths = iround(power);		// simple, an additional damage on top of other damage, each frame
 
 		if ( extradeaths > 0 )
 		{
@@ -352,7 +352,7 @@ void KaboHaze::calculate()
 			this->damage(host, extradeaths);
 		}
 
-		newcrew = host->getCrew();
+		newcrew = iround(host->getCrew());
 
 		//power *= 0.66;		// big powerdrain from the shield !
 		// change: the damage shield is permanent.
@@ -386,9 +386,9 @@ void blit_singlecolor(BITMAP *src, BITMAP *dest, int copycolor)
 
 void blit_resize( BITMAP* *bmpold, int wnew, int hnew)
 {
-	STACKTRACE
-	int wold = (*bmpold)->w;
-	int hold = (*bmpold)->h;
+  STACKTRACE;
+	  //int wold = (*bmpold)->w;
+	  //int hold = (*bmpold)->h;
 
 	BITMAP *bmpnew = create_bitmap(wnew, hnew);
 
@@ -538,7 +538,7 @@ SpaceLocation(creator, Vector2(0.0, 0.0), 0.0)
 
 //	decay_time = odecaytime;	// in milliseconds
 
-	newcrew = host->getCrew();
+	newcrew = iround(host->getCrew());
 	oldcrew = newcrew;
 
 	// this "haze" is passive, of course:
@@ -714,7 +714,7 @@ void KaboHaze::animate(Frame *space)
 	{
 		shield_bmp[shield_sprite_index] = create_bitmap(wshield, hshield);
 		clear_to_color(shield_bmp[shield_sprite_index], 0);	// important otherwise it contains artefacts
-		rotate_sprite(shield_bmp[shield_sprite_index], shield_bmp[0], 0, 0, (1<<24)*(host->angle + 0.5*PI)/PI2 );
+		rotate_sprite(shield_bmp[shield_sprite_index], shield_bmp[0], 0, 0, iround((1<<24)*(host->angle + 0.5*PI)/PI2) );
 		// result is in sprite_bmp[sprite_index]   ( nice conventions, huh !)
 	}
 	
@@ -749,8 +749,8 @@ void KaboHaze::animate(Frame *space)
 	Vector2 Vcorner;
 	Vcorner = corner(host->normal_pos(), Vector2(wshield, hshield) );
 
-	int xplot = Vcorner.x;	//wcorner(xhost, wshield);
-	int yplot = Vcorner.y;	//hcorner(yhost, hshield);
+	int xplot = iround(Vcorner.x);	//wcorner(xhost, wshield);
+	int yplot = iround(Vcorner.y);	//hcorner(yhost, hshield);
 	// these routines are the standard way to calculate screen coordinates !
 	
 
@@ -798,11 +798,11 @@ void KaboHaze::animate(Frame *space)
 		dy -= hshield / 2;
 
 		double a = host->angle + 0.5*PI;
-		int dx2 = wshield/2 + dx * cos(a) - dy * sin(a);	// rotated around the center
-		int dy2 = hshield/2 + dy * cos(a) + dx * sin(a);
+		int dx2 = iround(wshield/2 + dx * cos(a) - dy * sin(a));	// rotated around the center
+		int dy2 = iround(hshield/2 + dy * cos(a) + dx * sin(a));
 
-		dx = int( dx2 * space_zoom);
-		dy = int( dy2 * space_zoom);
+		dx = iround( dx2 * space_zoom);
+		dy = iround( dy2 * space_zoom);
 
 		int x = xplot + dx;
 		int y = yplot + dy;

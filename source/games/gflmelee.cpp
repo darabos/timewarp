@@ -46,7 +46,7 @@ REGISTER_FILE
 
 #include "../melee/mlog.h"
 
-#include "twgui.h"
+#include "twgui/twgui.h"
 
 
 

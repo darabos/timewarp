@@ -8,7 +8,7 @@
 
 #include "edit/disk_stuff.h"
 
-#include "twgui.h"
+#include "twgui/twgui.h"
 
 #include "../other/luaport.h"
 

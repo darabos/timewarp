@@ -46,7 +46,6 @@ end
 function GAME_EVENT_ENTER_STATION( location, x, y )
 	station_x = x;
 	station_y = y;
-	
 	if location == "Kohr-Ah" then
 	
 		if matter_investigated == 0 then

@@ -46,7 +46,7 @@ class AnimatedObject : public Animation
 public:
 
 	AnimatedObject(SpaceLocation *creator, Vector2 opos,
-					SpaceSprite *osprite, double frame_length);
+					SpaceSprite *osprite, int frame_length);
 
 	virtual void animate(Frame *f);
 	virtual void inflict_damage(SpaceObject *other);
@@ -71,7 +71,7 @@ public:
 
 
 AnimatedObject::AnimatedObject(SpaceLocation *creator, Vector2 opos,
-					SpaceSprite *osprite, double frame_length)
+					SpaceSprite *osprite, int frame_length)
 :
 Animation(creator, opos, 
 	osprite, 0, osprite->frames(), frame_length, 
@@ -100,7 +100,7 @@ void AnimatedObject::animate(Frame *f)
 	masked_blit(bmp, f->surface,
 		0, 0,
 		//pos.x - 0.5*bmp->w - space_center.x, pos.y - 0.5*bmp->h - space_center.y,
-		P.x, P.y,
+		iround(P.x), iround(P.y),
 		bmp->w, bmp->h);
 }
 
@@ -126,7 +126,7 @@ SpaceLocation(creator, lpos, langle)
 
 void Spawner::spawnit()
 {
-	physics->add(new AnimatedObject(this, pos, spawnsprite, framelen));
+	physics->add(new AnimatedObject(this, pos, spawnsprite, iround(framelen)));
 }
 
 void Spawner::calculate()
@@ -782,8 +782,8 @@ void Structure::animate(Frame *f)
 	{
 		//MapObj::animate(frame2);
 		double s = bmpframe2->w / 400.0;
-		int x = pos.x * s / scalesurface - 0.5*sprite->get_bitmap(0)->w;
-		int y = pos.y * s / scalesurface - 0.5*sprite->get_bitmap(0)->h;
+		int x = iround(pos.x * s / scalesurface - 0.5*sprite->get_bitmap(0)->w);
+		int y = iround(pos.y * s / scalesurface - 0.5*sprite->get_bitmap(0)->h);
 		sprite->draw(x, y, sprite_index, bmpframe2);
 	}
 }
@@ -1162,8 +1162,8 @@ void GamePlanetscan::animate(Frame *frame)
 		w = iround((map_bmp->w * scalesurface) * space_zoom);
 		h = iround((map_bmp->h * scalesurface) * space_zoom);
 
-		x = -space_center.x * space_zoom + 0.5 * space_view_size.x;
-		y = -space_center.y * space_zoom + 0.5 * space_view_size.y;
+		x = iround(-space_center.x * space_zoom + 0.5 * space_view_size.x);
+		y = iround(-space_center.y * space_zoom + 0.5 * space_view_size.y);
 
 		stretch_blit(map_bmp, maparea->backgr,
 			0, 0, map_bmp->w, map_bmp->h,
@@ -1289,7 +1289,7 @@ void GamePlanetscan::handle_ranmin()
 	int N;
 	char txt[512];
 
-	N = random(iround(nmin), iround(nmax));
+	N = iround(random(nmin, nmax));
 
 	for ( i = 0; i < N; ++i )
 	{
@@ -1370,8 +1370,8 @@ void GamePlanetscan::handle_env()
 	{
 		
 		double a = random(0.1 * PI2, 0.2 * PI2);
-		double da = 1.0;
-		double ra = 1000.0;
+		//double da = 1.0;
+		//double ra = 1000.0;
 		double v = 0.2;
 
 
@@ -1386,8 +1386,8 @@ void GamePlanetscan::handle_env()
 	{
 		
 		double a = random(PI2);
-		double da = 1.0;
-		double ra = 1000.0;
+		//double da = 1.0;
+		//double ra = 1000.0;
 		double v = 0.1;
 
 
@@ -1402,8 +1402,8 @@ void GamePlanetscan::handle_env()
 	{
 		
 		double a = random(PI2);
-		double da = 1.0;
-		double ra = 1000.0;
+		//double da = 1.0;
+		//double ra = 1000.0;
 		double v = 0;
 
 
@@ -1417,8 +1417,8 @@ void GamePlanetscan::handle_env()
 	{
 		
 		double a = random(PI2);
-		double da = 1.0;
-		double ra = 1000.0;
+		//double da = 1.0;
+		//double ra = 1000.0;
 		double v = 0.2;
 
 
@@ -1432,8 +1432,8 @@ void GamePlanetscan::handle_env()
 	{
 		
 		double a = random(PI2);
-		double da = 1.0;
-		double ra = 1000.0;
+		//double da = 1.0;
+		//double ra = 1000.0;
 		double v = 0.0;
 
 

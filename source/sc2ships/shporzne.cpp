@@ -363,7 +363,7 @@ void OrzMarine::inflict_damage(SpaceObject *other) {
 
 int OrzMarine::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	int total = normal + direct;
+	int total = iround(normal + direct);
 	armour -= total;
 	if(armour <= 0)
 		state = 0;

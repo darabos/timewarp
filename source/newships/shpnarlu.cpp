@@ -64,12 +64,11 @@ class NaroolGas: public AnimatedShot {
 };
 
 class NaroolPoison : public SpaceObject {
-	public:
-
-	float poison;
-	int duration;
-	int start;
-	Ship *oship;
+public:
+  Ship *oship;
+  double poison;
+  int duration;
+  int start;
 
 	NaroolPoison(NaroolGas *gas, int duration, float poison, Ship *kill_it, SpaceSprite *osprite);
 	virtual void calculate();
@@ -276,9 +275,9 @@ void NaroolGas::soundExplosion() {
 
 NaroolPoison::NaroolPoison(NaroolGas *gas, int nduration, float poison, Ship *nship, SpaceSprite *osprite) :
   SpaceObject (gas, nship->normal_pos(), 0.0, osprite),
-	duration(nduration),
-	oship(nship),
-	poison(poison)
+  oship(nship),
+  poison(poison),
+  duration(nduration)
 {
 	target = oship;
 	id |= NAROOL_POISON_ID;
@@ -328,7 +327,7 @@ void NaroolPoison::calculate() {
 			oship->update_panel = TRUE;
 			}
 			}
-		chance = random(1000.0);
+		chance = iround(random(1000.0));
 		if (chance < frame_time * poison) {
 			play_sound(data->sampleExtra[0]);
 			damage(oship, 0, 1);
@@ -446,7 +445,7 @@ void NaroolLurker::calc_lightning()
 				int col;
 				int re, gr, bl;
 				
-				col = getpixel(shpbmp, P.x, P.y);
+				col = getpixel(shpbmp, iround(P.x), iround(P.y));
 				
 				re = getr(col);
 				gr = getg(col);
@@ -455,7 +454,7 @@ void NaroolLurker::calc_lightning()
 				if ( !(re == 255 && gr == 0 && bl == 255))
 				{
 					int k;
-					k = 128*(0.5 + 0.5*sparktime/maxsparktime);
+					k = iround(128*(0.5 + 0.5*sparktime/maxsparktime));
 					
 				//	re = 0;
 				//	bl = 0;
@@ -468,10 +467,10 @@ void NaroolLurker::calc_lightning()
 					//f = (0.5 + (0.5*sparktime)/maxsparktime);
 					f = sparktime / maxsparktime;
 					c = 255;// / (i+1);
-					re = f * c;
-					bl = (1-f) * c;
+					re = iround(f * c);
+					bl = iround((1-f) * c);
 					
-					putpixel(b, P.x, P.y, makeacol(re,0,bl,255));
+					putpixel(b, iround(P.x), iround(P.y), makeacol(re,0,bl,255));
 				}
 			}
 			

@@ -844,7 +844,7 @@ int ClowanFlurry::activate_weapon()
 
 		batt += (weapon_drain - 1.0);
 		// weapon_recharge += weapon_rate;
-		weapon_recharge -= 0.75 * weapon_rate;
+		weapon_recharge -= iround(0.75 * weapon_rate);
 	}
 
 	return TRUE;

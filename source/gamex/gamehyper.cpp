@@ -334,7 +334,7 @@ void StarHyper::animate(Frame *f)
 		int bpp;
 		bpp = bitmap_color_depth(bmp);
 		//bmpcache[sprite_index] = create_bitmap_ex(bpp, s.x, s.y);
-		bmpcache[sprite_index] = create_video_bitmap(s.x, s.y);		// for faster drawing.
+		bmpcache[sprite_index] = create_video_bitmap(iround(s.x), iround(s.y));		// for faster drawing.
 
 		stretch_blit(bmp, bmpcache[sprite_index],
 			0, 0,  bmp->w, bmp->h,
@@ -346,7 +346,7 @@ void StarHyper::animate(Frame *f)
 	p = corner(pos, s);
 
 	masked_blit(bmpcache[sprite_index], f->surface,
-		0, 0, p.x, p.y,
+		0, 0, iround(p.x), iround(p.y),
 		bmpcache[sprite_index]->w, bmpcache[sprite_index]->h);
 }
 
@@ -560,7 +560,7 @@ void GameHyperspace::init()
 	int refresolution;
 	double sprscale;
 
-	int abpp = bitmap_color_depth(view->frame->window->surface);
+	//int abpp = bitmap_color_depth(view->frame->window->surface);
 
 	hyperexpl = new HyperspaceExplosions(&wininfo);
 
@@ -851,11 +851,11 @@ void GameHyperspace::plot_submap(BITMAP *submap)
 	{
 		int xp;
 
-		xp = i*W - P.x;
+		xp = iround(i*W - P.x);
 
-		xp *= submap->w / (2*L);
+		xp = xp * iround(submap->w / (2*L));
 
-		xp += 0.5 * submap->w;
+		xp += iround(0.5 * submap->w);
 
 		line ( submap, xp, 0, xp, submap->h-1, makecol(0,128,0));
 	}
@@ -864,11 +864,11 @@ void GameHyperspace::plot_submap(BITMAP *submap)
 	{
 		int yp;
 
-		yp = i*W - P.y;
+		yp = iround(i*W - P.y);
 
-		yp *= submap->w / (2*L);
+		yp = yp* iround(submap->w / (2*L));
 
-		yp += 0.5 * submap->w;
+		yp += iround(0.5 * submap->w);
 
 		line ( submap, 0, yp, submap->w-1, yp, makecol(0,128,0));
 	}
@@ -898,7 +898,7 @@ void GameHyperspace::plot_submap(BITMAP *submap)
 			D += 0.5 * Vector2(submap->w, submap->h);
 
 			bmp = star_radarspr[k]->get_bitmap(0);
-			masked_blit(bmp, submap, 0, 0, D.x, D.y, bmp->w, bmp->h);
+			masked_blit(bmp, submap, 0, 0, iround(D.x), iround(D.y), bmp->w, bmp->h);
 		}
 	}
 
@@ -925,7 +925,7 @@ void GameHyperspace::plot_submap(BITMAP *submap)
 				D += 0.5 * Vector2(submap->w, submap->h);
 				
 				bmp = radarenemyspr->get_bitmap(0);
-				masked_blit(bmp, submap, 0, 0, D.x, D.y, bmp->w, bmp->h);
+				masked_blit(bmp, submap, 0, 0, iround(D.x), iround(D.y), bmp->w, bmp->h);
 			}
 		}
 	}
@@ -935,7 +935,7 @@ void GameHyperspace::plot_submap(BITMAP *submap)
 	bmp = radarplayerspr->get_bitmap(0);
 
 	P = 0.5 * bitmap_size(submap) - 0.5 * bitmap_size(bmp);
-	masked_blit(bmp, submap, 0, 0, P.x, P.y, bmp->w, bmp->h);
+	masked_blit(bmp, submap, 0, 0, iround(P.x), iround(P.y), bmp->w, bmp->h);
 
 	// plot the radar submap onto the (temp) screen surface.
 //	P = bitmap_size(t) - bitmap_size(submap);
@@ -1011,15 +1011,15 @@ void HyperspaceExplosions::init()
 		W[i] = 10;	// physically, they're all equally big. Some are closer to the eye, that's all...
 		
 		// the number of cells on the map
-		mapNx[i] = map_size.x / W[i];
-		mapNy[i] = map_size.y / W[i];
+		mapNx[i] = iround(map_size.x / W[i]);
+		mapNy[i] = iround(map_size.y / W[i]);
 		
 		// the number of those cells that you can actually see.
 		double sc;		// should be 0.5: half the screen
 		sc = 0.35;	// for testing, to see if the correct square is made
 		sc = 0.5;
-		winNx[i] = sc * wininfo->maparea.x / (W[i] * level[i]);
-		winNy[i] = sc * wininfo->maparea.y / (W[i] * level[i]);
+		winNx[i] = iround(sc * wininfo->maparea.x / (W[i] * level[i]));
+		winNy[i] = iround(sc * wininfo->maparea.y / (W[i] * level[i]));
 			
 		ixpos[i] = int(wininfo->mapcenter.x / W[i]);
 		iypos[i] = int(wininfo->mapcenter.y / W[i]);

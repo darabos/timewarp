@@ -133,9 +133,9 @@ void colorize(BITMAP *bmp, double mr, double mg, double mb)
 
 			if (!(r == 255 && g == 0 && b == 255))
 			{
-				r *= mr;
-				g *= mg;
-				b *= mb;
+				r *= iround(mr);
+				g *= iround(mg);
+				b *= iround(mb);
 
 				if (r > 255)	r = 255;
 				if (g > 255)	g = 255;

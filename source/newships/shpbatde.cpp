@@ -304,7 +304,7 @@ void BathaDeviant::calculate ()
 		P.x = tw_random(-20,20);
 		P.y = -20 - tw_random(20);
 
-		int duration = 1000*fabs(1 - fabs(P.x/100));
+		int duration = iround(1000*fabs(1 - fabs(P.x/100)));
 		P = rotate(P, angle+PI + PI/2);
 
 		game->add(new Animation(this, pos+P, leakingsprites[i], sprite_index, 1,
@@ -331,7 +331,7 @@ int BathaDeviant::handle_damage(SpaceLocation *source, double normal, double dir
 		normal += CrewShipHit;
 
 	Ship::handle_damage(source, normal, direct);
-	return normal+direct;
+	return iround(normal+direct);
 }
 
 void BathaDeviant::inflict_damage(SpaceObject *other)

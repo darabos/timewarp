@@ -401,6 +401,7 @@ int is_escape_pressed() {
 	return key[KEY_ESC];
 }
 
+/*
 static DIALOG clientWaiting[] = 
 {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
@@ -410,7 +411,7 @@ static DIALOG clientWaiting[] =
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
-
+*/
 
 void play_net1client ( const char *_address, int _port ) {STACKTRACE
 	NetLog *log = new NetLog();
@@ -1593,7 +1594,6 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 
 	static int next_anim_time = get_time();
 	int old_d1 = d->d1;
-    int old_d2 = d->d2;
     int ret = 0;
    
 
@@ -1657,10 +1657,6 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
         
         if (type && type->data) {
             if (type->data->spriteShip) {
-                float r = rotationFrame;
-                float s = type->data->spriteShip->frames();
-                //float t = r / s;
-
                 fractionRotated = (float)((float)rotationFrame / (float)(type->data->spriteShip->frames()));
             }
             type->data->unlock();
@@ -1728,7 +1724,7 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 			 fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);*//*
 			//unload_datafile_object(data);
 
-			/*char obj[32];
+			char obj[32];
 			sprintf(obj, "SHIP_P0%d_PCX", 1 + rand() % 4);
 			data = load_datafile_object(type->data->file, obj);
 			bmp = (BITMAP*)data->dat;

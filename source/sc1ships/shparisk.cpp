@@ -49,7 +49,7 @@ int ArilouSkiff::activate_weapon() {
 int ArilouSkiff::activate_special() {
 
 	game->add(new Animation(this, pos,
-			specialSprite, 0, 40, specialFrames/40, DEPTH_HOTSPOTS-0.1));
+			specialSprite, 0, 40, iround(specialFrames/40), DEPTH_HOTSPOTS-0.1));
 	
 	Vector2 d = Vector2 ( 
 		random(-1500.0, 1500.0),
@@ -59,7 +59,7 @@ int ArilouSkiff::activate_special() {
 	just_teleported = 1;
 
 	game->add(new Animation(this, pos,
-			specialSprite, 0, 40, specialFrames/40, DEPTH_HOTSPOTS-0.1));
+			specialSprite, 0, 40, iround(specialFrames/40), DEPTH_HOTSPOTS-0.1));
 	return(TRUE);
 	}
 

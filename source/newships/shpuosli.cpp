@@ -271,8 +271,8 @@ void RotatingLaser::calculate()
 	r = getr(default_color);
 	g = getg(default_color);
 	b = getb(default_color);
-	r *= a;
-	b *= a;
+	r *= iround(a);
+	b *= iround(a);
 	color = makecol(r,g,b);
 
 

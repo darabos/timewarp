@@ -93,7 +93,7 @@ int TelluriNova::activate_weapon()
 	STACKTRACE
 	if (shield->power >= specialWeaponCost && (target && target->exists()) )
 	{
-		shield->power -= specialWeaponCost;
+		shield->power -= iround(specialWeaponCost);
 
 		// add a missile
 //	TelluriNovaMissile(SpaceLocation *creator, Vector2 rpos, double oangle, 
@@ -245,7 +245,7 @@ int TelluriNovaShield::handle_damage(SpaceLocation *source, double normal, doubl
 	if (t < 1)
 		t = 1;
 
-	power -= t;
+	power -= iround(t);
 	if (power < 0)
 		power = 0;
 

@@ -213,7 +213,7 @@ int BubalosBomber::activate_weapon()
 		o = a.currento;  r1 = distance(o);
     if (r1 > size.y)
       if ((!o->sameTeam(this)) && (r1 < r) &&
-	       canCollide(o) && o->exists() && (o->ally_flag != -1))
+	       canCollide(o) && o->exists() && (o->ally_flag != (unsigned int)-1))
           { t = o; r = r1;  }
     }
 
@@ -231,7 +231,7 @@ int BubalosBomber::activate_weapon()
   else 
     { FireAngle = angle + PI; Direction = -1; }
 
-  int wo = (weapon_offset>3)?(6-weapon_offset):weapon_offset;
+  //  int wo = (weapon_offset>3)?(6-weapon_offset):weapon_offset;
 
   // remove the alternating fire
 /* weapon_offset = (weapon_offset + 1) % 6;

@@ -338,7 +338,7 @@ void GahmurMonitor::calculate() {
     }
     if((int)chargingTime/(int)350 != (int)oldChargingTime/(int)350) {
       double fracDone = (double)this->chargingTime / (double)this->weaponMaxChargeTime;
-      play_sound2((this->data->sampleWeapon[0]), 150 + 150 * fracDone, 1000.0 + 300 * (fracDone-.5));
+      play_sound2((this->data->sampleWeapon[0]), iround(150 + 150 * fracDone), iround(1000.0 + 300 * (fracDone-.5)));
     }
   if(chargingTime>=this->weaponMaxChargeTime) {
     chargingTime = this->weaponMaxChargeTime;
@@ -369,8 +369,8 @@ void GahmurMonitor::calculate() {
     this->isCharging = false;
   }
   if(isCharging==false) {
-    chargingTime = 0.0;
-    oldChargingTime = -1000.0;
+    chargingTime = 0;
+    oldChargingTime = -1000;
   }
   if(isCharging&&weaponStopsDynamo)recharge_step = recharge_rate; //should freeze the dynamo
   if(isTractoring&&specialStopsDynamo)recharge_step = recharge_rate; //should freeze the dynamo
@@ -419,16 +419,16 @@ void GahmurMonitor::LaunchPlasma()
   else SV = unit_vector(PI) * size.y * 0.24;
   TV = unit_vector(-ta+this->angle+PI/2) * size.y * 0.20; 
   GP = (new GahmurPlasma(TV+SV, ta, 
-    weaponVelocity, weaponDamage, weaponRange, weaponHome, this,
+    weaponVelocity, iround(weaponDamage), weaponRange, weaponHome, this,
     data->spriteWeapon, 64));
   GP->speedChangeFactor = this->weaponSpeedChangeFactor;
   GP->SetMaxDamage(weaponDamage);
   GP->vulnerabilityFactor = this->weaponVulnerabilityFactor;
   game->add(GP);
   this->chargingTime = 0;
-  this->oldChargingTime = -1000.0;
+  this->oldChargingTime = -1000;
   this->isCharging = false;
-  play_sound2((this->data->sampleWeapon[1]), 120.0 + 400.0 * fracDone, 1500.0 - (1000.0 * fracDone));
+  play_sound2((this->data->sampleWeapon[1]), iround(120.0 + 400.0 * fracDone), iround(1500.0 - (1000.0 * fracDone)));
 
 }
 
@@ -454,9 +454,9 @@ void GahmurMonitor::BeamPlasma()
   game->add(new Laser(this, this->angle-weaponBeamDivergenceAngle, pallete_color[5], weaponRange, weaponDamage,
     100, this, Vector2(size.x * -0.27, size.x * 0.13), true));
   this->chargingTime = 0;
-  this->oldChargingTime = -1000.0;
+  this->oldChargingTime = -1000;
   this->isCharging = false;
-  play_sound2((this->data->sampleExtra[0]), 150 + 150 * fracDone, 1000.0 * (1.5 - fracDone));
+  play_sound2((this->data->sampleExtra[0]), iround(150 + 150 * fracDone), iround(1000.0 * (1.5 - fracDone)));
 }
 
 
@@ -662,7 +662,7 @@ void GahmurPlasma::animate (Frame *frame) {
 }
 
 void GahmurPlasma::SetMaxDamage(double omaxDamage) {
-  this->max_damage = omaxDamage;
+  this->max_damage = iround(omaxDamage);
 }
 
 REGISTER_SHIP(GahmurMonitor)

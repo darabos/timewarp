@@ -178,10 +178,10 @@ void MelnormeShot::animateExplosion()
 
 int MelnormeShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-  int old = armour;
-  int r = Shot::handle_damage(source, normal, direct);
+  int old = iround(armour);
+  Shot::handle_damage(source, normal, direct);
   if (!released && (armour > 0)) armour = old;
-  return old - armour;
+  return iround(old - armour);
 }
 
 void MelnormeShot::inflict_damage(SpaceObject *other)

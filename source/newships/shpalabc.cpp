@@ -376,7 +376,7 @@ void AlaryBC::animate(Frame *space)
 		sprite->animate_character(pos, sprite_index, col, space);
 
 		int	_old_trans = aa_get_trans();
-		aa_set_trans ( 128 * shield_flash_scale * shield_flash_time / max_shield_flash_time );
+		aa_set_trans ( iround(128 * shield_flash_scale * shield_flash_time / max_shield_flash_time) );
 		sprite->animate(pos,sprite_index, space);
 		aa_set_trans(_old_trans);
 	}

@@ -123,10 +123,10 @@ int _no_idle = 0;
 #	elif defined(__GNUC__) && defined(__i386__)
 //#		define RDTSC_TIMER
 		//need to double-check the inline asm here
-		static double rdtsc_period_f = 0;
-		static int rdtsc_period_i = 0;
+		//static double rdtsc_period_f = 0;
+		//static int rdtsc_period_i = 0;
 		static Uint64 rdtsc_base;
-		static __volatile__ Uint64 rdtsc_get_time() {
+		__volatile__ Uint64 rdtsc_get_time() {
 			unsigned int a, b;
 			asm ("RDTSC" : "=a" (a), "=d" (b) : );
 			//__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));

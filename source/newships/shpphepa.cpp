@@ -160,7 +160,7 @@ int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double di
 		if ( crew > crew_max )
 			crew = crew_max;
 
-		return totdam;
+		return iround(totdam);
 	}
 
 	if ( energizepersonalarmour )
@@ -196,7 +196,7 @@ int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double di
 	if ( crew < 1 )
 		Ship::handle_damage(src, 0, 0);		// use the "default" die procedure
 
-	return totdam;
+	return iround(totdam);
 }
 
 

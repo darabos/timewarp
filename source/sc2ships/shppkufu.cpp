@@ -25,7 +25,7 @@ PkunkFury::PkunkFury(Vector2 opos, double shipAngle,
 }
 
 int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct) {
-	double r = normal + direct;
+	int r = iround(normal + direct);
 	crew -= r;
 	if (crew > 0) return r;
 

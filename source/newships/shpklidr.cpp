@@ -136,7 +136,7 @@ int KlisruDragon::activate_special() {
   if(SO!=NULL) launchAngle = this->trajectory_angle(SO);
   KlisruMissile* KM;
   KM = new KlisruMissile(this, Vector2(0,0), launchAngle, this->specialVelocity,
-    this->specialDamage, this->specialRange, this->specialArmour,
+    iround(this->specialDamage), this->specialRange, iround(this->specialArmour),
     this->specialTurnRate, this, this->data->spriteSpecial, SO);
   game->add(KM);
   return(TRUE);

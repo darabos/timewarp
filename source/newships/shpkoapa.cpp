@@ -132,8 +132,8 @@ ShipData *data, unsigned int code)
 int KoanuaPatrolShip::activate_special() {
 	STACKTRACE
 
-  turboTimeLeft=specialFramesPerBattery * batt;
-	framesToRestartSound = specialFramesPerBattery * batt - 4500;
+  turboTimeLeft=iround(specialFramesPerBattery * batt);
+	framesToRestartSound = iround(specialFramesPerBattery * batt - 4500);
 	if(framesToRestartSound<=0) framesToRestartSound = 0;
 	batt = shipSpecialDrain;
 	turn_rate = specialTurnRate;

@@ -178,7 +178,7 @@ Ship(opos, angle, data, code)
 
 		for ( i = 0; i < crew_max; ++i )
 		{
-			int k = j*crew_max + i;
+			int k = iround(j*crew_max + i);
 			int ires;
 			ires = sscanf(&strdata[skipitems(strdata,i*2)], "%lf", &formationinfo[k].pos.x);
 			if ( ires == 0 ) break;
@@ -213,7 +213,7 @@ void RogueSquadron::materialize()
 		fighter[i] = new RogueFighter(this, data->spriteWeapon);
 
 		int k;
-		k = formation*crew_max + i;
+		k = iround(formation*crew_max + i);
 				
 		fighter[i]->idealrelpos = rotate(formationinfo[k].pos, player_angle-PI/2);
 
@@ -378,7 +378,7 @@ void RogueSquadron::calculate()
 
 
 		int k;
-		k = formation*crew_max + i;
+		k = iround(formation*crew_max + i);
 
 		// slow relaxed deformation of the ideal positions, to match new
 		// positions relative to the main ship (mrel=0). Althought the grid
@@ -609,7 +609,7 @@ void RogueFighter::calculate()
 	if ( mother->fire_main )
 		game->add( new PulseLaser(this, 0.0, mother->weaponColor,
 					mother->weaponLength, mother->weaponDamage,
-					mother->weaponRange, this, Vector2(0.0, get_size().y/2),
+					iround(mother->weaponRange), this, Vector2(0.0, get_size().y/2),
 					mother->weaponVelocity) );
 
 	if ( mother->thrust )
@@ -628,7 +628,7 @@ int RogueFighter::handle_damage(SpaceLocation* source, double normal, double dir
 	if (!state)
 		return 0;	// to avoid an infinite feedback with enemy rogue.
 
-	int total = normal + direct;
+	int total = iround(normal + direct);
 
 	if (source->sameTeam(this))
 		return 0;	// do nothing if it's friendly ones

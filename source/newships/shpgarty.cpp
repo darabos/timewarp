@@ -444,8 +444,8 @@ void GarashShot::inflict_damage(SpaceObject *other)
 	{
 	STACKTRACE
 
-	int Distance_Travelled = distance_from(StartC, other->normal_pos());
-	int AddDamage = (Distance_Travelled / CD) * CDD;
+	int Distance_Travelled = iround(distance_from(StartC, other->normal_pos()));
+	int AddDamage = iround((Distance_Travelled / CD) * CDD);
 
 
 	if (!ship_hit || !released)

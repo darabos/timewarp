@@ -10,6 +10,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 
 #include "twwindow.h"
 
+#include "util/round.h"
 
 // this destroys the bitmap (if it exists i.e. isn't set to 0),
 // and resets the pointer to 0
@@ -107,8 +108,8 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 	if (backgr)
 	{
-		x = round(dx * scale);
-		y = round(dy * scale);
+		x = iround(dx * scale);
+		y = iround(dy * scale);
 		W = backgr->w;	// background is already scaled !!
 		H = backgr->h;
 	} else {
@@ -416,8 +417,8 @@ void TWindow::center(int xcenter, int ycenter)
 	//blit(originalscreen, screen, 0, 0, x, y, W, H);
 
 	// move
-	x = round(xcenter*scale) - W / 2;
-	y = round(ycenter*scale) - H / 2;
+	x = iround(xcenter*scale) - W / 2;
+	y = iround(ycenter*scale) - H / 2;
 
 	// read the new background
 	//blit(screen, originalscreen, x, y, 0, 0, W, H);
@@ -532,8 +533,8 @@ bool TWindow::checkmouse()
 		
 		// this test is performed in relative coordinates (with respect to the (0,0) corner
 		// of the reserved area).
-		xrel = mpos.x;
-		yrel = mpos.y;
+		xrel = iround(mpos.x);
+		yrel = iround(mpos.y);
 		
 		if (  xrel >= 0 && xrel < W &&
 			  yrel >= 0 && yrel < H
@@ -765,14 +766,14 @@ void TWindow::handle_focus_loss()
 
 void TWindow::scalepos(int *ax, int *ay)
 {
-	(*ax) = round( (*ax) * scale );
-	(*ay) = round( (*ay) * scale );
+	(*ax) = iround( (*ax) * scale );
+	(*ay) = iround( (*ay) * scale );
 }
 
 void TWindow::scalepos(twguiVector *apos)
 {
-	(apos->x) = round( (apos->x) * scale );
-	(apos->y) = round( (apos->y) * scale );
+	(apos->x) = iround( (apos->x) * scale );
+	(apos->y) = iround( (apos->y) * scale );
 }
 
 
@@ -827,7 +828,7 @@ bool TWindow::search_bmp_location(BITMAP *bmp_default, twguiVector *apos)
 		return false;
 
 	// first, test the "apos" position for a match.
-	if (matchimage(backgr_forsearch, bmp_default, apos->x, apos->y))
+	if (matchimage(backgr_forsearch, bmp_default, iround(apos->x), iround(apos->y)))
 		return true;	// return without changing the position...
 
 	// search by comparing pixels :

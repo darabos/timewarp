@@ -472,7 +472,7 @@ void DajielkaSanctuary::calculate(void) {
 void DajielkaSanctuary::inflict_damage(SpaceObject *other){
 	STACKTRACE
   int old_damage_factor;
-  old_damage_factor = damage_factor;
+  old_damage_factor = iround(damage_factor);
   if(other==creator) damage_factor=0;;
   SpaceObject::inflict_damage(other);
   if(other==creator) damage_factor = old_damage_factor;
@@ -482,10 +482,10 @@ void DajielkaSanctuary::inflict_damage(SpaceObject *other){
 
 int DajielkaSanctuary::handle_damage(SpaceLocation *source, double normal, double direct){
 	STACKTRACE
-  armour -= normal + direct;
+  armour -= iround(normal + direct);
   if(armour<=0) state=0;
   if(normal+direct>0) regenerationCount /= 2;
-  return(normal+direct);
+  return iround(normal+direct);
 }
 
 
@@ -538,14 +538,14 @@ DajielkaTendril* DajielkaSanctuary::RecreateTendril(DajielkaTendril* DT) {
 
 DajielkaTendril::DajielkaTendril(DajielkaSanctuary* osanctuary, int odamage, int orange,
     double ostartingAngle, double orotation) :
-  creator(osanctuary->creator),
-  sanctuary(osanctuary),
+  SpaceLine(osanctuary->creator, osanctuary->normal_pos(),ostartingAngle, orange, palette_color[8]),
+  originalLength(orange),
   damage(odamage),
   range(orange),
-  originalLength(orange),
   rotation(orotation*ANGLE_RATIO),
   startingAngle(ostartingAngle),
-  SpaceLine(osanctuary->creator, osanctuary->normal_pos(),ostartingAngle, orange, palette_color[8])
+  creator(osanctuary->creator),
+  sanctuary(osanctuary)
 {
   isActive = FALSE;
   energyLevel = 0;
@@ -601,22 +601,22 @@ void DajielkaTendril::inflict_damage(SpaceObject *other) {
     creator->redeployTime = 0;
     if(creator->batt<creator->batt_max && creator->specialAbsorbEnergyEnabled) {
       creator->redeployTime = 0;
-      creator->accumulatedCharge += frame_time * creator->specialAbsorbEfficiency;
+      creator->accumulatedCharge += iround(frame_time * creator->specialAbsorbEfficiency);
     }
     if(creator->crew<creator->crew_max && creator->batt>=creator->batt_max && creator->specialAbsorbRegenEnabled) { //only when batteries full
-      creator->accumulatedRegeneration += frame_time * creator->specialAbsorbEfficiency;
+      creator->accumulatedRegeneration += iround(frame_time * creator->specialAbsorbEfficiency);
       creator->redeployTime = 0;
     }
     //if(creator->batt<creator->batt_max && creator->specialHarvestEnergyEnabled && creator->fire_special) {
     if(creator->fire_special && (creator->specialHarvestEnergyEnabled||creator->specialHarvestRegenEnabled)) {
       if(creator->batt<creator->batt_max && creator->specialHarvestEnergyEnabled) {
-        creator->accumulatedCharge += this->energyLevel * creator->specialHarvestEfficiency;
+        creator->accumulatedCharge += iround(this->energyLevel * creator->specialHarvestEfficiency);
         creator->redeployTime = 0;
         this->energyLevel = 0;
         this->isActive = 0;
       }
       else if (creator->crew<creator->crew_max && creator->specialHarvestRegenEnabled) {
-        creator->accumulatedRegeneration += this->energyLevel * creator->specialHarvestEfficiency;
+        creator->accumulatedRegeneration += iround(this->energyLevel * creator->specialHarvestEfficiency);
         creator->redeployTime = 0;
         this->energyLevel = 0;
         this->isActive = 0;
@@ -633,14 +633,14 @@ void DajielkaTendril::inflict_damage(SpaceObject *other) {
     collide_flag_sameship = bit(LAYER_SHIPS);
     return;
   }
-  if(other->isShip()) oldStats = ((Ship*)other)->crew + ((Ship*)other)->batt;
-  else if(other->isShot()) oldStats = ((Shot*)other)->armour + ((Shot*)other)->damage_factor;
+  if(other->isShip()) oldStats = iround(((Ship*)other)->crew + ((Ship*)other)->batt);
+  else if(other->isShot()) oldStats = iround(((Shot*)other)->armour + ((Shot*)other)->damage_factor);
   else oldStats = 1;
   if(energyLevel>=energyLevelPerDamagePoint) {
     damage_factor = 1;
     SpaceLine::inflict_damage(other);
-    if(other->isShip()) newStats = ((Ship*)other)->crew + ((Ship*)other)->batt;
-    else if(other->isShot()) newStats = ((Shot*)other)->armour + ((Shot*)other)->damage_factor;
+    if(other->isShip()) newStats = iround(((Ship*)other)->crew + ((Ship*)other)->batt);
+    else if(other->isShot()) newStats = iround(((Shot*)other)->armour + ((Shot*)other)->damage_factor);
     else newStats = 0;
     if(other->isShip() && oldStats!=newStats)
       energyLevel -= energyLevelPerDamagePoint;

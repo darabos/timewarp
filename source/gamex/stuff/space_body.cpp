@@ -38,15 +38,15 @@ void drawellips(Frame *f, Vector2 center, double R, double b, int col)
 
 	int ymin_visual, ymax_visual, ymin, ymax;
 
-	ymin_visual = iround(-R/b_sqrt) + center.y;
-	ymax_visual = iround( (R+1)/b_sqrt) + center.y;
+	ymin_visual = iround(-R/b_sqrt + center.y);
+	ymax_visual = iround( (R+1)/b_sqrt + center.y);
 	if (ymin_visual < 0)
 		ymin_visual = 0;
 
 	if (ymax_visual > space_view_size.y)
-		ymax_visual = space_view_size.y;
-	ymin = ymin_visual - center.y;
-	ymax = ymax_visual - center.y;
+		ymax_visual = iround(space_view_size.y);
+	ymin = ymin_visual - iround(center.y);
+	ymax = ymax_visual - iround(center.y);
 
 	if (ymin > ymax)
 		return;
@@ -61,7 +61,7 @@ void drawellips(Frame *f, Vector2 center, double R, double b, int col)
 		xref = iround( sqrt(R*R - b*ymin*ymin) );
 	}
 
-	putpixel(f->surface,  xref + center.x, yref + center.y, col);
+	putpixel(f->surface,  xref + iround(center.x), yref + iround(center.y), col);
 
 	// half a circle (downwards) of possible new locations to put a new pixel; radius = 2
 	int dx[7] = { 2,  2,  1,  0, -1, -2, -2};
@@ -112,8 +112,8 @@ void drawellips(Frame *f, Vector2 center, double R, double b, int col)
 		xref += dx[jbest];
 		yref += dy[jbest];
 
-		putpixel(f->surface,  xref + center.x, yref + center.y, col);
-		putpixel(f->surface, -xref + center.x, yref + center.y, col);
+		putpixel(f->surface,  xref + iround(center.x), yref + iround(center.y), col);
+		putpixel(f->surface, -xref + iround(center.x), yref + iround(center.y), col);
 	}
 
 }
@@ -210,14 +210,14 @@ void shadowpaintcircle(SpaceSprite *spr, double fi_s)
 
 			if (!(r == 255 && g == 0 && b == 255))
 			{
-				r *= I;
-				g *= I;
-				b *= I;
+				r *= iround(I);
+				g *= iround(I);
+				b *= iround(I);
 
 				// don't add too much ...
-				r += J * 128;
-				g += J * 128;
-				b += J * 128;
+				r += iround(J * 128);
+				g += iround(J * 128);
+				b += iround(J * 128);
 
 				if (r > 255) r = 255;
 				if (g > 255) g = 255;

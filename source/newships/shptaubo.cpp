@@ -29,7 +29,7 @@ public:
 class TauBomberBomb : public Missile
 {
 	double		blast_range, proximity_range, old_range, kick;
-	int			rotation_index;
+	int		rotation_index;
 	double		blast_damage, lifetime;
 	double		rotation_angle;
 	SpaceObject *tgt;
@@ -152,9 +152,8 @@ TauBomberBomb::TauBomberBomb (SpaceLocation *creator, double ox, double oy, doub
 							double oarmour, SpaceSprite *osprite, double oblast_range, double oproximity,
 							int olifetime, double okick) :
 	Missile(creator, Vector2(ox, oy), oangle, 0, 0, 1e40, oarmour, creator, osprite, 1.0),
-		blast_range(oblast_range), blast_damage(odamage), kick(okick),
-		proximity_range(oproximity), lifetime(olifetime),
-        tgt(NULL), active(false), old_range(1e40)
+		blast_range(oblast_range), proximity_range(oproximity), old_range(1e40), kick(okick), blast_damage(odamage),  lifetime(olifetime),
+        tgt(NULL), active(false)
 
 {
 	id = SPACE_OBJECT;
@@ -300,9 +299,9 @@ void TauBomberBombExplosion::animate(Frame *space)
 		dy = p0.y;
 		for (j=3; j>=0; j--) {
 			if (space_zoom <= 1)
-				set_trans_blender(0, 0, 0, space_zoom * 255 * t * (4-j) / 4.0);
+				set_trans_blender(0, 0, 0, iround(space_zoom * 255 * t * (4-j) / 4.0));
 			else
-				set_trans_blender(0, 0, 0, 1 * 255 * t * (4-j) / 4.0);
+				set_trans_blender(0, 0, 0, iround(1* 255 * t * (4-j) / 4.0));
 			xi = iround(x0 - dx * j);
 			yi = iround(y0 - dy * j);
 			putpixel(space->surface, xi, yi, color);
@@ -324,7 +323,7 @@ TauBomberBombExplosion::~TauBomberBombExplosion()
 TauBomberDecoy::TauBomberDecoy (SpaceLocation *creator, double ox, double oy, double oangle, double ov,
 								SpaceSprite *osprite, int olifetime, double er, double oslowdown, int effect) :
 	Shot(creator, Vector2(ox, oy), oangle, ov, 1, 1e40, 1, creator, osprite, 1.0),
-	lifetime(olifetime), slowdown(oslowdown), lifetime_max(olifetime)
+	lifetime(olifetime), lifetime_max(olifetime), slowdown(oslowdown) 
 {
 	collide_flag_sameteam = 0;
 	collide_flag_sameship = 0;
@@ -346,7 +345,7 @@ void TauBomberDecoy::calculate()
 
 	lifetime -= frame_time;
 
-	sprite_index = floor(40 * (1 - lifetime/(double)lifetime_max));
+	sprite_index = iround(floor(40 * (1 - lifetime/(double)lifetime_max)));
 	if (sprite_index >= 40) {
 		state =0; return; }
 	sprite_index = sprite_index % 40;

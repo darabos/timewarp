@@ -37,7 +37,7 @@ int TrideminTurret::handle_damage(SpaceLocation *source, double normal, double d
 	}
 	else	state=0;		//If it doesn't exist, remove the
 					//turret.
-	return normal + direct;
+	return iround(normal + direct);
 }
 
 

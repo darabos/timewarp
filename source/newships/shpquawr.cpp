@@ -96,7 +96,7 @@ QuarKathWraith::QuarKathWraith(Vector2 opos, double shipAngle,
   segment_length			= get_config_int("Weapon", "SegmentLength",0);
   segment_dispersion	= get_config_int("Weapon", "SegmentLengthDispersion",0);
   segments						= get_config_int("Weapon", "Segments", 0);
-  rnd_angle						= get_config_int("Weapon", "RandomAngle", 0) * ANGLE_RATIO;
+  rnd_angle						= iround(get_config_int("Weapon", "RandomAngle", 0) * ANGLE_RATIO);
   aiming							= get_config_int("Weapon", "Aiming", 0);
   dispersion					= get_config_int("Weapon", "Dispersion", 0);
 
@@ -293,7 +293,7 @@ QuarKathLightning::QuarKathLightning(Ship *lship, SpaceLocation *lroot,
 	angle += (random(r_angle*2+1)) - r_angle;
 	color = pallete_color[179 - level * 2 - (random(8))];
 	if (level) add(new QuarKathLightning(ship, this, target, level-1, b_length,
-                                         r_length, r_angle, aiming, dispersion));
+                                         r_length, r_angle, iround(aiming), iround(dispersion)));
 	}
 
 void QuarKathLightning::calculate() {

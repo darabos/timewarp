@@ -222,7 +222,7 @@ void Chain::Uncouple()
 		l->layer = LAYER_SHIPS;
 		l->set_depth(DEPTH_SHIPS);
 
-		l->ally_flag = -1;	// no allies
+		l->ally_flag = (unsigned int)-1;	// no allies
 		// this is needed, cause lasers don't hurt allies !!
 
 	}
@@ -242,7 +242,7 @@ void Chain::Uncouple()
 	m->layer = LAYER_SHIPS;
 	m->set_depth(DEPTH_SHIPS);
 
-	m->ally_flag = -1;	// no allies
+	m->ally_flag = (unsigned int)-1;	// no allies
 
 	state = 0;
 }

@@ -102,7 +102,7 @@ VuvJinxShot::VuvJinxShot (Vector2 opos, double oangle, double ov, double orange,
 		v(ov)
 {
         play_sound(data->sampleWeapon[1]);
-        double alpha = creator->get_angle() * ANGLE_RATIO;
+        //double alpha = creator->get_angle() * ANGLE_RATIO;
         //double tx = cos(alpha), ty = sin(alpha);
         //x += oy * tx - ox * ty;
         //y += oy * ty + ox * tx;

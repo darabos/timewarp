@@ -92,7 +92,7 @@ int IceciConfusion::activate_weapon()
 {
 	STACKTRACE
 
-	double da = 60 * ANGLE_RATIO;
+	  //double da = 60 * ANGLE_RATIO;
 
 	/*
 	add(new Missile(this, Vector2(16.0, 0.0), angle+da,

@@ -25,7 +25,8 @@ static vector<DIRECT_PROFILE_DATUM*> _raw_master_profile;
 static PROFILE_TIME_TYPE2 _profile_time;
 static Uint32 _safe_profile_time;
 static double _time_ratio = -1;
-static int _last_ratio_update = -1;
+static Uint32 _last_ratio_update = 0;
+
 void init_profiling() {
 	if (!is_time_initialized()) tw_error("init_profiling - you must call init_time() first");
 	_profile_time = PROFILE_TIME_FUNC();
@@ -86,7 +87,7 @@ class _PD_COMPARE_TIME {
 	}
 };
 
-Profile::Profile() : total_time(0), active(0), sorted(SORTED_ALPHA) {
+Profile::Profile() : active(0), sorted(SORTED_ALPHA), total_time(0) {
 }
 Profile::~Profile() {
 }
@@ -104,12 +105,12 @@ Profile &Profile::operator=  ( const Profile &p ) {
 }
 */
 Profile &Profile::operator+= ( const Profile &p ) {
-	int i;
-	int mj = 0;
+	unsigned int i;
+	unsigned int mj = 0;
 	bool oo = false;
 	total_time += p.total_time;
 	for (i = 0; i < p.data.size(); i++) {
-		int j;
+		unsigned int j;
 		for (j = mj; j < data.size(); j++) {
 			if (p.data[i].srcline == data[j].srcline) {
 				if (j == mj) mj++;
@@ -131,12 +132,12 @@ Profile &Profile::operator+= ( const Profile &p ) {
 	return *this;
 }
 Profile &Profile::operator-= ( const Profile &p ) {
-	int i;
-	int mj = 0;
+	unsigned int i;
+	unsigned int mj = 0;
 	bool oo = false;
 	total_time -= p.total_time;
 	for (i = 0; i < p.data.size(); i++) {
-		int j;
+		unsigned int j;
 		for (j = mj; j < data.size(); j++) {
 			if (p.data[i].srcline == data[j].srcline) {
 				if (j == mj) mj++;
@@ -172,7 +173,7 @@ void Profile::sort_alpha() {if (sorted != SORTED_ALPHA) _sort_alpha();}
 void Profile::sort_time() {if (sorted != SORTED_TIME) _sort_time();}
 
 void Profile::clear ( ) {
-	int i;
+	unsigned int i;
 	for (i = 0; i < data.size(); i++) {
 		data[i].time = 0;
 		data[i].runs = 0;
@@ -234,7 +235,7 @@ SelectProfile::~SelectProfile () {
 }*/
 int Profile::print ( int i, char *dest, int max ) {
 	if (_time_ratio == -1) {tw_error("Profile::print - forgot to call init_profiling");}
-	if ((i < 0) || (i >= data.size())) {
+	if ((i < 0) || ((unsigned)i >= data.size())) {
 		dest[0] = 0;
 		return -1;
 	}

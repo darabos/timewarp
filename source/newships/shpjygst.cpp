@@ -248,7 +248,7 @@ int JyglarBubble::handle_damage( SpaceLocation* source, double normal, double di
     state = 0;
     play_sound( data->sampleExtra[random() % data->num_extra_samples], 1000 );
   }
-  return normal + direct;
+  return iround(normal + direct);
 }
 
 

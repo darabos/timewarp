@@ -125,11 +125,11 @@ void VezlagariBarge::calculate(void) {
 int VezlagariBarge::activate_weapon() {
 	STACKTRACE
   game->add(new VezlagariMissile(this, 
-    Vector2(get_size().x * 0.32, get_size().y * -0.4), angle + PI2 / 2, weaponVelocity, weaponDamage, weaponRange,
-    weaponArmour, this, data->spriteWeapon, -1));
+    Vector2(get_size().x * 0.32, get_size().y * -0.4), angle + PI2 / 2, weaponVelocity, iround(weaponDamage), weaponRange,
+    iround(weaponArmour), this, data->spriteWeapon, -1));
   game->add(new VezlagariMissile(this,
-    Vector2(get_size().x * -0.32, get_size().y * -0.4), angle+ PI2 / 2, weaponVelocity, weaponDamage, weaponRange,
-    weaponArmour, this, data->spriteWeapon, 1));
+    Vector2(get_size().x * -0.32, get_size().y * -0.4), angle+ PI2 / 2, weaponVelocity, iround(weaponDamage), weaponRange,
+    iround(weaponArmour), this, data->spriteWeapon, 1));
   return(TRUE);
 }
 

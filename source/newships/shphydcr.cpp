@@ -286,9 +286,9 @@ int HydrovarCruiser::activate_special()
 //    F->orphanRange		= 9999999; // unused anyway
 	F->orphanFrames		= -specialOrphanFrames; // initially - inactive
 //    F->range			= 9999999;
-    F->numberOfShots	= specialNumberOfShots;
+    F->numberOfShots	= iround(specialNumberOfShots);
 	if (specialFiringTakesFuel && specialFuelFull)
-		F->shot_fuel_cost	= (specialFuelFull - specialFuelCritical) / specialNumberOfShots;
+		F->shot_fuel_cost	= iround(specialFuelFull - specialFuelCritical / specialNumberOfShots);
 	else
 		F->shot_fuel_cost	= 0;
 	F->fuel					= specialFuelFull;
@@ -424,7 +424,7 @@ int HydrovarEsFighter::handle_damage(SpaceLocation *source, double normal, doubl
     return (0);
  }
 
-	int x=HomingMissile::handle_damage(source, normal, direct);
+	HomingMissile::handle_damage(source, normal, direct);
 
 	if ((state == 0) && (damage_on_explosion)) { //if enabled, ....
 		damage(source, damage_on_explosion, 0); //inflict damage to what have  killed you
@@ -437,7 +437,7 @@ int HydrovarEsFighter::handle_damage(SpaceLocation *source, double normal, doubl
 void HydrovarEsFighter::inflict_damage(SpaceObject *other)
 {
 	STACKTRACE
-	int df = damage_factor;
+	int df = iround(damage_factor);
 	damage_factor = 0;
   if(this->bouncesOffAsteroids && other->isAsteroid()) 
   {
@@ -472,7 +472,7 @@ void HydrovarEsFighter::getTarget(SpaceObject *other)
 	if(other->isPlanet())
 		return;
 	a1 = angle; a2 = trajectory_angle(other);
-	if(abs(a1-a2)>trackingArc/2&&abs(a1-a2)<(PI2-trackingArc/2)) return;
+	if(fabs(a1-a2)>trackingArc/2&&fabs(a1-a2)<(PI2-trackingArc/2)) return;
 	if(this->distance(other)<dist) {
 		dist = this->distance(other);
 		target = other;
@@ -494,7 +494,7 @@ void HydrovarEsFighter::tryToFire()
 		return;
 	if(target->state==0)
 		return;
-	angleDif=abs(this->trajectory_angle((SpaceObject*)target)-angle);
+	angleDif=fabs(this->trajectory_angle((SpaceObject*)target)-angle);
 	if(angleDif>PI) angleDif=PI2-angleDif;
 	if(this->distance(target)>laser_range * 0.975)
 		return;

@@ -185,7 +185,7 @@ void OwaMissile::calculate() {
 			OwaShrapnel *shrap;
 			shrap = (new OwaShrapnel(0,angle+deg ,shrapnelVelocity,
 					shrapnelDamage, shrapnelRange, shrapnelArmour, shrapnelHoming,
-					shrapnelArming, this, shrapnelSprite, shrapnelHotspot));
+					iround(shrapnelArming), this, shrapnelSprite, shrapnelHotspot));
 			deg -= 10 * ANGLE_RATIO;
 			add(shrap);
 			}

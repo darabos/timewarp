@@ -230,7 +230,7 @@ void RaalrithMenacer::animate(Frame *space)
 	int a;
 	// 0 = not transparent; 255 = fully transparent
 	a = aa_get_trans();
-	aa_set_trans(0 + (150 * (100-phase)) / 100.0);	// not, phase = 100 means its solid
+	aa_set_trans(iround(0 + (150 * (100-phase)) / 100.0));	// not, phase = 100 means its solid
 //	Ship::animate(space);
 	
 	if(drillFrames > 0)

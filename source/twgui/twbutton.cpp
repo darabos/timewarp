@@ -11,7 +11,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include "twbutton.h"
 #include "twwindow.h"
 
-
+#include "util/round.h"
 
 
 EmptyButton::EmptyButton(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
@@ -392,7 +392,7 @@ bool GraphicButton::hasmouse(BITMAP *bmpref)
 	if (EmptyButton::hasmouse())
 	{
 		// then, check the bmp if there's a pixel touched...
-		return check_visibility(bmpref, mainwindow->mpos.x - pos.x, mainwindow->mpos.y - pos.y);
+		return check_visibility(bmpref, iround(mainwindow->mpos.x - pos.x), iround(mainwindow->mpos.y - pos.y));
 	} else
 		return false;
 }
@@ -406,15 +406,15 @@ void GraphicButton::draw_rect()
 	BITMAP *b = mainwindow->drawarea;
 	int x1, y1, x2, y2;
 	
-	x1 = pos.x;
-	y1 = pos.y;
-	x2 = (pos+size).x - 1;
-	y2 = (pos+size).y - 1;
+	x1 = iround(pos.x);
+	y1 = iround(pos.y);
+	x2 = iround((pos+size).x - 1);
+	y2 = iround((pos+size).y - 1);
 
 	// draw something simple:
 
 	int D = 4;	// width of the rectangle
-	D *= round(mainwindow->scale - 1);
+	D *= iround(mainwindow->scale - 1);
 	if (D < 0)
 		D = 0;
 
@@ -444,14 +444,14 @@ void GraphicButton::draw_rect_fancy()
 	BITMAP *b = mainwindow->drawarea;
 	int x1, y1, x2, y2;
 	
-	x1 = pos.x;
-	y1 = pos.y;
-	x2 = (pos+size).x - 1;
-	y2 = (pos+size).y - 1;
+	x1 = iround(pos.x);
+	y1 = iround(pos.y);
+	x2 = iround((pos+size).x - 1);
+	y2 = iround((pos+size).y - 1);
 
 
 	int D = 2;	// width of the rectangle
-	D = round(D * mainwindow->scale) - 1;		// cause 0 also counts as 1...
+	D = iround(D * mainwindow->scale) - 1;		// cause 0 also counts as 1...
 	if (D < 0)
 		D = 0;
 
@@ -515,10 +515,10 @@ void GraphicButton::draw_boundaries(BITMAP *bmpref)
 
 	int i, j;
 	int W = 2;
-	W = round(W * mainwindow->scale) - 1;
+	W = iround(W * mainwindow->scale) - 1;
 
 	int L = 0;
-	int Ltotal = 5 * sqrt( (double)bmpref->w * bmpref->h );
+	int Ltotal = iround(5 * sqrt( (double)bmpref->w * bmpref->h ));
 	double phase = mainwindow->menu_time * 1E-3 * AL_PI;	//offset angle
 
 	for ( j = -W; j < bmpref->h + W; ++j )
@@ -536,7 +536,7 @@ void GraphicButton::draw_boundaries(BITMAP *bmpref)
 						
 						if (check_visibility(bmpref, i+wx, j+wy))
 						{
-							putpixel(b, i+pos.x, j+pos.y, //makecol(255,255,255));
+							putpixel(b, iround(i+pos.x), iround(j+pos.y), //makecol(255,255,255));
 								rect_fancy_getcolor2(phase, L, Ltotal));
 						}
 					}
@@ -594,8 +594,8 @@ void GraphicButton::locate_by_backgr(char *strid)
 	// if the position has changed, then set the new position...
 	if (pos != oldpos)
 	{
-		set_config_int(0, strx, pos.x);
-		set_config_int(0, stry, pos.y);
+		set_config_int(0, strx, iround(pos.x));
+		set_config_int(0, stry, iround(pos.y));
 	}
 
 
@@ -658,7 +658,7 @@ bool GraphicButton::draw(BITMAP *b)
 {
 	if (b)
 	{
-		masked_blit(b, mainwindow->drawarea, 0, 0, pos.x, pos.y, b->w, b->h);
+		masked_blit(b, mainwindow->drawarea, 0, 0, iround(pos.x), iround(pos.y), b->w, b->h);
 		return true;
 
 	} else

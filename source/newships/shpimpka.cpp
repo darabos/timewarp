@@ -45,9 +45,9 @@ class ImperialKatana : public Ship {
 class ImperialBlade : public Laser {
   // blade. a laser that handles non-integer damage and splits victim in two after kill
 
-  ImperialKatana* katana;
   double res;
-
+  ImperialKatana* katana;
+  
   public:
   ImperialBlade( ImperialKatana* creator, double langle, int lcolor, double lrange,
     double ldamage, int lfcount, SpaceLocation *opos, double rel_x, double rel_y,
@@ -149,7 +149,7 @@ int ImperialKatana::activate_special(){
 		  damage(this, batt / 4);
 
 
-	int i = batt / 8;
+	int i = iround(batt / 8);
 	if(i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
 	play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
         game->add(new Animation(this, pos,
@@ -190,7 +190,7 @@ void ImperialKatana::calculate_fire_weapon() {
 		if (recharge_amount > 1) recharge_step = recharge_rate;
 		weapon_recharge += weapon_rate;
 
-		play_sound2(data->sampleWeapon[weapon_sample], 255, batt * 20 );
+		play_sound2(data->sampleWeapon[weapon_sample], 255, iround(batt * 20) );
 		}
 	return;
 	}
@@ -522,18 +522,18 @@ void ImperialBlade::inflict_damage( SpaceObject *other ){
   // adding the objects to the game world
   ImperialHalfObject *left = new ImperialHalfObject( other, other->normal_pos(),
     other->get_vel().x + ty * IMPERIAL_DEBRIS_SPEED,
-    other->get_vel().y - tx * IMPERIAL_DEBRIS_SPEED, other->get_angle(), other->mass,
+    other->get_vel().y - tx * IMPERIAL_DEBRIS_SPEED, other->get_angle(), iround(other->mass),
     spriteLeft,
-    IMPERIAL_MIN_DEBRIS_LIFE + random() % (IMPERIAL_MAX_DEBRIS_LIFE -
-    IMPERIAL_MIN_DEBRIS_LIFE) );
+    iround(IMPERIAL_MIN_DEBRIS_LIFE + random(IMPERIAL_MAX_DEBRIS_LIFE -
+    IMPERIAL_MIN_DEBRIS_LIFE)) );
   game->add( left );
 
   ImperialHalfObject *right = new ImperialHalfObject( other, other->normal_pos(),
     other->get_vel().x - ty * IMPERIAL_DEBRIS_SPEED,
-    other->get_vel().y + tx * IMPERIAL_DEBRIS_SPEED, other->get_angle(), other->mass,
+    other->get_vel().y + tx * IMPERIAL_DEBRIS_SPEED, other->get_angle(), iround(other->mass),
     spriteRight,
-    IMPERIAL_MIN_DEBRIS_LIFE + random() % (IMPERIAL_MAX_DEBRIS_LIFE -
-    IMPERIAL_MIN_DEBRIS_LIFE) );
+    iround(IMPERIAL_MIN_DEBRIS_LIFE + random(IMPERIAL_MAX_DEBRIS_LIFE -
+    IMPERIAL_MIN_DEBRIS_LIFE)) );
   game->add( right );
   // slice code ends here
 }

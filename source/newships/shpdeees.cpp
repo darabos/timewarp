@@ -55,8 +55,9 @@ public:
 class DeepSpaceWarrior : public HomingMissile {
 	// warriors that do damage on contact and pass through matter
 	
-	int    trail_step;
-	double drain_rate;
+  double drain_rate;
+  int    trail_step;
+	
 	
 public:
 	DeepSpaceWarrior( DeepSpaceEssence* creator, Vector2 opos, double oangle,
@@ -210,11 +211,11 @@ void DeepSpaceEssence::inflict_damage( SpaceObject* other )
 			residualDamage += extraDrainRate * (double)frame_time - drainDamage;
 			drainDamage += (int)residualDamage;
 			residualDamage -= (int)residualDamage;
-			if( s->getCrew() - drainDamage < 0 ) drainDamage = s->getCrew();
+			if( s->getCrew() - drainDamage < 0 ) drainDamage = iround(s->getCrew());
 			d = drainDamage;
-			drainDamage = s->getCrew();
+			drainDamage = iround(s->getCrew());
 			s->handle_damage( this, d );	// so, s loses crew ...
-			drainDamage -= s->getCrew();
+			drainDamage -= iround(s->getCrew());
 			//repair += drainDamage;
 			handle_damage( this, -drainDamage );
 			if( drainDamage ) play_sound2( data->sampleExtra[0] );
@@ -235,8 +236,6 @@ void DeepSpaceEssence::inflict_damage( SpaceObject* other )
 int DeepSpaceEssence::handle_damage(SpaceLocation* source, double normal, double direct)
 {
 	STACKTRACE;
-
-	double tot = normal + direct;
 
 	crew -= normal;
 

@@ -10,6 +10,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include "twwindow.h"
 #include "twbuttontypes.h"
 
+#include "util/round.h"
 
 // to implement a Button, you add bitmaps-feedback to the box-area control
 // name#default.bmp
@@ -123,7 +124,7 @@ void Area::overwritebackgr(BITMAP *newb, double scale, int col)
 	{
 		clear_to_color(backgr, col);
 		stretch_blit(newb, backgr, 0, 0, newb->w, newb->h,
-			0, 0, newb->w * scale, newb->h * scale);
+			0, 0, iround(newb->w * scale), iround(newb->h * scale));
 	}
 }
 
@@ -164,7 +165,7 @@ Area(menu, identbranch, asciicode, akeepkey)
 	//init_pos_size(&backgr, "backgr");
 
 	if (size.x != 0)
-		drawarea = create_bitmap_ex(bitmap_color_depth(mainwindow->drawarea), size.x, size.y);
+		drawarea = create_bitmap_ex(bitmap_color_depth(mainwindow->drawarea), iround(size.x), iround(size.y));
 	else
 		drawarea = 0;
 
@@ -181,7 +182,7 @@ AreaTablet::~AreaTablet()
 
 void AreaTablet::animate()
 {
-	blit(backgr, drawarea, 0, 0, 0, 0, size.x, size.y);
+	blit(backgr, drawarea, 0, 0, 0, 0, iround(size.x), iround(size.y));
 
 	subanimate();
 
@@ -321,10 +322,10 @@ AreaTablet(menu, identbranch, 255)
 	if (direction == ver)
 	{
 		pmin = bhhalf;
-		pmax = size.y - bhhalf;
+		pmax = iround(size.y - bhhalf);
 	} else {
 		pmin = bwhalf;
-		pmax = size.x - bwhalf;
+		pmax = iround(size.x - bwhalf);
 	}
 
 	pbutton = pmin;
@@ -340,9 +341,9 @@ ScrollBar::~ScrollBar()
 void ScrollBar::handle_lhold()
 {
 	if (direction == ver)
-		pbutton = mainwindow->mpos.y - pos.y;		// mouse pos relative in the little bar area
+		pbutton = iround(mainwindow->mpos.y - pos.y);		// mouse pos relative in the little bar area
 	else
-		pbutton = mainwindow->mpos.x - pos.x;
+		pbutton = iround(mainwindow->mpos.x - pos.x);
 	
 	if (pbutton < pmin)
 		pbutton = pmin;
@@ -359,9 +360,9 @@ void ScrollBar::subanimate()
 	AreaTablet::subanimate();
 
 	if (direction == ver)
-		masked_blit(button, drawarea, 0, 0, size.x/2 - bwhalf, pbutton-bhhalf, button->w, button->h);
+		masked_blit(button, drawarea, 0, 0, iround(size.x/2 - bwhalf), pbutton-bhhalf, button->w, button->h);
 	else
-		masked_blit(button, drawarea, 0, 0, pbutton-bwhalf, size.y/2 - bhhalf, button->w, button->h);
+		masked_blit(button, drawarea, 0, 0, pbutton-bwhalf, iround(size.y/2 - bhhalf), button->w, button->h);
 }
 
 
@@ -373,7 +374,7 @@ void ScrollBar::setrelpos(double arelpos)
 	relpos = arelpos;
 
 	// also update the button position to reflect this change
-	pbutton = pmin + round(relpos * (pmax - pmin));
+	pbutton = pmin + iround(relpos * (pmax - pmin));
 }
 
 

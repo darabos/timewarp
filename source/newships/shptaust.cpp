@@ -31,7 +31,7 @@ class TauStormMissile : public HomingMissile
 
 	SpaceObject *latched;
 	
-	double accel, thrust, booster_speed, rotation;
+	double booster_speed, thrust, accel, rotation;
 	int smoke_frame, first_frame;
 
 public:
@@ -93,7 +93,7 @@ int TauStorm::activate_weapon()
 	if (slot%2)	rx = -rx;
 	game->add(new TauStormMissile (this, rx, 10, angle, weaponAccel,
 				weaponVelocity, weaponTurnRate, target,
-				weaponFuel*(1+weaponRandom*(100-random()%201)/100.0), weaponThrust, weaponMass,
+				iround(weaponFuel*(1+weaponRandom*(100-random()%201)/100.0)), weaponThrust, weaponMass,
 				weaponBoosterSpeed, data->spriteWeapon,
 				weaponRotation, weaponStart, data->sampleWeapon[0]));
 	slot = (slot +1) % 6;
@@ -110,7 +110,7 @@ int TauStorm::activate_special()
 	if (slot%2)	rx = -rx;
 	game->add(new TauStormMissile (this, rx, 10, angle, specialAccel,
 			specialVelocity, specialTurnRate, target,
-			specialFuel*(1+specialRandom*(100-random()%201)/100.0), specialThrust, weaponMass,
+			iround(specialFuel*(1+specialRandom*(100-random()%201)/100.0)), specialThrust, weaponMass,
 			specialBoosterSpeed, data->spriteSpecial,
 			specialRotation, specialStart, data->sampleSpecial[0]));
 	slot = (slot + 1) % 6;

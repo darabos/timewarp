@@ -183,7 +183,7 @@ int ScloreFrigate::activate_special() {
 
 void ScloreFrigate::createSting(void) {
 	STACKTRACE
-  if(!Sting==NULL) return;
+  if(Sting!=NULL) return;
   Sting = new ScloreSting(this->pos.x, this->pos.y, this->angle,
     specialVelocity, 1, specialRange, 1, this, data->spriteSpecial, 0);
   Sting->creator = this;
@@ -223,7 +223,7 @@ void ScloreSting::calculate(void) {
 	STACKTRACE
   int x, si;
   double dx, dy;
-  x = this->damage_factor - 1;
+  x = iround(this->damage_factor - 1);
   if(x<0) x=0;
   if(x>8) x=8;
   if(!launched && creator!=NULL && creator->exists()) {

@@ -201,7 +201,7 @@ void JadRacer::calculate()
 
 	if(speed != ceil(cur_speed_rel * speedMax))
 	{
-		speed = ceil(cur_speed_rel * speedMax);
+		speed = iround(ceil(cur_speed_rel * speedMax));
 		bChangeSpeed = true;
 		ship->update_panel = TRUE;
 	}
@@ -210,7 +210,7 @@ void JadRacer::calculate()
 	
 	if(tach != ceil(cur_gear_rel * tachMax))
 	{
-		tach = ceil(cur_gear_rel * tachMax);
+		tach = iround(ceil(cur_gear_rel * tachMax));
 		bChangeTach = true;
 		ship->update_panel = TRUE;
 	}
@@ -220,12 +220,12 @@ void JadRacer::calculate()
 		
 	if(shift_frame > 0)
 {
-		last_pitch = 2000+6500*fabs((frame_time/(shift_frame-shift_rate))-0.5);
+		last_pitch = iround(2000+6500*fabs((frame_time/(shift_frame-shift_rate))-0.5));
 //		last_pitch=99999999;
 }
 	else
 //		last_pitch = 1000+2000*(cur_gear_rel+0.01);
-		last_pitch = 2000+6500*(cur_speed_rel+0.01);
+		last_pitch = iround(2000+6500*(cur_speed_rel+0.01));
 	
 	play_sound2(data->sampleExtra[0],255,last_pitch);
 
@@ -417,7 +417,7 @@ bool JadRacer::custom_panel_update(BITMAP* panel, int display_type)
 			
 			if((i - speed) < 0) 
 			{
-				col = makecol(ceil(128*(float(i)/speedMax))+127, ceil(64*(float(i)/speedMax)), ceil(64*(float(i)/speedMax)));
+				col = makecol(iround(ceil(128*(float(i)/speedMax))+127), iround(ceil(64*(float(i)/speedMax))), iround(ceil(64*(float(i)/speedMax))));
 				putpixel(bmp, speed_x + bar_x, speed_y + bar_y, col);
 				putpixel(bmp, speed_x + bar_x + 1, speed_y + bar_y, col);
 			}
@@ -451,7 +451,7 @@ bool JadRacer::custom_panel_update(BITMAP* panel, int display_type)
 
 			if((i - tach) < 0) 
 			{
-				col = makecol(ceil(255*(float(i)/tachMax)), ceil(255*(1.0-(float(i)/tachMax))), 0);
+				col = makecol(iround(ceil(255*(float(i)/tachMax))), iround(ceil(255*(1.0-(float(i)/tachMax)))), 0);
 				putpixel(bmp, tach_x + bar_x, tach_y + bar_y, col);
 				putpixel(bmp, tach_x + bar_x + 1, tach_y + bar_y, col);
 			}

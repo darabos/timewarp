@@ -138,7 +138,7 @@ void QlonLimpet::inflict_damage(SpaceObject *other) {
 			H.x = 18 + (rand() % 27);  //NOT part of physics ; not synchronized in network games ; varies with graphics mode
 			H.y = 15 + (rand() % 36);
 			tries++;
-			col = getpixel(bmp,H.x,H.y);
+			col = getpixel(bmp,iround(H.x),iround(H.y));
 			if (col == bitmap_mask_color(bmp)) continue;
 			if (col == 0) continue;
 			if (col == -1) continue;

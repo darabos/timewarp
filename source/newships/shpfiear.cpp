@@ -5,7 +5,7 @@ REGISTER_FILE
 
 class FierasShotSpark : public SpaceLine
 {
-	int lifetime, lifetime_max, r, b, g;
+	int lifetime, lifetime_max, r, g, b;
 
 public:
 
@@ -340,9 +340,9 @@ void FierasShotSpark::animate(Frame *space)
 	y0 = iround(p0.y);
 
 	if (space_zoom <= 1)
-		set_trans_blender(0, 0, 0, space_zoom * 255 * c);
+		set_trans_blender(0, 0, 0, iround(space_zoom * 255 * c));
 	else
-		set_trans_blender(0, 0, 0, 1 * 255 * c);
+		set_trans_blender(0, 0, 0, iround(1 * 255 * c));
 
 	putpixel(space->surface, x0, y0, color);
 	space->add_pixel(x0, y0);

@@ -287,7 +287,7 @@ int ChmmrZapSat::canCollide(SpaceLocation *other) {
 	}
 
 int ChmmrZapSat::handle_damage(SpaceLocation *source, double normal, double direct) {
-	int total = normal + direct;
+	int total = iround(normal + direct);
 	if (total) {
 		armour -= total;
 		if(armour <= 0) {

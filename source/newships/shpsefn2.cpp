@@ -567,7 +567,7 @@ int SefyNautilus2::activate_weapon()
 	if(!arm_movement)
 	{
 		arm_movement = true;
-		play_sound2(data->sampleWeapon[0],256, 1000 * (data->sampleWeapon[0]->len / arm_period));
+		play_sound2(data->sampleWeapon[0],256, iround(1000 * (data->sampleWeapon[0]->len / arm_period)));
 		weapon_recharge += weapon_rate;
 	}
 
@@ -744,7 +744,7 @@ int SefyNautilus2::handle_damage(SpaceLocation *src, double normal, double direc
 	STACKTRACE
 	Ship::handle_damage(src, normal, direct);
 
-	return normal + direct;
+	return iround(normal + direct);
 }
 
 // *********************************************************************************
@@ -1098,7 +1098,7 @@ int Hook2::handle_damage(SpaceLocation *src, double normal, double direct)
 		if ( armour <= 0 )
 			state = 0;
 
-		return normal + direct;
+		return iround(normal + direct);
 	}
 }
 
@@ -1120,8 +1120,8 @@ void Hook2::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropec
 	iy2 = int(co.y);
 	
 	int dx, dy;
-	dx = min_delta(ix2, ix1, map_size.x);
-	dy = min_delta(iy2, iy1, map_size.y);
+	dx = iround(min_delta(ix2, ix1, map_size.x));
+	dy = iround(min_delta(iy2, iy1, map_size.y));
 	ix2 = ix1 + dx;
 	iy2 = iy1 + dy;
 	
@@ -1132,9 +1132,9 @@ void Hook2::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropec
 	
 	int col, r, g, b;
 	col = ropecol;
-	r = getr(col) * colscale;
-	g = getg(col) * colscale;
-	b = getb(col) * colscale;
+	r = iround(getr(col) * colscale);
+	g = iround(getg(col) * colscale);
+	b = iround(getb(col) * colscale);
 	col = makecol(r, g, b);
 	
 	// draw the line

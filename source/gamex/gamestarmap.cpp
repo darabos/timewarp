@@ -255,7 +255,7 @@ void GameStarmap::calculate()
 
 	GameBare::calculate();
 
-	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
+	ptr->newpos(mouse_x - iround(maparea->pos.x), mouse_y - iround(maparea->pos.y));
 
 	if ( mouseper->update() && (mouse_b & 2) )
 	{
@@ -315,7 +315,7 @@ void GameStarmap::animate(Frame *frame)
 		P1 = corner2( Vector2(     0, iy*10000), 0);
 		P2 = corner2( Vector2(100000, iy*10000), 0);
 
-		hline(frame->surface, P1.x, P1.y, P2.x, c);
+		hline(frame->surface, iround(P1.x), iround(P1.y), iround(P2.x), c);
 	}
 
 	for ( ix = 0; ix < 11; ++ix )
@@ -323,7 +323,7 @@ void GameStarmap::animate(Frame *frame)
 		P1 = corner2( Vector2(ix*10000,      0), 0);
 		P2 = corner2( Vector2(ix*10000, 100000), 0);
 
-		vline(frame->surface, P1.x, P1.y, P2.y, c);
+		vline(frame->surface, iround(P1.x), iround(P1.y), iround(P2.y), c);
 	}
 
 

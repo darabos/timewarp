@@ -116,7 +116,9 @@ YushSpear::YushSpear( SpaceLocation *creator, Vector2 opos, double oangle,
 	double ov, int odamage, double orange, int oarmour, double ocontrol,
 	SpaceLocation *oposloc, SpaceSprite *osprite, double relativity):
 Missile( creator, opos, oangle, ov, odamage, orange, oarmour, oposloc, osprite, relativity ),
-released( false ), control( ocontrol ), latched( NULL )
+latched( NULL ),
+control( ocontrol ), 
+released( false )
 {
 }
 

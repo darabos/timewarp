@@ -49,7 +49,7 @@ RekojAssassin::RekojAssassin(Vector2 opos, double angle, ShipData *data, unsigne
   extraRange			= scale_range(get_config_float("Extra", "Range", 0));
   extraDamage			= get_config_int("Extra", "Damage", 0);
 	extraDelay			= get_config_int("Extra", "Delay", 0);
-	extraArcLimit		= get_config_float("Extra", "ArcLimit", 0);
+	extraArcLimit		= get_config_int("Extra", "ArcLimit", 0);
 	extraBlip				= 0;
 
 	normal_recharge = recharge_amount;

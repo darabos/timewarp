@@ -199,9 +199,9 @@ SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, in
 		if (scale != 1)
 		{
 			if (vidmem)
-				tmpbmp = create_video_bitmap(bmplist[i]->w * scale, bmplist[i]->h * scale);
+				tmpbmp = create_video_bitmap(iround(bmplist[i]->w * scale), iround(bmplist[i]->h * scale));
 			else
-				tmpbmp = create_bitmap_ex(bpp, bmplist[i]->w * scale, bmplist[i]->h * scale);
+				tmpbmp = create_bitmap_ex(bpp, iround(bmplist[i]->w * scale), iround(bmplist[i]->h * scale));
 
 			stretch_blit(bmplist[i], tmpbmp, 0, 0, bmplist[i]->w, bmplist[i]->h,
 				0, 0, tmpbmp->w, tmpbmp->h);

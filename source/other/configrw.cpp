@@ -159,9 +159,9 @@ char *construct_loadname(char *loadname)
 
 void validate_directory(char *fname)
 {
-	char *s = fname;
+	char *s = strchr(fname, '/');
 
-	while (s = strchr(s, '/'))	// yes, this must be =, not ==
+	while (s != NULL )  
 	{
 		*s = 0;
 
@@ -173,6 +173,7 @@ void validate_directory(char *fname)
 
 		*s = '/';
 		s += 1;	// skip the '/' that you've already found.
+		s = strchr(s, '/');
 	}
 
 }

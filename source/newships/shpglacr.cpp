@@ -185,7 +185,7 @@ GlavriaCrTorpedo::GlavriaCrTorpedo(Vector2 opos, double oangle, double ov,
   explosionSprite     = data->spriteWeaponExplosion;
   explosionFrameCount = 20;
   explosionFrameSize  = 40;
-  oorange=orange;
+  oorange=iround(orange);
   //vx = vx + ddx;
   //vy = vy + ddy;
 }

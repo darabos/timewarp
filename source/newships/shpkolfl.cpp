@@ -137,7 +137,6 @@ void KoloryFlamer :: calculate ()
 	if (!weapon1)	flamer1 = 0;
 	if (!weapon2)	flamer2 = 0;
 
-	int flame_prev_active = flame_active;
 	flame_active = weapon1 | weapon2;
 
 	Ship::calculate();
@@ -300,17 +299,17 @@ int Flamer::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 	STACKTRACE
 	
-	int totdamage = normal + direct;
+	int totdamage = iround(normal + direct);
 
 	if (source->isShip())
-		totdamage = armour;
+		totdamage = iround(armour);
 
 	armour -= totdamage;
 
 	if ( armour <= 0 )
 	{
 		state = 0;
-		return totdamage + armour;
+		return iround(totdamage + armour);
 	}
 
 	return totdamage;

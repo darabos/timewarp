@@ -103,8 +103,8 @@ class JadWarheadExplosion2 : public JadWarheadExplosion
 
 class JadWarhead : public Missile
 {
-	double		blast_range, old_range, kick;
-	double		blast_damage, lifetime, boost_max;
+	double		blast_range, old_range;
+	double		blast_damage, kick, lifetime, boost_max;
 	double		safe_range;
 	
 	double		safeAngle;
@@ -238,9 +238,9 @@ JadWarhead::JadWarhead (SpaceLocation *creator, Vector2 rpos, double ov, double 
 							double oarmour, SpaceSprite *osprite, double oblast_range,
 							int olifetime, double okick, double oboost_max, double osafeAngle, double osafe_range) :
 	Missile(creator, rpos, oangle, ov, 0, 1e40, oarmour, creator, osprite, 1.0),
-		blast_range(oblast_range), blast_damage(odamage), kick(okick),
-		lifetime(olifetime),
-        active(false), old_range(1e40)
+blast_range(oblast_range), old_range(1e40), blast_damage(odamage), kick(okick),
+	  lifetime(olifetime),
+	  active(false)
 
 {
 	myShip = ship;
@@ -296,7 +296,7 @@ void JadWarhead::animateExplosion()
 		
 		stuff = q.currento->normal_pos();
 		
-		if(q.currento != myShip || (q.currento == myShip && abs(trajectory_angle(q.currento) - q.currento->get_angle()) > safeAngle))
+		if(q.currento != myShip || (q.currento == myShip && abs(iround(trajectory_angle(q.currento) - q.currento->get_angle())) > safeAngle))
 		{
 			//stuff = q.currento->normal_pos()/* + (unit_vector(q.currento->trajectory_angle(this)) * q.currento->get_size()/2.5)*/;
 			
@@ -306,7 +306,7 @@ void JadWarhead::animateExplosion()
 			int i = iround_down(((int)ceil(r * blast_damage)) / 2);
 			if(i >= BOOM_SAMPLES) 
 				i = BOOM_SAMPLES - 1;
-			play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat), 36*r + 220);
+			play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat), iround(36*r + 220));
 		}
 		else if(q.currento == myShip)
 		{
@@ -389,7 +389,7 @@ void JadWarheadExplosion::animate(Frame *space)
 			if (space_zoom <= 1)
 				set_trans_blender(0, 0, 0, iround(space_zoom * 255 * t * (4-j) / 4.0));
 			else
-				set_trans_blender(0, 0, 0, (1 * 255 * t * (4-j) / 4.0));
+				set_trans_blender(0, 0, 0, iround(1 * 255 * t * (4-j) / 4.0));
 			xi = iround(x0 - dx * j);
 			yi = iround(y0 - dy * j);
 			putpixel(space->surface, xi, yi, color);

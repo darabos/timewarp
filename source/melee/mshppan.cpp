@@ -323,13 +323,13 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 
 		int dy;
 		dy = (ymax - ymin);
-		ymin += dy * (max - value) / double(max);
+		ymin += iround(dy * (max - value) / double(max));
 
 		for ( i = ymin; i < ymax; ++i )
 		{
 			int _x, _y;
 			int k;
-			k = value * double(ymax - i) / double(ymax - ymin);
+			k = iround(value * double(ymax - i) / double(ymax - ymin));
 
 			_x = xl + 1;
 			_y = i;

@@ -361,7 +361,7 @@ int XXXAssimilator::handle_damage(SpaceLocation *source, double normal, double d
 
 		{
 
-			weaponDamage = source->damage_factor;
+			weaponDamage = iround(source->damage_factor);
 
 			weapon_drain = weaponDamage;
 

@@ -40,8 +40,8 @@ class JnkdwoLazel : public Ship {
 
 
 class JnkdwoLazelCrystal : public SpaceLocation {
-  double rx, ry, ra;
   JnkdwoLazel *ship;
+  double rx, ry, ra;
   int recharge;
 
   public:
@@ -367,7 +367,7 @@ void JnkdwoLazelLaser::inflict_damage(SpaceObject *other) {
 
     if (damage_factor < 0) return;
 	int i;
-	i = damage_factor / 2;
+	i = iround(damage_factor / 2);
 	if(i >= BOOM_SAMPLES)
 		i = BOOM_SAMPLES - 1;
 	play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));

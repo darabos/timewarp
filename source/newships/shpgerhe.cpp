@@ -869,7 +869,7 @@ int GerlHero::handle_damage(SpaceLocation *other, double normal, double direct)
 	}
 
 
-	return normal + direct;
+	return iround(normal + direct);
 }
 
 
@@ -972,7 +972,7 @@ int GerlMorons::handle_damage(SpaceLocation *source, double normal, double direc
 		}
 		
 	}
-	return t;
+	return iround(t);
 
 /*
 	// most of the crew is on the moron vessel. One is on the hero vessel. This complicates

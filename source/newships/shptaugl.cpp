@@ -41,8 +41,8 @@ public:
 
 class TauGladiusShot : public SpaceLine
 {
-	double	range, d, v;
-    int		r,g,b;
+  double	d, v, range;
+  int		r,g,b;
 
 public:	
 	TauGladiusShot::TauGladiusShot (SpaceLocation *creator, Vector2 opos, double oangle, double ov, double orange, double odamage, double olength);
@@ -167,7 +167,7 @@ void TauGladiusMissile::calculate()
 
 TauGladiusShot::TauGladiusShot (SpaceLocation *creator, Vector2 opos, double oangle, double ov, double orange, double odamage, double olength) :
 	SpaceLine(creator, creator->normal_pos(), oangle, olength, makecol(255,255,115)),
-	v(ov), d(0), range(orange)
+	d(0), v(ov), range(orange)
 {
 	damage_factor = odamage;
 	set_depth(DEPTH_SHOTS);
@@ -233,7 +233,7 @@ void TauGladiusShot::animate(Frame *space)
 		ic *= ic*ic;
 		ic = sqrt(ic);
 		pos -= tl;
-		color = makecol(r*ic, g*ic, b*ic);
+		color = makecol(iround(r*ic), iround(g*ic), iround(b*ic));
 		SpaceLine::animate(space); }
 	pos =  position_base;
 	length = length_base;

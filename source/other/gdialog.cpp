@@ -38,7 +38,7 @@ static int alien_image_y = 0;
 	\chars maximum length of returned string
 	\return result string
 */
-std::string SplitString(std::string source, int chars)
+std::string SplitString(std::string source, unsigned int chars)
 {
 	std::string strResult;
 	if (source.length()<chars+1)

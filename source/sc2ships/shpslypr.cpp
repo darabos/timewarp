@@ -343,7 +343,7 @@ void SlylandroLaserNew::calculate()
 		if ( recalclights )
 		{
 			lastnseg[iline] = nseg[iline];
-			nseg[iline] = 1 + MAXsegs * (-0.00001 + sin(relativelifetime * PI));
+			nseg[iline] = iround(1 + MAXsegs * (-0.00001 + sin(relativelifetime * PI)));
 			
 			if ( nseg[iline] > MAXsegs )
 				nseg[iline] = MAXsegs;
@@ -426,18 +426,18 @@ void SlylandroLaserNew::calculate()
 					// normal_pos return normalize(pos,mapsize)
 					
 					int		x1, y1, x2, y2, dx, dy, sx, sy;
-					x1 = mother->pos.x + (int)lights[i].pos1.x;
-					y1 = mother->pos.y + (int)lights[i].pos1.y;
-					x2 = mother->pos.x + (int)lights[i].pos2.x;
-					y2 = mother->pos.y + (int)lights[i].pos2.y;
+					x1 = iround(mother->pos.x + lights[i].pos1.x);
+					y1 = iround(mother->pos.y + lights[i].pos1.y);
+					x2 = iround(mother->pos.x + lights[i].pos2.x);
+					y2 = iround(mother->pos.y + lights[i].pos2.y);
 					
 					// position of the target sprite:
-					sx = q.currento->pos.x;
-					sy = q.currento->pos.y;
+					sx = iround(q.currento->pos.x);
+					sy = iround(q.currento->pos.y);
 					
 					// you may have to re-locate this position, to correct for normalization ?!
-					dx = min_delta(sx, x1, map_size.x);
-					dy = min_delta(sy, y1, map_size.y);
+					dx = iround(min_delta(sx, x1, map_size.x));
+					dy = iround(min_delta(sy, y1, map_size.y));
 					
 					sx = x1 + dx;
 					sy = y1 + dy;

@@ -416,7 +416,7 @@ int SaMatraBoxer::handle_damage(SpaceLocation *source, double normal, double dir
 	}
 
 
-	return total;
+	return iround(total);
 }
 
 
@@ -596,7 +596,7 @@ SpaceObject(ocreator, opos, oangle, osprite)
 
 
 	trailTime = samatra->specialTrailTimeLen;	// in seconds
-	trailNum = 1 + trailTime / (frame_time*1E-3);
+	trailNum = iround(1 + trailTime / (frame_time*1E-3));
 	trailPos = new Vector2 [trailNum];
 
 	int i;
@@ -717,7 +717,7 @@ int SaMatraFlame::handle_damage(SpaceLocation *source, double normal, double dir
 		// shouldn't there be a small explosion here?
 	}
 
-	return total;
+	return iround(total);
 }
 
 

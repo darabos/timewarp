@@ -77,7 +77,7 @@ void ThraddashFlame::calculate()
 }
 
 int ThraddashFlame::handle_damage(SpaceLocation *source, double normal, double direct) {
-	int total = normal + direct;
+	int total = iround(normal + direct);
 	armour -= total;
 
 	if ((armour <= 0) || (source->isObject() && ((SpaceObject*)source)->mass)) {

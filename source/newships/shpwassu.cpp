@@ -217,7 +217,7 @@ int WasxSuperposition::activate_weapon() {
 
 		
 		add(new WasxShot( Vector2(WOS, WOS), AngleWithLead, rVelocity, weaponDamage,
-			  weaponRange, weaponArmour, this));
+			  weaponRange, iround(weaponArmour), this));
 	} // for
 
 
@@ -469,7 +469,7 @@ int WasxClone::activate_weapon() {
 
 		
 		add(new WasxShot( Vector2(WOS, WOS), AngleWithLead, rVelocity, weaponDamage,
-			  weaponRange, weaponArmour, ship));
+			  weaponRange, iround(weaponArmour), ship));
 	} // for
 
 	return(TRUE);
@@ -505,7 +505,7 @@ int WasxClone::handle_damage(SpaceLocation *source, double normal, double direct
 			state=0; 
 		}
 	}
-	return normal + direct;
+	return iround(normal + direct);
 }
  
 void WasxClone::calculate() {
@@ -560,8 +560,8 @@ void WasxClone::calculate() {
 	if (MotherShip->SpawnFormation == 1) {
     	double RelAngle;
 
-		if (abs(distance(MotherShip)) > 150 ||
-			abs(distance(MotherShip)) < 50) {
+		if (fabs(distance(MotherShip)) > 150 ||
+			fabs(distance(MotherShip)) < 50) {
 			switch (CloneIndex) {
 			case 1:	// upper right
 				RelAngle = 45 * ANGLE_RATIO;
@@ -585,8 +585,8 @@ void WasxClone::calculate() {
 		}
 
 		if (Forming) {
-			if (abs(distance(MotherShip)) >  50 &&
-				abs(distance(MotherShip)) < 150) {
+			if (fabs(distance(MotherShip)) >  50 &&
+				fabs(distance(MotherShip)) < 150) {
 				Forming = FALSE;
 			}
 		}

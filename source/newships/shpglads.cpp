@@ -169,10 +169,10 @@ void GlathrielSpot::animate(Frame *space)
 	if (state == 0) return;
 	double r = life_counter/(double)lifetime;
 	int rr = iround(80 * r * space_zoom);
-	set_trans_blender(0,0,0,255*(1-r)*(1-r));
+	set_trans_blender(0,0,0,iround(255*(1-r)*(1-r)));
 	drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 	Vector2 p0 = corner(pos);
-	circlefill(space->surface,iround(p0.x),iround(p0.y),rr,makecol(255,255,0+floor(255*(1-r))));
+	circlefill(space->surface,iround(p0.x),iround(p0.y),rr,makecol(255,255,0+iround(floor(255*(1-r)))));
 	space->add_box(iround(p0.x)-rr-1, iround(p0.y)-rr-1, 2*rr+2, 2*rr+2);
 	drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
 }

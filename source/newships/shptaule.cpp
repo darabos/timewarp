@@ -455,17 +455,13 @@ void LeviathanSlimeBall::inflict_damage(SpaceObject *other)
 
 	if (other->isShip()) {
 
-		int c = ((Ship*)other)->getCrew();
+		int c = iround(((Ship*)other)->getCrew());
 
 		AnimatedShot::inflict_damage(other);
 
-		c -= ((Ship*)other)->getCrew();
+		c -= iround(((Ship*)other)->getCrew());
 
 		RGB col = ((Ship*)other)->crewPanelColor();
-
-		if (((col.g < 1192) || (col.r > 16) || (col.b > 16)) || !greenOnly) {
-
-//		if ( (((Ship*)other)->crewPanelColor() == palette_color[2]) || !greenOnly) {
 
 			int i;
 
@@ -474,8 +470,6 @@ void LeviathanSlimeBall::inflict_damage(SpaceObject *other)
 				add(new LeviathanSlimeFood(random()%361, food_velocity*(1-0.90*(random()%101)/100.0),
 
 					(int)(l_time * (1-0.00*(random()%101)/100.0)), this, this, data->spriteExtra, 10, 70));
-
-		}
 
 	}
 
