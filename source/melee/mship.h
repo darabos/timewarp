@@ -158,9 +158,8 @@ class Ship : public SpaceObject {
 	virtual double getBatt();
 
 	virtual RGB crewPanelColor(int k = 0);
-
 	virtual RGB battPanelColor(int k = 0);
-
+	virtual bool custom_panel_update(BITMAP *panel, int display_type) {return false;};
 
 
 	void locate();

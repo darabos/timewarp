@@ -209,7 +209,12 @@ void ShipPanel::animate(Frame *space) {
 
 
 void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int display_type, int bcolor)
-{STACKTRACE
+{
+	STACKTRACE;
+
+	// custom update by the ship ...
+	if (ship->custom_panel_update(panel, display_type))
+		return;
 
 	// erase the background...
 	
