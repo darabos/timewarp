@@ -8,7 +8,7 @@
 /*			-Corona688, 2001	*/
 /************************************************/
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
 int MAX_TARGETS=3;
@@ -68,7 +68,7 @@ public:
 //invisible ships.  Note that these missiles are not fired unless a Marker
 //has attached to something.
 void TechMissile::calculate() {
-	STACKTRACE
+	STACKTRACE;
 	Missile::calculate();
 
 	//This used to be if(target&&!invisible()), or something like that.
@@ -157,7 +157,7 @@ Hilight::Hilight(Marked *otarget, Ship *ocreator, SpaceSprite *osprite,
 
 void Hilight::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	frame_count+=1;
 	if(frame_count>=frame_max)	frame_count=frame_min;
 	sprite_index=frame_count;
@@ -375,7 +375,7 @@ StrivanarScrutinizer::StrivanarScrutinizer(Vector2 opos, double shipAngle,
 
 void StrivanarScrutinizer::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	/*My code*/
 	static int prev_time[16]={0};
 
@@ -406,9 +406,8 @@ void StrivanarScrutinizer::calculate()
 
 int StrivanarScrutinizer::activate_weapon()
 {
-	STACKTRACE
+	STACKTRACE;
 	int flag=0;
-
 	for(int Cur_Target=0; Cur_Target<MAX_TARGETS; Cur_Target++)
 	{
 
@@ -431,12 +430,20 @@ int StrivanarScrutinizer::activate_weapon()
 
 	}
 
+	// dryfire ability, added by Jad
+	if(flag == 0)
+	{
+		flag=1;
+		float xpos=10.*sin(-angle+51.42*ANGLE_RATIO);
+		add(new TechMissile(Vector2(xpos, get_size().y * .5), angle, weaponVelocity, weaponDamage, weaponRange,
+			weaponArmour, weaponTurnRate, this, data->spriteWeapon,NULL));
+	}
 	return(flag);
 }
 
 int StrivanarScrutinizer::activate_special()
 {
-	STACKTRACE
+	STACKTRACE;
 	float min=angle-(specialFan/2);
 	float max=angle+(specialFan/2);
 	float step=(max-min)/specialMarkernum;
