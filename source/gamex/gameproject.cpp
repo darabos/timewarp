@@ -13,7 +13,7 @@ REGISTER_FILE
 #include "gamedialogue.h"
 
 
-BITMAP *game_screen;
+BITMAP *game_screen, *game_screen1, *game_screen2;
 
 
 GameBare::GameBare()
@@ -161,19 +161,23 @@ void GameBare::init()
 
 	init_menu();
 
-	if (!T || !maparea)
+	if (!T)
 	{
 		tw_error("Game menu is not defined !!");
 	}
 
 	// use this for game-drawing to part of the menu
-	tempframe->setsurface(maparea->backgr);
+	if (maparea)
+	{
+		tempframe->setsurface(maparea->backgr);
 
-	wininfo.init( Vector2(800,800), 800.0, tempframe );
+		wininfo.init( Vector2(800,800), 800.0, tempframe );
+	}
 
 	// performance check
 	tic_history = new Histograph(128);
 	render_history = new Histograph(128);
+	ti = true;
 }
 
 
@@ -225,7 +229,8 @@ void GameBare::animate(Frame *frame)
 	}
 
 	// (and the game frame then draws to video memory?)
-	show_ticinfo(frame, tic_history, render_history, 4.0);
+	if (ti)
+		show_ticinfo(frame, tic_history, render_history, 4.0);
 
 
 }
@@ -236,6 +241,13 @@ void GameBare::animate()
 {
 	if (next)
 		return;
+
+	// switch drawing screen
+	if (game_screen == game_screen1)
+		game_screen = game_screen2;
+	else
+		game_screen = game_screen1;
+	//clear_to_color(game_screen, 0);
 
 	/*
 
@@ -276,9 +288,14 @@ void GameBare::animate()
 
 	animate(tempframe);
 
+	T->tree_setscreen(game_screen);		// game_screen can change value...
 	T->tree_animate();
 
 	show_mouse(game_screen);
+
+	// when drawing is finished, do a page flip to the new screen.
+	show_video_bitmap(game_screen);
+
 
 	t = get_time2() - t;// - paused_time;
 	render_history->add_element(pow(t, 4.0));
@@ -384,11 +401,13 @@ void GameProject::init()
 
 	// first, allocate the (old) screen from memory ... this should match
 	// exactly the "global" screen ...
-	game_screen = create_video_bitmap(screen->w, screen->h);
-	if (!game_screen)
+	game_screen1 = create_video_bitmap(screen->w, screen->h);
+	game_screen2 = create_video_bitmap(screen->w, screen->h);
+	if (!(game_screen1 && game_screen2))
 	{
 		tw_error("Failed to initialize game_screen!");
 	}
+	game_screen = game_screen1;
 	show_video_bitmap(game_screen);
 	clear_to_color(game_screen, 0);
 	// ok ... so we've safely allocated the drawable area; this is needed, cause
@@ -400,9 +419,15 @@ void GameProject::init()
 
 void GameProject::quit()
 {
-	if (game_screen)
-		destroy_bitmap(game_screen);
-	show_video_bitmap(screen);
+	if (game_screen1)
+		show_video_bitmap(game_screen1);
+
+	if (game_screen1)
+		destroy_bitmap(game_screen1);
+
+	if (game_screen2)
+		destroy_bitmap(game_screen2);
+
 	// result of an empty project: nothing to do, also on exiting it
 }
 

@@ -69,6 +69,7 @@ class GameDialogue : public GameBare
 	virtual void init();
 	virtual void quit();
 	//virtual bool handle_key(int k);
+	virtual void init_menu();
 
 	virtual void calculate();
 	virtual void animate(Frame *frame);
@@ -80,11 +81,8 @@ class GameDialogue : public GameBare
 	char *racepiclist[maxracepiclist];
 	
 
-//	WindowManager *winman;
-	TWindow *R;
-
-	TextEditBox *T;
-	TextList	*B;
+	TextEditBox *Tedit;
+	TextList	*Tlist;
 
 	Button *refresh, *Bplus, *bprev;
 

@@ -220,12 +220,16 @@ SpaceObject(0, 0, 0, osprite)
 void MousePtr::animate(Frame *f)
 {
 	int x, y;
-
 	int w, h;
+
 	w = sprite->width();
 	h = sprite->height();
-	x = mouse_x - 0.5 * w;
-	y = mouse_y - 0.5 * h;
+
+	Vector2 P;
+	P = corner(pos);
+
+	x = P.x - 0.5 * w;
+	y = P.y - 0.5 * h;
 
 	sprite->draw(x, y, 0, f->surface);
 	f->add_box(x, y, w, h);
@@ -256,16 +260,33 @@ void MousePtr::animate(Frame *f)
 	}
 }
 
+void MousePtr::newpos(int x, int y)
+{
+	pos.x = x;
+	pos.y = y;
 
+	pos = uncorner(pos);
+	normalize(pos, map_size);
+
+	if (pos.x < 0)
+		pos.x = 0;
+
+	if (pos.y < 0)
+		pos.y = 0;
+
+	if (pos.x > map_size.x-1)
+		pos.x = map_size.x-1;
+
+	if (pos.y > map_size.y-1)
+		pos.y = map_size.y-1;
+
+}
 
 void MousePtr::calculate()
 {
 	FULL_REDRAW = 1;
 
 	SpaceObject::calculate();
-
-	pos.x = mouse_x;
-	pos.y = mouse_y;
 
 	// if the left mouse button is pressed, search for the closest object.
 	// a null value means, there's no selection.
@@ -276,10 +297,10 @@ void MousePtr::calculate()
 		
 
 		double range2;
-		Vector2 pos2;
+//		Vector2 pos2;
 		// note, the mouse pointer is "absolute" on the screen; 
-		pos2 = pos;
-		pos = uncorner(pos);
+//		pos2 = pos;
+//		pos = uncorner(pos);
 		range2 = mouserange / space_zoom;
 
 		closestrange = range2;
@@ -301,7 +322,7 @@ void MousePtr::calculate()
 
 		}
 
-		pos = pos2;
+//		pos = pos2;
 
 	}
 }

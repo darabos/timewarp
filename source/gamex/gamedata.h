@@ -80,6 +80,7 @@ public:
 	virtual void init(FILE *f, int level);
 	virtual void save(FILE *f, int level);
 	virtual int add(int level);
+	virtual int rem(int k);
 };
 
 

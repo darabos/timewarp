@@ -387,6 +387,21 @@ void TWindow::center(int xcenter, int ycenter)
 }
 
 
+
+
+void TWindow::center_abs(int xcenter, int ycenter)
+{
+	// put back the background
+	//blit(originalscreen, screen, 0, 0, x, y, W, H);
+
+	// move
+	x = xcenter - W / 2;
+	y = ycenter - H / 2;
+
+	// read the new background
+	//blit(screen, originalscreen, x, y, 0, 0, W, H);
+}
+
 void TWindow::center()
 {
 	ASSERT(screen)

@@ -16,6 +16,8 @@ REGISTER_FILE
 
 #include "gamestarmap.h"
 
+#include "../twgui/twpopup.h"
+
 
 
 
@@ -122,21 +124,58 @@ void GameStarmap::init()
 	selectionstar = 0;
 	lastselectionstar = 0;
 	maphaschanged = false;	// check if the map changed; if so, it's to be written back to disk
+
+
+	// define another (sub)menu
+
+	Tedit = new Popup("gamex/interface/starmap/edit", 400, 200, game_screen);
+	Tedit->exclusive = true;
+
+
+	bdec = new Button(Tedit, "dec_");
+	binc = new Button(Tedit, "inc_");
+	bnew = new Button(Tedit, "new_");
+	breplace = new Button(Tedit, "replace_");
+	bplot = new Button(Tedit, "plot_");
+
+	istarselect = 0;
+	update_bplot();
+
+
+	T->add(Tedit);
+	T->tree_doneinit();
 }
 
 
-
+void GameStarmap::update_bplot()
+{
+	BITMAP *dest, *src;
+	src  = starspr[istarselect]->get_bitmap(0);
+	dest = bplot->bmp_default;
+	clear_to_color(dest, 0);
+	blit(src, dest, 0, 0, 0, 0, src->w, src->h);
+}
 
 
 void GameStarmap::calculate()
 {
+	if (next)
+		return;
+
+	::space_view_size = wininfo.framesize;
+	::space_zoom = wininfo.zoomlevel;
+	::space_center = wininfo.mapcenter;
+
+	ptr->newpos(mouse_x - maparea->pos.x, mouse_y - maparea->pos.y);
+
+
 	GameBare::calculate();
 
 	if ( mouseper->update() && (mouse_b & 2) )
 	{
 		if (view && view->frame && view->frame->window && view->frame->window->surface)
-			wininfo.centermove((mouse_x - 0.5*view->frame->window->surface->w) / space_zoom,
-								(mouse_y - 0.5*view->frame->window->surface->h) / space_zoom);
+			wininfo.centermove((mouse_x - maparea->pos.x - 0.5*view->frame->window->surface->w) / space_zoom,
+								(mouse_y - maparea->pos.y - 0.5*view->frame->window->surface->h) / space_zoom);
 		//wininfo.center(Vector2(0,0));
 	}
 
@@ -158,53 +197,34 @@ void GameStarmap::calculate()
 	}
 
 
-	// select a star for movement (or so ...)
-	if ( (!selectionstar) && key[KEY_LCONTROL] && lastselectionstar)
-	{
-		selectionstar = lastselectionstar;
-	}
-
-
-	// add a new star (or toggle its type if it's still selected)
-	if (keyper->update())
-	{
-		if (key[KEY_A])
-		{
-			if (!selectionstar)
-			{
-				selectionstar = new Star(0, 0, 0, starspr[0]);
-				add(selectionstar);
-
-				// also ... add it to the map ?? with default settings ..
-				selectionstar->starnum = starmap->add(1);	// level 1 = stars
-
-			} else {
-				int k;
-				k = selectionstar->starnum;
-				int &startype = starmap->sub[k]->type;
-
-				++ startype;
-				if (startype > startypelist->N - 1)
-					startype = 0;
-
-				selectionstar->set_sprite(starspr[startype]);
-			}
-		}
-	}
-
 	// move a star
 	if (selectionstar)
 	{
-		selectionstar->pos = wininfo.mapcenter +
-			Vector2(	(mouse_x - 0.5*view->frame->window->surface->w) / space_zoom,
-						(mouse_y - 0.5*view->frame->window->surface->h) / space_zoom );
 
+		selectionstar->pos = ptr->pos;
 		staywithin(0, &(selectionstar->pos), map_size);
 	}
 
 
+	// delete a star
+	if (selectionstar && keyhandler.keyhit[KEY_DEL])
+	{
+		// remove from game physics
+		remove(selectionstar);
+
+		// remove from the map
+		starmap->rem(selectionstar->starnum);
+
+
+		// remove from memory
+		delete selectionstar;
+
+		selectionstar = 0;
+	}
+
+
 	// place a star
-	if ( selectionstar && (mouse_b & 1) )
+	if ( selectionstar && maparea->flag.left_mouse_press )//(mouse_b & 1) )
 	{
 		// update the map with this star ?
 		// yep ...
@@ -217,9 +237,84 @@ void GameStarmap::calculate()
 		selectionstar = 0;
 
 		maphaschanged = true;
+
+		maparea->flag.left_mouse_press = false;	// cause you've used it now
+	}
+
+
+	// select a star for movement (or so ...)
+	//if ( (!selectionstar) && key[KEY_LCONTROL] && lastselectionstar)
+	// using left-click of the mouse on the starmap area of the menu
+	if ( (!selectionstar) && lastselectionstar && maparea->flag.left_mouse_press )
+	{
+		selectionstar = lastselectionstar;
+
+		maparea->flag.left_mouse_press = false;
+	}
+
+
+
+	// ---------------
+
+	// by pressing "space", you initialize the menu
+	if (keyhandler.keyhit[KEY_SPACE])
+	{
+		Tedit->show();
+		Tedit->center_abs(mouse_x, mouse_y);
+	}
+
+	if (breplace->flag.left_mouse_press)
+	{
+		Tedit->hide();
+		T->show();
+
+		// change the picture of the selected star
+		if (selectionstar)
+		{
+			int k;
+			k = selectionstar->starnum;
+			starmap->sub[k]->type = istarselect;
+			selectionstar->set_sprite(starspr[istarselect]);
+		}
+	}
+
+	if (bnew->flag.left_mouse_press)
+	{
+		Tedit->hide();
+		T->show();
+
+		// select this picture for a new star ?
+		if (!selectionstar)
+		{
+			selectionstar = new Star(0, 0, 0, starspr[istarselect]);
+			add(selectionstar);
+			
+			// also ... add it to the map ?? with default settings ..
+			selectionstar->starnum = starmap->add(1);	// level 1 = stars
+			
+		}
+	}
+
+	if (binc->flag.left_mouse_press || bdec->flag.left_mouse_press)
+	{
+		if (binc->flag.left_mouse_press)
+			++istarselect;
+
+		if (bdec->flag.left_mouse_press)
+			--istarselect;
+
+		if (istarselect < 0 )
+			istarselect = startypelist->N - 1;
+		
+		if (istarselect >= startypelist->N)
+			istarselect = 0;
+
+		update_bplot();
+
 	}
 
 }
+
 
 void GameStarmap::animate(Frame *frame)
 {

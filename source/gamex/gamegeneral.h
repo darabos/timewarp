@@ -16,6 +16,8 @@ public:
 	MousePtr(SpaceSprite *osprite);
 	virtual void animate(Frame *f);
 	virtual void calculate();
+
+	void newpos(int x, int y);
 };
 
 

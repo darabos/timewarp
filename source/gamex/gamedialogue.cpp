@@ -66,6 +66,14 @@ char *GameAliendialog::showline(char *text, int num)
 }
 
 
+
+void GameAliendialog::init_menu()
+{
+	T = new TWindow("gamex/interface/aliendialog", 10, 10, game_screen, true);
+	maparea = 0;
+}
+
+
 void GameAliendialog::init()
 {
 	scare_mouse();
@@ -75,6 +83,8 @@ void GameAliendialog::init()
 	double H = 2000;
 	size = Vector2(H, H);
 	prepare();
+
+	ti = false;	// no render/tic time info needed...
 
 
 	int i;
@@ -109,7 +119,7 @@ void GameAliendialog::init()
 
 	FONT *usefont = videosystem.get_font(i);
 
-	view->frame->prepare();
+//	view->frame->prepare();
 
 
 	// the background for this race is :
@@ -121,7 +131,6 @@ void GameAliendialog::init()
 
 
 
-	R = new TWindow("gamex/interface/aliendialog", 10, 10, view->frame->surface);
 
 
 	
@@ -133,19 +142,19 @@ void GameAliendialog::init()
 	showline_num = 0;
 	showline_Nlines = Nlines(dialo->T);
 	//A = new TextEditBox(R, "A", -1, -1, usefont, showline(dialo.A, showline_num), 0);
-	A = new TextInfoArea(R, "A/", usefont, 0, 0);	// all text should fit on 1 window - no scroll needed !!
+	A = new TextInfoArea(T, "A/", usefont, 0, 0);	// all text should fit on 1 window - no scroll needed !!
 	//A->set_textcolor(tcol);
 
 	// ????
 	//A->changebackgr(racefile);
 
 
-	B = new TextList(R, "B/", usefont);
+	B = new TextList(T, "B/", usefont);
 
 	
 	//winman = new WindowManager;
 	//winman->add(R);
-	R->tree_doneinit();
+	T->tree_doneinit();
 
 	initBlist(dialo);
 
@@ -234,8 +243,8 @@ void GameAliendialog::calculate()
 	GameBare::calculate();
 
 
-	FULL_REDRAW = true;
-	R->tree_calculate();
+	//FULL_REDRAW = true;
+	//T->tree_calculate();
 
 
 
@@ -326,10 +335,10 @@ void GameAliendialog::animate(Frame *frame)
 
 
 	//show_mouse(frame->surface);
-	R->tree_setscreen(view->frame->surface);
-	R->tree_animate();
-	show_mouse(view->frame->surface);
-	scare_mouse();
+	//R->tree_setscreen(view->frame->surface);
+	//R->tree_animate();
+	//show_mouse(view->frame->surface);
+	//scare_mouse();
 }
 
 

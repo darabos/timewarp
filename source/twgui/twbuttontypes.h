@@ -12,9 +12,10 @@
 class Button : public GraphicButton
 {
 protected:
-	BITMAP *bmp_default, *bmp_focus, *bmp_selected;
 
 public:
+	BITMAP *bmp_default, *bmp_focus, *bmp_selected;
+
 	Button(TWindow *menu, char *identbranch, int asciicode = 0, bool keepkey = 0);
 	virtual ~Button();
 
@@ -58,8 +59,9 @@ public:
 class SwitchButton : public GraphicButton
 {
 protected:
-	BITMAP	*bmp_on, *bmp_off;
 public:
+	BITMAP	*bmp_on, *bmp_off;
+
 	bool	state;	// true=on, false=off
 	// x, y, W, H are inside the draw area
 	SwitchButton(TWindow *menu, char *identbranch, int asciicode = 0, bool initialstate = false);
@@ -92,8 +94,8 @@ public:
 class ScrollBar : public AreaTablet
 {
 protected:
-	BITMAP	*button;
 public:
+	BITMAP	*button;
 
 	enum {hor = 1, ver= 2}	direction ;
 

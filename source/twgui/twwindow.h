@@ -119,6 +119,7 @@ public:
 	BITMAP* bmp(char *bmpname, bool vidmem = false);
 
 	// this centers the bitmap on this position.
+	void center_abs(int xcenter, int ycenter);
 	void center(int xcenter, int ycenter);
 	void center();
 

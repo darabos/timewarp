@@ -28,6 +28,11 @@ class GameStarmap : public GameBare
 {
 public:
 
+	TWindow *Tedit;
+	// contents of Tedit
+	Button *bdec, *binc, *bnew, *breplace, *bplot;
+	int istarselect;
+
 	double scalepos;
 	Star *selectionstar, *lastselectionstar;
 
@@ -57,6 +62,8 @@ public:
 
 	SpaceSprite *starspr[32], *playerspr;
 	bool maphaschanged;
+
+	void update_bplot();
 };
 
 

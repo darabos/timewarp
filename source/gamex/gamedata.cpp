@@ -278,6 +278,22 @@ int MapSpacebody::add(int level)
 
 
 
+int MapSpacebody::rem(int k)
+{
+
+	if (k < 0 || k >= Nsub || Nsub == 0)
+		return 0;
+
+	int i;
+	for ( i = k; i < Nsub-1; ++i )
+		sub[i] = sub[i+1];
+	--Nsub;
+
+	return Nsub-1;
+}
+
+
+
 IndexTypeList::IndexTypeList(int omax, char *fname)
 {
 	max = omax;

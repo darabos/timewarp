@@ -21,6 +21,7 @@ class GameAliendialog : public GameBare
 	int Nactivebranches;
 
 	virtual void init();
+	virtual void init_menu();
 	virtual void quit();
 	//virtual bool handle_key(int k);
 
@@ -30,7 +31,7 @@ class GameAliendialog : public GameBare
 	void initBlist(Dialo *dialo);
 
 
-	TWindow *R;
+	//TWindow *R;
 
 	TextInfoArea *A;
 	TextList	*B;
