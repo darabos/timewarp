@@ -1,5 +1,7 @@
 This is the place to post questions and answers about using CVS.  Ironically, this file can be found in /docs/UsingCVS.txt in the repository.
 
+[B]This is for the latest, roughest, somewhat untested, bleeding-edge version.  When you get the files, you'll still have to recompile.  If you don't want to compile, get the latest official release here: [URL=http://www.classicgaming.com/starcontrol/timewarp/progress.shtm]http://www.classicgaming.com/starcontrol/timewarp/progress.shtm[/URL][/B]
+
 Basically, CVS is a way of synchronizing files for multiple users.  The simplest way of using it is to get the latest version of Timewarp (aka TW).  All files, including source code, data files and VC++ project files, are contained in the repository.  
 
 CVS can also be used to make changes to the source.  When you make changes, you commit them to the repository.  Other people can then update their local copy, which will now include your changes.  This keeps everyone in sync.  
@@ -87,18 +89,33 @@ You must enter a meaningful message in the quotes.  Describe in concise, minimal
 
 Having a visual representation of what files have changed is really handy.  Get [URL=http://www.wincvs.org/]WinCVS[/URL] or CVSGUI (same thing) and install it.
 
-
-1. WinCVS will immediately ask you for preferences when you start it for the first time.  You want the following:
 [B]Non-Developers:[/B]
+
+1. Go make a directory.
+
+2. Start WinCVS.
+
+3. Click the button next to the directory name to choose the directory you just made.  (highlighted with arrow at top)
+[IMG]http://members.rogers.com/youbastrd/wincvs.jpg[/IMG]
+
+4. Pick "Admin/Login..." and use these parameters:
+
 Authentication: pserver
 Path: /cvsroot/timewarp
 Host Address: cvs.sourceforge.net
 User name: anonymous
 CVSROOT: should be made automagically, but it should look like: anonymous@cvs.sourceforge.net:/cvsroot/timewarp
+[IMG]http://members.rogers.com/youbastrd/wincvs_login.jpg[/IMG]
 
-You should also login via the menu "Admin/login..." so you don't have to type in passwords anymore.
+5. Pick "Remote/Checkout module."  Either type the name "all" , without quotes, in the "Module name and Path on server" field, or click the button to the right.  It'll ask the server what modules are available.  This will create a directory called "all" .  You can avoid making the directory by using "." as the module name.
+[IMG]http://members.rogers.com/youbastrd/wincvs.jpg[/IMG]
+
+6. (Optional) Stay up to date by right-clicking the root directory in the left pane (shown with arrow) and picking "Update."  
 
 [B]Developers:[/B]
+
+1. Pick 
+
 Authentication: ssh
 Path: /cvsroot/timewarp
 Host Address: cvs.sourceforge.net
@@ -131,3 +148,4 @@ Recommended chapters:
 
 Revision history:
 2003.07.28 youBastrd! created
+2003.07.31 youBastrd! Made anonymous instructions clearer, with pictures n stuff.
