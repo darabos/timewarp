@@ -21,6 +21,8 @@ Release/*
 *.plg
 *.sbr
 *.pch
+*.ilk
+*.pdb
 
 
 #other files that we probably don't want
