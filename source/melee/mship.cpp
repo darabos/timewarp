@@ -893,7 +893,7 @@ void Ship::animate_predict(Frame *frame, int time) {
 	angle = normalize(angle + da);
 	pos = normalize(pos);
 	sprite_index = get_index(angle);
-	if (sprite_index > sprite->frames()) sprite_index = 0;
+	if (sprite_index >= sprite->frames()) sprite_index = 0;
 
 	animate(frame);
 
