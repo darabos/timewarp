@@ -132,16 +132,28 @@ void ClairconctlarPinnacle::calculate()
   Ship::calculate();
   if((specialObject != NULL) && (!specialObject->exists())) {
     //sound.stop(data->sampleSpecial[1]);
-    specialObject = NULL; }
-  if(specialFired && (!fire_special))
-    specialFired = FALSE;
-  if((specialFired) && (fire_special) && (beep)) {
+    specialObject = NULL;
+  }
+
+  //if(specialFired && (!fire_special))
+  //  specialFired = FALSE;
+
+  if((specialObject) && (fire_special) && (beep)) {
     specialSoundCount += frame_time;
     if (specialSoundCount >= 2500) {
        specialSoundCount = 0;
 	   play_sound2(data->sampleSpecial[1]);
 		}
     }
+
+  // release special
+  if((specialObject) && (!fire_special))
+  {
+	  specialFired = FALSE;
+	  activate_special();
+	  specialFired = FALSE;
+  }
+
 }
 
 ClairconctlarBeacon::ClairconctlarBeacon(Vector2 opos, double oangle,
