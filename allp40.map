@@ -1,0 +1,2619 @@
+ allp40
+
+ Timestamp is 3eaff57f (Wed Apr 30 12:10:39 2003)
+
+ Preferred load address is 10000000
+
+ Start         Length     Name                   Class
+ 0001:00000000 000698b0H .text                   CODE
+ 0002:00000000 00000230H .rdata                  DATA
+ 0002:00000230 00008925H .edata                  DATA
+ 0003:00000000 00000004H .CRT$XCA                DATA
+ 0003:00000004 00000004H .CRT$XCZ                DATA
+ 0003:00000008 00000004H .CRT$XIA                DATA
+ 0003:0000000c 00000004H .CRT$XIZ                DATA
+ 0003:00000010 00008310H .data                   DATA
+ 0003:00008320 0001eb90H .bss                    DATA
+ 0004:00000000 000000b4H .idata$2                DATA
+ 0004:000000b4 00000014H .idata$3                DATA
+ 0004:000000c8 000002f8H .idata$4                DATA
+ 0004:000003c0 000002f8H .idata$5                DATA
+ 0004:000006b8 00000b42H .idata$6                DATA
+ 0005:00000000 00000058H .rsrc$01                DATA
+ 0005:00000060 00000348H .rsrc$02                DATA
+
+  Address         Publics by Value              Rva+Base     Lib:Object
+
+ 0001:00000000       __add_exit_func            10001000 f   allegro.obj
+ 0001:00000040       __remove_exit_func         10001040 f   allegro.obj
+ 0001:00000090       _install_allegro           10001090 f   allegro.obj
+ 0001:000002b0       _allegro_exit              100012b0 f   allegro.obj
+ 0001:00000310       _allegro_message           10001310 f   allegro.obj
+ 0001:000003b0       _get_executable_name       100013b0 f   allegro.obj
+ 0001:00000400       _al_assert                 10001400 f   allegro.obj
+ 0001:000005b0       _al_trace                  100015b0 f   allegro.obj
+ 0001:000006a0       _register_assert_handler   100016a0 f   allegro.obj
+ 0001:000006b0       _register_trace_handler    100016b0 f   allegro.obj
+ 0001:000006c0       __al_malloc                100016c0 f   allegro.obj
+ 0001:000006d0       __al_free                  100016d0 f   allegro.obj
+ 0001:000006e0       __al_realloc               100016e0 f   allegro.obj
+ 0001:00000730       __blit_between_formats     10001730 f   blit.obj
+ 0001:000032b0       _blit                      100042b0 f   blit.obj
+ 0001:000036e0       _masked_blit               100046e0 f   blit.obj
+ 0001:000037f0       _load_bmp                  100047f0 f   bmp.obj
+ 0001:000043d0       _save_bmp                  100053d0 f   bmp.obj
+ 0001:000047c0       _clip3d                    100057c0 f   clip3d.obj
+ 0001:00006490       __set_errno_erange         10007490 f i clip3d.obj
+ 0001:000064a0       _clip3d_f                  100074a0 f   clip3df.obj
+ 0001:00007b20       __blender_black            10008b20 f   colblend.obj
+ 0001:00007b30       __blender_alpha24          10008b30 f   colblend.obj
+ 0001:00007be0       __blender_alpha32          10008be0 f   colblend.obj
+ 0001:00007c40       __blender_alpha24_bgr      10008c40 f   colblend.obj
+ 0001:00007cb0       __blender_add24            10008cb0 f   colblend.obj
+ 0001:00007d70       __blender_burn24           10008d70 f   colblend.obj
+ 0001:00007e20       __blender_color24          10008e20 f   colblend.obj
+ 0001:00007f50       __blender_difference24     10008f50 f   colblend.obj
+ 0001:00008000       __blender_dissolve24       10009000 f   colblend.obj
+ 0001:00008030       __blender_dodge24          10009030 f   colblend.obj
+ 0001:000080c0       __blender_hue24            100090c0 f   colblend.obj
+ 0001:000081d0       __blender_invert24         100091d0 f   colblend.obj
+ 0001:00008240       __blender_luminance24      10009240 f   colblend.obj
+ 0001:00008350       __blender_multiply24       10009350 f   colblend.obj
+ 0001:000083f0       __blender_saturation24     100093f0 f   colblend.obj
+ 0001:00008500       __blender_screen24         10009500 f   colblend.obj
+ 0001:000085e0       __blender_trans16          100095e0 f   colblend.obj
+ 0001:00008640       __blender_alpha16          10009640 f   colblend.obj
+ 0001:000086f0       __blender_alpha16_rgb      100096f0 f   colblend.obj
+ 0001:00008770       __blender_alpha16_bgr      10009770 f   colblend.obj
+ 0001:000087f0       __blender_add16            100097f0 f   colblend.obj
+ 0001:000088d0       __blender_burn16           100098d0 f   colblend.obj
+ 0001:000089a0       __blender_color16          100099a0 f   colblend.obj
+ 0001:00008af0       __blender_difference16     10009af0 f   colblend.obj
+ 0001:00008bc0       __blender_dissolve16       10009bc0 f   colblend.obj
+ 0001:00008bf0       __blender_dodge16          10009bf0 f   colblend.obj
+ 0001:00008cd0       __blender_hue16            10009cd0 f   colblend.obj
+ 0001:00008e10       __blender_invert16         10009e10 f   colblend.obj
+ 0001:00008ea0       __blender_luminance16      10009ea0 f   colblend.obj
+ 0001:00008fe0       __blender_multiply16       10009fe0 f   colblend.obj
+ 0001:000090e0       __blender_saturation16     1000a0e0 f   colblend.obj
+ 0001:00009220       __blender_screen16         1000a220 f   colblend.obj
+ 0001:00009360       __blender_trans15          1000a360 f   colblend.obj
+ 0001:000093c0       __blender_alpha15          1000a3c0 f   colblend.obj
+ 0001:00009470       __blender_alpha15_rgb      1000a470 f   colblend.obj
+ 0001:000094f0       __blender_alpha15_bgr      1000a4f0 f   colblend.obj
+ 0001:00009570       __blender_add15            1000a570 f   colblend.obj
+ 0001:00009650       __blender_burn15           1000a650 f   colblend.obj
+ 0001:00009720       __blender_color15          1000a720 f   colblend.obj
+ 0001:00009870       __blender_difference15     1000a870 f   colblend.obj
+ 0001:00009940       __blender_dissolve15       1000a940 f   colblend.obj
+ 0001:00009970       __blender_dodge15          1000a970 f   colblend.obj
+ 0001:00009a50       __blender_hue15            1000aa50 f   colblend.obj
+ 0001:00009b90       __blender_invert15         1000ab90 f   colblend.obj
+ 0001:00009c20       __blender_luminance15      1000ac20 f   colblend.obj
+ 0001:00009d60       __blender_multiply15       1000ad60 f   colblend.obj
+ 0001:00009e60       __blender_saturation15     1000ae60 f   colblend.obj
+ 0001:00009fa0       __blender_screen15         1000afa0 f   colblend.obj
+ 0001:0000a0e0       _set_trans_blender         1000b0e0 f   colblend.obj
+ 0001:0000a110       _set_add_blender           1000b110 f   colblend.obj
+ 0001:0000a140       _set_burn_blender          1000b140 f   colblend.obj
+ 0001:0000a170       _set_color_blender         1000b170 f   colblend.obj
+ 0001:0000a1a0       _set_difference_blender    1000b1a0 f   colblend.obj
+ 0001:0000a1d0       _set_dissolve_blender      1000b1d0 f   colblend.obj
+ 0001:0000a200       _set_dodge_blender         1000b200 f   colblend.obj
+ 0001:0000a230       _set_hue_blender           1000b230 f   colblend.obj
+ 0001:0000a260       _set_invert_blender        1000b260 f   colblend.obj
+ 0001:0000a290       _set_luminance_blender     1000b290 f   colblend.obj
+ 0001:0000a2c0       _set_multiply_blender      1000b2c0 f   colblend.obj
+ 0001:0000a2f0       _set_saturation_blender    1000b2f0 f   colblend.obj
+ 0001:0000a320       _set_screen_blender        1000b320 f   colblend.obj
+ 0001:0000a350       _set_alpha_blender         1000b350 f   colblend.obj
+ 0001:0000a4b0       __blender_write_alpha      1000b4b0 f   colblend.obj
+ 0001:0000a4d0       _set_write_alpha_blender   1000b4d0 f   colblend.obj
+ 0001:0000a510       _makecol_depth             1000b510 f   color.obj
+ 0001:0000a640       _makeacol_depth            1000b640 f   color.obj
+ 0001:0000a780       _makecol                   1000b780 f   color.obj
+ 0001:0000a7a0       _makeacol                  1000b7a0 f   color.obj
+ 0001:0000a7d0       _getr_depth                1000b7d0 f   color.obj
+ 0001:0000a890       _getg_depth                1000b890 f   color.obj
+ 0001:0000a950       _getb_depth                1000b950 f   color.obj
+ 0001:0000aa10       _geta_depth                1000ba10 f   color.obj
+ 0001:0000aa30       _getr                      1000ba30 f   color.obj
+ 0001:0000aa50       _getg                      1000ba50 f   color.obj
+ 0001:0000aa70       _getb                      1000ba70 f   color.obj
+ 0001:0000aa90       _geta                      1000ba90 f   color.obj
+ 0001:0000aab0       _bestfit_color             1000bab0 f   color.obj
+ 0001:0000abd0       _makecol8                  1000bbd0 f   color.obj
+ 0001:0000ac30       _hsv_to_rgb                1000bc30 f   color.obj
+ 0001:0000ae40       _rgb_to_hsv                1000be40 f   color.obj
+ 0001:0000afd0       _create_rgb_table          1000bfd0 f   color.obj
+ 0001:0000bf10       _create_light_table        1000cf10 f   color.obj
+ 0001:0000c110       _create_trans_table        1000d110 f   color.obj
+ 0001:0000c3b0       _create_color_table        1000d3b0 f   color.obj
+ 0001:0000c470       _create_blender_table      1000d470 f   color.obj
+ 0001:0000c6b0       _flush_config_file         1000d6b0 f   config.obj
+ 0001:0000c810       _set_config_file           1000d810 f   config.obj
+ 0001:0000cf90       _set_config_data           1000df90 f   config.obj
+ 0001:0000cfb0       _override_config_file      1000dfb0 f   config.obj
+ 0001:0000cfd0       _override_config_data      1000dfd0 f   config.obj
+ 0001:0000cff0       _push_config_state         1000dff0 f   config.obj
+ 0001:0000d030       _pop_config_state          1000e030 f   config.obj
+ 0001:0000d070       _hook_config_section       1000e070 f   config.obj
+ 0001:0000d260       _config_is_hooked          1000e260 f   config.obj
+ 0001:0000d2c0       _get_config_string         1000e2c0 f   config.obj
+ 0001:0000d4c0       _get_config_int            1000e4c0 f   config.obj
+ 0001:0000d5b0       _get_config_hex            1000e5b0 f   config.obj
+ 0001:0000d640       _get_config_float          1000e640 f   config.obj
+ 0001:0000d680       _get_config_id             1000e680 f   config.obj
+ 0001:0000d750       _get_config_argv           1000e750 f   config.obj
+ 0001:0000d8d0       _set_config_string         1000e8d0 f   config.obj
+ 0001:0000dc10       _set_config_int            1000ec10 f   config.obj
+ 0001:0000dc60       _set_config_hex            1000ec60 f   config.obj
+ 0001:0000dcf0       _set_config_float          1000ecf0 f   config.obj
+ 0001:0000dd40       _set_config_id             1000ed40 f   config.obj
+ 0001:0000de10       _reload_config_texts       1000ee10 f   config.obj
+ 0001:0000e010       _get_config_text           1000f010 f   config.obj
+ 0001:0000e1f0       _load_datafile             1000f1f0 f   datafile.obj
+ 0001:0000e200       _load_datafile_callback    1000f200 f   datafile.obj
+ 0001:00010290       _load_datafile_object      10011290 f   datafile.obj
+ 0001:000103d0       __unload_datafile_object   100113d0 f   datafile.obj
+ 0001:00010460       _unload_datafile           10011460 f   datafile.obj
+ 0001:000104a0       _unload_datafile_object    100114a0 f   datafile.obj
+ 0001:000104c0       _find_datafile_object      100114c0 f   datafile.obj
+ 0001:000105d0       _get_datafile_property     100115d0 f   datafile.obj
+ 0001:00010610       _fixup_datafile            10011610 f   datafile.obj
+ 0001:00010cf0       __construct_datafile       10011cf0 f   datafile.obj
+ 0001:00010da0       __initialize_datafile_types 10011da0 f   datafile.obj
+ 0001:00011300       _register_datafile_object  10012300 f   dataregi.obj
+ 0001:00011380       __digmid_find_patches      10012380 f   digmid.obj
+ 0001:00012d10       _makecol15_dither          10013d10 f   dither.obj
+ 0001:00012e10       _makecol16_dither          10013e10 f   dither.obj
+ 0001:00012f20       _set_display_switch_mode   10013f20 f   dispsw.obj
+ 0001:00012f60       _get_display_switch_mode   10013f60 f   dispsw.obj
+ 0001:00012f70       _set_display_switch_callback 10013f70 f   dispsw.obj
+ 0001:00012fa0       _remove_display_switch_callback 10013fa0 f   dispsw.obj
+ 0001:00012fc0       __register_switch_bitmap   10013fc0 f   dispsw.obj
+ 0001:000130c0       __unregister_switch_bitmap 100140c0 f   dispsw.obj
+ 0001:00013120       __save_switch_state        10014120 f   dispsw.obj
+ 0001:000133e0       __restore_switch_state     100143e0 f   dispsw.obj
+ 0001:00013540       __create_driver_list       10014540 f   drvlist.obj
+ 0001:00013560       __destroy_driver_list      10014560 f   drvlist.obj
+ 0001:00013570       __driver_list_append_driver 10014570 f   drvlist.obj
+ 0001:00013600       __driver_list_prepend_driver 10014600 f   drvlist.obj
+ 0001:00013660       __driver_list_append_list  10014660 f   drvlist.obj
+ 0001:00013690       _fix_filename_case         10014690 f   file.obj
+ 0001:000136a0       _fix_filename_slashes      100146a0 f   file.obj
+ 0001:00013700       _fix_filename_path         10014700 f   file.obj
+ 0001:00013ad0       _replace_filename          10014ad0 f   file.obj
+ 0001:00013b70       _replace_extension         10014b70 f   file.obj
+ 0001:00013c50       _append_filename           10014c50 f   file.obj
+ 0001:00013d40       _get_filename              10014d40 f   file.obj
+ 0001:00013d90       _get_extension             10014d90 f   file.obj
+ 0001:00013e10       _put_backslash             10014e10 f   file.obj
+ 0001:00013e70       _file_exists               10014e70 f   file.obj
+ 0001:00014390       _exists                    10015390 f   file.obj
+ 0001:000143b0       _file_size                 100153b0 f   file.obj
+ 0001:00014410       _file_time                 10015410 f   file.obj
+ 0001:00014450       _delete_file               10015450 f   file.obj
+ 0001:00014500       _for_each_file             10015500 f   file.obj
+ 0001:00014680       _find_allegro_resource     10015680 f   file.obj
+ 0001:00015010       _packfile_password         10016010 f   file.obj
+ 0001:00015060       __pack_fdopen              10016060 f   file.obj
+ 0001:00015670       _pack_fopen                10016670 f   file.obj
+ 0001:00015780       _pack_fclose               10016780 f   file.obj
+ 0001:00015800       _pack_fopen_chunk          10016800 f   file.obj
+ 0001:00015a20       _pack_fclose_chunk         10016a20 f   file.obj
+ 0001:00015be0       _pack_fseek                10016be0 f   file.obj
+ 0001:00015cc0       _pack_igetw                10016cc0 f   file.obj
+ 0001:00015d30       _pack_igetl                10016d30 f   file.obj
+ 0001:00015e10       _pack_iputw                10016e10 f   file.obj
+ 0001:00015eb0       _pack_iputl                10016eb0 f   file.obj
+ 0001:00016000       _pack_mgetw                10017000 f   file.obj
+ 0001:00016070       _pack_mgetl                10017070 f   file.obj
+ 0001:00016150       _pack_mputw                10017150 f   file.obj
+ 0001:000161e0       _pack_mputl                100171e0 f   file.obj
+ 0001:00016330       _pack_fread                10017330 f   file.obj
+ 0001:00016390       _pack_fwrite               10017390 f   file.obj
+ 0001:000163f0       _pack_fgets                100173f0 f   file.obj
+ 0001:00016540       _pack_fputs                10017540 f   file.obj
+ 0001:00016620       __sort_out_getc            10017620 f   file.obj
+ 0001:00016840       __sort_out_putc            10017840 f   file.obj
+ 0001:00017260       _play_fli                  10018260 f   fli.obj
+ 0001:00017350       _play_memory_fli           10018350 f   fli.obj
+ 0001:00017380       _open_fli                  10018380 f   fli.obj
+ 0001:00017710       _open_memory_fli           10018710 f   fli.obj
+ 0001:00017740       _close_fli                 10018740 f   fli.obj
+ 0001:000177c0       _next_fli_frame            100187c0 f   fli.obj
+ 0001:000186d0       _reset_fli_variables       100196d0 f   fli.obj
+ 0001:00018700       _floodfill                 10019700 f   flood.obj
+ 0001:00018d60       __mono_find_glyph          10019d60 f   font.obj
+ 0001:00018f40       __color_find_glyph         10019f40 f   font.obj
+ 0001:0001a1c0       _file_select_ex            1001b1c0 f   fsel.obj
+ 0001:0001a590       _file_select               1001b590 f   fsel.obj
+ 0001:0001a5c0       _drawing_mode              1001b5c0 f   gfx.obj
+ 0001:0001a680       _set_blender_mode          1001b680 f   gfx.obj
+ 0001:0001a780       _set_blender_mode_ex       1001b780 f   gfx.obj
+ 0001:0001a890       _xor_mode                  1001b890 f   gfx.obj
+ 0001:0001a8b0       _solid_mode                1001b8b0 f   gfx.obj
+ 0001:0001a8d0       _clear_bitmap              1001b8d0 f   gfx.obj
+ 0001:0001a8f0       _vsync                     1001b8f0 f   gfx.obj
+ 0001:0001a910       _set_color                 1001b910 f   gfx.obj
+ 0001:0001a930       _set_palette               1001b930 f   gfx.obj
+ 0001:0001a950       _set_palette_range         1001b950 f   gfx.obj
+ 0001:0001aa40       _select_palette            1001ba40 f   gfx.obj
+ 0001:0001aaf0       _unselect_palette          1001baf0 f   gfx.obj
+ 0001:0001ac40       _generate_332_palette      1001bc40 f   gfx.obj
+ 0001:0001acf0       _get_color                 1001bcf0 f   gfx.obj
+ 0001:0001ad10       _get_palette               1001bd10 f   gfx.obj
+ 0001:0001ad30       _get_palette_range         1001bd30 f   gfx.obj
+ 0001:0001ad70       _fade_interpolate          1001bd70 f   gfx.obj
+ 0001:0001ae60       _fade_from_range           1001be60 f   gfx.obj
+ 0001:0001af80       _fade_in_range             1001bf80 f   gfx.obj
+ 0001:0001afb0       _fade_out_range            1001bfb0 f   gfx.obj
+ 0001:0001aff0       _fade_from                 1001bff0 f   gfx.obj
+ 0001:0001b010       _fade_in                   1001c010 f   gfx.obj
+ 0001:0001b030       _fade_out                  1001c030 f   gfx.obj
+ 0001:0001b050       _rect                      1001c050 f   gfx.obj
+ 0001:0001b110       __normal_rectfill          1001c110 f   gfx.obj
+ 0001:0001b1f0       _do_line                   1001c1f0 f   gfx.obj
+ 0001:0001b4e0       __normal_line              1001c4e0 f   gfx.obj
+ 0001:0001b620       _do_circle                 1001c620 f   gfx.obj
+ 0001:0001b810       _circle                    1001c810 f   gfx.obj
+ 0001:0001b8e0       _circlefill                1001c8e0 f   gfx.obj
+ 0001:0001baf0       _do_ellipse                1001caf0 f   gfx.obj
+ 0001:0001bed0       _ellipse                   1001ced0 f   gfx.obj
+ 0001:0001bfb0       _ellipsefill               1001cfb0 f   gfx.obj
+ 0001:0001c3a0       _do_arc                    1001d3a0 f   gfx.obj
+ 0001:0001c6c0       _arc                       1001d6c0 f   gfx.obj
+ 0001:0001c720       __linear_draw_glyph8       1001d720 f   glyph.obj
+ 0001:0001c8e0       __linear_draw_glyph16      1001d8e0 f   glyph.obj
+ 0001:0001cab0       __linear_draw_glyph24      1001dab0 f   glyph.obj
+ 0001:0001ccc0       __linear_draw_glyph32      1001dcc0 f   glyph.obj
+ 0001:0001ce90       _lock_bitmap               1001de90 f   graphics.obj
+ 0001:0001cea0       _request_refresh_rate      1001dea0 f   graphics.obj
+ 0001:0001ceb0       _get_refresh_rate          1001deb0 f   graphics.obj
+ 0001:0001cec0       _get_gfx_mode_list         1001dec0 f   graphics.obj
+ 0001:0001cfa0       _destroy_gfx_mode_list     1001dfa0 f   graphics.obj
+ 0001:0001cfd0       _set_color_depth           1001dfd0 f   graphics.obj
+ 0001:0001d060       _set_color_conversion      1001e060 f   graphics.obj
+ 0001:0001d080       __color_load_depth         1001e080 f   graphics.obj
+ 0001:0001d0f0       __get_vtable               1001e0f0 f   graphics.obj
+ 0001:0001d140       _set_gfx_mode              1001e140 f   graphics.obj
+ 0001:0001da30       __sort_out_virtual_width   1001ea30 f   graphics.obj
+ 0001:0001da70       __make_bitmap              1001ea70 f   graphics.obj
+ 0001:0001dc40       _create_bitmap_ex          1001ec40 f   graphics.obj
+ 0001:0001dd60       _create_bitmap             1001ed60 f   graphics.obj
+ 0001:0001dd80       _create_sub_bitmap         1001ed80 f   graphics.obj
+ 0001:0001df60       _create_video_bitmap       1001ef60 f   graphics.obj
+ 0001:0001e130       _create_system_bitmap      1001f130 f   graphics.obj
+ 0001:0001e170       _destroy_bitmap            1001f170 f   graphics.obj
+ 0001:0001e240       _set_clip                  1001f240 f   graphics.obj
+ 0001:0001e350       _scroll_screen             1001f350 f   graphics.obj
+ 0001:0001e430       _request_scroll            1001f430 f   graphics.obj
+ 0001:0001e520       _poll_scroll               1001f520 f   graphics.obj
+ 0001:0001e540       _show_video_bitmap         1001f540 f   graphics.obj
+ 0001:0001e5a0       _request_video_bitmap      1001f5a0 f   graphics.obj
+ 0001:0001e600       _enable_triple_buffer      1001f600 f   graphics.obj
+ 0001:0001e650       _draw_gouraud_sprite       1001f650 f   gsprite.obj
+ 0001:0001eae0       _position_dialog           1001fae0 f   gui.obj
+ 0001:0001eb50       _centre_dialog             1001fb50 f   gui.obj
+ 0001:0001ec70       _set_dialog_color          1001fc70 f   gui.obj
+ 0001:0001eca0       _find_dialog_focus         1001fca0 f   gui.obj
+ 0001:0001ecd0       _dialog_message            1001fcd0 f   gui.obj
+ 0001:0001ee40       _broadcast_dialog_message  1001fe40 f   gui.obj
+ 0001:0001ee70       _offer_focus               1001fe70 f   gui.obj
+ 0001:0001f080       _do_dialog                 10020080 f   gui.obj
+ 0001:0001f110       _popup_dialog              10020110 f   gui.obj
+ 0001:0001f1c0       _init_dialog               100201c0 f   gui.obj
+ 0001:0001f530       _update_dialog             10020530 f   gui.obj
+ 0001:00020370       _shutdown_dialog           10021370 f   gui.obj
+ 0001:00020460       _menu_alt_key              10021460 f   gui.obj
+ 0001:00020520       _do_menu                   10021520 f   gui.obj
+ 0001:00021720       _d_menu_proc               10022720 f   gui.obj
+ 0001:00021920       _alert3                    10022920 f   gui.obj
+ 0001:00021d10       _alert                     10022d10 f   gui.obj
+ 0001:00021d50       _gui_textout               10022d50 f   guiproc.obj
+ 0001:00021f60       _gui_strlen                10022f60 f   guiproc.obj
+ 0001:00021f80       _d_yield_proc              10022f80 f   guiproc.obj
+ 0001:00021fa0       _d_clear_proc              10022fa0 f   guiproc.obj
+ 0001:00021ff0       _d_box_proc                10022ff0 f   guiproc.obj
+ 0001:00022070       _d_shadow_box_proc         10023070 f   guiproc.obj
+ 0001:00022160       _d_bitmap_proc             10023160 f   guiproc.obj
+ 0001:000221a0       _d_text_proc               100231a0 f   guiproc.obj
+ 0001:00022210       _d_ctext_proc              10023210 f   guiproc.obj
+ 0001:00022280       _d_rtext_proc              10023280 f   guiproc.obj
+ 0001:00022310       _d_button_proc             10023310 f   guiproc.obj
+ 0001:00022810       _d_check_proc              10023810 f   guiproc.obj
+ 0001:00022a20       _d_radio_proc              10023a20 f   guiproc.obj
+ 0001:00022d10       _d_icon_proc               10023d10 f   guiproc.obj
+ 0001:00022ef0       _d_keyboard_proc           10023ef0 f   guiproc.obj
+ 0001:00022f40       _d_edit_proc               10023f40 f   guiproc.obj
+ 0001:000235b0       __handle_scrollable_scroll_click 100245b0 f   guiproc.obj
+ 0001:000237c0       __handle_scrollable_scroll 100247c0 f   guiproc.obj
+ 0001:00023870       __handle_listbox_click     10024870 f   guiproc.obj
+ 0001:00023b90       __draw_scrollable_frame    10024b90 f   guiproc.obj
+ 0001:00023e70       __draw_listbox             10024e70 f   guiproc.obj
+ 0001:000241b0       _d_list_proc               100251b0 f   guiproc.obj
+ 0001:00024650       _d_text_list_proc          10025650 f   guiproc.obj
+ 0001:00024880       __draw_textbox             10025880 f   guiproc.obj
+ 0001:00024d50       _d_textbox_proc            10025d50 f   guiproc.obj
+ 0001:000250c0       _d_slider_proc             100260c0 f   guiproc.obj
+ 0001:00025890       __gui_shadow_box_proc      10026890 f   guiproc.obj
+ 0001:000258d0       __gui_ctext_proc           100268d0 f   guiproc.obj
+ 0001:00025910       __gui_button_proc          10026910 f   guiproc.obj
+ 0001:00025950       __gui_edit_proc            10026950 f   guiproc.obj
+ 0001:00025990       __gui_list_proc            10026990 f   guiproc.obj
+ 0001:000259d0       __gui_text_list_proc       100269d0 f   guiproc.obj
+ 0001:00025a10       _bmp_read24                10026a10 f i inline.obj
+ 0001:00025a30       _bmp_write24               10026a30 f i inline.obj
+ 0001:00025a50       _set_window_title          10026a50 f i inline.obj
+ 0001:00025a70       _set_window_close_button   10026a70 f i inline.obj
+ 0001:00025a90       _set_window_close_hook     10026a90 f i inline.obj
+ 0001:00025ab0       _desktop_color_depth       10026ab0 f i inline.obj
+ 0001:00025ad0       _get_desktop_resolution    10026ad0 f i inline.obj
+ 0001:00025af0       _yield_timeslice           10026af0 f i inline.obj
+ 0001:00025b00       __default_ds               10026b00 f i inline.obj
+ 0001:00025b10       _bmp_write_line            10026b10 f i inline.obj
+ 0001:00025b20       _bmp_read_line             10026b20 f i inline.obj
+ 0001:00025b30       _bmp_unwrite_line          10026b30 f i inline.obj
+ 0001:00025b40       _clear_to_color            10026b40 f i inline.obj
+ 0001:00025b60       _bitmap_color_depth        10026b60 f i inline.obj
+ 0001:00025b70       _bitmap_mask_color         10026b70 f i inline.obj
+ 0001:00025b80       _is_same_bitmap            10026b80 f i inline.obj
+ 0001:00025bc0       _is_linear_bitmap          10026bc0 f i inline.obj
+ 0001:00025bd0       _is_planar_bitmap          10026bd0 f i inline.obj
+ 0001:00025be0       _is_memory_bitmap          10026be0 f i inline.obj
+ 0001:00025c00       _is_screen_bitmap          10026c00 f i inline.obj
+ 0001:00025c40       _is_video_bitmap           10026c40 f i inline.obj
+ 0001:00025c50       _is_system_bitmap          10026c50 f i inline.obj
+ 0001:00025c60       _is_sub_bitmap             10026c60 f i inline.obj
+ 0001:00025c70       _acquire_bitmap            10026c70 f i inline.obj
+ 0001:00025c90       _release_bitmap            10026c90 f i inline.obj
+ 0001:00025cb0       _acquire_screen            10026cb0 f i inline.obj
+ 0001:00025cd0       _release_screen            10026cd0 f i inline.obj
+ 0001:00025cf0       _makecol15                 10026cf0 f i inline.obj
+ 0001:00025d30       _makecol16                 10026d30 f i inline.obj
+ 0001:00025d70       _makecol24                 10026d70 f i inline.obj
+ 0001:00025da0       _makecol32                 10026da0 f i inline.obj
+ 0001:00025dd0       _makeacol32                10026dd0 f i inline.obj
+ 0001:00025e10       _getr8                     10026e10 f i inline.obj
+ 0001:00025e30       _getg8                     10026e30 f i inline.obj
+ 0001:00025e50       _getb8                     10026e50 f i inline.obj
+ 0001:00025e70       _getr15                    10026e70 f i inline.obj
+ 0001:00025e90       _getg15                    10026e90 f i inline.obj
+ 0001:00025eb0       _getb15                    10026eb0 f i inline.obj
+ 0001:00025ed0       _getr16                    10026ed0 f i inline.obj
+ 0001:00025ef0       _getg16                    10026ef0 f i inline.obj
+ 0001:00025f10       _getb16                    10026f10 f i inline.obj
+ 0001:00025f30       _getr24                    10026f30 f i inline.obj
+ 0001:00025f50       _getg24                    10026f50 f i inline.obj
+ 0001:00025f70       _getb24                    10026f70 f i inline.obj
+ 0001:00025f90       _getr32                    10026f90 f i inline.obj
+ 0001:00025fb0       _getg32                    10026fb0 f i inline.obj
+ 0001:00025fd0       _getb32                    10026fd0 f i inline.obj
+ 0001:00025ff0       _geta32                    10026ff0 f i inline.obj
+ 0001:00026010       __set_color                10027010 f i inline.obj
+ 0001:00026030       _getpixel                  10027030 f i inline.obj
+ 0001:00026050       _putpixel                  10027050 f i inline.obj
+ 0001:00026070       _vline                     10027070 f i inline.obj
+ 0001:000260a0       _hline                     100270a0 f i inline.obj
+ 0001:000260d0       _line                      100270d0 f i inline.obj
+ 0001:00026100       _rectfill                  10027100 f i inline.obj
+ 0001:00026130       _draw_sprite               10027130 f i inline.obj
+ 0001:00026170       _draw_sprite_v_flip        10027170 f i inline.obj
+ 0001:00026190       _draw_sprite_h_flip        10027190 f i inline.obj
+ 0001:000261b0       _draw_sprite_vh_flip       100271b0 f i inline.obj
+ 0001:000261d0       _draw_trans_sprite         100271d0 f i inline.obj
+ 0001:00026210       _draw_lit_sprite           10027210 f i inline.obj
+ 0001:00026240       _draw_character            10027240 f i inline.obj
+ 0001:00026270       _rotate_sprite             10027270 f i inline.obj
+ 0001:000262d0       _rotate_sprite_v_flip      100272d0 f i inline.obj
+ 0001:00026330       _rotate_scaled_sprite      10027330 f i inline.obj
+ 0001:000263a0       _rotate_scaled_sprite_v_flip 100273a0 f i inline.obj
+ 0001:00026410       _pivot_sprite              10027410 f i inline.obj
+ 0001:00026460       _pivot_sprite_v_flip       10027460 f i inline.obj
+ 0001:000264b0       _pivot_scaled_sprite       100274b0 f i inline.obj
+ 0001:00026500       _pivot_scaled_sprite_v_flip 10027500 f i inline.obj
+ 0001:00026550       __putpixel                 10027550 f i inline.obj
+ 0001:00026580       __getpixel                 10027580 f i inline.obj
+ 0001:000265b0       __putpixel16               100275b0 f i inline.obj
+ 0001:000265b0       __putpixel15               100275b0 f i inline.obj
+ 0001:000265e0       __getpixel15               100275e0 f i inline.obj
+ 0001:000265e0       __getpixel16               100275e0 f i inline.obj
+ 0001:00026610       __putpixel24               10027610 f i inline.obj
+ 0001:00026650       __getpixel24               10027650 f i inline.obj
+ 0001:00026690       __putpixel32               10027690 f i inline.obj
+ 0001:000266c0       __getpixel32               100276c0 f i inline.obj
+ 0001:000266f0       _draw_rle_sprite           100276f0 f i inline.obj
+ 0001:00026710       _draw_trans_rle_sprite     10027710 f i inline.obj
+ 0001:00026740       _draw_lit_rle_sprite       10027740 f i inline.obj
+ 0001:00026770       _object_message            10027770 f i inline.obj
+ 0001:000267e0       _pack_getc                 100277e0 f i inline.obj
+ 0001:00026810       _pack_putc                 10027810 f i inline.obj
+ 0001:00026850       _pack_feof                 10027850 f i inline.obj
+ 0001:00026860       _pack_ferror               10027860 f i inline.obj
+ 0001:00026870       _fixadd                    10027870 f i inline.obj
+ 0001:00026890       _fixsub                    10027890 f i inline.obj
+ 0001:000268b0       _fixmul                    100278b0 f i inline.obj
+ 0001:000268f0       _fixdiv                    100278f0 f i inline.obj
+ 0001:00026940       _fixfloor                  10027940 f i inline.obj
+ 0001:00026950       _fixceil                   10027950 f i inline.obj
+ 0001:00026970       _ftofix                    10027970 f i inline.obj
+ 0001:00026a00       _fixtof                    10027a00 f i inline.obj
+ 0001:00026a10       _itofix                    10027a10 f i inline.obj
+ 0001:00026a20       _fixtoi                    10027a20 f i inline.obj
+ 0001:00026a40       _fixcos                    10027a40 f i inline.obj
+ 0001:00026a60       _fixsin                    10027a60 f i inline.obj
+ 0001:00026a80       _fixtan                    10027a80 f i inline.obj
+ 0001:00026aa0       _fixacos                   10027aa0 f i inline.obj
+ 0001:00026ad0       _fixasin                   10027ad0 f i inline.obj
+ 0001:00026b10       _apply_matrix              10027b10 f i inline.obj
+ 0001:00026d30       _dot_product               10027d30 f i inline.obj
+ 0001:00026dd0       _dot_product_f             10027dd0 f i inline.obj
+ 0001:00026df0       _persp_project             10027df0 f i inline.obj
+ 0001:00026f00       _persp_project_f           10027f00 f i inline.obj
+ 0001:00026f40       __grow_scratch_mem         10027f40 f i inline.obj
+ 0001:00026fa0       _install_joystick          10027fa0 f   joystick.obj
+ 0001:00027290       _remove_joystick           10028290 f   joystick.obj
+ 0001:000272e0       _poll_joystick             100282e0 f   joystick.obj
+ 0001:00027300       _save_joystick_data        10028300 f   joystick.obj
+ 0001:000273a0       _load_joystick_data        100283a0 f   joystick.obj
+ 0001:000274a0       _calibrate_joystick_name   100284a0 f   joystick.obj
+ 0001:000274e0       _calibrate_joystick        100284e0 f   joystick.obj
+ 0001:00027530       _initialise_joystick       10028530 f   joystick.obj
+ 0001:00027550       _clear_keybuf              10028550 f   keyboard.obj
+ 0001:000275f0       _keypressed                100285f0 f   keyboard.obj
+ 0001:00027620       _readkey                   10028620 f   keyboard.obj
+ 0001:00027650       _ureadkey                  10028650 f   keyboard.obj
+ 0001:00027760       _simulate_keypress         10028760 f   keyboard.obj
+ 0001:00027870       _simulate_ukeypress        10028870 f   keyboard.obj
+ 0001:00027960       _set_leds                  10028960 f   keyboard.obj
+ 0001:000279a0       _set_keyboard_rate         100289a0 f   keyboard.obj
+ 0001:000279e0       _install_keyboard_hooks    100289e0 f   keyboard.obj
+ 0001:00027a40       __handle_key_press         10028a40 f   keyboard.obj
+ 0001:00027d30       __handle_key_release       10028d30 f   keyboard.obj
+ 0001:00027df0       _poll_keyboard             10028df0 f   keyboard.obj
+ 0001:00028030       _keyboard_needs_poll       10029030 f   keyboard.obj
+ 0001:00028040       _scancode_to_ascii         10029040 f   keyboard.obj
+ 0001:00028060       _install_keyboard          10029060 f   keyboard.obj
+ 0001:00028170       _remove_keyboard           10029170 f   keyboard.obj
+ 0001:00028220       _load_lbm                  10029220 f   lbm.obj
+ 0001:00028aa0       __al_sane_realloc          10029aa0 f   libc.obj
+ 0001:00028b00       _fixatan                   10029b00 f   math.obj
+ 0001:00028b50       _fixatan2                  10029b50 f   math.obj
+ 0001:00028c30       _get_translation_matrix    10029c30 f   math3d.obj
+ 0001:00028c60       _get_translation_matrix_f  10029c60 f   math3d.obj
+ 0001:00028c90       _get_scaling_matrix        10029c90 f   math3d.obj
+ 0001:00028cc0       _get_scaling_matrix_f      10029cc0 f   math3d.obj
+ 0001:00028cf0       _get_x_rotate_matrix       10029cf0 f   math3d.obj
+ 0001:00028d50       _get_x_rotate_matrix_f     10029d50 f   math3d.obj
+ 0001:00028da0       _get_y_rotate_matrix       10029da0 f   math3d.obj
+ 0001:00028e00       _get_y_rotate_matrix_f     10029e00 f   math3d.obj
+ 0001:00028e40       _get_z_rotate_matrix       10029e40 f   math3d.obj
+ 0001:00028ea0       _get_z_rotate_matrix_f     10029ea0 f   math3d.obj
+ 0001:00028ee0       _get_rotation_matrix       10029ee0 f   math3d.obj
+ 0001:00029250       _get_rotation_matrix_f     1002a250 f   math3d.obj
+ 0001:00029320       _get_align_matrix          1002a320 f   math3d.obj
+ 0001:00029410       _get_align_matrix_f        1002a410 f   math3d.obj
+ 0001:00029500       _get_vector_rotation_matrix 1002a500 f   math3d.obj
+ 0001:00029610       _get_vector_rotation_matrix_f 1002a610 f   math3d.obj
+ 0001:00029710       _get_transformation_matrix 1002a710 f   math3d.obj
+ 0001:00029c40       _get_transformation_matrix_f 1002ac40 f   math3d.obj
+ 0001:00029d40       _get_camera_matrix         1002ad40 f   math3d.obj
+ 0001:00029f30       _get_camera_matrix_f       1002af30 f   math3d.obj
+ 0001:0002a1a0       _qtranslate_matrix         1002b1a0 f   math3d.obj
+ 0001:0002a1d0       _qtranslate_matrix_f       1002b1d0 f   math3d.obj
+ 0001:0002a200       _qscale_matrix             1002b200 f   math3d.obj
+ 0001:0002a260       _qscale_matrix_f           1002b260 f   math3d.obj
+ 0001:0002a290       _matrix_mul                1002b290 f   math3d.obj
+ 0001:0002a4b0       _matrix_mul_f              1002b4b0 f   math3d.obj
+ 0001:0002a570       _vector_length             1002b570 f   math3d.obj
+ 0001:0002a640       _vector_length_f           1002b640 f   math3d.obj
+ 0001:0002a660       _normalize_vector          1002b660 f   math3d.obj
+ 0001:0002a760       _normalize_vector_f        1002b760 f   math3d.obj
+ 0001:0002a7a0       _cross_product             1002b7a0 f   math3d.obj
+ 0001:0002a8e0       _cross_product_f           1002b8e0 f   math3d.obj
+ 0001:0002a930       _polygon_z_normal          1002b930 f   math3d.obj
+ 0001:0002a9e0       _polygon_z_normal_f        1002b9e0 f   math3d.obj
+ 0001:0002aa10       _set_projection_viewport   1002ba10 f   math3d.obj
+ 0001:0002aa90       _lock_midi                 1002ba90 f   midi.obj
+ 0001:0002aaa0       _load_midi                 1002baa0 f   midi.obj
+ 0001:0002ac10       _destroy_midi              1002bc10 f   midi.obj
+ 0001:0002ac60       __midi_allocate_voice      1002bc60 f   midi.obj
+ 0001:0002b060       _play_midi                 1002c060 f   midi.obj
+ 0001:0002c0c0       _play_looped_midi          1002d0c0 f   midi.obj
+ 0001:0002c0f0       _stop_midi                 1002d0f0 f   midi.obj
+ 0001:0002c100       _midi_pause                1002d100 f   midi.obj
+ 0001:0002c130       _midi_resume               1002d130 f   midi.obj
+ 0001:0002c150       _midi_seek                 1002d150 f   midi.obj
+ 0001:0002c390       _midi_out                  1002d390 f   midi.obj
+ 0001:0002c400       _load_midi_patches         1002d400 f   midi.obj
+ 0001:0002c480       __midi_constructor         1002d480 f   midi.obj
+ 0001:0002c490       _set_volume_per_voice      1002d490 f   mixer.obj
+ 0001:0002c4a0       __mixer_init               1002d4a0 f   mixer.obj
+ 0001:0002c790       __mixer_exit               1002d790 f   mixer.obj
+ 0001:0002c800       __mix_some_samples         1002d800 f   mixer.obj
+ 0001:0002fb80       __mixer_init_voice         10030b80 f   mixer.obj
+ 0001:0002fc30       __mixer_release_voice      10030c30 f   mixer.obj
+ 0001:0002fc60       __mixer_start_voice        10030c60 f   mixer.obj
+ 0001:0002fca0       __mixer_stop_voice         10030ca0 f   mixer.obj
+ 0001:0002fcc0       __mixer_loop_voice         10030cc0 f   mixer.obj
+ 0001:0002fd00       __mixer_get_position       10030d00 f   mixer.obj
+ 0001:0002fd30       __mixer_set_position       10030d30 f   mixer.obj
+ 0001:0002fd60       __mixer_get_volume         10030d60 f   mixer.obj
+ 0001:0002fd80       __mixer_set_volume         10030d80 f   mixer.obj
+ 0001:0002fdb0       __mixer_ramp_volume        10030db0 f   mixer.obj
+ 0001:0002fe20       __mixer_stop_volume_ramp   10030e20 f   mixer.obj
+ 0001:0002fe40       __mixer_get_frequency      10030e40 f   mixer.obj
+ 0001:0002fe60       __mixer_set_frequency      10030e60 f   mixer.obj
+ 0001:0002fea0       __mixer_sweep_frequency    10030ea0 f   mixer.obj
+ 0001:0002ff10       __mixer_stop_frequency_sweep 10030f10 f   mixer.obj
+ 0001:0002ff30       __mixer_get_pan            10030f30 f   mixer.obj
+ 0001:0002ff50       __mixer_set_pan            10030f50 f   mixer.obj
+ 0001:0002ff80       __mixer_sweep_pan          10030f80 f   mixer.obj
+ 0001:0002fff0       __mixer_stop_pan_sweep     10030ff0 f   mixer.obj
+ 0001:00030010       __mixer_set_echo           10031010 f   mixer.obj
+ 0001:00030020       __mixer_set_tremolo        10031020 f   mixer.obj
+ 0001:00030030       __mixer_set_vibrato        10031030 f   mixer.obj
+ 0001:00030560       _gfx_mode_select_ex        10031560 f   modesel.obj
+ 0001:00030c30       _gfx_mode_select           10031c30 f   modesel.obj
+ 0001:00030c70       __handle_mouse_input       10031c70 f   mouse.obj
+ 0001:00030e00       _set_mouse_sprite          10031e00 f   mouse.obj
+ 0001:00030f90       _set_mouse_sprite_focus    10031f90 f   mouse.obj
+ 0001:00030fc0       _show_mouse                10031fc0 f   mouse.obj
+ 0001:000315e0       _scare_mouse               100325e0 f   mouse.obj
+ 0001:00031680       _scare_mouse_area          10032680 f   mouse.obj
+ 0001:00031800       _unscare_mouse             10032800 f   mouse.obj
+ 0001:00031870       _position_mouse            10032870 f   mouse.obj
+ 0001:000318e0       _position_mouse_z          100328e0 f   mouse.obj
+ 0001:00031900       _set_mouse_range           10032900 f   mouse.obj
+ 0001:00031960       _set_mouse_speed           10032960 f   mouse.obj
+ 0001:00031980       _get_mouse_mickeys         10032980 f   mouse.obj
+ 0001:000319c0       _poll_mouse                100329c0 f   mouse.obj
+ 0001:000319f0       _mouse_needs_poll          100329f0 f   mouse.obj
+ 0001:00031ab0       _install_mouse             10032ab0 f   mouse.obj
+ 0001:00031d30       _remove_mouse              10032d30 f   mouse.obj
+ 0001:00031e00       __mouse_constructor        10032e00 f   mouse.obj
+ 0001:00031e10       _load_pcx                  10032e10 f   pcx.obj
+ 0001:000323d0       _save_pcx                  100333d0 f   pcx.obj
+ 0001:00032980       __poly_scanline_dummy      10033980 f   poly3d.obj
+ 0001:00032990       __fill_3d_edge_structure   10033990 f   poly3d.obj
+ 0001:00033000       __fill_3d_edge_structure_f 10034000 f   poly3d.obj
+ 0001:00033a50       __get_scanline_filler      10034a50 f   poly3d.obj
+ 0001:00033c90       __clip_polygon_segment_f   10034c90 f   poly3d.obj
+ 0001:00033d40       _polygon3d                 10034d40 f   poly3d.obj
+ 0001:00034630       _polygon3d_f               10035630 f   poly3d.obj
+ 0001:000347c0       __clip_polygon_segment     100357c0 f   poly3d.obj
+ 0001:00034980       _triangle3d                10035980 f   poly3d.obj
+ 0001:000352b0       _triangle3d_f              100362b0 f   poly3d.obj
+ 0001:00035970       _quad3d                    10036970 f   poly3d.obj
+ 0001:000359c0       _quad3d_f                  100369c0 f   poly3d.obj
+ 0001:00035a10       _create_zbuffer            10036a10 f   poly3d.obj
+ 0001:00035a30       _clear_zbuffer             10036a30 f   poly3d.obj
+ 0001:00035a50       _destroy_zbuffer           10036a50 f   poly3d.obj
+ 0001:00035a80       _set_zbuffer               10036a80 f   poly3d.obj
+ 0001:00035a90       _create_sub_zbuffer        10036a90 f   poly3d.obj
+ 0001:00035ac0       _fill_edge_structure       10036ac0 f   polygon.obj
+ 0001:00035b60       __add_edge                 10036b60 f   polygon.obj
+ 0001:00035bf0       __remove_edge              10036bf0 f   polygon.obj
+ 0001:00035c20       _polygon                   10036c20 f   polygon.obj
+ 0001:00035e60       _triangle                  10036e60 f   polygon.obj
+ 0001:00035ef0       _generate_optimized_palette 10036ef0 f   quantize.obj
+ 0001:00036900       _quat_mul                  10037900 f   quat.obj
+ 0001:000369e0       _get_x_rotate_quat         100379e0 f   quat.obj
+ 0001:00036a10       _get_y_rotate_quat         10037a10 f   quat.obj
+ 0001:00036a40       _get_z_rotate_quat         10037a40 f   quat.obj
+ 0001:00036a70       _get_rotation_quat         10037a70 f   quat.obj
+ 0001:00036b30       _get_vector_rotation_quat  10037b30 f   quat.obj
+ 0001:00036b90       _quat_to_matrix            10037b90 f   quat.obj
+ 0001:00036c80       _matrix_to_quat            10037c80 f   quat.obj
+ 0001:00036db0       _apply_quat                10037db0 f   quat.obj
+ 0001:00036ea0       _quat_slerp                10037ea0 f   quat.obj
+ 0001:00037030       _register_bitmap_file_type 10038030 f   readbmp.obj
+ 0001:000370e0       _load_bitmap               100380e0 f   readbmp.obj
+ 0001:00037160       _save_bitmap               10038160 f   readbmp.obj
+ 0001:000371f0       __fixup_loaded_bitmap      100381f0 f   readbmp.obj
+ 0001:00037320       __register_bitmap_file_type_init 10038320 f   readbmp.obj
+ 0001:00037450       _get_rle_sprite            10038450 f   rle.obj
+ 0001:00037b40       _destroy_rle_sprite        10038b40 f   rle.obj
+ 0001:00037b60       __parallelogram_map        10038b60 f   rotate.obj
+ 0001:00038610       __parallelogram_map_standard 10039610 f   rotate.obj
+ 0001:00038b80       __rotate_scale_flip_coordinates 10039b80 f   rotate.obj
+ 0001:00038f20       __pivot_scaled_sprite_flip 10039f20 f   rotate.obj
+ 0001:00038f90       _create_scene              10039f90 f   scene3d.obj
+ 0001:000390a0       _clear_scene               1003a0a0 f   scene3d.obj
+ 0001:000390e0       _destroy_scene             1003a0e0 f   scene3d.obj
+ 0001:00039140       _scene_polygon3d           1003a140 f   scene3d.obj
+ 0001:000395a0       _scene_polygon3d_f         1003a5a0 f   scene3d.obj
+ 0001:00039810       _render_scene              1003a810 f   scene3d.obj
+ 0001:0003a370       __dummy_detect             1003b370 f   sound.obj
+ 0001:0003a380       __dummy_init               1003b380 f   sound.obj
+ 0001:0003a3a0       __dummy_exit               1003b3a0 f   sound.obj
+ 0001:0003a3b0       __dummy_mixer_volume       1003b3b0 f   sound.obj
+ 0001:0003a3c0       __dummy_init_voice         1003b3c0 f   sound.obj
+ 0001:0003a3d0       __dummy_noop1              1003b3d0 f   sound.obj
+ 0001:0003a3e0       __dummy_noop2              1003b3e0 f   sound.obj
+ 0001:0003a3f0       __dummy_noop3              1003b3f0 f   sound.obj
+ 0001:0003a400       __dummy_get_position       1003b400 f   sound.obj
+ 0001:0003a410       __dummy_get                1003b410 f   sound.obj
+ 0001:0003a420       __dummy_raw_midi           1003b420 f   sound.obj
+ 0001:0003a430       __dummy_load_patches       1003b430 f   sound.obj
+ 0001:0003a440       __dummy_adjust_patches     1003b440 f   sound.obj
+ 0001:0003a450       __dummy_key_on             1003b450 f   sound.obj
+ 0001:0003a460       _detect_digi_driver        1003b460 f   sound.obj
+ 0001:0003a730       _detect_midi_driver        1003b730 f   sound.obj
+ 0001:0003a800       _reserve_voices            1003b800 f   sound.obj
+ 0001:0003a820       _install_sound             1003b820 f   sound.obj
+ 0001:0003af90       _install_sound_input       1003bf90 f   sound.obj
+ 0001:0003b340       _remove_sound              1003c340 f   sound.obj
+ 0001:0003b3e0       _remove_sound_input        1003c3e0 f   sound.obj
+ 0001:0003b440       _set_volume                1003c440 f   sound.obj
+ 0001:0003b4d0       _lock_sample               1003c4d0 f   sound.obj
+ 0001:0003b4e0       _load_sample               1003c4e0 f   sound.obj
+ 0001:0003b580       _load_voc                  1003c580 f   sound.obj
+ 0001:0003b810       _load_wav                  1003c810 f   sound.obj
+ 0001:0003ba30       _create_sample             1003ca30 f   sound.obj
+ 0001:0003bae0       _destroy_sample            1003cae0 f   sound.obj
+ 0001:0003bb10       _play_sample               1003cb10 f   sound.obj
+ 0001:0003bba0       _adjust_sample             1003cba0 f   sound.obj
+ 0001:0003bc20       _stop_sample               1003cc20 f   sound.obj
+ 0001:0003bc50       _allocate_voice            1003cc50 f   sound.obj
+ 0001:0003bf50       _deallocate_voice          1003cf50 f   sound.obj
+ 0001:0003bfb0       _reallocate_voice          1003cfb0 f   sound.obj
+ 0001:0003c070       _release_voice             1003d070 f   sound.obj
+ 0001:0003c090       _voice_start               1003d090 f   sound.obj
+ 0001:0003c0d0       _voice_stop                1003d0d0 f   sound.obj
+ 0001:0003c0f0       _voice_set_priority        1003d0f0 f   sound.obj
+ 0001:0003c110       _voice_check               1003d110 f   sound.obj
+ 0001:0003c160       _voice_get_position        1003d160 f   sound.obj
+ 0001:0003c190       _voice_set_position        1003d190 f   sound.obj
+ 0001:0003c1c0       _voice_set_playmode        1003d1c0 f   sound.obj
+ 0001:0003c220       _voice_get_volume          1003d220 f   sound.obj
+ 0001:0003c280       _voice_set_volume          1003d280 f   sound.obj
+ 0001:0003c2f0       _voice_ramp_volume         1003d2f0 f   sound.obj
+ 0001:0003c3b0       _voice_stop_volumeramp     1003d3b0 f   sound.obj
+ 0001:0003c3f0       _voice_get_frequency       1003d3f0 f   sound.obj
+ 0001:0003c420       _voice_set_frequency       1003d420 f   sound.obj
+ 0001:0003c470       _voice_sweep_frequency     1003d470 f   sound.obj
+ 0001:0003c500       _voice_stop_frequency_sweep 1003d500 f   sound.obj
+ 0001:0003c540       _voice_get_pan             1003d540 f   sound.obj
+ 0001:0003c580       _voice_set_pan             1003d580 f   sound.obj
+ 0001:0003c5e0       _voice_sweep_pan           1003d5e0 f   sound.obj
+ 0001:0003c690       _voice_stop_pan_sweep      1003d690 f   sound.obj
+ 0001:0003c6d0       _voice_set_echo            1003d6d0 f   sound.obj
+ 0001:0003c710       _voice_set_tremolo         1003d710 f   sound.obj
+ 0001:0003c750       _voice_set_vibrato         1003d750 f   sound.obj
+ 0001:0003c8c0       _get_sound_input_cap_bits  1003d8c0 f   sound.obj
+ 0001:0003c8d0       _get_sound_input_cap_stereo 1003d8d0 f   sound.obj
+ 0001:0003c8e0       _get_sound_input_cap_rate  1003d8e0 f   sound.obj
+ 0001:0003c910       _get_sound_input_cap_parm  1003d910 f   sound.obj
+ 0001:0003c940       _set_sound_input_source    1003d940 f   sound.obj
+ 0001:0003c960       _start_sound_input         1003d960 f   sound.obj
+ 0001:0003c990       _stop_sound_input          1003d990 f   sound.obj
+ 0001:0003c9b0       _read_sound_input          1003d9b0 f   sound.obj
+ 0001:0003c9e0       _calc_spline               1003d9e0 f   spline.obj
+ 0001:0003cba0       _spline                    1003dba0 f   spline.obj
+ 0001:0003cdc0       _play_audio_stream         1003ddc0 f   stream.obj
+ 0001:0003cf10       _stop_audio_stream         1003df10 f   stream.obj
+ 0001:0003cf60       _get_audio_stream_buffer   1003df60 f   stream.obj
+ 0001:0003d050       _free_audio_stream_buffer  1003e050 f   stream.obj
+ 0001:0003d0c0       _text_mode                 1003e0c0 f   text.obj
+ 0001:0003d0e0       _textout                   1003e0e0 f   text.obj
+ 0001:0003d110       _textout_centre            1003e110 f   text.obj
+ 0001:0003d150       _textout_right             1003e150 f   text.obj
+ 0001:0003d190       _textout_justify           1003e190 f   text.obj
+ 0001:0003d3b0       _textprintf                1003e3b0 f   text.obj
+ 0001:0003d410       _textprintf_centre         1003e410 f   text.obj
+ 0001:0003d470       _textprintf_right          1003e470 f   text.obj
+ 0001:0003d4d0       _textprintf_justify        1003e4d0 f   text.obj
+ 0001:0003d540       _text_length               1003e540 f   text.obj
+ 0001:0003d560       _text_height               1003e560 f   text.obj
+ 0001:0003d570       _destroy_font              1003e570 f   text.obj
+ 0001:0003d580       _load_tga                  1003e580 f   tga.obj
+ 0001:0003e1a0       _save_tga                  1003f1a0 f   tga.obj
+ 0001:0003e800       __handle_timer_tick        1003f800 f   timer.obj
+ 0001:0003e920       _rest_callback             1003f920 f   timer.obj
+ 0001:0003e9f0       _rest                      1003f9f0 f   timer.obj
+ 0001:0003ea00       _timer_can_simulate_retrace 1003fa00 f   timer.obj
+ 0001:0003ea20       _timer_simulate_retrace    1003fa20 f   timer.obj
+ 0001:0003ea40       _timer_is_using_retrace    1003fa40 f   timer.obj
+ 0001:0003ea50       _install_int               1003fa50 f   timer.obj
+ 0001:0003ec10       _install_int_ex            1003fc10 f   timer.obj
+ 0001:0003ec30       _install_param_int         1003fc30 f   timer.obj
+ 0001:0003ec60       _install_param_int_ex      1003fc60 f   timer.obj
+ 0001:0003ec80       _remove_int                1003fc80 f   timer.obj
+ 0001:0003ece0       _remove_param_int          1003fce0 f   timer.obj
+ 0001:0003ed40       _install_timer             1003fd40 f   timer.obj
+ 0001:0003ee40       _remove_timer              1003fe40 f   timer.obj
+ 0001:0003f2c0       __find_utype               100402c0 f   unicode.obj
+ 0001:0003f300       _set_uformat               10040300 f   unicode.obj
+ 0001:0003f360       _get_uformat               10040360 f   unicode.obj
+ 0001:0003f370       _register_uformat          10040370 f   unicode.obj
+ 0001:0003f3d0       _set_ucodepage             100403d0 f   unicode.obj
+ 0001:0003f3f0       _need_uconvert             100403f0 f   unicode.obj
+ 0001:0003f460       _uconvert_size             10040460 f   unicode.obj
+ 0001:0003f4d0       _do_uconvert               100404d0 f   unicode.obj
+ 0001:0003f590       _uconvert                  10040590 f   unicode.obj
+ 0001:0003f600       _uoffset                   10040600 f   unicode.obj
+ 0001:0003f660       _ugetat                    10040660 f   unicode.obj
+ 0001:0003f680       _usetat                    10040680 f   unicode.obj
+ 0001:0003f6f0       _uinsert                   100406f0 f   unicode.obj
+ 0001:0003f740       _uremove                   10040740 f   unicode.obj
+ 0001:0003f780       _uwidth_max                10040780 f   unicode.obj
+ 0001:0003f7a0       _utolower                  100407a0 f   unicode.obj
+ 0001:00040050       _utoupper                  10041050 f   unicode.obj
+ 0001:00040a40       _uisspace                  10041a40 f   unicode.obj
+ 0001:00040aa0       _uisdigit                  10041aa0 f   unicode.obj
+ 0001:00040ac0       __ustrdup                  10041ac0 f   unicode.obj
+ 0001:00040af0       _ustrsize                  10041af0 f   unicode.obj
+ 0001:00040b20       _ustrsizez                 10041b20 f   unicode.obj
+ 0001:00040b40       _ustrzcpy                  10041b40 f   unicode.obj
+ 0001:00040bb0       _ustrzcat                  10041bb0 f   unicode.obj
+ 0001:00040c30       _ustrlen                   10041c30 f   unicode.obj
+ 0001:00040c60       _ustrcmp                   10041c60 f   unicode.obj
+ 0001:00040cc0       _ustrzncpy                 10041cc0 f   unicode.obj
+ 0001:00040da0       _ustrzncat                 10041da0 f   unicode.obj
+ 0001:00040e30       _ustrncmp                  10041e30 f   unicode.obj
+ 0001:00040ea0       _ustricmp                  10041ea0 f   unicode.obj
+ 0001:00040f10       _ustrlwr                   10041f10 f   unicode.obj
+ 0001:00040f70       _ustrupr                   10041f70 f   unicode.obj
+ 0001:00040fd0       _ustrchr                   10041fd0 f   unicode.obj
+ 0001:00041020       _ustrrchr                  10042020 f   unicode.obj
+ 0001:00041070       _ustrstr                   10042070 f   unicode.obj
+ 0001:000410d0       _ustrpbrk                  100420d0 f   unicode.obj
+ 0001:00041140       _ustrtok                   10042140 f   unicode.obj
+ 0001:00041160       _ustrtok_r                 10042160 f   unicode.obj
+ 0001:00041230       _uatof                     10042230 f   unicode.obj
+ 0001:00041260       _ustrtol                   10042260 f   unicode.obj
+ 0001:000412d0       _ustrtod                   100422d0 f   unicode.obj
+ 0001:00041330       _ustrerror                 10042330 f   unicode.obj
+ 0001:00041370       _uvszprintf                10042370 f   unicode.obj
+ 0001:000422e0       _usprintf                  100432e0 f   unicode.obj
+ 0001:00042300       _uszprintf                 10043300 f   unicode.obj
+ 0001:00042320       __linear_clear_to_color16  10043320     iblit16.obj
+ 0001:000424f4       __linear_blit16            100434f4     iblit16.obj
+ 0001:000427b0       __linear_blit_backward16   100437b0     iblit16.obj
+ 0001:0004282c       __linear_blit16_end        1004382c     iblit16.obj
+ 0001:00042830       __linear_masked_blit16     10043830     iblit16.obj
+ 0001:000428f0       __linear_clear_to_color24  100438f0     iblit24.obj
+ 0001:0004298c       __linear_blit24            1004398c     iblit24.obj
+ 0001:00042a1c       __linear_blit_backward24   10043a1c     iblit24.obj
+ 0001:00042abc       __linear_blit24_end        10043abc     iblit24.obj
+ 0001:00042ac0       __linear_masked_blit24     10043ac0     iblit24.obj
+ 0001:00042b50       __linear_clear_to_color32  10043b50     iblit32.obj
+ 0001:00042b90       __linear_blit32            10043b90     iblit32.obj
+ 0001:00042bf4       __linear_blit_backward32   10043bf4     iblit32.obj
+ 0001:00042c6c       __linear_blit32_end        10043c6c     iblit32.obj
+ 0001:00042c70       __linear_masked_blit32     10043c70     iblit32.obj
+ 0001:00042cf0       __linear_clear_to_color8   10043cf0     iblit8.obj
+ 0001:00042eb8       __linear_blit8             10043eb8     iblit8.obj
+ 0001:00043018       __linear_blit_backward8    10044018     iblit8.obj
+ 0001:000430e4       __linear_blit8_end         100440e4     iblit8.obj
+ 0001:000430e8       __linear_masked_blit8      100440e8     iblit8.obj
+ 0001:00043220       _check_cpu                 10044220 f   icpu.obj
+ 0001:00043530       __i_is_486                 10044530     icpus.obj
+ 0001:00043554       __i_is_fpu                 10044554     icpus.obj
+ 0001:00043574       __i_is_cyrix               10044574     icpus.obj
+ 0001:0004359c       __i_cx_w                   1004459c     icpus.obj
+ 0001:000435b0       __i_cx_r                   100445b0     icpus.obj
+ 0001:000435c0       __i_is_cpuid_supported     100445c0     icpus.obj
+ 0001:000435e4       __i_get_cpuid_info         100445e4     icpus.obj
+ 0001:00043610       _get_compiled_sprite       10044610 f   icsprite.obj
+ 0001:000446f0       _destroy_compiled_sprite   100456f0 f   icsprite.obj
+ 0001:00044730       __linear_putpixel15        10045730     igfx15.obj
+ 0001:00044830       __linear_hline15           10045830     igfx15.obj
+ 0001:000449f0       __linear_vline15           100459f0     igfx15.obj
+ 0001:00044aa0       __linear_putpixel16        10045aa0     igfx16.obj
+ 0001:00044ba0       __linear_getpixel16        10045ba0     igfx16.obj
+ 0001:00044bec       __linear_hline16           10045bec     igfx16.obj
+ 0001:00044dac       __linear_vline16           10045dac     igfx16.obj
+ 0001:00044e50       __linear_putpixel24        10045e50     igfx24.obj
+ 0001:00044f8c       __linear_getpixel24        10045f8c     igfx24.obj
+ 0001:00044fe0       __linear_hline24           10045fe0     igfx24.obj
+ 0001:00045260       __linear_vline24           10046260     igfx24.obj
+ 0001:00045320       __linear_putpixel32        10046320     igfx32.obj
+ 0001:00045414       __linear_getpixel32        10046414     igfx32.obj
+ 0001:0004545c       __linear_hline32           1004645c     igfx32.obj
+ 0001:000455f0       __linear_vline32           100465f0     igfx32.obj
+ 0001:00045690       __linear_putpixel8         10046690     igfx8.obj
+ 0001:00045778       __linear_getpixel8         10046778     igfx8.obj
+ 0001:000457c0       __linear_hline8            100467c0     igfx8.obj
+ 0001:000459c4       __linear_vline8            100469c4     igfx8.obj
+ 0001:00045a70       __stub_bank_switch         10046a70     imisc.obj
+ 0001:00045a78       __stub_unbank_switch       10046a78     imisc.obj
+ 0001:00045a7c       __stub_bank_switch_end     10046a7c     imisc.obj
+ 0001:00045a80       _apply_matrix_f            10046a80     imisc.obj
+ 0001:00045afc       _draw_compiled_sprite      10046afc     imisc.obj
+ 0001:00045ba4       __do_stretch               10046ba4     imisc.obj
+ 0001:00045ccc       __blender_trans24          10046ccc     imisc.obj
+ 0001:00045d24       _fixsqrt                   10046d24     imisc.obj
+ 0001:00045d64       _fixhypot                  10046d64     imisc.obj
+ 0001:00045de0       __poly_scanline_gcol8      10046de0     iscan.obj
+ 0001:00045e10       __poly_scanline_grgb8      10046e10     iscan.obj
+ 0001:00045ea0       __poly_scanline_atex8      10046ea0     iscan.obj
+ 0001:00045f38       __poly_scanline_atex_mask8 10046f38     iscan.obj
+ 0001:00045fcc       __poly_scanline_atex_lit8  10046fcc     iscan.obj
+ 0001:000460b8       __poly_scanline_atex_mask_lit8 100470b8     iscan.obj
+ 0001:000461c0       __poly_scanline_ptex8      100471c0     iscan.obj
+ 0001:00046464       __poly_scanline_ptex_mask8 10047464     iscan.obj
+ 0001:00046718       __poly_scanline_ptex_lit8  10047718     iscan.obj
+ 0001:00046a48       __poly_scanline_grgb15     10047a48     iscan.obj
+ 0001:00046abc       __poly_scanline_grgb16     10047abc     iscan.obj
+ 0001:00046b30       __poly_scanline_grgb32     10047b30     iscan.obj
+ 0001:00046ba4       __poly_scanline_grgb24     10047ba4     iscan.obj
+ 0001:00046c20       __poly_scanline_atex16     10047c20     iscan.obj
+ 0001:00046c90       __poly_scanline_atex_mask15 10047c90     iscan.obj
+ 0001:00046d08       __poly_scanline_atex_mask16 10047d08     iscan.obj
+ 0001:00046d80       __poly_scanline_atex32     10047d80     iscan.obj
+ 0001:00046df0       __poly_scanline_atex_mask32 10047df0     iscan.obj
+ 0001:00046e68       __poly_scanline_atex24     10047e68     iscan.obj
+ 0001:00046ee4       __poly_scanline_atex_mask24 10047ee4     iscan.obj
+ 0001:00046f6c       __poly_scanline_atex_lit15 10047f6c     iscan.obj
+ 0001:00047008       __poly_scanline_atex_mask_lit15 10048008     iscan.obj
+ 0001:000470a8       __poly_scanline_atex_lit16 100480a8     iscan.obj
+ 0001:00047144       __poly_scanline_atex_mask_lit16 10048144     iscan.obj
+ 0001:000471e4       __poly_scanline_atex_lit32 100481e4     iscan.obj
+ 0001:0004727c       __poly_scanline_atex_mask_lit32 1004827c     iscan.obj
+ 0001:0004731c       __poly_scanline_atex_lit24 1004831c     iscan.obj
+ 0001:000473c8       __poly_scanline_atex_mask_lit24 100483c8     iscan.obj
+ 0001:0004747c       __poly_scanline_atex_trans8 1004847c     iscan.obj
+ 0001:00047504       __poly_scanline_atex_mask_trans8 10048504     iscan.obj
+ 0001:00047590       __poly_scanline_atex_trans15 10048590     iscan.obj
+ 0001:00047624       __poly_scanline_atex_mask_trans15 10048624     iscan.obj
+ 0001:000476c0       __poly_scanline_atex_trans16 100486c0     iscan.obj
+ 0001:00047754       __poly_scanline_atex_mask_trans16 10048754     iscan.obj
+ 0001:000477f0       __poly_scanline_atex_trans32 100487f0     iscan.obj
+ 0001:00047884       __poly_scanline_atex_mask_trans32 10048884     iscan.obj
+ 0001:00047920       __poly_scanline_atex_trans24 10048920     iscan.obj
+ 0001:000479cc       __poly_scanline_atex_mask_trans24 100489cc     iscan.obj
+ 0001:00047a80       __poly_scanline_ptex16     10048a80     iscan.obj
+ 0001:00047ba4       __poly_scanline_ptex_mask15 10048ba4     iscan.obj
+ 0001:00047ccc       __poly_scanline_ptex_mask16 10048ccc     iscan.obj
+ 0001:00047df4       __poly_scanline_ptex32     10048df4     iscan.obj
+ 0001:00047f14       __poly_scanline_ptex_mask32 10048f14     iscan.obj
+ 0001:0004803c       __poly_scanline_ptex24     1004903c     iscan.obj
+ 0001:00048168       __poly_scanline_ptex_mask24 10049168     iscan.obj
+ 0001:000482a8       __poly_scanline_ptex_mask_lit8 100492a8     iscan.obj
+ 0001:000483ec       __poly_scanline_ptex_lit15 100493ec     iscan.obj
+ 0001:0004853c       __poly_scanline_ptex_mask_lit15 1004953c     iscan.obj
+ 0001:00048690       __poly_scanline_ptex_lit16 10049690     iscan.obj
+ 0001:000487e0       __poly_scanline_ptex_mask_lit16 100497e0     iscan.obj
+ 0001:00048934       __poly_scanline_ptex_lit32 10049934     iscan.obj
+ 0001:00048a80       __poly_scanline_ptex_mask_lit32 10049a80     iscan.obj
+ 0001:00048bd4       __poly_scanline_ptex_lit24 10049bd4     iscan.obj
+ 0001:00048d34       __poly_scanline_ptex_mask_lit24 10049d34     iscan.obj
+ 0001:00048e9c       __poly_scanline_ptex_trans8 10049e9c     iscan.obj
+ 0001:00048fd8       __poly_scanline_ptex_mask_trans8 10049fd8     iscan.obj
+ 0001:00049118       __poly_scanline_ptex_trans15 1004a118     iscan.obj
+ 0001:00049260       __poly_scanline_ptex_mask_trans15 1004a260     iscan.obj
+ 0001:000493b0       __poly_scanline_ptex_trans16 1004a3b0     iscan.obj
+ 0001:000494f8       __poly_scanline_ptex_mask_trans16 1004a4f8     iscan.obj
+ 0001:00049648       __poly_scanline_ptex_trans32 1004a648     iscan.obj
+ 0001:00049790       __poly_scanline_ptex_mask_trans32 1004a790     iscan.obj
+ 0001:000498e0       __poly_scanline_ptex_trans24 1004a8e0     iscan.obj
+ 0001:00049a40       __poly_scanline_ptex_mask_trans24 1004aa40     iscan.obj
+ 0001:00049bb0       __poly_scanline_grgb8x     1004abb0     iscanmmx.obj
+ 0001:00049c74       __poly_scanline_grgb15x    1004ac74     iscanmmx.obj
+ 0001:00049d4c       __poly_scanline_grgb16x    1004ad4c     iscanmmx.obj
+ 0001:00049e2c       __poly_scanline_grgb32x    1004ae2c     iscanmmx.obj
+ 0001:00049f00       __poly_scanline_grgb24x    1004af00     iscanmmx.obj
+ 0001:00049fe8       __poly_scanline_atex_lit15x 1004afe8     iscanmmx.obj
+ 0001:0004a0c4       __poly_scanline_atex_mask_lit15x 1004b0c4     iscanmmx.obj
+ 0001:0004a1a8       __poly_scanline_atex_lit16x 1004b1a8     iscanmmx.obj
+ 0001:0004a284       __poly_scanline_atex_mask_lit16x 1004b284     iscanmmx.obj
+ 0001:0004a368       __poly_scanline_atex_lit32x 1004b368     iscanmmx.obj
+ 0001:0004a418       __poly_scanline_atex_mask_lit32x 1004b418     iscanmmx.obj
+ 0001:0004a4d0       __poly_scanline_atex_lit24x 1004b4d0     iscanmmx.obj
+ 0001:0004a598       __poly_scanline_atex_mask_lit24x 1004b598     iscanmmx.obj
+ 0001:0004a668       __poly_scanline_ptex_lit15x 1004b668     iscanmmx.obj
+ 0001:0004a94c       __poly_scanline_ptex_mask_lit15x 1004b94c     iscanmmx.obj
+ 0001:0004ac48       __poly_scanline_ptex_lit15d 1004bc48     iscanmmx.obj
+ 0001:0004adc0       __poly_scanline_ptex_mask_lit15d 1004bdc0     iscanmmx.obj
+ 0001:0004af3c       __poly_scanline_ptex_lit16x 1004bf3c     iscanmmx.obj
+ 0001:0004b220       __poly_scanline_ptex_mask_lit16x 1004c220     iscanmmx.obj
+ 0001:0004b51c       __poly_scanline_ptex_lit16d 1004c51c     iscanmmx.obj
+ 0001:0004b694       __poly_scanline_ptex_mask_lit16d 1004c694     iscanmmx.obj
+ 0001:0004b810       __poly_scanline_ptex_lit32x 1004c810     iscanmmx.obj
+ 0001:0004ba5c       __poly_scanline_ptex_mask_lit32x 1004ca5c     iscanmmx.obj
+ 0001:0004bccc       __poly_scanline_ptex_lit32d 1004cccc     iscanmmx.obj
+ 0001:0004be0c       __poly_scanline_ptex_mask_lit32d 1004ce0c     iscanmmx.obj
+ 0001:0004bf5c       __poly_scanline_ptex_lit24x 1004cf5c     iscanmmx.obj
+ 0001:0004c200       __poly_scanline_ptex_mask_lit24x 1004d200     iscanmmx.obj
+ 0001:0004c4c4       __poly_scanline_ptex_lit24d 1004d4c4     iscanmmx.obj
+ 0001:0004c620       __poly_scanline_ptex_mask_lit24d 1004d620     iscanmmx.obj
+ 0001:0004c790       __linear_draw_trans_sprite15 1004d790     ispr15.obj
+ 0001:0004c8ac       __linear_draw_trans_rgba_sprite15 1004d8ac     ispr15.obj
+ 0001:0004c9cc       __linear_draw_lit_sprite15 1004d9cc     ispr15.obj
+ 0001:0004cae0       __linear_draw_rle_sprite15 1004dae0     ispr15.obj
+ 0001:0004cc64       __linear_draw_trans_rle_sprite15 1004dc64     ispr15.obj
+ 0001:0004ce7c       __linear_draw_lit_rle_sprite15 1004de7c     ispr15.obj
+ 0001:0004d074       __linear_draw_trans_rgba_rle_sprite15 1004e074     ispr15.obj
+ 0001:0004d280       __linear_draw_sprite16     1004e280     ispr16.obj
+ 0001:0004d414       __linear_draw_sprite16_end 1004e414     ispr16.obj
+ 0001:0004d418       __linear_draw_256_sprite16 1004e418     ispr16.obj
+ 0001:0004d518       __linear_draw_sprite_v_flip16 1004e518     ispr16.obj
+ 0001:0004d61c       __linear_draw_sprite_h_flip16 1004e61c     ispr16.obj
+ 0001:0004d720       __linear_draw_sprite_vh_flip16 1004e720     ispr16.obj
+ 0001:0004d82c       __linear_draw_trans_sprite16 1004e82c     ispr16.obj
+ 0001:0004d948       __linear_draw_trans_rgba_sprite16 1004e948     ispr16.obj
+ 0001:0004da68       __linear_draw_lit_sprite16 1004ea68     ispr16.obj
+ 0001:0004db7c       __linear_draw_character16  1004eb7c     ispr16.obj
+ 0001:0004dca4       __linear_draw_rle_sprite16 1004eca4     ispr16.obj
+ 0001:0004de28       __linear_draw_trans_rle_sprite16 1004ee28     ispr16.obj
+ 0001:0004e040       __linear_draw_lit_rle_sprite16 1004f040     ispr16.obj
+ 0001:0004e238       __linear_draw_trans_rgba_rle_sprite16 1004f238     ispr16.obj
+ 0001:0004e440       __linear_draw_sprite24     1004f440     ispr24.obj
+ 0001:0004e550       __linear_draw_sprite24_end 1004f550     ispr24.obj
+ 0001:0004e554       __linear_draw_256_sprite24 1004f554     ispr24.obj
+ 0001:0004e660       __linear_draw_sprite_v_flip24 1004f660     ispr24.obj
+ 0001:0004e778       __linear_draw_sprite_h_flip24 1004f778     ispr24.obj
+ 0001:0004e894       __linear_draw_sprite_vh_flip24 1004f894     ispr24.obj
+ 0001:0004e9b8       __linear_draw_trans_sprite24 1004f9b8     ispr24.obj
+ 0001:0004eaf0       __linear_draw_trans_rgba_sprite24 1004faf0     ispr24.obj
+ 0001:0004ec18       __linear_draw_lit_sprite24 1004fc18     ispr24.obj
+ 0001:0004ed44       __linear_draw_character24  1004fd44     ispr24.obj
+ 0001:0004ee98       __linear_draw_rle_sprite24 1004fe98     ispr24.obj
+ 0001:0004f03c       __linear_draw_trans_rle_sprite24 1005003c     ispr24.obj
+ 0001:0004f264       __linear_draw_lit_rle_sprite24 10050264     ispr24.obj
+ 0001:0004f468       __linear_draw_trans_rgba_rle_sprite24 10050468     ispr24.obj
+ 0001:0004f690       __linear_draw_sprite32     10050690     ispr32.obj
+ 0001:0004f78c       __linear_draw_sprite32_end 1005078c     ispr32.obj
+ 0001:0004f790       __linear_draw_256_sprite32 10050790     ispr32.obj
+ 0001:0004f88c       __linear_draw_sprite_v_flip32 1005088c     ispr32.obj
+ 0001:0004f98c       __linear_draw_sprite_h_flip32 1005098c     ispr32.obj
+ 0001:0004fa8c       __linear_draw_sprite_vh_flip32 10050a8c     ispr32.obj
+ 0001:0004fb94       __linear_draw_trans_sprite32 10050b94     ispr32.obj
+ 0001:0004fd44       __linear_draw_lit_sprite32 10050d44     ispr32.obj
+ 0001:0004fe58       __linear_draw_character32  10050e58     ispr32.obj
+ 0001:0004ff7c       __linear_draw_rle_sprite32 10050f7c     ispr32.obj
+ 0001:000500d8       __linear_draw_trans_rle_sprite32 100510d8     ispr32.obj
+ 0001:000502dc       __linear_draw_lit_rle_sprite32 100512dc     ispr32.obj
+ 0001:000504c0       __linear_draw_sprite8      100514c0     ispr8.obj
+ 0001:000507c4       __linear_draw_sprite8_end  100517c4     ispr8.obj
+ 0001:000507c8       __linear_draw_sprite_v_flip8 100517c8     ispr8.obj
+ 0001:000508ac       __linear_draw_sprite_h_flip8 100518ac     ispr8.obj
+ 0001:00050990       __linear_draw_sprite_vh_flip8 10051990     ispr8.obj
+ 0001:00050a7c       __linear_draw_trans_sprite8 10051a7c     ispr8.obj
+ 0001:00050d60       __linear_draw_lit_sprite8  10051d60     ispr8.obj
+ 0001:00050e4c       __linear_draw_character8   10051e4c     ispr8.obj
+ 0001:00050f6c       __linear_draw_rle_sprite8  10051f6c     ispr8.obj
+ 0001:000510d8       __linear_draw_trans_rle_sprite8 100520d8     ispr8.obj
+ 0001:00051334       __linear_draw_lit_rle_sprite8 10052334     ispr8.obj
+ 0001:00051530       _stretch_blit              10052530 f   istretch.obj
+ 0001:00055cd0       _masked_stretch_blit       10056cd0 f   istretch.obj
+ 0001:00055d10       _stretch_sprite            10056d10 f   istretch.obj
+ 0001:00055d50       __poly_zbuf_flat8          10056d50     izbuf.obj
+ 0001:00055d98       __poly_zbuf_flat16         10056d98     izbuf.obj
+ 0001:00055de4       __poly_zbuf_flat32         10056de4     izbuf.obj
+ 0001:00055e2c       __poly_zbuf_flat24         10056e2c     izbuf.obj
+ 0001:00055e7c       __poly_zbuf_gcol8          10056e7c     izbuf.obj
+ 0001:00055ecc       __poly_zbuf_grgb8          10056ecc     izbuf.obj
+ 0001:00055f60       __poly_zbuf_grgb15         10056f60     izbuf.obj
+ 0001:00056004       __poly_zbuf_grgb16         10057004     izbuf.obj
+ 0001:000560a8       __poly_zbuf_grgb32         100570a8     izbuf.obj
+ 0001:00056148       __poly_zbuf_grgb24         10057148     izbuf.obj
+ 0001:000561f0       __poly_zbuf_atex8          100571f0     izbuf.obj
+ 0001:00056288       __poly_zbuf_atex_mask8     10057288     izbuf.obj
+ 0001:00056324       __poly_zbuf_atex16         10057324     izbuf.obj
+ 0001:000563c0       __poly_zbuf_atex_mask15    100573c0     izbuf.obj
+ 0001:00056464       __poly_zbuf_atex_mask16    10057464     izbuf.obj
+ 0001:00056508       __poly_zbuf_atex32         10057508     izbuf.obj
+ 0001:000565a4       __poly_zbuf_atex_mask32    100575a4     izbuf.obj
+ 0001:00056644       __poly_zbuf_atex24         10057644     izbuf.obj
+ 0001:000566ec       __poly_zbuf_atex_mask24    100576ec     izbuf.obj
+ 0001:000567a0       __poly_zbuf_atex_lit8      100577a0     izbuf.obj
+ 0001:00056858       __poly_zbuf_atex_mask_lit8 10057858     izbuf.obj
+ 0001:00056914       __poly_zbuf_atex_lit15     10057914     izbuf.obj
+ 0001:000569d8       __poly_zbuf_atex_mask_lit15 100579d8     izbuf.obj
+ 0001:00056aa4       __poly_zbuf_atex_lit16     10057aa4     izbuf.obj
+ 0001:00056b68       __poly_zbuf_atex_mask_lit16 10057b68     izbuf.obj
+ 0001:00056c34       __poly_zbuf_atex_lit32     10057c34     izbuf.obj
+ 0001:00056cf8       __poly_zbuf_atex_mask_lit32 10057cf8     izbuf.obj
+ 0001:00056dc4       __poly_zbuf_atex_lit24     10057dc4     izbuf.obj
+ 0001:00056e98       __poly_zbuf_atex_mask_lit24 10057e98     izbuf.obj
+ 0001:00056f74       __poly_zbuf_atex_trans8    10057f74     izbuf.obj
+ 0001:0005702c       __poly_zbuf_atex_mask_trans8 1005802c     izbuf.obj
+ 0001:000570e8       __poly_zbuf_atex_trans15   100580e8     izbuf.obj
+ 0001:000571ac       __poly_zbuf_atex_mask_trans15 100581ac     izbuf.obj
+ 0001:00057274       __poly_zbuf_atex_trans16   10058274     izbuf.obj
+ 0001:00057338       __poly_zbuf_atex_mask_trans16 10058338     izbuf.obj
+ 0001:00057400       __poly_zbuf_atex_trans32   10058400     izbuf.obj
+ 0001:000574c4       __poly_zbuf_atex_mask_trans32 100584c4     izbuf.obj
+ 0001:00057590       __poly_zbuf_atex_trans24   10058590     izbuf.obj
+ 0001:00057668       __poly_zbuf_atex_mask_trans24 10058668     izbuf.obj
+ 0001:00057750       __poly_zbuf_ptex8          10058750     izbuf.obj
+ 0001:00057898       __poly_zbuf_ptex_mask8     10058898     izbuf.obj
+ 0001:000579e4       __poly_zbuf_ptex16         100589e4     izbuf.obj
+ 0001:00057b30       __poly_zbuf_ptex_mask15    10058b30     izbuf.obj
+ 0001:00057c84       __poly_zbuf_ptex_mask16    10058c84     izbuf.obj
+ 0001:00057dd8       __poly_zbuf_ptex32         10058dd8     izbuf.obj
+ 0001:00057f24       __poly_zbuf_ptex_mask32    10058f24     izbuf.obj
+ 0001:00058074       __poly_zbuf_ptex24         10059074     izbuf.obj
+ 0001:000581cc       __poly_zbuf_ptex_mask24    100591cc     izbuf.obj
+ 0001:00058330       __poly_zbuf_ptex_lit8      10059330     izbuf.obj
+ 0001:00058498       __poly_zbuf_ptex_mask_lit8 10059498     izbuf.obj
+ 0001:00058604       __poly_zbuf_ptex_lit15     10059604     izbuf.obj
+ 0001:00058778       __poly_zbuf_ptex_mask_lit15 10059778     izbuf.obj
+ 0001:000588f4       __poly_zbuf_ptex_lit16     100598f4     izbuf.obj
+ 0001:00058a68       __poly_zbuf_ptex_mask_lit16 10059a68     izbuf.obj
+ 0001:00058be4       __poly_zbuf_ptex_lit32     10059be4     izbuf.obj
+ 0001:00058d58       __poly_zbuf_ptex_mask_lit32 10059d58     izbuf.obj
+ 0001:00058ed4       __poly_zbuf_ptex_lit24     10059ed4     izbuf.obj
+ 0001:00059058       __poly_zbuf_ptex_mask_lit24 1005a058     izbuf.obj
+ 0001:000591e8       __poly_zbuf_ptex_trans8    1005a1e8     izbuf.obj
+ 0001:00059350       __poly_zbuf_ptex_mask_trans8 1005a350     izbuf.obj
+ 0001:000594bc       __poly_zbuf_ptex_trans15   1005a4bc     izbuf.obj
+ 0001:00059630       __poly_zbuf_ptex_mask_trans15 1005a630     izbuf.obj
+ 0001:000597a8       __poly_zbuf_ptex_trans16   1005a7a8     izbuf.obj
+ 0001:0005991c       __poly_zbuf_ptex_mask_trans16 1005a91c     izbuf.obj
+ 0001:00059a94       __poly_zbuf_ptex_trans32   1005aa94     izbuf.obj
+ 0001:00059c08       __poly_zbuf_ptex_mask_trans32 1005ac08     izbuf.obj
+ 0001:00059d84       __poly_zbuf_ptex_trans24   1005ad84     izbuf.obj
+ 0001:00059f10       __poly_zbuf_ptex_mask_trans24 1005af10     izbuf.obj
+ 0001:0005a0b0       _gfx_directx_write_bank    1005b0b0     asmlock.obj
+ 0001:0005a0c8       _gfx_directx_unwrite_bank  1005b0c8     asmlock.obj
+ 0001:0005a0e4       _gfx_directx_write_bank_win 1005b0e4     asmlock.obj
+ 0001:0005a10c       _gfx_directx_unwrite_bank_win 1005b10c     asmlock.obj
+ 0001:0005a13c       _gfx_directx_unlock_win    1005b13c     asmlock.obj
+ 0001:0005a1b8       _gfx_gdi_write_bank        1005b1b8     asmlock.obj
+ 0001:0005a1e0       _gfx_gdi_unwrite_bank      1005b1e0     asmlock.obj
+ 0001:0005a200       _set_gdi_color_format      1005b200 f   gdi.obj
+ 0001:0005a260       _set_palette_to_hdc        1005b260 f   gdi.obj
+ 0001:0005a370       _convert_palette_to_hpalette 1005b370 f   gdi.obj
+ 0001:0005a400       _convert_hpalette_to_palette 1005b400 f   gdi.obj
+ 0001:0005a470       _convert_bitmap_to_hbitmap 1005b470 f   gdi.obj
+ 0001:0005aad0       _convert_hbitmap_to_bitmap 1005bad0 f   gdi.obj
+ 0001:0005b240       _draw_to_hdc               1005c240 f   gdi.obj
+ 0001:0005b270       _blit_to_hdc               1005c270 f   gdi.obj
+ 0001:0005b2b0       _stretch_blit_to_hdc       1005c2b0 f   gdi.obj
+ 0001:0005b330       _blit_from_hdc             1005c330 f   gdi.obj
+ 0001:0005b370       _stretch_blit_from_hdc     1005c370 f   gdi.obj
+ 0001:0005b420       _enable_acceleration       1005c420 f   wddaccel.obj
+ 0001:0005bdf0       _enable_triple_buffering   1005cdf0 f   wddaccel.obj
+ 0001:0005be30       _gfx_directx_create_surface 1005ce30 f   wddbmp.obj
+ 0001:0005c090       _gfx_directx_destroy_surf  1005d090 f   wddbmp.obj
+ 0001:0005c0d0       _make_directx_bitmap       1005d0d0 f   wddbmp.obj
+ 0001:0005c210       _destroy_directx_bitmap    1005d210 f   wddbmp.obj
+ 0001:0005c240       _gfx_directx_created_sub_bitmap 1005d240 f   wddbmp.obj
+ 0001:0005c250       _gfx_directx_create_video_bitmap 1005d250 f   wddbmp.obj
+ 0001:0005c350       _gfx_directx_destroy_video_bitmap 1005d350 f   wddbmp.obj
+ 0001:0005c3c0       _gfx_directx_show_video_bitmap 1005d3c0 f   wddbmp.obj
+ 0001:0005c490       _gfx_directx_request_video_bitmap 1005d490 f   wddbmp.obj
+ 0001:0005c4a0       _gfx_directx_poll_scroll   1005d4a0 f   wddbmp.obj
+ 0001:0005c4c0       _gfx_directx_create_system_bitmap 1005d4c0 f   wddbmp.obj
+ 0001:0005c500       _gfx_directx_destroy_system_bitmap 1005d500 f   wddbmp.obj
+ 0001:0005c520       _win_get_dc                1005d520 f   wddbmp.obj
+ 0001:0005c550       _win_release_dc            1005d550 f   wddbmp.obj
+ 0001:0005c580       _register_directx_bitmap   1005d580 f   wddbmpl.obj
+ 0001:0005c5d0       _unregister_directx_bitmap 1005d5d0 f   wddbmpl.obj
+ 0001:0005c660       _unregister_all_directx_bitmaps 1005d660 f   wddbmpl.obj
+ 0001:0005c6b0       _init_directx              1005d6b0 f   wddraw.obj
+ 0001:0005c740       _create_primary            1005d740 f   wddraw.obj
+ 0001:0005c770       _create_clipper            1005d770 f   wddraw.obj
+ 0001:0005c7b0       _create_palette            1005d7b0 f   wddraw.obj
+ 0001:0005c800       _setup_driver              1005d800 f   wddraw.obj
+ 0001:0005c8b0       _finalize_directx_init     1005d8b0 f   wddraw.obj
+ 0001:0005c910       _exit_directx              1005d910 f   wddraw.obj
+ 0001:0005c940       _gfx_directx_init          1005d940 f   wddraw.obj
+ 0001:0005ca70       _gfx_directx_set_palette   1005da70 f   wddraw.obj
+ 0001:0005cb10       _gfx_directx_sync          1005db10 f   wddraw.obj
+ 0001:0005cb20       _gfx_directx_exit          1005db20 f   wddraw.obj
+ 0001:0005cd40       _gfx_directx_restore       1005dd40 f   wddlock.obj
+ 0001:0005cd90       _gfx_directx_lock          1005dd90 f   wddlock.obj
+ 0001:0005cf10       _gfx_directx_autolock      1005df10 f   wddlock.obj
+ 0001:0005d000       _gfx_directx_unlock        1005e000 f   wddlock.obj
+ 0001:0005d080       _gfx_directx_release_lock  1005e080 f   wddlock.obj
+ 0001:0005d0e0       _build_desktop_rgb_map     1005e0e0 f   wddmode.obj
+ 0001:0005d1d0       _gfx_directx_compare_color_depth 1005e1d0 f   wddmode.obj
+ 0001:0005d2e0       _gfx_directx_update_color_format 1005e2e0 f   wddmode.obj
+ 0001:0005d400       _gfx_directx_fetch_mode_list 1005e400 f   wddmode.obj
+ 0001:0005d590       _set_video_mode            1005e590 f   wddmode.obj
+ 0001:0005eb90       _digi_directsound_capture_init 1005fb90 f   wdsinput.obj
+ 0001:0005f060       _digi_directsound_capture_exit 10060060 f   wdsinput.obj
+ 0001:0005f080       _digi_directsound_capture_detect 10060080 f   wdsinput.obj
+ 0001:0005f100       _digi_directsound_rec_cap_rate 10060100 f   wdsinput.obj
+ 0001:0005f130       _digi_directsound_rec_cap_param 10060130 f   wdsinput.obj
+ 0001:0005f1c0       _digi_directsound_rec_source 100601c0 f   wdsinput.obj
+ 0001:0005f1d0       _digi_directsound_rec_start 100601d0 f   wdsinput.obj
+ 0001:0005f2f0       _digi_directsound_rec_stop 100602f0 f   wdsinput.obj
+ 0001:0005f340       _digi_directsound_rec_read 10060340 f   wdsinput.obj
+ 0001:0005f540       __get_dsalmix_driver       10060540 f   wdsndmix.obj
+ 0001:0005fd50       __get_win_digi_driver_list 10060d50 f   wdsound.obj
+ 0001:0005fee0       __free_win_digi_driver_list 10060ee0 f   wdsound.obj
+ 0001:00061010       __get_woalmix_driver       10062010 f   wsndwo.obj
+ 0001:000614f0       _get_dx_ver                100624f0 f   wdxver.obj
+ 0001:000616f0       _sys_directx_display_switch_init 100626f0 f   wdispsw.obj
+ 0001:00061710       _sys_directx_display_switch_exit 10062710 f   wdispsw.obj
+ 0001:00061720       _sys_directx_set_display_switch_mode 10062720 f   wdispsw.obj
+ 0001:00061790       _sys_directx_set_display_switch_callback 10062790 f   wdispsw.obj
+ 0001:000617e0       _sys_directx_remove_display_switch_callback 100627e0 f   wdispsw.obj
+ 0001:00061810       _sys_switch_in             10062810 f   wdispsw.obj
+ 0001:00061870       _sys_switch_out            10062870 f   wdispsw.obj
+ 0001:00061900       _thread_switch_out         10062900 f   wdispsw.obj
+ 0001:00061930       _sys_directx_switch_out_callback 10062930 f   wdispsw.obj
+ 0001:00061950       _sys_directx_switch_in_callback 10062950 f   wdispsw.obj
+ 0001:00061970       __al_file_isok             10062970 f   wfile.obj
+ 0001:00061980       __al_file_size             10062980 f   wfile.obj
+ 0001:000619e0       __al_file_time             100629e0 f   wfile.obj
+ 0001:00061a40       _al_findfirst              10062a40 f   wfile.obj
+ 0001:00061ba0       _al_findnext               10062ba0 f   wfile.obj
+ 0001:00061c10       _al_findclose              10062c10 f   wfile.obj
+ 0001:00061c50       __al_drive_exists          10062c50 f   wfile.obj
+ 0001:00061c70       __al_getdrive              10062c70 f   wfile.obj
+ 0001:00061c80       __al_getdcwd               10062c80 f   wfile.obj
+ 0001:00062d80       _key_dinput_acquire        10063d80 f   wkeybd.obj
+ 0001:00062e10       _key_dinput_unacquire      10063e10 f   wkeybd.obj
+ 0001:000632c0       __get_win_midi_driver_list 100642c0 f   wmidi.obj
+ 0001:000633f0       __free_win_midi_driver_list 100643f0 f   wmidi.obj
+ 0001:00063450       _midi_win32_detect         10064450 f   wmidi.obj
+ 0001:00063460       _midi_win32_init           10064460 f   wmidi.obj
+ 0001:000634b0       _midi_win32_exit           100644b0 f   wmidi.obj
+ 0001:000634e0       _midi_win32_mixer_volume   100644e0 f   wmidi.obj
+ 0001:00063510       _midi_switch_out           10064510 f   wmidi.obj
+ 0001:00063530       _midi_win32_raw_midi       10064530 f   wmidi.obj
+ 0001:000635e0       _mouse_dinput_acquire      100645e0 f   wmouse.obj
+ 0001:00063640       _mouse_dinput_unacquire    10064640 f   wmouse.obj
+ 0001:00063690       _mouse_set_syscursor       10064690 f   wmouse.obj
+ 0001:000636d0       _mouse_set_sysmenu         100646d0 f   wmouse.obj
+ 0001:00064800       __WinMain                  10065800 f   wsystem.obj
+ 0001:00064990       _win_err_str               10065990 f   wsystem.obj
+ 0001:000649c0       _thread_safe_trace         100659c0 f   wsystem.obj
+ 0001:00064a00       _win_init_thread           10065a00 f   wthread.obj
+ 0001:00064a90       _win_exit_thread           10065a90 f   wthread.obj
+ 0001:00064aa0       _set_sync_timer_freq       10065aa0 f   wtimer.obj
+ 0001:00064e40       _win_set_window            10065e40 f   wwnd.obj
+ 0001:00064f80       _win_get_window            10065f80 f   wwnd.obj
+ 0001:00064f90       _win_set_wnd_create_proc   10065f90 f   wwnd.obj
+ 0001:00064fa0       _win_grab_input            10065fa0 f   wwnd.obj
+ 0001:00064fb0       _wnd_call_proc             10065fb0 f   wwnd.obj
+ 0001:00064fe0       _wnd_acquire_keyboard      10065fe0 f   wwnd.obj
+ 0001:00065000       _wnd_unacquire_keyboard    10066000 f   wwnd.obj
+ 0001:00065020       _wnd_acquire_mouse         10066020 f   wwnd.obj
+ 0001:00065040       _wnd_unacquire_mouse       10066040 f   wwnd.obj
+ 0001:00065060       _wnd_set_syscursor         10066060 f   wwnd.obj
+ 0001:00065080       _save_window_pos           10066080 f   wwnd.obj
+ 0001:000650a0       _adjust_window             100660a0 f   wwnd.obj
+ 0001:000651d0       _restore_window_style      100661d0 f   wwnd.obj
+ 0001:00065200       _init_directx_window       10066200 f   wwnd.obj
+ 0001:00065b20       _exit_directx_window       10066b20 f   wwnd.obj
+ 0001:00065ba0       __set_colorconv_palette    10066ba0 f   colconv.obj
+ 0001:00065ce0       __get_colorconv_map        10066ce0 f   colconv.obj
+ 0001:00065cf0       __get_colorconv_blitter    10066cf0 f   colconv.obj
+ 0001:00066340       __release_colorconv_blitter 10067340 f   colconv.obj
+ 0001:000663a0       __colorconv_blit_8_to_15   100673a0     icolconv.obj
+ 0001:000663a0       __colorconv_blit_8_to_16   100673a0     icolconv.obj
+ 0001:00066450       __colorconv_blit_8_to_32   10067450     icolconv.obj
+ 0001:00066500       __colorconv_blit_15_to_16  10067500     icolconv.obj
+ 0001:000665e4       __colorconv_blit_15_to_32  100675e4     icolconv.obj
+ 0001:00066688       __colorconv_blit_16_to_15  10067688     icolconv.obj
+ 0001:00066758       __colorconv_blit_16_to_32  10067758     icolconv.obj
+ 0001:000667fc       __colorconv_blit_24_to_32  100677fc     icolconv.obj
+ 0001:000668a0       __colorconv_blit_32_to_15  100678a0     icolconv.obj
+ 0001:0006694c       __colorconv_blit_32_to_16  1006794c     icolconv.obj
+ 0001:000669fc       __colorconv_blit_32_to_24  100679fc     icolconv.obj
+ 0001:00066aa4       __colorconv_blit_8_to_8    10067aa4     icolconv.obj
+ 0001:00066bc4       __colorconv_blit_8_to_24   10067bc4     icolconv.obj
+ 0001:00066cfc       __colorconv_blit_15_to_8   10067cfc     icolconv.obj
+ 0001:00066e40       __colorconv_blit_16_to_24  10067e40     icolconv.obj
+ 0001:00066e40       __colorconv_blit_15_to_24  10067e40     icolconv.obj
+ 0001:00066fcc       __colorconv_blit_16_to_8   10067fcc     icolconv.obj
+ 0001:00067104       __colorconv_blit_24_to_8   10068104     icolconv.obj
+ 0001:00067180       __colorconv_blit_24_to_15  10068180     icolconv.obj
+ 0001:00067218       __colorconv_blit_24_to_16  10068218     icolconv.obj
+ 0001:00067330       __colorconv_blit_32_to_8   10068330     icolconv.obj
+ 0001:00067570       __pckey_scancode_to_ascii  10068570 f   pckeys.obj
+ 0001:000675a0       __handle_pckey             100685a0 f   pckeys.obj
+ 0001:00067ca0       __pckeys_init              10068ca0 f   pckeys.obj
+ 0001:00069450       _DirectInputCreateA@16     1006a450 f   dinput:DINPUT.dll
+ 0001:000694d0       _DirectDrawCreate@12       1006a4d0 f   ddraw:DDRAW.dll
+ 0001:000694d6       _DirectSoundCreate@12      1006a4d6 f   dsound:DSOUND.dll
+ 0001:000694dc       _DirectSoundEnumerateA@8   1006a4dc f   dsound:DSOUND.dll
+ 0001:000694f0       __ftol                     1006a4f0 f   MSVCRT:MSVCRT.dll
+ 0001:000694f6       __CIfmod                   1006a4f6 f   MSVCRT:MSVCRT.dll
+ 0001:00069500       __chkstk                   1006a500 f   MSVCRT:chkstk.obj
+ 0001:00069500       __alloca_probe             1006a500 f   MSVCRT:chkstk.obj
+ 0001:00069530       __CIpow                    1006a530 f   MSVCRT:MSVCRT.dll
+ 0001:00069536       __CIacos                   1006a536 f   MSVCRT:MSVCRT.dll
+ 0001:00069540       __aulldiv                  1006a540 f   MSVCRT:ulldiv.obj
+ 0001:000695b0       __aullrem                  1006a5b0 f   MSVCRT:ullrem.obj
+ 0001:00069630       __aullshr                  1006a630 f   MSVCRT:ullshr.obj
+ 0001:00069650       __alldiv                   1006a650 f   MSVCRT:lldiv.obj
+ 0001:00069700       __allmul                   1006a700 f   MSVCRT:llmul.obj
+ 0001:00069734       __CRT_INIT@12              1006a734 f   MSVCRT:crtdll.obj
+ 0001:000697df       __DllMainCRTStartup@12     1006a7df f   MSVCRT:crtdll.obj
+ 0001:0006987c       __initterm                 1006a87c f   MSVCRT:MSVCRT.dll
+ 0001:00069882       _DllMain@12                1006a882 f   MSVCRT:dllmain.obj
+ 0002:00000000       __real@4@3ff78080808080808000 1006b000     colblend.obj
+ 0002:00000004       __real@4@3ffe8000000000000000 1006b004     color.obj
+ 0002:00000008       __real@4@3fff8000000000000000 1006b008     color.obj
+ 0002:0000000c       __real@4@4001c000000000000000 1006b00c     color.obj
+ 0002:00000010       __real@8@3ff98888888888888800 1006b010     color.obj
+ 0002:00000018       __real@8@4007b400000000000000 1006b018     color.obj
+ 0002:00000020       __real@4@00000000000000000000 1006b020     color.obj
+ 0002:00000024       __real@4@4006ff00000000000000 1006b024     color.obj
+ 0002:00000028       __real@4@4007b400000000000000 1006b028     color.obj
+ 0002:0000002c       __real@4@4004f000000000000000 1006b02c     color.obj
+ 0002:00000030       __real@4@40018000000000000000 1006b030     color.obj
+ 0002:00000034       __real@4@40008000000000000000 1006b034     color.obj
+ 0002:00000038       __real@8@3ffbaaaaaaaaaaaaa800 1006b038     digmid.obj
+ 0002:00000040       __real@8@40008000000000000000 1006b040     digmid.obj
+ 0002:00000048       __real@8@3ffeccccccccccccd000 1006b048     fsel.obj
+ 0002:00000050       __real@8@3ffaccccccccccccd000 1006b050     fsel.obj
+ 0002:00000058       __real@8@3fff8000000000000000 1006b058     fsel.obj
+ 0002:00000060       __real@8@3ffef333333333333000 1006b060     fsel.obj
+ 0002:00000068       __real@8@3ffe8000000000000000 1006b068     gfx.obj
+ 0002:00000070       __real@8@00000000000000000000 1006b070     gfx.obj
+ 0002:00000078       __real@8@3fe9c90fdaa22168c000 1006b078     gfx.obj
+ 0002:00000080       __real@8@400f8000000000000000 1006b080     inline.obj
+ 0002:00000088       __real@8@bffe8000000000000000 1006b088     inline.obj
+ 0002:00000090       __real@8@c00dfffe000000000000 1006b090     inline.obj
+ 0002:00000098       __real@8@400dfffe000000000000 1006b098     inline.obj
+ 0002:000000a0       __real@8@3fef8000000000000000 1006b0a0     inline.obj
+ 0002:000000a8       __real@8@3ff9c90fdaa22168c000 1006b0a8     math3d.obj
+ 0002:000000b0       __real@4@bfffaaaaaaaaaaaaa800 1006b0b0     math3d.obj
+ 0002:000000b8       __real@8@40058000000000000000 1006b0b8     math3d.obj
+ 0002:000000c0       __real@8@3ff18000000000000000 1006b0c0     mixer.obj
+ 0002:000000c8       __real@8@3ff583126e978d4fe000 1006b0c8     quat.obj
+ 0002:000000d0       __real@4@bfdddbe6fecebdedd800 1006b0d0     scene3d.obj
+ 0002:000000d4       __real@4@3fdddbe6fecebdedd800 1006b0d4     scene3d.obj
+ 0002:000000d8       __real@8@bfdddbe6fecebdedd800 1006b0d8     scene3d.obj
+ 0002:000000e0       __real@8@3fdddbe6fecebdedd800 1006b0e0     scene3d.obj
+ 0002:000000e8       __real@8@4005c800000000000000 1006b0e8     scene3d.obj
+ 0002:000000f0       __real@8@4000c000000000000000 1006b0f0     spline.obj
+ 0002:000000f8       __real@8@4001c000000000000000 1006b0f8     spline.obj
+ 0002:00000100       __real@8@3fff9999999999999800 1006b100     spline.obj
+ 0002:00000108       __real@8@c00c9c40000000000000 1006b108     wdsndmix.obj
+ 0002:00000110       __real@8@4009fa00000000000000 1006b110     wdsndmix.obj
+ 0002:00000118       __real@8@3ff78080808080808000 1006b118     wdsndmix.obj
+ 0002:00000120       __real@8@400c9c40000000000000 1006b120     wdsound.obj
+ 0002:00000128       __real@8@c009fa00000000000000 1006b128     wdsound.obj
+ 0002:00000130       __real@8@4006ff00000000000000 1006b130     wdsound.obj
+ 0002:00000138       __real@8@3ff88102040810204000 1006b138     wdsound.obj
+ 0002:00000140       _c_dfDIKeyboard            1006b140     dinput:dilib2.obj
+ 0002:00000158       _c_dfDIMouse               1006b158     dinput:dilib1.obj
+ 0002:00000170       _IID_IDirectDrawSurface2   1006b170     dxguid:guid5.obj
+ 0002:00000180       _IID_IDirectDraw2          1006b180     dxguid:guid3.obj
+ 0002:00000190       _CLSID_DirectSoundCapture  1006b190     dxguid:guid102.obj
+ 0002:000001a0       _IID_IDirectSoundCapture   1006b1a0     dxguid:guid107.obj
+ 0002:000001b0       _IID_IDirectDrawSurface3   1006b1b0     dxguid:guid6.obj
+ 0002:000001c0       _GUID_SysKeyboard          1006b1c0     dxguid:guid134.obj
+ 0002:000001d0       _GUID_SysMouse             1006b1d0     dxguid:guid133.obj
+ 0002:000001e0       _GUID_Button               1006b1e0     dxguid:guid129.obj
+ 0002:000001f0       _GUID_ZAxis                1006b1f0     dxguid:guid124.obj
+ 0002:00000200       _GUID_Key                  1006b200     dxguid:guid130.obj
+ 0002:00000210       _GUID_YAxis                1006b210     dxguid:guid123.obj
+ 0002:00000220       _GUID_XAxis                1006b220     dxguid:guid122.obj
+ 0003:00000000       ___xc_a                    10074000     MSVCRT:cinitexe.obj
+ 0003:00000004       ___xc_z                    10074004     MSVCRT:cinitexe.obj
+ 0003:00000008       ___xi_a                    10074008     MSVCRT:cinitexe.obj
+ 0003:0000000c       ___xi_z                    1007400c     MSVCRT:cinitexe.obj
+ 0003:00000010       _allegro_id                10074010     allegro.obj
+ 0003:00000024       __current_palette_changed  10074024     allegro.obj
+ 0003:00000028       _desktop_palette           10074028     allegro.obj
+ 0003:00000428       _default_palette           10074428     allegro.obj
+ 0003:00000828       _gui_fg_color              10074828     allegro.obj
+ 0003:0000082c       _gui_mg_color              1007482c     allegro.obj
+ 0003:00000830       __last_bank_1              10074830     allegro.obj
+ 0003:00000834       __last_bank_2              10074834     allegro.obj
+ 0003:00000838       _os_version                10074838     allegro.obj
+ 0003:0000083c       _os_revision               1007483c     allegro.obj
+ 0003:00000848       _system_none               10074848     allegro.obj
+ 0003:00000b68       __compile_sprites          10074b68     datafile.obj
+ 0003:00000b80       __datafile_type            10074b80     dataregi.obj
+ 0003:00000d00       _midi_digmid               10074d00     digmid.obj
+ 0003:00000ebc       _fli_bmp_dirty_from        10074ebc     fli.obj
+ 0003:00000ec0       _fli_bmp_dirty_to          10074ec0     fli.obj
+ 0003:00000ec4       _fli_pal_dirty_from        10074ec4     fli.obj
+ 0003:00000ec8       _fli_pal_dirty_to          10074ec8     fli.obj
+ 0003:000027d0       _allegro_404_char          100767d0     font.obj
+ 0003:000027d8       __font_vtable_mono         100767d8     font.obj
+ 0003:000027f0       _font_vtable_mono          100767f0     font.obj
+ 0003:000027f8       __font_vtable_color        100767f8     font.obj
+ 0003:00002810       _font_vtable_color         10076810     font.obj
+ 0003:00002858       __default_font             10076858     font.obj
+ 0003:00002864       _font                      10076864     font.obj
+ 0003:00002a90       __palette_expansion_table  10076a90     gfx.obj
+ 0003:00002a9c       __sub_bitmap_id_count      10076a9c     graphics.obj
+ 0003:00002aa0       __color_depth              10076aa0     graphics.obj
+ 0003:00002aa4       __color_conv               10076aa4     graphics.obj
+ 0003:00002aa8       _palette_color             10076aa8     graphics.obj
+ 0003:00002aac       __rgb_g_shift_15           10076aac     graphics.obj
+ 0003:00002ab0       __rgb_b_shift_15           10076ab0     graphics.obj
+ 0003:00002ab4       __rgb_g_shift_16           10076ab4     graphics.obj
+ 0003:00002ab8       __rgb_b_shift_16           10076ab8     graphics.obj
+ 0003:00002abc       __rgb_g_shift_24           10076abc     graphics.obj
+ 0003:00002ac0       __rgb_b_shift_24           10076ac0     graphics.obj
+ 0003:00002ac4       __rgb_g_shift_32           10076ac4     graphics.obj
+ 0003:00002ac8       __rgb_b_shift_32           10076ac8     graphics.obj
+ 0003:00002acc       __rgb_a_shift_32           10076acc     graphics.obj
+ 0003:00002ad0       __rgb_scale_5              10076ad0     graphics.obj
+ 0003:00002b50       __rgb_scale_6              10076b50     graphics.obj
+ 0003:00002e70       _gui_mouse_focus           10076e70     gui.obj
+ 0003:00002e74       _gui_mouse_x               10076e74     gui.obj
+ 0003:00002e78       _gui_mouse_y               10076e78     gui.obj
+ 0003:00002e7c       _gui_mouse_z               10076e7c     gui.obj
+ 0003:00002e80       _gui_mouse_b               10076e80     gui.obj
+ 0003:000030c0       __force_instantiate_bmp_read24 100770c0     inline.obj
+ 0003:000030c4       __force_instantiate_bmp_write24 100770c4     inline.obj
+ 0003:000030c8       __force_instantiate_set_window_title 100770c8     inline.obj
+ 0003:000030cc       __force_instantiate_set_window_close_button 100770cc     inline.obj
+ 0003:000030d0       __force_instantiate_set_window_close_hook 100770d0     inline.obj
+ 0003:000030d4       __force_instantiate_desktop_color_depth 100770d4     inline.obj
+ 0003:000030d8       __force_instantiate_get_desktop_resolution 100770d8     inline.obj
+ 0003:000030dc       __force_instantiate_yield_timeslice 100770dc     inline.obj
+ 0003:000030e0       __force_instantiate__default_ds 100770e0     inline.obj
+ 0003:000030e4       __force_instantiate_bmp_write_line 100770e4     inline.obj
+ 0003:000030e8       __force_instantiate_bmp_read_line 100770e8     inline.obj
+ 0003:000030ec       __force_instantiate_bmp_unwrite_line 100770ec     inline.obj
+ 0003:000030f0       __force_instantiate_clear_to_color 100770f0     inline.obj
+ 0003:000030f4       __force_instantiate_bitmap_color_depth 100770f4     inline.obj
+ 0003:000030f8       __force_instantiate_bitmap_mask_color 100770f8     inline.obj
+ 0003:000030fc       __force_instantiate_is_same_bitmap 100770fc     inline.obj
+ 0003:00003100       __force_instantiate_is_linear_bitmap 10077100     inline.obj
+ 0003:00003104       __force_instantiate_is_planar_bitmap 10077104     inline.obj
+ 0003:00003108       __force_instantiate_is_memory_bitmap 10077108     inline.obj
+ 0003:0000310c       __force_instantiate_is_screen_bitmap 1007710c     inline.obj
+ 0003:00003110       __force_instantiate_is_video_bitmap 10077110     inline.obj
+ 0003:00003114       __force_instantiate_is_system_bitmap 10077114     inline.obj
+ 0003:00003118       __force_instantiate_is_sub_bitmap 10077118     inline.obj
+ 0003:0000311c       __force_instantiate_acquire_bitmap 1007711c     inline.obj
+ 0003:00003120       __force_instantiate_release_bitmap 10077120     inline.obj
+ 0003:00003124       __force_instantiate_acquire_screen 10077124     inline.obj
+ 0003:00003128       __force_instantiate_release_screen 10077128     inline.obj
+ 0003:0000312c       __force_instantiate_makecol15 1007712c     inline.obj
+ 0003:00003130       __force_instantiate_makecol16 10077130     inline.obj
+ 0003:00003134       __force_instantiate_makecol24 10077134     inline.obj
+ 0003:00003138       __force_instantiate_makecol32 10077138     inline.obj
+ 0003:0000313c       __force_instantiate_makeacol32 1007713c     inline.obj
+ 0003:00003140       __force_instantiate_getr8  10077140     inline.obj
+ 0003:00003144       __force_instantiate_getg8  10077144     inline.obj
+ 0003:00003148       __force_instantiate_getb8  10077148     inline.obj
+ 0003:0000314c       __force_instantiate_getr15 1007714c     inline.obj
+ 0003:00003150       __force_instantiate_getg15 10077150     inline.obj
+ 0003:00003154       __force_instantiate_getb15 10077154     inline.obj
+ 0003:00003158       __force_instantiate_getr16 10077158     inline.obj
+ 0003:0000315c       __force_instantiate_getg16 1007715c     inline.obj
+ 0003:00003160       __force_instantiate_getb16 10077160     inline.obj
+ 0003:00003164       __force_instantiate_getr24 10077164     inline.obj
+ 0003:00003168       __force_instantiate_getg24 10077168     inline.obj
+ 0003:0000316c       __force_instantiate_getb24 1007716c     inline.obj
+ 0003:00003170       __force_instantiate_getr32 10077170     inline.obj
+ 0003:00003174       __force_instantiate_getg32 10077174     inline.obj
+ 0003:00003178       __force_instantiate_getb32 10077178     inline.obj
+ 0003:0000317c       __force_instantiate_geta32 1007717c     inline.obj
+ 0003:00003180       __force_instantiate__set_color 10077180     inline.obj
+ 0003:00003184       __force_instantiate_getpixel 10077184     inline.obj
+ 0003:00003188       __force_instantiate_putpixel 10077188     inline.obj
+ 0003:0000318c       __force_instantiate_vline  1007718c     inline.obj
+ 0003:00003190       __force_instantiate_hline  10077190     inline.obj
+ 0003:00003194       __force_instantiate_line   10077194     inline.obj
+ 0003:00003198       __force_instantiate_rectfill 10077198     inline.obj
+ 0003:0000319c       __force_instantiate_draw_sprite 1007719c     inline.obj
+ 0003:000031a0       __force_instantiate_draw_sprite_v_flip 100771a0     inline.obj
+ 0003:000031a4       __force_instantiate_draw_sprite_h_flip 100771a4     inline.obj
+ 0003:000031a8       __force_instantiate_draw_sprite_vh_flip 100771a8     inline.obj
+ 0003:000031ac       __force_instantiate_draw_trans_sprite 100771ac     inline.obj
+ 0003:000031b0       __force_instantiate_draw_lit_sprite 100771b0     inline.obj
+ 0003:000031b4       __force_instantiate_draw_character 100771b4     inline.obj
+ 0003:000031b8       __force_instantiate_rotate_sprite 100771b8     inline.obj
+ 0003:000031bc       __force_instantiate_rotate_sprite_v_flip 100771bc     inline.obj
+ 0003:000031c0       __force_instantiate_rotate_scaled_sprite 100771c0     inline.obj
+ 0003:000031c4       __force_instantiate_rotate_scaled_sprite_v_flip 100771c4     inline.obj
+ 0003:000031c8       __force_instantiate_pivot_sprite 100771c8     inline.obj
+ 0003:000031cc       __force_instantiate_pivot_sprite_v_flip 100771cc     inline.obj
+ 0003:000031d0       __force_instantiate_pivot_scaled_sprite 100771d0     inline.obj
+ 0003:000031d4       __force_instantiate_pivot_scaled_sprite_v_flip 100771d4     inline.obj
+ 0003:000031d8       __force_instantiate__putpixel 100771d8     inline.obj
+ 0003:000031dc       __force_instantiate__getpixel 100771dc     inline.obj
+ 0003:000031e0       __force_instantiate__putpixel15 100771e0     inline.obj
+ 0003:000031e4       __force_instantiate__getpixel15 100771e4     inline.obj
+ 0003:000031e8       __force_instantiate__putpixel16 100771e8     inline.obj
+ 0003:000031ec       __force_instantiate__getpixel16 100771ec     inline.obj
+ 0003:000031f0       __force_instantiate__putpixel24 100771f0     inline.obj
+ 0003:000031f4       __force_instantiate__getpixel24 100771f4     inline.obj
+ 0003:000031f8       __force_instantiate__putpixel32 100771f8     inline.obj
+ 0003:000031fc       __force_instantiate__getpixel32 100771fc     inline.obj
+ 0003:00003200       __force_instantiate_draw_rle_sprite 10077200     inline.obj
+ 0003:00003204       __force_instantiate_draw_trans_rle_sprite 10077204     inline.obj
+ 0003:00003208       __force_instantiate_draw_lit_rle_sprite 10077208     inline.obj
+ 0003:0000320c       __force_instantiate_object_message 1007720c     inline.obj
+ 0003:00003210       __force_instantiate_pack_getc 10077210     inline.obj
+ 0003:00003214       __force_instantiate_pack_putc 10077214     inline.obj
+ 0003:00003218       __force_instantiate_pack_feof 10077218     inline.obj
+ 0003:0000321c       __force_instantiate_pack_ferror 1007721c     inline.obj
+ 0003:00003220       __force_instantiate__set_errno_erange 10077220     inline.obj
+ 0003:00003224       __force_instantiate_fixadd 10077224     inline.obj
+ 0003:00003228       __force_instantiate_fixsub 10077228     inline.obj
+ 0003:0000322c       __force_instantiate_fixmul 1007722c     inline.obj
+ 0003:00003230       __force_instantiate_fixdiv 10077230     inline.obj
+ 0003:00003234       __force_instantiate_fixfloor 10077234     inline.obj
+ 0003:00003238       __force_instantiate_fixceil 10077238     inline.obj
+ 0003:0000323c       __force_instantiate_ftofix 1007723c     inline.obj
+ 0003:00003240       __force_instantiate_fixtof 10077240     inline.obj
+ 0003:00003244       __force_instantiate_itofix 10077244     inline.obj
+ 0003:00003248       __force_instantiate_fixtoi 10077248     inline.obj
+ 0003:0000324c       __force_instantiate_fixcos 1007724c     inline.obj
+ 0003:00003250       __force_instantiate_fixsin 10077250     inline.obj
+ 0003:00003254       __force_instantiate_fixtan 10077254     inline.obj
+ 0003:00003258       __force_instantiate_fixacos 10077258     inline.obj
+ 0003:0000325c       __force_instantiate_fixasin 1007725c     inline.obj
+ 0003:00003260       __force_instantiate_apply_matrix 10077260     inline.obj
+ 0003:00003264       __force_instantiate_dot_product 10077264     inline.obj
+ 0003:00003268       __force_instantiate_dot_product_f 10077268     inline.obj
+ 0003:0000326c       __force_instantiate_persp_project 1007726c     inline.obj
+ 0003:00003270       __force_instantiate_persp_project_f 10077270     inline.obj
+ 0003:00003274       __force_instantiate__grow_scratch_mem 10077274     inline.obj
+ 0003:00003278       _joystick_none             10077278     joystick.obj
+ 0003:00003304       _three_finger_flag         10077304     keyboard.obj
+ 0003:00003308       _key_led_flag              10077308     keyboard.obj
+ 0003:00003320       __cos_tbl                  10077320     math.obj
+ 0003:00003b20       __tan_tbl                  10077b20     math.obj
+ 0003:00003f20       __acos_tbl                 10077f20     math.obj
+ 0003:00004724       __sqrt_table               10078724     math.obj
+ 0003:00004928       _identity_matrix           10078928     math3d.obj
+ 0003:00004958       _identity_matrix_f         10078958     math3d.obj
+ 0003:00004988       __persp_xscale             10078988     math3d.obj
+ 0003:0000498c       __persp_yscale             1007898c     math3d.obj
+ 0003:00004990       __persp_xoffset            10078990     math3d.obj
+ 0003:00004994       __persp_yoffset            10078994     math3d.obj
+ 0003:00004998       __persp_xscale_f           10078998     math3d.obj
+ 0003:0000499c       __persp_yscale_f           1007899c     math3d.obj
+ 0003:000049a0       __persp_xoffset_f          100789a0     math3d.obj
+ 0003:000049a4       __persp_yoffset_f          100789a4     math3d.obj
+ 0003:000049a8       _midi_pos                  100789a8     midi.obj
+ 0003:000049ac       _midi_loop_start           100789ac     midi.obj
+ 0003:000049b0       _midi_loop_end             100789b0     midi.obj
+ 0003:000050d0       _mousedrv_none             100790d0     mouse.obj
+ 0003:00005104       __mouse_type               10079104     mouse.obj
+ 0003:00005108       __mouse_on                 10079108     mouse.obj
+ 0003:00005110       _mouse_x_focus             10079110     mouse.obj
+ 0003:00005114       _mouse_y_focus             10079114     mouse.obj
+ 0003:00005218       __mask_mmx_15              10079218     poly3d.obj
+ 0003:00005220       __mask_mmx_16              10079220     poly3d.obj
+ 0003:00005b88       _identity_quat             10079b88     quat.obj
+ 0003:00005bb4       _scene_gap                 10079bb4     scene3d.obj
+ 0003:00005cb0       __midi_none                10079cb0     sound.obj
+ 0003:00005d0c       _digi_card                 10079d0c     sound.obj
+ 0003:00005d10       _midi_card                 10079d10     sound.obj
+ 0003:00005d14       _digi_input_card           10079d14     sound.obj
+ 0003:00005d18       _midi_input_card           10079d18     sound.obj
+ 0003:00005d1c       _digi_driver               10079d1c     sound.obj
+ 0003:00005d20       _midi_driver               10079d20     sound.obj
+ 0003:00005d24       _digi_input_driver         10079d24     sound.obj
+ 0003:00005d28       _midi_input_driver         10079d28     sound.obj
+ 0003:00005d34       __digi_volume              10079d34     sound.obj
+ 0003:00005d38       __midi_volume              10079d38     sound.obj
+ 0003:00005d3c       __sound_hq                 10079d3c     sound.obj
+ 0003:00005d40       __sound_freq               10079d40     sound.obj
+ 0003:00005d44       __sound_stereo             10079d44     sound.obj
+ 0003:00005d48       __sound_bits               10079d48     sound.obj
+ 0003:00005d4c       __sound_port               10079d4c     sound.obj
+ 0003:00005d50       __sound_dma                10079d50     sound.obj
+ 0003:00005d54       __sound_irq                10079d54     sound.obj
+ 0003:00006080       __retrace_hpp_value        1007a080     timer.obj
+ 0003:00006590       _utypes                    1007a590     unicode.obj
+ 0003:00006694       _ugetc                     1007a694     unicode.obj
+ 0003:00006698       _ugetx                     1007a698     unicode.obj
+ 0003:0000669c       _ugetxc                    1007a69c     unicode.obj
+ 0003:000066a0       _usetc                     1007a6a0     unicode.obj
+ 0003:000066a4       _uwidth                    1007a6a4     unicode.obj
+ 0003:000066a8       _ucwidth                   1007a6a8     unicode.obj
+ 0003:000066ac       _uisok                     1007a6ac     unicode.obj
+ 0003:000066e0       __vtable_list              1007a6e0     vtable.obj
+ 0003:00006710       ___linear_vtable15         1007a710     vtable15.obj
+ 0003:000067c0       ___linear_vtable16         1007a7c0     vtable16.obj
+ 0003:00006870       ___linear_vtable24         1007a870     vtable24.obj
+ 0003:00006920       ___linear_vtable32         1007a920     vtable32.obj
+ 0003:000069d0       ___linear_vtable8          1007a9d0     vtable8.obj
+ 0003:00006ad8       _gfx_directx_accel         1007aad8     wddfull.obj
+ 0003:00006b60       _gfx_directx_soft          1007ab60     wddfull.obj
+ 0003:00006be8       _gfx_directx_safe          1007abe8     wddfull.obj
+ 0003:00006cc4       _ptr_gfx_directx_autolock  1007acc4     wddlock.obj
+ 0003:00006cc8       _ptr_gfx_directx_unlock    1007acc8     wddlock.obj
+ 0003:00006e18       _gfx_directx_ovl           1007ae18     wddovl.obj
+ 0003:00006fa0       _gfx_directx_win           1007afa0     wddwin.obj
+ 0003:00007440       _app_foreground            1007b440     wdispsw.obj
+ 0003:00007448       _ptr_gfx_gdi_autolock      1007b448     wgdi.obj
+ 0003:0000744c       _ptr_gfx_gdi_unlock        1007b44c     wgdi.obj
+ 0003:00007450       _gfx_gdi                   1007b450     wgdi.obj
+ 0003:00007518       __gfx_driver_list          1007b518     wgfxdrv.obj
+ 0003:00007570       __joystick_driver_list     1007b570     wjoydrv.obj
+ 0003:00007598       _joystick_win32            1007b598     wjoyw32.obj
+ 0003:00007698       __keyboard_driver_list     1007b698     wkeybd.obj
+ 0003:000076b0       _keyboard_directx          1007b6b0     wkeybd.obj
+ 0003:00007720       __mouse_driver_list        1007b720     wmouse.obj
+ 0003:00007748       _mouse_directx             1007b748     wmouse.obj
+ 0003:000077d0       _system_directx            1007b7d0     wsystem.obj
+ 0003:00007868       __system_driver_list       1007b868     wsystem.obj
+ 0003:000079b0       __timer_driver_list        1007b9b0     wtimer.obj
+ 0003:000079d8       _timer_win32_high_perf     1007b9d8     wtimer.obj
+ 0003:00007a10       _timer_win32_low_perf      1007ba10     wtimer.obj
+ 0003:00007c20       __key_standard_kb          1007bc20     pckeys.obj
+ 0003:000080e8       __key_ascii_table          1007c0e8     pckeys.obj
+ 0003:000080ec       __key_capslock_table       1007c0ec     pckeys.obj
+ 0003:000080f0       __key_shift_table          1007c0f0     pckeys.obj
+ 0003:000080f4       __key_control_table        1007c0f4     pckeys.obj
+ 0003:000080f8       __key_altgr_lower_table    1007c0f8     pckeys.obj
+ 0003:000080fc       __key_altgr_upper_table    1007c0fc     pckeys.obj
+ 0003:00008100       __key_accent1_lower_table  1007c100     pckeys.obj
+ 0003:00008104       __key_accent1_upper_table  1007c104     pckeys.obj
+ 0003:00008108       __key_accent2_lower_table  1007c108     pckeys.obj
+ 0003:0000810c       __key_accent2_upper_table  1007c10c     pckeys.obj
+ 0003:00008110       __key_accent3_lower_table  1007c110     pckeys.obj
+ 0003:00008114       __key_accent3_upper_table  1007c114     pckeys.obj
+ 0003:00008118       __key_accent4_lower_table  1007c118     pckeys.obj
+ 0003:0000811c       __key_accent4_upper_table  1007c11c     pckeys.obj
+ 0003:00008320       _allegro_error             1007c320     allegro.obj
+ 0003:00008420       _system_driver             1007c420     allegro.obj
+ 0003:00008424       _allegro_errno             1007c424     allegro.obj
+ 0003:00008428       __allegro_count            1007c428     allegro.obj
+ 0003:0000842c       _gfx_driver                1007c42c     allegro.obj
+ 0003:00008430       _gfx_capabilities          1007c430     allegro.obj
+ 0003:00008434       _gfx_mode_list             1007c434     allegro.obj
+ 0003:00008438       _screen                    1007c438     allegro.obj
+ 0003:0000843c       __drawing_mode             1007c43c     allegro.obj
+ 0003:00008440       __drawing_pattern          1007c440     allegro.obj
+ 0003:00008444       __drawing_x_anchor         1007c444     allegro.obj
+ 0003:00008448       __drawing_y_anchor         1007c448     allegro.obj
+ 0003:0000844c       __drawing_x_mask           1007c44c     allegro.obj
+ 0003:00008450       __drawing_y_mask           1007c450     allegro.obj
+ 0003:00008454       _gui_bg_color              1007c454     allegro.obj
+ 0003:00008458       __scratch_mem              1007c458     allegro.obj
+ 0003:0000845c       __scratch_mem_size         1007c45c     allegro.obj
+ 0003:00008460       __gfx_bank                 1007c460     allegro.obj
+ 0003:00008464       _os_type                   1007c464     allegro.obj
+ 0003:00008468       _os_multitasking           1007c468     allegro.obj
+ 0003:0000846c       _cpu_vendor                1007c46c     allegro.obj
+ 0003:0000848c       _cpu_family                1007c48c     allegro.obj
+ 0003:00008490       _cpu_model                 1007c490     allegro.obj
+ 0003:00008494       _cpu_capabilities          1007c494     allegro.obj
+ 0003:000084a8       __al_linker_midi           1007c4a8     allegro.obj
+ 0003:000084ac       __al_linker_mouse          1007c4ac     allegro.obj
+ 0003:0000964c       __dispsw_status            1007d64c     dispsw.obj
+ 0003:00009750       __packfile_filesize        1007d750     file.obj
+ 0003:00009754       __packfile_datasize        1007d754     file.obj
+ 0003:00009758       __packfile_type            1007d758     file.obj
+ 0003:00009af4       _fli_bitmap                1007daf4     fli.obj
+ 0003:00009af8       _fli_frame                 1007daf8     fli.obj
+ 0003:00009afc       _fli_timer                 1007dafc     fli.obj
+ 0003:0000a328       __got_prev_current_palette 1007e328     gfx.obj
+ 0003:0000a32c       __gfx_mode_set_count       1007e32c     graphics.obj
+ 0003:0000a330       __screen_split_position    1007e330     graphics.obj
+ 0003:0000a334       __safe_gfx_mode_change     1007e334     graphics.obj
+ 0003:0000a338       _rgb_map                   1007e338     graphics.obj
+ 0003:0000a33c       _color_map                 1007e33c     graphics.obj
+ 0003:0000a340       __refresh_rate_request     1007e340     graphics.obj
+ 0003:0000a344       __current_refresh_rate     1007e344     graphics.obj
+ 0003:0000a34c       __blender_func15           1007e34c     graphics.obj
+ 0003:0000a350       __blender_func16           1007e350     graphics.obj
+ 0003:0000a354       __blender_func24           1007e354     graphics.obj
+ 0003:0000a358       __blender_func32           1007e358     graphics.obj
+ 0003:0000a35c       __blender_func15x          1007e35c     graphics.obj
+ 0003:0000a360       __blender_func16x          1007e360     graphics.obj
+ 0003:0000a364       __blender_func24x          1007e364     graphics.obj
+ 0003:0000a368       __blender_col_15           1007e368     graphics.obj
+ 0003:0000a36c       __blender_col_16           1007e36c     graphics.obj
+ 0003:0000a370       __blender_col_24           1007e370     graphics.obj
+ 0003:0000a374       __blender_col_32           1007e374     graphics.obj
+ 0003:0000a378       __blender_alpha            1007e378     graphics.obj
+ 0003:0000a37c       __rgb_r_shift_15           1007e37c     graphics.obj
+ 0003:0000a380       __rgb_r_shift_16           1007e380     graphics.obj
+ 0003:0000a384       __rgb_r_shift_24           1007e384     graphics.obj
+ 0003:0000a388       __rgb_r_shift_32           1007e388     graphics.obj
+ 0003:0000a3a0       _gui_font_baseline         1007e3a0     gui.obj
+ 0003:0000a3a8       _active_dialog             1007e3a8     gui.obj
+ 0003:0000a3ac       _active_menu               1007e3ac     gui.obj
+ 0003:0000a3c0       _gui_menu_draw_menu        1007e3c0     gui.obj
+ 0003:0000a3c4       _gui_menu_draw_menu_item   1007e3c4     gui.obj
+ 0003:0000a3cc       __joystick_installed       1007e3cc     joystick.obj
+ 0003:0000a3d0       _joystick_driver           1007e3d0     joystick.obj
+ 0003:0000a3d4       __joy_type                 1007e3d4     joystick.obj
+ 0003:0000a3d8       _num_joysticks             1007e3d8     joystick.obj
+ 0003:0000a67c       _keyboard_driver           1007e67c     keyboard.obj
+ 0003:0000a680       __keyboard_installed       1007e680     keyboard.obj
+ 0003:0000a688       _key_shifts                1007e688     keyboard.obj
+ 0003:0000a68c       __key_shifts               1007e68c     keyboard.obj
+ 0003:0000a690       _keyboard_callback         1007e690     keyboard.obj
+ 0003:0000a694       _keyboard_ucallback        1007e694     keyboard.obj
+ 0003:0000a698       _keyboard_lowlevel_callback 1007e698     keyboard.obj
+ 0003:000138dc       __midi_tick                100878dc     midi.obj
+ 0003:000138f0       _midi_msg_callback         100878f0     midi.obj
+ 0003:000138f4       _midi_meta_callback        100878f4     midi.obj
+ 0003:000138f8       _midi_sysex_callback       100878f8     midi.obj
+ 0003:000144fc       _mouse_driver              100884fc     mouse.obj
+ 0003:00014500       __mouse_installed          10088500     mouse.obj
+ 0003:00014504       _mouse_x                   10088504     mouse.obj
+ 0003:00014508       _mouse_y                   10088508     mouse.obj
+ 0003:0001450c       _mouse_z                   1008850c     mouse.obj
+ 0003:00014510       _mouse_b                   10088510     mouse.obj
+ 0003:00014514       _mouse_pos                 10088514     mouse.obj
+ 0003:00014518       __mouse_x                  10088518     mouse.obj
+ 0003:0001451c       __mouse_y                  1008851c     mouse.obj
+ 0003:00014520       __mouse_z                  10088520     mouse.obj
+ 0003:00014524       __mouse_b                  10088524     mouse.obj
+ 0003:0001452c       _freeze_mouse_flag         1008852c     mouse.obj
+ 0003:00014530       _mouse_callback            10088530     mouse.obj
+ 0003:00014534       __mouse_pointer            10088534     mouse.obj
+ 0003:00014538       _mouse_sprite              10088538     mouse.obj
+ 0003:0001453c       __mouse_screen             1008853c     mouse.obj
+ 0003:00014560       __zbuffer                  10088560     poly3d.obj
+ 0003:00014628       _digi_recorder             10088628     sound.obj
+ 0003:0001462c       _midi_recorder             1008862c     sound.obj
+ 0003:00014630       __sound_installed          10088630     sound.obj
+ 0003:00014634       __sound_input_installed    10088634     sound.obj
+ 0003:00014638       __sound_flip_pan           10088638     sound.obj
+ 0003:0001463c       __textmode                 1008863c     text.obj
+ 0003:00014648       _timer_driver              10088648     timer.obj
+ 0003:0001464c       __timer_installed          1008864c     timer.obj
+ 0003:00014650       _retrace_count             10088650     timer.obj
+ 0003:00014654       _retrace_proc              10088654     timer.obj
+ 0003:00014658       __timer_use_retrace        10088658     timer.obj
+ 0003:00014864       _empty_string              10088864     unicode.obj
+ 0003:00014968       _directx_bmp_list          10088968     wddbmpl.obj
+ 0003:00014d6c       _directdraw                10088d6c     wddraw.obj
+ 0003:00014d70       _dd_prim_surface           10088d70     wddraw.obj
+ 0003:00014d74       _dd_clipper                10088d74     wddraw.obj
+ 0003:00014d78       _dd_palette                10088d78     wddraw.obj
+ 0003:00014d7c       _dd_pixelformat            10088d7c     wddraw.obj
+ 0003:00014d80       _dd_frontbuffer            10088d80     wddraw.obj
+ 0003:00014f70       _pseudo_screen             10088f70     wddwin.obj
+ 0003:00014f74       _wd_dirty_lines            10088f74     wddwin.obj
+ 0003:00014f78       _update_window             10088f78     wddwin.obj
+ 0003:00015e48       __foreground_event         10089e48     wdispsw.obj
+ 0003:000162ac       _gdi_dirty_lines           1008a2ac     wgdi.obj
+ 0003:000172e0       _key_thread                1008b2e0     wkeybd.obj
+ 0003:00018310       _mouse_thread              1008c310     wmouse.obj
+ 0003:00018360       __digi_driver_list         1008c360     wsnddrv.obj
+ 0003:00018370       __midi_driver_list         1008c370     wsnddrv.obj
+ 0003:000184d0       _allegro_inst              1008c4d0     wsystem.obj
+ 0003:000184d4       _allegro_thread            1008c4d4     wsystem.obj
+ 0003:00018508       _allegro_wnd               1008c508     wwnd.obj
+ 0003:0001850c       _wnd_x                     1008c50c     wwnd.obj
+ 0003:00018510       _wnd_y                     1008c510     wwnd.obj
+ 0003:00018514       _wnd_width                 1008c514     wwnd.obj
+ 0003:00018518       _wnd_height                1008c518     wwnd.obj
+ 0003:0001851c       _wnd_sysmenu               1008c51c     wwnd.obj
+ 0003:00018520       _gfx_crit_sect_nesting     1008c520     wwnd.obj
+ 0003:00018524       _user_close_proc           1008c524     wwnd.obj
+ 0003:00018560       __colorconv_indexed_palette 1008c560     colconv.obj
+ 0003:00018564       __colorconv_rgb_scale_5x35 1008c564     colconv.obj
+ 0003:00018568       __colorconv_rgb_map        1008c568     colconv.obj
+ 0003:0001931c       __key_accent1              1008d31c     pckeys.obj
+ 0003:00019320       __key_accent2              1008d320     pckeys.obj
+ 0003:00019324       __key_accent3              1008d324     pckeys.obj
+ 0003:00019328       __key_accent4              1008d328     pckeys.obj
+ 0003:0001932c       __key_accent1_flag         1008d32c     pckeys.obj
+ 0003:00019330       __key_accent2_flag         1008d330     pckeys.obj
+ 0003:00019334       __key_accent3_flag         1008d334     pckeys.obj
+ 0003:00019338       __key_accent4_flag         1008d338     pckeys.obj
+ 0003:00019340       _gfx_crit_sect             1008d340     <common>
+ 0003:00019360       _wnd_title                 1008d360     <common>
+ 0003:000193e0       _win_gfx_driver            1008d3e0     <common>
+ 0003:00019400       _allegro_critical_section  1008d400     <common>
+ 0003:00019418       __dx_ver                   1008d418     <common>
+ 0003:00019420       _win32_joystick            1008d420     <common>
+ 0003:00019920       _desktop_depth             1008d920     <common>
+ 0003:00019924       _mode_supported            1008d924     <common>
+ 0003:00019940       _desktop_rgb_map           1008d940     <common>
+ 0003:00021940       _pseudo_surf_mem           10095940     <common>
+ 0003:00021960       _dd_caps                   10095960     <common>
+ 0003:00021aa0       __timer_queue              10095aa0     <common>
+ 0003:00021be0       __voice                    10095be0     <common>
+ 0003:00022fe0       __phys_voice               10096fe0     <common>
+ 0003:00023ae0       __optim_alternative_drawer 10097ae0     <common>
+ 0003:00023b00       _key                       10097b00     <common>
+ 0003:00023b80       __key                      10097b80     <common>
+ 0003:00023c00       _joy                       10097c00     <common>
+ 0003:000249c0       _gui_button_proc           100989c0     <common>
+ 0003:000249c4       _gui_ctext_proc            100989c4     <common>
+ 0003:000249c8       _gui_list_proc             100989c8     <common>
+ 0003:000249cc       _gui_shadow_box_proc       100989cc     <common>
+ 0003:000249d0       _gui_edit_proc             100989d0     <common>
+ 0003:000249d4       _gui_text_list_proc        100989d4     <common>
+ 0003:000249e0       __screen_vtable            100989e0     <common>
+ 0003:00024aa0       __palette_color32          10098aa0     <common>
+ 0003:00024ea0       __palette_color24          10098ea0     <common>
+ 0003:000252a0       __palette_color16          100992a0     <common>
+ 0003:000256a0       __palette_color15          100996a0     <common>
+ 0003:00025aa0       __palette_color8           10099aa0     <common>
+ 0003:00025ea0       __prev_current_palette     10099ea0     <common>
+ 0003:000262a0       _fli_palette               1009a2a0     <common>
+ 0003:000266a0       __current_palette          1009a6a0     <common>
+ 0003:00026aa0       _black_palette             1009aaa0     <common>
+ 0003:00026ea0       __adjust_fdiv              1009aea0     <common>
+ 0003:00026ea4       ___onexitend               1009aea4     <common>
+ 0003:00026ea8       ___onexitbegin             1009aea8     <common>
+ 0003:00026eac       __pRawDllMain              1009aeac     <common>
+ 0004:00000000       __IMPORT_DESCRIPTOR_KERNEL32 1009b000     kernel32:KERNEL32.dll
+ 0004:00000014       __IMPORT_DESCRIPTOR_USER32 1009b014     user32:USER32.dll
+ 0004:00000028       __IMPORT_DESCRIPTOR_GDI32  1009b028     gdi32:GDI32.dll
+ 0004:0000003c       __IMPORT_DESCRIPTOR_ole32  1009b03c     ole32:ole32.dll
+ 0004:00000050       __IMPORT_DESCRIPTOR_DINPUT 1009b050     dinput:DINPUT.dll
+ 0004:00000064       __IMPORT_DESCRIPTOR_DDRAW  1009b064     ddraw:DDRAW.dll
+ 0004:00000078       __IMPORT_DESCRIPTOR_WINMM  1009b078     winmm:WINMM.dll
+ 0004:0000008c       __IMPORT_DESCRIPTOR_DSOUND 1009b08c     dsound:DSOUND.dll
+ 0004:000000a0       __IMPORT_DESCRIPTOR_MSVCRT 1009b0a0     MSVCRT:MSVCRT.dll
+ 0004:000000b4       __NULL_IMPORT_DESCRIPTOR   1009b0b4     kernel32:KERNEL32.dll
+ 0004:000003c0       __imp__DirectDrawCreate@12 1009b3c0     ddraw:DDRAW.dll
+ 0004:000003c4       \177DDRAW_NULL_THUNK_DATA  1009b3c4     ddraw:DDRAW.dll
+ 0004:000003c8       __imp__DirectInputCreateA@16 1009b3c8     dinput:DINPUT.dll
+ 0004:000003cc       \177DINPUT_NULL_THUNK_DATA 1009b3cc     dinput:DINPUT.dll
+ 0004:000003d0       __imp__DirectSoundCreate@12 1009b3d0     dsound:DSOUND.dll
+ 0004:000003d4       __imp__DirectSoundEnumerateA@8 1009b3d4     dsound:DSOUND.dll
+ 0004:000003d8       \177DSOUND_NULL_THUNK_DATA 1009b3d8     dsound:DSOUND.dll
+ 0004:000003dc       __imp__StretchBlt@44       1009b3dc     gdi32:GDI32.dll
+ 0004:000003e0       __imp__GetSystemPaletteEntries@16 1009b3e0     gdi32:GDI32.dll
+ 0004:000003e4       __imp__RealizePalette@4    1009b3e4     gdi32:GDI32.dll
+ 0004:000003e8       __imp__SelectPalette@12    1009b3e8     gdi32:GDI32.dll
+ 0004:000003ec       __imp__SetPaletteEntries@16 1009b3ec     gdi32:GDI32.dll
+ 0004:000003f0       __imp__DeleteObject@4      1009b3f0     gdi32:GDI32.dll
+ 0004:000003f4       __imp__CreatePalette@4     1009b3f4     gdi32:GDI32.dll
+ 0004:000003f8       __imp__GetPaletteEntries@16 1009b3f8     gdi32:GDI32.dll
+ 0004:000003fc       __imp__CreateDIBitmap@24   1009b3fc     gdi32:GDI32.dll
+ 0004:00000400       __imp__GetObjectA@12       1009b400     gdi32:GDI32.dll
+ 0004:00000404       __imp__GetDIBits@28        1009b404     gdi32:GDI32.dll
+ 0004:00000408       __imp__StretchDIBits@52    1009b408     gdi32:GDI32.dll
+ 0004:0000040c       __imp__DeleteDC@4          1009b40c     gdi32:GDI32.dll
+ 0004:00000410       __imp__SelectObject@8      1009b410     gdi32:GDI32.dll
+ 0004:00000414       __imp__CreateCompatibleBitmap@12 1009b414     gdi32:GDI32.dll
+ 0004:00000418       __imp__CreateCompatibleDC@4 1009b418     gdi32:GDI32.dll
+ 0004:0000041c       __imp__BitBlt@36           1009b41c     gdi32:GDI32.dll
+ 0004:00000420       __imp__GetDeviceCaps@8     1009b420     gdi32:GDI32.dll
+ 0004:00000424       __imp__GetStockObject@4    1009b424     gdi32:GDI32.dll
+ 0004:00000428       \177GDI32_NULL_THUNK_DATA  1009b428     gdi32:GDI32.dll
+ 0004:0000042c       __imp__Sleep@4             1009b42c     kernel32:KERNEL32.dll
+ 0004:00000430       __imp__GetCommandLineA@0   1009b430     kernel32:KERNEL32.dll
+ 0004:00000434       __imp__DeleteCriticalSection@4 1009b434     kernel32:KERNEL32.dll
+ 0004:00000438       __imp__GetModuleHandleA@4  1009b438     kernel32:KERNEL32.dll
+ 0004:0000043c       __imp__QueryPerformanceCounter@4 1009b43c     kernel32:KERNEL32.dll
+ 0004:00000440       __imp__TerminateThread@8   1009b440     kernel32:KERNEL32.dll
+ 0004:00000444       __imp__GetModuleFileNameA@12 1009b444     kernel32:KERNEL32.dll
+ 0004:00000448       __imp__GetCurrentThread@0  1009b448     kernel32:KERNEL32.dll
+ 0004:0000044c       __imp__GetCurrentProcess@0 1009b44c     kernel32:KERNEL32.dll
+ 0004:00000450       __imp__DuplicateHandle@28  1009b450     kernel32:KERNEL32.dll
+ 0004:00000454       __imp__GetVersion@0        1009b454     kernel32:KERNEL32.dll
+ 0004:00000458       __imp__InitializeCriticalSection@4 1009b458     kernel32:KERNEL32.dll
+ 0004:0000045c       __imp__WaitForMultipleObjects@16 1009b45c     kernel32:KERNEL32.dll
+ 0004:00000460       __imp__ExitProcess@4       1009b460     kernel32:KERNEL32.dll
+ 0004:00000464       __imp__PulseEvent@4        1009b464     kernel32:KERNEL32.dll
+ 0004:00000468       __imp__GetLogicalDrives@0  1009b468     kernel32:KERNEL32.dll
+ 0004:0000046c       __imp__WaitForSingleObject@8 1009b46c     kernel32:KERNEL32.dll
+ 0004:00000470       __imp__ResetEvent@4        1009b470     kernel32:KERNEL32.dll
+ 0004:00000474       __imp__GetThreadPriority@4 1009b474     kernel32:KERNEL32.dll
+ 0004:00000478       __imp__SetThreadPriority@8 1009b478     kernel32:KERNEL32.dll
+ 0004:0000047c       __imp__SetEvent@4          1009b47c     kernel32:KERNEL32.dll
+ 0004:00000480       __imp__CloseHandle@4       1009b480     kernel32:KERNEL32.dll
+ 0004:00000484       __imp__QueryPerformanceFrequency@4 1009b484     kernel32:KERNEL32.dll
+ 0004:00000488       __imp__FormatMessageA@28   1009b488     kernel32:KERNEL32.dll
+ 0004:0000048c       __imp__GetVersionExA@4     1009b48c     kernel32:KERNEL32.dll
+ 0004:00000490       __imp__FreeLibrary@4       1009b490     kernel32:KERNEL32.dll
+ 0004:00000494       __imp__DisableThreadLibraryCalls@4 1009b494     kernel32:KERNEL32.dll
+ 0004:00000498       __imp__LocalAlloc@8        1009b498     kernel32:KERNEL32.dll
+ 0004:0000049c       __imp__LeaveCriticalSection@4 1009b49c     kernel32:KERNEL32.dll
+ 0004:000004a0       __imp__EnterCriticalSection@4 1009b4a0     kernel32:KERNEL32.dll
+ 0004:000004a4       __imp__LocalFree@4         1009b4a4     kernel32:KERNEL32.dll
+ 0004:000004a8       __imp__GetProcAddress@8    1009b4a8     kernel32:KERNEL32.dll
+ 0004:000004ac       __imp__OutputDebugStringA@4 1009b4ac     kernel32:KERNEL32.dll
+ 0004:000004b0       __imp__LoadLibraryA@4      1009b4b0     kernel32:KERNEL32.dll
+ 0004:000004b4       __imp__CreateEventA@16     1009b4b4     kernel32:KERNEL32.dll
+ 0004:000004b8       \177KERNEL32_NULL_THUNK_DATA 1009b4b8     kernel32:KERNEL32.dll
+ 0004:000004bc       __imp___open               1009b4bc     MSVCRT:MSVCRT.dll
+ 0004:000004bc       __imp__open                1009b4bc     MSVCRT:MSVCRT.dll
+ 0004:000004c0       __imp___unlink             1009b4c0     MSVCRT:MSVCRT.dll
+ 0004:000004c0       __imp__unlink              1009b4c0     MSVCRT:MSVCRT.dll
+ 0004:000004c4       __imp___CIacos             1009b4c4     MSVCRT:MSVCRT.dll
+ 0004:000004c8       __imp__qsort               1009b4c8     MSVCRT:MSVCRT.dll
+ 0004:000004cc       __imp__tmpnam              1009b4cc     MSVCRT:MSVCRT.dll
+ 0004:000004d0       __imp__strpbrk             1009b4d0     MSVCRT:MSVCRT.dll
+ 0004:000004d4       __imp__memmove             1009b4d4     MSVCRT:MSVCRT.dll
+ 0004:000004d8       __imp___CIpow              1009b4d8     MSVCRT:MSVCRT.dll
+ 0004:000004dc       __imp___CIfmod             1009b4dc     MSVCRT:MSVCRT.dll
+ 0004:000004e0       __imp__rand                1009b4e0     MSVCRT:MSVCRT.dll
+ 0004:000004e4       __imp___ftol               1009b4e4     MSVCRT:MSVCRT.dll
+ 0004:000004e8       __imp__realloc             1009b4e8     MSVCRT:MSVCRT.dll
+ 0004:000004ec       __imp__vsprintf            1009b4ec     MSVCRT:MSVCRT.dll
+ 0004:000004f0       __imp__fwrite              1009b4f0     MSVCRT:MSVCRT.dll
+ 0004:000004f4       __imp__fclose              1009b4f4     MSVCRT:MSVCRT.dll
+ 0004:000004f8       __imp__sprintf             1009b4f8     MSVCRT:MSVCRT.dll
+ 0004:000004fc       __imp__getenv              1009b4fc     MSVCRT:MSVCRT.dll
+ 0004:00000500       __imp__fopen               1009b500     MSVCRT:MSVCRT.dll
+ 0004:00000504       __imp__fprintf             1009b504     MSVCRT:MSVCRT.dll
+ 0004:00000508       __imp__fflush              1009b508     MSVCRT:MSVCRT.dll
+ 0004:0000050c       __imp__abort               1009b50c     MSVCRT:MSVCRT.dll
+ 0004:00000510       __imp___iob                1009b510     MSVCRT:MSVCRT.dll
+ 0004:00000514       __imp__fputs               1009b514     MSVCRT:MSVCRT.dll
+ 0004:00000518       __imp___errno              1009b518     MSVCRT:MSVCRT.dll
+ 0004:0000051c       __imp__exit                1009b51c     MSVCRT:MSVCRT.dll
+ 0004:00000520       __imp__free                1009b520     MSVCRT:MSVCRT.dll
+ 0004:00000524       __imp__clock               1009b524     MSVCRT:MSVCRT.dll
+ 0004:00000528       __imp__atof                1009b528     MSVCRT:MSVCRT.dll
+ 0004:0000052c       __imp__malloc              1009b52c     MSVCRT:MSVCRT.dll
+ 0004:00000530       __imp__strtod              1009b530     MSVCRT:MSVCRT.dll
+ 0004:00000534       __imp__strerror            1009b534     MSVCRT:MSVCRT.dll
+ 0004:00000538       __imp__strtol              1009b538     MSVCRT:MSVCRT.dll
+ 0004:0000053c       __imp___stat               1009b53c     MSVCRT:MSVCRT.dll
+ 0004:00000540       __imp___findfirst          1009b540     MSVCRT:MSVCRT.dll
+ 0004:00000544       __imp__calloc              1009b544     MSVCRT:MSVCRT.dll
+ 0004:00000548       __imp___findclose          1009b548     MSVCRT:MSVCRT.dll
+ 0004:0000054c       __imp___getdrive           1009b54c     MSVCRT:MSVCRT.dll
+ 0004:00000550       __imp___findnext           1009b550     MSVCRT:MSVCRT.dll
+ 0004:00000554       __imp___beginthread        1009b554     MSVCRT:MSVCRT.dll
+ 0004:00000558       __imp___close              1009b558     MSVCRT:MSVCRT.dll
+ 0004:00000558       __imp__close               1009b558     MSVCRT:MSVCRT.dll
+ 0004:0000055c       __imp___getdcwd            1009b55c     MSVCRT:MSVCRT.dll
+ 0004:00000560       __imp___stricmp            1009b560     MSVCRT:MSVCRT.dll
+ 0004:00000560       __imp__stricmp             1009b560     MSVCRT:MSVCRT.dll
+ 0004:00000564       __imp___strdup             1009b564     MSVCRT:MSVCRT.dll
+ 0004:00000564       __imp__strdup              1009b564     MSVCRT:MSVCRT.dll
+ 0004:00000568       __imp__write               1009b568     MSVCRT:MSVCRT.dll
+ 0004:00000568       __imp___write              1009b568     MSVCRT:MSVCRT.dll
+ 0004:0000056c       __imp__read                1009b56c     MSVCRT:MSVCRT.dll
+ 0004:0000056c       __imp___read               1009b56c     MSVCRT:MSVCRT.dll
+ 0004:00000570       __imp___lseek              1009b570     MSVCRT:MSVCRT.dll
+ 0004:00000570       __imp__lseek               1009b570     MSVCRT:MSVCRT.dll
+ 0004:00000574       __imp___initterm           1009b574     MSVCRT:MSVCRT.dll
+ 0004:00000578       __imp__dup                 1009b578     MSVCRT:MSVCRT.dll
+ 0004:00000578       __imp___dup                1009b578     MSVCRT:MSVCRT.dll
+ 0004:0000057c       __imp___adjust_fdiv        1009b57c     MSVCRT:MSVCRT.dll
+ 0004:00000580       \177MSVCRT_NULL_THUNK_DATA 1009b580     MSVCRT:MSVCRT.dll
+ 0004:00000584       __imp__ReleaseDC@8         1009b584     user32:USER32.dll
+ 0004:00000588       __imp__GetDC@4             1009b588     user32:USER32.dll
+ 0004:0000058c       __imp__SendMessageA@16     1009b58c     user32:USER32.dll
+ 0004:00000590       __imp__GetClientRect@8     1009b590     user32:USER32.dll
+ 0004:00000594       __imp__PostMessageA@16     1009b594     user32:USER32.dll
+ 0004:00000598       __imp__MessageBoxA@16      1009b598     user32:USER32.dll
+ 0004:0000059c       __imp__MoveWindow@24       1009b59c     user32:USER32.dll
+ 0004:000005a0       __imp__RedrawWindow@16     1009b5a0     user32:USER32.dll
+ 0004:000005a4       __imp__ShowWindow@8        1009b5a4     user32:USER32.dll
+ 0004:000005a8       __imp__SetWindowLongA@12   1009b5a8     user32:USER32.dll
+ 0004:000005ac       __imp__SystemParametersInfoA@16 1009b5ac     user32:USER32.dll
+ 0004:000005b0       __imp__SetWindowPos@28     1009b5b0     user32:USER32.dll
+ 0004:000005b4       __imp__GetWindowRect@8     1009b5b4     user32:USER32.dll
+ 0004:000005b8       __imp__GetForegroundWindow@0 1009b5b8     user32:USER32.dll
+ 0004:000005bc       __imp__AdjustWindowRect@12 1009b5bc     user32:USER32.dll
+ 0004:000005c0       __imp__ClientToScreen@8    1009b5c0     user32:USER32.dll
+ 0004:000005c4       __imp__keybd_event@16      1009b5c4     user32:USER32.dll
+ 0004:000005c8       __imp__GetWindowLongA@8    1009b5c8     user32:USER32.dll
+ 0004:000005cc       __imp__GetKeyboardState@4  1009b5cc     user32:USER32.dll
+ 0004:000005d0       __imp__MessageBoxW@16      1009b5d0     user32:USER32.dll
+ 0004:000005d4       __imp__ShowCursor@4        1009b5d4     user32:USER32.dll
+ 0004:000005d8       __imp__GetClassLongA@8     1009b5d8     user32:USER32.dll
+ 0004:000005dc       __imp__GetSystemMenu@8     1009b5dc     user32:USER32.dll
+ 0004:000005e0       __imp__EnableMenuItem@12   1009b5e0     user32:USER32.dll
+ 0004:000005e4       __imp__GetCursorPos@4      1009b5e4     user32:USER32.dll
+ 0004:000005e8       __imp__GetSystemMetrics@4  1009b5e8     user32:USER32.dll
+ 0004:000005ec       __imp__SetCursorPos@8      1009b5ec     user32:USER32.dll
+ 0004:000005f0       __imp__SetWindowTextA@8    1009b5f0     user32:USER32.dll
+ 0004:000005f4       __imp__LoadIconA@8         1009b5f4     user32:USER32.dll
+ 0004:000005f8       __imp__LoadCursorA@8       1009b5f8     user32:USER32.dll
+ 0004:000005fc       __imp__RegisterClassA@4    1009b5fc     user32:USER32.dll
+ 0004:00000600       __imp__CreateWindowExA@48  1009b600     user32:USER32.dll
+ 0004:00000604       __imp__SetForegroundWindow@4 1009b604     user32:USER32.dll
+ 0004:00000608       __imp__UpdateWindow@4      1009b608     user32:USER32.dll
+ 0004:0000060c       __imp__GetMessageA@16      1009b60c     user32:USER32.dll
+ 0004:00000610       __imp__DispatchMessageA@4  1009b610     user32:USER32.dll
+ 0004:00000614       __imp__TranslateMessage@4  1009b614     user32:USER32.dll
+ 0004:00000618       __imp__DestroyWindow@4     1009b618     user32:USER32.dll
+ 0004:0000061c       __imp__DefWindowProcA@16   1009b61c     user32:USER32.dll
+ 0004:00000620       __imp__PostQuitMessage@4   1009b620     user32:USER32.dll
+ 0004:00000624       __imp__SetTimer@16         1009b624     user32:USER32.dll
+ 0004:00000628       __imp__GetActiveWindow@0   1009b628     user32:USER32.dll
+ 0004:0000062c       __imp__IsIconic@4          1009b62c     user32:USER32.dll
+ 0004:00000630       __imp__BeginPaint@8        1009b630     user32:USER32.dll
+ 0004:00000634       __imp__EndPaint@8          1009b634     user32:USER32.dll
+ 0004:00000638       __imp__KillTimer@8         1009b638     user32:USER32.dll
+ 0004:0000063c       __imp__CallWindowProcA@20  1009b63c     user32:USER32.dll
+ 0004:00000640       __imp__RegisterWindowMessageA@4 1009b640     user32:USER32.dll
+ 0004:00000644       __imp__SetClassLongA@12    1009b644     user32:USER32.dll
+ 0004:00000648       \177USER32_NULL_THUNK_DATA 1009b648     user32:USER32.dll
+ 0004:0000064c       __imp__midiOutShortMsg@8   1009b64c     winmm:WINMM.dll
+ 0004:00000650       __imp__midiOutSetVolume@8  1009b650     winmm:WINMM.dll
+ 0004:00000654       __imp__timeGetTime@0       1009b654     winmm:WINMM.dll
+ 0004:00000658       __imp__midiOutClose@4      1009b658     winmm:WINMM.dll
+ 0004:0000065c       __imp__midiOutOpen@20      1009b65c     winmm:WINMM.dll
+ 0004:00000660       __imp__midiOutReset@4      1009b660     winmm:WINMM.dll
+ 0004:00000664       __imp__midiOutGetNumDevs@0 1009b664     winmm:WINMM.dll
+ 0004:00000668       __imp__midiOutGetDevCapsA@12 1009b668     winmm:WINMM.dll
+ 0004:0000066c       __imp__joyGetNumDevs@0     1009b66c     winmm:WINMM.dll
+ 0004:00000670       __imp__waveOutReset@4      1009b670     winmm:WINMM.dll
+ 0004:00000674       __imp__waveOutUnprepareHeader@12 1009b674     winmm:WINMM.dll
+ 0004:00000678       __imp__waveOutGetPosition@12 1009b678     winmm:WINMM.dll
+ 0004:0000067c       __imp__waveOutPause@4      1009b67c     winmm:WINMM.dll
+ 0004:00000680       __imp__waveOutOpen@24      1009b680     winmm:WINMM.dll
+ 0004:00000684       __imp__waveOutPrepareHeader@12 1009b684     winmm:WINMM.dll
+ 0004:00000688       __imp__waveOutWrite@12     1009b688     winmm:WINMM.dll
+ 0004:0000068c       __imp__joyGetDevCapsA@12   1009b68c     winmm:WINMM.dll
+ 0004:00000690       __imp__waveOutGetVolume@8  1009b690     winmm:WINMM.dll
+ 0004:00000694       __imp__joyGetPosEx@8       1009b694     winmm:WINMM.dll
+ 0004:00000698       __imp__waveOutRestart@4    1009b698     winmm:WINMM.dll
+ 0004:0000069c       __imp__waveOutClose@4      1009b69c     winmm:WINMM.dll
+ 0004:000006a0       __imp__waveOutSetVolume@8  1009b6a0     winmm:WINMM.dll
+ 0004:000006a4       \177WINMM_NULL_THUNK_DATA  1009b6a4     winmm:WINMM.dll
+ 0004:000006a8       __imp__CoUninitialize@0    1009b6a8     ole32:ole32.dll
+ 0004:000006ac       __imp__CoInitialize@4      1009b6ac     ole32:ole32.dll
+ 0004:000006b0       __imp__CoCreateInstance@20 1009b6b0     ole32:ole32.dll
+ 0004:000006b4       \177ole32_NULL_THUNK_DATA  1009b6b4     ole32:ole32.dll
+
+ entry point at        0001:000697df
+
+ Static symbols
+
+ 0001:00067e10       _read_keyboard_config      10068e10 f   pckeys.obj
+ 0001:000683a0       _read_key_table            100693a0 f   pckeys.obj
+ 0001:00065ff0       _build_rgb_scale_5235_table 10066ff0 f   colconv.obj
+ 0001:00066110       _build_rgb_scale_5335_table 10067110 f   colconv.obj
+ 0001:00066230       _create_indexed_palette    10067230 f   colconv.obj
+ 0001:000662d0       _create_rgb_map            100672d0 f   colconv.obj
+ 0001:00064e90       _init_window_modules       10065e90 f   wwnd.obj
+ 0001:00064ee0       _exit_window_modules       10065ee0 f   wwnd.obj
+ 0001:00065380       _directx_wnd_proc@16       10066380 f   wwnd.obj
+ 0001:00065920       _wnd_thread_proc           10066920 f   wwnd.obj
+ 0001:000659b0       _create_directx_window     100669b0 f   wwnd.obj
+ 0001:00064ab0       _tim_win32_high_perf_init  10065ab0 f   wtimer.obj
+ 0001:00064b20       _tim_win32_high_perf_thread 10065b20 f   wtimer.obj
+ 0001:00064be0       _tim_win32_handle_timer_tick 10065be0 f   wtimer.obj
+ 0001:00064d00       _tim_win32_low_perf_init   10065d00 f   wtimer.obj
+ 0001:00064d40       _tim_win32_low_perf_thread 10065d40 f   wtimer.obj
+ 0001:00064db0       _tim_win32_exit            10065db0 f   wtimer.obj
+ 0001:00064de0       _can_simulate_retrace      10065de0 f   wtimer.obj
+ 0001:00064df0       _win32_rest                10065df0 f   wtimer.obj
+ 0001:00064380       _sys_directx_init          10065380 f   wsystem.obj
+ 0001:000644e0       _sys_directx_exit          100654e0 f   wsystem.obj
+ 0001:00064510       _sys_directx_get_executable_name 10065510 f   wsystem.obj
+ 0001:00064580       _sys_directx_set_window_title 10065580 f   wsystem.obj
+ 0001:000645c0       _sys_directx_set_window_close_button 100655c0 f   wsystem.obj
+ 0001:00064630       _sys_directx_set_window_close_hook 10065630 f   wsystem.obj
+ 0001:00064640       _sys_directx_message       10065640 f   wsystem.obj
+ 0001:000646f0       _sys_directx_assert        100656f0 f   wsystem.obj
+ 0001:00064700       _sys_directx_save_console_state 10065700 f   wsystem.obj
+ 0001:00064720       _sys_directx_restore_console_state 10065720 f   wsystem.obj
+ 0001:00064770       _sys_directx_desktop_color_depth 10065770 f   wsystem.obj
+ 0001:000647a0       _sys_directx_get_desktop_resolution 100657a0 f   wsystem.obj
+ 0001:000647e0       _sys_directx_yield_timeslice 100657e0 f   wsystem.obj
+ 0001:000647f0       _sys_directx_trace_handler 100657f0 f   wsystem.obj
+ 0001:000637d0       _mouse_directx_init        100647d0 f   wmouse.obj
+ 0001:000638b0       _mouse_directx_thread      100648b0 f   wmouse.obj
+ 0001:00063920       _mouse_dinput_exit         10064920 f   wmouse.obj
+ 0001:00063980       _mouse_dinput_init         10064980 f   wmouse.obj
+ 0001:00063aa0       _mouse_enum_callback@8     10064aa0 f   wmouse.obj
+ 0001:00063b00       _mouse_directx_poll        10064b00 f   wmouse.obj
+ 0001:00064010       _mouse_directx_exit        10065010 f   wmouse.obj
+ 0001:00064050       _mouse_directx_position    10065050 f   wmouse.obj
+ 0001:00064140       _mouse_directx_set_range   10065140 f   wmouse.obj
+ 0001:00064290       _mouse_directx_set_speed   10065290 f   wmouse.obj
+ 0001:00064350       _mouse_directx_get_mickeys 10065350 f   wmouse.obj
+ 0001:00062e50       _key_dinput_handle_scancode 10063e50 f   wkeybd.obj
+ 0001:00062f60       _key_directx_init          10063f60 f   wkeybd.obj
+ 0001:00063000       _key_directx_thread        10064000 f   wkeybd.obj
+ 0001:00063080       _key_dinput_handle         10064080 f   wkeybd.obj
+ 0001:00063100       _key_dinput_exit           10064100 f   wkeybd.obj
+ 0001:00063160       _key_dinput_init           10064160 f   wkeybd.obj
+ 0001:00063250       _key_directx_exit          10064250 f   wkeybd.obj
+ 0001:000632a0       _key_directx_wait_for_input 100642a0 f   wkeybd.obj
+ 0001:000632b0       _key_directx_stop_wait     100642b0 f   wkeybd.obj
+ 0001:00062600       _joy_poll                  10063600 f   wjoyw32.obj
+ 0001:00062830       _poll_win32_joysticks      10063830 f   wjoyw32.obj
+ 0001:00062a30       _joy_init                  10063a30 f   wjoyw32.obj
+ 0001:00062be0       _init_win32_joysticks      10063be0 f   wjoyw32.obj
+ 0001:00062d70       _joy_exit                  10063d70 f   wjoyw32.obj
+ 0001:00061cf0       _gfx_gdi_set_mouse_sprite  10062cf0 f   wgdi.obj
+ 0001:00061da0       _gfx_gdi_show_mouse        10062da0 f   wgdi.obj
+ 0001:00061df0       _update_mouse_pointer      10062df0 f   wgdi.obj
+ 0001:00061f00       _gfx_gdi_hide_mouse        10062f00 f   wgdi.obj
+ 0001:00061f80       _gfx_gdi_move_mouse        10062f80 f   wgdi.obj
+ 0001:00061fc0       _gdi_enter_sysmode         10062fc0 f   wgdi.obj
+ 0001:00061fe0       _gdi_exit_sysmode          10062fe0 f   wgdi.obj
+ 0001:00062000       _gdi_update_window         10063000 f   wgdi.obj
+ 0001:000620b0       _gfx_gdi_autolock          100630b0 f   wgdi.obj
+ 0001:000620d0       _gfx_gdi_lock              100630d0 f   wgdi.obj
+ 0001:00062160       _render_proc               10063160 f   wgdi.obj
+ 0001:000622f0       _gfx_gdi_unlock            100632f0 f   wgdi.obj
+ 0001:00062320       _gfx_gdi_init              10063320 f   wgdi.obj
+ 0001:00062470       _gfx_gdi_exit              10063470 f   wgdi.obj
+ 0001:00062570       _gfx_gdi_set_palette       10063570 f   wgdi.obj
+ 0001:000625f0       _gfx_gdi_vsync             100635f0 f   wgdi.obj
+ 0001:00061b60       _fill_ffblk                10062b60 f   wfile.obj
+ 0001:00061060       _digi_waveout_detect       10062060 f   wsndwo.obj
+ 0001:00061070       _digi_waveout_init         10062070 f   wsndwo.obj
+ 0001:000612c0       _digi_waveout_mixer_callback 100622c0 f   wsndwo.obj
+ 0001:000613f0       _digi_waveout_exit         100623f0 f   wsndwo.obj
+ 0001:00061490       _digi_waveout_mixer_volume 10062490 f   wsndwo.obj
+ 0001:000614c0       _digi_waveout_buffer_size  100624c0 f   wsndwo.obj
+ 0001:0005fe60       _DSEnumCallback@16         10060e60 f   wdsound.obj
+ 0001:0005ff30       _digi_directsound_detect   10060f30 f   wdsound.obj
+ 0001:0005ffa0       _digi_directsound_init     10060fa0 f   wdsound.obj
+ 0001:000602e0       _digi_directsound_exit     100612e0 f   wdsound.obj
+ 0001:00060380       _digi_directsound_mixer_volume 10061380 f   wdsound.obj
+ 0001:000603d0       _digi_directsound_init_voice 100613d0 f   wdsound.obj
+ 0001:00060510       _create_dsound_buffer      10061510 f   wdsound.obj
+ 0001:00060670       _fill_dsound_buffer        10061670 f   wdsound.obj
+ 0001:00060850       _digi_directsound_release_voice 10061850 f   wdsound.obj
+ 0001:000608a0       _digi_directsound_start_voice 100618a0 f   wdsound.obj
+ 0001:000608f0       _digi_directsound_stop_voice 100618f0 f   wdsound.obj
+ 0001:00060930       _digi_directsound_loop_voice 10061930 f   wdsound.obj
+ 0001:00060960       _update_voice_buffers      10061960 f   wdsound.obj
+ 0001:00060b50       _digi_directsound_lock_voice 10061b50 f   wdsound.obj
+ 0001:00060c20       _digi_directsound_unlock_voice 10061c20 f   wdsound.obj
+ 0001:00060cc0       _digi_directsound_get_position 10061cc0 f   wdsound.obj
+ 0001:00060de0       _digi_directsound_set_position 10061de0 f   wdsound.obj
+ 0001:00060e80       _digi_directsound_get_volume 10061e80 f   wdsound.obj
+ 0001:00060ea0       _digi_directsound_set_volume 10061ea0 f   wdsound.obj
+ 0001:00060f10       _digi_directsound_get_frequency 10061f10 f   wdsound.obj
+ 0001:00060f30       _digi_directsound_set_frequency 10061f30 f   wdsound.obj
+ 0001:00060f80       _digi_directsound_get_pan  10061f80 f   wdsound.obj
+ 0001:00060fa0       _digi_directsound_set_pan  10061fa0 f   wdsound.obj
+ 0001:0005f610       _digi_dsoundmix_detect     10060610 f   wdsndmix.obj
+ 0001:0005f680       _digi_dsoundmix_init       10060680 f   wdsndmix.obj
+ 0001:0005fa30       _digi_dsoundmix_mixer_callback 10060a30 f   wdsndmix.obj
+ 0001:0005fc60       _digi_dsoundmix_exit       10060c60 f   wdsndmix.obj
+ 0001:0005fce0       _digi_dsoundmix_mixer_volume 10060ce0 f   wdsndmix.obj
+ 0001:0005fd20       _digi_dsoundmix_buffer_size 10060d20 f   wdsndmix.obj
+ 0001:0005ec60       _get_capture_format_support 1005fc60 f   wdsinput.obj
+ 0001:0005f000       _create_test_capture_buffer 10060000 f   wdsinput.obj
+ 0001:0005deb0       _switch_in_win             1005eeb0 f   wddwin.obj
+ 0001:0005df00       _get_working_area          1005ef00 f   wddwin.obj
+ 0001:0005df40       _handle_window_enter_sysmode_win 1005ef40 f   wddwin.obj
+ 0001:0005df70       _handle_window_exit_sysmode_win 1005ef70 f   wddwin.obj
+ 0001:0005dfa0       _handle_window_move_win    1005efa0 f   wddwin.obj
+ 0001:0005e060       _paint_win                 1005f060 f   wddwin.obj
+ 0001:0005e0b0       _gfx_directx_show_video_bitmap_win 1005f0b0 f   wddwin.obj
+ 0001:0005e130       _init_directx_win          1005f130 f   wddwin.obj
+ 0001:0005e450       _gfx_directx_set_palette_win_8 1005f450 f   wddwin.obj
+ 0001:0005e4b0       _gfx_directx_set_palette_win 1005f4b0 f   wddwin.obj
+ 0001:0005e4e0       _wnd_set_windowed_coop     1005f4e0 f   wddwin.obj
+ 0001:0005e500       _verify_color_depth        1005f500 f   wddwin.obj
+ 0001:0005e630       _update_matching_window    1005f630 f   wddwin.obj
+ 0001:0005e720       _update_colorconv_window   1005f720 f   wddwin.obj
+ 0001:0005e8d0       _ddsurf_blit_ex            1005f8d0 f   wddwin.obj
+ 0001:0005e9e0       _create_offscreen          1005f9e0 f   wddwin.obj
+ 0001:0005ea40       _setup_driver_desc         1005fa40 f   wddwin.obj
+ 0001:0005ead0       _gfx_directx_win_exit      1005fad0 f   wddwin.obj
+ 0001:0005d7f0       _switch_in_overlay         1005e7f0 f   wddovl.obj
+ 0001:0005d830       _show_overlay              1005e830 f   wddovl.obj
+ 0001:0005d870       _update_overlay            1005e870 f   wddovl.obj
+ 0001:0005d930       _move_overlay              1005e930 f   wddovl.obj
+ 0001:0005d9b0       _hide_overlay              1005e9b0 f   wddovl.obj
+ 0001:0005d9f0       _paint_overlay             1005e9f0 f   wddovl.obj
+ 0001:0005da10       _gfx_directx_show_video_bitmap_ovl 1005ea10 f   wddovl.obj
+ 0001:0005da60       _gfx_directx_request_video_bitmap_ovl 1005ea60 f   wddovl.obj
+ 0001:0005dab0       _init_directx_ovl          1005eab0 f   wddovl.obj
+ 0001:0005dd40       _wnd_set_windowed_coop     1005ed40 f   wddovl.obj
+ 0001:0005dd60       _setup_driver_desc         1005ed60 f   wddovl.obj
+ 0001:0005ddb0       _create_overlay            1005edb0 f   wddovl.obj
+ 0001:0005dde0       _gfx_directx_ovl_exit      1005ede0 f   wddovl.obj
+ 0001:0005d2c0       _get_color_bits            1005e2c0 f   wddmode.obj
+ 0001:0005d3e0       _get_color_shift           1005e3e0 f   wddmode.obj
+ 0001:0005d4e0       _EnumModesCallback@8       1005e4e0 f   wddmode.obj
+ 0001:0005d770       _wnd_set_video_mode        1005e770 f   wddmode.obj
+ 0001:0005d7d0       _check_mode_availability@8 1005e7d0 f   wddmode.obj
+ 0001:0005cee0       _gfx_directx_switch_out    1005dee0 f   wddlock.obj
+ 0001:0005cc00       _init_directx_accel        1005dc00 f   wddfull.obj
+ 0001:0005cc70       _finalize_fullscreen_init  1005dc70 f   wddfull.obj
+ 0001:0005cc90       _init_directx_soft         1005dc90 f   wddfull.obj
+ 0001:0005ccf0       _init_directx_safe         1005dcf0 f   wddfull.obj
+ 0001:0005c050       _get_surface2_int          1005d050 f   wddbmp.obj
+ 0001:0005c160       __make_video_bitmap        1005d160 f   wddbmp.obj
+ 0001:0005c3d0       _flip_directx_bitmap       1005d3d0 f   wddbmp.obj
+ 0001:0005b510       _ddraw_blit_to_self        1005c510 f   wddaccel.obj
+ 0001:0005b630       _ddraw_masked_blit         1005c630 f   wddaccel.obj
+ 0001:0005b790       _ddraw_draw_sprite         1005c790 f   wddaccel.obj
+ 0001:0005b8a0       _ddraw_clear_to_color      1005c8a0 f   wddaccel.obj
+ 0001:0005b980       _ddraw_rectfill            1005c980 f   wddaccel.obj
+ 0001:0005bb10       _ddraw_hline               1005cb10 f   wddaccel.obj
+ 0001:0005bc80       _ddraw_vline               1005cc80 f   wddaccel.obj
+ 0001:0005a340       _destroy_hpalette          1005b340 f   gdi.obj
+ 0001:0005a510       _get_dib                   1005b510 f   gdi.obj
+ 0001:0005aa20       _get_bitmap_info           1005ba20 f   gdi.obj
+ 0001:0005ab40       _get_dib_from_hbitmap      1005bb40 f   gdi.obj
+ 0001:0005ad10       _copy_dib_to_bitmap        1005bd10 f   gdi.obj
+ 0001:00051570       _do_stretch_blit           10052570 f   istretch.obj
+ 0001:00051920       _make_stretcher            10052920 f   istretch.obj
+ 0001:00051a20       _make_stretcher_256        10052a20 f   istretch.obj
+ 0001:00052510       _make_stretcher_15         10053510 f   istretch.obj
+ 0001:000531c0       _make_stretcher_16         100541c0 f   istretch.obj
+ 0001:00053e70       _make_stretcher_24         10054e70 f   istretch.obj
+ 0001:00055130       _make_stretcher_32         10056130 f   istretch.obj
+ 0001:00055c80       _free_stretchers           10056c80 f   istretch.obj
+ 0001:000436c0       _compile_sprite            100446c0 f   icsprite.obj
+ 0001:00043410       _cyrix_type                10044410 f   icpu.obj
+ 0001:0003ee80       _ascii_getc                1003fe80 f   unicode.obj
+ 0001:0003ee90       _ascii_getx                1003fe90 f   unicode.obj
+ 0001:0003eea0       _ascii_setc                1003fea0 f   unicode.obj
+ 0001:0003eeb0       _ascii_width               1003feb0 f   unicode.obj
+ 0001:0003eec0       _ascii_cwidth              1003fec0 f   unicode.obj
+ 0001:0003eed0       _ascii_isok                1003fed0 f   unicode.obj
+ 0001:0003eef0       _ascii_cp_getc             1003fef0 f   unicode.obj
+ 0001:0003ef10       _ascii_cp_getx             1003ff10 f   unicode.obj
+ 0001:0003ef30       _ascii_cp_setc             1003ff30 f   unicode.obj
+ 0001:0003efc0       _ascii_cp_isok             1003ffc0 f   unicode.obj
+ 0001:0003f020       _unicode_getc              10040020 f   unicode.obj
+ 0001:0003f030       _unicode_getx              10040030 f   unicode.obj
+ 0001:0003f050       _unicode_setc              10040050 f   unicode.obj
+ 0001:0003f070       _unicode_width             10040070 f   unicode.obj
+ 0001:0003f080       _unicode_cwidth            10040080 f   unicode.obj
+ 0001:0003f090       _unicode_isok              10040090 f   unicode.obj
+ 0001:0003f0b0       _utf8_getc                 100400b0 f   unicode.obj
+ 0001:0003f120       _utf8_getx                 10040120 f   unicode.obj
+ 0001:0003f1a0       _utf8_setc                 100401a0 f   unicode.obj
+ 0001:0003f240       _utf8_width                10040240 f   unicode.obj
+ 0001:0003f270       _utf8_cwidth               10040270 f   unicode.obj
+ 0001:0003f2b0       _utf8_isok                 100402b0 f   unicode.obj
+ 0001:000414c0       _decode_format_string      100424c0 f   unicode.obj
+ 0001:00041c00       _sprint_char               10042c00 f   unicode.obj
+ 0001:00041c60       _sprint_int                10042c60 f   unicode.obj
+ 0001:00041d20       _sprint_i                  10042d20 f   unicode.obj
+ 0001:00041dd0       _sprint_unsigned           10042dd0 f   unicode.obj
+ 0001:00041e60       _sprint_hex                10042e60 f   unicode.obj
+ 0001:00041fc0       _sprint_octal              10042fc0 f   unicode.obj
+ 0001:000420f0       _sprint_float              100430f0 f   unicode.obj
+ 0001:00042220       _sprint_string             10043220 f   unicode.obj
+ 0001:0003e9e0       _rest_int                  1003f9e0 f   timer.obj
+ 0001:0003ea80       _install_timer_int         1003fa80 f   timer.obj
+ 0001:0003eb90       _find_timer_slot           1003fb90 f   timer.obj
+ 0001:0003ebb0       _find_param_timer_slot     1003fbb0 f   timer.obj
+ 0001:0003ebe0       _find_empty_timer_slot     1003fbe0 f   timer.obj
+ 0001:0003db00       _rle_tga_read8             1003eb00 f   tga.obj
+ 0001:0003dbc0       _raw_tga_read32            1003ebc0 f   tga.obj
+ 0001:0003dce0       _rle_tga_read32            1003ece0 f   tga.obj
+ 0001:0003de40       _raw_tga_read24            1003ee40 f   tga.obj
+ 0001:0003df30       _rle_tga_read24            1003ef30 f   tga.obj
+ 0001:0003e060       _raw_tga_read16            1003f060 f   tga.obj
+ 0001:0003e0d0       _rle_tga_read16            1003f0d0 f   tga.obj
+ 0001:0003a520       _read_sound_config         1003b520 f   sound.obj
+ 0001:0003c790       _update_sweeps             1003d790 f   sound.obj
+ 0001:0003c9d0       _sound_lock_mem            1003d9d0 f   sound.obj
+ 0001:00039240       __add_edge_hash            1003a240 f   scene3d.obj
+ 0001:000392e0       _poly_plane                1003a2e0 f   scene3d.obj
+ 0001:00039480       _init_poly                 1003a480 f   scene3d.obj
+ 0001:000396a0       _poly_plane_f              1003a6a0 f   scene3d.obj
+ 0001:00039b50       _far_z                     1003ab50 f   scene3d.obj
+ 0001:00039bd0       _scene_trans_seg           1003abd0 f   scene3d.obj
+ 0001:00039c40       _scene_segment             1003ac40 f   scene3d.obj
+ 0001:000387d0       _draw_scanline_generic_convert 100397d0 f   rotate.obj
+ 0001:000388b0       _draw_scanline_generic     100398b0 f   rotate.obj
+ 0001:00038930       _draw_scanline_8           10039930 f   rotate.obj
+ 0001:000389a0       _draw_scanline_15          100399a0 f   rotate.obj
+ 0001:00038a10       _draw_scanline_16          10039a10 f   rotate.obj
+ 0001:00038a80       _draw_scanline_24          10039a80 f   rotate.obj
+ 0001:00038b10       _draw_scanline_32          10039b10 f   rotate.obj
+ 0001:00037400       _register_bitmap_file_type_exit 10038400 f   readbmp.obj
+ 0001:00035f10       _generate_optimized_palette_ex 10036f10 f   quantize.obj
+ 0001:000365f0       _delete_list               100375f0 f   quantize.obj
+ 0001:00036620       _insert_node               10037620 f   quantize.obj
+ 0001:000366a0       _qsort_helper_ITEM         100376a0 f   quantize.obj
+ 0001:000366c0       _optimize_colors           100376c0 f   quantize.obj
+ 0001:00033ed0       _do_polygon3d              10034ed0 f   poly3d.obj
+ 0001:00033f70       _draw_polygon_segment      10034f70 f   poly3d.obj
+ 0001:00034bb0       _draw_triangle_part        10035bb0 f   poly3d.obj
+ 0001:00035000       __triangle_deltas          10036000 f   poly3d.obj
+ 0001:000355d0       __triangle_deltas_f        100365d0 f   poly3d.obj
+ 0001:00030c50       _nomouse_init              10031c50 f   mouse.obj
+ 0001:00030c60       _nomouse_exit              10031c60 f   mouse.obj
+ 0001:00030c80       _update_mouse              10031c80 f   mouse.obj
+ 0001:00030f10       _create_mouse_pointer      10031f10 f   mouse.obj
+ 0001:00031160       _draw_mouse                10032160 f   mouse.obj
+ 0001:00031340       _draw_mouse_doublebuffer   10032340 f   mouse.obj
+ 0001:000314a0       _mouse_move                100324a0 f   mouse.obj
+ 0001:00031a00       _set_mouse_etc             10032a00 f   mouse.obj
+ 0001:00030050       _change_proc               10031050 f   modesel.obj
+ 0001:00030310       _bpp_value_for_mode        10031310 f   modesel.obj
+ 0001:00030360       _bpp_index_for_mode        10031360 f   modesel.obj
+ 0001:000303b0       _gfx_card_getter           100313b0 f   modesel.obj
+ 0001:000303e0       _gfx_mode_getter           100313e0 f   modesel.obj
+ 0001:00030470       _gfx_depth_getter          10031470 f   modesel.obj
+ 0001:000307b0       _create_driver_list        100317b0 f   modesel.obj
+ 0001:00030a10       _create_mode_list          10031a10 f   modesel.obj
+ 0001:00030ba0       _bpp_index                 10031ba0 f   modesel.obj
+ 0001:00030bc0       _destroy_driver_list       10031bc0 f   modesel.obj
+ 0001:0002c700       _create_volume_table       1002d700 f   mixer.obj
+ 0001:0002cc20       _mix_silent_samples        1002dc20 f   mixer.obj
+ 0001:0002cdf0       _update_silent_mixer       1002ddf0 f   mixer.obj
+ 0001:0002ce90       _mix_mono_8x1_samples      1002de90 f   mixer.obj
+ 0001:0002d060       _update_mixer              1002e060 f   mixer.obj
+ 0001:0002d140       _update_mixer_volume       1002e140 f   mixer.obj
+ 0001:0002d290       _mix_mono_8x2_samples      1002e290 f   mixer.obj
+ 0001:0002d4e0       _mix_mono_16x1_samples     1002e4e0 f   mixer.obj
+ 0001:0002d6c0       _mix_mono_16x2_samples     1002e6c0 f   mixer.obj
+ 0001:0002d930       _mix_stereo_8x1_samples    1002e930 f   mixer.obj
+ 0001:0002db60       _mix_stereo_8x2_samples    1002eb60 f   mixer.obj
+ 0001:0002dda0       _mix_stereo_16x1_samples   1002eda0 f   mixer.obj
+ 0001:0002dff0       _mix_stereo_16x2_samples   1002eff0 f   mixer.obj
+ 0001:0002e240       _mix_hq1_8x1_samples       1002f240 f   mixer.obj
+ 0001:0002e4a0       _mix_hq1_8x2_samples       1002f4a0 f   mixer.obj
+ 0001:0002e700       _mix_hq1_16x1_samples      1002f700 f   mixer.obj
+ 0001:0002e960       _mix_hq1_16x2_samples      1002f960 f   mixer.obj
+ 0001:0002ebc0       _mix_hq2_8x1_samples       1002fbc0 f   mixer.obj
+ 0001:0002ef40       _mix_hq2_8x2_samples       1002ff40 f   mixer.obj
+ 0001:0002f3a0       _mix_hq2_16x1_samples      100303a0 f   mixer.obj
+ 0001:0002f730       _mix_hq2_16x2_samples      10030730 f   mixer.obj
+ 0001:00030040       _mixer_lock_mem            10031040 f   mixer.obj
+ 0001:0002adf0       _midi_note_off             1002bdf0 f   midi.obj
+ 0001:0002aef0       _midi_init                 1002bef0 f   midi.obj
+ 0001:0002b050       _midi_exit                 1002c050 f   midi.obj
+ 0001:0002b110       _all_notes_off             1002c110 f   midi.obj
+ 0001:0002b1a0       _midi_player               1002c1a0 f   midi.obj
+ 0001:0002b450       _parse_var_len             1002c450 f   midi.obj
+ 0001:0002b490       _midi_note_on              1002c490 f   midi.obj
+ 0001:0002b680       _update_controllers        1002c680 f   midi.obj
+ 0001:0002b860       _process_midi_event        1002c860 f   midi.obj
+ 0001:0002baa0       _raw_program_change        1002caa0 f   midi.obj
+ 0001:0002bbb0       _process_controller        1002cbb0 f   midi.obj
+ 0001:0002bcf0       _reset_controllers         1002ccf0 f   midi.obj
+ 0001:0002bda0       _process_meta_event        1002cda0 f   midi.obj
+ 0001:0002be50       _load_patches              1002ce50 f   midi.obj
+ 0001:0002bfe0       _prepare_to_play           1002cfe0 f   midi.obj
+ 0001:0002c470       _midi_lock_mem             1002d470 f   midi.obj
+ 0001:00027a20       _clear_key                 10028a20 f   keyboard.obj
+ 0001:00027cf0       _repeat_timer              10028cf0 f   keyboard.obj
+ 0001:00026f80       _nojoy_ret0                10027f80 f   joystick.obj
+ 0001:00026f90       _nojoy_void                10027f90 f   joystick.obj
+ 0001:000271a0       _clear_joystick_vars       100281a0 f   joystick.obj
+ 0001:00027220       _update_calib              10028220 f   joystick.obj
+ 0001:00022700       _dotted_rect               10023700 f   guiproc.obj
+ 0001:00023b80       _idle_cb                   10024b80 f   guiproc.obj
+ 0001:0001ea60       _default_mouse_x           1001fa60 f   gui.obj
+ 0001:0001ea80       _default_mouse_y           1001fa80 f   gui.obj
+ 0001:0001eaa0       _default_mouse_z           1001faa0 f   gui.obj
+ 0001:0001eac0       _default_mouse_b           1001fac0 f   gui.obj
+ 0001:0001f420       _dclick_check              10020420 f   gui.obj
+ 0001:0001f4a0       _gui_switch_callback       100204a0 f   gui.obj
+ 0001:0001f4b0       _find_mouse_object         100204b0 f   gui.obj
+ 0001:0001ff50       _move_focus                10020f50 f   gui.obj
+ 0001:000200e0       _obj_list_cmp              100210e0 f   gui.obj
+ 0001:00020100       _cmp_tab                   10021100 f   gui.obj
+ 0001:00020120       _cmp_shift_tab             10021120 f   gui.obj
+ 0001:00020140       _cmp_right                 10021140 f   gui.obj
+ 0001:00020180       _cmp_left                  10021180 f   gui.obj
+ 0001:000201c0       _cmp_down                  100211c0 f   gui.obj
+ 0001:00020200       _cmp_up                    10021200 f   gui.obj
+ 0001:00020240       _check_for_redraw          10021240 f   gui.obj
+ 0001:00020560       __do_menu                  10021560 f   gui.obj
+ 0001:00020de0       _get_menu_pos              10021de0 f   gui.obj
+ 0001:00020e90       _bar_entry_length          10021e90 f   gui.obj
+ 0001:00020ee0       _split_around_tab          10021ee0 f   gui.obj
+ 0001:00020f50       _draw_menu_item            10021f50 f   gui.obj
+ 0001:00021350       _draw_menu                 10022350 f   gui.obj
+ 0001:00021420       _menu_mouse_object         10022420 f   gui.obj
+ 0001:000214d0       _mouse_in_parent_menu      100224d0 f   gui.obj
+ 0001:00021500       _fill_menu_info            10022500 f   gui.obj
+ 0001:000216b0       _menu_key_shortcut         100226b0 f   gui.obj
+ 0001:0001cf40       _sort_gfx_mode_list        1001df40 f   graphics.obj
+ 0001:0001d780       _shutdown_gfx              1001e780 f   graphics.obj
+ 0001:0001d7d0       _get_config_gfx_driver     1001e7d0 f   graphics.obj
+ 0001:0001e040       _try_vram_location         1001f040 f   graphics.obj
+ 0001:0001ab50       _palette_expansion_table   1001bb50 f   gfx.obj
+ 0001:00019210       _fs_dlist_getter           1001a210 f   fsel.obj
+ 0001:000192a0       _count_disks               1001a2a0 f   fsel.obj
+ 0001:000192c0       _get_x_drive               1001a2c0 f   fsel.obj
+ 0001:000192f0       _fs_dlist_proc             1001a2f0 f   fsel.obj
+ 0001:000194b0       _fs_edit_proc              1001a4b0 f   fsel.obj
+ 0001:000197c0       _fs_flist_getter           1001a7c0 f   fsel.obj
+ 0001:000197f0       _fs_flist_proc             1001a7f0 f   fsel.obj
+ 0001:00019b80       _fs_flist_putter           1001ab80 f   fsel.obj
+ 0001:0001a080       _ustrfilecmp               1001b080 f   fsel.obj
+ 0001:0001a3a0       _stretch_dialog            1001b3a0 f   fsel.obj
+ 0001:00018d00       _font_height               10019d00 f   font.obj
+ 0001:00018d10       _length                    10019d10 f   font.obj
+ 0001:00018da0       _mono_char_length          10019da0 f   font.obj
+ 0001:00018dc0       _mono_render_char          10019dc0 f   font.obj
+ 0001:00018e40       _mono_render               10019e40 f   font.obj
+ 0001:00018ee0       _mono_destroy              10019ee0 f   font.obj
+ 0001:00018f80       _color_char_length         10019f80 f   font.obj
+ 0001:00018fa0       _color_render_char         10019fa0 f   font.obj
+ 0001:000190a0       _color_render              1001a0a0 f   font.obj
+ 0001:000191a0       _color_destroy             1001a1a0 f   font.obj
+ 0001:000188f0       _flooder                   100198f0 f   flood.obj
+ 0001:00018c80       _check_flood_line          10019c80 f   flood.obj
+ 0001:00017290       _do_play_fli               10018290 f   fli.obj
+ 0001:000173f0       _do_open_fli               100183f0 f   fli.obj
+ 0001:00017510       _fli_timer_callback        10018510 f   fli.obj
+ 0001:00017520       __fli_read_header          10018520 f   fli.obj
+ 0001:000175e0       _fli_read                  100185e0 f   fli.obj
+ 0001:000176a0       __fli_read_word_nc         100186a0 f   fli.obj
+ 0001:000176c0       __fli_read_long_nc         100186c0 f   fli.obj
+ 0001:000176e0       __fli_read_ulong_nc        100186e0 f   fli.obj
+ 0001:00017820       _fli_rewind                10018820 f   fli.obj
+ 0001:00017880       _read_frame                10018880 f   fli.obj
+ 0001:00017a80       _fli_skip                  10018a80 f   fli.obj
+ 0001:00017ac0       _do_fli_256_color          10018ac0 f   fli.obj
+ 0001:00017c00       __fli_read_short_nc        10018c00 f   fli.obj
+ 0001:00017c20       _do_fli_delta              10018c20 f   fli.obj
+ 0001:00017ea0       _do_fli_color              10018ea0 f   fli.obj
+ 0001:00017fe0       _do_fli_lc                 10018fe0 f   fli.obj
+ 0001:00018230       _do_fli_black              10019230 f   fli.obj
+ 0001:00018260       _do_fli_brun               10019260 f   fli.obj
+ 0001:000185b0       _do_fli_copy               100195b0 f   fli.obj
+ 0001:00018620       __fli_read_frame           10019620 f   fli.obj
+ 0001:00018680       __fli_parse_chunk          10019680 f   fli.obj
+ 0001:00013f60       _pack_fopen_special_file   10014f60 f   file.obj
+ 0001:000140d0       _pack_fopen_exe_file       100150d0 f   file.obj
+ 0001:000141d0       _pack_fopen_datafile_object 100151d0 f   file.obj
+ 0001:00014c00       _find_resource             10015c00 f   file.obj
+ 0001:00015460       _encrypt_id                10016460 f   file.obj
+ 0001:000154d0       _clone_password            100164d0 f   file.obj
+ 0001:00015560       _create_packfile           10016560 f   file.obj
+ 0001:000155b0       _create_pack_data          100165b0 f   file.obj
+ 0001:000155f0       _create_unpack_data        100165f0 f   file.obj
+ 0001:00015630       _free_packfile             10016630 f   file.obj
+ 0001:00016510       _pack_ungetc               10017510 f   file.obj
+ 0001:00016650       _refill_buffer             10017650 f   file.obj
+ 0001:00016880       _flush_buffer              10017880 f   file.obj
+ 0001:000169e0       _pack_write                100179e0 f   file.obj
+ 0001:00016da0       _pack_inittree             10017da0 f   file.obj
+ 0001:00016dd0       _pack_insertnode           10017dd0 f   file.obj
+ 0001:00016f10       _pack_deletenode           10017f10 f   file.obj
+ 0001:00017010       _pack_read                 10018010 f   file.obj
+ 0001:000135d0       _count_drivers             100145d0 f   drvlist.obj
+ 0001:00013070       _find_switch_bitmap        10014070 f   dispsw.obj
+ 0001:000131d0       _reconstruct_kids          100141d0 f   dispsw.obj
+ 0001:000132b0       _save_bitmap_state         100142b0 f   dispsw.obj
+ 0001:00013350       _fudge_bitmap              10014350 f   dispsw.obj
+ 0001:000133b0       _swap_bitmap_contents      100143b0 f   dispsw.obj
+ 0001:000134d0       _restore_bitmap_state      100144d0 f   dispsw.obj
+ 0001:000114e0       _digmid_load_patches       100124e0 f   digmid.obj
+ 0001:00011b90       _load_patch                10012b90 f   digmid.obj
+ 0001:000122c0       _destroy_patch             100132c0 f   digmid.obj
+ 0001:00012310       _parse_string              10013310 f   digmid.obj
+ 0001:00012420       _digmid_key_on             10013420 f   digmid.obj
+ 0001:000125a0       _digmid_trigger            100135a0 f   digmid.obj
+ 0001:00012690       _digmid_freq               10013690 f   digmid.obj
+ 0001:00012920       _scale64                   10013920 f   digmid.obj
+ 0001:000129b0       _digmid_key_off            100139b0 f   digmid.obj
+ 0001:000129f0       _digmid_set_volume         100139f0 f   digmid.obj
+ 0001:00012b90       _digmid_set_pitch          10013b90 f   digmid.obj
+ 0001:00012be0       _digmid_detect             10013be0 f   digmid.obj
+ 0001:00012c30       _digmid_init               10013c30 f   digmid.obj
+ 0001:00012cb0       _digmid_exit               10013cb0 f   digmid.obj
+ 0001:0000e2c0       _read_old_datafile         1000f2c0 f   datafile.obj
+ 0001:0000e5f0       _read_block                1000f5f0 f   datafile.obj
+ 0001:0000e650       _read_bitmap               1000f650 f   datafile.obj
+ 0001:0000f480       _load_st_data              10010480 f   datafile.obj
+ 0001:0000f510       _read_font_fixed           10010510 f   datafile.obj
+ 0001:0000f640       _read_font_prop            10010640 f   datafile.obj
+ 0001:0000f7d0       _read_palette              100107d0 f   datafile.obj
+ 0001:0000f8e0       _read_sample               100108e0 f   datafile.obj
+ 0001:0000fa10       _read_midi                 10010a10 f   datafile.obj
+ 0001:0000fab0       _read_rle_sprite           10010ab0 f   datafile.obj
+ 0001:0000fe80       _read_compiled_sprite      10010e80 f   datafile.obj
+ 0001:0000fee0       _unload_midi               10010ee0 f   datafile.obj
+ 0001:0000ff20       _load_file_object          10010f20 f   datafile.obj
+ 0001:00010220       _load_object               10011220 f   datafile.obj
+ 0001:00010270       _load_data_object          10011270 f   datafile.obj
+ 0001:00010e50       _load_font_object          10011e50 f   datafile.obj
+ 0001:00010ea0       _read_font                 10011ea0 f   datafile.obj
+ 0001:00010fb0       _read_font_mono            10011fb0 f   datafile.obj
+ 0001:00011120       _read_font_color           10012120 f   datafile.obj
+ 0001:00011230       _load_sample_object        10012230 f   datafile.obj
+ 0001:00011240       _load_midi_object          10012240 f   datafile.obj
+ 0001:00011250       _load_bitmap_object        10012250 f   datafile.obj
+ 0001:00011270       _load_rle_sprite_object    10012270 f   datafile.obj
+ 0001:00011290       _load_compiled_sprite_object 10012290 f   datafile.obj
+ 0001:000112b0       _load_xcompiled_sprite_object 100122b0 f   datafile.obj
+ 0001:000112d0       _unload_sample             100122d0 f   datafile.obj
+ 0001:0000c6c0       _flush_config              1000d6c0 f   config.obj
+ 0001:0000c830       _load_config_file          1000d830 f   config.obj
+ 0001:0000c9a0       _destroy_config            1000d9a0 f   config.obj
+ 0001:0000ca10       _set_config                1000da10 f   config.obj
+ 0001:0000cb30       _init_config               1000db30 f   config.obj
+ 0001:0000cc50       _config_cleanup            1000dc50 f   config.obj
+ 0001:0000cd10       _get_line                  1000dd10 f   config.obj
+ 0001:0000d190       _prettify_section_name     1000e190 f   config.obj
+ 0001:0000d3f0       _find_config_string        1000e3f0 f   config.obj
+ 0001:0000db90       _insert_variable           1000eb90 f   config.obj
+ 0001:0000ab60       _bestfit_init              1000bb60 f   color.obj
+ 0001:000039d0       _read_bmfileheader         100049d0 f   bmp.obj
+ 0001:00003a20       _read_win_bminfoheader     10004a20 f   bmp.obj
+ 0001:00003aa0       _read_os2_bminfoheader     10004aa0 f   bmp.obj
+ 0001:00003b00       _read_bmicolors            10004b00 f   bmp.obj
+ 0001:00003be0       _read_image                10004be0 f   bmp.obj
+ 0001:00003c90       _read_1bit_line            10004c90 f   bmp.obj
+ 0001:00003d00       _read_4bit_line            10004d00 f   bmp.obj
+ 0001:00003d80       _read_8bit_line            10004d80 f   bmp.obj
+ 0001:00003de0       _read_24bit_line           10004de0 f   bmp.obj
+ 0001:00003fb0       _read_RLE8_compressed_image 10004fb0 f   bmp.obj
+ 0001:000041a0       _read_RLE4_compressed_image 100051a0 f   bmp.obj
+ 0001:000008a0       _blit_from_256             100018a0 f   blit.obj
+ 0001:00000d00       _get_replacement_mask_color 10001d00 f   blit.obj
+ 0001:00000d70       _blit_from_15              10001d70 f   blit.obj
+ 0001:00001440       _makecol_trans             10002440 f   blit.obj
+ 0001:000014b0       _dither_blit               100024b0 f   blit.obj
+ 0001:00001810       _blit_from_16              10002810 f   blit.obj
+ 0001:00001ee0       _blit_from_24              10002ee0 f   blit.obj
+ 0001:000028e0       _makecol_dither_trans      100038e0 f   blit.obj
+ 0001:00002980       _blit_from_32              10003980 f   blit.obj
+ 0001:000032a0       _blit_to_or_from_modex     100042a0 f   blit.obj
+ 0001:00003560       _blit_to_self              10004560 f   blit.obj
+ 0001:00000550       _debug_exit                10001550 f   allegro.obj
+ 0001:00000700       _sys_none_init             10001700 f   allegro.obj
+ 0001:00000710       _sys_none_exit             10001710 f   allegro.obj
+ 0001:00000720       _sys_no_driver             10001720 f   allegro.obj
+
+FIXUPS: 14a7 79 7c a9 69149 8d 10 14 11 fff990f2 19 7b b7 5b 10e 67 f6
+FIXUPS: 3ed5 67 f6 171 28a 14f 4a ffffcae6 5 5 5 5a 2a 1f 9 46 49 35 9
+FIXUPS: 1255 9 10 cd 4b 9b0 19 77 cc 62 10b 1a8 1a3 12c 19 ce 83 10 10
+FIXUPS: 2658 20e cc 62 10b 1a8 1a3 14c cf 6a 12b 76 10f 1ae 76 10e 18b
+FIXUPS: 3922 1bc5 a 8 7 8 7 8 b 17 b 3a 30 31 26 2d 8 48 2f 1b 1c 1b 1c
+FIXUPS: 573a 42 26 ffffbfef 2a 2a 2a 2a 2a 80 32b7 2b 59 10 10 10 6a 70
+FIXUPS: 4da9 87 2b 29 111 6e 25 6e 48 27 25 cd 25 95 b3 25 a2 3f 27 7 8
+FIXUPS: 54a8 17 1f fffff3fd 12 13 18 13 e e 2e 24 9 16 20 c 9 a a 2c 8
+FIXUPS: 4a3d 6 9 a 6 6 6 6 3c b b 6 77 2f 21da 1b d 1f 1b d 22 24 d7 42
+FIXUPS: 70a2 36 40 42 81 10 1f 1b d 1f 1b d 22 24 d7 42 ffffd454 18 11
+FIXUPS: 4868 30 24 1b05 1b d 1f 1b d 22 24 d7 42 189 36 40 42 81 10 1f
+FIXUPS: 689b d 1f 1b d 22 24 d7 42 190 36 40 42 81 10 ffffed08 1b d 1f
+FIXUPS: 5a91 d 22 24 d7 42 199 36 40 42 81 10 1f 1b d 1f 1b d 22 24 d7
+FIXUPS: 60cc 18d 36 40 42 81 10 21be e c 22 11 20 61 27 26 1f8 24 c 1c
+FIXUPS: 88d0 e c 1c 11 e c 22 11 20 61 27 26 ffffce95 36 40 42 81 10 2406
+FIXUPS: 7e38 11 20 61 27 26 1e6 24 c 1c 11 e c 1c 11 e c 22 11 20 61 27
+FIXUPS: 82bc 200 24 c 1c 11 e c 1c fffff199 20 60 27 26 1fc 24 c 1c 11
+FIXUPS: 7a1c c 1c 11 e c 1f 11 20 61 27 26 1ea 25 c 1c 11 e c 1c 11 e 303b
+FIXUPS: aeb4 55 4d 16e 40 30 30 30 30 30 30 30 30 30 30 30 30 159 5f ffffc0fe
+FIXUPS: 761e c 1c 11 e c 1c 11 e c 1f 1efd 3bb 65 55 69 f7 10f 6c 55 4d
+FIXUPS: 9e8e 66 55 4d 12f 6f 55 4d 16e 3cb 65 55 69 f7 10f 6c 55 4d c8
+FIXUPS: ac74 55 4d 1084 f f 11 f f 11 f f 1c0 2a 1095 2be dd 208 ffffb7d5
+FIXUPS: 8e67 48 69 d4 c3 58 48 4d 92 59 48 4d c9 52 48 4d 5b6b 26 9 31
+FIXUPS: f0bc 62 28 1a 1a 4a ffffc37b 130 127 26 281 20 20 20 1d 164 37
+FIXUPS: bc78 20 75 f f 11 f f 11 f f 2de3 47 1c 60 10 14 30 10 14 22 10
+FIXUPS: ed14 10 14 31 10 7d 2b 28 28 22 9 2d 8 6 26 c b 40 26 1b 23 fffff4ad
+FIXUPS: e48b 4c 1a 22 21 8d 22 28 7 3c 1d 24 2c 34 e 6 5c 24 30 93 41 55
+FIXUPS: e8f3 1a 43 5a 44 bc 42 13 4c fffff2c0 38 78 d 47 6 f 6 13 3e 27
+FIXUPS: dfbd 25 19 40 40 17 1f 33 bc 60 8 75 14 3a 17 1a 29 3b 52 16 8c
+FIXUPS: d840 13 18 32 14 17 21 2f 1d 1b 9 17 17 26 71 16 35 50 2c 1b 45
+FIXUPS: db8d 1f 19 12 1d 10 5d 1f 18 18 48 4232 35 42 48 8 61 c 54 9f 8
+FIXUPS: 121b6 3d 43 10 11 c 14 a 16 c 14 c ffffb3f4 57 29 29 2a 2a 20 e
+FIXUPS: d7f6 26 3b0f 2e 1d 8 f8 35 9d b 4b 7c e7 c4 9e 179 6f 44 6f 229
+FIXUPS: 11db0 14 14 14 14 14 17 14 18 17 12 b 52 30 ffffeed0 f 6 2f 6 6
+FIXUPS: 10e37 6 51 24 1a 67 85 17 a 35 14 17 23 3c 13 1a a4 83 59 38 29
+FIXUPS: 112c1 b 22 10 1e fffff439 28 b1 29 29 90 26 9 33 40 a5 c 13 1f
+FIXUPS: 10add a 8 66 32 2f 35 16 35 4f 29 27 2d 19 1d 39 1e f fffff08f
+FIXUPS: fe52 d4 29 25 25 15 59 27 27 25 be 2b 27 25 cd 27 27 2d 8c f 2f
+FIXUPS: 103c7 d6 8 8 8 117 21 f6 3d 26 ffffedc6 16 d 60 6 94 52 4c c e
+FIXUPS: f74d 1f 3e 40 74 30 4c ac b0 c9 d7 2b 29 25 13 9e 29 25 25 15 57
+FIXUPS: fe06 3dff 10 23 42 12 5b ffffb511 14 36 15 b 21 15 10 25 1c 2f
+FIXUPS: f364 28 1e 20 1f 19 d 19 c 21 22 1c 1c 1b 25 3b98 12 97 4b 67 2e
+FIXUPS: 13243 43 62 188 69 b2 1b 3c 3b a 7 b b 30 9 281 dd a 4e 5c 94 38
+FIXUPS: 13b71 51 7 2b ffffee00 82 13 d 2c 13 15 1b 8 26 79 6f 27 6 13 23
+FIXUPS: 12c90 5d 6 f f f f a b b 23 4b 34 18 29 24a fffff5de 14 2c b 2e
+FIXUPS: 12734 23 b 24 11 f 18 17 19 15 3a 17 d 10 17 24 10 8 1c 2c c 31
+FIXUPS: 12962 a 2a 14 d 18d5 4f 13 58 1a 1a d0 c 8b 33 9 14 ffffde72 1f
+FIXUPS: 123cb 1d 1d 20 23 19 37 11 1f 1e 2b 4d 1a 12 2e 1d 2f 4b 4e7d 11
+FIXUPS: 1755e 2b 2b 2d 65 4e 1c 19c 62 1a6 72 1a cb 8d 38 22 2c 72 35b
+FIXUPS: 180f0 69 36 ffffc3eb 91 70 fffff972 aa 4f a5 c 2a0d 2a 88 51 3d
+FIXUPS: 16d0e 48 2e 2c 2a 60 37 80 49 47 3f 64 2a 48 2e 2c 2a 60 37 70
+FIXUPS: 1726a 47 3e 78 56 aa 3c ffffeea4 4a 25 e d 2bd 15 13 7f 30 31 1a
+FIXUPS: 167c0 14 96 21 1a 4a b d b6 d d3 16 1f f c 1e 2c 1b 1c 6 fffff4f2
+FIXUPS: 160d8 d 18 10 16 9 16 d 37 9 16 d 18 10 f 1f 13 24 6 1e 6 d 27
+FIXUPS: 162ad 1b c 1a 11 20 10 12 fffffa4a a 32 a 9 1a 8 c c a 40 8 c f
+FIXUPS: 15e8b 2b 8 c c a 27 f a 1c 1a c a 41 1a 6 f a fffff987 d 25 3e
+FIXUPS: 15a15 d 25 c4 f 12 15 e 28 13 17 11 24 4a f 15 18 11 22 c 12 15
+FIXUPS: 15cd0 61 8 a 1c 1d fffff74a 54 22 22 61 3f 1f 28 64 41 2f 7 15
+FIXUPS: 15756 21 a 9 3b 8 8 e 15 20 a 11 11 28 18 1e 27 12 44 fffff825
+FIXUPS: 15154 1f 8 f 1e 8 9b 14 14 8 1c 34 9 18 13 a 13 39 9 1a 22 1f 12
+FIXUPS: 153db d 11 20 1c f 29 29 fffff8c6 24 19 13 28 17 f 2d 1d 3e 12
+FIXUPS: 14ea5 35 22 37 69 e c 47 13 15 f c 19 15 17 10 23 2b a 32 1f fffff807
+FIXUPS: 14957 64 23 1d 21 25 8 14 1f 2a 3c 13 2e 17 1a 2f 15 2a 1b 1b 10
+FIXUPS: 14c1f 1a 2e a 2e 16 22 38 1a 20 3ebd 4e 28 3e 200 154 13 216 3ef
+FIXUPS: 19641 10 e 37 10 ffffb02d 55 17 29 7c a f 13 29 d 1b d d 3d f 12
+FIXUPS: 1492c 11 3c4f e e e d c0 43 6d 14 14 31 1a 4e 12 35 11 17 41 23
+FIXUPS: 188ee 29 55 34 47 9 9 9 7 9 9 8e 31 16f8 fffff631 52 40 445 ffffe58c
+FIXUPS: 18287 13 32 17 25 8 12 1b 19 21 3b 17 11 1c c 2e 48 11 b 6d 28
+FIXUPS: 18544 10 e e e 2cab f 22 16 6 6 6 8 1e a 17 c 12 18 2f 7 1f 26
+FIXUPS: 1b3be d 3a 1b 7f 3c 15 b9 ffffe802 49 197 a3 bf 17 b09 c 23 17
+FIXUPS: 1ac63 1d 2d 6 19 14 17 7c f 1b a7 6 16 29 19 6 8e 2e 39 1c 1c 67
+FIXUPS: 1b056 3e 13 36 22 105 fffff2fa 12 2d 23 8 13 1c 8 1a 1c 8 2d 2d
+FIXUPS: 1a673 e9 aa bd 15 13 1b f a 10 8d 4a 20 19 24 17 20 1f 78 13b4
+FIXUPS: 1bf23 e e 22 39 22 27 24 1b 1b 5be 2ba 6d1 461 26 48 2c 27b ffffcb26
+FIXUPS: 1a22f 79 25 4b 17 15 1f 16 43 e6 28 28 4339 13 24 13 28 13 2a 13
+FIXUPS: 1e912 9 84 dc 1f2 105 1cc de d4 67 91 321 89 60 ffffc2b1 16 6a
+FIXUPS: 1b93f 67 111 128 122 1c 1ba 6dea 1a 5d ffffb475 25 38 82 99 10
+FIXUPS: 1e347 22 12 a 1e 9 2d 84 9 48 9 5e 8c 88 10 75 21 38 19 19 20 3b
+FIXUPS: 1e7af 3b64 2d 5d 65 43 3a 5c 6d 41 4b c 16 2f c8 8 7e 4e a 1a 1a
+FIXUPS: 22888 1e b3 10 3d 1e 23 35 59 4c 1b6 18 ffffef96 37 6c 10 1e a
+FIXUPS: 21d65 28 5 a 6e 2d 23 49 c 16 2b 25 a 17 39 28 84 2f 34 25 1a 23
+FIXUPS: 22108 176 3e 1a fffff0ac 1c a c8 6e 8 57 38 2d d5 30 1a 24 21 83
+FIXUPS: 217c0 16 19 18b 1d 4a 2c 24 18 16 1e 62 9d 17 28 14 3b ffffe751
+FIXUPS: 20369 204 1d1 1e 8 16 a4 6 10a 14 da 27 8a 31 65 1e 8 42 12 18
+FIXUPS: 20d8a c 169 11 e 38 11d 1f5 36 3c 6b ffffe785 214 c2 4b 3b 34 f7
+FIXUPS: 1ffc2 f 96 54 12 8 d 15 9 22 e 22 8 19 e 23 5 6 cd 8 15 23 1f 9
+FIXUPS: 20351 5973 7d 42 61 46 5a 13 3d 3e f2 4b1 16a 4d 4f 4e 8f 47 4e
+FIXUPS: 26836 88 40 40 40 40 40 ffff9063 9 17 9 17 9 17 586c 30 85 5f 4e
+FIXUPS: 254ff c0 d8 53 18 6 d 6 1d 6 c 6a 8 4e 2f 133 62 26 58 38 7c 33
+FIXUPS: 25bdb 11 53 11 3c fffff115 30 d 27 6 34 26 35 cd 11 14 10 25 3d
+FIXUPS: 2501f 23 a 11 1d 58 25 45 1d 22 79 11 21 3c 45 4e 6 24 fffff382
+FIXUPS: 246ef 9 53 4e 9 28 d7 2c 15 32 18 39 15 32 1a c8 23 1c 21 32 1d
+FIXUPS: 24b54 19 18 36 68 24 26 29 c e1 ffffeec9 4e 9 2a d6 141 70 44 1f
+FIXUPS: 23fe2 91 39 3a 38 6 33 57 2b 36 4e 64 57 19 21 11 75 8 64 4e 72
+FIXUPS: 24513 4e ffffee7a 14 3b 6 5a 97 34 4e a8 4e 9 1ac 21 31 e 5f 19
+FIXUPS: 2394f 22 7a d 17 64 13 29 20 6 62 2d 24 71 21 40e1 4f 30 30 74
+FIXUPS: 27e51 4f 33 ffffaf5d 61 1a 11 11 30 10 63 5b 8d 4a 54 95 4a 1d
+FIXUPS: 231f8 4d 1d 6 4d 15 1d 6 e7 4fb0 37 10 6 1f 1f 9 1e 2a 15 12 90
+FIXUPS: 28541 6 ffffead4 7e6 2a 51 20 2c 55 48 74 1a 140 36 36 42 36 36
+FIXUPS: 27c8f 36 107f 341 5 39 65 a 28 29 18 2a 28 5 1c ffffeda3 69 31
+FIXUPS: 2809c 10 1f 53 13 2f 12 a 2e 10c a 53 6 24 1f 9 10f4 e 1b 1a 10
+FIXUPS: 294b9 cc 22 31 55 a5 22 35 58 1de 47 29 29 2e 15 21 28 ffffead6
+FIXUPS: 285fa 2d bd 311 5 2cc 11 30 14 2b33 35 30 b5 45 ffffe216 3f fffff632
+FIXUPS: 29263 1a 10 15 6 17 24 10 15 e 15 c a 6 27 11 28 27 15 28 9 1b
+FIXUPS: 2944a 9 16ef 30 33 31 31 1e0 9d 7d 4b be 44 12e 17 9a e2 3d 3b
+FIXUPS: 2b3e3 3d 3c 149 30 30 1f 55 38 46 43 3f 40 30 35 ffffe99d 30 33
+FIXUPS: 2a333 14 32 32 78 14 32 32 aa 8d 77 17d 31 31 31 33 31 36 31 30
+FIXUPS: 2a987 31 30 33 31 31 31 30 33 22a3 180 1b 9b e 67 2d 3c 2d 1b b
+FIXUPS: 2d145 2d 89 40 5d a1 23 c 73 10 ffffcbab 31 31 33 36 30 33 30 33
+FIXUPS: 2a158 30 1e56 f 10 41 13 16 b 20 28 c ae 64 5e f 12d 1a 24 15 2e
+FIXUPS: 2c3fb 1a 1e a 158 38e 28 26 3d 61 30 1fa f 3724 184 11d ee 1c8
+FIXUPS: 30a22 131 a7 1a2 1d0 ffffab46 2d 2d 1e 6 16 21 1f 1a 1d 1d 6 17
+FIXUPS: 2bbfd 22 160 181 71 10 28 9 1c 27df bf 93 10c af 80 102 b0 81 116
+FIXUPS: 2ef3a 88 112 b8 8d 11b c0 84 11d c1 85 11b c2 86 119 c3 87 16b
+FIXUPS: 2fe24 ed 1c7 15e ffffd6a2 f 70 28 f 15 f 75 28 f 15 f 66 28 f 15
+FIXUPS: 2db43 19a 20 91 20 36 15a 8e 63 b3 293 b7 87 df 92 67 3050 19 d
+FIXUPS: 3177f e 69 15 c 19 18 12 19 18 12 29 5d 66 af 5c 36 27 1b 1c d
+FIXUPS: 31b6d d5 ffffb9ad ff 7b 123 28 f 53be 9 6c a 1c 26 a 68 18 12 13
+FIXUPS: 3108b 8f 5d 30 32 5c 3a 32 5d 151 10 a0 16 23 10 20 42 16 16 14
+FIXUPS: 316ba be0 4a eb 44 28 4c 48 e1 92 13a ae 5f 38 a 28 26 2d a 87
+FIXUPS: 32a4d 25 9 2c 66 1f 9 4b 53 45 1f 9 22 a92 25 1c 5e 30 61 2e 4a
+FIXUPS: 338d7 31 30 21 ffffe321 1a3 1a 8 11 36 c 14 b 15 b 27 21 3c 7f
+FIXUPS: 32019 f2 25 1e 10e eb3 36 121 46 2f 2f 1f 18 43 2a 36 21 54 27
+FIXUPS: 334a7 27 1a 8 a b b b 3d 35 35 3b 29 1a 8 9 a 22 30f2 93 36 85
+FIXUPS: 368f4 b6 50 24 4e 3e ffffc3a0 2c 1b 1b 23 e 15 a a e e 2b 2f 2f
+FIXUPS: 32fdc 23 1e 18 a 26 16 11 2db1 af 53 c d b ea 39 12 13 5a 4d 4d
+FIXUPS: 361f4 4b 9e 78 ab 21 25 86 2b 1f 39 19 39 7a 3e c f 5b 50 ffffec9a
+FIXUPS: 353f4 116 69 c d b ee 8a 97 45 40 3c 3c 3c 3a 94 6a 5c 25 40 1f
+FIXUPS: 35b30 19 39 b7 26 73 52 3c 3c 66 ffffe777 13 13 7a 4d 4d 31 3c
+FIXUPS: 3475f a8 7b 76 23 8b 23 4f 37d 8a 97 71 b3 24 aa 31 77 4b 4b 34
+FIXUPS: 35256 3c a8 4b ffffe87e 49 10 f 13 10 13 76 4d 4d 31 3f 3f 67 4d
+FIXUPS: 33f45 3c 52 c5 1b 7e 1b 9b 75 80 74 23 15b 2e 49 f 12 3dc3 28 9
+FIXUPS: 3837f 9 28 9 28 9 4f fffff707 31e 10 dd ffffefbd 1dd 61 4a 3f 90
+FIXUPS: 3752c fffff771 29 61 11 6e 12e ffffcaf4 26 63 2e 156 6031 74 31
+FIXUPS: 39cdc 31 31 30 3a 30 46 39 36 39 a0 15 ffffe0d8 ab 9 77 9 7d f
+FIXUPS: 3823d 2a 19 23 1b 16 8 6 1f 9 bfa 78 2b 94 24 6d 2b 55 2b 5b 2b
+FIXUPS: 392ae 2b 6d 3a 4c 3a 23e 18 1a 31 18 1a 4b 28 1f 1f af b b e 380
+FIXUPS: 3ab20 fc 48 27 c7 24 9d 2e 69 4d 4d 31 3c 3c 69 4d 31 3b 93 4f
+FIXUPS: 3b1fd d b 74 2e ffffd926 4d 19d 2b 5b 2b 61 3c13 2c 14 b 31 12
+FIXUPS: 3cb80 6 40 b 31 12 20 507 ffffd04d 19 19 2b 1b 3e8 19 19 2b 1b
+FIXUPS: 3a838 99 e 43 3b 1f 3b fc 1bae 34 2c e 18 1f a 25 33 19 18 19 1a
+FIXUPS: 3c7f0 b 3f 1e 44 12 1e 12 1e a 6 6 85 1b 16 25 d 21 ab fffff477
+FIXUPS: 3bf4b 13 53 6c a 2e a bd 13 f1 13 c6 10 47 a 15 50 13c e 9 d 23
+FIXUPS: 3c54c 9 d 30 1e 21 1b 37 19 fffff043 a 25 a 25 a 25 a 2b 52 ae
+FIXUPS: 3b8ba 3d a 2e a 2d a 2d a d 5 31 f5 10 5a 327 1d d 2f e 13 1fe1
+FIXUPS: 3dee4 d d 36 8 9 35 124 10 fffffa12 be ad 20 eb 2e ffffd622 eb
+FIXUPS: 3b4c0 7e 22 a 2a a 25 a 25 a 25 a 25 a 3f0d 73 38 36 8b 34 34 33
+FIXUPS: 3f7a7 ffffe976 22 1e 1d 79 3b 22 1f 22 84 10 7 64 3e 32 2e 32 2e
+FIXUPS: 3e4c0 2e 42 fffff90a 7f ed5 25 7f 4a 27 25 92 3b 27 25 74 27 7e
+FIXUPS: 3f113 76 2e 3c 36 2e 2e 19 15 23 19 8 9 a 17 26 70 64 aa fffff232
+FIXUPS: 3e710 52 26 26 26 b 154 30 67 c 1b c 12 c 16 c 18 14 45 26 16 40
+FIXUPS: 3eb5d 46 57 27 25 25 9c 3b 27 44ec a0 20 ffffc63e 35 70 29 4a 22
+FIXUPS: 3fad1 29 c 119 2f 24 2f 6e bb 54 48 ffffe75b 2f 29 2b d 6 29 d
+FIXUPS: 3e693 6 a 27 3bb4 2d 42 2c 3e 26 2f 7a 376 3a 46 89 23 21 55 5c
+FIXUPS: 42c19 68 7d 41 10 a0 5c 39 9a c6 8a 144 39 10 3a 11 ffffd238 5d
+FIXUPS: 404f2 b1 2a 18 2e 59 22 29 54 8 3b 14 24 1342 1a d8 1f0 104 13
+FIXUPS: 41edf 13 3c 10 50 10 db 1c bb bf 3b 14a6d 4e 37 fffed94c 1e fffffb87
+FIXUPS: 4424d 3b 24 6f 1d 32 1c 1a 18 1f 8 3f 15 a a 15 a 15 a a 15 32
+FIXUPS: 40306 71 d e4 1c7b1 170 ffffe56b f 27 36 11b 17 c 66c 12 9 fe 84
+FIXUPS: 5c263 38 1e d 95 7e 21 6 ffff6165 202 59 86 b5 66 1e 1e 1e 1e b198
+FIXUPS: 5db7f 46 e a fffff3f6 118 5b d6 75 47 25 26 17 3b 20 9 16 14 16
+FIXUPS: 5d498 3d 17 20 6 fffff098 a 15e 6 16a 9c 192 119a 8 2b 8 38 13
+FIXUPS: 5dcd8 45 e fffff998 90 117 6d 17 7c 10 f 1a 11 10 a f e 18 15 14
+FIXUPS: 5da3a 1d 94 46 13 14 12cc b 16 2c 10 fffff309 87 c c e4 c c ff
+FIXUPS: 5e480 13 3b 26 55 b b 197 14 fffff69f 99 b7 31 96 29 2b 76 fffffba3
+FIXUPS: 5dc40 e0a 1c 34 42 10 1c 26 1b 10 f 15 13 69 10 19 19 10 d 1a 18
+FIXUPS: 5ec9b 49 11 a a 11 8 64 13 2a 40 6 569 19 1c f 6e 8 27 72 8 43
+FIXUPS: 5f568 41 1f 9 266 1d7 16 52 25 13 48 6 29 1e 13 f ffffecad 5 47
+FIXUPS: 5e9a3 5d 16 158e bd b6 2f 1f 1f 1f 72 ffffeca1 29 191 a5 44 10
+FIXUPS: 5f198 12 1b 10 f 18 7 17 2d 11 10 1a 1a 69 25 19 16 c 1c64 29 3a
+FIXUPS: 611e2 5b 65 47 15 1c9 39 a4 3b1 f3 48 59 45 d2 ffffea2f 22 56 2a
+FIXUPS: 6070c 174 136 22 2b 32 1eb 49 a ffffef9f c 2fde c7 fffffa43 115
+FIXUPS: 62820 17 5 3f 5 5 5 17 60 fffff781 10 1cb e 1b 20 20 107 29 ffffe96a
+FIXUPS: 60d71 5d 39 10 15 10 da 39 22 210c 3a 43 20 20 d8 22 4a 14 cf 11
+FIXUPS: 63382 15 54 4c 11 8 4e 6 d 4b 11 12 2a 11 fffff44b 60 c8 57 d 15
+FIXUPS: 62b93 1476 9 47 10 5 6b 18 19 94 8e 15 fffff3c4 42d 31c ffffefad
+FIXUPS: 62d10 16 1e 1b 1f 11 48 3e 4f 30 1c 2e 4b 28 67 1c 80 1766 39 1f
+FIXUPS: 6481b 99 5 9 44 7 5 1d 89 bd 18 8 347 33 4b 166 8 d fffff313 c0
+FIXUPS: 643d0 61 64 10c fffff892 100 1b 17 9f 1ba4 1bd 22 fffff5fe c9 2d
+FIXUPS: 6548b 22 8 5 9 1e 5 5 5 10 46 54 10d 1a 60 5 167 a8 ffffecd8 1d
+FIXUPS: 64679 88 8 6e 1b 20 1794 2a 31 5 412 1a 1a 1a 22 b8 36 198 9 20
+FIXUPS: 66736 87 43 36 ee e 6c aa a e 16 15 21 9 fffff023 75 40 15 3741
+FIXUPS: 692ec d c8 26 2a 16 ffffd814 f6 7 10 10 10 10 2f 16 10 2f 16 10
+FIXUPS: 66e4d 3d ffffefc8 8 18 a 1f c 16 17 2f 19 306e 14 14 14 14 17 14
+FIXUPS: 69019 14 14 26 22 9 2b 22 9 2b 22 9 2b 22 9 2b 22 9 2b 22 9 2b
+FIXUPS: 6928d 9 2b fffff316 b cc 29 2c 93 c5 2c 49 38 3a 3a e2 69 4d 27
+FIXUPS: 68c8b 17d 2e 22 9 3e 23 1b 11 d 14 14 14 14 14 17
+
+ 96 bytes saved through ICF
+
