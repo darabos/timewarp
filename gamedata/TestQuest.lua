@@ -7,7 +7,7 @@ end
 
 function GAME_EVENT_SHIP_DIE( Type )
 	if Type == "shosc" then shoscKilled = shoscKilled - 1 end
-	if shoscKilled == 0 then Complited = 1 end
+	if shoscKilled == 0 then Complited = 1; PrintMessage("Mission Completed."); end
 end
 
 function GAME_EVENT_ENTER_STATION( locationID )
