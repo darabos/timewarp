@@ -29,7 +29,7 @@ void iMessage(char *cmdstr, int num)
 
 int SpaceStation::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	Crew-=normal+direct;
+	Crew-=(int)(normal+direct);
 	if(Crew<=0) state=0;
 	return SpaceObject::handle_damage(source, normal, direct);
 }

@@ -282,7 +282,7 @@ void Comet::calculate() {
 		
 		//angler = 0.0;
 		add(new CometPlasma(Vector2(xoffs, yoffs),
-			angler, weaponVelocity, weaponDamage, weaponRange, weaponHome, this,
+			angler, weaponVelocity, (int)weaponDamage, weaponRange, weaponHome, this,
 			TailPic, Num_Tail_Pic));
 		
 		this->angle = angleold;	// re-orientate the comet.

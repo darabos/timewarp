@@ -755,7 +755,7 @@ void mission::Play::init(Log *_log)
 	*/
 
 
-	stopgametime = 0.0;
+	stopgametime = 0;
 	quit_value = 0;
 }
 
@@ -833,10 +833,10 @@ void mission::Play::ship_change_crew(Ship *s, double pcrew, double pcrewmax)
 
 void mission::Play::ship_change_batt(Ship *s, double pbatt, double pbattmax, double prechargeamount, double prechargerate)
 {
-	s->batt *= pbatt / 100.0;
-	s->batt_max *= pbatt / 100.0;
-	s->recharge_amount  *= prechargeamount / 100.0;
-	s->recharge_rate /= prechargerate / 100.0;
+	s->batt *= pbatt / 100;
+	s->batt_max *= pbatt / 100;
+	s->recharge_amount  *= (int)(prechargeamount / 100);
+	s->recharge_rate /= (int)(prechargerate / 100);
 }
 
 void mission::Play::ship_change_speed(Ship *s, double pspeed, double paccel, double pturn)

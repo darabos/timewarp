@@ -118,7 +118,7 @@ void GobGame::init(Log *_log) {
 		default: {
 		}
 		break;
-	}/**/
+	}*/
 	Game::init(_log);
 
 	log_file("server.ini");
@@ -267,21 +267,21 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 void GobGame::fps() {
 	Game::fps();
 
-	message.print(msecs_per_fps, 15, "enemies: %d", gobenemies);
-	message.print(msecs_per_fps, 15, "time: %d", game_time / 1000);
+	message.print((int)msecs_per_fps, 15, "enemies: %d", gobenemies);
+	message.print((int)msecs_per_fps, 15, "time: %d", game_time / 1000);
 
 	int i = 0;
 	for (i = 0; i < gobplayers; i += 1) {
 		if (!is_local(gobplayer[i]->channel)) continue;
 
 		if (gobplayer[i]->ship) {
-			message.print(msecs_per_fps, 15-i, "coordinates: %d x %d", 
+			message.print((int)msecs_per_fps, 15-i, "coordinates: %d x %d", 
 					iround(gobplayer[i]->ship->normal_pos().x), 
 					iround(gobplayer[i]->ship->normal_pos().y));
 		}
-		message.print(msecs_per_fps, 15-i, "starbucks: %d", gobplayer[i]->starbucks);
-		message.print(msecs_per_fps, 15-i, "buckazoids: %d", gobplayer[i]->buckazoids);
-		message.print(msecs_per_fps, 15-i, "kills: %d", gobplayer[i]->kills);
+		message.print((int)msecs_per_fps, 15-i, "starbucks: %d", gobplayer[i]->starbucks);
+		message.print((int)msecs_per_fps, 15-i, "buckazoids: %d", gobplayer[i]->buckazoids);
+		message.print((int)msecs_per_fps, 15-i, "kills: %d", gobplayer[i]->kills);
 	}
 	return;
 }

@@ -117,7 +117,7 @@ void NormalGame::init_players() {STACKTRACE
 		case Log::log_net1client:
 		case Log::log_net1server: {
 			log_file("server.ini");
-			int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
+			//int use_teams_menu = get_config_int("Network", "NetworkMeleeUseTeams", 0);
 			//if (use_teams_menu) {
 			if (1) {
 				int j;
@@ -145,7 +145,7 @@ void NormalGame::init_players() {STACKTRACE
 							const char *name = get_config_string(buffy, "Name", buffy);
 							char config[64];
 							sprintf(config, "Config%d", get_config_int(buffy, "Config", 0));
-							int channel = channel_server;
+							//int channel = channel_server;
 							//if (strcmp(type, "WussieBot") == 0) channel = channel_none;
 							//if (strcmp(type, "MoronBot") == 0) channel = channel_none;
 							int ti = get_config_int(buffy, "Team", 0);
@@ -556,7 +556,7 @@ void TeamIndicator::animate(Frame *space)
 	int col;
 	col = palette_color[mother->get_team() + 1];	// team 0 is black ...
 
-	rect(space->surface, co1.x, co1.y, co2.x, co2.y, col);
+	rect(space->surface, (int)co1.x, (int)co1.y, (int)co2.x, (int)co2.y, col);
 	space->add_box(co1.x, co1.y, co2.x, co2.y);
 }
 

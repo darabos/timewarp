@@ -185,10 +185,11 @@ void Frame::add_pixel(int x, int y)
 	add_to_list(x, y, 0, 0, erase_pixel, draw_pixel);
 }
 
-void Frame::add_box(int x, int y, int a, int b)
+void Frame::add_box(double x, double y, double w, double h)
 {
-	add_to_list(x, y, a, b, erase_box, draw_box);
+	add_to_list((int)x, (int)y, (int)w, (int)h, erase_box, draw_box);
 }
+
 
 void Frame::add_circle(int x, int y, int a, int b)
 {

@@ -185,8 +185,8 @@ void AreaReserve::center(int xcenter, int ycenter)
 	//blit(originalscreen, screenreserve, 0, 0, x, y, W, H);
 
 	// move
-	x = xcenter*scale - W / 2;
-	y = ycenter*scale - H / 2;
+	x = iround(xcenter*scale) - W / 2;
+	y = iround(ycenter*scale) - H / 2;
 
 	// read the new background
 	//blit(screenreserve, originalscreen, x, y, 0, 0, W, H);
@@ -371,6 +371,10 @@ void AreaReserve::scalepos(int *ax, int *ay)
 
 bool AreaReserve::search_bmp_location(BITMAP *bmp_default, int *ax, int *ay)
 {
+	ASSERT(bmp_default);
+	ASSERT(ax);
+	ASSERT(ay);
+	
 	if (!backgr_forsearch)
 		return false;
 
@@ -382,8 +386,12 @@ bool AreaReserve::search_bmp_location(BITMAP *bmp_default, int *ax, int *ay)
 		{
 
 			// check if the image block at this position, matches that of the background
-			int c1, c2;
-			int m, n;
+			int c1 = 0, c2 = 0;
+			int m = 0, n;
+
+			ASSERT( bmp_default->h <= 0 );
+			ASSERT( bmp_default->w <= 0 );
+
 			for (n = 0; n < bmp_default->h; ++n)
 			{
 				for (m = 0; m < bmp_default->w; ++m)
@@ -773,7 +781,9 @@ AreaGeneral(menu, identbranch, asciicode, akeepkey)
 	//y = ay * areareserve->scale;
 }
 
-
+AreaBox::~AreaBox()
+{
+}
 
 
 // check a square area to see if it has the mouse on it.
@@ -804,7 +814,7 @@ void AreaBox::draw_rect()
 	// draw something simple:
 
 	int D = 4;	// width of the rectangle
-	D *= areareserve->scale - 1;
+	D *= iround(areareserve->scale - 1);
 	if (D < 0)
 		D = 0;
 
@@ -821,9 +831,9 @@ int rect_fancy_getcolor(double phase, double L, double Ltot)
 {
 	unsigned char r, g, b;
 	
-	r = 128 + 127 * sin(phase + 2*PI * L/Ltot);
-	g = 128 + 127 * sin(phase + 0.3*PI + 2*PI * L/Ltot);
-	b = 128 + 127 * sin(phase + 0.7*PI + 2*PI * L/Ltot);
+	r = (unsigned char)(128 + 127 * sin(phase + PI2 * L/Ltot));
+	g = (unsigned char)(128 + 127 * sin(phase + 0.3*PI + PI2 * L/Ltot));
+	b = (unsigned char)(128 + 127 * sin(phase + 0.7*PI + PI2 * L/Ltot));
 
 	return makecol(r, g, b);
 }
@@ -1102,14 +1112,12 @@ void WindowManager::add(AreaReserve *newreserve)
 
 void WindowManager::remove(WindowManagerElement *e)
 {
-	if (!e)
+	if ( e == NULL)
 		return;
 
-	if (head = e)
-		head = e->next;
+	head = e->next;
+	tail = e->prev;
 
-	if (tail = e)
-		tail = e->prev;
 	// head = 0 and tail = 0 if this is the last element.
 
 	delete e;

@@ -15,7 +15,7 @@ protected:
 public:
 	// x, y, W, H are inside the draw area
 	Button(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool keepkey = 0);
-	~Button();
+	virtual ~Button();
 
 //	virtual void init(AreaReserve *menu, char *identbranch, int ax, int ay, unsigned char asciicode);
 
@@ -29,6 +29,7 @@ class GhostButton : public AreaGeneral
 {
 public:
 	GhostButton(AreaReserve *menu);
+	virtual ~GhostButton();
 };
 
 // a text on top of a button.
@@ -38,6 +39,7 @@ class TextButton : public AreaTablet
 {
 public:
 	TextButton(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
+	virtual ~TextButton();
 
 	FONT		*usefont;
 
@@ -69,6 +71,7 @@ protected:
 
 public:
 	TextEditBox(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont);
+	virtual ~TextEditBox();
 
 	FONT		*usefont;
 
@@ -97,7 +100,7 @@ public:
 	bool	state;	// true=on, false=off
 	// x, y, W, H are inside the draw area
 	SwitchButton(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode);
-	~SwitchButton();
+	virtual ~SwitchButton();
 
 	virtual void calculate();
 
@@ -121,7 +124,7 @@ class TextButtonList : public AreaTablet
 public:
 	TextButtonList(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont,
 					scrollpos_str *ascroll);
-	~TextButtonList();
+	virtual ~TextButtonList();
 
 	char	**optionlist;
 	int		N;				// number of options
@@ -167,7 +170,7 @@ public:
 
 	// x, y, W, H are inside the draw area
 	ScrollBar(AreaReserve *menu, char *identbranch, int ax, int ay);
-	~ScrollBar();
+	virtual ~ScrollBar();
 
 	virtual void handle_lhold();
 
@@ -189,7 +192,7 @@ class TextInfoArea : public AreaTablet
 public:
 	TextInfoArea(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont,
 					scrollpos_str *ascroll);
-	~TextInfoArea();
+	virtual ~TextInfoArea();
 
 	char	*textinfo;
 
@@ -243,7 +246,7 @@ public:
 	PopupGeneral(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename);
 	PopupGeneral::PopupGeneral(char *ident, int axshift, int ayshift,
 								char *datafilename, BITMAP *outputscreen);
-	~PopupGeneral();
+	virtual ~PopupGeneral();
 	virtual void init_components();
 
 	// returnstatus can be (usually is) the array index of a selected item in a list.
@@ -272,7 +275,7 @@ public:
 
 	PopupTextInfo(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename,
 					FONT *afont, char *atext, int aNchar);
-	~PopupTextInfo();
+	virtual ~PopupTextInfo();
 };
 
 
@@ -285,8 +288,7 @@ public:
 
 	PopupTextInfo_toggle(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename,
 		FONT *afont, char *atext, int aNchar);
-
-//	~PopupTextInfo();
+	virtual ~PopupTextInfo_toggle();
 
 	virtual void calculate();
 	virtual void check_end();
@@ -317,7 +319,7 @@ public:
 	// origin relative to the creators' position
 	PopupList(AreaGeneral *creator, char *ident, int axshift, int ayshift, char *datafilename,
 				FONT *afont, char **aaoptionslist);
-	~PopupList();
+	virtual ~PopupList();
 
 	virtual void check_end();
 	//virtual void calculate();
@@ -355,7 +357,7 @@ public:
 
 	MatrixIcons(AreaReserve *menu, char *identbranch, int ax, int ay,
 						scrollpos_str *ascroll, int akey);
-	~MatrixIcons();
+	virtual ~MatrixIcons();
 
 	void set_iconinfo(BITMAP **alistIcon, double ascale);
 
@@ -385,7 +387,7 @@ public:
 								char *datafilename, BITMAP *outputscreen,
 								BITMAP **alistIcon, double ascale, FONT *afont );
 
-	~PopupFleetSelection();
+	virtual ~PopupFleetSelection();
 
 	//virtual void close(int areturnstatus);
 	virtual void check_end();
@@ -409,6 +411,7 @@ class Popup : public AreaReserve
 public:
 	Popup(char *ident, int xcenter, int ycenter, char *datafilename, BITMAP *outputscreen,
 		bool inherited = false);
+	virtual ~Popup();
 
 	bool returnvalueready;
 
@@ -430,7 +433,7 @@ public:
 	PopupOk(char *ident, int xcenter, int ycenter,
 						char *datafilename, BITMAP *outputscreen,
 							bool inherited = false);
-
+	virtual ~PopupOk();
 	virtual void check_end();
 };
 
@@ -442,7 +445,7 @@ public:
 	PopupYN(char *ident, int xcenter, int ycenter,
 						char *datafilename, BITMAP *outputscreen,
 							bool inherited = false);
-
+	virtual ~PopupYN();
 	virtual void check_end();
 
 };

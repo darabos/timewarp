@@ -98,7 +98,7 @@ int DefenderStation::handle_damage ( SpaceLocation *source, double normal, doubl
 		add ( new Animation ( this, pos, game->kaboomSprite, 0, game->kaboomSprite->frames(), 50, DEPTH_EXPLOSIONS) );
 		state = 0;
 	}
-	return old-health;
+	return (int)(old-health);
 }
 
 DefenderStation::DefenderStation( SpaceSprite *sprite, SpaceLocation *orbit)
@@ -169,12 +169,12 @@ DefenderGame::~DefenderGame() {
 
 void DefenderGame::fps() {
 	int s = 0;
-	if (starbase) s = starbase->health;
-	message.print(msecs_per_fps, 15, "Current Time: %d", game->game_time / 1000);
-	message.print(msecs_per_fps, 12, "Starbase Health: %d", s);
+	if (starbase) s = (int)starbase->health;
+	message.print((int)msecs_per_fps, 15, "Current Time: %d", game->game_time / 1000);
+	message.print((int)msecs_per_fps, 12, "Starbase Health: %d", s);
 	int p = 0;
-	if (player->ship) p = player->ship->getCrew();
-	message.print(msecs_per_fps, 12, "Your Health: %d", p);
+	if (player->ship) p = (int)player->ship->getCrew();
+	message.print((int)msecs_per_fps, 12, "Your Health: %d", p);
 }
 
 void DefenderGame::restart() {

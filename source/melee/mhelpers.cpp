@@ -363,7 +363,7 @@ struct VW_lock_data {
 };
 
 void VideoWindow::lock ( ) {
-	int i = lock_level;
+	//int i = lock_level;
 	lock_level += 1;
 	//if (!surface) return;
 	if (lock_level == 1) {

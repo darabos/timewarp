@@ -39,7 +39,7 @@ void install_pmask() {
 
 void init_pmask (struct PMASK *mask, int w, int h)
 {
-	int words, total_words, x, error = 0;
+	int words, total_words, x;
 
 	if ((w > MAX_INTVAL(short int)) || (h > MAX_INTVAL(short int)) || (w < 0) || (h < 0)) 
 	{

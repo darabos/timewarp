@@ -42,7 +42,7 @@ DIALOG joyDialog[] = {
 };
 
 void calibrate_joysticks() {
-	int i, t = 0;
+	int i;
 	const char *cal;
 
 	if (!num_joysticks) {

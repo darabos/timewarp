@@ -34,7 +34,7 @@ REGISTER_FILE
 
 void VNebulaColorEffects (RGB *c) {
 	c->r = ((c->r * 2) / 3) + 256/3;
-  c->b = c->b * 0.75 + 60;
+  c->b = (unsigned char)(c->b * 0.75 + 60);
 	//gamma_color_effects (c);
 	return;
 }
@@ -429,7 +429,7 @@ void VGroundDefenseLaser::Initialize() {
   VGroundInstallation::Initialize("PlanetaryDefenseLaser");
   weaponRange = scale_range(get_config_float("PlanetaryDefenseLaser", "LaserRange", 0));
   weaponColor = get_config_int("PlanetaryDefenseLaser", "LaserColor", 0);
-  weaponDamage = get_config_float("PlanetaryDefenseLaser", "LaserDamage", 0);
+  weaponDamage = get_config_int("PlanetaryDefenseLaser", "LaserDamage", 0);
   weaponFrames = get_config_int("PlanetaryDefenseLaser", "LaserFrames", 0);
 }
 

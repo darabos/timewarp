@@ -151,14 +151,14 @@ int _no_idle = 0;
 #	if !defined NO_WIMM_QPC
 #		define WINMM_QPC
 		static double winmm_qpc_period_f = 1;
-		static int winmm_qpc_period_i = 0;
 		static Uint64 winmm_qpc_base = 0;
 		static volatile Uint64 winmm_qpc_get_time() {
 			LARGE_INTEGER bob;
 			if (QueryPerformanceCounter(&bob)) {
 				return bob.QuadPart - winmm_qpc_base;
 			}
-			return -1;
+			tw_error("QueryPerformanceCounter return 0");
+			return 0;
 		}
 		static double winmm_qpc_get_freq() {
 			LARGE_INTEGER fred;

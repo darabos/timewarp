@@ -170,12 +170,9 @@ double ControlWussie::evasion (Ship * ship)
 
 int ControlWussie::think ()
 {
-	if (key[KEY_SPACE]) {
-		int i = 0;
-	}
 	int action = 0;
 	float velocity, distance;
-	double angle, va, pangle, dangle;
+	double angle = 0, va, pangle, dangle;
 	int avoid_planet = FALSE;
 	Query ap;
 	SpaceObject *p;

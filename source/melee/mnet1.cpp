@@ -22,7 +22,7 @@ void GameEventMessage::execute( int source ) {STACKTRACE
 	char buffy[64+max_message_length];
 	char *tmp = buffy;
 	int c = 15;
-	if (size > max_message_length + sizeof(GameEvent)) tw_error("GameEventMessage - message overflow");
+	if ((unsigned short int)size > max_message_length + sizeof(GameEvent)) tw_error("GameEventMessage - message overflow");
 	//if (source == Game::channel_server) tmp += sprintf(tmp, "Server says: ");
 	//else if (source == Game::channel_client) tmp += sprintf(tmp, "Client says: ");
 	if (source == Game::channel_server) c = 13; else c = 9;

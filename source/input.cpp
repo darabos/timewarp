@@ -346,7 +346,7 @@ int joykey_enumerate(Key *keys) {
 			nb = MAX_JOY_BUTTONS;
 		ns = joy[which_joystick-1].num_sticks;
 
-		int t, r = 0, unpressed = 0;
+		int t, r = 0;
 		int i, j;
 		for (i = 0; i < nb; i += 1) {
 			t = (which_joystick<<JOY_NUM_SHIFT) | (i<<JOY_BUTTON_SHIFT);

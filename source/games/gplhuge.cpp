@@ -146,7 +146,7 @@ void Huge::init_objects()
 	Centre->vel = Vector2( vx, vy );
 
 	size.x = size.y = MapSize;
-	iMessage("Size   = %d *PRESET*",(size.x));
+	iMessage("Size   = %d *PRESET*",MapSize);
 
 	int num;
 

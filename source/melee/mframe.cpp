@@ -276,19 +276,6 @@ void Query2::end() {STACKTRACE
 	}
 
 
-
-
-
-
-
-
-
-
-
-SpaceLocation::~SpaceLocation() {STACKTRACE
-	if (data) data->unlock();
-	}
-
 Presence::Presence() {STACKTRACE
 	total_presences += 1;
 	attributes = 0;
@@ -356,14 +343,15 @@ SpaceLocation *SpaceLocation::get_focus() {STACKTRACE
 
 SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle) :
 	pos(lpos),
-	angle(langle),
-	vel(0,0),
+	qnext(NULL),
 	layer(LAYER_LOCATIONS),
+	vel(0,0),
+	angle(langle),
 	damage_factor(0),
 	collide_flag_anyone(ALL_LAYERS),
 	collide_flag_sameteam(0),
-	collide_flag_sameship(0),
-	qnext(NULL)
+	collide_flag_sameship(0)
+
 {STACKTRACE
 	id |= SPACE_LOCATION;
 	attributes |= ATTRIB_SYNCHED;
@@ -382,6 +370,12 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 		target = NULL;
 		}
 }
+
+
+SpaceLocation::~SpaceLocation() {STACKTRACE
+	if (data) data->unlock();
+
+	}
 
 bool SpaceLocation::change_owner(SpaceLocation *new_owner) {STACKTRACE
 	if (new_owner) {
@@ -682,7 +676,7 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	x2 = (int)(normal_x() - dx - ((other->w) / 2.0));
 	y2 = (int)(normal_y() - dy - ((other->h) / 2.0));*/
 
-	if (!sprite->collide(p1.x, p1.y, sprite_index, p2.x, p2.y, 
+	if (!sprite->collide((int)p1.x, (int)p1.y, sprite_index, (int)p2.x, (int)p2.y, 
 			other->sprite_index, other->sprite)) 
 		return;
 	//sprite->collide(x1, y1, sprite_index, x2, y2, other->sprite_index, other->sprite);
@@ -728,7 +722,7 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	Vector2 nd;
 	nd = unit_vector(dp);
 	nd /= (mass + other->mass);
-	while (sprite->collide(p1.x, p1.y, sprite_index, p2.x, p2.y, 
+	while (sprite->collide((int)p1.x, (int)p1.y, sprite_index, (int)p2.x, (int)p2.y, 
 			other->sprite_index, other->sprite)) {
 		//pos = normalize(pos + nd * other->mass);
 		//other->pos = normalize(other->pos - nd * mass);
@@ -875,7 +869,7 @@ int Physics::_find_serial(int serial) {STACKTRACE
 		if (listed[i].serial == serial) return i;
 		}
 	return -1;
-	}/**/
+	}*/
 
 void Physics::destroy_all() {
 	STACKTRACE
@@ -932,7 +926,7 @@ unsigned int Physics::get_code(unsigned int ship, TeamCode team) {STACKTRACE
 int Physics::new_unsynched_serial() {
 	last_unsynched_serial -= 1;
 	return last_unsynched_serial;
-	};/**/
+	};*/
 unsigned int Physics::new_ship() {
 	last_ship += 1;
 	return last_ship;
@@ -992,7 +986,7 @@ void Physics::init() {STACKTRACE
 		}
 	num_listed += 1;
 	return;
-	}/**/
+	}*/
 
 void Physics::add(SpaceLocation *o) {STACKTRACE
 	if (o->attributes & ATTRIB_INGAME) tw_error("addItem - already added");
@@ -1194,7 +1188,8 @@ checksync();
 		if (deleted) listed[i] = listed[i+deleted];
 	}
 	num_listed -= deleted;
-}/**/
+
+}*/
 
 checksync();
 
@@ -1352,7 +1347,7 @@ void Physics::dump_state ( const char *file_name ) {STACKTRACE
 	//unimplemented
 }
 void Physics::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {STACKTRACE
-	sound.play(sample, vol, 128, freq * turbo);
+	sound.play(sample, vol, 128, iround(freq * turbo));
 	return;
 }
 void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {STACKTRACE

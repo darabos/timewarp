@@ -284,10 +284,10 @@ int hot_color[HOT_COLORS] =
 
 Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite) :
 	SpaceObject(creator, opos, oangle, osprite),
+	death_counter(-1),
 	update_panel(false),
 	target_pressed(false),
-	control(NULL),
-	death_counter(-1)
+	control(NULL)
 {STACKTRACE
 	attributes |= ATTRIB_SHIP;
 	layer = LAYER_SHIPS;
@@ -322,10 +322,10 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 
 Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally_flag) :
 	SpaceObject(NULL, opos, shipAngle, shipData->spriteShip),
+	death_counter(-1),
 	update_panel(false),
 	target_pressed(false),
-	control(NULL),
-	death_counter(-1)
+	control(NULL)
 {STACKTRACE
 	shipData->lock();
 	attributes |= ATTRIB_SHIP;

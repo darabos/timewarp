@@ -372,8 +372,6 @@ bool Game::game_ready() {STACKTRACE
 }
 
 void Game::handle_desynch(int local_checksum, int server_checksum, int client_checksum) {STACKTRACE
-	char buf[100000];
-	char *f = buf;
 	error("Game Desynchronized\nTime=%d Frame=%d\nClient=%d Server=%d Local=%d", game_time, frame_number, (int)client_checksum, (int)server_checksum, (int)local_checksum);
 }
 
@@ -630,7 +628,7 @@ void Game::fps() {STACKTRACE
 		if (ping > 200) tt = "bad";
 		if (ping > 400) tt = "BAD!";
 		if (ping > 800) tt = "VERY BAD!";
-		message.print(msecs_per_fps, 12, "ping: %dms (that's %s)", ping, tt);
+		message.print((int)msecs_per_fps, 12, "ping: %dms (that's %s)", ping, tt);
 	}
 
 	if (this->show_fps) {
@@ -657,7 +655,7 @@ void Game::fps() {STACKTRACE
 			tmp = "bad";
 		else
 			tmp = "BAD!";
-		message.print(msecs_per_fps, 12, "tic time: %.3fms (that's %s)", tt, tmp);
+		message.print((int)msecs_per_fps, 12, "tic time: %.3fms (that's %s)", tt, tmp);
 
 		if (rt < 2)
 			tmp = "good";
@@ -667,13 +665,13 @@ void Game::fps() {STACKTRACE
 			tmp = "bad";
 		else
 			tmp = "BAD!";
-		message.print(msecs_per_fps, 12, "render time: %.3fms (that's %s)", rt, tmp);
-		message.print(msecs_per_fps, 12, "debug: %d", debug_value);
-		message.print(msecs_per_fps, 12, "shipdatas loaded: %d", shipdatas_loaded);
+		message.print((int)msecs_per_fps, 12, "render time: %.3fms (that's %s)", rt, tmp);
+		message.print((int)msecs_per_fps, 12, "debug: %d", debug_value);
+		message.print((int)msecs_per_fps, 12, "shipdatas loaded: %d", shipdatas_loaded);
 	}
 
 	if (chat_on)
-		message.print(msecs_per_fps, 15, "say: %s", chat_buf);
+		message.print((int)msecs_per_fps, 15, "say: %s", chat_buf);
 }
 
 void Game::preinit() {STACKTRACE

@@ -136,7 +136,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 	{
 		type = fleet->ship[i];
 		
-		DATAFILE *alldata;
+		DATAFILE *alldata = NULL;
 
 		char fname[512];
 		RGB *ptest = 0;
@@ -170,8 +170,8 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 				} else {
 					
 					int dx, dy;
-					dx = 0.5 * (W - bmp->w);
-					dy = 0.5 * (W - bmp->h);
+					dx = (W - bmp->w)/2;
+					dy = (W - bmp->h)/2;
 					blit(bmp, fleet_bmp[i], 0, 0, dx, dy, bmp->w, bmp->h);
 				}
 
@@ -205,7 +205,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 		
 		if (data)
 		{
-			BITMAP *bmp;
+			BITMAP *bmp = NULL;
 			if (data->type == DAT_RLE_SPRITE)
 			{
 				RLE_SPRITE* rle = (RLE_SPRITE*) data->dat;
@@ -235,8 +235,8 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 			} else {
 
 				int dx, dy;
-				dx = 0.5 * (W - bmp->w);
-				dy = 0.5 * (W - bmp->h);
+				dx = (W - bmp->w) / 2;
+				dy = (W - bmp->h) / 2;
 				masked_blit(bmp, fleet_bmp[i], 0, 0, dx, dy, bmp->w, bmp->h);
 			}
 
@@ -700,7 +700,7 @@ void TWgui::choose_new_ships()
 {
 	// check if there is only 1 nonzero fleet left
 	// in that case, the game should end ...
-	int i, k, m;
+	int i, k, m = 0;
 	k = 0;
 	for ( i = 0; i < num_players; ++i )
 	{

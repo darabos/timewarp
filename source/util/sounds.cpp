@@ -42,7 +42,7 @@
   #include <jgmod.h>
 #endif
 
-static int is_jgmod_compiled() {return 0;}
+/* static int is_jgmod_compiled() {return 0;} */
 
 
 SoundSystem tw_soundsystem;
@@ -165,7 +165,9 @@ void SoundSystem::play_music (Music *music, int loop) {
 	if ((state & (MOD_ENABLED | MUSIC_ON)) == (MOD_ENABLED | MUSIC_ON)) {
 		::play_mod(music, loop);
 		}
-	if (fake_mod_playing = loop) looping_music = music;
+	fake_mod_playing = loop;
+	if (fake_mod_playing)
+		looping_music = music;
 	return;
 	}
 void SoundSystem::stop_music () {

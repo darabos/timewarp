@@ -147,8 +147,10 @@ int TW_Dialog_Player::update() {
 	return -2;
 }
 
+/*
 static void tw_dialog_post ( VideoWindow *window, DIALOG *d, int n ) {
-}
+}*/
+
 int tw_do_dialog ( VideoWindow *window, DIALOG *d, int index ) {
 	int return_value;
 	TW_Dialog_Player bob;
@@ -225,17 +227,22 @@ const char *_get_ini_string ( const char *name ) {
 		tw_error("_get_ini_string - bad name (%s)", name);
 		return NULL;
 	}
-	_slash[1] = strchr(_slash[0]+1, '/');
+	_slash[1] = strchr(_slash[0] + 1, '/');
 	if (!_slash[1]) {
 		tw_error("_get_ini_string - bad name (%s)", name);
 		return NULL;
 	}
-	char *tmp;
+	
 	int i = 1;
-	while (tmp = strchr(_slash[i]+1, '/')) {
+
+	char *tmp = strchr(_slash[i] + 1, '/');
+	while ( tmp )
+	{
 		i ^= 1;
 		_slash[i] = tmp;
+		tmp = strchr(_slash[i] + 1, '/');
 	}
+
 	item = _slash[i] + 1;
 	item[-1] = 0;
 	section = _slash[i^1] + 1;
@@ -260,12 +267,15 @@ void _set_ini_string ( const char *name, const char *value ) {
 		tw_error("_set_ini_string - bad name (%s)", name);
 		return;
 	}
-	char *tmp;
+	
 	int i = 1;
-	while (tmp = strchr(_slash[i]+1, '/')) {
+	char *tmp = strchr(_slash[i] + 1, '/');
+	while (tmp ) {
 		i ^= 1;
 		_slash[i] = tmp;
+		tmp = strchr(_slash[i] + 1, '/');
 	}
+
 	item = _slash[i] + 1;
 	item[-1] = 0;
 	section = _slash[i^1] + 1;

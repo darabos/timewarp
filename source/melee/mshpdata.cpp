@@ -94,12 +94,14 @@ void unload_unused_ship_data() {
 */
 
 
-static BITMAP *copy_bitmap(BITMAP *old) {
+/*
+ static BITMAP *copy_bitmap(BITMAP *old) {
 	BITMAP *r;
 	r = create_bitmap(old->w, old->h);
 	blit (old, r, 0, 0, 0, 0, old->w, old->h);
 	return r;
 }
+*/
 
 void save_spacesprite2(SpaceSprite *ss, const char *spritename, const char *destination, const char *extension) {
 	int i;
@@ -111,7 +113,7 @@ void save_spacesprite2(SpaceSprite *ss, const char *spritename, const char *dest
 	BITMAP *tmp = create_bitmap(int(ss->width() * 8), int(ss->height() * 8));
 	for (i = 0; i < ss->frames(); i += 1) {
 		blit(ss->get_bitmap(i), tmp, 0, 0, (i&7) * (int)ss->width(), int((i/8) * ss->height()), (int)ss->width(), (int)ss->height());
-		sprintf(buf, "%s.bmp", spritename, i, extension);
+		sprintf(buf, "%s%i.%s", spritename, i, extension);
 		save_bitmap(buf, tmp, NULL);
 	}
 	return;
@@ -421,7 +423,7 @@ void ShipData::load() {
 	sprintf (header, "type = Ship\n");
 
 //panel bitmaps
-/*	sprintf (header, "num_panel_bitmaps = %d\n", num_panel_bitmaps);
+	sprintf (header, "num_panel_bitmaps = %d\n", num_panel_bitmaps);
 	for (i = 0; i < num_panel_bitmaps; i += 1) {
 		sprintf(fname, "%s/panel%03d.pcx", dname, i);
 		save_bitmap(fname, bitmapPanel[i], NULL);

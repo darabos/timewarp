@@ -280,8 +280,8 @@ void RadarMap::animate(Frame *frame)
 
 		// scale the location onto the map:
 		double scale = wx / (2.0 * scandist);
-		int xpos = wx/2 + (o->normal_pos().x - x0) * scale;
-		int ypos = wy/2 + (o->normal_pos().y - y0) * scale;
+		int xpos = wx/2 + iround((o->normal_pos().x - x0) * scale);
+		int ypos = wy/2 + iround((o->normal_pos().y - y0) * scale);
 
 		// what color to use?
 		// makecol(r, g, b)
@@ -518,16 +518,14 @@ images respectively (optional, may be NULL).
 */
 
 // DIALOG (part 1)
-static int displayvalue = 0;
-static char *testtext = "start it!";
+//static int displayvalue = 0;
+//static char *testtext = "start it!";
 
 
 static int		B_SELECT, B_REFRESH, B_SIZE_INC, B_SIZE_DEC, B_SIZE_DEF,
 				B_SYS_NEXT, B_SYS_PREV;
 static DIALOG	*Dialog_star;
-static BITMAP	*bmp_, *bitmap_button_right, *bitmap_button_up,
-				*bitmap_button_down, *bitmap_button_select,
-				*bitmap_button_refresh, *bitmap_selectscreen;
+static BITMAP	*bitmap_selectscreen;
 static DIALOG_PLAYER	*Dialog_star_player;
 static int		xPutDialog = 0, yPutDialog = 0;
 static char		PlanetSystemText[512];
@@ -545,7 +543,7 @@ BITMAP* get_data_bmp(DATAFILE *data, char *objname, double scale)
 	
 	// copied from mshipdata.cpp:
 	old = (BITMAP*)dataobj->dat;
-	r = create_bitmap(old->w*scale, old->h*scale);
+	r = create_bitmap(iround(old->w*scale), iround(old->h*scale));
 	stretch_blit (old, r, 0, 0, old->w, old->h, 0, 0, r->w, r->h);
 	
 	return r;
@@ -569,7 +567,7 @@ void add_dialog_icon_proc( DIALOG *Dialog_star, int *k, DATAFILE *tmpdata,
 	int j = 0;
 
 	DIALOG tmpdialog =
-		{ d_icon_proc_PLSY,      x*scale,  y*scale, bmps[0]->w, bmps[0]->h,   255,  0,    0,    j,  6,    6,    bmps[0], bmps[1], bmps[2] };
+		{ d_icon_proc_PLSY,      iround(x*scale),  iround(y*scale), bmps[0]->w, bmps[0]->h,   255,  0,    0,    j,  6,    6,    bmps[0], bmps[1], bmps[2] };
 
 	Dialog_star[*k] = tmpdialog;
 	++ (*k);	// the next dialog.
@@ -680,7 +678,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 	int	i, j;
 	
 	char	objectname[512];
-	sprintf(objectname, "Planets%03i\0", iPlanetSystem);
+	sprintf(objectname, "Planets%03i", iPlanetSystem);
 
 	strcpy(PlanetSystemText, get_config_string(objectname,"PlanetText",0));
 	//strcpy(PlanetSystemText, "HELLO THERE !");
@@ -691,7 +689,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 	char name[512];
 	const char	*result;
 	i = 0;
-	sprintf(name, "PlanetPic%02i\0", i);
+	sprintf(name, "PlanetPic%02i", i);
 	result = get_config_string(objectname, name, 0);
 	if ( result )
 	{
@@ -728,7 +726,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 	{
 		char name[512];
 		const char	*result;
-		sprintf(name, "PlanetMoon%02i\0", i);
+		sprintf(name, "PlanetMoon%02i", i);
 		result = get_config_string(objectname, name, 0);
 		if ( result )
 		{
@@ -750,7 +748,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 	{
 		char name[512];
 		const char	*result;
-		sprintf(name, "PlanetStarbase%02i\0", i);
+		sprintf(name, "PlanetStarbase%02i", i);
 		result = get_config_string(objectname, name, 0);
 		if ( result )
 		{
@@ -824,12 +822,12 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 		if ( i == 0 )
 			Rmin = OrbitRadiusMin;
 		else
-			Rmin = PlanetMoonEllipsW[i-1];
+			Rmin = (int)PlanetMoonEllipsW[i-1];
 
 		if ( k == NumMoons )
 			Rmax = OrbitRadiusMax;
 		else
-			Rmax = PlanetMoonEllipsW[k];
+			Rmax = (int)PlanetMoonEllipsW[k];
 
 		// now, assign a radius to these moons (with indexes i to k-1 )
 
@@ -1006,8 +1004,8 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 
 	show_mouse(tmpscreen);	// redirect all mouse output to a temp screen.
 
-	int xcenter = tmpscreen->w / 2 + 20*dialog_scale;
-	int ycenter = tmpscreen->h / 2 -  5*dialog_scale;
+	int xcenter = tmpscreen->w / 2 + iround(20*dialog_scale);
+	int ycenter = tmpscreen->h / 2 - iround(5*dialog_scale);
 
 	double scalefactor = 1.0;	// scaling applied to the planet system
 
@@ -1086,7 +1084,7 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 
 			scare_mouse();
 			// also, show some text information
-			gui_textout(tmpscreen, PlanetSystemText, 92*dialog_scale, 82*dialog_scale, 0x000FF00, TRUE);
+			gui_textout(tmpscreen, PlanetSystemText, iround(92*dialog_scale), iround(82*dialog_scale), 0x000FF00, TRUE);
 
 			// also, force the dialog(s) to redraw itself, otherwise this big image
 			// would overwrite all the buttons:
@@ -1392,10 +1390,10 @@ void Planets::init_objects()
 	{
 		char name[512];
 		const char	*result;
-		sprintf(name, "Planet%03i\0", i);
+		sprintf(name, "Planet%03i", i);
 		result = get_config_string(NULL, name, 0);
 		if ( result )
-			sscanf(result, "%f %i", &PlanetGrav[i], &PlanetType[i]);
+			sscanf(result, "%lf %i", &PlanetGrav[i], &PlanetType[i]);
 		else
 			error("Error in reading datafile planet");
 	}
@@ -1407,7 +1405,7 @@ void Planets::init_objects()
 	{
 		char name[512];
 		const char	*result;
-		sprintf(name, "Moon%03i\0", i);
+		sprintf(name, "Moon%03i", i);
 		result = get_config_string(NULL, name, 0);
 		if ( result )
 			sscanf(result, "%lf %i", &MoonGrav[i], &MoonType[i]);
@@ -1440,14 +1438,14 @@ void Planets::init_objects()
 
 	int Comets = get_config_int(NULL, "Comets",0);
 	int CoMass = get_config_int(NULL, "Comet_mass",0);
-	int ComMax = get_config_int(NULL, "Comet_max",0);
+	//int ComMax = get_config_int(NULL, "Comet_max",0);
 	int Asteroids=get_config_int(NULL,"Asteroids",0);
-	int ComAcc = get_config_int(NULL, "Comet_acc",0);
+	//int ComAcc = get_config_int(NULL, "Comet_acc",0);
 
 
 	int Radius = get_config_int(NULL, "Radius", 0);
-	int PrimRadiusMax=get_config_int(NULL,"PrimRadiusMax",0);
-	int MoonRandGrav=get_config_int(NULL,"MRandGrav",0);
+	//int PrimRadiusMax=get_config_int(NULL,"PrimRadiusMax",0);
+	//int MoonRandGrav=get_config_int(NULL,"MRandGrav",0);
 
 
 	int MapSize = get_config_int(NULL,"MapSize",0);
@@ -1457,7 +1455,7 @@ void Planets::init_objects()
 
 	int OrbitRadiusMin = get_config_int(NULL,"OrbitRadiusMin",0);
 	int OrbitRadiusMax = get_config_int(NULL,"OrbitRadiusMax",0);
-	int OrbitMinDistance = get_config_int(NULL,"OrbitMinDistance",0);
+	//int OrbitMinDistance = get_config_int(NULL,"OrbitMinDistance",0);
 
 	double OrbitPeriodMin = get_config_float(NULL, "OrbitPeriodMin", 0.0);
 	double OrbitPeriodMax = get_config_float(NULL, "OrbitPeriodMax", 0.0);
@@ -1471,10 +1469,10 @@ void Planets::init_objects()
 	{
 		char name[512];
 		const char	*result;
-		sprintf(name, "Moon%03i\0", i);
+		sprintf(name, "Moon%03i", i);
 		result = get_config_string(NULL, name, 0);
 		if (result)
-			sscanf(result, "%f %i", &MoonGrav[i], &MoonType[i]);
+			sscanf(result, "%lf %i", &MoonGrav[i], &MoonType[i]);
 
 		//iMessage("MoonType = %d *DATAFILE*", MoonType[i]);
 		//message.print(10,10, "Moon default = %2i %8.4f", MoonType[i], MoonGrav[i]);
@@ -1527,7 +1525,7 @@ void Planets::init_objects()
 
 
 
-	iMessage("HI !!!!   = %d *PRESET*",(size.x));
+	iMessage("HI !!!!   = %d *PRESET*",(int)size.x);
 
 
 	//Select planet
@@ -1551,7 +1549,7 @@ void Planets::init_objects()
 
 	add(new Stars());
 
-	iMessage("Size   = %d *PRESET*",(size.x));
+	iMessage("Size   = %d *PRESET*",(int)size.x);
 	game->add(Centre);
 	game->add(new WedgeIndicator(Centre, 50, 4));	// this shows the direction/distance of the planet.
 
@@ -1676,8 +1674,12 @@ Planets::~Planets()
 {
 
 	delete backgrimages;
-	delete PlanetGrav, PlanetType, MoonGrav, MoonType, PlanetPics, MoonPics;
-
+	delete PlanetGrav; 
+	delete PlanetType;
+	delete MoonGrav;
+	delete MoonType;
+	delete PlanetPics;
+	delete MoonPics;
 }
 
 

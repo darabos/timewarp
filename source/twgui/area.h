@@ -118,7 +118,7 @@ public:
 
 	AreaGeneral(AreaReserve *menu);
 	AreaGeneral(AreaReserve *menu, char *identbranch, int asciicode, bool akeepkey = 0);
-	~AreaGeneral();
+	virtual ~AreaGeneral();
 	//virtual void init(AreaReserve *menu, char *identbranch);
 
 
@@ -213,7 +213,7 @@ public:
 
 
 	AreaReserve(char *identbase, int dx, int dy, char *datafilename, BITMAP *outputscreen);
-	~AreaReserve();
+	virtual ~AreaReserve();
 
 	void setscreen(BITMAP *scr);
 
@@ -255,6 +255,7 @@ public:
 
 	AreaBox(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool akeepkey = 0);
 //	virtual void init(AreaReserve *menu, char *identbranch, int ax, int ay);
+	virtual ~AreaBox();
 
 	void locate_by_backgr(char *stron);
 
@@ -272,7 +273,7 @@ protected:
 public:
 
 	AreaTablet(AreaReserve *menu, char *identbranch, int ax, int ay, int asciicode, bool akeepkey = 0);
-	AreaTablet::~AreaTablet();
+	virtual ~AreaTablet();
 
 	void initbackgr(bool autoplace);
 

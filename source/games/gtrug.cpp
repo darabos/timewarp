@@ -49,7 +49,6 @@ int TrugControl::think() {
 		}
 		break;
 		case ORDER_ATTACK: {
-			int target_serial = order.x;
 			k &= ~(KEYFLAG_NEXT | KEYFLAG_PREV | KEYFLAG_CLOSEST);
             //TODO check following 2 lines
 			//if (!target || (target->get_serial() == target_serial)) 

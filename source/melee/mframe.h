@@ -58,7 +58,7 @@ enum {
 
 	void init(Presence *p);
 	void clear();
-};/**/
+};*/
 
 
 class Physics : public BaseClass {
@@ -73,7 +73,8 @@ class Physics : public BaseClass {
 	int last_serial;
 	int new_serial();
 	int last_unsynched_serial;
-	int new_unsynched_serial();/**/
+
+	int new_unsynched_serial();*/
 
 	int num_items, max_items;
 	SpaceLocation **item;
@@ -111,7 +112,7 @@ class Physics : public BaseClass {
 	virtual void animate_predict(Frame *frame, int time);
 
 	/*Presence *find_serial(int serial);
-	int _find_serial(int serial);/**/
+	int _find_serial(int serial);*/
 
 	virtual void play_sound (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000);
 	virtual void play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000);
@@ -211,11 +212,13 @@ protected: public://aught to be protected, but we're lazy
 	virtual bool change_owner(SpaceLocation *new_owner);
 
 
-	int    collide_flag_sameship; // mask for which layers it can collide with objects associated with the same ship
-	int    collide_flag_sameteam; // mask for which layers it can collide with for allies
-	int    collide_flag_anyone;   // mask for which layers it can collide with for non-allies
-
 	double damage_factor;         // the damage this item inflicts
+
+	int    collide_flag_anyone;   // mask for which layers it can collide with for non-allies
+	int    collide_flag_sameteam; // mask for which layers it can collide with for allies
+	int    collide_flag_sameship; // mask for which layers it can collide with objects associated with the same ship
+
+
 
 	int damage(SpaceLocation *who, double normal, double direct = 0) { return who->handle_damage(this, normal, direct); }
 	/*handle_damage returns: (this is a lie)

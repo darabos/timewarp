@@ -297,7 +297,7 @@ void View::track (const CameraPosition &target, double smooth_time, CameraPositi
 		d = 0.5;
 		dx = origin->vx * d + dx * (1.0 - d);
 		dy = origin->vy * d + dy * (1.0 - d);
-/*		dx = ddx * (1.0 - d);
+		dx = ddx * (1.0 - d);
 		dx += origin->vx * (1.0 - d);
 		dy -= ddy * (1.0 - d);
 		dy += origin->vy * d;*/

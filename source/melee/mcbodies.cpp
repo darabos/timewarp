@@ -387,7 +387,7 @@ void Stars::_event( Event *e) {STACKTRACE
 			switch (ce->subtype) {
 				case ConfigEvent::GET: {
 					char blah[64];
-					sprintf(ce->value, "%f", field_depth);
+					sprintf(blah, "%i", field_depth);
 					ce->value = strdup(blah);
 				} break;
 				case ConfigEvent::SET: {

@@ -107,7 +107,9 @@ GhostButton::GhostButton(AreaReserve *menu)
 AreaGeneral(menu)
 {
 }
-
+GhostButton::~GhostButton()
+{
+}
 
 
 TextButton::TextButton(AreaReserve *menu, char *identbranch, int ax, int ay, FONT *afont)
@@ -117,6 +119,9 @@ AreaTablet(menu, identbranch, ax, ay, 255)
 	usefont = afont;
 }
 
+TextButton::~TextButton()
+{
+}
 
 void TextButton::set_text(char *txt, int color)
 {
@@ -157,6 +162,10 @@ AreaTablet(menu, identbranch, ax, ay, 255)
 	}
 	repeattime = 100;
 
+}
+
+TextEditBox::~TextEditBox()
+{
 }
 
 void TextEditBox::set_repeattime(int atime)
@@ -209,7 +218,7 @@ void TextEditBox::calculate()
 		{
 			// for each key, you remember how long it was since it was last pressed.
 			// if that's too short ago, it's not used.
-			key_time[m] = areareserve->menu_time;
+			key_time[m] = (int)areareserve->menu_time;
 			
 			if ( k >= 0x020 && k < 0x080 )
 			{
@@ -246,7 +255,7 @@ void TextEditBox::subanimate()
 	// background?
 	//blit(backgr, areareserve->drawarea, 0, 0, x, y, W, H);
 
-	textout(drawarea, usefont, text, 0, H/2 - 0.5*text_height(usefont), makecol(20,20,20));
+	textout(drawarea, usefont, text, 0, H/2 - text_height(usefont)/2, makecol(20,20,20));
 	//textout(areareserve->drawarea, font, text, 0, 0, makecol(200,200,200));
 
 	int w, h;
@@ -552,8 +561,8 @@ AreaTablet(menu, identbranch, ax, ay, 255)
 
 	if (button)
 	{
-		bwhalf = 0.5*button->w; 
-		bhhalf = 0.5*button->h;
+		bwhalf = button->w/2; 
+		bhhalf = button->h/2;
 	} else {
 		bwhalf = 0;
 		bhhalf = 0;
@@ -776,7 +785,7 @@ void TextInfoArea::subanimate()
 		int k;
 		for ( k = 0; k < L; ++k )
 		{
-			if (txt[k] < 20 || txt[k] > 128 )
+			if (txt[k] < 20 || (unsigned char)txt[k] > 128 )
 				txt[k] = ' ';
 		}
 
@@ -808,8 +817,8 @@ AreaReserve(ident,
 
 	init_components();
 
-	xshift = axshift * scale;
-	yshift = ayshift * scale;
+	xshift = iround(axshift * scale);
+	yshift = iround(ayshift * scale);
 }
 
 
@@ -817,7 +826,7 @@ AreaReserve(ident,
 PopupGeneral::PopupGeneral(AreaGeneral *atrigger, char *ident, int axshift, int ayshift, char *datafilename)
 :
 AreaReserve(ident,
-			0.0, 0.0,
+			0, 0,
 			datafilename,
 			atrigger->areareserve->screenreserve)
 {
@@ -825,8 +834,8 @@ AreaReserve(ident,
 
 	init_components();
 
-	xshift = axshift * scale;
-	yshift = ayshift * scale;
+	xshift = iround(axshift * scale);
+	yshift = iround(ayshift * scale);
 }
 
 
@@ -1089,6 +1098,10 @@ PopupTextInfo(creator, ident, axshift, ayshift, datafilename, afont, atext, aNch
 {
 };
 
+PopupTextInfo_toggle::~PopupTextInfo_toggle()
+{
+}
+
 void PopupTextInfo_toggle::calculate()
 {
 	PopupTextInfo::calculate();
@@ -1337,12 +1350,12 @@ void MatrixIcons::subanimate()
 			yoverlay = (iy - scroll->y) * Hicon;
 
 			int w0, h0;
-			w0 = listIcon[k]->w * areareserve->scale * extrascale;
-			h0 = listIcon[k]->h * areareserve->scale * extrascale;
+			w0 = iround(listIcon[k]->w * areareserve->scale * extrascale);
+			h0 = iround(listIcon[k]->h * areareserve->scale * extrascale);
 
 			// create a intermediate icon
-			xicon = 0.5 * (Wicon - w0);
-			yicon = 0.5 * (Hicon - h0);
+			xicon =  (Wicon - w0) / 2;
+			yicon =  (Hicon - h0) / 2;
 
 			clear_to_color(tmp, makecol(255,0,255));
 
@@ -1368,7 +1381,9 @@ void MatrixIcons::subanimate()
 	double a;
 	//a = 0.5 + 0.5 * sin(areareserve->menu_time * 1E-3 * 2*PI / 10);
 	a = 0.5;
-	rect(drawarea, i*Wicon, j*Hicon, (i+1)*Wicon-1, (j+1)*Hicon-1, makecol(20*a,100*a,200*a));
+	rect(drawarea, i*Wicon, j*Hicon, (i+1)*Wicon-1, (j+1)*Hicon-1, makecol(iround(20*a),
+																		   iround(100*a),
+																		   iround(200*a)));
 }
 
 
@@ -1378,8 +1393,8 @@ void MatrixIcons::handle_rpress()
 	int mx, my;
 	
 	// mouse position relative to the center of the item window:
-	mx = mouse.xpos() - x - 0.5 * W;
-	my = mouse.ypos() - y - 0.5 * H;
+	mx = mouse.xpos() - x - W / 2;
+	my = mouse.ypos() - y - H / 2;
 
 	// velocity depends on how far you're away from the center.
 	scroll->add(mx / (W/8), my / (H/8));
@@ -1437,6 +1452,9 @@ AreaReserve(ident, xcenter, ycenter, datafilename, outputscreen)
 	}
 }
 
+Popup::~Popup()
+{
+}
 
 // this calls close with return value
 // (the general close is ok, it closes and hides the menu).
@@ -1510,6 +1528,9 @@ Popup(ident,
 	}
 }
 
+PopupYN::~PopupYN()
+{
+}
 
 void PopupYN::check_end()
 {
@@ -1545,6 +1566,9 @@ Popup(ident,
 	}
 }
 
+PopupOk::~PopupOk()
+{
+}
 
 void PopupOk::check_end()
 {

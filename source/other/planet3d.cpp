@@ -253,8 +253,8 @@ Planet *create_planet( Vector2 position )
 		
 		unload_datafile(rawdata);
 		
-		int mapW = color_map->size().x;
-		int mapH = color_map->size().y;
+		int mapW = (int)color_map->size().x;
+		int mapH = (int)color_map->size().y;
 
 		if (spec_map->size().x != mapW || spec_map->size().y != mapH )
 		{
@@ -321,8 +321,8 @@ Planet( opos, ObjectSprite, 0 )
 	
 	dummy = ObjectSprite;
 
-	mapW = map->size().x;
-	mapH = map->size().y;
+	mapW = (int)map->size().x;
+	mapH = (int)map->size().y;
 
 	image_size = planet_radius*2;
 	visual_size = image_size / 2 - 1;
@@ -357,9 +357,9 @@ Planet( opos, ObjectSprite, 0 )
 			b = getb32(ccc);
 
 			// filter the colors by the reference sun
-			r = sun_r * r;
-			g = sun_g * g;
-			b = sun_b * b;
+			r = (unsigned char)(sun_r * r);
+			g = (unsigned char)(sun_g * g);
+			b = (unsigned char)(sun_b * b);
 
 			// for testing:
 //			r = 200;
@@ -374,9 +374,9 @@ Planet( opos, ObjectSprite, 0 )
 
 			// repeat this for the spec map
 
-			sr = sun_r * getr32(spec);
-			sg = sun_g * getg32(spec);
-			sb = sun_b * getb32(spec);
+			sr = (unsigned char)(sun_r * getr32(spec));
+			sg = (unsigned char)(sun_g * getg32(spec));
+			sb = (unsigned char)(sun_b * getb32(spec));
 
 			*((int*) &spec_map_linear[4*k]) = makecol32(sr,sg,sb);
 
@@ -661,9 +661,9 @@ filter instead.
 
 			int k = (i+image_size/2) * image_size + j + image_size/2;
 			int mx2, my2;
-			mx2 = base_map[k].lon;
+			mx2 = (int)base_map[k].lon;
 			if (mx2 >= mapW) mx2 -= mapW;
-			my2 = base_map[k].lat;
+			my2 = (int)base_map[k].lat;
 
 			base_map_linear[k] = mx2 + my2 * 2*mapW;	// twice cause there's an extra copy
 														// of the map colors

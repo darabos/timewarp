@@ -240,7 +240,7 @@ void HealthBar::calculate()
 }
 
 
-void HealthBar::draw_bar(Ship *s, double yoffs, int len, int H, double fraction, int col1, int col2, Frame *space)
+void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fraction, int col1, int col2, Frame *space)
 {
 	Vector2 center;
 	int d;
@@ -267,8 +267,8 @@ void HealthBar::draw_bar(Ship *s, double yoffs, int len, int H, double fraction,
 	if (iy+H < 0) return;
 
 	if (d > 0)
-		rectfill(space->surface, ix, iy, ix+d-1, iy+H, col1);
-	rectfill(space->surface, ix+d, iy, ix+len, iy+H, col2);
+		rectfill(space->surface, ix, iy, ix+d-1, iy+(int)H, col1);
+	rectfill(space->surface, ix+d, iy, ix+len, iy+(int)H, col2);
 
 	space->add_box(ix, iy, ix+len, iy+H);
 }
@@ -283,16 +283,16 @@ void HealthBar::animate(Frame *space)
 		return;
 
 	int H = 2;
-	int dy = 4;
+	double dy = 4;
 
 	if ((dy - H/2) * space_zoom < 1)
 		dy = H/2 + 1/space_zoom;
 
 
-	draw_bar(mother, -dy, mother->crew_max * scale, H, mother->crew/mother->crew_max,
+	draw_bar(mother, -dy, iround(mother->crew_max * scale), H, mother->crew/mother->crew_max,
 		makecol(0, 255, 0), makecol(150, 0, 0), space);
 
-	draw_bar(mother,  dy, mother->batt_max * scale, H, mother->batt/mother->batt_max,
+	draw_bar(mother,  dy, iround(mother->batt_max * scale), H, mother->batt/mother->batt_max,
 		makecol(255, 50, 50), makecol(150, 0, 0), space);
 
 }
@@ -379,7 +379,7 @@ void FlMelee::init(Log *_log)
 //	int MapSize=get_config_int(NULL,"MapSize",0);
 	int MapSize = 15000;	// somewhat bigger :)
 	size.x = size.y = MapSize;
-	iMessage("Size   = %d *PRESET*",(size.x));
+	iMessage("Size   = %d *PRESET*",MapSize);
 
 	int PlanetType=get_config_int(NULL,"PlanetType",0);
 	
@@ -699,13 +699,13 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 		spos = Vector2( frame->surface->w/2, 1);
 		ssize = Vector2( text_length(font,alliancename[0]), text_height(font) );
 		
-		textprintf( frame->surface, font, spos.x, spos.y, pallete_color[15], alliancename[0]);
+		textprintf( frame->surface, font, (int)spos.x, (int)spos.y, pallete_color[15], alliancename[0]);
 		frame->add_box(spos.x, spos.y, ssize.x, ssize.y);
 		
 		spos = Vector2( frame->surface->w/2, frame->surface->h-15);
 		ssize = Vector2( text_length(font,alliancename[1]), text_height(font) );
 		
-		textprintf( frame->surface, font, spos.x, spos.y, pallete_color[15], alliancename[1]);
+		textprintf( frame->surface, font, (int)spos.x, (int)spos.y, pallete_color[15], alliancename[1]);
 		frame->add_box(spos.x, spos.y, ssize.x, ssize.y);
 		
 		//textprintf( frame->surface, font, frame->surface->w/2, frame->surface->h-15, pallete_color[15], alliancename[1]);
@@ -736,7 +736,6 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 						
 						SpaceSprite *spr = o->get_sprite();
 						// set transparency to indicate how alive it is ?
-						double scale = 0.5;
 						
 						cnt[iall] += 1;
 						
@@ -749,12 +748,12 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 						{
 							int a;
 							a = aa_get_trans();
-							aa_set_trans(150 + 50*(1-shp->crew/shp->crew_max));		// 0 = solid
+							aa_set_trans(150 + iround(50*(1-shp->crew/shp->crew_max)));		// 0 = solid
 							spr->draw(spos, ssize, 0, frame);
 							aa_set_trans(a);
 						} else {
 							int col = makecol(150, 30, 30);
-							spr->draw_character(spos.x, spos.y, ssize.x, ssize.y, 0, col, frame);
+							spr->draw_character((int)spos.x, (int)spos.y, (int)ssize.x, (int)ssize.y, 0, col, frame);
 							//spr->draw(spos, ssize, 0, frame);
 						}
 						
@@ -764,10 +763,10 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 						col2 = makecol(255, 0, 0);	// red = dead crew
 						
 						int ix, iy, h1, h2;
-						iy = spos.y + 30;
-						ix = spos.x - 5;
-						h1 = shp->crew_max;
-						h2 = shp->crew;
+						iy = int(spos.y) + 30;
+						ix = int(spos.x) - 5;
+						h1 = int(shp->crew_max);
+						h2 = int(shp->crew);
 						line(frame->surface, ix, iy-h1, ix, iy-h2, col2);
 						line(frame->surface, ix, iy-h2, ix, iy, col1);
 						
@@ -1148,10 +1147,8 @@ void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 	s = source->ship;
 	if ( s && s->isShip() )
 	{
-
-		BITMAP *dest = view->frame->surface;
 		char sometext[512];
-		sprintf(sometext, "Cptn [%s] killed Cptn [%s]\0", s->captain_name, who->captain_name);
+		sprintf(sometext, "Cptn [%s] killed Cptn [%s]", s->captain_name, who->captain_name);
 		message.out(sometext, 8000, 14);
 	}
 
@@ -1227,8 +1224,6 @@ StatsManager::StatsManager()
 
 void StatsManager::addship ( Ship *statship, int ofordisplay )
 {
-	int H = 40;
-
 	SpaceSprite *spr = statship->data->spriteShip;
 	BITMAP *tmp = create_bitmap(40, 40);
 
@@ -1476,9 +1471,9 @@ void YRadar::PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale)
 		pos -= Vector2(bmp->w/2, bmp->h/2);
 
 		masked_blit(bmp, Slate, 
-			0, 0, pos.x, pos.y, bmp->w, bmp->h);
+			0, 0, (int)pos.x, (int)pos.y, bmp->w, bmp->h);
 	} else {
-		putpixel(Slate, pos.x, pos.y, makecol(200,200,200));
+		putpixel(Slate, (int)pos.x, (int)pos.y, makecol(200,200,200));
 	}
 
 }
@@ -1583,8 +1578,8 @@ void YRadar::animate(Frame *space)
 	masked_blit(foregr_bmp, Painted, 0,0,0,0,backgr_bmp->w, backgr_bmp->h);
 
 	int ix, iy;
-	ix = location.x;
-	iy = location.y;
+	ix = (int)location.x;
+	iy = (int)location.y;
 
 
 	//Copy Painted onto space->frame, which will then paint it on the screen.
@@ -1876,13 +1871,13 @@ void ImIndicator::animate(Frame *frame)
 
 
 	int iw, ih;
-	iw = bmp->w*scale;
-	ih = bmp->h*scale;
+	iw = bmp->w*(int)scale;
+	ih = bmp->h*(int)scale;
 
 	S -= Vector2(iw/2, ih/2);
 
 	masked_stretch_blit(bmp, frame->surface, 0, 0, bmp->w, bmp->h,
-						S.x, S.y, iw, ih);
+						(int)S.x, (int)S.y, iw, ih);
 	frame->add_box(S.x, S.y, iw, ih);
 }
 

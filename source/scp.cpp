@@ -201,17 +201,19 @@ Log *new_log (int logtype) { STACKTRACE
 		case Log::log_normal: {
 			log = new Log();
 			log->init();
+			return log;
 		}
 		case Log::log_net1server: {
-			log = new NetLog();
-			log->init();
-			log->type = Log::log_net1server;
+			netlog = new NetLog();
+			netlog->init();
+			netlog->type = Log::log_net1server;
+			return netlog;
 		}
 		default: {
 			tw_error("that is not a valid log type");
 		}
 	}
-	return log;
+	return NULL;
 }
 
 char *detect_gametype( Log *_log ) { STACKTRACE
@@ -411,7 +413,10 @@ void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 	Game *new_game = NULL;
 
 	strncpy(gametype_name, _gametype_name, 1000);
-	for (c = gametype_name; c = strchr(c, '_'); *c = ' ');
+	for (c = strchr(gametype_name, '_'); c; c = strchr(c, '_'))
+		*c = ' ';
+
+
 
 	if (scp) {
 		gui_stuff = true;
@@ -1379,7 +1384,6 @@ void ship_view_dialog(int si, Fleet *fleet) {
 				type->data->lock();
 				if (type->data->spriteShip) {
 					sprite = create_bitmap(180, 180);
-					BITMAP *tmp = type->data->spriteShip->get_bitmap_readonly(0);
 					clear_to_color(sprite, 0);
 					type->data->spriteShip->draw( 
 						Vector2(90,90) - type->data->spriteShip->size()/2, 

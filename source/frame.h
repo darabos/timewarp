@@ -49,7 +49,7 @@ class Frame {
     void (*draw_item)(DirtyItem *item, BITMAP *frame, BITMAP *child));
 
 	void add_pixel(int x, int y);
-	void add_box(int x, int y, int w, int h);
+	void add_box(double x, double y, double w, double h);
 	void add_line(int x, int y, int x2, int y2);
 
 	void add_circle(int x, int y, int a, int b);

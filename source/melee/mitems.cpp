@@ -69,7 +69,7 @@ void BlinkyIndicator::animate(Frame *space) {
 	}
 	else {
 		Vector2 size = s->size() * space_zoom;
-		s->draw_character(p.x, p.y, size.x, size.y, 
+		s->draw_character((int)p.x, (int)p.y, (int)size.x, (int)size.y, 
 			target->get_sprite_index(), palette_color[color], space);
 	}
 	return;

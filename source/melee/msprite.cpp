@@ -664,7 +664,7 @@ SpaceSprite::SpaceSprite(const char *sourcename, const char *spritename) {
 			}
 		}
 	}
-/*
+
 void save_spacesprite(SpaceSprite *ss, const char *sname, const char *dname, const char *extension) {
 	int i;
 	char buf[512];
@@ -742,7 +742,6 @@ SpaceSprite::SpaceSprite(const char *package, const char *name) {
 	return;
 	}
 
-/*
 SpaceSprite::SpaceSprite(BITMAP **sprites, int sprite_count) {
 	int i, j;
 	BITMAP *bmp;

@@ -161,7 +161,7 @@ int NetTCP::listen(int port, int (*cancel_callback)()) {
 		}
 	else {
 		char tmp[80];
-		sprintf (tmp, "NetTCP::listen: socket bound to port", port);
+		sprintf (tmp, "NetTCP::listen: socket bound to port %d", port);
 		message (tmp);
 		}
 	if (::listen(s, 1) == -1) {

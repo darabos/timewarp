@@ -222,9 +222,9 @@ void SpaceObjectFrozen::drawpos(Frame *frame, int index, BITMAP **bmp, int *x, i
 	xgame -= dx;
 	ygame -= dy;
 
-	dxpos = pos.x - int(0.5*(*bmp)->w) - xgame;
-	dypos = pos.y - int(0.5*(*bmp)->h) - ygame;
-	// the "int" here is necessary, to synch the pixel position with that of the map
+	dxpos = pos.x - iround(0.5*(*bmp)->w) - xgame;
+	dypos = pos.y - iround(0.5*(*bmp)->h) - ygame;
+	// the "iround" here is necessary, to synch the pixel position with that of the map
 	// cause if you got half a pixel, and add a value, it'll be rounded off at other times 
 	// than the integer-placed map - thus, it'll look like the sprite is moving 1 pixel
 	// up and down all the time, which is weird. Note that for an even number of pixels,
@@ -235,8 +235,8 @@ void SpaceObjectFrozen::drawpos(Frame *frame, int index, BITMAP **bmp, int *x, i
 	while (dxpos < -0.5*map_size.x)		dxpos += map_size.x;
 	while (dypos < -0.5*map_size.y)		dypos += map_size.y;
 	
-	(*x) = dxpos;
-	(*y) = dypos;
+	(*x) = (int)dxpos;
+	(*y) = (int)dypos;
 }
 
 
@@ -268,7 +268,7 @@ int SpaceObjectFrozen::handle_damage(SpaceLocation *source, double normal, doubl
 		tangible = false;	// no more interaction ...
 		d = -health;	// that's left of the damage
 	}
-	return d;
+	return iround(d);
 }
 
 
@@ -342,7 +342,7 @@ void Creature::calculate()
 
 
 	int col;
-	col = plsurface->surf_color(pos.x, pos.y);
+	col = plsurface->surf_color((int)pos.x, (int)pos.y);
 
 
 	// check the background:
@@ -761,10 +761,12 @@ Presence()
 		char t[512], bmpname[512], crot;
 		int Nbmps, Nrot;
 		strline(t);
+		int tangible;
 		sscanf(t, "%s %i %c %i  %i %i %i %i ", bmpname, &Nbmps, &crot,
-					&object_type[i].habitat, &object_type[i].tangible,
+					&object_type[i].habitat, &tangible,
 					&object_type[i].vel, &object_type[i].damage,
 					&object_type[i].health );
+		object_type[i].tangible = (bool)tangible;
 
 		strcpy(object_type[i].name, bmpname);
 
@@ -910,8 +912,8 @@ void Plsurface::animate(Frame *frame)
 			k = iy*Nx + ix;	// in map
 
 			int ixpos, iypos;	// in game
-			ixpos = ix2 * BitmapSize - xgame;	// relative to top-left of the screen
-			iypos = iy2 * BitmapSize - ygame;
+			ixpos = ix2 * BitmapSize - (int)xgame;	// relative to top-left of the screen
+			iypos = iy2 * BitmapSize - (int)ygame;
 
 			BITMAP *bmp = terrain_tile[terrain_index[k]];
 			blit(bmp, frame->surface, 0, 0, ixpos, iypos, bmp->w, bmp->h);

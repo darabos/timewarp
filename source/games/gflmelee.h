@@ -12,7 +12,7 @@ public:
 	void calculate();
 	void animate(Frame *space);
 
-	void draw_bar(Ship *s, double yoffs, int len, int H, double fraction, int col1, int col2, Frame *space);
+	void draw_bar(Ship *s, double yoffs, int len, double H, double fraction, int col1, int col2, Frame *space);
 };
 
 

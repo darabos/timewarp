@@ -202,10 +202,10 @@ void VanRadar::Paint(BITMAP *Slate, double Tx, double Ty)
 
 		//Scale it's position
 
-		//Position---------------------------------\
+		/*Position---------------------------------\
 		//Zooming ---------------------------\	   |
 		//Center of RADAR coordinates--\     |     |
-		//Center of game coords--\/    \/    \/    \/
+		//Center of game coords--\/    \/    \/    \/     */
 		xpos=(int)shiftscale(Tx, Slate->w/2.,Scale,o->pos.x);
 		ypos=(int)shiftscale(Ty, Slate->w/2.,Scale,o->pos.y);
 
@@ -511,9 +511,9 @@ void Vanguard::pick_new_ships() {
 	int MRadius = get_config_int(NULL, "MRadius", 0);
 	int Comets = get_config_int(NULL, "Comets",0);
 	int CoMass = get_config_int(NULL, "Comet_mass",0);
-	int ComMax = get_config_int(NULL, "Comet_max",0);
-	int Asteroids=get_config_int(NULL,"Asteroids",0);
-	int ComAcc = get_config_int(NULL, "Comet_acc",0);
+	//int ComMax = get_config_int(NULL, "Comet_max",0);
+	//int Asteroids=get_config_int(NULL,"Asteroids",0);
+	//int ComAcc = get_config_int(NULL, "Comet_acc",0);
 	int SizeX = get_config_int(NULL, "SizeX",0);
 	int SizeY = get_config_int(NULL, "SizeY",0);
 	double MinDistance = get_config_float(NULL,"MinDistance",0);

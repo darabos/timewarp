@@ -287,7 +287,7 @@ void AimSys::Update(void) {
 
 double AimSys::absAngleDifference(double A1, double A2) {
 	double x;
-	x = abs(A2 - A1);
+	x = fabs(A2 - A1);
 	if(x>180)
 		return(360 - x);
 	else
@@ -314,8 +314,8 @@ int AimSys::shouldFireNow(void) {
 
 int AimSys::shouldTurnLeft(void) {
 	int x1, x2;
-	x1 = source->angle-weaponAngle;
-	x2 = pursuitAngle;
+	x1 = iround(source->angle-weaponAngle);
+	x2 = iround(pursuitAngle);
 	while(x2<x1) x2 +=360;
 	if(x2-x1<1||x2-x1>359) return (FALSE); //it's really close now.
 	if((x2-x1)<180)
@@ -326,8 +326,8 @@ int AimSys::shouldTurnLeft(void) {
 
 int AimSys::shouldTurnRight(void) {
 	int x1, x2;
-	x1 = source->angle-weaponAngle;
-	x2 = pursuitAngle;
+	x1 = iround(source->angle-weaponAngle);
+	x2 = iround(pursuitAngle);
 	while(x2<x1) x2 +=360;
 	if(x2-x1<1||x2-x1>359) return (FALSE); //it's really close now.
 	if((x2-x1)>180)

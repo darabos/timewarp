@@ -796,7 +796,7 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 		_aa.b = b1;
 		t1 = a1 + (t1 << 8);
 	}
-	else if (_rgb_r_shift_32 = 16) {
+	else if (_rgb_r_shift_32 == 16) {
 		_aa.r = b1;
 		_aa.g = g1;
 		_aa.b = r1;
@@ -1529,7 +1529,6 @@ void make_alpha_scale ( BITMAP *bob, int nmin, int nmax ) {
 
 unsigned long _blender_premultiplied_alpha24 (unsigned long x, unsigned long y, unsigned long n) 
 {
-	unsigned long xx = makecol24(getr32(x), getg32(x), getb32(x));
 	unsigned long res, g;
 
 	n = geta32(x) + 1;
