@@ -574,6 +574,11 @@ void WasxClone::calculate() {
 				break;
 			case 4: // lower right
 				RelAngle = 135 * ANGLE_RATIO;
+				break;
+			default:
+			  tw_error("This is not supposed to happend");
+			  RelAngle = -1;
+			  break;
 			}
 			RelAngle += trajectory_angle(MotherShip);
 

@@ -592,7 +592,7 @@ void Log::log_file(const char *fname)
 	{	
 		PACKFILE *f;
 		
-		int i, j = 0;
+		int i;
 		f = pack_fopen(fname, F_READ);
 		if (!f) { tw_error("tw_log_file - bad file name %s", fname); }
 		

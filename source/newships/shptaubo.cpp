@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "../ship.h"
 #include "../melee/mview.h"
 #include "../frame.h"
@@ -186,7 +187,7 @@ void TauBomberBomb::calculate()
 	SpaceObject *old_tgt = tgt;
 	tgt = NULL;
 
-	double r0 = 1e40, r;
+	double r0 = 1e40, r = -1;
 	Query q;
 	for (q.begin(this, OBJECT_LAYERS, proximity_range); q.currento; q.next())
 		if (q.currento->isShip() && q.currento->exists()
@@ -197,6 +198,7 @@ void TauBomberBomb::calculate()
 				tgt = q.currento; }
 		}
 	q.end();
+	assert(r>0&&"Using uninitialized variable");
 	if ((old_tgt?old_tgt->exists():false) && (tgt?(r>old_range):true) && active) {
 		damage(this, 9999); return; }
 	old_range = r0;

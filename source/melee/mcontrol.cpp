@@ -351,7 +351,7 @@ void Control::calculate() {STACKTRACE
 		if (!ship && temporary && (already > 0)) already = -already;
 		
 		//network traffic
-		int lf = game->lag_frames;			// Geo: this is not that relevant, the game is already lagging cause it has to wait for the data
+		//int lf = game->lag_frames;			// Geo: this is not that relevant, the game is already lagging cause it has to wait for the data
 		//if (0) ;
 		//else
 		

@@ -1343,7 +1343,7 @@ void GamePlanetscan::handle_ranlife()
 	int N;
 	char txt[512];
 
-	N = random(iround(nmin), iround(nmax));
+	N = iround(random(iround(nmin), iround(nmax)));
 
 	for ( i = 0; i < N; ++i )
 	{

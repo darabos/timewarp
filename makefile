@@ -4,6 +4,7 @@
 # Define win32=1    when compiling with Mingw32 gcc compiler for windows     #
 # Define debug=1    when you want to build debug version of TimeWarp         #
 # Define NO_JGMOD=1 when you have not jgmod optional library                 #
+# Define NO_NET=1   when you does not need network                           # 
 #                                                                            #
 # Running just make builds the release version of TimeWarp for *nix          #
 # (Linux, FreeBSD, ...)                                                      #
@@ -17,7 +18,7 @@ CC = g++
 LD = g++
 CFLAGS = -fsigned-char -Wall 
 OBJDIR = obj
-NAME = timewarp
+NAME = TimeWarp
 
 VPATH = source source/ais source/games source/games/triggers source/melee \
         source/newships source/other source/sc1ships source/sc2ships \
@@ -50,6 +51,10 @@ ifdef NO_JGMOD
 	CFLAGS += -DNO_JGMOD
 else
 	LIBS = -ljgmod
+endif
+
+ifdef NO_NET
+        CFLAGS += -DNETWORK_NONE
 endif
 
 ifdef win32

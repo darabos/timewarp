@@ -342,7 +342,10 @@ void JnkdwoLazelLaser::calculate() {
 	if (tgt)
 		d_a = normalize(trajectory_angle(tgt) - angle, PI2);
 	else {  //d_a = pos->get_angle();
-		base_length = lng * (frame_count - frame) / frame_count; }
+		base_length = lng * (frame_count - frame) / frame_count; 
+		tw_error("Using uninitialized variable d_a bellow few line");
+		d_a = -12345;
+	}
 	length = base_length;
 	//        state = 0; return;
 	SpaceLine::calculate();

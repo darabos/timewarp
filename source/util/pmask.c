@@ -164,7 +164,7 @@ int init_deserialize_pmask(void *source, int maxsize, PMASK *pmask) {
 	for (j = 0; j < words; j += 1) {
 		int base = j * sizeof(MASK_WORD_TYPE);
 		for (k = 0; k < pmask->h; k += 1) {
-			MASK_WORD_TYPE tmp;
+			MASK_WORD_TYPE tmp = 0;
 			base += bytes;
 			for (i = sizeof(MASK_WORD_TYPE)-1; i >= 0; i -= 1) {
 				if ((int)(j*sizeof(MASK_WORD_TYPE)+i) > bytes) PUSH_BYTE(tmp,0);
@@ -206,7 +206,7 @@ PMASK *create_deserialize_pmask(void *source, int maxsize, int *ret_size) {
 	for (j = 0; j < words; j += 1) {
 		int base = j * sizeof(MASK_WORD_TYPE);
 		for (k = 0; k < pmask->h; k += 1) {
-			MASK_WORD_TYPE tmp;
+			MASK_WORD_TYPE tmp = 0;
 			base += bytes;
 			for (i = sizeof(MASK_WORD_TYPE)-1; i >= 0; i -= 1) {
 				if ((int)(j*sizeof(MASK_WORD_TYPE)+i) > bytes) PUSH_BYTE(tmp,0);

@@ -36,6 +36,8 @@
 #include <stdio.h>
 #include "net_tcp.h"
 #if defined(NETWORK_BSD) && !defined(NETWORK_NO_INCLUDE)
+#	include <stdlib.h>
+#	include <sys/ioctl.h>
 #	include <unistd.h>
 #	include <sys/time.h>
 #	include <sys/types.h>
@@ -99,7 +101,11 @@ void (* NetTCP::message)(char*) = &msg;
 void set_nonblocking(SOCKET &sd)
 {
 	u_long no_block = 1;
+#	ifdef NETWORK_WINSOCK
 	ioctlsocket(sd, FIONBIO, &no_block);
+#	else
+	ioctl(sd, FIONBIO, &no_block);
+#	endif
 }
 
 
@@ -521,9 +527,9 @@ int NetTCP::ready2send() {
 int NetTCP::ready2recv() {
 	return 0;
 	}
-int NetTCP::send(int size, const void *data) {
-	return 0;
-	}
+//int NetTCP::send(int size, const void *data) {
+//	return 0;
+//	}
 int NetTCP::recv(int min, int max, void *data) {
 	return 0;
 	}

@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "../ship.h"
 REGISTER_FILE
 
@@ -162,7 +163,7 @@ void DraxMine::calculate() {
 			}
 		}
 	Query a;
-	Shot *o,*f = NULL;
+	Shot *o = NULL,*f = NULL;
 	double r=99999;
 	int Seek=FALSE;
 
@@ -175,6 +176,7 @@ void DraxMine::calculate() {
 				((HomingMissile *) o)->target = this;
 			}
 		}
+	assert(o!=NULL);
 	for (a.begin(this, bit(LAYER_SHOTS),MineSeek);
 			a.current; a.next()) {
 		if (a.currento->isShot())

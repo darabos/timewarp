@@ -289,11 +289,11 @@ void __checksync( const char *fname, int line) {
 }
 
 
-static const int channel_none = -1;
-static const int _channel_buffered = 1;
-static const int channel_init = 4;     // game type, version, length, etc.. things that need to read by a reader independant of a particular game type
-static const int channel_playback = 8; // used for demo playbacks only
-static const int channel_server = 12;  //data originating on the server
+const int channel_none = -1;
+const int _channel_buffered = 1;
+const int channel_init = 4;     // game type, version, length, etc.. things that need to read by a reader independant of a particular game type
+const int channel_playback = 8; // used for demo playbacks only
+const int channel_server = 12;  //data originating on the server
 int channel_player[max_player];  //data originating on the client
 int p_local;				// this defines the local player.
 int num_players = 0;		// the number of players in the game.
@@ -1678,12 +1678,12 @@ EventClass events;
 
 
 
-static bool has_registered = false;
+//static bool has_registered = false;
 void Game::register_events()
 {
-	EVENT(Game, chat);
-	EVENT(Game, change_lag);
-	EVENT(Game, test_event1);
+	EVENT(Game, &Game::chat);
+	EVENT(Game, &Game::change_lag);
+	EVENT(Game, &Game::test_event1);
 }
 
 
@@ -1769,7 +1769,7 @@ void Game::heavy_compare()
 	const int max_comp = 512;
 	int val[max_comp];
 
-	int N, Nprev;
+	int N, Nprev = -1;
 	for ( p = 0; p < num_humans; ++p )
 	{
 		channel_current = channel_player[p] + _channel_buffered;
@@ -1811,8 +1811,8 @@ void Game::heavy_compare()
 				{
 					// only generate in true-time
 					// otherwise, N may differ from the true number of items in the game.
-					test = item[i]->pos.x + item[i]->pos.y +
-								item[i]->vel.x + item[i]->vel.y;
+					test = iround(item[i]->pos.x + item[i]->pos.y +
+								item[i]->vel.x + item[i]->vel.y);
 					id = item[i]->debug_id;
 				}
 

@@ -628,7 +628,7 @@ void NetLog::optimize4latency()
 
 
 
-static int netlog_idletime = 0;
+//static int netlog_idletime = 0;
 
 void NetLog::use_idle(int time)
 {

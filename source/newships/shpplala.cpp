@@ -16,7 +16,7 @@
 	Graphics display problems on rotation of ship/shot
 	
 
-/* Disclaimer: I can't code.  At all.  I'm basically taking stuff from other 
+   Disclaimer: I can't code.  At all.  I'm basically taking stuff from other 
    ships and using it here. This means, theres probably a lot of usless 
    garbage in here.  And a lot of other people get credit.  Some ships I've 
    borrowed and modified code from: Jyglar Starfarer, Nissk Harraser, 

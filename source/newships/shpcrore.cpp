@@ -251,6 +251,8 @@ void CromeShot::animateExplosion()
 
         for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next()) {
                 if (q.currento != direct_hit) {
+		  tw_error("Using uninitialized variable r");
+		  r = -1000;
                         if (q.currento->sameShip(this)) r *= 2;
                         if (r > blast_range) continue;
 
@@ -273,5 +275,5 @@ void CromeShot::inflict_damage(SpaceObject *other)
 }
 
 
-REGISTER_SHIP(Crome)
+//REGISTER_SHIP(Crome)
 

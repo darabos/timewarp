@@ -302,7 +302,7 @@ void GobGame::init(Log *_log) {
 	luaopen_math(ls);
 	luaopen_debug(ls);
 
-	int a = lua_dofile (ls, "gamedata/gob/config.lua");
+	lua_dofile (ls, "gamedata/gob/config.lua");
 
 	lua_close(ls);
 

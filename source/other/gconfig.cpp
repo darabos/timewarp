@@ -118,12 +118,12 @@ static int l_AddPlanet(lua_State* ls)
 	// Load cordinates
 	int nx, ny;
 	if ( !strcmp(x, "?") )
-		nx = random (game->size.x);
+		nx = iround(random (game->size.x));
 	else
 		nx = atoi(x);
 
 	if ( !strcmp(y, "?") )
-		ny = random (game->size.y);
+		ny = iround(random (game->size.y));
 	else
 		ny = atoi(y);
 	Vector2 pos(nx,ny);	
@@ -169,8 +169,8 @@ int top = lua_gettop(ls); // number of argument
 	if ( !lua_isstring(ls, 8) ) {tw_error("AddStation wrong argument type for 8 arg");}
 	
 	const char* name        = lua_tostring(ls, 1);
-	const char* x           = lua_tostring(ls, 2);
-	const char* y           = lua_tostring(ls, 3);
+	//const char* x           = lua_tostring(ls, 2);
+	//const char* y           = lua_tostring(ls, 3);
 	const char* buildtype   = lua_tostring(ls, 4);
 	const char* commander   = lua_tostring(ls, 5);
 	const char* orbit       = lua_tostring(ls, 6);
@@ -183,7 +183,7 @@ int top = lua_gettop(ls); // number of argument
 	DATAFILE *tmpdata; 
 	bool c = true;
 	std::string file, pic;
-	for (int i = 0; i< strlen(sprite);i++)
+	for (unsigned int i = 0; i< strlen(sprite);i++)
 	{
 		if (sprite[i] == '#')
 		{

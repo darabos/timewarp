@@ -5,7 +5,10 @@
 
 #include "configrw.h"
 
-
+#ifdef __APPLE__
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
 
 bool config_read = true;
 
