@@ -11,7 +11,6 @@ extern Fleet *reference_fleet;
 using namespace std;
 
 
-extern int lastFleetItemShown;
 
 //TODO get rid of global variables used by this function; remove this function
 void init_fleet();	// inits reference_fleet [former shiptype array]
