@@ -1,6 +1,8 @@
 #include "../ship.h"
 REGISTER_FILE
 
+#include "../util/aastr.h"
+
 #define turret_fire_frame_size 40
 
 class AlaryBCTurret;
@@ -37,6 +39,8 @@ public:
 	double		absorbed_damage;//, residual_damage;
 
 	double		turn_step_128;
+
+	double		max_shield_flash_time, shield_flash_time, shield_flash_scale;
 
 	AlaryBCTurret *turret[3];
 
@@ -163,6 +167,9 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 	extraFuelSapReduction    = get_config_float("Extra", "FuelSapReduction", 1);
     extraSpeedLossReduction  = get_config_float("Extra", "SpeedLossReduction", 1);
 
+	max_shield_flash_time = get_config_float("Extra", "ShieldFlashTime", 1);
+	shield_flash_scale = 0;
+
 	absorbed_damage = 0;
 //	residual_damage = 0;
 	old_shield_state= -1;
@@ -274,6 +281,9 @@ void AlaryBC::calculate()
 	absorbed_damage -= extraRelaxation * frame_time;
 	if (absorbed_damage < 0) absorbed_damage = 0;
 
+	shield_flash_time -= frame_time * 1E-3;
+	if (shield_flash_time < 0)
+		shield_flash_time = 0;
 };
 
 int AlaryBC::activate_weapon()
@@ -358,7 +368,18 @@ void AlaryBC::animate(Frame *space)
 		data->more_sprites[6]->animate(Vector2(pos.x+0.5-48*tx+39*ty, pos.y+0.5-48*ty-39*tx), engine_phase, space);
 	}
 
-	sprite->animate(pos,sprite_index, space);
+	if ( shield_flash_time == 0 )
+		sprite->animate(pos,sprite_index, space);
+	else
+	{
+		int col = makecol(150,0,150);
+		sprite->animate_character(pos, sprite_index, col, space);
+
+		int	_old_trans = aa_get_trans();
+		aa_set_trans ( 128 * shield_flash_scale * shield_flash_time / max_shield_flash_time );
+		sprite->animate(pos,sprite_index, space);
+		aa_set_trans(_old_trans);
+	}
 
 	int i;
 	for (i=0; i<3; i++) {
@@ -399,6 +420,15 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 
 	if (normal+direct <= 0) return 0;
 	
+	/*
+	Ini settings:
+	Threshold = 4
+	Capacity = 20
+	DamageReduction = 8.0
+	DirectDamageReduction = 2.0	
+
+	Relaxation = 3.5		reduction of absorbed_damage per second.
+	*/
 //      damage reduction
 
 	if (normal > extraThreshold) {
@@ -409,9 +439,19 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 		absorbed_damage += normal;
 		total += normal / extraDamageReduction; }
 
-	if (absorbed_damage > extraCapacity) {
+	if (absorbed_damage > extraCapacity)
+	{
+		// shield "fails", and the ships absorbs damage relatively normally (except the default reduction)
 		total += (absorbed_damage - extraCapacity) / extraDirectDamageReduction;
-		absorbed_damage = extraCapacity; }
+		absorbed_damage = extraCapacity;
+	} else {
+		// give some sound for the shield if the shield absorbs its damage.
+		if (data->num_extra_samples >= 2)
+			play_sound(data->sampleExtra[1]);
+		shield_flash_time = max_shield_flash_time;	// 1 second ?
+		// 0=shield is almost drained, 1=shield is maxed.
+		shield_flash_scale = (extraCapacity - absorbed_damage) / extraCapacity;
+	}
 
 //      direct_damage
 	total += direct / extraDirectDamageReduction;

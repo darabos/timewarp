@@ -309,138 +309,144 @@ void BubalosMIRV::calculate() {
 	}
 
 
-void BubalosBomber::death() {
-	STACKTRACE
+void BubalosBomber::death()
+{
+	STACKTRACE;
+	
 	int lastHurrah;
-  double radInc;
-  int i;
-  Missile* M;
-  Vector2 CenterPoint;
-  CenterPoint.x = 0; CenterPoint.y = 0;
-
+	double radInc;
+	int i;
+	Missile* M;
+	Vector2 CenterPoint;
+	CenterPoint.x = 0; CenterPoint.y = 0;
+	
 	if (random() % 100 < explosionPercentChanceBigBoom)
-  {
-	  Query q;
-    //message.print(4500,9,"BOOM!");
-	  for (q.begin(this,OBJECT_LAYERS, explosionRangeBigBoom); q.currento; q.next()) 
-    {
-		  lastHurrah = (int)ceil((explosionRangeBigBoom - distance(q.currento)) /
-		  explosionRangeBigBoom * explosionDamageBigBoom);
-		  damage( q.currento, 0, lastHurrah);
+	{
+		Query q;
+		//message.print(4500,9,"BOOM!");
+		for (q.begin(this,OBJECT_LAYERS, explosionRangeBigBoom); q.currento; q.next()) 
+		{
+			lastHurrah = (int)ceil((explosionRangeBigBoom - distance(q.currento)) /
+				explosionRangeBigBoom * explosionDamageBigBoom);
+			damage( q.currento, 0, lastHurrah);
 		} //for
-	  add(new Animation(this, CenterPoint, data->spriteExtra, 0, 6, 50, LAYER_EXPLOSIONS));
-  }
-  if(random()%100 < explosionPercentChanceShrapnel) {
-    radInc = PI2 / explosionShrapnelNumber1;
-    for(i=0; i<explosionShrapnelNumber1; i++) {
-      M = new Missile(this, CenterPoint, radInc * i, explosionShrapnelSpeed1,
-        explosionShrapnelDamage1, explosionShrapnelRange1, explosionShrapnelArmour1,
-        this, this->data->spriteExtraExplosion, 0);
-      game->add(M);
-    }
-    radInc = PI2 / explosionShrapnelNumber2;
-    for(i=0; i<explosionShrapnelNumber2; i++) {
-      M = new Missile(this, CenterPoint, radInc * i, explosionShrapnelSpeed2,
-        explosionShrapnelDamage2, explosionShrapnelRange2, explosionShrapnelArmour2,
-        this, this->data->spriteExtraExplosion, 0);
-      game->add(M);
-    }
-  }
+		add(new Animation(this, CenterPoint, data->spriteExtra, 0, 6, 50, LAYER_EXPLOSIONS));
+	}
+	if(random()%100 < explosionPercentChanceShrapnel) {
+		radInc = PI2 / explosionShrapnelNumber1;
+		for(i=0; i<explosionShrapnelNumber1; i++) {
+			M = new Missile(this, CenterPoint, radInc * i, explosionShrapnelSpeed1,
+				explosionShrapnelDamage1, explosionShrapnelRange1, explosionShrapnelArmour1,
+				this, this->data->spriteExtraExplosion, 0);
+			game->add(M);
+		}
+		radInc = PI2 / explosionShrapnelNumber2;
+		for(i=0; i<explosionShrapnelNumber2; i++) {
+			M = new Missile(this, CenterPoint, radInc * i, explosionShrapnelSpeed2,
+				explosionShrapnelDamage2, explosionShrapnelRange2, explosionShrapnelArmour2,
+				this, this->data->spriteExtraExplosion, 0);
+			game->add(M);
+		}
+	}
 	return;
 }
 
 int BubalosBomber::handle_damage(SpaceLocation *source, double normal, double direct) {
-	STACKTRACE
-
- if (normal > 0) {
-    //normal = int(normal * EAS);
-	 normal *= EAS;	// don't use INT here !!
-    //if (normal == 0) normal = 1;
-    //batt += normal;	?!?!?!??! this sucks imo.
-    //if (batt > batt_max) batt = batt_max; 
-  } //if  
-  return Ship::handle_damage(source, normal, direct);
- } // handle_damage
+	STACKTRACE;
+	
+	if (normal > 0) {
+		//normal = int(normal * EAS);
+		normal *= EAS;	// don't use INT here !!
+		//if (normal == 0) normal = 1;
+		//batt += normal;	?!?!?!??! this sucks imo.
+		//if (batt > batt_max) batt = batt_max; 
+	} //if  
+	return Ship::handle_damage(source, normal, direct);
+} // handle_damage
 
 
 BubalosEMPSlug::BubalosEMPSlug(double ox, double oy, double oangle, double ov,
-    int odamage, int oddamage, double specialDriftVelocity, double specialDriftMaxVelocity, double otrate,
-    double orange, int oarmour, Ship *oship, SpaceSprite *osprite) :
-    HomingMissile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, otrate,
-	oship, osprite, oship->target),
-	
-	kick(specialDriftVelocity), 
-	kick_max(specialDriftMaxVelocity),
-	EMPSlug_Damage(oddamage)
+							   int odamage, int oddamage, double specialDriftVelocity, double specialDriftMaxVelocity, double otrate,
+							   double orange, int oarmour, Ship *oship, SpaceSprite *osprite) :
+HomingMissile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, otrate,
+			  oship, osprite, oship->target),
+			  
+			  kick(specialDriftVelocity), 
+			  kick_max(specialDriftMaxVelocity),
+			  EMPSlug_Damage(oddamage)
 {
-  collide_flag_sameteam  = bit(LAYER_SHIPS);
-  explosionSprite     = data->spriteWeaponExplosion;
-  explosionFrameCount = 10;
-  explosionFrameSize  = 50; 
+	collide_flag_sameteam  = bit(LAYER_SHIPS);
+	explosionSprite     = data->spriteWeaponExplosion;
+	explosionFrameCount = 10;
+	explosionFrameSize  = 50; 
 }
 
 
 BubalosHMissile::BubalosHMissile(double ox, double oy, double oangle,double ov, 
 								 int odamage, double orange, int oarmour, double otrate,
 								 BubalosMIRV *opos, SpaceSprite *osprite) :
-  HomingMissile(opos, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, otrate,
-  opos, osprite, opos->target)
+HomingMissile(opos, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, otrate,
+			  opos, osprite, opos->target)
 {
-  collide_flag_sameteam   = bit(LAYER_SHIPS);
-  explosionSprite     = data->spriteWeaponExplosion;
-  explosionFrameCount = 10;
-  explosionFrameSize  = 50;
+	collide_flag_sameteam   = bit(LAYER_SHIPS);
+	explosionSprite     = data->spriteWeaponExplosion;
+	explosionFrameCount = 10;
+	explosionFrameSize  = 50;
 }
 
 
-int BubalosBomber::activate_special() {
-	STACKTRACE
-
-  if ( (!fire_weapon) && shipCanReverseThrusters) return false;
-
-
-  double FireAngle;
-  double Direction; 
-  double DeltaA;
-
+int BubalosBomber::activate_special()
+{
+	STACKTRACE;
+	
+	if ( (!fire_weapon) && shipCanReverseThrusters) return false;
+	
+	
+	double FireAngle;
+	double Direction; 
+	double DeltaA;
+	
     if (target && target->exists() && (!target->isInvisible())) {
-      DeltaA = fabs(angle - trajectory_angle(target));
-      if (DeltaA > PI*3/2) DeltaA = 0;
+		DeltaA = fabs(angle - trajectory_angle(target));
+		if (DeltaA > PI*3/2) DeltaA = 0;
     } else DeltaA = 0;
-
+	
     if (DeltaA <= PI/2) {
-          FireAngle = angle;
-          Direction = 1; }
+		FireAngle = angle;
+		Direction = 1; }
     else {FireAngle = angle + PI;
-          Direction = -1;
+	Direction = -1;
     }
-
-  add(new BubalosEMPSlug(
-     0.0, 55 * Direction, FireAngle, specialVelocity,
-     specialDamage, specialDDamage, specialDriftVelocity,
-	 specialDriftMaxVelocity, specialTurnRate,
-     specialRange, specialArmour, this, data->spriteSpecial));
-
-  return(TRUE);
-
+	
+	add(new BubalosEMPSlug(
+		0.0, 55 * Direction, FireAngle, specialVelocity,
+		specialDamage, specialDDamage, specialDriftVelocity,
+		specialDriftMaxVelocity, specialTurnRate,
+		specialRange, specialArmour, this, data->spriteSpecial));
+	
+	return(TRUE);
+	
 }
 
 
-void BubalosEMPSlug::inflict_damage (SpaceObject *other) {
-	STACKTRACE
+
+void BubalosEMPSlug::inflict_damage (SpaceObject *other)
+{
+	STACKTRACE;
+	
 	if (other->mass) 
 	{
 		Vector2 D;
 		double veff, dv, a;
-
+		
 		// after some testing, given physics of timewarp, it's most effective to push ships
 		// back from the direction they're pointing to.
-
+		
 		D = unit_vector(other->angle+PI);
 		D /= D.magnitude();
-
+		
 		veff = other->vel.dot(D);	// effective vel. pointing away from slug-effect; this
-									// shouldn't exceed kick_max.
+		// shouldn't exceed kick_max.
 		
 		if ( veff < kick_max )
 		{
@@ -452,11 +458,11 @@ void BubalosEMPSlug::inflict_damage (SpaceObject *other) {
 				dv = kick_max - veff;
 			
 			other->accelerate (this, a, dv, MAX_SPEED);
-
+			
 			// also, reduce accel_rate of the enemy for a short while, so
 			// that also ships with extremely high accel rate are affected
 			// for a few seconds:
-
+			
 			double t = 3.0;
 			if ( other->isShip())
 				game->add(new BubalosAccelLimiter((Ship*) other, t, 0.1));
@@ -467,46 +473,57 @@ void BubalosEMPSlug::inflict_damage (SpaceObject *other) {
 }
 
 
-void BubalosBomber::calculate_hotspots() {
-	STACKTRACE
 
-  Ship::calculate_hotspots();
-
-  if ((thrust) && (flame_frame <= 0)) {
-    add(new BubalosBomberFlame(this, -28, 42, data->spriteExtraExplosion));
-    add(new BubalosBomberFlame(this, -28, -42, data->spriteExtraExplosion));
-    flame_frame += 100; }
-  if (flame_frame > 0) flame_frame -= frame_time;
-
+void BubalosBomber::calculate_hotspots()
+{
+	STACKTRACE;
+	
+	Ship::calculate_hotspots();
+	
+	if ((thrust) && (flame_frame <= 0)) {
+		add(new BubalosBomberFlame(this, -28, 42, data->spriteExtraExplosion));
+		add(new BubalosBomberFlame(this, -28, -42, data->spriteExtraExplosion));
+		flame_frame += 100; }
+	if (flame_frame > 0) flame_frame -= frame_time;
+	
 }
 
+
+
 BubalosBomberFlame::BubalosBomberFlame (SpaceLocation *creator, double ox, double oy, SpaceSprite *osprite) :
-        PositionedAnimation(creator, creator, Vector2(ox,oy), osprite, 0, 1, 100, LAYER_SHOTS)
+PositionedAnimation(creator, creator, Vector2(ox,oy), osprite, 0, 1, 100, LAYER_SHOTS)
 {
-        base_frame = 64*(random()%4);
-        sprite_index = base_frame + get_index(follow->get_angle());
+	base_frame = 64*(random()%4);
+	sprite_index = base_frame + get_index(follow->get_angle());
 }
 
 void BubalosBomberFlame::calculate()
 {
-	STACKTRACE
-  PositionedAnimation::calculate();
-  if (state != 0)
-    sprite_index = base_frame + get_index(follow->get_angle());
+	STACKTRACE;
+	PositionedAnimation::calculate();
+	if (exists())
+		sprite_index = base_frame + get_index(follow->get_angle());
 }
 
 void BubalosBomber::calculate()
 {
-	STACKTRACE
-  if(shipCanReverseThrusters) {
-  if (fire_special && thrust) {
-    if (can_switch) {
-      can_switch = false;
-      angle = normalize (angle+PI, PI2); } }
-    else    can_switch = true;
-  }
-  Ship::calculate();
-  sprite_index = sprite_index & 31;
+	STACKTRACE;
+	if(shipCanReverseThrusters)
+	{
+		if (fire_special && thrust)
+		{
+			if (can_switch)
+			{
+				can_switch = false;
+				angle = normalize (angle+PI, PI2);
+			}
+		}
+		else
+			can_switch = true;
+	}
+
+	Ship::calculate();
+	sprite_index = sprite_index & 31;
 }
 
 
@@ -525,7 +542,7 @@ BubalosAccelLimiter::BubalosAccelLimiter(Ship *otarget, double oduration, double
 
 void BubalosAccelLimiter::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	timer += frame_time * 1E-3;
 
 	if ( !(mother && mother->exists()) || ( timer > duration ) )
