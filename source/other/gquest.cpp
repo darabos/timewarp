@@ -9,6 +9,7 @@ REGISTER_FILE
 #include "../melee/mship.h"
 #include "../games/ggob.h"
 #include "gdialog.h"
+#include "../melee/mview.h" // for message
 
 static GobPlayer * g_player = NULL;
 #define gobgame ((GobGame*)game)
@@ -30,6 +31,7 @@ Quest::Quest( const char * szLuaFile, GobPlayer * player )
   lua_register(L, "AddObject",     l_AddObject);
   lua_register(L, "RemoveObject",  l_RemoveObject);
   lua_register(L, "AddBuckazoids", l_AddBuckazoids);
+  lua_register(L, "PrintMessage", l_PrintMessage);
 
   // Load Quest
   lua_dofile(L, szLuaFile);
@@ -202,6 +204,17 @@ int Quest::l_AddBuckazoids(lua_State*ls)
 	}
 	int money = lua_tonumber(ls, -1);
 	g_player->buckazoids += money;
+	return 0;
+}
+int Quest::l_PrintMessage(lua_State*ls)
+{
+	int top = lua_gettop(ls);
+	if ( top != 1 )
+	{
+		tw_error ("Wrong argument count for PrintMessage");
+	}
+    const char * str = lua_tostring(ls, -1);
+    message.out((char *)str, 10000, makecol(0,255,0));
 	return 0;
 }
 

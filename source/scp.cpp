@@ -228,13 +228,23 @@ void prepareTitleScreenAssets() {
       tw_error("Couldnt load title music");
         
   Music * mymusic = load_mod("TitleScreen.dat#TITLEMUSIC");
-
-  //Music * mymusic = load_mod("scpgui.dat#SCPMUSIC");
-
   if (!mymusic)
      tw_error("Couldnt load title music");
 
   sound.play_music( mymusic, TRUE);
+}
+
+/** clears the screen, and displays a loading message to the user.
+*/
+void showLoadingScreen() {
+    acquire_screen();
+    clear_to_color(screen, palette_color[0]);
+    
+    const char * loadString = "Loading...";
+    textout_right(screen, font, loadString, 
+        screen->w - 1*text_length(font, loadString), screen->h - 4*text_height(font), 
+        palette_color[15]);
+    release_screen();
 }
 
 
@@ -345,7 +355,7 @@ void play_net1client ( const char *_address, int _port ) {STACKTRACE
 		if (connect_menu(&videosystem.window, &addressaddress, &port) == -1) 
 			return;
 		set_config_string("Network", "Address", addressaddress);
-		message.out("...");
+		message.out("Connecting to server...");
 		message.animate(0);
 		i = ((NetLog*)log)->net.connect(addressaddress, port, is_escape_pressed);
 		free(addressaddress);
@@ -387,7 +397,7 @@ void play_net1server(const char *_gametype_name, int _port) {STACKTRACE
 		port = listen_menu( &videosystem.window, port );
 		if (port == -1) return;
 
-		message.out("...");
+		message.out("Listening for client...");
 		message.animate(0);
 		log->net.listen(port, is_escape_pressed);
 		
@@ -417,6 +427,8 @@ void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 	char gametype_name[1024];
 	char *c;
 	Game *new_game = NULL;
+
+    showLoadingScreen();
 
 	strncpy(gametype_name, _gametype_name, 1000);
 	for (c = strchr(gametype_name, '_'); c; c = strchr(c, '_'))
@@ -448,9 +460,6 @@ void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 		else
 			throw "wait a sec... I can't find that game type";
 
-		videosystem.window.lock();
-		clear_to_color(videosystem.window.surface, palette_color[8]);
-		videosystem.window.unlock();
 		new_game->preinit();
 		new_game->window = new VideoWindow;
 		new_game->window->preinit();
@@ -800,16 +809,20 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		sound.init();
 		sound.load();
 		videosystem.set_resolution(screen_width, screen_height, screen_bpp, fullscreen);
+        
+        showLoadingScreen();
 
 		View *v = NULL;
 		v = get_view ( get_config_string("View", "View", NULL) , NULL );
 		if (!v) v = get_view ( "Hero", NULL );
 		set_view(v);
+        
+
 
 		init_ships();
 		init_fleet();
 		init_time();
-		meleedata.init();
+		meleedata.init();//mainmain
 
 		if (auto_play) {// FIX ME
 			if (!strcmp(auto_play, "game")) play_game(auto_param, NULL);

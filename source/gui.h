@@ -13,7 +13,6 @@ char *fleetListboxGetter(int index, int *list_size, class Fleet *fleet) ;
 char *fleetpointsListboxGetter(int index, int *list_size, class Fleet *fleet) ;
 
 
-
 /*
 TimeWarps own custom GUI
 */
@@ -26,6 +25,8 @@ void   twconfig_set_float ( const char *item, double value );
 double twconfig_get_float ( const char *item );
 /*int  twconfig_get_bool ( const char *item );
 void twconfig_set_bool ( const char *item, int value );*/
+
+
 
 
 /*struct {

@@ -46,6 +46,8 @@ class Quest: public EventListner
   static int l_RemoveObject(lua_State*ls);  
   /*! \brief Add buckazoids */
   static int l_AddBuckazoids(lua_State*ls);
+  /*! \brief Print message */
+  static int l_PrintMessage(lua_State*ls);
 };
 
 
