@@ -531,7 +531,7 @@ void Ship::calculate()
 
 	if(batt < batt_max) {
 		recharge_step -= frame_time;
-		while(recharge_step < 0) {
+		while(recharge_step < 0 && recharge_rate > 0)	// this loop never ends if there's no recharge
 			batt += recharge_amount;
 			if (batt > batt_max) batt = batt_max;
 			recharge_step += recharge_rate;

@@ -26,6 +26,7 @@ public:
 
 	virtual void change_vel(Vector2 dvel);
 	virtual void change_pos(Vector2 dpos);
+
 };
 
 
@@ -61,6 +62,8 @@ public:
 
 	virtual void change_vel(Vector2 dvel);
 	virtual void change_pos(Vector2 dpos);
+
+	virtual int handle_fuel_sap(SpaceLocation *source, double normal);
 };
 
 
