@@ -1,0 +1,19 @@
+
+// this is not used yet; just to see how a layout may look like.
+
+id = Star one:Planet one
+stats = temp 20  g 1.2  R 7000  pressure 0.8  atm 30/50/10/5/5  ocean 0.01
+critters = 1 2  2 2  3 1	// type+number
+minerals = 1 5  2 1  3 6	// type+number
+colony = virtao city 0.1 0.8 51000    guph biodome 0.2 0.4 200	// race type coordinates people
+mine   = virtao small mine 0.1 0.6    guph medium industry 0.2 0.5
+starbase = virtao big  guph tiny
+weapon = virtao iongun
+
+
+id = Star one:Planet one:Moon one
+colony = virtao biodome 0.2 0.3 200
+minerals = 6   // chosen through some random algorithm based on star type and planet type
+critters = 4   // ,,
+// if nothing else is mentioned, default values are assumed for remaining items
+

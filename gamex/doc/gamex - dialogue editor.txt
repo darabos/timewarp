@@ -1,0 +1,36 @@
+
+---------------
+DIALOGUE EDITOR
+---------------
+
+How:
+
+The dialog basically consists of pieces of text, branching to other pieces of text. Each piece can be either an "alien answer" or an "captain question" in SC2.
+
+Note that often, a alien answer can be followed by several questions of the captain; similarly, a single question by the captain can give different answers based on game settings.
+
+
+-------------
+the interface
+-------------
+Top rect. field: shows the alien info (alien picture).
+
+Top field: shows the text.
+
+Bottom field: shows parts of text of the pieces this text links to.
+
+"P" button: goes to the previous piece of text.
+
+"+" button: adds a new link, (and jumps to that new piece of text ??).
+
+"refresh": reloads the text (only works if you're still within the same piece of text)
+
+checkbox: initial state of the text (is immediately accessible as a dialogue, or hidden until activated by some trigger).
+
+-- todo:
+
+"rem": not supported yet (should delete this piece of text)
+
+triggers (yeah, difficult...) --> perhaps best, a "variable" name, which can change now and then ?
+
+

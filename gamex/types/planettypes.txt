@@ -1,0 +1,3 @@
+small_purp
+small_red
+big_blue
