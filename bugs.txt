@@ -1,0 +1,44 @@
+----------------------------------------------------------------------------
+1.  Known Bugs
+----------------------------------------------------------------------------
+
+
+Version 0.05u6:
+known major bugs:
+        Networking occaisonally desynchs for no known reason.  
+        Reports of sound not working on Windows ME.  
+        Windows XP support is reported to be flaky.  
+
+known minor bugs:
+	Slylandro lightning messed up again
+
+
+
+Version 0.05u5:
+known major bugs:
+	none
+
+known minor bugs:
+	Joystick setup doesn't work, and some joysticks don't work at all
+	VUX warp-in screwed up
+	Ships warp in near the planet
+
+
+----------------------------------------------------------------------------
+2.  How to report bugs
+----------------------------------------------------------------------------
+
+If you find a bug not listed here, post to this chat board:
+http://dynamic.gamespy.com/~starcontrol/boards/timewarp/
+and include this information:
+
+1.  The version where you found the bug (e.g. 0.05u6 or a recent alpha version)
+2.  The executable where you found the bug (e.g. twwin.exe or twdos.exe)
+3.  The circumstances where the bug occured (e.g. sometimes right 
+after I select a new ship in combat)
+4.  The manifestation of the bug (e.g. the screen freezes and it won't 
+respond to anything).  
+5.  Anything else you think is important.  (e.g. I keep my pet gerbil inside
+of my computer, so the processor will keep him toasty warm)
+
+orz
