@@ -112,10 +112,10 @@ Frame::~Frame() {
 	window->deinit();
 	delete window;
 
-	delete item;
+	delete[] item;
 	item_count = 0;
 
-	delete old_item;
+	delete[] old_item;
 	old_item_count = 0;
 }
 
@@ -133,12 +133,12 @@ void Frame::enlarge_list(int increment) {
 	temp = item;
 	item = new DirtyItem[list_size + increment];
 	memcpy(item, temp, item_count * sizeof(DirtyItem));
-	delete temp;
+	delete[] temp;
 
 	temp = old_item;
 	old_item = new DirtyItem[list_size + increment];
 	memcpy(old_item, temp, old_item_count * sizeof(DirtyItem));
-	delete temp;
+	delete[] temp;
 
 	list_size += increment;
 	return;
