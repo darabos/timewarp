@@ -8,7 +8,9 @@
 #ifndef __DIALOG_MODULE__
 #define __DIALOG_MODULE__
 
-#include <lua.h>
+extern "C" {
+#	include "lua.h"
+}
 #include <allegro.h>
 
 /*! \brief Communicatin */
