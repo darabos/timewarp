@@ -1587,16 +1587,29 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
     //selection has changed
     if (d->d1 != old_d1) {
         safeToDrawPreview = false;
+        float fractionRotated = 0;
 
         {ShipType* type = reference_fleet->getShipType(old_d1);
-        if (type && type->data)
-            type->data->unlock();}
+        
+        if (type && type->data) {
+            if (type->data->spriteShip) {
+                float r = rotationFrame;
+                float s = type->data->spriteShip->frames();
+                float t = r / s;
 
-        {ShipType* type = reference_fleet->getShipType(d->d1);
-        if (type && type->data)
-            type->data->lock();}
+                fractionRotated = (float)((float)rotationFrame / (float)(type->data->spriteShip->frames()));
+            }
+            type->data->unlock();
+        }}
 
         rotationFrame = 0;
+
+        {ShipType* type = reference_fleet->getShipType(d->d1);
+        if (type && type->data) {
+            type->data->lock();
+            if (type->data->spriteShip)
+               rotationFrame = (int)(fractionRotated * type->data->spriteShip->frames());
+        }}
     }
 
 	if ( ( d->d1 != old_d1 || msg == MSG_START) || 
