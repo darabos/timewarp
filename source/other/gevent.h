@@ -13,6 +13,7 @@
 
 
 class Ship;
+class GobPlayer;
 
 enum EventTypes
   {
@@ -29,8 +30,11 @@ class IEvent
 
 class EventShipDie : public IEvent
 {
-  Ship * s;
  public:
+	 EventShipDie();
+
+  Ship * victim;
+  GobPlayer * player_killer;
 	 virtual unsigned int GetEventType();
 };
 

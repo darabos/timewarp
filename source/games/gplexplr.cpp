@@ -474,7 +474,7 @@ void View_Frozen::prepare ( Frame *frame, int time )
 
 	::space_view_size = view_size;
 	::space_zoom = 1.0;
-	::space_mip = -log(space_zoom) / log(2);
+	::space_mip = -log(space_zoom) / log(2.0);
 	::space_mip_i = iround_down(::space_mip);
 	::space_size  = view_size * space_zoom;
 

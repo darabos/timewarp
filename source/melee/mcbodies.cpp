@@ -499,7 +499,7 @@ void Stars::animate(Frame *space) {STACKTRACE
 						-space_center_nowrap.y * d + space_view_size.y / 2, 
 						w, h, 
 						w, h, 
-						d + d*fabs(50-(((game->game_time / 10 + layer * 70)) % 100)) / 100.0,
+						d + d*fabs(50.0-(((game->game_time / 10 + layer * 70)) % 100)) / 100.0,
 						seed + layer,
 						aa_mode
 					);
@@ -514,7 +514,7 @@ void Stars::animate(Frame *space) {STACKTRACE
 						-space_center_nowrap.y * d + space_view_size.y / 2, 
 						w, h, 
 						w, h, 
-						d + d*fabs(50-(((game->game_time / 10 + layer * 70)) % 100)) / 100.0,
+						d + d*fabs(50.0-(((game->game_time / 10 + layer * 70)) % 100)) / 100.0,
 						seed + layer,
 						aa_mode & 0x7fffFFFF
 					);

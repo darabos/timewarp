@@ -520,7 +520,7 @@ void GraphicButton::draw_boundaries(BITMAP *bmpref)
 	W = iround(W * mainwindow->scale) - 1;
 
 	int L = 0;
-	int Ltotal = 5 * sqrt( bmpref->w * bmpref->h );
+	int Ltotal = 5 * sqrt( (double)bmpref->w * bmpref->h );
 	double phase = mainwindow->menu_time * 1E-3 * PI;	//offset angle
 
 	for ( j = -W; j < bmpref->h + W; ++j )

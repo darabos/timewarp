@@ -12,10 +12,17 @@ REGISTER_FILE
 #include "melee/mship.h"
 
 
+EventShipDie::EventShipDie()
+{
+	victim        = NULL; // ship
+	player_killer = NULL;
+}
+
 unsigned int EventShipDie::GetEventType()
 {
 	return GAME_EVENT_SHIP_DIE;
 };
+
 
 unsigned int EventShipGetDamage::GetEventType()
 {

@@ -110,15 +110,18 @@ void Quest::ProcessEvent ( IEvent* event )
     case GAME_EVENT_SHIP_DIE:
 		// Test Implementation
 		top = lua_gettop(L);
-		lua_pushstring(L, "GAME_EVENT_SHIP_DIE");
-		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_pushstring ( L, "GAME_EVENT_SHIP_DIE" );
+		lua_gettable   ( L, LUA_GLOBALSINDEX );
 
 
 		if ( !lua_isfunction(L, -1) )
 		{
 			tw_error("Quest script is not contain GAME_EVENT_SHIP_DIE function");
 		};
-		lua_call(L, 0, 0 );
+
+		lua_pushstring( L, ((EventShipDie*)event)->victim->get_shiptype() -> id ); //reserved
+		
+		lua_call(L, 1, 0 );
 		lua_settop(L, top);
       break;
     case GAME_EVENT_SHIP_GET_DAMAGE:

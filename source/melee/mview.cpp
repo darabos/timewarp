@@ -119,7 +119,7 @@ void View::prepare ( Frame *frame, int time ) {STACKTRACE
 	::space_view_size = view_size;
 	double tz = magnitude(view_size) / 1.41421356237309504880168872;
 	::space_zoom = tz / camera.z;
-	::space_mip = -log(space_zoom) / log(2);
+	::space_mip = -log(space_zoom) / log(2.0);
 	::space_mip_i = iround_down(::space_mip);
 	::space_size  = view_size * space_zoom;
 
@@ -581,7 +581,7 @@ void View_Enemy_Discrete::calculate (Game *game) {STACKTRACE
 
 
 	double ref_size = 480;
-	n.z = ref_size * pow(2, ceil(log(n.z/ref_size) / log(2)));
+	n.z = ref_size * pow( 2, iround( ceil(log(n.z/ref_size) / log(2.0))) );
 	track(n);
 	return;
 	}

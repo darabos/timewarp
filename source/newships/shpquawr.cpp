@@ -315,9 +315,9 @@ void QuarKathLightning::calculate() {
         double d_a = normalize(trajectory_angle(target) - angle, PI2);
         if (d_a > PI) d_a -= PI2;
         if (d_a > 0)
-                angle += (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(-50+random()%101) / sqrt(frame_time)) * frame_time / 100.0;
+                angle += (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(-50+random()%101) / sqrt((double)frame_time)) * frame_time / 100.0;
         else
-                angle -= (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(-50+random()%101) / sqrt(frame_time)) * frame_time / 100.0;
+                angle -= (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(-50+random()%101) / sqrt((double)frame_time)) * frame_time / 100.0;
 	if (!target->exists()) target = NULL;
 	return;
 	}

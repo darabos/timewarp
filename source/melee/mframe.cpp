@@ -504,7 +504,7 @@ void Presence::set_depth(double d) {STACKTRACE
 }
 
 double Presence::get_depth() {STACKTRACE
-	return ldexp(_depth, -8);
+	return ldexp((double)_depth, -8);
 }
 
 Planet *SpaceLocation::nearest_planet() {STACKTRACE
@@ -1352,8 +1352,8 @@ int Physics::checksum() {STACKTRACE
 		if (!(item[i]->attributes & ATTRIB_SYNCHED)) continue;
 
 		Vector2 n = item[i]->normal_pos();
-		g += iround(n.x * sqrt(47+i+g));
-		g += iround(n.y * sqrt(71+i+g));
+		g += iround(n.x * sqrt(47.0+i+g));
+		g += iround(n.y * sqrt(71.0+i+g));
 		//g += g * item[i]->get_vy() * sqrt(73+i+g/32768.0);
 		//g -= g * item[i]->get_vx() * sqrt(1+i+g/65536.0);
 	}

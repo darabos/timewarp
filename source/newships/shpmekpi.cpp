@@ -155,7 +155,7 @@ int MeknikPincer::activate_weapon()
 		rpos = Vector2(0, 5) + R * unit_vector(PI/2-da);
 
 		add(new LaserInform(this, angle + da,
-			makecol(128,0,64), weaponRange / (1+fabs(i)), weaponDamage, weapon_rate,
+			makecol(128,0,64), weaponRange / (1+fabs((double)i)), weaponDamage, weapon_rate,
 			this, rpos, true));
 	}
 

@@ -550,7 +550,7 @@ void Hook::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropeco
 	
 	// simulate visibility of a glittering line in the sun ...
 	double a, colscale;
-	a = atan2(dy,dx);
+	a = atan2((double)dy,(double)dx);
 	colscale = fabs(sin(a));	// flat lying = less visible.
 	
 	int col, r, g, b;

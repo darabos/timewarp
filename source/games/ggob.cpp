@@ -1,7 +1,7 @@
 
-//#include <stdlib.h>
-//#include <string.h>
-//#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include <allegro.h>
 
@@ -406,6 +406,8 @@ void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 	STACKTRACE
 
 	EventShipDie esd;
+	esd.victim        = who;
+	esd.player_killer = get_player(source);
 	gobgame->GenerateEvent(&esd);
 
 
@@ -433,6 +435,9 @@ void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 */
 GobPlayer *GobGame::get_player(SpaceLocation *what) {
 	STACKTRACE
+	
+	if ( what == NULL )
+		return NULL;
 
 	int i;
 	for (i = 0; i < gobplayers; i += 1) {		
@@ -483,7 +488,7 @@ base	time	low		high
 		e = random() % (e + 3);
 		if (e < pow(2.5*base,0.4) - 1) 
 			e = random() % num_enemy_types;
-		if (e > sqrt(3*base) + 2) 
+		if (e > sqrt( 3.0*base) + 2) 
 			e = random() % (e + 1);
 		//if (e > num_enemy_types * 2) e = e % num_enemy_types;
 		e = e;

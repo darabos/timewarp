@@ -938,7 +938,7 @@ void MatrixIcons::set_iconinfo(BITMAP **alistIcon, double ascale)
 		++maxitems;
 	
 	// create the most "optimal" square map (minimum x,y positions means least search trouble (I think)).
-	Nx = iround( sqrt(maxitems) );
+	Nx = iround( sqrt((double)maxitems) );
 	Ny = maxitems/Nx + 1;
 
 	if (Nx*Ny >= maxitems + Nx)

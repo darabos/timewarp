@@ -1,19 +1,36 @@
-Complited = 0;
+Complited           = 0; -- Quest complitted
+shoscKilled         = 1; -- Shofixti Scout you need to kill
+allready_get_reward = 0;
 
 function Process(time, enemy, kills, x, y, res_num1, res_num2, res_str)
---AddObject();
-a = 1;
-b = 2;
-c = a + b;
 end
 
-function GAME_EVENT_SHIP_DIE()
+function GAME_EVENT_SHIP_DIE( Type )
+	if Type == "shosc" then shoscKilled = shoscKilled - 1 end
+	if shoscLilled == 0 then Complited = 1 end
+end
+
+function GAME_EVENT_VISIT_LOCATION( locationID )
+	if locationID == QuestSourceLocationID then
+		if Complited == 1 then return Reward() end
+		return HurryLazyPlayer()
+	end
+end
+
+function Reward()
 DialogStart "gamedata/pkunk-standing.bmp"
-	DialogWrite "Somebody is dead now"
-	answer = DialogAnswer("It doesn't matter!", 
-			 "bye")
+	DialogWrite "Congratulations, those bastards are all dead now! Take 20 bucks"
+	answer = DialogAnswer ( "Thanks!" )
 DialogEnd()
 end
+
+function HurryLazyPlayer()
+DialogStart "gamedata/pkunk-standing.bmp"
+	DialogWrite "Hurry, they are criminals!"
+	answer = DialogAnswer ( "I am off!!!" )
+DialogEnd()
+end
+
 
 DialogStart "gamedata/pkunk-standing.bmp"
 function question1()
