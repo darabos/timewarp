@@ -604,6 +604,10 @@ SOURCE=.\source\newships\shpconho.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpcresu.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpdajem.cpp
 # End Source File
 # Begin Source File
@@ -633,6 +637,10 @@ SOURCE=.\source\newships\shpestgu.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpfiear.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpfopsl.cpp
 # End Source File
 # Begin Source File
 
@@ -724,11 +732,19 @@ SOURCE=.\source\newships\shpktesa.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpleimu.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shplyrwa.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\source\newships\shpmekpi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpmoisp.cpp
 # End Source File
 # Begin Source File
 
@@ -741,6 +757,10 @@ SOURCE=.\source\newships\shpnarlu.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpneccr.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpneodr.cpp
 # End Source File
 # Begin Source File
 
@@ -857,6 +877,10 @@ SOURCE=.\source\newships\shpulzin.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpuosli.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpuxjba.cpp
 # End Source File
 # Begin Source File
 

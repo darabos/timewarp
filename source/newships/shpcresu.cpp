@@ -70,7 +70,6 @@ Ship(opos,  shipAngle, shipData, code)
 
 int CrewSupplyship::activate_weapon()
 {	
-	Planet *p;
 	// find the planet
 	int i;
 	for (i = 0; i < physics->num_items; ++i )

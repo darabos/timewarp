@@ -545,6 +545,12 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 				}
 				else {
 					bmp = create_bitmap_ex ( bpp, w, h);
+
+					// added, otherwise maybe the "convert" skips masked parts in
+					// tmp, and those are then undefined in bmp.
+					if (general_attributes & MASKED)
+						clear_to_color(bmp, bitmap_mask_color(bmp));
+					
 					convert_bitmap(tmp, bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
 					destroy_bitmap(tmp);
 					tmp = NULL;

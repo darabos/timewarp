@@ -72,7 +72,6 @@ int LeiMule::activate_weapon()
 			continue;
 
 		Vector2 rpos;
-		double s;
 
 		rpos = P0 + (fabs(i*R0) / N) * unit_vector(A0*sign(i) - PI/2);
 
@@ -115,7 +114,6 @@ int LeiMule::activate_special()
 			continue;
 
 		Vector2 rpos;
-		double s;
 
 		rpos = P0 + (fabs(i*R0) / N) * unit_vector(A0*sign(i) - PI/2);
 
