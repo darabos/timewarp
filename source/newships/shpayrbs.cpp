@@ -236,6 +236,11 @@ BigShip(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 //		if (ayronparts[i])
 //			game->add_target(ayronparts[i]);
 	// update: no need to this here anymore, it's done in the part-constructor.
+
+	crew_max = 0;
+	for ( i = 0; i < Nparts; ++i )
+		if (ayronparts[i])
+			crew_max += ayronparts[i]->crew_max;
 }
 
 
