@@ -335,7 +335,8 @@ void RaalrithPoison::calculate() {
   duration -= frame_time;
 
   if (duration < 0) {
-    blit(oship->data->spritePanel->get_bitmap(0), oship->spritePanel->get_bitmap(0), 16 , 18, 16, 18, 32, 30);
+	  if (oship->spritePanel)
+		blit(oship->data->spritePanel->get_bitmap(0), oship->spritePanel->get_bitmap(0), 16 , 18, 16, 18, 32, 30);
     oship->update_panel = TRUE;
     state = 0;
     return;
@@ -346,7 +347,8 @@ void RaalrithPoison::calculate() {
   
   if (start) {
       start = FALSE;
-	  data->spriteExtra->draw(16, 18, 0, oship->spritePanel->get_bitmap(0));
+	  if (oship->spritePanel)
+		data->spriteExtra->draw(16, 18, 0, oship->spritePanel->get_bitmap(0));
       oship->update_panel = TRUE;
   }
 
