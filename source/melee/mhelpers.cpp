@@ -8,16 +8,12 @@
 
 Various helpers included in mhelpers.cpp :
 
-Base Class
-	offers serialization, run-time sizeof(), that kind of thing
 Type verication
 Byte Ordering (endianness)
 	offers invert_ordering, intel_ordering, motorola_ordering, 
 	normal versions are 32 bit; and short versions of each are 16 bit
 File Registration System
 	keeps a list of linked files & compile times
-Timer
-	provides init_time() & get_time() on top of windows or Allegro
 VideoSystem
 	sets screen resolutions, color formats, color transforms, fonts
 	gets screen surface
@@ -26,7 +22,6 @@ SoundSystem
 	inits sound hardware
 	plays sounds
 	loads sounds
-Random Number Generator
 
 SC2 Unit Conversion
 Help Dialog
@@ -57,6 +52,8 @@ REGISTER_FILE
 
 
 volatile int debug_value = 0;
+
+
 
 
 
