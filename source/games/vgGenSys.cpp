@@ -9,25 +9,27 @@ REGISTER_FILE
 #include "../melee/mcbodies.h"
 #include "../melee/mview.h"
 
+#include "../twgui/twgui.h"
+
 #ifndef _V_BODIES_H
 #include "../other/vbodies.h"
 #endif
 
 class VGenSystem : public NormalGame {
 public:
-  SpaceSprite* AstSpr1[64];
-  SpaceSprite* AstSpr2[64];
-  SpaceSprite* AstSpr3[64];
-  SpaceSprite* AstSpr4[64];
+  SpaceSprite* AstSpr1;
+  SpaceSprite* AstSpr2;
+  SpaceSprite* AstSpr3;
+  SpaceSprite* AstSpr4;
   SpaceSprite* PlanetMoon;
   SpaceSprite* PlanetHabitable;
   SpaceSprite* PlanetInhospitable;
   SpaceSprite* PlanetRockball;
   SpaceSprite* PlanetGasGiant;
-  SpaceSprite* Flare1[64];
-  SpaceSprite* Flare2[64];
-  SpaceSprite* Flare3[64];
-  SpaceSprite* Flare4[64];
+  SpaceSprite* Flare1;
+  SpaceSprite* Flare2;
+  SpaceSprite* Flare3;
+  SpaceSprite* Flare4;
   SpaceSprite* BrownDwarfSpr;
   SpaceSprite* RedDwarfSpr;
   SpaceSprite* WhiteDwarfSpr;
@@ -37,8 +39,8 @@ public:
   SpaceSprite* WhiteStarSpr;
   SpaceSprite* RedGiantSpr;
   SpaceSprite* BlueGiantSpr;
-  SpaceSprite* NeutronStarSpr[64];
-  SpaceSprite* BlackHoleSpr[64];
+  SpaceSprite* NeutronStarSpr;
+  SpaceSprite* BlackHoleSpr;
   SpaceSprite* DustCloudSpr;
   SpaceSprite* GasCloudSpr[2];
   SpaceSprite* SpaceMineSpr;
@@ -52,22 +54,50 @@ public:
   void setupSprites(void);
   void setupBinary(SpaceObject* S1, SpaceObject* S2, double radius1, double radius2, double speed1);
 	virtual void init_objects();
-  bool GetSpriteTo64Rot(SpaceSprite *Pics[], char *fileName, char *cmdStr, 
+  bool GetSpriteTo64Rot(SpaceSprite *Pics, char *fileName, char *cmdStr, 
     int numSprites = 1, int attribs = -1);
   SpaceSprite* GetSprite(char *fileName, char *spriteName, int attribs, int rotations=1, int numSprites = 1);
   bool GetSpriteGroup(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites, int attribs=-1, int firstSpriteNumber=1);
   SpaceSprite* GetMultiframeSprite(char *fileName, char *spriteName, int attribs, int numberOfFrames);
   virtual ~VGenSystem();
+
+
+	void init_objectsVAncientBattlefield();
+	void init_objectsVSpaceStationGame();
+	void init_objectsVImperialCapitol();
+	void init_objectsVDefendedPlanet();
+	void init_objectsVMineField();
+	void init_objectsVSysNebula();
+	void init_objectsVSysDusty();
+	void init_objectsVSysGassy();
+	void init_objectsVSysBlueGiant();
+	void init_objectsVSysWhiteDwarf();
+	void init_objectsVSysWhiteStar();
+	void init_objectsVSysYellowThreePlanets();
+	void init_objectsVSysVoid();
+	void init_objectsVSysBrownDwarf();
+	void init_objectsVSysBinRedDwarf();
+	void init_objectsVSysBinRedGiantNeutron();
+	void init_objectsVSysHypermass();
+	void init_objectsVSysTartarus();
+	void init_objectsVSysSmallAsteroids();
+	void init_objectsVSysLargeAsteroids();
+	void init_objectsVSysHeavyAsteroids();
+	void init_objectsVSysExtremeAsteroids();
+	void init_objectsVSysMetallicAsteroids();
+
+	typedef void (VGenSystem::* type_func) ();
+	type_func	funclist[32];
+	char		*functitle[32];
+	int Ninit;
+	void register_init(type_func f, char *description);
 };
 
 
-class VAncientBattlefield : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VAncientBattlefield::init_objects(void) {
+void VGenSystem::init_objectsVAncientBattlefield() {
   int i;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   for(i=0; i<20; i++) {
     game->add(new VDustCloud());
     game->add(new VGasCloud());
@@ -80,13 +110,10 @@ void VAncientBattlefield::init_objects(void) {
 }
 
 
-class VSpaceStationGame : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSpaceStationGame::init_objects(void) {
+void VGenSystem::init_objectsVSpaceStationGame() {
   VDeepSpaceStation* DSS;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   DSS = new VDeepSpaceStation();
   game->add(DSS);
   game->add(new VLargeAsteroid());
@@ -95,14 +122,12 @@ void VSpaceStationGame::init_objects(void) {
   DSS->AddInstallation(new VGroundIonCannon(DSS));
 }
 
-class VImperialCapitol : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VImperialCapitol::init_objects() {
+
+void VGenSystem::init_objectsVImperialCapitol() {
   VHabitablePlanet* VHP;
   VGroundDefenseLaser *GDL;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   VHP = new VHabitablePlanet();
   game->add(VHP);
   // Laser #1:
@@ -136,13 +161,10 @@ void VImperialCapitol::init_objects() {
 }
 
 
-class VDefendedPlanet : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VDefendedPlanet::init_objects(void) {
+void VGenSystem::init_objectsVDefendedPlanet(void) {
   VRockballPlanet* VRP;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   VRP = new VRockballPlanet();
   game->add(VRP);
   game->add(new VLargeAsteroid());
@@ -152,14 +174,11 @@ void VDefendedPlanet::init_objects(void) {
 }
 
 
-class VMineField : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VMineField::init_objects(void) {
+void VGenSystem::init_objectsVMineField(void) {
   int i;
   VSpaceMine* VSM;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   for(i=0; i<90; i++){
     VSM = (new VSpaceMine());
     //VSM->data->spriteWeaponExplosion = SpaceMineExplosionSpr;
@@ -172,72 +191,58 @@ void VMineField::init_objects(void) {
   game->add(new VMetalAsteroid());
 }
 
-class VSysNebula : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysNebula::init_objects(void) {
+
+void VGenSystem::init_objectsVSysNebula(void) {
   game->add(new VNebula());
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   game->add(new VSmallAsteroid());
   game->add(new VLargeAsteroid());
   game->add(new VMetalAsteroid());
 }
 
-class VSysDusty : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysDusty::init_objects(void) {
-  VGenSystem::init_objects();
+
+void VGenSystem::init_objectsVSysDusty(void) {
+  //VGenSystem::init_objects();
   for(int i=0; i<33; i++)
     game->add(new VDustCloud());
 }
 
-class VSysGassy : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysGassy::init_objects(void) {
-  VGenSystem::init_objects();
+
+void VGenSystem::init_objectsVSysGassy(void) {
+  //VGenSystem::init_objects();
   for(int i=0; i<33; i++)
     game->add(new VGasCloud());
 }
 
 
-class VSysBlueGiant : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysBlueGiant::init_objects(void) {
-  VGenSystem::init_objects();
+
+void VGenSystem::init_objectsVSysBlueGiant(void) {
+  //VGenSystem::init_objects();
   game->add(new VBlueGiant());
 }
 
-class VSysWhiteDwarf : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysWhiteDwarf::init_objects(void) {
-  VGenSystem::init_objects();
+
+void VGenSystem::init_objectsVSysWhiteDwarf(void) {
+  //VGenSystem::init_objects();
   game->add(new VWhiteDwarf());
 }
 
-class VSysWhiteStar : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysWhiteStar::init_objects(void) {
-  VGenSystem::init_objects();
+
+void VGenSystem::init_objectsVSysWhiteStar(void) {
+  //VGenSystem::init_objects();
   game->add(new VWhiteStar());
 }
 
 
-class VSysYellowThreePlanets : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysYellowThreePlanets::init_objects(void) {
+
+void VGenSystem::init_objectsVSysYellowThreePlanets(void) {
   int i;
   VYellowStar* YS;
   VRockballPlanet* RP;
@@ -247,7 +252,7 @@ void VSysYellowThreePlanets::init_objects(void) {
   VMoon* M2;
   VMoon* M3;
   OrbitHandler* OH;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   YS = new VYellowStar();
   RP = new VRockballPlanet();
   HP = new VHabitablePlanet();
@@ -284,33 +289,27 @@ void VSysYellowThreePlanets::init_objects(void) {
     game->add(new VSmallAsteroid());
 }
 
-class VSysVoid : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysVoid :: init_objects(void) {
-  VGenSystem::init_objects();
+
+void VGenSystem :: init_objectsVSysVoid(void) {
+  //VGenSystem::init_objects();
 }
 
 
-class VSysBrownDwarf : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysBrownDwarf::init_objects(void) {
-  VGenSystem::init_objects();
+
+void VGenSystem::init_objectsVSysBrownDwarf(void) {
+  //VGenSystem::init_objects();
   game->add(new VBrownDwarf());
 }
 
-class VSysBinRedDwarf : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysBinRedDwarf::init_objects(void) {
+
+void VGenSystem::init_objectsVSysBinRedDwarf(void) {
   int i;
   VRedDwarf* RD1;
   VRedDwarf* RD2;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   RD1 = new VRedDwarf();
   RD2 = new VRedDwarf();
   game->add(RD1);
@@ -328,15 +327,13 @@ void VSysBinRedDwarf::init_objects(void) {
 }
 
 
-class VSysBinRedGiantNeutron : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysBinRedGiantNeutron::init_objects(void) {
+
+void VGenSystem::init_objectsVSysBinRedGiantNeutron(void) {
   int i;
   VRedGiant* RG1;
   VNeutronStar* NS2;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   RG1 = new VRedGiant();
   NS2 = new VNeutronStar();
   game->add(RG1);
@@ -352,14 +349,12 @@ void VSysBinRedGiantNeutron::init_objects(void) {
     game->add(new VLargeAsteroid());
 }
 
-class VSysHypermass : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysHypermass::init_objects(void) {
+
+void VGenSystem::init_objectsVSysHypermass(void) {
   int i;
   VHypermass* H1;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   H1 = new VHypermass();
   game->add(H1);
   for (i=0; i<3; i++)
@@ -372,16 +367,14 @@ void VSysHypermass::init_objects(void) {
     game->add(new VLargeAsteroid());
 }
 
-class VSysTartarus : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysTartarus::init_objects(void) {
+
+void VGenSystem::init_objectsVSysTartarus(void) {
   int i;
   VHypermass* H1;  
   VHypermass* H2;
   VBlueGiant* BG;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   H1 = new VHypermass();
   H2 = new VHypermass();
   BG = new VBlueGiant();
@@ -404,35 +397,26 @@ void VSysTartarus::init_objects(void) {
     game->add(new VGasCloud());
 }
 
-class VSysSmallAsteroids : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysSmallAsteroids::init_objects(void) {
+void VGenSystem::init_objectsVSysSmallAsteroids(void) {
   int i;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   for(i=0; i<35; i++)
     game->add(new VSmallAsteroid());
 }
 
-class VSysLargeAsteroids : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysLargeAsteroids::init_objects(void) {
+void VGenSystem::init_objectsVSysLargeAsteroids(void) {
   int i;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   for(i=0;i<30; i++)
     game->add(new VLargeAsteroid());
 }
 
-class VSysHeavyAsteroids : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysHeavyAsteroids::init_objects(void) {
+void VGenSystem::init_objectsVSysHeavyAsteroids(void) {
   int i;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   for (i=0; i<4; i++)
     game->add(new VMetalShard());
   for(i=0; i<4; i++) 
@@ -443,13 +427,10 @@ void VSysHeavyAsteroids::init_objects(void) {
     game->add(new VLargeAsteroid());
 }
 
-class VSysExtremeAsteroids : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysExtremeAsteroids::init_objects(void) {
+void VGenSystem::init_objectsVSysExtremeAsteroids(void) {
   int i;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   for (i=0; i<5; i++)
     game->add(new VMetalShard());
   for(i=0; i<5; i++) 
@@ -460,16 +441,21 @@ void VSysExtremeAsteroids::init_objects(void) {
     game->add(new VLargeAsteroid());
 }
 
-class VSysMetallicAsteroids : public VGenSystem {
-  virtual void init_objects(void);
-};
 
-void VSysMetallicAsteroids::init_objects(void) {
+void VGenSystem::init_objectsVSysMetallicAsteroids(void) {
   int i;
-  VGenSystem::init_objects();
+  //VGenSystem::init_objects();
   for(i=0; i<30; i++) 
     game->add(new VMetalAsteroid());
 }
+
+
+
+
+
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 
 
 
@@ -541,14 +527,14 @@ void VGenSystem::setupSprites(void) {
 	if(GetSpriteTo64Rot(BlackHoleSpr,"vobject.dat","Star010",1,-1)==FALSE)
 		error("File error, things pictures.  Bailing out...");
 
-  VMetalShard::SetMySprite(AstSpr1[0]);
-  VMetalAsteroid::SetMySprite(AstSpr2[0]);
-  VSmallAsteroid::SetMySprite(AstSpr3[0]);
-  VLargeAsteroid::SetMySprite(AstSpr4[0]);
-  VRedFlare::SetMySprite(Flare1[0]);
-  VOrangeFlare::SetMySprite(Flare2[0]);
-  VYellowFlare::SetMySprite(Flare3[0]);
-  VWhiteFlare::SetMySprite(Flare4[0]);
+  VMetalShard::SetMySprite(AstSpr1);
+  VMetalAsteroid::SetMySprite(AstSpr2);
+  VSmallAsteroid::SetMySprite(AstSpr3);
+  VLargeAsteroid::SetMySprite(AstSpr4);
+  VRedFlare::SetMySprite(Flare1);
+  VOrangeFlare::SetMySprite(Flare2);
+  VYellowFlare::SetMySprite(Flare3);
+  VWhiteFlare::SetMySprite(Flare4);
   VDustCloud::SetMySprite(DustCloudSpr);
   VGasCloud::SetMySprite1(GasCloudSpr[0]);
   VGasCloud::SetMySprite2(GasCloudSpr[1]);
@@ -566,8 +552,8 @@ void VGenSystem::setupSprites(void) {
   VWhiteStar::SetMySprite(WhiteStarSpr);
   VRedGiant::SetMySprite(RedGiantSpr);
   VBlueGiant::SetMySprite(BlueGiantSpr);
-  VNeutronStar::SetMySprite(NeutronStarSpr[0]);
-  VHypermass::SetMySprite(BlackHoleSpr[0]);
+  VNeutronStar::SetMySprite(NeutronStarSpr);
+  VHypermass::SetMySprite(BlackHoleSpr);
   VSpaceMine::SetMySprite(SpaceMineSpr, SpaceMineExplosionSpr);
   VDefSat::SetMySprite(DefSatSpr);
   VDeepSpaceOutpost::SetMySprite(SpaceOutpostSpr);
@@ -575,19 +561,8 @@ void VGenSystem::setupSprites(void) {
   VDeepSpaceStation::SetMySprite(SpaceStationSpr);
 }
 
-void VGenSystem::init_objects() {
-	size *= 1;
-	prepare();
-  VGenSystem::setupSprites();
-  mapCenter = new SpaceLocation(NULL, Vector2(0,0), 0);
-  add(new Stars());
-  VMetalShard::InitStatics();
-  VSmallAsteroid::InitStatics();
-  VLargeAsteroid::InitStatics();
-  VMetalAsteroid::InitStatics();
-}
 
-bool VGenSystem::GetSpriteTo64Rot(SpaceSprite *Pics[], char *fileName, char *cmdStr, 
+bool VGenSystem::GetSpriteTo64Rot(SpaceSprite *Pics, char *fileName, char *cmdStr, 
 int numSprites, int attribs)
 {
 
@@ -602,7 +577,7 @@ int numSprites, int attribs)
 		{
 			return FALSE;
 		}
-		Pics[num]=spr;
+		Pics=spr;
 	}
 	return TRUE;
 }
@@ -680,7 +655,7 @@ int numSprites, int attribs, int firstSpriteNumber)
 	for(int num=firstSpriteNumber; num<(numSprites+firstSpriteNumber); num++)
 	{
 		sprintf(dataStr,cmdStr,num);
-    message.print(500,5,dataStr);
+		message.print(500,5,dataStr);
 		spr=GetSprite(fileName, dataStr, attribs, 1);
 		if(!spr)
 		{
@@ -693,20 +668,20 @@ int numSprites, int attribs, int firstSpriteNumber)
 
 
 VGenSystem::~VGenSystem(void) {
-  int i;
+ // int i;
   //NormalGame::~NormalGame();
-  for(i=0; i<64; i++) {
-    delete AstSpr1[i];
-    delete AstSpr2[i];
-    delete AstSpr3[i];
-    delete AstSpr4[i];
-    delete Flare1[i];
-    delete Flare2[i];
-    delete Flare3[i];
-    delete Flare4[i];
-    delete NeutronStarSpr[i];
-    delete BlackHoleSpr[i];
-  }
+  //for(i=0; i<64; i++) {
+    delete AstSpr1;
+    delete AstSpr2;
+    delete AstSpr3;
+    delete AstSpr4;
+    delete Flare1;
+    delete Flare2;
+    delete Flare3;
+    delete Flare4;
+    delete NeutronStarSpr;
+    delete BlackHoleSpr;
+  //}
   delete PlanetMoon;
   delete PlanetHabitable;
   delete PlanetInhospitable;
@@ -723,6 +698,14 @@ VGenSystem::~VGenSystem(void) {
   delete RedGiantSpr;
   delete BlueGiantSpr;
 }
+
+
+
+
+class GeneralMelee : public NormalGame {
+  virtual void init_objects(void);
+};
+
 /*
 REGISTER_GAME ( VSysVoid, "V-Void");
 REGISTER_GAME ( VSysDusty, "V-Dusty");
@@ -749,3 +732,92 @@ REGISTER_GAME ( VSysHypermass, "V-Hypermass (Black hole)");
 REGISTER_GAME ( VSysTartarus, "V-Tartarus (Space Hell)");
 */
 
+
+
+
+void VGenSystem::register_init(type_func f, char *description)
+{
+	funclist[Ninit] = f;
+	functitle[Ninit] = description;
+	++Ninit;
+}
+
+
+void VGenSystem::init_objects() {
+	size *= 1;
+	prepare();
+
+	// interface, and init-objects using the interface ...
+	Ninit = 0;
+	register_init(&VGenSystem::init_objectsVAncientBattlefield, "Ancient battlefield");
+	register_init(&VGenSystem::init_objectsVSpaceStationGame, "Station");
+	register_init(&VGenSystem::init_objectsVImperialCapitol, "Imperial capital");
+	register_init(&VGenSystem::init_objectsVDefendedPlanet, "Defended planet");
+	register_init(&VGenSystem::init_objectsVMineField, "Mine field");
+	register_init(&VGenSystem::init_objectsVSysNebula, "Nebula");
+	register_init(&VGenSystem::init_objectsVSysDusty, "Dusty");
+	register_init(&VGenSystem::init_objectsVSysGassy, "Gassy");
+	register_init(&VGenSystem::init_objectsVSysBlueGiant, "Blue giant");
+	register_init(&VGenSystem::init_objectsVSysWhiteDwarf, "White dwarf");
+	register_init(&VGenSystem::init_objectsVSysWhiteStar, "White star");
+	register_init(&VGenSystem::init_objectsVSysYellowThreePlanets, "Yellow three planets");
+	register_init(&VGenSystem::init_objectsVSysVoid, "Void");
+	register_init(&VGenSystem::init_objectsVSysBrownDwarf, "Brown dwarf");
+	register_init(&VGenSystem::init_objectsVSysBinRedDwarf, "Red dwarf");
+	register_init(&VGenSystem::init_objectsVSysBinRedGiantNeutron, "Red giant neutron");
+	register_init(&VGenSystem::init_objectsVSysHypermass, "Hypermass");
+	register_init(&VGenSystem::init_objectsVSysTartarus, "Tartarus");
+	register_init(&VGenSystem::init_objectsVSysSmallAsteroids, "Small asteroids");
+	register_init(&VGenSystem::init_objectsVSysLargeAsteroids, "Large asteroids");
+	register_init(&VGenSystem::init_objectsVSysHeavyAsteroids, "Heavy asteroids");
+	register_init(&VGenSystem::init_objectsVSysExtremeAsteroids, "Extreme asteroids");
+	register_init(&VGenSystem::init_objectsVSysMetallicAsteroids, "Metallic asteroids");
+
+	//int i = random(Ninit);
+
+
+	PopupList *popupl;
+	popupl = new PopupList(screen, "interfaces/gametest/popuplist", 0, 0, videosystem.get_font(2), 0);
+	popupl->tbl->set_optionlist(functitle, Ninit, makecol(255,255,128));
+	popupl->show();
+	popupl->xshift = 0;
+	popupl->yshift = 0;
+	popupl->close_on_defocus = false;
+	
+
+	WindowManager *winman;
+	winman = new WindowManager;
+	winman->add(popupl);
+
+	popupl->setscreen(screen);
+	show_mouse(screen);
+	unscare_mouse();
+
+	while (!popupl->returnvalueready)
+	{
+		idle(10);
+		
+		winman->calculate();
+		winman->animate();
+	}
+
+	int i;
+	i = popupl->returnstatus;
+
+
+	VGenSystem::setupSprites();
+	mapCenter = new SpaceLocation(NULL, Vector2(0,0), 0);
+	add(new Stars());
+	VMetalShard::InitStatics();
+	VSmallAsteroid::InitStatics();
+	VLargeAsteroid::InitStatics();
+	VMetalAsteroid::InitStatics();
+
+
+	// call the selected init routine :
+	(this->*funclist[i])();
+
+}
+
+
+REGISTER_GAME(VGenSystem, "Varith Systems")
