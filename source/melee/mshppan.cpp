@@ -210,7 +210,7 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 
 	// erase the background...
 	
-	int x1, x2, y1, y2, xl, xr, ymid, erasecolor;
+	int x1, x2, y1, y2, xl, xr, ymid, erasecolor, max2;
 
 
 	if (display_type == 1)
@@ -224,7 +224,11 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 		xr = 59;
 	}
 	
-	ymid = y + dy * (max / m);
+	max2 = max;
+	if (max2 > 42)
+		max2 = 42;
+
+	ymid = y + dy * (max2 / m);
 	
 	// erase to default greyish panel color
 	erasecolor = tw_color(100,100,100);
@@ -274,21 +278,59 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 	w -= 1;
 	h -= 1;
 	if (value > max) value = max;
-	for (i = 0; i < value; i += 1) {
-		int _x = x + dx * (i % m);
-		int _y = y + dy * (i / m);
+	
+	if (value <= 42)
+	{
 
-
-
-		if (display_type == 1)
-			color = tw_color(ship->crewPanelColor(i));
-		else
-			color = tw_color(ship->battPanelColor(i));
-
-
-
-		rectfill(panel, _x, _y, _x+w, _y+h, color);
+		// normal crew/batt bar
+		
+		for (i = 0; i < value; i += 1)
+		{
+			int _x = x + dx * (i % m);
+			int _y = y + dy * (i / m);
+			
+			if (display_type == 1)
+				color = tw_color(ship->crewPanelColor(i));
+			else
+				color = tw_color(ship->battPanelColor(i));
+			
+			rectfill(panel, _x, _y, _x+w, _y+h, color);
 		}
+		
+	} else {
+
+		// percentile crew/batt bar
+
+
+		w = xr - xl - 1;
+
+		
+		int ymin, ymax;
+		ymin = ymid;
+		ymax = 55;
+
+		int dy;
+		dy = (ymax - ymin);
+		ymin += dy * (max - value) / double(max);
+
+		for ( i = ymin; i < ymax; ++i )
+		{
+			int _x, _y;
+			int k;
+			k = value * double(ymax - i) / double(ymax - ymin);
+
+			_x = xl + 1;
+			_y = i;
+			
+			if (display_type == 1)
+				color = tw_color(ship->crewPanelColor(k));
+			else
+				color = tw_color(ship->battPanelColor(k));
+			
+			rectfill(panel, _x, _y, _x+w, _y, color);
+		}
+
+	}
 
 	/* already erased
 	for (i = value; i < max; i += 1) {

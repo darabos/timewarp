@@ -59,8 +59,7 @@ int code);
 
 class AlhordianDrBolt : public Missile {
 	public:
-	AlhordianDrBolt(double ox, double oy, double oangle, double ov, int 
-odamage,
+	AlhordianDrBolt(double ox, double oy, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship,
       SpaceSprite *osprite, double orelativity);
 	int spriteToUse;
@@ -76,8 +75,7 @@ ShipData *data, unsigned int code)
 	{
   shipWeaponDrain = get_config_int("Ship", "WeaponDrain",0);
   weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
-  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 
-0));
+  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
   specialDamage = get_config_int("Special", "Damage", 0);
@@ -111,12 +109,9 @@ ShipData *data, unsigned int code)
   specialStartY = get_config_float("Special", "StartY", 0);
   specialEndX = get_config_float("Special", "EndX", 0);
   specialEndY = get_config_float("Special", "EndY", 0);
-  specialStartAngle = get_config_float("Special", "StartAngle", 0) * 
-ANGLE_RATIO;
-  specialEndAngle = get_config_float("Special", "EndAngle", 0) * 
-ANGLE_RATIO;
-  specialStartRange = scale_range(get_config_float("Special", "StartRange", 
-0));
+  specialStartAngle = get_config_float("Special", "StartAngle", 0) * ANGLE_RATIO;
+  specialEndAngle = get_config_float("Special", "EndAngle", 0) * ANGLE_RATIO;
+  specialStartRange = scale_range(get_config_float("Special", "StartRange", 0));
   specialEndRange = scale_range(get_config_float("Special", "EndRange", 0));
   specialTime = get_config_int("Special", "Time", 0);
   specialDamage = get_config_int("Special", "Damage", 0);
@@ -199,13 +194,11 @@ void AlhordianDreadnought::weapon_flash() {
     flashRange7, flashDamage7, 50, this, Vector2(size.y *0.0, size.y*0.5)));
 }
 
-AlhordianDrBolt::AlhordianDrBolt(double ox, double oy, double oangle, double 
-ov,
+AlhordianDrBolt::AlhordianDrBolt(double ox, double oy, double oangle, double ov,
 	int odamage, double orange, int oarmour, Ship *oship, SpaceSprite *osprite, 
 double orelativity)
 	:
-	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, 
-osprite, orelativity),
+	Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, osprite, orelativity),
 	spriteToUse(odamage)
 {
 	explosionSprite     = data->spriteWeaponExplosion;
@@ -228,15 +221,11 @@ void AlhordianDreadnought::calculate_laser_sweep(void) {
   fractionDone = currentSweepTime / specialTime;
   X = specialStartX * (1-fractionDone) + specialEndX * fractionDone;
   Y = specialStartY * (1-fractionDone) + specialEndY * fractionDone;
-  Angle = specialStartAngle * (1-fractionDone) + specialEndAngle * 
-(fractionDone);
-  Length = specialStartRange * (1-fractionDone) + specialEndRange * 
-(fractionDone);
-  game->add(new Laser(this,Angle+angle, palette_color[9], Length, 
-specialDamage, specialSustain,
+  Angle = specialStartAngle * (1-fractionDone) + specialEndAngle * (fractionDone);
+  Length = specialStartRange * (1-fractionDone) + specialEndRange * (fractionDone);
+  game->add(new Laser(this,Angle+angle, palette_color[9], Length, specialDamage, specialSustain,
     this, Vector2(size.y * X, size.y * Y), TRUE));
-  game->add(new Laser(this,-Angle+angle, palette_color[9], Length, 
-specialDamage, specialSustain,
+  game->add(new Laser(this,-Angle+angle, palette_color[9], Length, specialDamage, specialSustain,
     this, Vector2(-size.y * X, size.y * Y), TRUE));
 }
 
