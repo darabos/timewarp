@@ -506,9 +506,16 @@ void Ship::calculate()
 				angle -= PI2;
 		}
 
-		// changed GEO - just to be sure you don't exceed #frames.
+		// changed GEO - just to be sure you don't exceed #frames if #frames<64 (the assumed value here...).
 		// sprite_index = get_index(angle);
-		sprite_index = get_index(angle, PI/2, sprite->frames());
+		//sprite_index = get_index(angle, PI/2, sprite->frames());
+		// (geo) actually, this introduces a big bug if the ship has >64 frames in
+		// the ship sprite -- eg the tau mercury.
+		if (sprite->frames() > 64)
+			sprite_index = get_index(angle);
+		else
+			sprite_index = get_index(angle, PI/2, sprite->frames());
+
 
 		SpaceObject::calculate();
 
