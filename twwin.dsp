@@ -692,6 +692,14 @@ SOURCE=.\source\sc3ships\shpxchex.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\source\newships\_howto_1.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\_howto_2.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpaktgu.cpp
 # End Source File
 # Begin Source File
