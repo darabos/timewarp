@@ -110,6 +110,36 @@ void options_menu (Game *game) {STACKTRACE
 	}
 
 
+bool confirmVideoChanges() {
+    enum { 
+        DIALOG_CONFIRM_VIDEO_BOX = 0,
+        DIALOG_CONFIRM_VIDEO_TEXT,
+        DIALOG_CONFIRM_VIDEO_YES,
+        DIALOG_CONFIRM_VIDEO_NO
+    };
+    
+    DIALOG confirmVideoDialog[] = {
+        // (dialog proc)     (x)   (y)   (w)   (h)   (fg) (bg) (key) (flags)  (d1)  (d2)  (dp)
+        { d_box_proc,       120,  140,  368,  90,   255,  0,    0,     0,       0,    0,    NULL, NULL, NULL },
+        { d_text_proc,      130,  150,  348,  30,   255,  0,    0,     0,       0,    0,    (void *)"Do you want to keep these settings?", NULL, NULL },
+        { d_button_proc,    130,  190,  174,  30,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Yes", NULL, NULL },
+        { d_button_proc,    294,  190,  174,  30,   255,  0,    0,D_EXIT,       0,    0,    (void *)"No", NULL, NULL },
+        { NULL,               0,    0,    0,   0,    255,  0,    0,     0,       3,    0,    NULL, NULL, NULL }
+    };
+    
+    int choice = -1;
+    while (-1 != (choice = tw_popup_dialog(NULL, confirmVideoDialog, 0))) {        
+        switch (choice) {
+        case DIALOG_CONFIRM_VIDEO_YES:
+            return true;
+        case DIALOG_CONFIRM_VIDEO_NO:
+            return false;
+        }
+    }
+    return false;
+}
+
+int handleGammaSliderChange(void *dp3, int d2);
 
 char *resolution[] = { 
 	"320x200", "640x480", "800x600", "1024x768", "1280x1024", "Custom", NULL
@@ -128,7 +158,6 @@ enum {
 	DIALOG_VIDEO_BPPTEXT,
 	DIALOG_VIDEO_BPPLIST,
 	DIALOG_VIDEO_EXIT,
-	DIALOG_VIDEO_APPLY,
 	DIALOG_VIDEO_GET_DEFAULT,
 	DIALOG_VIDEO_SET_DEFAULT,
 	DIALOG_VIDEO_GAMMA_TEXT,
@@ -136,60 +165,70 @@ enum {
 	};
 DIALOG video_dialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg) (bg) (key) (flags)  (d1)  (d2)  (dp)
-  { d_box_proc,        20,   20,  400, 400,   255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_box_proc,        20,   20,  400, 400,   255,  0,    0,     0,       0,    0,    NULL, NULL, NULL },//DIALOG_VIDEO_BOX
 
-  { d_check_proc,      190,  120,  160,  30,   255,  0,    0,    0,       0,    0,    (void *)"Full-screen ", NULL, NULL },
+  { d_check_proc,      190,  120, 160,  30,   255,  0,    0,     0,       0,    0,    (void *)"Full-screen ", NULL, NULL },//DIALOG_VIDEO_FULLSCREEN
 
-  { d_text_proc,       190,  180, 160,  30,   255,  0,    0,    0,       0,    0,    (void *)"Custom", NULL, NULL },
-  { d_box_proc,        188,  208, 164,  34,   255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_edit_proc,       190,  210, 150,  30,   255,  0,    0,    0,       75,   0,    (void *) dialog_string[3], NULL, NULL },
+  { d_text_proc,       190,  180, 160,  30,   255,  0,    0,     0,       0,    0,    (void *)"Custom", NULL, NULL },//DIALOG_VIDEO_CUSTOM_TEXT
+  { d_box_proc,        188,  208, 164,  34,   255,  0,    0,     0,       0,    0,    NULL, NULL, NULL },//DIALOG_VIDEO_CUSTOM_BOX
+  { d_edit_proc,       190,  210, 150,  30,   255,  0,    0,     0,       75,   0,    (void *) dialog_string[3], NULL, NULL },//DIALOG_VIDEO_CUSTOM_EDIT
 
-  { d_text_proc,       30,  120,  140,  30,   255,  0,    0,    0,       0,    0,    (void *)"Resolution", NULL, NULL },
-  { d_list_proc2,      30,  145,  140, 115,   255,  0,    0,    0,       0,    0,    (void *) genericListboxGetter, NULL, resolution },
-  { d_text_proc,       30,  290,  100,  30,   255,  0,    0,    0,       0,    0,    (void *)"Color Depth", NULL, NULL },
-  { d_list_proc2,      30,  310,  100, 100,   255,  0,    0,    0,       0,    0,    (void *) genericListboxGetter, NULL, color_depth },
+  { d_text_proc,       30,  120,  140,  30,   255,  0,    0,     0,       0,    0,    (void *)"Resolution", NULL, NULL },//DIALOG_VIDEO_RESTEXT
+  { d_list_proc2,      30,  145,  140, 115,   255,  0,    0,D_EXIT,       0,    0,    (void *) genericListboxGetter, NULL, resolution },//DIALOG_VIDEO_RESLIST
+  { d_text_proc,       30,  290,  100,  30,   255,  0,    0,     0,       0,    0,    (void *)"Color Depth", NULL, NULL },//DIALOG_VIDEO_BPPTEXT
+  { d_list_proc2,      30,  310,  100, 100,   255,  0,    0,D_EXIT,       0,    0,    (void *) genericListboxGetter, NULL, color_depth },//DIALOG_VIDEO_BPPLIST
 
-  { d_button_proc,      32,  30,  100,   35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
-  { d_button_proc,      32,  70,  100,   35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Apply", NULL, NULL },
-  { d_button_proc,     143,  30,  260,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Restore Default", NULL, NULL },
-  { d_button_proc,     143,  70,  260,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Set Default", NULL, NULL },
+  { d_button_proc,      32,  30,  100,   35,   255,  0,   0,D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },//DIALOG_VIDEO_EXIT
+  { d_button_proc,     143,  30,  260,  35,   255,  0,    0,D_EXIT,  0,    0,    (void *)"Restore Default", NULL, NULL },//DIALOG_VIDEO_GET_DEFAULT
+  { d_button_proc,      32,  70,  100,   35,   255,  0,   0,D_EXIT,  0,    0,    (void *)"Ok", NULL, NULL },//DIALOG_VIDEO_SET_DEFAULT
 
-  { d_text_proc,       170,  310,  160,  20,   255,  0,    0,    0,       0,    0,    (void *)"Gamma Correction", NULL, NULL },
-  { d_slider_proc,     170,  330,  160,  15,   255,  0,    0,    0,       255,  0,    NULL, NULL, NULL },
+  { d_text_proc,       170,  310,  160,  20,   255,  0,   0,     0,       0,    0,    (void *)"Gamma Correction", NULL, NULL },//DIALOG_VIDEO_GAMMA_TEXT
+  { d_slider_proc,     170,  330,  160,  15,   255,  0,   0,     0,       255,  0,    NULL, handleGammaSliderChange, NULL  },//DIALOG_VIDEO_GAMMA_SLIDER
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       3,    0,    NULL, NULL, NULL }
 	};
 
+int handleGammaSliderChange(void *dp3, int d2) {
+    set_gamma(d2);
+    return d2;
+}
+
 
 void video_menu (Game *game) {STACKTRACE
 	int choice = -1;
-	while (choice != DIALOG_VIDEO_EXIT) {
+    bool done = false;
+    
+	while ( (choice != DIALOG_VIDEO_EXIT) && (!done) ) {
 		sprintf(dialog_string[3], "%dx%d", videosystem.width, videosystem.height);
 
-		//set index for resolution
-		int x, y, x2, y2, i, bpp, bpp2, fs;
-		x2 = videosystem.width;
-		y2 = videosystem.height;
-		for (i = 0; resolution[i+1]; i += 1) {
-			x = strtol(resolution[i], NULL, 10);
-			y = strtol(strchr(resolution[i], 'x') + 1, NULL, 10);
-			if ((x == x2) && (y == y2)) break;
-			}
-		video_dialog[DIALOG_VIDEO_RESLIST].d1 = i;
 
-		//set index for bpp
-		bpp = videosystem.bpp;
-		for (i = 0; true; i += 1) {
-			if (!color_depth[i]) tw_error("video_menu - current bpp invalid?");
-			if (strtol(color_depth[i], NULL, 10) == bpp) break;
-			}
-		video_dialog[DIALOG_VIDEO_BPPLIST].d1 = i;
+        //set index for resolution
+        int x, y, x2, y2, i, bpp, bpp2, fs;
+        x2 = videosystem.width;
+        y2 = videosystem.height;
+        for (i = 0; resolution[i+1]; i += 1) {
+            x = strtol(resolution[i], NULL, 10);
+            y = strtol(strchr(resolution[i], 'x') + 1, NULL, 10);
+            if ((x == x2) && (y == y2)) break;
+        }
+        video_dialog[DIALOG_VIDEO_RESLIST].d1 = i;
+        
+        //set index for bpp
+        bpp = videosystem.bpp;
+        for (i = 0; true; i += 1) {
+            if (!color_depth[i]) tw_error("video_menu - current bpp invalid?");
+            if (strtol(color_depth[i], NULL, 10) == bpp) break;
+        }
+        video_dialog[DIALOG_VIDEO_BPPLIST].d1 = i;
+        
+        //set button for fullscreen
+        video_dialog[DIALOG_VIDEO_FULLSCREEN].flags = videosystem.fullscreen ? D_SELECTED : 0;
 
-		//set button for fullscreen
-		video_dialog[DIALOG_VIDEO_FULLSCREEN].flags = videosystem.fullscreen ? D_SELECTED : 0;
+        int startfs = video_dialog[DIALOG_VIDEO_FULLSCREEN].flags;
 
-		//set gamma correction
-		video_dialog[DIALOG_VIDEO_GAMMA_SLIDER].d2 = get_gamma();
+        
+        //set gamma correction
+        video_dialog[DIALOG_VIDEO_GAMMA_SLIDER].d2 = get_gamma();
 
 		//do the dialog
 		choice = tw_popup_dialog(NULL, video_dialog, 0);
@@ -204,37 +243,77 @@ void video_menu (Game *game) {STACKTRACE
 
 		//set bpp from menu
 		i = video_dialog[DIALOG_VIDEO_BPPLIST].d1;
-		bpp2 = strtol(color_depth[i], NULL, 10);
+        bpp2 = strtol(color_depth[i], NULL, 10);
+        
+        //set fullscreen from menu
+        fs = video_dialog[DIALOG_VIDEO_FULLSCREEN].flags & D_SELECTED;
+        
+        switch (choice) {
+            case DIALOG_VIDEO_GET_DEFAULT:
+                set_config_file("client.ini");
+                bpp2   = get_config_int("Video", "BitsPerPixel", 16);
+                x2     = get_config_int("Video", "ScreenWidth", 640);
+                y2     = get_config_int("Video", "ScreenHeight", 480);
+                fs     = get_config_int("Video", "FullScreen", false);
+                set_gamma(get_config_int("Video", "Gamma", 128));
 
-		//set fullscreen from menu
-		fs = video_dialog[DIALOG_VIDEO_FULLSCREEN].flags & D_SELECTED;
+                videosystem.set_resolution(x2, y2, bpp2, fs);
+                break;
+            
+           
+             case DIALOG_VIDEO_SET_DEFAULT:
+                 if ((bpp2 != bpp) && game) {
+                     tw_alert ("Color depths cannot be changed in\nthe middle of a game\nin this version", "Okay");
+                 }
+                 else {
+                     done = true;
+                 }
+                 break;
 
-		if (choice == DIALOG_VIDEO_GET_DEFAULT) {
-			set_config_file("client.ini");
-			bpp2   = get_config_int("Video", "BitsPerPixel", 16);
-			x2     = get_config_int("Video", "ScreenWidth", 640);
-			y2     = get_config_int("Video", "ScreenHeight", 480);
-			fs     = get_config_int("Video", "FullScreen", false);
-			set_gamma(get_config_int("Video", "Gamma", 128));
-			choice = DIALOG_VIDEO_APPLY;
-		}
-		if ((choice == DIALOG_VIDEO_APPLY) | (choice == DIALOG_VIDEO_SET_DEFAULT)) {
-			if ((bpp2 != bpp) && game) {
-				tw_alert ("Color depths cannot be changed in\nthe middle of a game\nin this version", "Okay");
-				}
-			else {
-				set_gamma(video_dialog[DIALOG_VIDEO_GAMMA_SLIDER].d2);
-				i = videosystem.set_resolution(x2, y2, bpp2, fs);
-				if (i && (choice == DIALOG_VIDEO_SET_DEFAULT)) {
-					set_config_file("client.ini");
-					set_config_int("Video", "BitsPerPixel", bpp2);
-					set_config_int("Video", "ScreenWidth", x2);
-					set_config_int("Video", "ScreenHeight", y2);
-					set_config_int("Video", "FullScreen", fs);
-					set_config_int("Video", "Gamma", get_gamma());
-				}
-			}
-		}
+             case DIALOG_VIDEO_BPPLIST:
+             case DIALOG_VIDEO_RESLIST:
+                 break;
+
+             case DIALOG_VIDEO_GAMMA_SLIDER:
+                 set_gamma(video_dialog[DIALOG_VIDEO_GAMMA_SLIDER].d2);
+                 break;
+
+             case DIALOG_VIDEO_EXIT:
+             case -1:
+                 return;
+                 break;
+        }
+        
+        if ( (x2 != x) ||
+             (y2 != y) ||
+             (bpp != bpp2) ||
+             (startfs != fs) )
+        {
+            set_gamma(video_dialog[DIALOG_VIDEO_GAMMA_SLIDER].d2);
+            videosystem.set_resolution(x2, y2, bpp2, fs);
+            
+            if (confirmVideoChanges()) {
+                set_config_file("client.ini");
+                set_config_int("Video", "BitsPerPixel", bpp2);
+                set_config_int("Video", "ScreenWidth", x2);
+                set_config_int("Video", "ScreenHeight", y2);
+                set_config_int("Video", "FullScreen", fs);
+                set_config_int("Video", "Gamma", get_gamma());
+                return;
+            }
+            else {
+                set_config_file("client.ini");
+                bpp2   = get_config_int("Video", "BitsPerPixel", 16);
+                x2     = get_config_int("Video", "ScreenWidth", 640);
+                y2     = get_config_int("Video", "ScreenHeight", 480);
+                fs     = get_config_int("Video", "FullScreen", false);
+                set_gamma(get_config_int("Video", "Gamma", 128));
+
+                i = videosystem.set_resolution(x2, y2, bpp2, fs);
+                done = false;
+            }
+        }
+        
 	}
 	return;
 }
