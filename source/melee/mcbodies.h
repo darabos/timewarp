@@ -5,6 +5,7 @@
 #include "../melee.h"
 #include "mframe.h"
 
+#include <string>
 
 class Asteroid : public SpaceObject {
 	protected:
@@ -24,6 +25,7 @@ class Asteroid : public SpaceObject {
 Planet *create_planet( Vector2 position = map_size/2 );//remove me!
 
 class Planet : public SpaceObject {
+	std::string name;
 	public:
 	double gravity_force;
 	double gravity_mindist;
@@ -35,6 +37,9 @@ class Planet : public SpaceObject {
 
 	virtual void inflict_damage(SpaceObject *other);
 	virtual void calculate();
+
+	void SetName(std::string sname) {name = sname;}
+	std::string GetName() {return name;};
 };
 
 struct StarLayer {

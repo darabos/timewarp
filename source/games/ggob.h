@@ -91,23 +91,11 @@ class GobGame : public Game, public EventHandler {
   
   int next_add_new_enemy_time;
   
-  SpaceSprite *stationSprite[3];
-  char *station_pic_name[3];
-  char *station_build_name[3];
   SpaceSprite *defenderSprite;
   
  public:
   int num_planets;
-  Planet *planet[16];
-  GobStation *station[16];
-  void add_planet_and_station ( SpaceSprite *planet_sprite, 
-								int planet_index, 
-								SpaceSprite *station_sprite, 
-								const char *builds, 
-								const char *background,
-								std::string sname,
-								std::string commander);
-
+  
   void save_game();
   void load_game();
   void config(bool option);
@@ -119,7 +107,7 @@ class GobStation : public Orbiter {
   std::string name;
  public:
   const char *build_type;
-  const char *background_pic;
+  std::string background_pic;
   GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, 
 	       const char *ship, const char *background,
 		   std::string sname );

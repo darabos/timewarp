@@ -1,11 +1,13 @@
 
 #include "../melee.h"
 REGISTER_FILE
-#include "../util/aastr.h"
+
 
 #include "../ship.h"
 #include "mgame.h"
 #include "manim.h"
+
+#include "../util/aastr.h"
 
 Animation::Animation(SpaceLocation *creator, Vector2 opos, 
 	SpaceSprite *osprite, int first_frame, int num_frames, int frame_length, 

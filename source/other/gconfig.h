@@ -14,24 +14,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef __GDIALOG_H__
-#define __GDIALOG_H__
-
-extern "C" {
-#	include "lua.h"
-#	include "lualib.h"
-#	include "lauxlib.h"
-}
+#ifndef __GCONFIG_H__
+#define __GCONFIG_H__
 
 
-void InitConversationModule ( lua_State* L  );
+void InitInitializeModule ( lua_State* L  );
 
-int l_DialogStart(lua_State* ls);
-int l_DialogSetAlienImage(lua_State* ls);
-int l_DialogSetMusic(lua_State* ls);
-int l_DialogWrite(lua_State* ls);
-int l_KeyPressed (lua_State* ls);
-int l_DialogAnswer(lua_State* ls);
-int l_DialogEnd ( lua_State* ls );
-
-#endif // __G_DIALOG_H__
+#endif

@@ -577,12 +577,13 @@ class UpPlanetLocater : public Upgrade {
 	}
 	void execute(Ship *ship, GobStation *station, GobPlayer *gs) {
 	STACKTRACE
-
+/*
 		locater = new Presence *[gobgame->num_planets];
 		for (int i = 0; i < gobgame->num_planets; i += 1) {
 			locater[i] = new WedgeIndicator ( gobgame->planet[i], 80, 2 );
 			gobgame->add (locater[i] );
 		}
+*/
 	}
 	void clear(Ship *oship, Ship *nship, GobPlayer *gs) {
 	STACKTRACE

@@ -200,15 +200,15 @@ void aa_stretch_sprite (BITMAP* dst, BITMAP* src,
 
   // Rotation.  
 void aa_rotate_scaled_bitmap (BITMAP* src, BITMAP* dst,
-		int x, int y, fixed angle,
-		fixed scalex, fixed scaley);
+		int x, int y, long angle,
+		long scalex, long scaley);
 void aa_rotate_scaled_sprite (BITMAP* dst, BITMAP* src,
-		int x, int y, fixed angle,
-		fixed scalex, fixed scaley);
+		int x, int y, long angle,
+		long scalex, long scaley);
 void aa_rotate_bitmap (BITMAP* src, BITMAP* dst,
-		int x, int y, fixed angle);
+		int x, int y, long angle);
 void aa_rotate_sprite (BITMAP* dst, BITMAP* src,
-		int x, int y, fixed angle);
+		int x, int y, long angle);
 
 
 
@@ -219,11 +219,11 @@ void _aa_stretch_blit (BITMAP* src, BITMAP* dest,
 		int dx, int dy, int dw, int dh, 
 		int mode);
 //does NOT perform checking/clipping on the source rectangle
-//parameters are fixed point (32-aa_BITS.aa_BITS) numbers
+//parameters are long point (32-aa_BITS.aa_BITS) numbers
 
 void _aa_rotate_bitmap (BITMAP *_src, BITMAP *_dst, 
-		int _x, int _y, fixed _angle,
-		fixed _scalex, fixed _scaley, 
+		int _x, int _y, long _angle,
+		long _scalex, long _scaley, 
 		int _mode);
 //destination is in integer format
 //rotation does not yet support the following new features:

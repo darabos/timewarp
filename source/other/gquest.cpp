@@ -4,12 +4,12 @@
 #pragma warning (disable:4786)
 #endif
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../melee/mship.h"
-#include "../games/ggob.h"
+#include "melee/mship.h"
+#include "games/ggob.h"
 #include "gdialog.h"
-#include "../melee/mview.h" // for message
+#include "melee/mview.h" // for message
 
 static GobPlayer * g_player = NULL;
 #define gobgame ((GobGame*)game)

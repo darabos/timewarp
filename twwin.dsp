@@ -265,6 +265,14 @@ SOURCE=.\source\other\fontmorph.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\other\gconfig.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\gconfig.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\other\gdialog.cpp
 # End Source File
 # Begin Source File

@@ -34,10 +34,8 @@ REGISTER_FILE
 #include "../sc2ships.h"
 
 #include "other/gup.h"
-
 #include "other/configrw.h"
-
-
+#include "other/gconfig.h"
 #include "ais/ext_ai.h"
 
 void GobGame::config(bool option)
@@ -220,15 +218,7 @@ void GobGame::preinit() {
 	max_enemies = 0;
 	gobenemy = NULL;
 
-	int i;
-	for (i = 0; i < 3; i += 1)
-		stationSprite[i] = NULL;
-	for (i = 0; i < 3; i += 1)
-		station_pic_name[i] = NULL;
-	for (i = 0; i < 3; i += 1)
-		station_build_name[i] = NULL;
 	defenderSprite = NULL;
-
 }
 
 /*! \brief Add player to game
@@ -301,63 +291,34 @@ void GobGame::init(Log *_log) {
 
 	enemy_team = new_team();
 
+	// load objects from config file
 
-	DATAFILE *tmpdata; 
-	tmpdata = load_datafile_object("gob.dat", "station0sprite");
-	if (!tmpdata) error( "couldn't find gob.dat#station0sprite");
-	stationSprite[0] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
-	unload_datafile_object(tmpdata);
-	stationSprite[0]->permanent_phase_shift(8);
+	lua_State * ls = lua_open();
+	InitInitializeModule(ls);
+	luaopen_base(ls);
+	luaopen_table(ls);
+	luaopen_io(ls);
+	luaopen_string(ls);
+	luaopen_math(ls);
+	luaopen_debug(ls);
 
-	tmpdata = load_datafile_object("gob.dat", "station1sprite");
-	if (!tmpdata) error ("couldn't find gob.dat#station1sprite");
-	stationSprite[1] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
-	unload_datafile_object(tmpdata);
-	stationSprite[1]->permanent_phase_shift(8);
+	int a = lua_dofile (ls, "gamedata/gob/config.lua");
 
-	tmpdata = load_datafile_object("gob.dat", "station2sprite");
-	if (!tmpdata) error ("couldn't find gob.dat#station2sprite");
-	stationSprite[2] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
-	unload_datafile_object(tmpdata);
-	stationSprite[2]->permanent_phase_shift(8);
-
-	tmpdata = load_datafile_object("gob.dat", "defender");
-	if (!tmpdata) error ("couldn't find gob.dat#defender");
-	defenderSprite = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	unload_datafile_object(tmpdata);
-
-
-
-	station_pic_name[0] = "gob.dat#station0picture.bmp";
-	station_pic_name[1] = "gob.dat#station1picture.bmp";
-	station_pic_name[2] = "gob.dat#station2picture.bmp";
-	station_build_name[0] = "supbl";
-	station_build_name[1] = "orzne";
-	station_build_name[2] = "kohma";
+	lua_close(ls);
 
 	prepare();
 
 	add(new Stars());
 
-	num_planets = 0;
-	i = 0;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Supox", "gamedata/supox_station.lua");
-	i = 1;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Orz", "gamedata/orz_station.lua");
-	i = 2;
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i], "Kohr-Ah", "gamedata/korah_station.lua");
-	i = random(3);
-	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i], "Utwig","gamedata/utwig_station.lua");
-
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 
 
 	int ichoice = 2;	// default, "no" 'don't load a game
-	if (!lag_frames)
-	{
-		// check a menu to see what the player wants ... how ??
-		ichoice = tw_alert("Continue saved game?", "&YES", "&NO");
-	}
+	//if (!lag_frames)
+	//{
+	//	// check a menu to see what the player wants ... how ??
+	//	ichoice = tw_alert("Continue saved game?", "&YES", "&NO");
+	//}
 
 	if (ichoice == 2)
 	{
@@ -408,12 +369,6 @@ void GobGame::init(Log *_log) {
 			char buffy[256];
 			sprintf(buffy, "Config%d", i);
 			add_gobplayer(create_control(channel_server, "Human", buffy));
-		//	gobplayer[i]->new_ship(shiptype("supbl"));
-		//	Ship *s = gobplayer[i]->ship;
-		//	s->translate(size/2-s->normal_pos());
-		//	double angle = PI2 * i / (client_players + server_players);
-		//	s->translate(rotate(Vector2(260, 120), angle));
-		//	s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
 		}
 		
 		load_game();
@@ -442,9 +397,6 @@ void GobGame::init(Log *_log) {
 
 /*! \brief Free game resources */
 GobGame::~GobGame() {
-	delete stationSprite[0];
-	delete stationSprite[1];
-	delete stationSprite[2];
 	delete defenderSprite;
 	int i;
 	for (i = 0; i < gobplayers; i += 1) {
@@ -460,45 +412,6 @@ GobGame::~GobGame() {
 	return;
 }
 
-/*! \brief Add planet and station
-\param planet_sprite ???
-\param planet_index ???
-\param station_sprite ???
-\param builds ???
-\param background ???
-\param sname station name (used for station identification )
-*/
-void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, 
-									  int planet_index, 
-									  SpaceSprite *station_sprite, 
-									  const char *builds, 
-									  const char *background, 
-									  std::string sname,
-									  std::string commander ) {
-	STACKTRACE;
-
-		Planet *p = new Planet (size/2, planet_sprite, planet_index);
-	if (num_planets) while (true) {
-		SpaceLocation *n;
-		n = p->nearest_planet();
-		if (!n || (p->distance(n) > 1500)) break;
-		p->translate(random(size));
-	}
-	add ( p );
-
-	GobStation *gs = new GobStation(station_sprite, p, builds, 
-		background, sname );
-	gs->install_external_ai(commander.c_str());
-
-	gs->collide_flag_sameship = ALL_LAYERS;
-	gs->collide_flag_sameteam = ALL_LAYERS;
-	gs->collide_flag_anyone = ALL_LAYERS;
-	add ( gs );
-
-	gobgame->planet[gobgame->num_planets] = p;
-	gobgame->station[gobgame->num_planets] = gs;
-	gobgame->num_planets += 1;
-}
 
 /*! \brief Print game information: enemies count, time, cordinates, money */
 void GobGame::fps() {
@@ -964,9 +877,9 @@ static DIALOG station_dialog[] =
 void GobStation::station_screen(GobPlayer *s) {
 	STACKTRACE;
 
-	BITMAP *background = load_bitmap(background_pic, NULL);
+	BITMAP *background = load_bitmap(background_pic.c_str(), NULL);
 	if (!background) {
-		message.print(1000, 15, "%s", background_pic);
+		message.print(1000, 15, "%s", background_pic.c_str());
 		error ("couldn't load station background");
 	}
 	game->window->lock();

@@ -362,18 +362,6 @@ void Solar::init_comets ()
 
 
 
-
-
-//#define STATION_LOG
-
-
-/*void iMessage(char *cmdstr, int num)
-{
-	char buf[200];
-	sprintf(buf, cmdstr,num);
-	message.out(buf);
-}    */
-
 SpaceSprite *Solar::GetSprite(char *fileName, char *spriteName)
 {
 	STACKTRACE;
