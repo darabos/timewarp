@@ -46,7 +46,7 @@ Page custom CreateShortCutF
 !insertmacro MUI_PAGE_INSTFILES
 
 !define MUI_FINISHPAGE_LINK "Visit the ${PRODUCT_NAME} website for the latest news"
-!define MUI_FINISHPAGE_LINK_LOCATION "http://www.classicgaming.com/starcontrol/timewarp/"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://timewarp.sf.net/"
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\twwin.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\readme.html

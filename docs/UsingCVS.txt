@@ -1,6 +1,6 @@
 This is the place to post questions and answers about using CVS.  Ironically, this file can be found in /docs/UsingCVS.txt in the repository.
 
-[B]This is for the latest, roughest, somewhat untested, bleeding-edge version.  When you get the files, you'll still have to recompile.  If you don't want to compile, get the latest official release here: [URL=http://www.classicgaming.com/starcontrol/timewarp/progress.shtm]http://www.classicgaming.com/starcontrol/timewarp/progress.shtm[/URL][/B]
+[B]This is for the latest, roughest, somewhat untested, bleeding-edge version.  When you get the files, you'll still have to recompile.  If you don't want to compile, get the latest official release here: [URL=http://sourceforge.net/project/showfiles.php?group_id=13354&package_id=11311&release_id=187537][/URL][/B]
 
 Basically, CVS is a way of synchronizing files for multiple users.  The simplest way of using it is to get the latest version of Timewarp (aka TW).  All files, including source code, data files and VC++ project files, are contained in the repository.  
 

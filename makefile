@@ -64,12 +64,12 @@ ifdef win32
 	LIBS += -lalleg -lws2_32 -lwinmm
 else
 	CFLAGS += -DLINUX
-	INCLUDES = ${shell allegro-config --cflags}
+	INCLUDES = ${shell allegro-config --cflags} ${shell freetype-config --cflags}
 	CFLAGS += $(INCLUDES)
 	LIBS += ${shell allegro-config --libs} ${shell freetype-config --libs}
 endif
 
-CFLAGS += -I./source ${shell freetype-config --cflags}
+CFLAGS += -I./source 
 
 #CFLAGS += ${addprefix -I./, $(VPATH)}
 
