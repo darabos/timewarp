@@ -277,6 +277,10 @@ SOURCE=.\source\games\gastroid.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\games\gdebugonly.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\games\gflmelee.cpp
 # End Source File
 # Begin Source File
