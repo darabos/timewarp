@@ -149,6 +149,7 @@ Ship(aowner, 0, 0, spr)
 	batt = owner->batt;
 	batt_max = owner->batt_max;
 	recharge_rate = owner->recharge_rate;
+
 	recharge_step = recharge_rate;
 	recharge_amount = owner->recharge_amount;
 	turn_rate = owner->turn_rate;
@@ -328,9 +329,13 @@ void BigShipPartDevice::animate(Frame *space)
 
 
 int BigShipPart::handle_fuel_sap(SpaceLocation *source, double normal)
+
 {
+
 	return owner->handle_fuel_sap(source, normal);
+
 }
+
 
 
 

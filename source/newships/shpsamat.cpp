@@ -300,6 +300,7 @@ SpaceObject(ocreator, opos, oangle, osprite)
 
 void SaMatraBoxer::death()
 {
+
 	if (samatra)
 		--samatra->Nweapons;
 }
@@ -606,6 +607,7 @@ SaMatraFlame::~SaMatraFlame()
 
 void SaMatraFlame::death()
 {
+
 	if (samatra)
 		--samatra->Nspecials;
 }

@@ -325,6 +325,7 @@ BigShipPart(aowner, orelpos, 0.0, info[otype-1]->spr_crewed, info[otype-1]->spr_
 	batt = info[otype-1]->batt;
 	batt_max = batt;
 	recharge_rate = info[otype-1]->dynamo;
+
 	recharge_step = recharge_rate;
 	recharge_amount = 1;
 	turn_rate = info[otype-1]->turning;

@@ -9,6 +9,8 @@ REGISTER_FILE
 #include "../melee/mmain.h"
 #include "../melee/mcbodies.h"
 
+
+
 #include "../melee/mshppan.h"
 
 #include "../frame.h"
@@ -37,7 +39,9 @@ class DjinniLancer : public Ship {
   double          shield;
   double          shield_old;
 
+
   double       crew_old, crew_real;
+
 
   SpaceLine *laser1;
   SpaceLine *laser2;
@@ -54,7 +58,11 @@ class DjinniLancer : public Ship {
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
 
 
+
+
   RGB crewPanelColor(int k = 0);
+
+
 
 };
 
@@ -90,11 +98,16 @@ DjinniLancer::DjinniLancer(Vector2 opos, double angle, ShipData *data, unsigned 
   shield          = shield_max;
   shield_old      = 0;
 
+
   crew_real       = crew;
+
   crew = crew_real + shield;
 
+
   crew_old        = 0;
+
     ship->update_panel = true;
+
   
 
 }
@@ -114,8 +127,11 @@ void DjinniLancer::calculate()
   }
 
    // this should always occur, it's a bit strange if countdown of wait time only
+
    // starts after that you take damage (and shield isn't max) ?!
+
    if (regenWaitCount >= 0)
+
 	   regenWaitCount -= frame_time;
 
    if (regenrating) 
@@ -146,21 +162,33 @@ void DjinniLancer::calculate()
    }
    
 
+
    crew = crew_real + shield;
 
+
+
   if (shield != shield_old || crew_old != crew)
+
    {
+
      update_panel = true;
+
 	 crew_old = crew;
+
 	 shield_old = shield;
    }
 
   Ship::calculate();
+
 }
+
 
 int DjinniLancer::handle_damage(SpaceLocation *source, double normal, double direct) {
 
+
+
 	if (normal > 0)
+
 	{
 		if ((normal - shield) <= 0) {
 			shield -= normal;
@@ -169,18 +197,30 @@ int DjinniLancer::handle_damage(SpaceLocation *source, double normal, double dir
 			normal -= shield;
 			shield = 0;
 		}
+
 	}
+
+
 
 	crew = crew_real + shield;
    
    int k = Ship::handle_damage(source, normal, direct);
 
+
+
    // below "real" level you have lost real crew
+
    if (crew < crew_real)
+
 	   crew_real = crew;
+
    
+
    // shield is what is remaining.
+
    shield = crew - crew_real;
+
+
 
    return k;
 }
@@ -217,29 +257,52 @@ int DjinniLancer::activate_special() {
 			}
 		}
 	if (fire)
+
 	{
+
 		play_sound((SAMPLE *)(melee[MELEE_BOOM + 0].dat));
+
+
 
 		// only wait regenerating, if the weapon is used.
 		regenWaitCount = regenWaitFrames;
 		regenrateCount = regenrateFrames;
+
 	}
 	return(fire);
 }
 
 
 
+
+
+
 RGB DjinniLancer::crewPanelColor(int k)
+
 {
+
 	RGB c1 = {32,164,32};
+
 	RGB c2 = {64,64,255};
 
+
+
 	if (k < crew_real)	// it starts counting captain as 0
+
 		return c1;
+
 	else
+
 		return c2;
 
+
+
 }
+
+
+
+
+
 
 
 

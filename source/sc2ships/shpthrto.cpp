@@ -61,6 +61,7 @@ ThraddashFlame::ThraddashFlame(Vector2 opos, int odamage, int oarmour,
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
   damage_factor = odamage;
+
   attributes &= ~ATTRIB_UNDETECTABLE;
 
   if(!(ship && ship->exists()))

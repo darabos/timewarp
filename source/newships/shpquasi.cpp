@@ -58,12 +58,15 @@ class QuaiEngine : public SpaceObject
 
 public:
 
+
 	double armour;
+
 
 	QuaiEngine(Quai *creator, Vector2 opos, double oangle, SpaceSprite *osprite);
 
 	virtual void calculate();
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+
 };
 
 
@@ -122,7 +125,10 @@ SpaceObject(creator, opos, oangle, osprite)
 	mother = creator;
 	vel = mother->vel;
 
+
+
 	damage_factor = mother->specialDamage;
+
 	armour = mother->specialArmour;
 }
 
@@ -142,13 +148,19 @@ void QuaiEngine::calculate()
 
 	if (!mother->enginereleased)
 	{
+
 		// cease to exist
 		mother = 0;
 		state = 0;
 
+
+
 		// also cause a small explosion, perhaps ?
+
 		
+
 		// ...
+
 
 		return;
 	}
@@ -156,15 +168,26 @@ void QuaiEngine::calculate()
 	SpaceObject::calculate();
 }
 
+
+
 int QuaiEngine::handle_damage(SpaceLocation *source, double normal, double direct)
+
 {
+
 	armour -= normal + direct;
+
 	
+
 	if ( armour < 0 || source->isShip() )
+
 		state = 0;
 
+
+
 	return 0;
+
 }
+
 
 
 
@@ -218,26 +241,42 @@ int Quai::activate_special()
 		game->add_target(tmp);
 
 		// separation from the engine pushes the ship it away a little
+
 		// but the engine stays on its original course as if nothing happened
 		vel += specialPush * speed_max * unit_vector(angle);
 
+
+
 		// remove this thing from the target list
+
 		game->rem_target(this);
 
+
+
 		// check all existing objects, and if they're targetting
+
 		// this ship, let them target the engine instead.
+
 		int i;
+
 		for ( i = 0; i < physics->num_items; ++i )
+
 		{
+
 			if (physics->item[i]->target == this)
+
 				physics->item[i]->target = tmp;
+
 		}
 
 	} else {
 		enginereleased = 0;
 
+
+
 		// add this thing to the targetlist
 		game->add_target(this);
+
 	}
 
 	return(TRUE);
