@@ -400,6 +400,8 @@ void message_type::print(int dur, int c, const char *format, ...) {STACKTRACE
 #ifdef ALLEGRO_MSVC
 	_vsnprintf(buf, 1000, format, those_dots);
 //#elif NO_VSNPRINTF
+#elif defined VSNPRINTF 
+	vsnprintf(buf, 1000, format, those_dots);
 #else 
 	vsprintf(buf, format, those_dots);
 	//vsnprintf(buf, 1000, format, those_dots); //it would be nice to use this line...
