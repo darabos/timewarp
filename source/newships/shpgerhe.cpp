@@ -968,7 +968,7 @@ int GerlMorons::handle_damage(SpaceLocation *source, double normal, double direc
 			mother->crew += t;
 			if ( mother->crew > mother->crew_max )
 				mother->crew = mother->crew_max;
-			mother->update_panel;
+			mother->update_panel = true;
 		}
 		
 	}
