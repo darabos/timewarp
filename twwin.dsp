@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /Zi /Op /Ob1 /I "./include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /Zi /Op /Ob1 /I "./include" /I "./source" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -1213,7 +1213,15 @@ SOURCE=.\source\newships\shpzeksh.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\source\twgui\gamebuttonevent.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\twgui\gametest2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\twgui\gametest2.h
 # End Source File
 # Begin Source File
 
@@ -1221,11 +1229,23 @@ SOURCE=.\source\twgui\twbutton.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\twgui\twbutton.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\twgui\twbuttontypes.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\twgui\twgui.cpp
+SOURCE=.\source\twgui\twbuttontypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\twgui\twguilist.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\twgui\twguilist.h
 # End Source File
 # Begin Source File
 
@@ -1233,7 +1253,15 @@ SOURCE=.\source\twgui\twhelpers.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\twgui\twhelpers.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\twgui\twmenuexamples.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\twgui\twmenuexamples.h
 # End Source File
 # Begin Source File
 
@@ -1241,11 +1269,23 @@ SOURCE=.\source\twgui\twpopup.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\twgui\twpopup.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\twgui\twwindow.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\twgui\twwindow.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\twgui\utils.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\twgui\utils.h
 # End Source File
 # End Group
 # Begin Source File
@@ -1791,10 +1831,6 @@ SOURCE=.\source\ship.h
 # Begin Source File
 
 SOURCE=.\scpwin.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\scpwin.rc
 # End Source File
 # End Group
 # End Target
