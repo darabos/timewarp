@@ -14,7 +14,6 @@ REGISTER_FILE
 #include "gameplanetscan.h"
 #include "gamemelee.h"
 #include "edit/edit_dialogue.h"
-#include "edit/edit_trigger.h"
 #include "gamedialogue.h"
 
 

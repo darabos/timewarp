@@ -22,7 +22,7 @@ REGISTER_FILE
 
 
 #include "gamesolarview.h"
-#include "GameMelee.h"
+#include "gamemelee.h"
 #include "gameplanetscan.h"
 #include "gamemelee.h"
 
