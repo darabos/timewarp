@@ -11,6 +11,6 @@ void replace_color(BITMAP *bmp, int col1, int col2);
 
 
 // all the sprite-relevant information (and nothing else).
-SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int rotations, int _attributes);
+//SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int rotations, int _attributes);
 
 #endif

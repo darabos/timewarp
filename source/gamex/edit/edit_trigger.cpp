@@ -309,7 +309,7 @@ void addchar(char *txt, char c)
 	txt[L+1] = 0;
 }
 
-void GameTriggerEdit::init()
+void XGameTriggerEdit::init()
 {
 	int i;
 
@@ -408,7 +408,7 @@ void GameTriggerEdit::init()
 }
 
 
-void GameTriggerEdit::quit()
+void XGameTriggerEdit::quit()
 {
 	
 	delete trigger[0];
@@ -425,7 +425,7 @@ void GameTriggerEdit::quit()
 
 
 
-void GameTriggerEdit::calculate()
+void XGameTriggerEdit::calculate()
 {
 	if (next)
 		return;
@@ -439,7 +439,7 @@ void GameTriggerEdit::calculate()
 }
 
 
-void GameTriggerEdit::animate(Frame *frame)
+void XGameTriggerEdit::animate(Frame *frame)
 {
 	if (next)
 		return;

@@ -10,7 +10,7 @@
 
 
 
-class GameTriggerEdit : public GameBare
+class XGameTriggerEdit : public GameBare
 {
 	BlockStore	dstore;
 
