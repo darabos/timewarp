@@ -69,38 +69,38 @@ int YushRanger::activate_weapon(){
 }
 
 int YushRanger::activate_special(){
-	STACKTRACE
-  double alpha = atan3(vel.y, vel.x);
-  alpha = normalize(alpha, PI2);
-  double v = vel.length();		//sqrt( vx*vx + vy*vy );
-  if( v*2 > speed_max ) v = v>speed_max?v:speed_max;
-  else v *= 2;
-// collide to left-right directed wall
-//  vx = v * cos( PI + 2 * angle - alpha );
-//  vy = v * sin( PI + 2 * angle - alpha );
-// collide to front-back directed wall
-
-//  vx = v * cos( 2 * angle - alpha );
-//  vy = v * sin( 2 * angle - alpha );
-  vel = v * unit_vector( 2 * angle - alpha );
-  game->add( new ObjectAnimation( this, pos, Vector2(0, 0), angle, data->spriteSpecial,
-    0, 4, time_ratio, LAYER_HOTSPOTS ));
-  special_sample = random() % 2;
-  return TRUE;
+	STACKTRACE;
+	double alpha = atan3(vel.y, vel.x);
+	alpha = normalize(alpha, PI2);
+	double v = vel.length();		//sqrt( vx*vx + vy*vy );
+	if( v*2 > speed_max ) v = v>speed_max?v:speed_max;
+	else v *= 2;
+	// collide to left-right directed wall
+	//  vx = v * cos( PI + 2 * angle - alpha );
+	//  vy = v * sin( PI + 2 * angle - alpha );
+	// collide to front-back directed wall
+	
+	//  vx = v * cos( 2 * angle - alpha );
+	//  vy = v * sin( 2 * angle - alpha );
+	vel = v * unit_vector( 2 * angle - alpha );
+	game->add( new ObjectAnimation( this, pos, Vector2(0, 0), angle, data->spriteSpecial,
+		0, 4, time_ratio, LAYER_HOTSPOTS ));
+	special_sample = random() % 2;
+	return TRUE;
 }
 
 void YushRanger::calculate_turn_left(){
-	STACKTRACE
-  if( !fire_weapon ) Ship::calculate_turn_left();
+	STACKTRACE;
+	if( !fire_weapon ) Ship::calculate_turn_left();
 }
 
 void YushRanger::calculate_turn_right(){
-	STACKTRACE
+	STACKTRACE;
   if( !fire_weapon ) Ship::calculate_turn_right();
 }
 
 void YushRanger::calculate(){
-	STACKTRACE
+	STACKTRACE;
   Ship::calculate();
   if( weaponObject ){
     if( !weaponObject->exists() || weaponObject->released ){
@@ -116,11 +116,13 @@ YushSpear::YushSpear( SpaceLocation *creator, Vector2 opos, double oangle,
 	double ov, int odamage, double orange, int oarmour, double ocontrol,
 	SpaceLocation *oposloc, SpaceSprite *osprite, double relativity):
 Missile( creator, opos, oangle, ov, odamage, orange, oarmour, oposloc, osprite, relativity ),
-released( false ), control( ocontrol ), latched( NULL ){
+released( false ), control( ocontrol ), latched( NULL )
+{
 }
 
 void YushSpear::calculate()
 {
+	STACKTRACE;
 
 	if (latched)
 	{
@@ -144,6 +146,7 @@ void YushSpear::calculate()
 		angle = old_angle + latched->get_angle();
 		sprite_index = get_index(angle);
 		
+		return;
 	}
 	
 	Missile::calculate();
@@ -169,32 +172,33 @@ void YushSpear::calculate()
 }
 
 void YushSpear::release(){
-  released = true;
+	released = true;
 }
 
-void YushSpear::inflict_damage( SpaceObject* other ){
-	STACKTRACE
-  if( latched || other->isShot() ) return;
-  if( !other->isAsteroid() ) Shot::inflict_damage( other );
-  state = 1;                   // don't want to die on contact
-  attributes &= ~ATTRIB_SHOT;  // not a shot anymore
-  released = true;
-  latched = other;
-  rel_angle = other->trajectory_angle( this ) - other->get_angle();
-  old_angle = angle - other->get_angle();
-  rel_dist = distance( other );
-  change_owner( other );       // are now part of the other ship
-  play_sound2( data->sampleWeapon[1 + random() % 2] );
+void YushSpear::inflict_damage( SpaceObject* other )
+{
+	STACKTRACE;
+	if( latched || other->isShot() ) return;
+	if( !other->isAsteroid() ) Shot::inflict_damage( other );
+	state = 1;                   // don't want to die on contact
+	attributes &= ~ATTRIB_SHOT;  // not a shot anymore
+	released = true;
+	latched = other;
+	rel_angle = other->trajectory_angle( this ) - other->get_angle();
+	old_angle = angle - other->get_angle();
+	rel_dist = distance( other );
+	change_owner( other );       // are now part of the other ship
+	play_sound2( data->sampleWeapon[1 + random() % 2] );
 }
 
 int YushSpear::handle_damage( SpaceLocation* other, double normal, double direct ){
-	STACKTRACE
-  if( latched ){
-    latched->handle_damage( other, normal, direct );
-// commenting out the following two lines makes the spears vulnerable to damage
-    normal = direct = 0;
-  }
-  return Shot::handle_damage( other, normal, direct );
+	STACKTRACE;
+	if( latched ){
+		latched->handle_damage( other, normal, direct );
+		// commenting out the following two lines makes the spears vulnerable to damage
+		normal = direct = 0;
+	}
+	return Shot::handle_damage( other, normal, direct );
 }
 
 REGISTER_SHIP(YushRanger)

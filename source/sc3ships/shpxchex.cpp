@@ -121,18 +121,26 @@ void XchaggerDisable::calculate() {
 		state = 0;
 		return;
 		}
+	if(!(target && target->exists() && target->isShip())) {
+		target = 0;
+		state = 0;
+		return;
+		}
+
+	Ship *t = (Ship*)target;
+
 	if (!lowerindex) {
-		pos = ship->normal_pos();
-		keyleft = ship->nextkeys & (keyflag::left);
-		keyright = ship->nextkeys & (keyflag::right);
-		ship->nextkeys &= ~(keyflag::left | keyflag::right);
+		pos = t->normal_pos();
+		keyleft = t->nextkeys & (keyflag::left);
+		keyright = t->nextkeys & (keyflag::right);
+		t->nextkeys &= ~(keyflag::left | keyflag::right);
 		if (keyleft)
-			ship->nextkeys |= (keyflag::right);
+			t->nextkeys |= (keyflag::right);
 		if (keyright)
-			ship->nextkeys |= (keyflag::left);
+			t->nextkeys |= (keyflag::left);
         } 
 	else {
-        pos = ship->normal_pos() + (frame_time * ship->get_vel());
+        pos = t->normal_pos() + (frame_time * t->get_vel());
 		SpaceObject::calculate();
         }
 	disableframe += frame_time;
@@ -162,27 +170,28 @@ XchaggerSpecial::XchaggerSpecial(Vector2 opos, double oangle,
 
 void XchaggerSpecial::animateExplosion() {}
 
-void XchaggerSpecial::inflict_damage(SpaceObject *other) {
-          if (other->isShip()) {
-            play_sound(disableSound);
-            SpaceObject *o = NULL;
-            Query a;
-            int found = FALSE;
-            for (a.begin(this, ALL_LAYERS ,distance(other)+ 10);
-              a.current; a.next()) {
-		o = a.currento;
-		if ((o->getID()) == XCHAGGERDISABLE_SPEC)
-		  if ((((XchaggerDisable *)o)->return_disable()) == other) {
-			((XchaggerDisable *)o)->reset_time();
-                        found = TRUE;
-	  }
-          if (!found) {
-          add(new XchaggerDisable( this, 
-            (Ship *)(other), disableSprite, 32, 40, disableFrames, 0));
-          //game->addItem(new XchaggerDisable(
-          //  (Ship *)(other), disableSprite, 32, 40, disableFrames, 32));
-          }  }   }
-        state = 0;
+void XchaggerSpecial::inflict_damage(SpaceObject *other)
+{
+	if (other->isShip()) {
+		play_sound(disableSound);
+		SpaceObject *o = NULL;
+		Query a;
+		int found = FALSE;
+		for (a.begin(this, ALL_LAYERS ,distance(other)+ 10);
+		a.current; a.next()) {
+			o = a.currento;
+			if ((o->getID()) == XCHAGGERDISABLE_SPEC)
+				if ((((XchaggerDisable *)o)->return_disable()) == other) {
+					((XchaggerDisable *)o)->reset_time();
+					found = TRUE;
+				}
+				if (!found) {
+					add(new XchaggerDisable( this, 
+						(Ship *)(other), disableSprite, 32, 40, disableFrames, 0));
+					//game->addItem(new XchaggerDisable(
+					//  (Ship *)(other), disableSprite, 32, 40, disableFrames, 32));
+	}  }   }
+	state = 0;
 	return;
 }
 
