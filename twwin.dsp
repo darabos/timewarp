@@ -708,6 +708,10 @@ SOURCE=.\source\newships\shpalhdr.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpalhha.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shparitr.cpp
 # End Source File
 # Begin Source File
@@ -717,6 +721,10 @@ SOURCE=.\source\newships\shparkpi.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpartem.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpastba.cpp
 # End Source File
 # Begin Source File
 
@@ -833,6 +841,14 @@ SOURCE=.\source\newships\shpgarty.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpgerhe.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpgeror.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpgerra.cpp
 # End Source File
 # Begin Source File
 
@@ -1013,6 +1029,10 @@ SOURCE=.\source\newships\shpsamat.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpsclfr.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpsefn2.cpp
 # End Source File
 # Begin Source File
 
@@ -1771,10 +1791,6 @@ SOURCE=.\source\ship.h
 # Begin Source File
 
 SOURCE=.\scpwin.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\scpwin.rc
 # End Source File
 # End Group
 # End Target
