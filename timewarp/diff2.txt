@@ -1,0 +1,88 @@
+Okay, trying to list all changes.  Not going to succeed.
+
+		Present day.  Present Time.  
+
+
+Added game-type autodetection for demos & net1 clients.  
+Revised various animate_predict functions
+
+                Bleeding Edge release
+
+Added _prediction_keys to Control, and Ship::animate_predict to use it
+Fixed critical bug in VideoWindow::lock()
+Fixed some color-related bugs
+
+                Bleeding Edge release
+
+!!!!! Lots of changes related to Vectors stuff !!!!
+
+                Ultra-Bleeding Edge update
+
+Added alpha, blending, dithering, & more support to the AASTR code
+!!!!! Lots of changes related to Vectors stuff !!!!
+!!!!! Converted engine core to using 2d Vectors !!!!!
+Changed VideoWindow::lock() & unlock()
+
+                Bleeding Edge update
+
+Optimized Vector2 unit_vector ( angle );
+Added Vector2 class & basic operations
+Fixed desynch bug in HomingMissile prediction
+Changed aiming algorithm in WussieBot
+!!!Changed angles from degrees to radians!!! (probably made lots of mistakes)
+Fixed a few details in View / Camera code.  
+Re-implemented in-game chat using game events.  
+Improved event networking.  
+Moved TrugGame event networking to Game
+!!Changed health & damage from int to float.  
+Made maximum speed changeable at run-time.
+
+                Post-Release Update
+
+Changed the View / Camera code.  
+Changed sound initialization to be louder but not mess with the windows mixer settings.  
+Changed -auto_unload to be a .ini setting instead of a command line option
+Fixed Ilwrath aiming
+Fixed infinite-loop sometimes when multiple ships die simultaneously.  
+A bunch of minor bug-fixes.  
+
+		Alpha release (21:44 7/15/2002)
+
+Futzed with Asteroid death animations
+Added seperate package, "dev.zip" for extra development stuff
+Fixed demo recordings of network games.  
+Switch to Allegro 4.0.2
+Fixed a major networking bug (collisions).  
+Organized ship .dat's, .ini's, and .txt's into directories.  
+Changed the way ships work a lot.  
+Added a datafile "stars.dat", and made starfields 
+	automatically use all star picturse included in it.  
+Fixed demo recordings.  
+Fixed a bug in starfields
+Fixed a bug in non-integer anti-aliasing
+Added team support to NormalMelee and the "Teams" menu.  
+Reorganized high-level rendering code slightly.  
+Varith removed some ships, changed others.  
+Added command line option -interpolate_frames to uncouple the 
+	graphical frame-rate from the physics tic-rate.  
+Added command line option -noidle to cause TW to use all 
+	available CPU
+Added the ability to automatically unload ship data.  Enable 
+	with -auto_unload
+Fixed bug(s) in some Varith ship?
+Fixed a bug in Kat Poly ?
+Fixed two bugs in the AA code.  
+Fixed aspect ratio of ship panels in melee.  
+The Fly fixed the joystick code.  
+The Fly shuffled around the code in scp.cpp a lot,and added 
+	lots of comments.
+
+		Alpha release (21:44 6/23/2002)
+
+Varith sent in a bunch of new ships.
+Some new game modes were sent in (teams melee, vanguard, )
+Fixed a major networking bug (random numbers).
+Changed starfields a lot.
+Fixed some issues in Vanguard.
+Recorded a new demo for the main release.
+

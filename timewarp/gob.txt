@@ -1,0 +1,157 @@
+0.  What is Gob?
+Gob is like a cross between Asteroids, Life-Force, and Star Control.
+It uses the same data files as TimeWarp.  
+
+1.  How do I start Gob?
+Run twwin.exe or twdos.exe or twlinux or twbeos or whatever.
+Click on the "Extended Menu" button.  Click on the "Gob" button.  
+
+2.  What is the goal of Gob?
+Avoid dieing.  
+Try to get as bad-ass a ship as you can.  
+Kill lots of enemies.
+If you survive for long enough and accumulate enough wealth, you will
+eventually be able to purchase the "Hyper Dynamo" upgrade.  Once you
+get that, you can basically consider yourself to have won the game.  
+
+3.  What are the controls in Gob?
+The keyboard controls for config 0 in TimeWarp
+
+4.  What can I do in Gob?
+You can fly around in a really big map (MUCH larger than a normal melee).
+You can kill enemy ships.  They appear randomly.
+You can visit space stations.  They orbit planets.
+
+5.  What can I do at space stations?
+You can buy upgrades for your ship.
+You can buy a new ship.  You automatically sell your old ship when you do
+        so.
+You can repair your ship.
+
+6.  What starbases are there?  What are the differences between them?
+There are 4 starbases of 4 types (though there are only 3 different
+starbase graphics... the 4th uses a duplicate of one of the other threes
+graphics, chosen at random).
+They are located at random locations, except for one which starts out next 
+        to you, at 12000x12000.
+Each type of starbase sells a specific type of ship, either Supox, Orz,
+        Kohr-Ah, or Utwig.
+Some starbases may also sell unique upgrades only available there.  
+
+7.  What upgrades are available.
+
+There are a number of generic upgrades that are available for most
+types of ships.  
+
+Each purchasable ship type has a number of ship specific upgrades
+available for it, including at least special ship specific upgrade.  
+Most special ship specific upgrades can only be purchased once.
+
+There are also a number of very special upgrades.  These can
+usually be purchased for any ship type, but only at certain
+starbases.  Most of these are very expensive.  Some can only be
+purchased when certain conditions are met.  
+
+Most upgrades are lost when your ship is sold (although they add
+to the sale value of your ship).  
+
+These upgrades are available for all ships:
+
+Crewpod                 Increases your max. crew by 4.  You cannot exceed 42.  
+Battery                 Increases your max. battery by 8.  You cannot exceed
+                        42.
+Thruster Upgrade        Increases your max. speed by a lot, and your
+                        acceleration by a little.  
+Control Jet Upgrade     Increases your turn rate by a lot, and your
+                        acceleration by a little.  
+Dynamo                  Increases your battery recovery rate.  
+
+These upgrades are available for Supoxi only:
+
+Glob Hurler Upgrade     Increase your max range by a medium amount, and your
+                        projectile velocity by a little.  
+Glob Former Upgrade     Increase the damage your gun inflicts by 1, and the
+                        battery you require to shoot by a lot.  Don't buy
+                        this a second time unless you have tons of dynamos
+                        (5-8), and don't buy it a third time unless you have
+                        gazzillions of dynamos (12-21).
+BLADE Upgrade           ???
+
+These upgrades are available for Orz only:
+
+Missile Upgrade         Improves your missiles, both range and damage.  It
+                        also makes them cost more battery to shoot.  
+Marine Armor Upgrade    Improves the max. speed and acceleration of your
+                        space marines.  
+Absoption               ???
+
+These upgrades are available for Kohr-Ah only:
+
+Shuriken Sharpness      Increases damage inflicted by blades.  
+Shuriken Speed          Increases the velocity of blades.  
+FRIED Range             Increases the range & velocity of F.R.I.E.D.  This
+                        upgrade can only be purchased once.  
+FRIED Damage            Increases the damage dealt by F.R.I.E.D.  This
+                        upgrade can only be purchased once.  
+
+These upgrades are available for Utwig only:
+
+Bolt Regulator          Increase maximum range
+Bolt Charger            Increase damage inflicted.  Also slows your
+                        rate of fire.
+Bolt Generator          Speeds of your rate of fire
+Mask of Honest Demeanor        ???
+Mask of Elephantine Fortitude  ???
+        (note that you are only allowed to purchase one mask)
+
+These very special upgrades may be available.  Some will be hidden,
+some will not be available, some may not be available until certain
+conditions are met.  Most are extremely valuable.  
+
+Planet Locator                 Keeps you from getting lost.
+Divine Favor                   ???
+External Defense System        ???
+Devil Protects His Own         ???
+Hyper Dynamo                   ???
+Rainbow Abyss                  ???
+
+8.  What enemies are possible in Gob?  How much do you get for killing them?  
+Special
+        Asteroid                             1 buckazoid
+Weak
+        Thraddash Torch         1 starbuck
+        Zof-Fot-Pik Stinger     1 starbuck
+        Shofixti Scout          1 starbuck
+        Drax Griphon            1 starbuck
+Moderate
+        Kterbi Saber            2 starbucks
+        Kahr Boomerang          2 starbucks
+        Ilwrath Spider          2 starbucks
+        Syreen Penetrator       2 starbucks
+        Urquan Dreadnought      3 starbucks
+        Lk Sanctorum            3 starbucks
+
+Tough
+        Mmmrnhrmmm Transformer  3 starbucks, 1 buckazoid
+        Druuge Mauler           3 starbucks, 1 buckazoid
+        Yehat Terminator        4 starbucks, 1 buckazoids
+        Earthling Cruiser       4 starbucks, 1 buckazoids
+        Herald Exterminator     4 starbucks, 2 buckazoids
+        Virtao Limb             4 starbucks, 2 buckazoids
+Nasty
+        Ploxis Plunderer        5 starbucks, 3 buckazoids
+        Narool Lurker           5 starbucks, 3 buckazoids
+
+
+9.  What is the difficulty of the enemies based upon?  And the cost of the
+upgrades?
+
+The type and frequency of enemy spawning is based upon the time you have
+been alive and the number of enemies currently alive.  The cost of the
+upgrades is based upon what upgrades you already have, and upon what type
+of ship you have.
+
+10.  What's a good score in Gob?
+
+11.  Why is Gob so addictive?  
+

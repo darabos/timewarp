@@ -1,0 +1,71 @@
+Unknown = Stardard implementation of weapon or special:
+  For weapon it is Front,Proximtiy.
+  For special it is Feild,MaxBattery
+
+None = Weapon or Special is not used by Wussiebot.
+
+Front = Causes ship to fire if enemy is in front (+/- sweep degrees)
+  in front of ship, normal sweep is 20 degrees, not need for weapon.
+
+No_Front = Doesn't cause ship to fire if enemy is in front.
+  Can be used with field to make ship fire except when enemey is in front.
+
+Sides = Causes ship to fire if enemy is to the left or right.
+
+Back = Cause ship to fire if enemy is behind ship.
+
+Field = Cause ship to fire if enemy is anywhere can be use with No_Front
+
+Narrow = Changes sweep to +/- 5 degrees
+
+Homing = Changes sweep to +/- 45 degrees
+
+No_range = Cause ship to not use proximity to determine wiether
+           to fire or not, Use with weapon.
+
+Proximity = Cause ship to use weapon/special when enemy is with in range
+ - Weapon_Range/Special_Range = Use to determine range if you wish it to
+       be different from default set in weapon/special section
+
+Precedence = Cause ship to not use other ability if it can use this one.
+
+Defense = Use ability to defend ship against attacks
+ - WeaponFreq/SpecialFreq = Determines how much damage is must see
+                            before using it
+
+Max_Battery = use ability when battery is full.
+
+Battery = Uses ability when battery drops below level of BattRecharge
+
+Reserve_Battery= Doesn't use ability when battery drops below level
+
+ - BattRecharge = Use with Battery and Reserve_Battery
+
+Cloak = Use ability to cloak
+
+Hold = Use this for when ablity should be held down before releasing to use
+
+ - Weapon_Timer/Special_Timer = Sets delay between pressing button
+
+Plus_Fire = cause fire button to be pressed along with this ability
+
+Plus_Special = cause special button to be pressed along with this ability
+
+Launched = cause ability to be held down until can't get closer (ie. Broodhome)
+
+No_Proximity = cause ability to be use in enemy is outside of range
+
+Next_State = Cause ship to go to next state (Recommended Timer of
+  at least 50)
+
+Reset_State = Cause ship to go back to first state (Recommended Timer of
+  at least 50)
+
+Alway_When_Full = Cause ship to use ability no matter the other options when
+  battery is full.
+
+Mine = Uses ability when enemy is approaching.
+
+To get into multiple states use [AI3_Default] for state 1 (start-up)
+  [AI3_Default2] for state 2, ect.. Current max is 3 states.
+  Use Next_State and Reset_State to advance states.

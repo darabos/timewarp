@@ -1,0 +1,26 @@
+This release of Star Control: TimeWarp is public domain, to the
+maximum extent possible considering portions of it are derivative 
+works of Star Control 1, 2, and 3.
+
+The name "Star Control" is a trademark of Accolade/Infogames,
+I think.
+
+The Star Control I & II ships & storyline are copyrighted or 
+something by Toys For Bob, more specifically Paul Reiche and
+Fred Ford.
+
+The Star Control III ships are copyrighted by Accolade and/or
+Legends, I think.  
+
+Anyone is free to use Star Control: TimeWarp for any purpose.  
+However, be carefull with the SC 1, 2, & 3 stuff, as these have
+extra legal complications do to the extra parties involved.  
+
+Note that the closely associated project SDLTW, the SDL-based version
+of TimeWarp, is NOT public domain, nor open-source in the normal sense.  
+
+Star Control 1 was created by Toys For Bob and published by Accolade.  
+Star Control 2 was created by Toys For Bob and published by Accolade.  
+Star Control 3 was created by Legends(?) and published by Accolade.
+
+orz
