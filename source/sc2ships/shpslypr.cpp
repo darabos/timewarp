@@ -217,7 +217,7 @@ int SlylandroProbe::activate_weapon()
 	int i;
 	for (i = 0; i < game->num_targets; i += 1) {
 		SpaceObject *s = game->target[i];
-		if ((distance(s) < r) && control->valid_target(s)) {
+		if (s && s->exists() && control->valid_target(s) && (distance(s) < r)) {
 			t = s;
 			r = distance(t);
 		}
@@ -226,7 +226,7 @@ int SlylandroProbe::activate_weapon()
     //                                     segment_dispersion, rnd_angle, aiming, dispersion));
 	
 	
-	if (!SlyLaser || !SlyLaser->exists() )
+	if (!(SlyLaser && SlyLaser->exists()) )
 	{
 		SlyLaser = new SlylandroLaserNew( this, t );
 		game->add( SlyLaser );
@@ -290,7 +290,7 @@ void SlylandroLaserNew::calculate()
 	S = mother->pos;
 	
 	int directedbeam;
-	if (!target || !target->exists())
+	if (!(target && target->exists()))
 		directedbeam = 0;
 	else
 		directedbeam = 1;
@@ -480,7 +480,7 @@ void SlylandroLaserNew::animate(Frame *frame)
 {
 	int i, iline;
 	
-	if ( !mother || !mother->exists() )
+	if ( !(mother && mother->exists()) )
 		return;
 	
 	for ( iline = 0; iline < MAXlines; ++iline )
