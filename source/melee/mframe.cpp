@@ -293,7 +293,7 @@ Presence::Presence() {STACKTRACE
 	total_presences += 1;
 	attributes = 0;
 	state = 1;
-	_serial = 0;
+	//_serial = 0;
 	id = 0;
 	_depth = 0;
 	set_depth(DEPTH_PRESENCE);
@@ -820,11 +820,12 @@ void SpaceLine::collide(SpaceObject *o)
 	return;
 }
 
-void Listed::init(Presence *p) {STACKTRACE
+/*void Listed::init(Presence *p) {STACKTRACE
 	pointer = p;
 	serial = p->get_serial();
 	if (serial == 0) tw_error("bad serial #");
 	}
+
 void Listed::clear() {STACKTRACE
 	pointer = NULL;
 	serial = 0;
@@ -847,7 +848,7 @@ int Physics::_find_serial(int serial) {STACKTRACE
 		if (listed[i].serial == serial) return i;
 		}
 	return -1;
-	}
+	}/**/
 
 void Physics::destroy_all() {
 	STACKTRACE
@@ -886,10 +887,10 @@ void Physics::preinit() {STACKTRACE
 	presence = NULL;
 	last_ship = 0;
 	last_team = 0;
-	last_serial = 0;
-	last_unsynched_serial = -1;
-	listed = NULL;
-	num_listed = max_listed = 0;
+	//last_serial = 0;
+	//last_unsynched_serial = -1;
+	//listed = NULL;
+	//num_listed = max_listed = 0;
 	return;
 	}
 
@@ -897,14 +898,14 @@ unsigned int Physics::get_code(unsigned int ship, TeamCode team) {STACKTRACE
 	return (ship << SpaceLocation::ship_shift) | (team << SpaceLocation::team_shift);
 	}
 
-int Physics::new_serial() {
+/*int Physics::new_serial() {
 	last_serial += 1;
 	return last_serial;
 	}
 int Physics::new_unsynched_serial() {
 	last_unsynched_serial -= 1;
 	return last_unsynched_serial;
-	};
+	};/**/
 unsigned int Physics::new_ship() {
 	last_ship += 1;
 	return last_ship;
@@ -947,7 +948,7 @@ void Physics::init() {STACKTRACE
 	return;
 	}
 
-void Physics::_list(Presence *p) {STACKTRACE
+/*void Physics::_list(Presence *p) {STACKTRACE
 	if (!p->exists()) return;
 	if (num_listed == max_listed) {
 		max_listed += 256;
@@ -964,12 +965,12 @@ void Physics::_list(Presence *p) {STACKTRACE
 		}
 	num_listed += 1;
 	return;
-	}
+	}/**/
 
 void Physics::add(SpaceLocation *o) {STACKTRACE
 	if (o->attributes & ATTRIB_INGAME) tw_error("addItem - already added");
 	if (!o->isLocation()) tw_error("addItem - catastrophic");
-	if (!o->_serial) _list(o);
+	//if (!o->_serial) _list(o);
 
 	o->attributes |= ATTRIB_INGAME;
 
@@ -1013,7 +1014,7 @@ void Physics::add(Presence *p) {STACKTRACE
 		add((SpaceLocation*)p);
 		return;
 		}
-	if (!p->_serial) _list(p);
+	//if (!p->_serial) _list(p);
 	if (num_presences == max_presences) {
 		max_presences += 256; 
 		presence = (Presence**) realloc(presence, sizeof(Presence*) * max_presences);
@@ -1156,14 +1157,14 @@ checksync();
 checksync();
 
 	//remove dead listings
-{STACKTRACE
+/*{STACKTRACE
 	int deleted = 0;
 	for (i = 0; i + deleted < num_listed; i += 1) {
 		if (listed[i].serial == 0) deleted += 1;
 		if (deleted) listed[i] = listed[i+deleted];
 	}
 	num_listed -= deleted;
-}
+}/**/
 
 checksync();
 
@@ -1174,7 +1175,8 @@ int compare_depth (const void *_a, const void *_b) {
 	int a = (*(const Presence**)_a)->_depth;
 	int b = (*(const Presence**)_b)->_depth;
 	if (a-b) return a-b;
-	else return (*(const SpaceLocation**)_a)->get_serial() - (*(const SpaceLocation**)_b)->get_serial();
+        else return 0; // TODO test this line
+	//else return (*(const SpaceLocation**)_a)->get_serial() - (*(const SpaceLocation**)_b)->get_serial();
 }
 static Presence *animate_buffer[ANIMATE_BUFFER_SIZE];
 

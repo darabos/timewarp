@@ -51,13 +51,15 @@ int TrugControl::think() {
 		case ORDER_ATTACK: {
 			int target_serial = order.x;
 			k &= ~(KEYFLAG_NEXT | KEYFLAG_PREV | KEYFLAG_CLOSEST);
-			if (!target || (target->get_serial() == target_serial)) 
-				break;
+            //TODO check following 2 lines
+			//if (!target || (target->get_serial() == target_serial)) 
+			//	break;
 			if (game->frame_number & 1) break;
-			if (!game->find_serial(target_serial)) {
-				next_order();
-				break;
-			}
+            //TODO check following 4 lines
+			//if (!game->find_serial(target_serial)) {
+			//	next_order();
+            //	break;
+			//}
 			k |= KEYFLAG_NEXT;
 		}
 		break;

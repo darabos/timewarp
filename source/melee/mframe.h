@@ -49,13 +49,13 @@ enum {
 
 };
 
-struct Listed {
+/*struct Listed {
 	int serial;
 	Presence *pointer;
 
 	void init(Presence *p);
 	void clear();
-};
+};/**/
 
 
 class Physics : public BaseClass {
@@ -64,13 +64,13 @@ class Physics : public BaseClass {
 	SpaceLocation **quadrant;
 	friend struct Query;
 
-	Listed *listed;
+	/*Listed *listed;
 	int num_listed, max_listed;
 	void _list(Presence *p);
 	int last_serial;
 	int new_serial();
 	int last_unsynched_serial;
-	int new_unsynched_serial();
+	int new_unsynched_serial();/**/
 
 	int num_items, max_items;
 	SpaceLocation **item;
@@ -107,8 +107,8 @@ class Physics : public BaseClass {
 	virtual void animate(Frame *frame);
 	virtual void animate_predict(Frame *frame, int time);
 
-	Presence *find_serial(int serial);
-	int _find_serial(int serial);
+	/*Presence *find_serial(int serial);
+	int _find_serial(int serial);/**/
 
 	virtual void play_sound (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000);
 	virtual void play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000);
@@ -130,7 +130,7 @@ class Presence : public BaseClass {
 	int    id;            // id code, indicates what type it is
 	int attributes;       // describes it
 	signed char state;    // may be set to any positive value if alive, or 0 to kill it
-	private: int _serial; // unique reference number
+	//private: int _serial; // unique reference number
 	private: int _depth;  // determines rendering order ; read/write with set_depth, get_depth
 	public:
 	void set_depth(double d);
@@ -161,7 +161,7 @@ class Presence : public BaseClass {
 	bool isShot() const;
 	bool isSynched() const;
 
-	inline int get_serial() const {return _serial;}
+	//inline int get_serial() const {return _serial;}
 };
 
 class SpaceLocation : public Presence { // base class for all items in game
