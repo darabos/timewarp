@@ -288,7 +288,7 @@ const char * twconfig_get_string (const char *item) {
 	char buffy[256];
 	static char result[512];
 	enum { INI, CFG, DEV, NORMAL};
-	int type;
+	int type = -1;
 	strcpy(buffy, item);
 	if (*item == '/') {
 		if (0) ;
@@ -303,6 +303,7 @@ const char * twconfig_get_string (const char *item) {
 	ce.value = NULL;
 	ce.subtype = ConfigEvent::GET;
 
+	ASSERT(type!=-1);
 	switch (type) {
 		case NORMAL: {
 			ce.name = buffy;
@@ -332,7 +333,7 @@ void twconfig_set_string (const char *item, const char *value){
 	char buffy[256];
 	char buffy2[256];
 	enum { INI, CFG, DEV, NORMAL};
-	int type;
+	int type = -1;
 	strcpy(buffy, item);
 	if (*item == '/') {
 		if (0) ;
@@ -349,6 +350,7 @@ void twconfig_set_string (const char *item, const char *value){
 	ce.type = Event::TW_CONFIG;
 	ce.subtype = ConfigEvent::SET;
 
+	ASSERT(type!=-1);
 	switch (type) {
 		case NORMAL: {
 			ce.name = buffy;

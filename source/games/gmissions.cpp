@@ -1377,7 +1377,7 @@ void Play::order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, Shi
 		return;
 
 	// check your position
-	double Rs, Rt;
+	double Rs, Rt = 0;
 	Rs = min_delta(shp->pos, loc, map_size).length();
 
 	if (enemy && enemy->exists())
@@ -1385,7 +1385,7 @@ void Play::order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, Shi
 
 	// just move around in (or return to) the guard area, if the enemy is out of reach
 	// (if the enemy stays in reach, you got a hot pursuit :)
-	if (!enemy || Rt > Rattack)
+	if (!(enemy && enemy->exists()) || Rt > Rattack)
 	{
 		// reset the keys for this ship
 		shp->nextkeys = 0;

@@ -1004,7 +1004,7 @@ void MassShot::calculate()
 int MassShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 	STACKTRACE
-	int i;
+	int i = 0;
 
 	// ok .. if the shot hits a planet, it wont be damaged, but greatly accelerated
 	// this should hardly ever happen, cause shots first try to evade the planet !

@@ -627,7 +627,7 @@ void *action_vars_str::getptr(char vartype, int i)
 
 void action_vars_str::set_id(char vartype, int i, char *id)
 {
-	char *trg;
+	char *trg = NULL;
 
 	switch (vartype)
 	{
@@ -640,6 +640,9 @@ void action_vars_str::set_id(char vartype, int i, char *id)
 	case 'S':
 			trg = strvarid[i];
 			break;
+	default:
+	  ASSERT(0&&"trg is not valid");
+	  break;
 	}
 
 	strncpy(trg, id, var_id_len);

@@ -119,7 +119,7 @@ void ConfederationHornet::calculate()
 {
 	STACKTRACE;
 
-   int shield_color = 9; // Blue
+//   int shield_color = 9; // Blue
 //   int i, bar_x, bar_y, shield_panel;
 
    if (regenrating) {

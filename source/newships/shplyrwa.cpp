@@ -145,14 +145,14 @@ int LyrmristuWarDestroyer::handle_damage(SpaceLocation *source, double normal, d
 			weaponObject->damage_factor = 0;
 			weaponObject->state = 0;
       weaponObject->powerLevel = 0;
-		}
-		if(weaponObject->armour = normal) {
+		}else
+		if(weaponObject->armour == normal) {
 			weaponObject->armour = 0;
 			weaponObject->damage_factor = 0;
 			normal = 0;
 			weaponObject->state = 0;
       weaponObject->powerLevel = 0;
-		}
+		}else
 		if(weaponObject->armour > normal) {
 			weaponObject->armour -= normal;
 			weaponObject->damage_factor = weaponObject->armour;

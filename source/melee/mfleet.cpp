@@ -181,7 +181,7 @@ void init_fleet() {STACKTRACE
         if ( (slot<0) || (slot>=(int)ships.size()))
             return NULL;
 
-        return ships.at(slot);
+        return ships[slot];
     }
 
     void Fleet::save(const char *filename, const char *section) {STACKTRACE

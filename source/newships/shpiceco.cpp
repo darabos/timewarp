@@ -145,8 +145,6 @@ void ConfusionDart::inflict_damage(SpaceObject *other)
 	
     if ( other->isShip() )
 	{
-		Ship *t = (Ship*) other;
-
 		game->add(new Confusionator((Ship*)other, confusionLifeTime));
 	}
 

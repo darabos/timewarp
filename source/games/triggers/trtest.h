@@ -16,7 +16,7 @@ public:
 	action_func *prev, *next;
 
 	action_func();
-	~action_func();
+	virtual ~action_func();
 
 	virtual void insert(action_func *a, action_func *b);
 	virtual void append(action_func *a);
@@ -140,7 +140,7 @@ struct ActionID
 	int N;
 
 	ActionID();
-	~ActionID();
+	virtual ~ActionID();
 
 	action_func *action[maxactions];
 

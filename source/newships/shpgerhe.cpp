@@ -951,7 +951,7 @@ void GerlMorons::calculate()
 int GerlMorons::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 	STACKTRACE
-	int totdamage = normal + direct;
+	  //int totdamage = normal + direct;
 
 	state = 1;	// just in case it's been changed by the planet !
 

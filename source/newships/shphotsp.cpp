@@ -146,7 +146,7 @@ void ShpHotSpot::calculate()
 		weaponhs = 0;
 
 
-	Vector2 U = vel;
+	//Vector2 U = vel;
 	a = angle;
 	double prev_batt = batt;
 	extradrain = 0;

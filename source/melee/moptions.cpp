@@ -203,7 +203,7 @@ void video_menu (Game *game) {STACKTRACE
 
 
         //set index for resolution
-        int x, y, x2, y2, i, bpp, bpp2, fs;
+        int x=-1, y=-1, x2, y2, i, bpp, bpp2, fs;
         x2 = videosystem.width;
         y2 = videosystem.height;
         for (i = 0; resolution[i+1]; i += 1) {
@@ -211,8 +211,10 @@ void video_menu (Game *game) {STACKTRACE
             y = strtol(strchr(resolution[i], 'x') + 1, NULL, 10);
             if ((x == x2) && (y == y2)) break;
         }
+        if(!resolution[0])
+        	tw_error("Resolution error");
+        	
         video_dialog[DIALOG_VIDEO_RESLIST].d1 = i;
-        
         //set index for bpp
         bpp = videosystem.bpp;
         for (i = 0; true; i += 1) {

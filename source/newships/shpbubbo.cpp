@@ -239,7 +239,9 @@ int BubalosBomber::activate_weapon()
 	  case 0: dx = -12; break;
     case 1: dx = -8; break;
     case 2: dx = 8; break;
-    case 3: dx = 12; }
+	case 3: dx = 12;  break;
+	default: tw_error("Unexpected value of weapon_offset"); dx=0;break;
+	}
   
   BMIRV = new BubalosMIRV(dx, 54 * Direction, FireAngle,weaponVelocity,
           weaponDamage,DetonateRange,weaponArmour,

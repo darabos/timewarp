@@ -11,6 +11,7 @@
 class action_func_control : public action_func
 {
 public:
+  virtual ~action_func_control(){};
 	// execution of blocks is handled by this:
 	action_func *current_action;
 
@@ -29,6 +30,7 @@ public:
 class action_startfunction : public action_func_control
 {
 public:
+  virtual ~action_startfunction(){};
 	action_func *main_ptr;
 	double timer, timeforaction;
 
@@ -54,6 +56,7 @@ public:
 class action_subr : public action_func_control
 {
 public:
+  virtual ~action_subr(){};
 	action_func *block_ptr;
 
 	virtual void calculate();
@@ -73,6 +76,7 @@ public:
 class action_if : public action_func_control
 {
 public:
+  virtual ~action_if(){};
 	action_func *true_block_ptr, *false_block_ptr;
 	int *ichoice;
 
@@ -91,6 +95,7 @@ public:
 class action_for : public action_func_control
 {
 public:
+  virtual ~action_for(){};
 	action_func *block_ptr;
 	int *ivar, *istart, *iend;
 
@@ -112,7 +117,7 @@ const int max_action_levels = 16;
 class action_levels : public action_func_control
 {
 public:
-
+  virtual ~action_levels(){};
 	action_func *level_ptr[max_action_levels];
 	
 	int currentlevel;

@@ -518,7 +518,7 @@ void FlMelee::init(Log *_log)
 	playercontrols[0] = 0;
 	playercontrols[1] = 0;
 
-	Ship *takeovership;
+	Ship *takeovership = NULL;
 
 	for ( iplayer = 0; iplayer < 2; ++iplayer )
 	{
@@ -613,8 +613,10 @@ void FlMelee::init(Log *_log)
 	}
 
 	playercontrols[0]->set_target(-1);
-				
-
+	
+	if(	takeovership == NULL )		
+		tw_error("takeovership is used without initialization");
+	
 	oldcontrol = takeovership->control;	// remember :)
 	playercontrols[0]->select_ship(takeovership, "none");
 
