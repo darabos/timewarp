@@ -36,19 +36,18 @@ using namespace Interface;
 #include "../melee/mgame.h"
 
 
-
-// some forward declarations
-class PlayLocalMenu;
-
 class PlayLocalMenu : public OverlayDialog {
 
 private:
-	PanelRaised panel;
+	PanelRaised leftPanel;
 	ListBox gametypeList;
 	Button bQuit;
+	Label label, label2, label3;
+	PanelRaised labelBackground, labelBackground2, labelBackground3;
+	Button bOk;
 	
-	PanelRaised rightSide;
-	Button button, button2;
+	PanelRaised rightPanel;
+	TextArea descriptionText;
 
 public:
 
@@ -69,44 +68,66 @@ public:
 
 
 	virtual void init() {
-	  int x = 5, 
-		  y = 5;
-  
-	  panel.Shape(x, y, 32, 52, true);
-  
-	  x++; y++;
 
-	  gametypeList.Shape(x, y, 30, 30, true);
+	  //left side stuff -- select game type
+      leftPanel.Shape(1, 11, 42, 76, true);
+	  
+	  labelBackground.Shape(1,1,32,8,true);
+	  label.Shape(1,1,32,7,true);
+	  label.SetText("Play Local");
+	  label.SetAlignment(2);//this means centered... MASKING should really enum this 
+	  
+	  labelBackground2.Shape(2,12,28,5,true);
+	  label2.Shape(2,12,27,5,true);
+	  label2.SetText("Select Gametype:");
+	  label2.SetAlignment(2);
+	  
+	  gametypeList.Shape(2, 18, 40, 68, true);
 
+      gametypeList.DeleteAllItems();
 	  for (int i=0; i<num_games; i++) {
 		  gametypeList.InsertItem( new ListItemString(game_names[i]),0 );
 	  }
+	  gametypeList.Sort();
   
-	  bQuit.SetupNormalized(x, y+=30, 30, 10, KEY_Q, D_EXIT, "&Quit");
+	  bQuit.SetupNormalized(0, 90, 15, 10, KEY_B, D_EXIT, "&Back");
+	  bOk.SetupNormalized(85, 90, 15, 10, KEY_S, D_EXIT, "&Start Game");
 
-	  x = 43; y = 10;
 
-	  rightSide.Shape(x, y, 45, 53, true);
-	  x++; y++;
+	  descriptionText.Shape(15,90,70,10, true);
+	  descriptionText.SetText("");
 
-	  button.Shape(x, y+=30, 30, 10, true);
-	  button.SetText("Remove me!");
+	  // right side stuff -- game settings
+	  rightPanel.Shape( 44,11,55,76, true);
+	  
+	  labelBackground3.Shape(45,12,28,5,true);
+	  label3.Shape(46,12,27,5,true);
+	  label3.SetText("Game Settings:");
+	  label3.SetAlignment(2);
 
-	  button2.SetupNormalized(x, y+=30, 30,10, 0, 0, "Add me!");
   
-	  Add(panel);
-	  Add(rightSide);
+	  Add(leftPanel);
+	  Add(rightPanel);
+
+	  Add(labelBackground);
+	  Add(label);
+
+	  Add(labelBackground2);
+	  Add(label2);
+
+	  Add(labelBackground3);
+	  Add(label3);
+
 
 	  Add(gametypeList);
 	  Add(bQuit);
-	  Add(button);
-	  Add(button2);
+	  Add(descriptionText);
+	  Add(bOk);
 	}
 
 	/** handle key presses mouse moves, etc. in this function */
 	virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);
 };
 
-//}//namespace MainMenu
 
 #endif

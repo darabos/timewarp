@@ -26,6 +26,7 @@ GNU General Public License for more details.
 using namespace MAS;
 
 #include "PlayLocalMenu.h"
+#include "MainMenu.h" // remove
 #include "Interface.h"
 using namespace Interface;
 
@@ -35,26 +36,30 @@ void PlayLocalMenu::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 	switch (msg) {
 		case MSG_ACTIVATE: 
 
-			if (obj == gametypeList) {
-				_state = IDLE;
+			if (obj == gametypeList) {				
+				descriptionText.SetText(gametypeList.GetSelectedItem()->GetText());
+
+				switch (gametypeList.Selection()) {
+				default:
+					;
+				}
 			}
 					
 			if (obj == bQuit) {
 			    _state = FOLLOW_PREV;
 			}
 
-			if (obj == button) {
-				GetParent()->HandleEvent(obj, MSG_REMOVEME);
-			}
-
-			if (obj == button2) {
-				Add(button);
-				//GetParent()->HandleEvent(obj, MSG_REMOVEME);
-			}
 			break;
 
 		case MSG_REMOVEME:
 			Remove(obj);
 			break;
+
+/*		case MSG_TICK:
+		case MSG_TIMER:
+			;
+
+		default:
+			int td = 3;*/
 	}
 }

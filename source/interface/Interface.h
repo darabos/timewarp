@@ -69,8 +69,6 @@ public:
 	/** the bitmap that you can write onto.  */
 	BITMAP * _buffer;
 
-	
-
 	OverlayDialog(BITMAP * buffer, MenuDialogs prev, MenuDialogs next = (MenuDialogs)NULL) :
 	  Dialog(),
 	  _buffer(buffer),
@@ -94,9 +92,14 @@ public:
 	virtual void MsgEnd() { Dialog::MsgEnd(); }
 	virtual void Close() { Dialog::Close(); }
 	virtual void MsgIdle() { Dialog::MsgIdle(); }
+	virtual void HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
+		Dialog::HandleEvent(obj, msg, arg1, arg2); 
+	}
 
 	virtual OverlayDialogState getState() { return _state; }
 	virtual OverlayDialogState setState(OverlayDialogState state) { return _state; }
+
+	
 
 	/** if the user is done interacting with this thing and wants to go back, what kind of thing should
 		it return to? */
@@ -107,10 +110,6 @@ public:
 	virtual MenuDialogs getPrev() { return _prev; }
 
 protected:
-	/** the dialog's state, ie, what is it currently doing now.  This can be used to determine
-		what the user selected when a dialog is closing.  */
-	//bool _isDone; 
-
 	/** what's the used doing?  Interacting with this dialog, following a link forward, 
 		or following a link backwards? */
 	OverlayDialogState _state;
@@ -161,13 +160,7 @@ namespace Interface {
 		}
 	};
 
-	class SelfRemovingButton : public Button {
-
-	};
 };
-
-
-
 
 
 #endif

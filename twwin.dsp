@@ -1643,6 +1643,14 @@ SOURCE=.\source\interface\PlayOnlineMenu.cpp
 
 SOURCE=.\source\interface\PlayOnlineMenu.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\SettingsPage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\SettingsPage.h
+# End Source File
 # End Group
 # Begin Source File
 
