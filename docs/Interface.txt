@@ -2,7 +2,7 @@ This doc describes a potential menu interface for TW.
 Revision history:
 2003.10.14 youbastrd started
 2003.10.29 youbastrd continuing after a hiatus
-2003.11.03 youbastrd testing wacky new commit mailing list...testing again, linefeeds were a problem...?
+2003.11.03 youbastrd testing wacky new commit mailing list... should work now
 
 *************************************************************************
 Goals - What do users want to do inside this game? **********************
