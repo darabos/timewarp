@@ -44,7 +44,7 @@ void SettingsPage::init(char * subtitle)
   rightPanel.Shape( 44,11,55,76, true);
 
   labelBackground3.Shape(45,12,53,5,true);
-  label3.Shape(46,12,51,5,true);  
+  label3.Shape(46,12,51,5,true);
   label3.SetText(title);
 
 }
@@ -53,11 +53,11 @@ void SettingsPage::init(char * subtitle)
 void SettingsPage::populate(Dialog * dialog) {
   dialog->Add(rightPanel);
   dialog->Add(labelBackground3);
-  dialog->Add(label3);	/**/
+  dialog->Add(label3);
 }
 
 void SettingsPage::unpopulate(Dialog * dialog) {
   dialog->Remove(rightPanel);
   dialog->Remove(labelBackground3);
-  dialog->Remove(label3);	/**/
+  dialog->Remove(label3);
 }

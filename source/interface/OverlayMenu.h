@@ -27,6 +27,7 @@ $Id$
 #define OVERLAY_MENU_HEADER 1
 
 #include "Interface.h"
+#include "GameSessionConfiguration.h"
 
 class OverlayDialog;
 class MyUpdateDriver;
@@ -59,12 +60,15 @@ public:
 	/** Constructor.  
 	    Note that each subclass must call its own init() in its constructor.
 	  */
-	OverlayDialog(BITMAP * buffer, MenuDialogs prev, MenuDialogs next = (MenuDialogs)NULL) :
+	OverlayDialog(GameSessionConfiguration ** configuration, 
+		          BITMAP * buffer,
+				  MenuDialogs prev, MenuDialogs next = (MenuDialogs)NULL) :
 	  Dialog(),
 	  _buffer(buffer),
 	  _state(IDLE),
 	  _prev(prev),
-	  _next(next)
+	  _next(next),
+	  _configuration(configuration)
 	{
 		init();
 	}
@@ -99,6 +103,9 @@ public:
 		it return to? */
 	virtual MenuDialogs getPrev() { return _prev; }
 
+	/** @return WARNING: may return NULL */
+	//virtual GameSessionConfiguration ** getGameConfiguration() { return _configuration; }
+
 protected:
 	/** what's the used doing?  Interacting with this dialog, following a link forward, 
 		or following a link backwards? */
@@ -112,7 +119,11 @@ protected:
 		it return to? */
 	MenuDialogs _next;
 
+	/** */
 	virtual void SelectDriver();
+
+	/** this will be set to a GameSessionConfiguration if the menu wishes that a game be created. */
+	GameSessionConfiguration ** _configuration;
 };
 
 

@@ -30,6 +30,7 @@ $Id$
 #include "MASkinG.h"
 using namespace MAS;
 
+#include "GameSessionConfiguration.h"
 #include "OverlayMenu.h"
 #include "Interface.h"
 using namespace Interface;
@@ -55,23 +56,25 @@ private:
 
 public:
 
-	PlayLocalMenu(BITMAP *buffer, MenuDialogs prev) : 
-	  OverlayDialog(buffer, prev),
+	PlayLocalMenu(GameSessionConfiguration**config, BITMAP *buffer, MenuDialogs prev) : 
+	  OverlayDialog(config, buffer, prev),
 	  currentPage(NULL)
 	{
        init();
 	}
 
     virtual ~PlayLocalMenu() {
-		while (gametypeList.Size() > 0) {
+		/*while (gametypeList.Size() > 0) {
 			if (gametypeList.GetItem(0) != NULL)
 				delete gametypeList.GetItem(0);
 			gametypeList.DeleteItem(0);
-		}
+		}*/
 		gametypeList.DeleteAllItems();
 
+		currentPage->unpopulate(this);
 		while (pages.size() >0) {
 			delete pages.back();
+			pages.pop_back();
 		}
 		pages.clear();
 	}

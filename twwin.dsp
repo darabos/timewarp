@@ -1597,6 +1597,14 @@ SOURCE=.\source\alfont\alfont.c
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\source\interface\GameSessionConfiguration.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\GameSessionConfiguration.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\interface\HostGameMenu.cpp
 # End Source File
 # Begin Source File

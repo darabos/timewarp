@@ -31,7 +31,9 @@ using namespace Interface;
 #include "PlayLocalMenu.h"
 #include "PlayOnlineMenu.h"
 #include "OverlayMenu.h"
+#include "GameSessionConfiguration.h"
 
+#include "../scp.h"
 
 
 // the timer system variable and callback
@@ -43,7 +45,6 @@ static void timer_f() {
 
 // tha Engine
 void doMyEngine() {
-	int i;
 	
 	// make the backbuffer for doublebuffering
 	BITMAP * buffer = create_bitmap(SCREEN_W, SCREEN_H);
@@ -51,13 +52,16 @@ void doMyEngine() {
 	// make some stars;
 	Star stars[NSTARS];
 	
-	
+	// this configures a game session.
+	GameSessionConfiguration * config = NULL;
+
 	// make a new dialog and initialize it
-	MyMainMenu * mainMenu = new MyMainMenu(buffer, QUIT);
-	PlayLocalMenu * playLocalMenu = new PlayLocalMenu(buffer, MAIN_MENU);
-	PlayOnlineMenu * playOnlineMenu = new PlayOnlineMenu(buffer, MAIN_MENU);
+	MyMainMenu * mainMenu = new MyMainMenu(&config, buffer, QUIT);
+	PlayLocalMenu * playLocalMenu = new PlayLocalMenu(&config, buffer, MAIN_MENU);
+	PlayOnlineMenu * playOnlineMenu = new PlayOnlineMenu(&config, buffer, MAIN_MENU);
 
 	OverlayDialog * currentMenu = mainMenu;
+
 
 	// setup the timer system
 	LOCK_VARIABLE(timer);
@@ -68,11 +72,12 @@ void doMyEngine() {
 	
 	timer = 0;
 	bool done = false;
+	MenuDialogs menuToSwitchTo = QUIT;
 
 	while (! done) {
 		while (timer) {
 			// do the engine logic
-			for (i=0; i<NSTARS; i++) {
+			for (int i=0; i<NSTARS; i++) {
 				stars[i].Update();
 			}
 			
@@ -81,7 +86,7 @@ void doMyEngine() {
 		
 		// draw the engine
 		clear(buffer);
-		for (i=0; i<NSTARS; i++) {
+		for (int i=0; i<NSTARS; i++) {
 			stars[i].Draw(buffer);
 		}
 		
@@ -93,7 +98,7 @@ void doMyEngine() {
 
 		if (currentMenu->getState() != IDLE) {
 
-			MenuDialogs menuToSwitchTo = QUIT;
+			menuToSwitchTo = QUIT;
 
 			if (currentMenu->getState() == FOLLOW_NEXT)
 				menuToSwitchTo = currentMenu->getNext();
@@ -101,7 +106,7 @@ void doMyEngine() {
 			if (currentMenu->getState() == FOLLOW_PREV)
 				menuToSwitchTo = currentMenu->getPrev();
 
-            currentMenu->MsgEnd();
+			currentMenu->MsgEnd();
 
 			switch (menuToSwitchTo) {
 
@@ -118,12 +123,13 @@ void doMyEngine() {
 				break;
 
 			case HOST_GAME:
-			    break;
+				break;
 
 			case OPTIONS:
 				break;
 
 			case QUIT:
+			case START_GAME:
 				done = true;
 				break;
 
@@ -131,18 +137,32 @@ void doMyEngine() {
 				;
 			};
 
-			if (menuToSwitchTo != QUIT)
+			if ( !done )
 				currentMenu->MsgStart();
 		}
 	}
 	
 	// deinitialize the dialog and delete it
 	currentMenu->MsgEnd();
-	
-	delete mainMenu;
-	
+
 	// destory the backbuffer
 	destroy_bitmap(buffer);
+
+    /** clear out the menus from memory, they aren't needed while playing the game. */
+	delete mainMenu;
+	delete playLocalMenu;
+	delete playOnlineMenu;
+	
+	if (menuToSwitchTo == START_GAME) {
+		
+		// start a game with the requested configuration.
+		if (config != NULL) {
+
+	       play_single(config->getGameType());
+
+		}
+	}
+	
 }
 
 

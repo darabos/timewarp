@@ -71,7 +71,6 @@ REGISTER_FILE
 #include "games/ggob.h"
 #include "util/net_tcp.h"
 #include "util/aastr.h"
-#include "melee/mship.h" //remove
 #include "melee/mfleet.h"
 
 #include "util/sounds.h"

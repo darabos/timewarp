@@ -26,8 +26,6 @@ $Id$
 #ifndef INTERFACE_HEADER
 #define INTERFACE_HEADER 1
 
-
-//#include "MainMenu.h"
 #include "MASkinG.h"
 using namespace MAS;
 
@@ -36,8 +34,22 @@ using namespace std;
 
 namespace Interface {
 	enum { NSTARS=200 };
-	enum MenuDialogs { QUIT=0, MAIN_MENU, PLAY_LOCAL, PLAY_ONLINE, HOST_GAME, OPTIONS };
-	enum OverlayDialogState { IDLE=0, FOLLOW_NEXT, FOLLOW_PREV }; 
+	enum MenuDialogs { QUIT=0, MAIN_MENU, PLAY_LOCAL, PLAY_ONLINE, HOST_GAME, OPTIONS, START_GAME };
+
+	enum OverlayDialogState { 
+		/** remain in the current state, keep the dialog up, keep processing events*/
+		IDLE=0, 
+
+		/** hide this dialog, stop events, follow the "next" link to decide which dialog to bring up next*/
+		FOLLOW_NEXT,
+
+		/** hide this dialog, stop events, follow the "prev" link to decide which dialog to bring up next*/
+		FOLLOW_PREV//,
+
+		/** close this dialog, stop processing events, start the game defined in the dialog's
+		    configuration. */
+		//PLAY_GAME 
+	}; 
 };
 using namespace Interface;
 

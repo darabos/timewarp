@@ -44,9 +44,10 @@ void PlayLocalMenu::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 					
 			if (obj == bStart) {
 				// start the game
-				_state = FOLLOW_PREV;
-				_next = QUIT;
-				play_single("Melee");
+				_state = FOLLOW_NEXT;
+				_next = START_GAME;
+
+				*_configuration = new MeleeSessionConfiguration(gametypeList.GetSelectedItem()->GetText());
 			}
 			
 			if (obj == bQuit) {
@@ -82,11 +83,13 @@ void PlayLocalMenu::init() {
 	gametypeList.Shape(2, 18, 40, 68, true);
 	
 	gametypeList.DeleteAllItems();
+
+	// *** game_names ***.Sort(); // TODO can't sort until the game_names list can be sorted
 	for (int i=0; i<num_games; i++) {
 		gametypeList.InsertItem( new ListItemString(game_names[i]),0 );
         pages.insert( pages.begin(), new SettingsPage(game_names[i]) );
 	}
-	//gametypeList.Sort();
+	
 	setSettingsPage(0);
 
 	

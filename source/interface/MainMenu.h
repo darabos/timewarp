@@ -28,6 +28,7 @@ $Id$
 #include "MASkinG.h"
 using namespace MAS;
 
+#include "GameSessionConfiguration.h"
 #include "OverlayMenu.h"
 #include "Interface.h"
 using namespace Interface;
@@ -46,8 +47,8 @@ private:
 	Button bPlayLocal, bPlayOnline, bHostGame, bOptions, bQuit;
 	
 public:
-	MyMainMenu(BITMAP *buffer, MenuDialogs prev) : 
-	  OverlayDialog(buffer, prev)
+	MyMainMenu(GameSessionConfiguration**config, BITMAP *buffer, MenuDialogs prev) : 
+	  OverlayDialog(config, buffer, prev)
 	  {
 		  init();
 	  }
