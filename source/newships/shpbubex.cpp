@@ -11,8 +11,8 @@ class BubalosExecutioner : public Ship {
   int          weaponDamage;
   int          weaponArmour;
   int          weaponOffset;
-  double       weaponDriftVelocity;
-  int          shield;
+//  double       weaponDriftVelocity;
+//  int          shield;
 
   double       specialRange;
   double       specialVelocity;
@@ -34,7 +34,7 @@ class BubalosExecutioner : public Ship {
 class BubalosMissile : public Missile {
   public:
   BubalosMissile(double ox, double oy, double oangle, double ov, int odamage,
-      double weaponDriftVelocity, double orange, int oarmour, Ship *oship,
+      /*double weaponDriftVelocity, */double orange, int oarmour, Ship *oship,
       SpaceSprite *osprite);
   virtual void inflict_damage (SpaceObject *other);
   double kick;
@@ -47,8 +47,8 @@ BubalosExecutioner::BubalosExecutioner(Vector2 opos, double shipAngle, ShipData 
   weaponVelocity        = scale_velocity(get_config_int("Weapon", "Velocity", 0));
   weaponDamage          = get_config_int("Weapon", "Damage", 0);
   weaponArmour          = get_config_int("Weapon", "Armour", 0);
-  weaponDriftVelocity   = scale_velocity(get_config_int("Weapon", "DriftVelocity", 0));
-  shield                = get_config_int("Extra", "AbsorberShield", 0);
+//  weaponDriftVelocity   = scale_velocity(get_config_int("Weapon", "DriftVelocity", 0));
+//  shield                = get_config_int("Extra", "AbsorberShield", 0);
 
   reverse_frame         = 0;
   weaponOffset = 0;
@@ -60,7 +60,7 @@ BubalosExecutioner::BubalosExecutioner(Vector2 opos, double shipAngle, ShipData 
 }
 
 void BubalosExecutioner::calculate() {
-	STACKTRACE
+	STACKTRACE;
   Ship::calculate();
 
   if (reverse_frame > 0) {
@@ -80,10 +80,10 @@ void BubalosExecutioner::calculate() {
 
 int BubalosExecutioner::activate_weapon()
 {
-	STACKTRACE
+	STACKTRACE;
   add(new BubalosMissile(10.5*(weaponOffset-1), 44, angle,
                     weaponVelocity, weaponDamage,
-                    weaponDriftVelocity,weaponRange, weaponArmour,
+                    /*weaponDriftVelocity,*/weaponRange, weaponArmour,
                     this, data->spriteWeapon));
   weaponOffset = (weaponOffset + 1) % 3;
   return(TRUE);
@@ -91,7 +91,7 @@ int BubalosExecutioner::activate_weapon()
 
 int BubalosExecutioner::activate_special()
 {
-	STACKTRACE
+	STACKTRACE;
 		
 	//double shpAngle;
 
@@ -107,28 +107,31 @@ int BubalosExecutioner::handle_damage(SpaceLocation *source, double normal, doub
 	
    if (normal > 0) {
 
-	   // removed the armor
+	   // remove the armor damage reduction
 //      normal -= shield;
 //      if (normal  <= 0)
 //         normal = 1;
 
-      batt += normal;
+	   // remove the batt for damage quirk
+//      batt += normal;
       if (batt > batt_max) batt = batt_max;
    }
    return Ship::handle_damage(source, normal, direct);
 }
 
 BubalosMissile::BubalosMissile(double ox, double oy, double oangle, double ov,
-    int odamage, double weaponDriftVelocity, double orange, int oarmour,
+    int odamage, /*double weaponDriftVelocity,*/ double orange, int oarmour,
     Ship *oship, SpaceSprite *osprite) :
-    Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, osprite),
-    kick(weaponDriftVelocity)
+    Missile(oship, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oship, osprite)/*,
+    kick(weaponDriftVelocity)*/
 {}
 
 void BubalosMissile::inflict_damage (SpaceObject *other) {
-	STACKTRACE
-	if (other->mass) 
-		other->accelerate (this, angle, kick / other->mass, MAX_SPEED);
+	STACKTRACE;
+
+	// remove the weapon-bounce quirk.
+	//if (other->mass) 
+	//	other->accelerate (this, angle, kick / other->mass, MAX_SPEED);
 	Missile::inflict_damage(other);
 	}
 
