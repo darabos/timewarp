@@ -231,8 +231,8 @@ int DjinniLancer::activate_special() {
 
 RGB DjinniLancer::crewPanelColor(int k)
 {
-	RGB c1 = {64,64,64};
-	RGB c2 = {255,164,164};
+	RGB c1 = {32,164,32};
+	RGB c2 = {64,64,255};
 
 	if (k < crew_real)	// it starts counting captain as 0
 		return c1;
