@@ -66,7 +66,8 @@ double intercept_angle2(Vector2 pos, Vector2 vel, double v, Vector2 tpos, Vector
 	}
 
 double normalize(double value, double max)
-{STACKTRACE
+{
+	STACKTRACE;
 	//if (isnan(value) || isnan(max)) tw_error("normalize - not finite");
 
 /*

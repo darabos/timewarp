@@ -162,6 +162,8 @@ int KatPoly::activate_special()
 		morph->state = 0;                         // kill last morph
 		morph->crew = 0;
 
+		game->remove(morph);
+
 	} else {                                      // if we have never yet morphed
 
 		morph_target = ((Ship*)target)->get_shiptype();      // we will morph to it

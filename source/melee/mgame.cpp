@@ -446,7 +446,7 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 
 void game_create_errorlog()
 {
-	STACKTRACE
+	STACKTRACE;
 	FILE *f;
 
 	f = fopen("error.log", "a");
@@ -459,7 +459,8 @@ void game_create_errorlog()
 	tm *td;
 	t = ::time(0);
 	td = ::localtime(&t);
-	fprintf(f, "local time = %i-%02i-%02i %02i:%02i\n\n", td->tm_mday, td->tm_mon, 1900+td->tm_year,
+	// month: 0=januari
+	fprintf(f, "local time = %i-%02i-%02i %02i:%02i\n\n", td->tm_mday, td->tm_mon+1, 1900+td->tm_year,
 		td->tm_hour, td->tm_min);
 
 	fprintf(f, "name, pos(x,y), vel(x,y), obj-pointer(this), ship-pointer(ship), target pointer(target)\n\n");

@@ -117,7 +117,7 @@ void WedgeIndicator::calculate() {
 
 Orbiter::Orbiter ( SpaceSprite *pic, SpaceLocation *orbit_me, double distance) : 
 		SpaceObject(NULL, orbit_me->normal_pos(), random(PI2), pic) 
-	{STACKTRACE
+	{
 	layer = LAYER_CBODIES;
 	mass = 99;
 	center = orbit_me;
