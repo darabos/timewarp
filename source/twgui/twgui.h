@@ -207,6 +207,7 @@ public:
 	void set_textcolor(int c);
 
 	void text_reset();
+	void text_reset(char *newtext);
 };
 
 

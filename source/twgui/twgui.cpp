@@ -478,6 +478,9 @@ void TextInfo::reset(scrollpos_str *scroll)
 	linestart[0] = 0;
 	if (textinfo[0] == 0)	// empty text
 	{
+		Nlines = 1;	// even empty text has 1 line to hold the cursor.
+		linestart[1] = 0;
+
 		scroll->y = 0;
 		scroll->yselect = 0;
 		scroll->set(0, scroll->y, 1, Nlines, 1, Nshow);
@@ -589,6 +592,11 @@ int TextInfo::getcharpos(int x, int y)
 	iline = y / Htxt;
 	if (iline > Nlines-1)
 		iline = Nlines-1;
+
+	if (iline < 0)
+	{
+		tw_error("getcharpos : Nlines < 0 should not happen");
+	}
 
 	// the last line should be handled with care ... (you don't know it's length, only that it stops)
 	if (iline == Nlines-1)
@@ -739,6 +747,13 @@ void TextEditBox::handle_lpress()
 }
 
 
+void TextEditBox::text_reset(char *newtext)
+{
+	textinfo->textinfo = newtext;
+	text = newtext;
+	text_reset();
+}
+
 void TextEditBox::text_reset()
 {
 
@@ -771,14 +786,23 @@ void TextEditBox::calculate()
 	int ys;
 	ys = scroll.yselect;
 
+	// perhaps this could happen if someone changes the text pointer.
+	if (ys < 0)
+		ys = 0;
+	if (ys > textinfo->Nlines-1)
+		ys = textinfo->Nlines-1;
+
 	scroll.calculate();
 
 	// if scrolled, then update the position in the text
+	if (scroll.yselect > textinfo->Nlines-1)
+		scroll.yselect = textinfo->Nlines-1;
+
+	if (scroll.yselect < 0)
+		scroll.yselect = 0;
+
 	if (scroll.yselect != ys)
 	{
-		if (scroll.yselect > textinfo->Nlines-1)
-			scroll.yselect = textinfo->Nlines-1;
-
 		// update the charpos ...
 		textinfo->changeline(&charpos, ys, scroll.yselect);
 	}
@@ -2415,8 +2439,14 @@ void AreaTablet::changebackgr(char *fname)
 	// nah, it's only overwritten !!
 
 	//blit(bmp, backgr, 0, 0, 0, 0, bmp->w, bmp->h);
-	destroy_bitmap(backgr);
-	backgr = areareserve->bmp(fname);
+	BITMAP *newb;
+	newb = areareserve->bmp(fname);
+
+	if (newb)
+	{
+		destroy_bitmap(backgr);
+		backgr = newb;
+	}
 }
 
 
