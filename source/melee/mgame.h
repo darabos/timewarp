@@ -69,7 +69,7 @@ class Game : public Physics {
 	void log_int  (int channel, int &data);              //helper for using the logging system
 	void log_int  (int channel, unsigned int &data) {log_int (channel,*(int*)&data);}
 	void log_data (int channel, void *data, int length); //helper for using the logging system
-	void log_file (const char *fname);
+	virtual void log_file (const char *fname);
 	void log_fleet(int channel, class Fleet *fleet);
 	int is_local ( int channel ) ;
 

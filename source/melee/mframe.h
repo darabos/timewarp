@@ -127,7 +127,11 @@ class Physics : public BaseClass {
 
 	// moved ROB - from mgame to here.
 	bool friendly_fire;
-	double shot_relativity;};
+	double shot_relativity;
+
+	// to init parameters of space-objects...
+	virtual void log_file (const char *fname);
+};
 
 
 class Presence : public BaseClass { 
@@ -169,6 +173,7 @@ class Presence : public BaseClass {
 	bool isSynched() const;
 
 	//inline int get_serial() const {return _serial;}
+
 };
 
 class SpaceLocation : public Presence { // base class for all items in game

@@ -129,7 +129,7 @@ public:
 	bool ti;
 	Histograph *tic_history;
 	Histograph *render_history;
-	void GameBare::show_ticinfo(Frame *f, Histograph *tic_history, Histograph *render_history, double hist_power);
+	void show_ticinfo(Frame *f, Histograph *tic_history, Histograph *render_history, double hist_power);
 
 };
 

@@ -77,8 +77,8 @@ void ProjectX::init()
 
 //	add( new GameStarmap() );
 //	add( new GameSolarview() );
-	add( new GamePlanetview() );
-//	add( new GamePlanetscan() );
+//	add( new GamePlanetview() );
+	add( new GamePlanetscan() );
 //	add( new GameMelee() );
 //	add( new GameDialogue() );		// the editor
 //	add( new GameAliendialog() );	// the alien interface

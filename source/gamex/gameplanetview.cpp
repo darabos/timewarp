@@ -29,6 +29,9 @@ REGISTER_FILE
 #include "../twgui/twpopup.h"
 
 
+static const int ID_MAP_PLANET = 0x0b8f934ae;
+
+
 
 
 void GamePlanetview::init_menu()
@@ -122,7 +125,8 @@ void GamePlanetview::init()
 	
 	planetmap->o = solarbody;
 	add(solarbody);
-	solarbody->id = 0;	// so that it's not editable by the mapeditor
+	
+	solarbody->id = ID_MAP_PLANET;	// so that it's not editable by the mapeditor
 
 	// load moon sprites
 	int i;
@@ -338,6 +342,23 @@ void GamePlanetview::checknewgame()
 				gamerequest = g;
 			}
 
+		} else if (player->collisionwith->id == MAPOBJ_ID ||
+					player->collisionwith->id == ID_MAP_PLANET)
+		{
+			player->vel = 0;
+			
+			if (player->collisionwith->id == MAPOBJ_ID)
+				playerinfo.imoon = ((SolarBody*) player->collisionwith)->starnum;
+			else
+				playerinfo.imoon = -1;	// it's not a moon, but the planet then.
+
+			if (!gamerequest && !next)
+			{
+				GamePlanetscan *g;
+				g = new GamePlanetscan();
+
+				gamerequest = g;
+			}
 		}
 	}
 

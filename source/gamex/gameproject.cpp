@@ -702,7 +702,6 @@ void GameBare::show_ticinfo(Frame *f, Histograph *tic_history, Histograph *rende
 
 
 
-
 Frame2::Frame2(int max_items)
 :
 Frame(max_items)

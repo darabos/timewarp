@@ -35,10 +35,8 @@ public:
 	int		iplanet;
 
 	// <0 means you're in planetsys view
-	int		iplanetcode;
+	int		imoon;
 
-	// >= 0 mean you're in explore view.
-	// each planet should have a unique code.
 
 	void init(char *filename);
 	void write();

@@ -28,7 +28,7 @@ void PlayerInfo::init(char *filename)
 
 	istar = get_config_int(0, "Star", -1);
 	iplanet = get_config_int(0, "Planet", -1);
-	iplanetcode = get_config_int(0, "PlanetCode", -1);	// of planets and moons
+	imoon = get_config_int(0, "Moon", -1);	// of planets and moons
 }
 
 
@@ -41,7 +41,8 @@ void PlayerInfo::write()
 
 	set_config_int(0, "Star", istar);
 	set_config_int(0, "Planet", iplanet);
-	set_config_int(0, "PlanetCode", iplanetcode);
+	set_config_int(0, "Moon", imoon);
+	//set_config_int(0, "PlanetCode", iplanetcode);
 }
 
 

@@ -1372,3 +1372,12 @@ void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int f
 	play_sound(sample, source, vol, freq);
 	return;
 }
+
+
+void Physics::log_file (const char *fname)
+{
+	set_config_file(fname);
+};
+
+
+

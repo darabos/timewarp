@@ -7,12 +7,16 @@
 #include "gamegeneral.h"
 
 
+#include "../other/planet3d.h"
 
 
 class GamePlanetscan : public GameBare
 {
+	Area *surf_area;
+//	SpaceObject *solarbody;
 
-	WindowInfo wininfo;
+	Planet3D *rotatingplanet;
+
 
 	class ThePlaya : public LocalPlayerInfo
 	{
@@ -23,6 +27,7 @@ class GamePlanetscan : public GameBare
 	ThePlaya *player;
 
 	virtual void init();
+	virtual void init_menu();
 	virtual void quit();
 	//virtual bool handle_key(int k);
 
@@ -30,7 +35,8 @@ class GamePlanetscan : public GameBare
 	virtual void animate(Frame *frame);
 
 	BITMAP *map_bmp;
-	SpaceSprite *playerspr, *planetspr;
+	SpaceSprite *playerspr;		//*planetspr;
+
 };
 
 

@@ -226,7 +226,7 @@ void GameSolarview::init()
 		int k;
 		k = solarmap->sub[i]->type;
 
-		solarbody = new SolarBody(0, solarmap->sub[i]->position, 0.0, planetspr[k], sunpos, k,
+		solarbody = new SolarBody(0, solarmap->sub[i]->position, 0.0, planetspr[k], sunpos, i,
 									sunpos+Poffs, R, b, col	// ellips information
 									);
 		solarmap->sub[i]->o = solarbody;

@@ -11,7 +11,6 @@ PlanetUsespec = 1         ; 1 = uses spec and shading, 0 = uses only shading.
 
 #include "../ship.h"
 REGISTER_FILE
-#include "../melee/mcbodies.h"
 #include "../melee/mview.h"
 
 #include "../util/pmask.h"
@@ -19,6 +18,8 @@ REGISTER_FILE
 
 #include <stdio.h>
 #include <string.h>
+
+#include "planet3d.h"
 
 
 SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
@@ -58,55 +59,6 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 
 
 
-
-class Planet3D : public Planet {
-	
-	BITMAP *image32bit;
-	SpaceSprite *map;		// color map
-	SpaceSprite *dummy;		// the "target" sprite where the 2d planet image is stored
-	
-	int image_size, visual_size;
-
-	int PlanetUsespec;
-	
-	double theta, fi, rad;
-	double spin;//degrees per second
-	
-	int draw_reserve;
-	
-	//	bool AA;
-	
-	int mapW, mapH;
-	
-	//	unsigned char color_map[1000][500][4];
-	//	double spec_map[1000][500];
-	
-	struct base_map_type {double lat, lon, diff, spec;} *base_map;
-	
-	unsigned int	*base_map_linear;		// mapping of coordinates
-	unsigned int	*base_shade_linear, *base_spec_linear;		// shades ?
-	unsigned char	*color_map_linear, *spec_map_linear;
-	
-	unsigned int	*base_map_and_shade_resorted;
-	// linear means in this case, a linear array
-	
-	int jmin[1000], jmax[1000];
-	
-	public:
-		
-		Planet3D(Vector2 opos, SpaceSprite *color_map, SpaceSprite *spec_map,
-			SpaceSprite *ObjectSprite,
-			int planet_radius, int aPlanetUsespec,
-			double turn_rate, double tilt, 
-			double sun_vertangle,	// positive is pointing down
-			double sun_horizangle,	// oriented along x
-			double sunr, double sung, double sunb);
-		
-		virtual void calculate();
-		virtual void animate(Frame * space);
-		
-		~Planet3D();
-};
 
 
 /*
@@ -308,7 +260,8 @@ Planet3D::Planet3D( Vector2 opos, SpaceSprite *color_map, SpaceSprite *spec_map,
 						double turn_rate, double tilt, 
 						double sun_vertangle,	// positive is pointing down
 						double sun_horizangle,	// oriented along x
-						double sun_r, double sun_g, double sun_b)
+						double sun_r, double sun_g, double sun_b,
+						bool invcolor)
 :
 Planet( opos, ObjectSprite, 0 )
 {
@@ -348,16 +301,30 @@ Planet( opos, ObjectSprite, 0 )
 		{
 			ccc=getpixel(map->get_bitmap(0), i, j);
 
-			int spec = getpixel(spec_map->get_bitmap(0), i, j);
+			int spec;
+			if (spec_map)
+				spec = getpixel(spec_map->get_bitmap(0), i, j);
+			else
+				spec = makecol(200,200,200);
 
 			unsigned char r, g, b;
 			unsigned char sr, sg, sb;
 
+			// AT THIS MOMENT, it's a good moment to find out in which way the
+			// videocard interprets the colors ... as rgb, or as bgr ??!!
+
 			// map coordinate
 			int k = (2*mapW*mapH) - (j+1)*(2*mapW) + i;
-			r = getr32(ccc);
-			g = getg32(ccc);
-			b = getb32(ccc);
+			if (!invcolor)
+			{
+				r = getr32(ccc);
+				g = getg32(ccc);
+				b = getb32(ccc);
+			} else {
+				b = getr32(ccc);
+				g = getg32(ccc);
+				r = getb32(ccc);
+			}
 
 			// filter the colors by the reference sun
 			r = (unsigned char)(sun_r * r);
@@ -393,7 +360,8 @@ Planet( opos, ObjectSprite, 0 )
 		}
 
 	delete map;
-	delete spec_map;
+	if (spec_map)
+		delete spec_map;
 	map = 0;
 	spec_map = 0;
 	color_map = 0;
@@ -732,9 +700,9 @@ void Planet3D::calculate()
 
 }
 
-void Planet3D::animate( Frame* space )
+void Planet3D::animate_pre()
 {
-	STACKTRACE
+	STACKTRACE;
 
 
 //	if (!space_view->in_view(pos, size)) return;
@@ -1150,7 +1118,14 @@ ignore3:
 
 	// blit can convert color depths (I think?)
 	blit(image32bit, tmp, 0, 0, 0, 0, image_size, image_size);
+}
 	
+
+void Planet3D::animate( Frame* space )
+{
+	STACKTRACE;
+
+	animate_pre();
 
 	dummy->animate(pos, 0, space);
 }
