@@ -11,7 +11,7 @@ int unmapkey2(int k);
 
 BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif);
 
-BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale);
+BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem);
 
 
 

@@ -32,11 +32,11 @@ public:
 class AreaTablet : public GraphicButton
 {
 protected:
-	BITMAP *backgr, *drawarea;
 
 public:
+	BITMAP *backgr, *drawarea;
 
-	AreaTablet(TWindow *menu, char *identbranch, int asciicode, bool akeepkey = 0);
+	AreaTablet(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
 	virtual ~AreaTablet();
 
 	void changebackgr(char *fname);

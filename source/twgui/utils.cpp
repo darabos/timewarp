@@ -77,7 +77,7 @@ BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif)
 }
 
 
-BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale)
+BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem)
 {
 	BITMAP *dest, *convert;
 
@@ -100,6 +100,22 @@ BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale)
 		blit(convert, dest, 0, 0, 0, 0, W, H);
 
 	destroy_bitmap(convert);
+
+
+	
+	// try to store this in memory, if there's enough room for it
+	// cause the menu-bitmaps are pretty large, and take lotsa time to draw ...
+	if (vidmem)
+	{
+		convert = create_video_bitmap(W, H);
+		if (convert)
+		{
+			blit(dest, convert, 0, 0, 0, 0, W, H);
+//			destroy_bitmap(dest);
+			dest = convert;
+		}
+	}
+	
 
 	return dest;
 }

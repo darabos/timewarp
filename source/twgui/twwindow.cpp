@@ -21,7 +21,7 @@ REGISTER_FILE
 // note, it's scaled to maximum W,H=1.0, 1.0 being the screen width
 // default_W is the screen width for which all buttons in the menu are developed, and
 // this is used to scale them to other screen resolutions.
-TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen)
+TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vidwin)
 {
 	prev = 0;
 	next = 0;
@@ -76,7 +76,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen)
 	hidden = false;
 
 	// this is the background, in scaled form
-	backgr = bmp(backgrname);
+	backgr = bmp(backgrname, vidwin);
 
 	// for "automatic placement" purposes, which can be used if the "default buttons"
 	// are an exact copy of the "background" image (you can design a menu and the buttons
@@ -114,7 +114,19 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen)
 	//blit(screen, originalscreen, x, y, 0, 0, W, H);
 
 	// used for drawing
-	drawarea = create_bitmap_ex(bitmap_color_depth(screen), W, H);
+
+	if (vidwin)
+		drawarea = create_video_bitmap(W, H);
+
+	if (!(vidwin && drawarea))
+		drawarea = create_bitmap_ex(bitmap_color_depth(screen), W, H);
+
+
+	if (is_same_bitmap(backgr, drawarea) || !backgr || !drawarea || !screen)
+	{
+		tw_error("oh my!");
+	}
+
 	//Nareas = 0;
 
 
@@ -203,7 +215,7 @@ void TWindow::tree_calculate()
 	Tmouse.update();
 
 	// if this window is "exclusive", other windows cannot be accessed while this one has focus
-	if (current->exclusive)
+	if (current->exclusive && !current->disabled)
 	{
 		current->calculate();
 		return;
@@ -321,7 +333,7 @@ bool TWindow::hasfocus()
 // a menu superstructure ... to manage a bunch of related areas ... in a reserved area/ region
 
 
-BITMAP* TWindow::bmp(char *bmpname)
+BITMAP* TWindow::bmp(char *bmpname, bool vidmem)
 {
 	BITMAP *bmp, *tmpbmp;
 	int bpp;
@@ -341,7 +353,7 @@ BITMAP* TWindow::bmp(char *bmpname)
 	strcat(objname, ".bmp");	// default extension for .bmp files.
 
 	tmpbmp = load_bitmap(objname, 0);
-	bmp = clone_bitmap(bpp, tmpbmp, scale);
+	bmp = clone_bitmap(bpp, tmpbmp, scale, vidmem);
 	if (tmpbmp)
 		destroy_bitmap(tmpbmp);
 
@@ -402,8 +414,9 @@ void TWindow::disable()
 
 void TWindow::show()
 {
-	hidden = false;
-	enable();
+	hidden = false;	// allow animation
+	enable();		// allow calculation
+	focus();		// bring this window to the front of the list, so that it draws on top of the rest
 }
 
 void TWindow::hide()
@@ -635,10 +648,15 @@ void TWindow::animate()
 
 	if (!disabled)
 	{
+		
 		// draw the background
 		// also copy transparent color!
-		blit(backgr, drawarea, 0, 0, 0, 0, W, H);
+
+		// release for in-game drawing
+		//release_bitmap(drawarea);
 	
+		blit(backgr, drawarea, 0, 0, 0, 0, W, H);
+
 		// draw the buttons
 		EmptyButton *button;
 		button = button_first;
@@ -651,7 +669,13 @@ void TWindow::animate()
 
 		// update the main screen
 		// ignore transparent color
-		masked_blit(drawarea, screen, 0, 0, x, y, W, H);
+		if (screen)
+		{
+			//acquire_bitmap(screen);
+			masked_blit(drawarea, screen, 0, 0, x, y, W, H);
+			//release_bitmap(screen);
+		}
+
 	} else
 		//draw_lit_sprite(drawarea, screen, x, y, makecol(100,100,100));
 		masked_blit(drawarea, screen, 0, 0, x, y, W, H);

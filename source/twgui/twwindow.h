@@ -102,7 +102,8 @@ public:
 	void setfocus(EmptyButton *newbutton);
 
 
-	TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen);
+	// vidwin: places the bitmaps used by the menu in video-memory, which is faster.
+	TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vidwin = false);
 	virtual ~TWindow();
 
 	void setscreen(BITMAP *scr);
@@ -115,7 +116,7 @@ public:
 	virtual void animate();
 
 	// return a bmp from the data file
-	BITMAP* bmp(char *bmpname);
+	BITMAP* bmp(char *bmpname, bool vidmem = false);
 
 	// this centers the bitmap on this position.
 	void center(int xcenter, int ycenter);
