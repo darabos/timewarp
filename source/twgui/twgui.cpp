@@ -1703,6 +1703,8 @@ void PopupGeneral::init_components(char *id)
 	// and default option settings:
 	option.disable_othermenu = true;
 	option.place_relative2mouse = true;
+
+	close_on_defocus = true;
 }
 
 
@@ -1826,6 +1828,9 @@ void PopupGeneral::calculate()
 
 void PopupGeneral::handle_focus_loss()
 {
+	if (!close_on_defocus)
+		return;
+	
 	if (mouse.left.hold())
 	{
 		hasfocus = true;
@@ -1850,7 +1855,7 @@ void PopupGeneral::close(int areturnstatus)
 // you can (and should) replace this routine with one suited for your own purposes
 void PopupGeneral::check_end()
 {
-	if (!hidden && !hasfocus)	// to prevent this from being called twice, due to recursive call to handle_focus() in hide()
+	if (!hidden && !hasfocus && close_on_defocus)	// to prevent this from being called twice, due to recursive call to handle_focus() in hide()
 	{
 		//tw_error("PopupList : Losing focus !!");
 		AreaReserve::handle_focus_loss();
@@ -1941,6 +1946,19 @@ void PopupTextInfo_toggle::check_end()
 // This popup is invoked by a push-button somewhere. I'm not going to create some
 // special push button type for that, I can just as well let this (new) class
 // access the state of that general button type.
+
+
+// (well, the following one isn't using a button, the one below is...)
+PopupList::PopupList(BITMAP *outputscreen, char *ident, int axshift, int ayshift,
+				FONT *afont, char **aoptionslist)
+:
+PopupGeneral(ident, axshift, ayshift, outputscreen)
+{
+	tbl = new TextButtonList(this, "TEXT/", -1, -1, afont, &scroll);
+	tbl->set_optionlist(aoptionslist, makecol(0,0,0));
+
+	doneinit();	// closes the datafile
+}
 
 PopupList::PopupList(AreaGeneral *atrigger, char *ident, int axshift, int ayshift,
 						FONT *afont, char **aoptionslist)

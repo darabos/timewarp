@@ -389,7 +389,7 @@ public:
 
 	// origin relative to the creators' position
 	PopupGeneral(AreaGeneral *creator, char *identbranch, int axshift, int ayshift);
-	PopupGeneral::PopupGeneral(char *identbranch, int axshift, int ayshift, BITMAP *outputscreen);
+	PopupGeneral(char *identbranch, int axshift, int ayshift, BITMAP *outputscreen);
 	~PopupGeneral();
 	virtual void init_components(char *identbranch);
 
@@ -409,6 +409,10 @@ public:
 	// this allows you to acces the return value, but only once after the submenu was
 	// closed; otherwise it returns -1.
 	int getvalue();
+
+	// this toggles whether the list is auto-closed when focus is lost, or remains
+	// focus even if the mouse moves out of sight of the list...
+	bool close_on_defocus;
 };
 
 
@@ -460,6 +464,10 @@ public:
 //	ScrollBar		*scrollvert, *scrollhor;
 
 //	char			**optionslist;
+
+	// just a "list" item ... not really a popup thing
+	PopupList(BITMAP *outputscreen, char *ident, int axshift, int ayshift,
+				FONT *afont, char **aaoptionslist);
 	
 	// origin relative to the creators' position
 	PopupList(AreaGeneral *creator, char *ident, int axshift, int ayshift,
