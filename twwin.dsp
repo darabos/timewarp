@@ -253,6 +253,14 @@ SOURCE=.\source\util\vector2.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\source\other\configrw.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\configrw.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\other\fontmorph.cpp
 # End Source File
 # Begin Source File
@@ -270,6 +278,14 @@ SOURCE=.\source\other\gquest.cpp
 # Begin Source File
 
 SOURCE=.\source\other\gup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\luaport.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\luaport.h
 # End Source File
 # Begin Source File
 

@@ -64,4 +64,9 @@ lua_State *lua_init();
 
 
 
+void lua_dochunk(lua_State *L, char **data);
+
+
+
+
 #endif
