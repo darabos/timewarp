@@ -1,6 +1,42 @@
 #ifndef __MLOG_H__
 #define __MLOG_H__
 
+extern int channel_file_names;
+extern int channel_file_data; //direction for file channels must be the same
+
+void log_set_fake();
+void log_set_nofake();
+
+
+void log_set_default();
+
+// disables write operations
+void log_set_readonly();
+
+// disables read operations
+void log_set_writeonly();
+
+// check current read/write override settings
+bool log_readonly();
+bool log_writeonly();
+bool log_default();
+
+extern bool log_synched;	// use in combination with "log_modes"
+void log_resetmode();
+bool log_nextmode();
+
+
+// check current channel settings
+bool log_writable();
+bool log_readable();
+
+extern int channel_current;
+
+int log_size_ch(int channel);
+
+
+extern bool log_show_data;	// for inspecting values
+
 
 class Log { //Logging system, usefull for networking & demo recording/playback
 	protected:
@@ -19,9 +55,7 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 //	static int log_dir[256];  //direction of channel (none, self->other, other->self, self->self)
 //	static int log_dir_files;    //direction of channel (none, self->other, other->self, self->self)
 //	static int log_dir_messages; //direction of channel (none, self->other, other->self, self->self)
-	enum {
-		channel_file_names = 0, channel_file_data = 1 //direction for file channels must be the same
-		};
+
 	public:
 	int type;
 	enum {
@@ -29,7 +63,7 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 		};
 	bool playback;
 	enum {
-		direction_write = 1, direction_read = 2, direction_forget = 4
+		direction_write = 1, direction_read = 2, direction_forget = 4, direction_immediate = 16
 		};
 	virtual void log (int channel, void *data, int size) ;
 	virtual void init();
@@ -39,12 +73,15 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 	virtual char get_direction (int channel);
 	void set_all_directions (char direction);
 
+	virtual void set_r(int ch);
+	virtual void set_rw(int ch);
+
 	virtual ~Log();
 	virtual void log_file(const char *fname);
 //	virtual void *log_file_data (const char *fname, int *size);
 	virtual int ready(int channel);
 	//file_ready returns -1 if a file is not ready, otherwise it is the length of the file.  if location is not NULL, it sets *location to pointing at the file data.  
-	virtual int file_ready(const char *fname, void **location = NULL);
+//	virtual int file_ready(const char *fname, void **location = NULL);
 
 	virtual void save (const char *fname);
 	virtual void load (const char *fname);
@@ -52,10 +89,21 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 	virtual bool buffer (int channel, void *data, int size );
 	virtual bool unbuffer (int channel, void *data, int size );
 
-	virtual void flush();
+	virtual void flush_block();
+	virtual void flush_noblock();
 	virtual bool listen();
 	virtual void reset();
-	};
+
+	virtual void use_idle(int time);	// is called in the games idle() function
+
+	bool writeable(int ch = channel_current);
+	bool readable(int ch = channel_current);
+
+	void lint(int *val, int ch = channel_current);
+	void ldata(char *data, int N, int ch = channel_current);
+	char *Log::create_buffer(int *size, int ch = channel_current);
+
+};
 
 class PlaybackLog : public Log { //Logging system, usefull for networking & demo recording/playback
 	virtual void init();
@@ -63,9 +111,12 @@ class PlaybackLog : public Log { //Logging system, usefull for networking & demo
 	virtual void set_all_directions (char direction);
 	};
 
-void share(int channel, int *value, int num = 1);
-void share(int channel, short *value, int num = 1);
-void share(int channel, char *value, int num = 1);
+
+/** \brief Share memory values accross player channels.
+*/
+void share(int player, int *value, int num = 1);
+void share(int player, short *value, int num = 1);
+void share(int player, char *value, int num = 1);
 void share_update();
 
 

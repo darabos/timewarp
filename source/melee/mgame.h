@@ -7,6 +7,8 @@
 extern int random_seed[2];
 extern int interpolate_frames;
 
+void idle_extra(int time = 5);	// adding extra network-share to avoid total standstill which may happen, very occasionally...
+
 class GameType {
 	private:
 	Game *(*_new_game)();
@@ -46,31 +48,91 @@ public:
 };
 
 
-class Game : public Physics {
-	public:
+const int max_player = 8;
+
+extern const int channel_none;    //not a valid channel
+extern const int _channel_buffered;
+extern const int channel_init;     // game type, version, length, etc.. things that need to read by a reader independant of a particular game type
+extern const int channel_playback; // used for demo playbacks only
+// THE SERVER IS THE ONE WHO DEFINES THE DATA (eg initial game conditions; log_files)
+// the server is always player 0.
+extern const int channel_server;  //data originating on the server
+// THE LOCAL CHANNEL IS THE ONE BELONGING TO THE COMPUTER YOU'RE SITTING AT; all other channels are remote
+// the local channel is always read/write, while remote channels are always read-only.
+// each guy who logs in to a game (defined by the server) receives a local-channel number from the server.
+// (eg. player 1, player 2 .. player 7).
+extern int channel_player[max_player];  //data originating on the client
+extern int p_local, num_players, num_humans, num_bots;
+int channel_local();
+void init_channels();
+void set_numplayers(int n);
+
+
+class GameEvent2
+{
+public:
+	virtual void calculate(){};
+};
+
+
+template <class G>
+class GE : public GameEvent2
+{
+public:
+	typedef void (G::* reffunc) ();	// store the class-function pointer
+	G *game;						// store pointer to the class in memory
+
+	reffunc ref;
+
+	GE(G *agame, reffunc aref) : GameEvent2() { game = agame; ref = aref; };
+	
+	virtual void calculate() {(game->*ref)();};
+};
+
+const int max_events = 100;
+const int max_requests = 1024;
+class EventClass
+{
+public:
+	int N;
+
+	EventClass();
+
+	struct ref
+	{
+		GameEvent2 *call;
+		char name[64];
+	} event[max_events];
+
+	void reg(GameEvent2 *g, char *id);
+
+	void request(char *id);	// adds a requested call to the stack
+	void issue(int i);		// calls one function of the stack
+
+	int Nreq;
+	int req[max_requests];
+
+	void handle();
+
+	bool sendmode;
+};
+
+extern EventClass events;
+#define EVENT(classname, functionname) {events.reg(new GE<classname>(this, functionname), #functionname);}
+#define CALL(functionname) {events.request( #functionname );}
+
+
+class Game : public Physics
+{
+public:
+	virtual void register_events();
+	virtual void do_game_events2();
+
 	GameType *type;
 
-	enum 
-	{
-		channel_none = -1,    //not a valid channel
-		channel_init = 4,     // game type, version, length, etc.. things that need to read by a reader independant of a particular game type
-		channel_playback = 8, // used for demo playbacks only
-		channel_server  = 12,  //data originating on the server
-		channel_client  = 16,  //data originating on the client
-		_channel_buffered = 1
-	};
-
-	Log *log; //logging system for networking, demo recording/playback, etc.
-	void log_char (int channel, char &data);             //helper for using the logging system
-	void log_char (int channel, unsigned char &data) {log_char (channel,*(char*)&data);}
-	void log_short(int channel, short &data);            //helper for using the logging system
-	void log_short(int channel, unsigned short &data) {log_short (channel,*(short*)&data);}
-	void log_int  (int channel, int &data);              //helper for using the logging system
-	void log_int  (int channel, unsigned int &data) {log_int (channel,*(int*)&data);}
-	void log_data (int channel, void *data, int length); //helper for using the logging system
-	virtual void log_file (const char *fname);
+	virtual void log_file (const char *fname);		// overload to allow networking
 	void log_fleet(int channel, class Fleet *fleet);
-	int is_local ( int channel ) ;
+//	int is_local ( int channel ) ;
 
 protected:
 
@@ -134,9 +196,9 @@ public:
 
 	int lag_frames;
 	int prediction;
-	virtual void increase_latency();
-	virtual void decrease_latency();
-
+	virtual void increase_latency(int n);
+	virtual void decrease_latency(int n);
+	
 	bool view_locked;
 	bool physics_locked;
 
@@ -156,7 +218,7 @@ public:
 	virtual void pause();
 	virtual void unpause();
 	virtual bool is_paused();
-	virtual void idle(int time = 5);
+	virtual void use_idle(int time);
 
 	virtual void play_music();
 
@@ -195,6 +257,24 @@ public:
 	int show_fps;
 	unsigned char local_checksum, client_checksum, server_checksum;
 
+	// just for debugging the buffered channel
+	void net_expect(int val);
+
+	// put all buffered-data generating stuff in this subroutine, for (1) timelag control,
+	// and (2) for safety ;) Cause each has to be called in the correct order so that
+	// different data won't interfere with each other !!
+	void gen_buffered_data();
+
+
+	// events
+	int lagchange;
+	void change_lag();
+	void chat();
+	void test_event1();
+
+
+	// "extreme" desynch testing.
+	void heavy_compare();
 };
 
 

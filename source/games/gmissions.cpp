@@ -186,7 +186,7 @@ int MSFactory::activate_weapon()
 	A = angle;
 
 	Ship *s;
-	s = game->create_ship(game->channel_none, "zfpst", "WussieBot", P, A, get_team());
+	s = game->create_ship(channel_none, "zfpst", "WussieBot", P, A, get_team());
 	game->add(s);
 
 	return TRUE;

@@ -314,58 +314,60 @@ void GobGame::init(Log *_log) {
 
 
 	int ichoice = 2;	// default, "no" 'don't load a game
-	//if (!lag_frames)
-	//{
-	//	// check a menu to see what the player wants ... how ??
-	//	ichoice = tw_alert("Continue saved game?", "&YES", "&NO");
-	//}
+
+	if (!lag_frames)
+	{
+		// check a menu to see what the player wants ...
+		// (but only if it's not a networked game)
+		ichoice = tw_alert("Continue saved game?", "&YES", "&NO");
+	}
 
 	if (ichoice == 2)
 	{
 	
-		int server_players, client_players;
+		int console_players;
 		set_config_file("client.ini");
-		server_players = client_players = get_config_int("Gob", "NumPlayers", 1);
-		if (!lag_frames) client_players = 0;
-		log_int(channel_server, server_players);
-		log_int(channel_client, client_players);
-		for (i = 0; i < server_players; i += 1) {
-			char buffy[256];
-			sprintf(buffy, "Config%d", i);
-			add_gobplayer(create_control(channel_server, "Human", buffy));
-			gobplayer[i]->new_ship(shiptype("supbl"));
-			Ship *s = gobplayer[i]->ship;
-			s->translate(size/2-s->normal_pos());
-			double angle = PI2 * i / (client_players + server_players);
-			s->translate(rotate(Vector2(260, 120), angle));
-			s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
+		console_players = get_config_int("Gob", "NumPlayers", 1);
+
+		int p;
+		int k = 0;
+		for ( p = 0; p < num_humans; ++p )
+		{
+			//log_int(channel_player[p], server_players);
+			log_int(console_players, channel_player[p]);
+
+			// several console players, who share a "human" channel
+			for (i = 0; i < console_players; i += 1)
+			{
+				
+				char buffy[256];
+				sprintf(buffy, "Config%d", i);
+
+				add_gobplayer(create_control(channel_player[p], "Human", buffy));
+				++k;
+			}
 		}
-		for (i = server_players; i < client_players + server_players; i += 1) {
-			char buffy[256];
-			sprintf(buffy, "Config%d", i - server_players);
-			add_gobplayer(create_control(channel_client, "Human", buffy));
+
+		for ( i = 0; i < k; ++i )
+		{
 			gobplayer[i]->new_ship(shiptype("supbl"));
+
 			Ship *s = gobplayer[i]->ship;
-			s->translate(size/2-s->normal_pos());
-			double angle = PI2 * i / (client_players + server_players);
+			s->translate( size/2 - s->normal_pos() );
+
+			double angle = (PI2 * i) / k;
 			s->translate(rotate(Vector2(260, 120), angle));
-			s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);
+
+			s->accelerate(s, PI2/3 + angle, 0.17, MAX_SPEED);	
 		}
 
 	} else if (ichoice == 1) {
 
 		// just supports ONE player.
 
-		int server_players = 1;
-		int client_players = 0;
 		set_config_file("client.ini");
 
-		if (!lag_frames) client_players = 0;
-
-		log_int(channel_server, server_players);
-		log_int(channel_client, client_players);
-
-		for (i = 0; i < server_players; i += 1) {
+		for (i = 0; i < 1; i += 1) {
 			char buffy[256];
 			sprintf(buffy, "Config%d", i);
 			add_gobplayer(create_control(channel_server, "Human", buffy));
@@ -719,14 +721,14 @@ int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
 	char buffy1[512];
 	sprintf(buffy1, "Price: %d starbucks plus %d buckazoids", price_starbucks, price_buckazoids);
 	if ((starbucks < price_starbucks) || (buckazoids < price_buckazoids)) {
-		if (game->is_local(channel)) 
+		if (is_local(channel)) 
 			alert("You don't have enough.", name, buffy1, "Cancel", NULL, 0, 0);
 		return 0;
 	}
 	int r = 0;
-	if (game->is_local(channel)) 
+	if (is_local(channel)) 
 		r = alert ("Do you wish to make this purchase?", name, buffy1, "&No", "&Yes", 'n', 'y');
-	game->log_int(channel, r);
+	log_int(r, channel);
 	if (r == 2) {
 		starbucks -= price_starbucks;
 		buckazoids -= price_buckazoids;
@@ -757,7 +759,7 @@ void GobPlayer::new_ship(ShipType *type) {
 	panel = new ShipPanel(ship);
 	panel->always_redraw = true;
 	panel->window->init(game->window);
-	if (game->is_local(control->channel)) {
+	if (is_local(control->channel)) {
 		panel->window->locate(
 			0,0.9,
 			0,0,
@@ -798,7 +800,7 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 	ShipType *ntype = shiptype(build_type);
 	if (otype == ntype) {
 		sprintf (buffy1, "You already have a %s", ntype->name);
-		if (game->is_local(s->channel)) 
+		if (is_local(s->channel)) 
 			alert(buffy1, NULL, NULL, "&Cancel", NULL, 'c', 0);
 		return;
 	}
@@ -810,9 +812,9 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 	sprintf (buffy2, "A %s costs %d s$ / %d b$", ntype->name, nssb, nsbz);
 	if ((nssb <= (ossb + s->starbucks)) && (nsbz <= (osbz + s->buckazoids))) {
 		int i = 0;
-		if (game->is_local(s->channel))
+		if (is_local(s->channel))
 			i = alert(buffy1, buffy2, "Do you wish to buy it?", "Yeah!", "No", 'y', 'n');
-		game->log_int(s->channel, i);
+		log_int(i, s->channel);
 		if (i == 1) {
 			s->starbucks -= nssb - ossb;
 			s->buckazoids -= nsbz - osbz;
@@ -820,7 +822,7 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 		}
 	}
 	else {
-		if (game->is_local(s->channel)) 
+		if (is_local(s->channel)) 
 			alert (buffy1, buffy2, "You don't have enough to buy it", "Cancel", NULL, 0, 0);
 	}
 	return;
@@ -892,9 +894,9 @@ void GobStation::station_screen(GobPlayer *s) {
 	while (true) {
 		sprintf(dialog_string[0], "%03d Starbucks  %03d Buckazoids", s->starbucks, s->buckazoids);
 		int r = 0;
-		if (game->is_local(s->channel)) 
+		if (is_local(s->channel)) 
 			r = tw_do_dialog(game->window, station_dialog, STATION_DIALOG_DEPART);
-		game->log_int(s->channel, r);
+		log_int(r, s->channel);
 		switch (r) {
 	case STATION_DIALOG_UPGRADE: {
 		upgrade_menu(this, s);
@@ -911,15 +913,15 @@ void GobStation::station_screen(GobPlayer *s) {
 								 break;
 	case STATION_DIALOG_REPAIR: { 
 		if (s->ship->crew == s->ship->crew_max) {
-			if (game->is_local(s->channel)) 
+			if (is_local(s->channel)) 
 				alert("You don't need repairs", "", "", "Oh, okay", "I knew that", 0, 0);
 
 			break;
 		}
 		int p = 0;
-		if (game->is_local(s->channel)) 
+		if (is_local(s->channel)) 
 			p = alert3("Which would you prefer", "to pay for your repairs", "", "1 &Starbuck", "1 &Buckazoid", "&Nothing!", 's', 'b', 'n');
-		game->log_int(s->channel, p);
+		log_int(p, s->channel);
 		switch (p) 
 		{
 			case 1:
@@ -930,7 +932,7 @@ void GobStation::station_screen(GobPlayer *s) {
 				}
 				else 
 				{
-					if (game->is_local(s->channel)) 
+					if (is_local(s->channel)) 
 						alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
 				}
 				break;
@@ -942,7 +944,7 @@ void GobStation::station_screen(GobPlayer *s) {
 				}
 				else 
 				{
-					if (game->is_local(s->channel)) 
+					if (is_local(s->channel)) 
 						alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
 				}
 			break;
@@ -1051,15 +1053,15 @@ void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
 		}
 		num_upgrade_indexes = j;
 		int m = 0;
-		if (game->is_local(gs->channel))
+		if (is_local(gs->channel))
 			m = tw_do_dialog(game->window, upgrade_dialog, UPGRADE_DIALOG_EXIT);
-		game->log_int(gs->channel, m);
+		log_int(m, gs->channel);
 		if (m == UPGRADE_DIALOG_EXIT) return;
 		if (m == UPGRADE_DIALOG_LIST) {
 			int i = 0;
-			if (game->is_local(gs->channel))
+			if (is_local(gs->channel))
 				i = upgrade_dialog[UPGRADE_DIALOG_LIST].d1;
-			game->log_int(gs->channel, i);
+			log_int(i, gs->channel);
 			i = upgrade_index[i];
 			Upgrade *u = gs->upgrade_list[i];
 			if (gs->charge(u->name, u->starbucks, u->buckazoids)) {
@@ -1205,7 +1207,7 @@ void RainbowRift::calculate() {
 				if (q.currento == p->ship) {
 					int i = 0;
 					i = p->control->choose_ship(game->window, "You found the Rainbow Rift!", reference_fleet);
-					game->log_int(p->channel, i);
+					log_int(i, p->channel);
 					if (i == -1) i = random(reference_fleet->getSize());
 					game->redraw();
 					if (reference_fleet->getShipType(i) == p->ship->type) {

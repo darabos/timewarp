@@ -17,88 +17,6 @@ REGISTER_FILE
 
 
 
-/* 
-adding lag handlers to mcontrol.cpp
-They're not finished yet
-they're in mcontrol.cpp because that's really the 
-only thing likely to use them
-*/
-/*
-#include "mlog.h"
-
-class SimpleLagHandler : public Presence {
-	public:
-	virtual void preinit();
-	virtual void init ( Game *game, int channel, int size, void *default_value );
-	~SimpleLagHandler();
-	virtual void change_latency ( int new_lag_frames ) ;
-	virtual void post_item ( void *item );
-	virtual void recv_item ( void *space );
-	virtual void predict_item (int frames, void *space );
-	void *data;
-	void *default_value;
-	unsigned int *transmit_bits;
-	Log *log;
-	int channel;
-	short int item_size;
-	short int lag_frames;
-	};
-
-void SimpleLagHandler::preinit() {
-	data = NULL;
-	default_value = NULL;
-	log = NULL;
-	item_size = 0;
-	lag_frames = 0;
-}
-void SimpleLagHandler::init ( Game *game, int channel, int size, void *default_value ) {
-	this->log = game->log;
-	this->lag_frames = game->lag_frames;
-	this->channel = channel + Game::_channel_buffered;
-	this->item_size = size;
-	this->default_value = malloc( item_size );
-	memcpy(this->default_value, default_value, item_size);
-	data = malloc ( item_size * lag_frames );
-	return;
-}
-*/
-/*
-	int lag = game->lag_frames;
-	if (sent & 1) {
-		source->recieve();
-		}
-	if (source && source->exists()) {
-		if (send()) sent |= (1 << lag);
-		}
-	else source = NULL;
-	sent = sent << 1;
-	if (!source && (sent == 0)) die();
-
-
-	if (already == lag) {
-		game->log_short(channel + Game::_channel_buffered, keys);
-		oldkeys = keys;
-		}
-	else if (already < lag) {
-		keys = intel_ordering_short(keys);
-		game->log->buffer(channel + Game::_channel_buffered, &keys, sizeof(KeyCode));
-		keys = oldkeys;
-		already += 1;
-		}
-	else {
-		game->log->unbuffer(channel + Game::_channel_buffered, &oldkeys, sizeof(KeyCode));
-		oldkeys = intel_ordering_short(oldkeys);
-		already -= 1;
-		}
-*/
-
-
-
-
-
-
-
-
 
 enum {
 	ai_index_none = 0,
@@ -161,7 +79,7 @@ int control2number(const char *name) {STACKTRACE
 	}
 
 Control *getController(const char *type, const char *name, int channel) {STACKTRACE
-	if ((channel != -1) && (channel & Game::_channel_buffered)) {
+	if ((channel != -1) && (channel & _channel_buffered)) {
 		error("getController - invalid channel # %d", channel);
 	}
 	switch (control2number(type)) {
@@ -175,7 +93,7 @@ Control *getController(const char *type, const char *name, int channel) {STACKTR
 
 
 int Control::rand() {
-	if (channel == Game::channel_none) return random();
+	if (channel == channel_none) return random();
 	return (::rand() ^ ((::rand() << 12) + (::rand() <<24))) & 0x7fffffff;
 	}
 void Control::setup() {}
@@ -183,7 +101,7 @@ void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE
 	ship = ship_pointer;
 	if (ship) {
 		ship->control = this;
-		if (temporary && (channel != Game::channel_none) && (already != 0) && (already != game->lag_frames)) 
+		if (temporary && (channel != channel_none) && (already != 0) && (already != game->lag_frames)) 
 			{tw_error ("Control::select_ship - bad operation (incompatible with networking)");}
 		}
 	target_stuff() ;
@@ -388,6 +306,23 @@ lag / already state:
 
 */
 
+
+void Control::gen_buffered_data()
+{
+	if (ship && ship->exists())
+		keys = think();
+	else
+		keys = 0;
+
+	if (channel != channel_none)
+		log_short(keys, channel + _channel_buffered);
+	// this will overwrite think() result, if it's a remote player. This does not matter,
+	// cause a remote player is simulated with a vegetable bot here, which does not generate
+	// meaningful data anyway (through think()).
+}
+
+
+
 void Control::calculate() {STACKTRACE
 
 	if (!exists()) return;
@@ -399,15 +334,15 @@ void Control::calculate() {STACKTRACE
 			//message.print(5000, 12, "Ship died in frame %d", game->frame_number);
 			select_ship( NULL, NULL);
 			}
-		else keys = think();
+		//else keys = think();		// <--- goes into the gen_buffered_data !!
 		}
 	
 	if (!ship) {
-		keys = 0;
+		//keys = 0;	// <--- goes into the gen_buffered_data !!
 		if (temporary) state = 0;
 		}
 
-	if (channel != Game::channel_none) {
+	if (channel != channel_none) {
 		//prediction stuff
 		_prediction_keys[_prediction_keys_index] = keys;
 		_prediction_keys_index = (_prediction_keys_index + 1) & (_prediction_keys_size-1);
@@ -416,26 +351,49 @@ void Control::calculate() {STACKTRACE
 		if (!ship && temporary && (already > 0)) already = -already;
 		
 		//network traffic
-		int lf = game->lag_frames;
-		if (0) ;
-		else if (already < 0) {//unbuffering
-			game->log->unbuffer(channel + Game::_channel_buffered, &keys, sizeof(KeyCode));
+		int lf = game->lag_frames;			// Geo: this is not that relevant, the game is already lagging cause it has to wait for the data
+		//if (0) ;
+		//else
+		
+		// Geo: note, that this is (or should be) already correctly buffered
+//		log_short(channel + _channel_buffered, keys);		<--- goes into the gen_buffered_data !!
+		// an action like this, automatically halts the game, until data arrive.
+		// or, if (lots of (also other)) data have arrived, it'll simply take what it
+		// needs from the buffer.
+		// it's not possible, once you've halted, to catch up by discarding data,
+		// cause you don't know which parts of the game depend on those data.
+
+		/* Geo: YOU SHOULD HAVE A PREDICTABLE PATTERN. reason: different items are thrown
+		in a certain pattern onto the net, and you've to match that pattern. It should
+		never depend on local properties. Therefore, I disable the stuff below.
+
+		if (already < 0) {//unbuffering
+			glog->unbuffer(channel + _channel_buffered, &keys, sizeof(KeyCode));
 			keys = intel_ordering_short(keys);
 			already += 1;
+
+			//message.print(1500, 14, "SHARE(send) key: %i", int(keys));
 			}
 		else if (already < lf) {//buffering
 			keys = intel_ordering_short(keys);
-			game->log->buffer(channel + Game::_channel_buffered, &keys, sizeof(KeyCode));
+			glog->buffer(channel + _channel_buffered, &keys, sizeof(KeyCode));
 			keys = intel_ordering_short(keys);
 			already += 1;
+			//message.print(1500, 14, "SHARE(send) key: %i", int(keys));
 			}
 		else if (already > lf) {//stupid error check
 			tw_error("Control::calculate() - inconcievable!");
 			}
 		else {//stable, perform no action
-			game->log_short(channel + Game::_channel_buffered, keys);
+			//message.print(1500, 14, "SHARE(send/rec) key: %i", int(keys));
+			log_short(channel + _channel_buffered, keys);
 			}
+			*/
 		}
+
+//	message.animate(0);
+//	if (ship && p_local == 0)
+//		readkey();
 
 	return;
 	}
@@ -451,15 +409,15 @@ void Control::_event(Event *e) {STACKTRACE
 }
 Control::Control(const char *name, int _channel) : temporary(false), target_sign_color(255), 
 	already(0), channel(_channel), ship(NULL), 
-	target(NULL), index(-1), always_random(0), _prediction_keys(NULL) 
+	target(NULL), index(-1), always_random(0), keys(0), _prediction_keys(NULL) 
 	{STACKTRACE
 	id |= ID_CONTROL;
 	attributes |= ATTRIB_SYNCHED;
-	if (channel != Game::channel_none) {
+	if (channel != channel_none) {
 		attributes |= ATTRIB_LOGGED;
 		_prediction_keys = new KeyCode[_prediction_keys_size];
 		_prediction_keys_index = 0;
-		if (channel & Game::_channel_buffered) {
+		if (channel & _channel_buffered) {						// ????????????
 			error("Control::Control - invalid channel!");
 		}
 	}
@@ -469,7 +427,7 @@ Control::~Control() { STACKTRACE
 	if (_prediction_keys) delete[] _prediction_keys;
 	}
 bool Control::die() {
-	if (channel == Game::channel_none) return Presence::die();
+	if (channel == channel_none) return Presence::die();
 	// controls CANNOT arbitrarily be killed off, because the deal with networking directly
 	error("controls cannot be killed");
 	//the error can be removed eventually... 

@@ -31,11 +31,19 @@ void IterGame::play_iteration(unsigned int time)
 //	if(!sound.is_music_playing())
 //		play_music();
 	
-	if ((next_tic_time <= time) && (next_render_time > game_time) && game_ready()) {
+	if ((next_tic_time <= time) && (next_render_time > game_time) &&
+		(game_ready() || game_time == 0))	// note that game_time==0 is also needed, cause otherwise it'll wait for data, while no data've been generated yet.
+	{		
+		_STACKTRACE("Game::play - Game physics");
+		
+		gen_buffered_data();
+		glog->flush_noblock();
+		glog->listen();
+		
 		calculate();
+		
 		if (auto_unload) unload_unused_ship_data();//expiremental
-		log->flush();
-		log->listen();
+
 		if (key[KEY_F4])
 			turbo = f4_turbo;
 		else
@@ -52,7 +60,7 @@ void IterGame::play_iteration(unsigned int time)
 		animate();
 		next_render_time = game_time + msecs_per_render;
 	}
-	else idle();
+	else idle(1);
 	while (keypressed())
 		handle_key(readkey());
 }
@@ -81,7 +89,7 @@ void MainGame::addsubgame(SubGame *asubgame)
 	asubgame->window->init(&videosystem.window);
 	asubgame->window->locate(0,0,0,0,0,1,0,1);
 
-	asubgame->init(log);	// all subgames share the same log (is this ok?)
+	asubgame->init(glog);	// all subgames share the same log (is this ok?)
 	// this init should reference the already-initialized melee-data of the maingame
 
 	subgame[Nsubgames] = asubgame;
@@ -93,7 +101,7 @@ void MainGame::removesubgame(int k)
 {
 	STACKTRACE
 
-	subgame[k]->log->deinit();	// this is empty, dunno why
+	glog->deinit();	// this is empty, dunno why
 
 //	DATAFILE *d = melee;	// remember this important pointer.
 
@@ -217,10 +225,10 @@ void SubGame::init(Log *_log)
 
 
 	game_done = false;
-	log = _log;
-	if (!log) {
-		log = new Log();
-		log->init();
+	//log = _log;
+	if (!glog) {
+		glog = new Log();
+		glog->init();
 	}
 
 	lag_frames = 0;

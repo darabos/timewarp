@@ -81,6 +81,9 @@ class Control : public Presence {
 
 //for future mid-game lag changes
 	virtual void _event ( Event *e );
+
+
+	virtual void gen_buffered_data();
 	};
 
 

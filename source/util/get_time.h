@@ -1,6 +1,7 @@
 #ifndef __GET_TIME_H__
 #define __GET_TIME_H__
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,7 +18,7 @@ volatile double get_time2();    //to get the current time in milliseconds at hig
 volatile Sint64 get_time3();    //to get the current time in unspecified units
 //in all cases, the current time is measured relative to the call to init_time();
 
-int idle ( int time ); //to yeild a number of milliseconds to the OS
+int idle ( int time ); //to yield a number of milliseconds to the OS
 extern int _no_idle;   //to disable the above function
 
 #ifdef __cplusplus

@@ -47,12 +47,18 @@ class LagHandler {
 };*/
 
 
-class NetLog : public Log { //Logging system, usefull for networking & demo recording/playback
+const int max_connections = 20;
+// note, that I'll assume that (channel/4) equals the connection number.
+
+class NetLog : public Log { //Logging system, useful for networking & demo recording/playback
 	protected:
 
 	int *log_transmitted;      //the number of bytes transmitted in each channel
 	void expand_logs(int num_channels) ; //intializes these extensions to the logging
-	unsigned char buffy[4096]; //a buffer for sending and recieving packets
+	void check_bufsize(int size);		// checks if the buffer isn't too small, and increases its size if needed
+	unsigned char *buffy;	//a buffer for sending and recieving packets
+	int buffy_size;			// current size of the buffer.
+	//int buffy_num;				// how many prepared data are waiting in the buffer
 //	void handle_code(unsigned int code) ;
 //	void send_code(unsigned int code) ;
 	enum code {
@@ -65,21 +71,29 @@ class NetLog : public Log { //Logging system, usefull for networking & demo reco
 		};
 //	void send_message(char *string) ;
 
-	void send_packet(); //sends a packet
+	void prepare_packet();
+		
+	void send_packets(); //sends a packet (copies of it) to all outgoing connections
+	void send_packet_block(int conn); //sends a (copy of a) packet to a particular connection
 
 	public:
 
 	bool need_to_transmit;
-	NetTCP net;       // the TCP network connection to the opponent player
+	int num_connections;
+	NetTCP net[max_connections];       // the TCP network connection to the opponent player
 
+	int conn(int channel) { return channel / 4; };
+
+	/*
 	enum {
 		direction_immediate = 16
 		};
+		*/
 
-	void recv_packet(); //recieves a packet
+	void recv_packet(int conn); //receives a packet
 
-	int remote_time; //used in calculating ping
-	int ping;            //the most recently measured ping
+	int remote_time[max_connections]; //used in calculating ping
+	int ping[max_connections];        //the most recently measured ping
 
 	virtual void init();
 	virtual void deinit();
@@ -89,10 +103,23 @@ class NetLog : public Log { //Logging system, usefull for networking & demo reco
 	void log_file(const char *fname) ;
 	virtual int ready(int channel);
 
-	virtual void flush() ;
+	virtual void flush_block() ;
+	virtual void flush_noblock();
 	virtual bool listen();
 
 
+	bool add_listen(int port);
+	bool add_connect(const char *address, int port);
+
+	char *get_address(int n);
+
+	void optimize4latency();
+
+	virtual void use_idle(int time);
+	
+	void recv_noblock();
+	bool ready2send();
+	void send_packet_noblock(int conn);
 	};
 
 #endif // __MNET1_H__

@@ -999,7 +999,8 @@ int collide_y;
 PMASK *rect_mask;
 
 void check_line_collision(BITMAP *bmp, int x, int y, int d)
-{STACKTRACE
+{
+	STACKTRACE;
 	int row, col;
 
 	if(line_collide)

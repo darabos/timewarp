@@ -147,7 +147,7 @@ void PhedarPatrolShip::calculate()
 
 int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double direct)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	double totdam = normal + direct;
 	// you also have to deal with negative damage, i.e., crew increase - that's
@@ -167,11 +167,11 @@ int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double di
 	{
 		double evac = 0;
 		while ( evac < totdam && crew >= 1 )	// yeah, the last one may also leave !!
-		{
+		{										// otherwise, it's hard to die ;)
 
 			int i = int(crew+0.5);
 			if ( i < 0 || i > maxcrew-1 )
-				{tw_error("Too many crew in this ship !!"); }	// this is an evil macro - leave the brackets
+				{tw_error("Too many crew in this ship !!"); }
 
 			crewinspace[i] = new CrewPodPP(
 					this->normal_pos() + (unit_vector(trajectory_angle(this) - PI) * 
@@ -194,7 +194,10 @@ int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double di
 
 	// don't use == 0, but use < 1, cause of possible partial damage ? I assume, 0.8 crew is also dead crew...
 	if ( crew < 1 )
+	{
+		crew = 0;
 		Ship::handle_damage(src, 0, 0);		// use the "default" die procedure
+	}
 
 	return iround(totdam);
 }
@@ -232,7 +235,7 @@ int CrewPodPP::sameTeam(SpaceLocation *other)
 
 void CrewPodPP::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	frame_step += frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
@@ -265,7 +268,7 @@ void CrewPodPP::calculate()
 
 void CrewPodPP::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	STACKTRACE;
 	if (other->isShip() && other->damage_factor == 0) {
 //		sound.stop(data->sampleExtra[0]);
 //		sound.play(data->sampleExtra[0]);
@@ -276,7 +279,7 @@ void CrewPodPP::inflict_damage(SpaceObject *other)
 
 int CrewPodPP::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	STACKTRACE;
 	state = 0;	// this is extra; eg. if hit by a asteroid or so.
 	return 0;
 }

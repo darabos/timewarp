@@ -94,6 +94,15 @@ static int network_status = 0;
 static void msg (char *) {}
 void (* NetTCP::message)(char*) = &msg;
 
+
+
+void set_nonblocking(SOCKET &sd)
+{
+	u_long no_block = 1;
+	ioctlsocket(sd, FIONBIO, &no_block);
+}
+
+
 static fd_set read_set, write_set, except_set;
 static timeval tmv = {0, 0};
 int NetTCP::init() {
@@ -113,12 +122,21 @@ int NetTCP::init() {
 	FD_ZERO(&read_set);
 	FD_ZERO(&write_set);
 	FD_ZERO(&except_set);
+
+
+	NBuffer = 0;
+	MaxBuffer = 4096;
+	buffer = (char*) malloc(MaxBuffer);
+
 	return 0;
 	}
 
 void NetTCP::deinit() {
 	message ("NetTCP::deinit: network shut down");
 	if (isConnected()) disconnect();
+	
+	free(buffer);
+
 	return;
 	}
 
@@ -201,12 +219,22 @@ int NetTCP::listen(int port, int (*cancel_callback)()) {
 		if ((new_socket = accept(s, (sockaddr *) &other, &tmp)) != INVALID_SOCKET) {
 			close_socket(s);
 			s = new_socket;
+
+			set_nonblocking(s);
+
+			// added GEO.
+			char *str;
+			str = inet_ntoa(other.sin_addr);	// rewrites the address into string-dotted-format
+			strcpy(addr, str);
+
 			return 0;
 			}
 		}
 	throw("NetTCP::listen: WTF?");
+
 	return 0;
 	}
+
 
 int NetTCP::connect(const char *address, int port, int (*cancel_callback)()) {
 	if (port > 65535) throw "NetTCP::connect - bad port number";
@@ -244,7 +272,6 @@ int NetTCP::connect(const char *address, int port, int (*cancel_callback)()) {
 		}
 	message ("NetTCP::connect: socket allocated");
 
-
 	while (::connect(s, (struct sockaddr *)&other, sizeof(other)) == SOCKET_ERROR) {
 		if (cancel_callback && cancel_callback()) {
 			close_socket(s);
@@ -252,6 +279,9 @@ int NetTCP::connect(const char *address, int port, int (*cancel_callback)()) {
 			return -4;
 			}
 		}
+
+	set_nonblocking(s);
+
 	return 0;
 	}
 
@@ -260,6 +290,7 @@ int NetTCP::disconnect() {
 	s = INVALID_SOCKET;
 	return 0;
 	}
+
 
 int NetTCP::ready2send() {
 	int r;
@@ -271,6 +302,8 @@ int NetTCP::ready2send() {
 	FD_CLR ( s, &write_set);
 	return r;
 	}
+
+
 int NetTCP::ready2recv() {
 	int r;
 	tmv.tv_sec = 0;
@@ -281,18 +314,79 @@ int NetTCP::ready2recv() {
 	if (r == SOCKET_ERROR) throw "NetTCP::select - error";
 	return r;
 	}
-int NetTCP::send(int size, const void *data) {
-	int sofar = 0;
-	while (sofar < size) {
-		int tmp = ::send(s, ((char*) data) + sofar, size - sofar, 0);
-		if (tmp > 0) sofar += tmp;
-		if (tmp == SOCKET_ERROR) throw "NetTCP::send - error";
-		if (sofar == size) break;
-		if (sofar > size) throw "NetTCP::send - trying to send more data than requested";
-		idle(1);
-		}
-	return sofar;
+
+
+// add L bytes to the buffer
+int NetTCP::add2buffer(char *data, int N)
+{
+	while (NBuffer + N > MaxBuffer)
+	{
+		MaxBuffer *= 2;
+		buffer = (char*) realloc(buffer, MaxBuffer);
 	}
+
+	memcpy(&buffer[NBuffer], data, N);
+
+	NBuffer += N;
+
+	return NBuffer;
+}
+
+
+// remove L bytes from the buffer (from the start of the buffer, so, move the rest of the buffer
+int NetTCP::rembuffer(int N)
+{
+	if (N > NBuffer)
+		throw("Trying to remove more buffered bytes then present");
+
+	memmove(buffer, &buffer[N], NBuffer-N);
+	NBuffer -= N;
+
+	return NBuffer;
+}
+
+
+int NetTCP::buflen()
+{
+	return NBuffer;
+}
+
+
+int NetTCP::sendattempt()
+{
+	int tmp;
+
+	if (NBuffer <= 0)
+		return 0;
+
+	if (ready2send())
+		tmp = ::send(s, buffer, NBuffer, 0);
+	else
+		tmp = 0;
+
+	if (tmp == SOCKET_ERROR) throw "NetTCP::send - error";
+
+	rembuffer(tmp);
+
+	return tmp;
+}
+
+
+int NetTCP::sendall()
+{
+	while ( buflen() > 0 )
+	{
+		sendattempt();
+
+		idle(1);
+	}
+
+	if (buflen() < 0) throw "NetTCP::send - trying to send more data than requested";
+
+	return buflen();
+}
+
+
 int NetTCP::recv(int min, int max, void *data) {
 	int sofar = 0;
 	while (1) {
@@ -323,6 +417,84 @@ bool NetTCP::isConnected() {
 	if (s == INVALID_SOCKET) return false;
 	return true;
 	}
+
+
+
+
+
+
+
+
+
+/*
+
+// stuf useful for server ? It uses an extra socket, the listener, to check for
+// incoming connection requests.
+
+
+int NetTCP2::SetupListener(int port, int (*cancel_callback)())
+{
+
+	int i;
+	for (i = 0; i < MaxSockets; ++i )
+	{
+		server_buffer[i].inp.N = 0;
+		server_buffer[i].out.N = 0;
+		sd[i] = INVALID_SOCKET;
+	}
+
+	if (sd_listen != INVALID_SOCKET) throw ("NetTCP2::listen: socket already active");
+	if (port <= 0) throw "NetTCP2::listen - Bad port number!";
+	sd_listen = socket( AF_INET, SOCK_STREAM, 0);
+	if (sd_listen == INVALID_SOCKET) {
+		message("NetTCP2::listen: socket allocation failed");
+		return -1;
+		}
+	message ("NetTCP2::listen: socket allocated");
+
+	sockaddr_in self;
+	self.sin_family = AF_INET;
+	self.sin_port = htons(port);
+	self.sin_addr.s_addr = 0;
+	memset(&(self.sin_zero), 0, 8);
+
+	if (bind (sd_listen, (sockaddr *) &self, sizeof(sockaddr_in) ) == -1) {
+		char tmp[80];
+		sprintf (tmp, "NetTCP2::listen: bind to port %d failed", port);
+		message (tmp);
+		close_socket(sd_listen);
+		sd_listen = INVALID_SOCKET;
+		return -2;
+		}
+	else {
+		char tmp[80];
+		sprintf (tmp, "NetTCP2::listen: socket bound to port", port);
+		message (tmp);
+		}
+	if (::listen(sd_listen, 1) == -1) {
+		message ("NetTCP2::listen: listen failed");
+		close_socket(sd_listen);
+		sd_listen = INVALID_SOCKET;
+		return -3;
+		}
+
+//	set_as_host();		// show that this computer runs the host...
+
+	return 1;
+}
+
+
+
+int NetTCP2::CloseListener()
+{
+	close_socket(sd_listen);	// closing the listening socket.
+	return 1;
+}
+
+
+*/
+
+
 
 
 #else

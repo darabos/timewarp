@@ -12,6 +12,7 @@ REGISTER_FILE
 #include "twgui/twgui.h"
 
 #include "../melee/mlog.h"
+#include "../scp.h"
 
 #ifndef _V_BODIES_H
 #include "../other/vbodies.h"
@@ -786,7 +787,7 @@ void VGenSystem::init_objects() {
 	int i;
 
 	// initialization is for non-clients only ...
-	if (log->type == Log::log_net1server || log->type == Log::log_normal)
+	if (p_local == 0)	// if you're the server
 	{
 		
 		PopupList *popupl;
@@ -825,7 +826,7 @@ void VGenSystem::init_objects() {
 	
 	// share the result of the initialization.
 	// send (or receive) ... channel_server is locally either the server, or the client.
-	log_int(channel_server, i);
+	log_int(i, channel_server);
 
 
 	VGenSystem::setupSprites();

@@ -76,3 +76,16 @@ void BaseClass::issue_event ( int num, BaseClass **recipients, Event *e) {
 	}
 }
 
+
+/** \brief You can use this to generate buffered data across the network. These are shared
+on the network, and taken from it, in a neat, orderly way so that information doesn't get
+mixed up. Make sure that you can also handle the null-case, where fake data are produced so
+that there's an initial networking buffer (yeah that's needed, otherwise each has to
+wait for the other).
+*/
+void BaseClass::gen_buffered_data()
+{
+	// do nothing by default
+}
+
+

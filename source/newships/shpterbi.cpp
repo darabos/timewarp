@@ -736,7 +736,7 @@ just_docked( false ), resource( 0 ), docked( NULL ), goal( dock )
 
   weaponRange      = creator->droneWeaponRange;
 
-  control = new TeronDroneController( "Teron Drone", Game::channel_none );
+  control = new TeronDroneController( "Teron Drone", channel_none );
   control->load( "scp.ini", "Config0" );
   game->add( control );
   control->temporary = true;
@@ -987,7 +987,7 @@ Ship( creator, opos, shipAngle, osprite ){
   weaponDamage     = creator->fighterWeaponDamage;
   weaponArmour     = creator->fighterWeaponArmour;
 
-  control = new TeronShipController( "Teron Fighter", Game::channel_none );
+  control = new TeronShipController( "Teron Fighter", channel_none );
   control->load( "scp.ini", "Config0" );
   game->add( control );
   control->temporary = true;
@@ -1051,7 +1051,7 @@ dock_counter( 0 ){
   weaponDamage     = creator->turretWeaponDamage;
   weaponArmour     = creator->turretWeaponArmour;
 
-  control = new TeronShipController( "Teron Turret", Game::channel_none );
+  control = new TeronShipController( "Teron Turret", channel_none );
   control->load( "scp.ini", "Config0" );
   game->add( control );
   control->temporary = true;

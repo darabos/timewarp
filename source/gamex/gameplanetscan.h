@@ -65,10 +65,12 @@ public:
 	//double scalesurface;
 
 	int		nmin, nmax;
-	double	avsize, frac[32];
+	double	avsize, frac_life[32], frac_mine[32];
 	Mineral *mine[64];
+	Lifeform *life[64];
 
 	void handle_ranmin();
+	void handle_ranlife();
 
 	SpaceSprite *spr[10];
 

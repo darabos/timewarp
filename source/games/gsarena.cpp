@@ -13,6 +13,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include "../melee/mitems.h"  //ship panels...
 #include "../melee/mfleet.h"
 #include "../other/orbit.h"
+#include "../scp.h"
 
 class SuperArena : public Game { //declaring our game type
 	virtual void init(Log *_log) ; //happens when our game is first started
@@ -130,7 +131,7 @@ void SuperArena::pick_new_ships() {
 	fleet->load(NULL, "Player1");
 	if (fleet->getSize()>0) {
 	i = human_control[0]->choose_ship(window, "player 1 \nship 1", fleet);
-	log_int(channel_server, i);
+	log_int(i, channel_server);
 	if (i == -1) i = random() % fleet->getSize();
 	Ship *s = create_ship(fleet->getShipType(i)->id, human_control[0], Vector2(map_size.x/4 , map_size.y*3.0/4), 0, team[1]);
 	add(s->get_ship_phaser());
@@ -142,16 +143,16 @@ void SuperArena::pick_new_ships() {
 	add_focus(s, channel_server);
 	}
 
-	if ((log->type == Log::log_net1server) || (log->type == Log::log_net1client)) {
+	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) {
 		fleet->load("fleets.ini", "Player2");
-		log_fleet(channel_client, fleet);
+		log_fleet(channel_player[1], fleet);
 		if (fleet->getSize()>0) {
 		i = human_control[1]->choose_ship(window, "player 2 \nship 1", fleet);
-		log_int(channel_client, i);
+		log_int(i, channel_player[1]);
 		if (i == -1) i = random() % fleet->getSize();
 		Ship *s = create_ship(fleet->getShipType(i)->id, human_control[1], Vector2(size.x/4 , size.y/4), PI, team[2]);
 		add(s->get_ship_phaser());
-		add_focus(s, channel_client);
+		add_focus(s, channel_player[1]);
 		human_panel[1] = new ShipPanel(s);
 		human_panel[0]->window->init(window);
 		human_panel[0]->window->locate(0,0.9, 0,0.25, 0,0.1, 0,.25);
@@ -172,7 +173,7 @@ void SuperArena::pick_new_ships() {
 		if (fleet->getSize()>0) {
 			sprintf( buf, "Player 1 \nShip %d", j+1 );
 			i = human_control[0]->choose_ship(window, buf, fleet);
-			log_int(channel_server, i);
+			log_int(i, channel_server);
 			if (i == -1) i = random() % fleet->getSize();
 			e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x/4, size.y*3/4), random(PI2), team[1]);
 			add(e->get_ship_phaser());
@@ -196,7 +197,7 @@ void SuperArena::pick_new_ships() {
 			if (fleet->getSize()>0) {
 				sprintf( buf, "Player 2 \nShip %d", j+1 );
 				i = human_control[0]->choose_ship(window, buf, fleet);
-				log_int(channel_server, i);
+				log_int(i, channel_server);
 				if (i == -1) i = random() % fleet->getSize();
 				e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x/4, size.y/4), random(PI2), team[2]);
 				add(e->get_ship_phaser());
@@ -222,7 +223,7 @@ void SuperArena::pick_new_ships() {
 			if (fleet->getSize()>0) {
 				sprintf( buf, "Player 3 \nShip %d", j+1 );
 				i = human_control[0]->choose_ship(window, buf, fleet);
-				log_int(channel_server, i);
+				log_int(i, channel_server);
 				if (i == -1) i = random() % fleet->getSize();
 				e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x*3/4, size.y/4), random(PI2), team[3]);
 				add(e->get_ship_phaser());
@@ -247,7 +248,7 @@ void SuperArena::pick_new_ships() {
 			if (fleet->getSize()>0) {
 				sprintf( buf, "Player 4 \nShip %d", j+1 );
 				i = human_control[0]->choose_ship(window, buf, fleet);
-				log_int(channel_server, i);
+				log_int(i, channel_server);
 				if (i == -1) i = random() % fleet->getSize();
 				e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x*3/4, size.y*3/4), random(PI2), team[4]);
 				add(e->get_ship_phaser());
@@ -273,7 +274,7 @@ void SuperArena::pick_new_ships() {
 			if (fleet->getSize()>0) {
 				sprintf( buf, "Player 5 \nShip %d", j+1 );
 				i = human_control[0]->choose_ship(window, buf, fleet);
-				log_int(channel_server, i);
+				log_int(i, channel_server);
 				if (i == -1) i = random() % fleet->getSize();
 				e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x/2, size.y*3/4), random(PI2), team[5]);
 				add(e->get_ship_phaser());
@@ -298,7 +299,7 @@ void SuperArena::pick_new_ships() {
 			if (fleet->getSize()>0) {
 				sprintf( buf, "Player 6 \nShip %d", j+1 );
 				i = human_control[0]->choose_ship(window, buf, fleet);
-				log_int(channel_server, i);
+				log_int(i, channel_server);
 				if (i == -1) i = random() % fleet->getSize();
 				e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x/4, size.y/2), random(PI2), team[6]);
 				add(e->get_ship_phaser());
@@ -323,7 +324,7 @@ void SuperArena::pick_new_ships() {
 			if (fleet->getSize()>0) {
 				sprintf( buf, "Player 7 \nShip %d", j+1 );
 				i = human_control[0]->choose_ship(window, buf, fleet);
-				log_int(channel_server, i);
+				log_int(i, channel_server);
 				if (i == -1) i = random() % fleet->getSize();
 				e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x/2, size.y/4), random(PI2), team[7]);
 				add(e->get_ship_phaser());
@@ -348,7 +349,7 @@ void SuperArena::pick_new_ships() {
 			if (fleet->getSize()>0) {
 				sprintf( buf, "Player 8 \nShip %d", j+1 );
 				i = human_control[0]->choose_ship(window, buf, fleet);
-				log_int(channel_server, i);
+				log_int(i, channel_server);
 				if (i == -1) i = random() % fleet->getSize();
 				e = create_ship(channel_none, fleet->getShipType(i)->id, "WussieBot", Vector2(size.x*3/4, size.y/2), random(PI2), team[8]);
 				add(e->get_ship_phaser());
@@ -453,8 +454,8 @@ void SuperArena::init(Log *_log) {
 
 	human_control[0] = create_control(channel_server, "Human");
 
-	if ((log->type == Log::log_net1server) || (log->type == Log::log_net1client)) {
-		human_control[1] = create_control(channel_client, "Human");
+	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) {
+		human_control[1] = create_control(channel_player[1], "Human");
 		}
 	else human_control[1] = NULL;
 

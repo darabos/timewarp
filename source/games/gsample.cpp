@@ -30,6 +30,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include "../melee/mshppan.h"  //ship panels...
 #include "../melee/mitems.h"   //indicators...
 #include "../melee/mfleet.h"   //fleets...
+#include "../scp.h"
 
 
 class SampleGame1 : public Game { //declaring our game type
@@ -148,7 +149,8 @@ class SampleGame2 : public Game { //declaring our game type
 	virtual void init(Log *_log) ; //happens when our game is first started
 	};
 
-void SampleGame2::init(Log *_log) {
+void SampleGame2::init(Log *_log)
+{
 	Game::init(_log);
 
 	size *= 1.2;
@@ -178,65 +180,98 @@ void SampleGame2::init(Log *_log) {
 	humans = new_team();
 	enemies = new_team();
 
-	Control *c = create_control(channel_server, "Human");
 
+	// re-use the same fleet for all players.
 	//this is where we deviate from SampleGame1
 	Fleet fleet;//first we declare a fleet
 	log_file("fleets/all.scf"); //this is a fleet file containing every ship (more or less)
 	fleet.load(NULL, "Fleet");
-	//to load a fleet from disk you say fleet.load(filename, fleetname); (fleetname is usually "Fleet", because that is the standard name used in .scf files)
-	//but that's not network enabled, so we manually load the file using the network-enabled log_file(), and pass NULL for the file name
-	//BTW, the cost of the fleet is fleet.cost and the size is fleet.size 
-	//(if fleet is a pointer, then fleet->cost, fleet->size, and fleet->load instead)
-	i = c->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
-	//note that we said &fleet instead of fleet because choose_ship expects a pointer at a fleet instead of just a fleet
-	//now i is the number of the ship that the user selected from that list
-	log_int(channel_server, i);
-	//necessary for networking... because i would otherwise be different on the 2 computers...
-	//channel_server is used instead of channel_client becaues we want the servers value to override the clients
-	if (i == -1) i = random(fleet.getSize());
-	//handles the case where random or always random was used
 
-	//now we're back to the way we were in SampleGame1 for a little bit
-	Ship *s = create_ship(fleet.getShipType(i)->id, c, Vector2(size.x/2 + 100, size.y), 0, humans);
-	add(s->get_ship_phaser());
+	int p;
 
-	add_focus(s, channel_server);
-	//in SampleGame1, we just said "add_focus(s);" to make it a focus for the camera
-	//but here it's different, because we don't want it to be a focus for all computers, only the server computer
+	// check all the (human) players.
+	int slot[max_player];
+	Control *c[max_player];
 
-	ShipPanel *sp = new ShipPanel(s); //here we create a ship panel for our ship
-	sp->window->init(window); //here we tell the ship panel to display itself on our games window
-	//this next bit of code tells the ship panel where on our display it should show up
-	//it's little complicated, so I'll try to explain:
-	//the location is made up of 4 pairs
-	//the first 2 pairs describe the X & Y coordinates of the upper left corner
-	//the next 2 pairs describe the width & height
-	//the first number in each pair is a number of pixels
-	//the second number is a portion of the screen width or height
-	sp->window->locate(
-		//the first pair of numbers describes the X coordinate of the 
-		//upper left hand corner of the ship panel
-		//-PANEL_WIDTH, 1 means it should be -PANEL_WIDTH + 1 * SCREEN_WIDTH
-		//or, in english, PANEL_WIDTH to the left of the right edge of the screen
-		-PANEL_WIDTH, 1,
-		//the second pair of numbers describes the Y coordinate of the 
-		//upper left hand corner of the ship panel
-		//0, 0 means it should be 0 + 0 * SCREEN_HEIGHT
-		//or, in english, the top edge of the screen
-		0, 0,
-		//the third pair of numbers describes the width of the ship panel
-		//PANEL_WIDTH, 0 means it should be PANEL_WIDTH + 0 * SCREEN_WIDTH
-		//or, in english, the normal width for a panel
-		PANEL_WIDTH, 0,
-		//the fourth pair of numbers describes the height of the ship panel
-		PANEL_HEIGHT, 0
-		);
+	for ( p = 0; p < num_humans; ++p )
+	{
+		
+		if (p == p_local)
+		{
+			c[p] = create_control(channel_player[p], "Human");
+		
+		//to load a fleet from disk you say fleet.load(filename, fleetname); (fleetname is usually "Fleet", because that is the standard name used in .scf files)
+		//but that's not network enabled, so we manually load the file using the network-enabled log_file(), and pass NULL for the file name
+		//BTW, the cost of the fleet is fleet.cost and the size is fleet.size 
+		//(if fleet is a pointer, then fleet->cost, fleet->size, and fleet->load instead)
+			slot[p] = c[p]->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
+		//note that we said &fleet instead of fleet because choose_ship expects a pointer at a fleet instead of just a fleet
+		} else {
 
+			c[p] = create_control(channel_player[p], "VegetableBot");
+			// controlled by the remote player
+		}
 
-	add(sp); //now we make the panel appear in the game
+		//now i is the number of the ship that the user selected from that list
+		// (or if it's a remote player, it's chosen remotely, and isn't know here yet - it
+		// will be after the share_update, so specify the slot here already
+		share(p, &slot[p]);//log_int(channel_server, i);
+	}
 
-	if ((log->type == Log::log_net1server) || (log->type == Log::log_net1client)) { 
+	// send/receive all choices.
+	share_update();
+
+	for ( p = 0; p < num_humans; ++p )
+	{
+		i = slot[p];
+
+		//necessary for networking... because i would otherwise be different on the 2 computers...
+		//channel_server is used instead of channel_client becaues we want the servers value to override the clients
+		if (i == -1) i = random(fleet.getSize());
+		//handles the case where random or always random was used
+		
+		//now we're back to the way we were in SampleGame1 for a little bit
+		Ship *s = create_ship(fleet.getShipType(i)->id, c[p], Vector2(size.x/2 + 100, size.y), 0, humans);
+		add(s->get_ship_phaser());
+		
+		add_focus(s, channel_player[p]);
+		//in SampleGame1, we just said "add_focus(s);" to make it a focus for the camera
+		//but here it's different, because we don't want it to be a focus for all computers, only the server computer
+		
+		ShipPanel *sp = new ShipPanel(s); //here we create a ship panel for our ship
+		sp->window->init(window); //here we tell the ship panel to display itself on our games window
+		//this next bit of code tells the ship panel where on our display it should show up
+		//it's little complicated, so I'll try to explain:
+		//the location is made up of 4 pairs
+		//the first 2 pairs describe the X & Y coordinates of the upper left corner
+		//the next 2 pairs describe the width & height
+		//the first number in each pair is a number of pixels
+		//the second number is a portion of the screen width or height
+		sp->window->locate(
+			//the first pair of numbers describes the X coordinate of the 
+			//upper left hand corner of the ship panel
+			//-PANEL_WIDTH, 1 means it should be -PANEL_WIDTH + 1 * SCREEN_WIDTH
+			//or, in english, PANEL_WIDTH to the left of the right edge of the screen
+			-PANEL_WIDTH, 1,
+			//the second pair of numbers describes the Y coordinate of the 
+			//upper left hand corner of the ship panel
+			//0, 0 means it should be 0 + 0 * SCREEN_HEIGHT
+			//or, in english, the top edge of the screen
+			0, 0,
+			//the third pair of numbers describes the width of the ship panel
+			//PANEL_WIDTH, 0 means it should be PANEL_WIDTH + 0 * SCREEN_WIDTH
+			//or, in english, the normal width for a panel
+			PANEL_WIDTH, 0,
+			//the fourth pair of numbers describes the height of the ship panel
+			PANEL_HEIGHT, 0
+			);
+		
+		
+		add(sp); //now we make the panel appear in the game
+	}
+
+	/*
+	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) { 
 		//if we're in a network game...
 		//then do the same thing, only for the other player
 		Control *c = create_control(channel_client, "Human");
@@ -256,6 +291,7 @@ void SampleGame2::init(Log *_log) {
 			);
 		add(sp);
 		}
+		*/
 
 	//now, we need some enemies to fight
 
@@ -342,7 +378,7 @@ void SampleGame3::pick_new_ships() {
 
 	//player 1 selects a new ship
 	i = human_control[0]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
-	log_int(channel_server, i);
+	log_int(i, channel_server);
 	if (i == -1) i = random() % reference_fleet->getSize();
 	Ship *s = create_ship(reference_fleet->getShipType(i)->id, human_control[0], size/2 + Vector2(100, 0), 0, human_team);
 	add(s->get_ship_phaser());
@@ -359,10 +395,10 @@ void SampleGame3::pick_new_ships() {
 		);
 	add(sp);
 
-	if ((log->type == Log::log_net1server) || (log->type == Log::log_net1client)) { 
+	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) { 
 		log_file("fleets/all.scf");
 		i = human_control[1]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
-		log_int(channel_client, i);
+		log_int(i, channel_player[1]);
 		if (i == -1) i = random() % reference_fleet->getSize();
 		Ship *s = create_ship(reference_fleet->getShipType(i)->id, human_control[1], size/2 + Vector2(100, 0), 180, human_team);
 		add(s->get_ship_phaser());
@@ -429,10 +465,10 @@ void SampleGame3::init(Log *_log) {
 	//so that we don't have to call add_focus again every time the controller gets a new ship
 	//BTW, if you have multiple focuses, the camera will track one of them, and the player can switch which one by pressing F3
 	
-	if ((log->type == Log::log_net1server) || (log->type == Log::log_net1client)) { 
-		human_control[1] = create_control(channel_client, "Human");
+	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) { 
+		human_control[1] = create_control(channel_player[1], "Human");
 		human_control[1]->target_sign_color = 2;
-		add_focus(human_control[1], channel_client);
+		add_focus(human_control[1], channel_player[1]);
 		}
 	else human_control[1] = NULL;
 
@@ -441,7 +477,7 @@ void SampleGame3::init(Log *_log) {
 	int i;
 	for (i = 0; i < 7; i += 1) add(new Asteroid());
 
-	if (log->type == Log::log_net1server) fleet.load("fleets/all.scf", "Fleet");
+	if (glog->type == Log::log_net1server) fleet.load("fleets/all.scf", "Fleet");
 	log_fleet(channel_server, &fleet);
 	//this time, instead of transmitting the fleet file over the network and then loading 
 	//it on both sides

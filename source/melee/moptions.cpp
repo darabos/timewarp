@@ -510,12 +510,12 @@ void change_options() {STACKTRACE
 	else
 		old_optionsDialog[OPTIONS_DIALOG_HIDE_CLOAKERS].flags = 0;
 
-	set_config_file("client.ini");
-
 	if (get_config_int("Planet", "PlanetDimension", 2) == 3) 
 		old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags = D_SELECTED;
 	else
 		old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags = 0;
+
+	set_config_file("client.ini");
 
 	i = get_view_num ( get_config_string ( "View", "View", NULL ) );
 	if (i == -1) i = 0;
@@ -544,12 +544,6 @@ void change_options() {STACKTRACE
 	set_config_int("Rendering", "AA_Mode", aa);
 	set_tw_aa_mode(aa);
 
-	if (old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags == D_SELECTED)
-		i = 3;
-	else
-		i = 2;
-	set_config_int("Planet", "PlanetDimension", i);
-
 	View *v = get_view(
 		view_name[old_optionsDialog[OPTIONS_DIALOG_VIEW].d1],
 		NULL
@@ -560,6 +554,12 @@ void change_options() {STACKTRACE
 	if (game && !game->view_locked) game->change_view(
 		view_name[old_optionsDialog[OPTIONS_DIALOG_VIEW].d1]);
 
+
+	if (old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags == D_SELECTED)
+		i = 3;
+	else
+		i = 2;
+	twconfig_set_int("/cfg/server.ini/Planet/PlanetDimension", i);
 
 	twconfig_set_int("/cfg/server.ini/stars/depth", 
 		old_optionsDialog[OPTIONS_DIALOG_STARS_SLIDER].d2);

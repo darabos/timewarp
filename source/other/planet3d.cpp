@@ -119,7 +119,7 @@ void Vector3D::normalize()
 // instead of the creation of a 2D planet.
 Planet *create_planet( Vector2 position )
 {
-	STACKTRACE
+	STACKTRACE;
 
 	// first, check the server.ini settings to see which type of planet you want
 	// to create: a 2D planet, or a 3D planet ?!
@@ -127,7 +127,7 @@ Planet *create_planet( Vector2 position )
 	// add this line to server.ini, under [Planets]
 	// PlanetDimension = 3       ; 2 = standard 2d sprite, 3 = Tau's 3D planet idea.
 
-	game->log_file ("client.ini");
+	game->log_file ("server.ini");
 
 
 	int planetD, PlanetUsespec;
@@ -135,11 +135,9 @@ Planet *create_planet( Vector2 position )
 	PlanetUsespec = get_config_int("Planet", "PlanetUsespec", 1);
 
 	// check if the 3D data file exists
-	FILE *data3d = fopen("planet3d.dat", "rb");
-	if (!data3d)
+	if (!exists("planet3d.dat"))
 		planetD = 2;
-	else
-		fclose(data3d);
+
 
 	if (planetD == 2)
 	{

@@ -21,6 +21,7 @@ IndexTypeList *planettypelist;
 IndexTypeList *surfacetypelist;
 IndexTypeList *starsurfacetypelist;
 IndexTypeList *mineraltypelist;
+IndexTypeList *lifeformtypelist;
 IndexTypeList *structuretypelist;
 
 PlayerInfo		playerinfo;

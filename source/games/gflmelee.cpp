@@ -422,14 +422,15 @@ void FlMelee::init(Log *_log)
 	}
 	*/
 
-	if (log->type == Log::log_net1server || log->type == Log::log_normal)
+	if (glog->type == Log::log_net1server || glog->type == Log::log_normal)
 	{
 		start_menu(allyfleet);
 	}
 	// send (or receive) ... channel_server is locally either the server, or the client.
 	// fleet numbers are fixed: fleet 0 vs fleet 1
-	log_int(channel_server, allyfleet[0]);
-	log_int(channel_server, allyfleet[1]);
+	channel_current = channel_server;
+	log_int(allyfleet[0]);
+	log_int(allyfleet[1]);
 
 	// team-numbers are fixed : fleet 0 vs fleet 1.
 	alliance[0] = new_team();
@@ -440,7 +441,7 @@ void FlMelee::init(Log *_log)
 	// this is not fixed, game-host should have fleet 0, game-client fleet 1
 	// note that channel_server/ channel_client are always local vs. remote,
 	// log->type is host vs client.
-	if (log->type == Log::log_net1server || log->type == Log::log_normal)
+	if (glog->type == Log::log_net1server || glog->type == Log::log_normal)
 	{
 		localplayer = 0;
 		remoteplayer = 1;
@@ -459,10 +460,10 @@ void FlMelee::init(Log *_log)
 	
 	
 	// create the remote player
-	if (log->type == Log::log_net1server || log->type == Log::log_net1client)
+	if (glog->type == Log::log_net1server || glog->type == Log::log_net1client)
 	{
 		// it's "client" from local perspective ???
-		c  = create_control(channel_client, "Human");
+		c  = create_control(channel_player[1], "Human");
 		playercontrols[remoteplayer] = c;
 		add_focus(c, c->channel);
 	} else
@@ -635,7 +636,7 @@ void FlMelee::init(Log *_log)
 	char txt[512];
 	sprintf(txt, "gflmelee%02i.dat", radarlayout+1);
 
-	if (log->type == Log::log_net1client)
+	if (glog->type == Log::log_net1client)
 		iplayer = remoteplayer;
 	else
 		iplayer = localplayer;

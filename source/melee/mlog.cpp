@@ -3,15 +3,134 @@
 #include <allegro.h>
 
 #include "../melee.h"
+#include "../scp.h"
 
 #include "mlog.h"
 #include "mgame.h"
 #include "../util/net_tcp.h"
+#include "../melee/mview.h"
+
+int channel_current = -1;
+
+int channel_file_names = 0;
+int channel_file_data = 1; //direction for file channels must be the same
 
 
 ////////////////////////////////////////////////////////////////////////
 //				Logging stuff
 ////////////////////////////////////////////////////////////////////////
+
+
+// if set to fake, it overrides all other read-settings to "false", to allow buffering
+// of fake data, without having to make this explicit in higher level code.
+static bool log_fake = false;
+
+void log_set_fake()
+{
+	log_fake = true;
+}
+
+void log_set_nofake()
+{
+	log_fake = false;
+}
+
+// to initialize a lag-buffer, you've to first push fake data, without reading operations,
+// i.e. a predictable (and therefore synched), pushing of pre-defined (hard-coded) values.
+// For this, you need stuff like this (and also to push/pop sequences of values to the buffer)
+
+static bool log_read_disable = false;	// turn off most of the time, except when building the lag buffer (then you just write into the buffer!)
+static bool log_write_disable = false;
+bool log_synched = true;
+
+void log_set_default()
+{
+	log_read_disable = false;
+	log_write_disable = false;
+}
+
+void log_set_writeonly()
+{
+	log_read_disable = true;	// disable read (always)
+	log_write_disable = false;
+}
+
+void log_set_readonly()
+{
+	log_read_disable = log_fake;	// enable read, but only if it's not in fake-mode
+	log_write_disable = true;		// disable write
+}
+
+
+// check if the logging mode is currently read-only. This is useful for events, which
+// should only "act" if you're in receiving mode.
+bool log_readonly()
+{
+	return (log_read_disable == false) && (log_write_disable == true);
+}
+
+bool log_writeonly()
+{
+	return (log_read_disable == true) && (log_write_disable == false);
+}
+
+bool log_default()
+{
+	return (log_read_disable == false) && (log_write_disable == false);
+}
+
+
+// check current channel settings
+bool log_writable()
+{
+	return (glog->writeable());
+}
+
+
+bool log_readable()
+{
+	return (glog->readable());
+}
+
+// define different "modes" of writability or readability
+void log_resetmode()
+{
+	log_set_default();
+	log_synched = true;
+}
+
+// default --> writeonly --> readonly
+bool log_nextmode()
+{
+	if (log_default())
+	{
+		log_set_writeonly();
+		log_synched = false;	// written data are true-time, hence, not synched
+		return true;
+	}
+	else if (log_writeonly())
+	{
+		log_set_readonly();
+		if (!log_fake)
+		{
+			log_synched = true;		// received data are game-time, hence, synched
+			return true;
+		} else {
+			log_synched = false;
+			return false;
+		}
+
+	}
+
+	else
+		return false;
+}
+
+
+
+
+bool log_show_data = false;	// for inspecting values
+
 
 void Log::init() {STACKTRACE
 	log_len  = NULL;
@@ -24,6 +143,18 @@ void Log::init() {STACKTRACE
 	playback = false;
 	type = Log::log_normal;
 	return;
+}
+
+void Log::set_r(int ch)
+{
+	set_direction(ch , direction_read);
+	set_direction(ch + _channel_buffered, direction_read);
+}
+
+void Log::set_rw(int ch)
+{
+	set_direction(ch, direction_write | direction_read | direction_immediate);
+	set_direction(ch + _channel_buffered, direction_write | direction_read);
 }
 
 void Log::set_direction ( int channel, char direction ) {
@@ -72,8 +203,9 @@ void Log::log ( int channel, void *data, int size) {STACKTRACE
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
-	if (log_dir[channel] & direction_write) _log ( channel, data, size);
-	if (log_dir[channel] & direction_read) _unlog ( channel, data, size);
+
+	if ((log_dir[channel] & direction_write) && !log_write_disable) _log ( channel, data, size);
+	if ((log_dir[channel] & direction_read ) && !log_read_disable && !log_fake ) _unlog ( channel, data, size);
 	return;
 }
 void Log::_log(int channel, const void *data, int size) {STACKTRACE
@@ -164,70 +296,8 @@ int Log::ready(int channel) {
 	if (channel >= log_num) return 0;
 	return log_len[channel] - log_pos[channel];
 }
-int Log::file_ready(const char *fname, void **location) {
-	STACKTRACE;
-	if (log_num <= channel_file_data) return -1;
-	int i = 0, j = 0;
-	while (i < log_len[channel_file_names]) {
-		if (strcmp((char*) log_data[channel_file_names] + i, fname)) {
-			i += strlen((char*) log_data[channel_file_names] + i) + 1;
-//			j += intel_ordering(*((int*)(log_data[channel_file_names] + i)));
-			int k;
-			memcpy(&k, (log_data[channel_file_names] + i), sizeof(int));
-			j += intel_ordering(k);
-			i += sizeof(int);
-		}
-		else {
-			i += strlen((char*) log_data[channel_file_names] + i) + 1;
-			int k;
-			memcpy(&k, (log_data[channel_file_names] + i), sizeof(int));
-			k = intel_ordering(k);
 
-			if (j+k > log_len[channel_file_data]) { tw_error ("Log::file_ready - uh, that's bad"); }
-			if (location) *location = log_data[channel_file_data] + j;
-			return k;
-		}
-	}
-	return -1;
-}
-void Log::log_file(const char *fname) {STACKTRACE
-	void *loc;
-	if (!(log_dir[channel_file_data] & direction_read)) {
-		set_config_file(fname);
-		return;
-	}
-	int len = file_ready(fname, &loc);
-	if (len >= 0) {
-		set_config_data((char*)loc, len);
-		return;
-	}
-	if (!(log_dir[channel_file_data] & direction_write)) {
-		tw_error("Log::log_file - file logs read only, \"%s\" not found", fname);
-	}
-	if (log_num <= channel_file_data) {
-		expand_logs(channel_file_data + 1);
-	}
-	char buffy[2048];
-	PACKFILE *f;
-	int i, j = 0;
-	f = pack_fopen(fname, F_READ);
-	if (!f) { tw_error("tw_log_file - bad file name %s", fname); }
-	while (1) {
-		i = pack_fread(buffy, 1024, f);
-		if (i > 0) {
-			_log(channel_file_data, buffy, i);
-			j += i;
-		}
-		else break;
-	}
-	sprintf(buffy, "%s", fname);
-	j = intel_ordering(j);
-	memcpy(&buffy[strlen(buffy)+1], &j, sizeof(int));
-	_log (channel_file_names, buffy, strlen(buffy)+5);
-	len = file_ready(fname, &loc);
-	set_config_data((char*)loc, len);
-	return;
-}
+
 
 void Log::deinit() {STACKTRACE
 	return;
@@ -245,7 +315,7 @@ bool Log::buffer ( int channel, void *data, int size ) {STACKTRACE
 		if (size > 128) { tw_error("Log::buffer - overflow"); }
 		memset(zeros, 0, size);
 	}
-	if (log_dir[channel] & direction_write) {
+	if ((log_dir[channel] & direction_write) && !log_write_disable) {
 		_log ( channel, data, size);
 //		if (!(log_dir[channel] & direction_immediate)) send_packet();
 		return true;
@@ -267,19 +337,28 @@ bool Log::unbuffer ( int channel, void *data, int size ) {STACKTRACE
 	}
 
 //	if (log_dir[channel] & direction_write) _log ( channel, data, size);
-	if (log_dir[channel] & direction_read) {
+	if ((log_dir[channel] & direction_read) && !log_read_disable && !log_fake) {
 		_unlog ( channel, data, size);
 		return true;
 	}
 	return false;
 }
 
-void Log::flush() {
+void Log::flush_block() {
+	return;
+}
+
+void Log::flush_noblock() {
 	return;
 }
 
 bool Log::listen() {
 	return false;
+}
+
+void Log::use_idle(int time)
+{
+	// nothing by default.
 }
 
 void Log::reset() {
@@ -296,8 +375,8 @@ void PlaybackLog::init() {STACKTRACE
 	Log::init();
 	playback = true;
 	default_direction = Log::direction_read;
-	Log::set_direction(Game::channel_playback, Log::direction_read | Log::direction_write | Log::direction_forget);
-	Log::set_direction(Game::channel_playback + Game::_channel_buffered, Log::direction_read | Log::direction_write | Log::direction_forget);
+	Log::set_direction(channel_playback, Log::direction_read | Log::direction_write | Log::direction_forget);
+	Log::set_direction(channel_playback + _channel_buffered, Log::direction_read | Log::direction_write | Log::direction_forget);
 	return;
 }
 
@@ -347,9 +426,22 @@ void share_intel_order(int n, int i)
 	}
 }
 
-void share_buffer(int channel, void *value, int num, int size, share_types st)
+
+static int chann(int player)
 {
-	share_channel[Nshare] = channel;
+	if (player == -1)
+		return channel_init;
+
+	else
+		return channel_player[player];
+}
+
+void share_buffer(int player, void *value, int num, int size, share_types st)
+{
+	if (chann(player) == channel_none)
+		return;
+
+	share_channel[Nshare] = chann(player);
 	share_address[Nshare] = value;
 
 	share_num[Nshare] = num;
@@ -363,7 +455,7 @@ void share_buffer(int channel, void *value, int num, int size, share_types st)
 		share_intel_order(Nshare, i);
 
 	// buffer an array
-	game->log->buffer(share_channel[Nshare],
+	glog->buffer(share_channel[Nshare],
 							share_address[Nshare],
 							share_num[Nshare] * share_size[Nshare]);
 
@@ -382,22 +474,25 @@ occur between the share and share_update(). It uses the global game->log. NOTE, 
 is no "intel_buffering" done, so it's probably a problem between different machine types.
 */
 
-void share(int channel, int *value, int num)
+void share(int player, int *value, int num)
 {
-	share_buffer(channel, value, num, sizeof(int), TYPE_INT);
+	share_buffer(player, value, num, sizeof(int), TYPE_INT);
 }
 
 
-void share(int channel, short *value, int num)
+void share(int player, short *value, int num)
 {
-	share_buffer(channel, value, num, sizeof(short), TYPE_SHORT);
+	share_buffer(player, value, num, sizeof(short), TYPE_SHORT);
 }
 
 
-void share(int channel, char *value, int num)
+void share(int player, char *value, int num)
 {
-	share_buffer(channel, value, num, sizeof(char), TYPE_CHAR);
+	share_buffer(player, value, num, sizeof(char), TYPE_CHAR);
 }
+
+
+
 
 
 
@@ -409,7 +504,10 @@ void share_update()
 {
 	// do it here, cause why would you want to wait for each little packet till it
 	// can be sent onto the net ?
-	game->log->flush();
+
+	
+//	glog->need_to_transmit = true;
+	glog->flush_block();
 
 	// superfluous, cause this is already used inside the unbuffer routine.
 	//game->log->listen();
@@ -419,7 +517,7 @@ void share_update()
 	for ( n = 0; n < Nshare; ++n )
 	{
 		// unbuffer an array
-		game->log->unbuffer(share_channel[n], share_address[n], share_size[n] * share_num[n]);
+		glog->unbuffer(share_channel[n], share_address[n], share_size[n] * share_num[n]);
 
 		// sort out bit-ordering for all values in the array
 		int i;
@@ -428,4 +526,119 @@ void share_update()
 	}
 
 	Nshare = 0;
+}
+
+
+
+
+
+bool Log::writeable(int ch)
+{
+	if (ch < 0)
+		return false;
+
+	return log_dir[ch] & direction_write;
+}
+
+
+bool Log::readable(int ch)
+{
+	if (ch < 0)
+		return false;
+
+	return log_dir[ch] & direction_read;
+}
+
+
+
+
+void Log::lint(int *val, int ch)
+{
+	log(ch, val, sizeof(int));
+}
+
+void Log::ldata(char *data, int N, int ch)
+{
+	log(ch, data, N);
+}
+
+char *Log::create_buffer(int *size, int ch)
+{
+	lint(size, ch);
+	return new char [*size];
+}
+
+
+void Log::log_file(const char *fname)
+{
+	STACKTRACE;
+
+	int chold = channel_current;
+	channel_current = channel_file_data;
+
+	if (log_read_disable || log_write_disable || log_fake)
+		tw_error("Faking sharing a file ? Unlikely !");
+
+	if (writeable() && !(log_dir[channel_current] & direction_immediate))
+		tw_error("You should use an immediate connection to share file-data");
+
+	int L = 0;
+	if (writeable())
+		L = file_size(fname);
+
+	char *buffy = create_buffer(&L);
+
+	if (writeable())
+	{	
+		PACKFILE *f;
+		
+		int i, j = 0;
+		f = pack_fopen(fname, F_READ);
+		if (!f) { tw_error("tw_log_file - bad file name %s", fname); }
+		
+		i = pack_fread(buffy, L, f);
+		if ( i != L ) { tw_error("tw_log_file - bad filesize"); };
+	}
+
+	ldata(buffy, L, sizeof(char));	// woops, I used sizeof(int) by mistake --> caused some unpred.behav.
+
+	set_config_data(buffy, L);
+
+	/*
+	// error check:
+	int i;
+	int sum = 0;
+	for ( i = 0; i < L; ++i )
+		sum += buffy[i];
+
+	message.print(1500, 14, "L = %i  sum = %i", L, sum);
+	message.animate(0);
+	//*/
+
+	delete buffy;
+
+
+	channel_current = chold;
+
+	/*
+	// check if the file-share buffer isn't empty - it should be empty !!
+	// but this only makes sense for the host, cause remotes who are on the receiving end,
+	// can receive >1 file due to the lag, if the game is paused.
+	if (log_size_ch(channel_current) != 0)
+		tw_error("The file channel should be empty. Contains %i chars", log_size_ch(channel_current));
+	so ... in principle this test makes sense, but only in places where it's safe to test. Like,
+	after all ships have been initialized.
+	*/
+
+	return;
+}
+
+
+
+int log_size_ch(int channel)
+{
+	if (glog)
+		return glog->log_len[channel] - glog->log_pos[channel];
+	else
+		return 0;
 }

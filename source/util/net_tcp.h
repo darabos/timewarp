@@ -4,6 +4,9 @@
 
 class NetTCP {
 	public:
+
+		char addr[512];
+
 		//init() is called once on each NetTCP before it is used
 		int init();
 		void deinit();
@@ -18,7 +21,7 @@ class NetTCP {
 		//ready2recv returns true if recv() can return quickly
 		int ready2recv();
 		//send (size, data) sends size bytes of data
-		int send(int size, const void *data);
+		int sendall();
 		//recv (min, max, data) recieves at least min bytes, and at most max bytes, storing them in data
 		int recv(int min, int max, void *data);
 		//optimizes for bandwidth (good for file transfers)
@@ -29,12 +32,29 @@ class NetTCP {
 		bool isConnected();
 		//describes the network type
 		static const char *network_type();
+
+		int sendattempt();
+		// the buffer used for subsequent send(attempts)
+		// adds N bytes to the buffer
+		// it's probably advantageous if each socket can manage its own buffer
+		int add2buffer(char *data, int N);
+		
+		// remove N bytes from the buffer
+		int rembuffer(int N);
+
+		// returns the buffer length
+		int buflen();
+
 	private:
 		union {
 			int signed_socket;
 			unsigned int unsigned_socket;
 			};
 		static void (*message)(char *txt);
+
+
+		char *buffer;
+		int MaxBuffer, NBuffer;
 	};
 
 

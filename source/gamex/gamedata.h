@@ -281,6 +281,7 @@ extern IndexTypeList *planettypelist;
 extern IndexTypeList *surfacetypelist;
 extern IndexTypeList *starsurfacetypelist;
 extern IndexTypeList *mineraltypelist;
+extern IndexTypeList *lifeformtypelist;
 extern IndexTypeList *structuretypelist;
 
 #endif // __GAMEX_DATA__

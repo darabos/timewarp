@@ -3,11 +3,6 @@
  *
  * melee/mgame.cpp - Melee base game module
  *
- * 21-Jun-2002
- *
- * - Game::create_ship() function modified to load ship ini files according to shp*.*
- *   file naming convention.
- * - Cosmetic code changes.
  */
 
 //#define REVERSE_CONNECT
@@ -46,6 +41,124 @@ REGISTER_FILE
 #include <typeinfo>
 
 #include <stdarg.h>
+
+
+
+
+
+
+
+
+void display_channel_info(char *txt = "")
+{
+	int p;
+	for ( p = 0; p < num_humans; ++p )
+	{
+		int ch = channel_player[p];
+		message.print(1500, 15, "[%s] player[%i]  (direct) [%i]  (buffered) [%i]", txt, p,
+			glog->log_len[ch] - glog->log_pos[ch],
+			glog->log_len[ch+1] - glog->log_pos[ch+1]);
+	}
+	message.animate(0);
+	//if (p_local == 0) readkey();
+}
+
+
+
+
+
+void idle_extra(int time)
+{
+	if (game) game->use_idle(time);
+	if (glog) glog->use_idle(time);
+
+	idle(time);	
+}
+
+
+
+static int next_frame = 0;
+
+
+void Game::increase_latency(int n)
+{
+	// make sure both have identical lag !!
+	// to keep games synchronized (and to aid in pushing synched fake data ???)
+	share(-1, &n);
+
+	lag_frames += n;
+	next_frame += n;
+
+	message.print(1500, 13, "Increasing latency [%i]", n);
+	message.animate(0);
+	//if (p_local == 0) readkey();
+}
+
+void Game::decrease_latency(int n)
+{
+	// make sure both have identical lag !!
+	share(-1, &n);
+
+	lag_frames -= n;
+	next_frame -= n;
+
+//	message.print(1500, 13, "Decreasing latency [%i]", n);
+//	message.animate(0);
+}
+
+
+
+void Game::gen_buffered_data()
+{
+	++ next_frame;		// doesn't this lead to additional lag-frames in the buffer ??????
+
+	// this is needed to push (fake) data to create an initial lag-buffer, without
+	// having the trouble of synchronized reads which have the nasty habit of just begging
+	// for instant data ;)
+
+	if (next_frame > 1)
+		log_set_fake();	// buffering data means ... well you know.
+	else
+		log_set_nofake();
+	log_set_default();
+
+	
+	// there must be at least one "next frame" otherwise nothing happens.
+
+	//log_show_data = true;
+	while (next_frame > 0)
+	{
+		-- next_frame;
+
+		// game events
+		net_expect(92308549);		
+		compare_checksums();
+		
+		// checksum check
+		net_expect(692930);
+		do_game_events2();		// testing version only , for now !!
+		
+		// the control data ... how to do those ? They're one of the presences, so, call them
+		// in the following way, I think that's ok ?
+		net_expect(2909485);
+		int i;
+		for ( i = 0; i < num_presences; ++i )
+			presence[i]->gen_buffered_data();
+		
+		for ( i = 0; i < num_items; ++i )
+			item[i]->gen_buffered_data();
+		net_expect(8938034);
+	}
+	//log_show_data = false;
+
+	//display_channel_info();
+	//if (p_local == 0) readkey();
+	//readkey();
+
+	log_set_nofake();
+	log_resetmode();
+}
+
 
 
 static char chat_buf[256];
@@ -121,8 +234,8 @@ int interpolate_frames = false;
 
 #define HIST_POWER 4.0
 
-#define CHECKSUM_CHANNEL Game::_channel_buffered
-//#define CHECKSUM_CHANNEL 0
+#define CHECKSUM_CHANNEL _channel_buffered
+//#define CHECKSUM_CHANNEL 0   THIS IS HIGHLY ILLEGAL IF YOU'd USE THIS ! Cause it's not also included in the buffer-filling!!
 
 #ifdef _MSC_VER
 #	pragma warning( disable : 4800 ) //int -> bool, performance warning
@@ -166,11 +279,46 @@ void __checksync( const char *fname, int line) {
 		error("request to compare checksums without a valid game\nfrom file %f, line %d", fname, line);
 		return;
 	}
-#	ifdef LOTS_OF_CHECKSUMS
-	game->compare_checksums();
-#	endif
+//#	ifdef LOTS_OF_CHECKSUMS
+//	game->compare_checksums();
+//#	endif
 }
 
+
+static const int channel_none = -1;
+static const int _channel_buffered = 1;
+static const int channel_init = 4;     // game type, version, length, etc.. things that need to read by a reader independant of a particular game type
+static const int channel_playback = 8; // used for demo playbacks only
+static const int channel_server = 12;  //data originating on the server
+int channel_player[max_player];  //data originating on the client
+int p_local;				// this defines the local player.
+int num_players = 0;		// the number of players in the game.
+int num_humans = 0;
+int num_bots = 0;
+
+void set_numplayers(int n)
+{
+	num_players = n;
+}
+
+int channel_local()
+{
+	return channel_player[p_local];
+}
+
+void init_channels()
+{
+	p_local = -1;
+
+	// default values for the available channels
+	channel_player[0] = channel_server; //data originating on the server (=player 0)
+	int i;
+	for ( i = 1; i < max_player; ++i )
+		channel_player[i] = channel_player[i-1] + 4; //data originating on the client
+
+	// actual number of players that use these channels...
+	num_players = 0;
+};
 
 
 void Game::_event(Event *e) {
@@ -204,7 +352,7 @@ void Game::_event(Event *e) {
 }
 
 void Game::add_focus(Presence *new_focus, int channel) {
-	if ((channel != -1) && !log->playback && !(log->get_direction(channel) & Log::direction_write))
+	if ((channel != -1) && !glog->playback && !(glog->get_direction(channel) & Log::direction_write))
 		return;
 	num_focuses += 1;
 	focus = (Presence **) realloc(focus, sizeof(Presence *) * num_focuses);
@@ -277,47 +425,22 @@ Ship *Game::create_ship(int channel, const char *id, const char *control, Vector
 	return s;
 }
 
-void Game::increase_latency() {STACKTRACE
-	if (CHECKSUM_CHANNEL) {
-		log->buffer(channel_server + Game::_channel_buffered, NULL, 2);
-		log->buffer(channel_client + Game::_channel_buffered, NULL, 2);
-		if (log->playback) 
-			log->buffer(channel_playback + Game::_channel_buffered, NULL, 1);
-		log->flush();
-	}
-	lag_frames += 1;
-}
 
-void Game::decrease_latency() {
-	STACKTRACE;
-	if (lag_frames <= 1) {tw_error("latency decreased too far");}
-	if (CHECKSUM_CHANNEL) {
-		log->unbuffer(channel_server + Game::_channel_buffered, NULL, 2);
-		log->unbuffer(channel_client + Game::_channel_buffered, NULL, 2);
-		if (log->playback) 
-			log->unbuffer(channel_playback + Game::_channel_buffered, NULL, 1);
-	}
-	lag_frames -= 1;
-}
 
-int Game::is_local (int channel) {
-	return (log->get_direction (channel) & Log::direction_write);
-}
-void Game::log_file (const char *fname) {STACKTRACE
-	log->log_file(fname);
-}
 
 void Game::log_fleet(int channel, Fleet *fleet) {STACKTRACE
 	int fl;
 	void *tmpdata = fleet->serialize(&fl);
 	char buffer[16384];
 
+	channel_current = channel;
+
 	if (fl > 16000)	{tw_error("blah");}
 	memcpy(buffer, tmpdata, fl);
 	free(tmpdata);
-	log_int(channel, fl);
+	log_int(fl);
 	if (fl > 16000)	{tw_error("blah");}
-	log_data(channel, buffer, fl);
+	log_data(buffer, fl);
 	fleet->deserialize(buffer, fl);
 }
 
@@ -338,39 +461,13 @@ Control *Game::create_control (int channel, const char *type, char *config, char
 	return c;
 }
 
-void Game::log_char(int channel, char &data) {
-	if (!log) return;
-	log->log  (channel, &data, 1);
+void Game::use_idle(int time)
+{
+	// you can put stuff here, which *has* to be done, even if the game is idle() (which
+	// usually means, it's in some closed loop).
 	return;
 }
 
-void Game::log_short(int channel, short &data) {
-	if (!log) return;
-	data = intel_ordering_short(data);	
-	log->log  (channel, &data, sizeof(short));
-	data = intel_ordering_short(data);
-	return;
-}
-
-void Game::log_int(int channel, int &data) {
-	if (!log) return;
-	data = intel_ordering(data);
-	log->log  (channel, &data, sizeof(int));
-	data = intel_ordering(data);
-	return;
-}
-
-void Game::log_data(int channel, void *data, int size) {STACKTRACE
-	if (!log) return;
-	log->log  (channel, data, size);
-	return;
-}
-
-void Game::idle(int time) {STACKTRACE
-	if (log->listen()) return;
-	::idle(time);
-	return;
-}
 
 void Game::animate(Frame *frame) {_STACKTRACE("Game::animate(Frame*)")
 	Physics::animate(frame);
@@ -399,19 +496,23 @@ void Game::animate() {_STACKTRACE("Game::animate(void)")
 
 bool Game::game_ready() {STACKTRACE
 	if (CHECKSUM_CHANNEL == 0) return 1;
-	if (log->playback) {
-		return (log->ready(channel_server + Game::_channel_buffered) != 0);
+	if (glog->playback) {
+		return (glog->ready(channel_server + _channel_buffered) != 0);
 	}
-	else switch (log->type) {
+	else switch (glog->type) {
 		case Log::log_normal: {
 			return true;
 		}
 		break;
 		case Log::log_net1server:
 		case Log::log_net1client: {
-			if (!log->ready(channel_client + Game::_channel_buffered)) return false;
-			if (!log->ready(channel_server + Game::_channel_buffered)) return false;
-			return true;
+			int i;
+			bool result = true;
+			for ( i = 0; i < num_humans; ++i )
+				if (!glog->ready(channel_player[i] + _channel_buffered))
+					result = false;
+			//if (!log->ready(channel_server + Game::_channel_buffered)) return false;
+			return result;	// if one or more channels aren't ready yet, it returns false.
 		}
 	}
 	return true;
@@ -431,8 +532,8 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 void handle_game_error ( Game *game )
 {
 	log_debug("handle_game_error() executed\n");
-	if (game->log) {
-		game->log->save("error.dmo");
+	if (glog) {
+		glog->save("error.dmo");
 		log_debug("Demo recording saved to error.dmo\n");
 	}
 /*
@@ -526,59 +627,91 @@ void handle_game_error ( Game *game )
 }
 
 
-void Game::compare_checksums() {STACKTRACE
+
+
+void Game::compare_checksums()
+{
+	STACKTRACE;
+
+	heavy_compare();	// compare all "live" items
+	return;	// the minor compare is irrelevant, and hardly useful
+
 	unsigned char local_checksum = checksum() & 255;
-	unsigned char client_checksum = local_checksum;
+	unsigned char client_checksum[max_player];
 	unsigned char server_checksum = local_checksum;
 	bool desync = false;
 
-	log_char(channel_server + CHECKSUM_CHANNEL, server_checksum);
+	log_char(server_checksum, channel_server + CHECKSUM_CHANNEL);
 	if (lag_frames)
-		log_char(channel_client + CHECKSUM_CHANNEL, client_checksum);
+	{
+		int i;
+		for ( i = 1; i < num_humans; ++i )	// note, 0==server.
+		{
+			client_checksum[i] = local_checksum;
+			log_char(client_checksum[i], channel_player[i] + CHECKSUM_CHANNEL);
 
-	if (server_checksum != client_checksum)
-		desync = true;
-	if (log->playback) {
+			if (server_checksum != client_checksum[i])
+				desync = true;
+		}
+
+
+		/*
+		if (p_local == 0)	// serverside-check only
+		{
+			message.print(1500, 14,
+				"1: %i  2: %i  3: %i  frame: %i",
+				(int)server_checksum,
+				(int)client_checksum[1],	// note that "0" in principle equals the server, and it isn't defined.
+				(int)client_checksum[2],
+				frame_number);
+			message.animate(0);
+			//readkey();
+			idle(10);		// this slows the game down a lot...
+		}
+		//*/
+		
+		
+
+	}
+
+	if (glog->playback) {
 		if (lag_frames) 
-			log_char (channel_playback + CHECKSUM_CHANNEL, local_checksum);
+			log_char (local_checksum, channel_playback + CHECKSUM_CHANNEL);
 		if (local_checksum != server_checksum) desync = true;
 	}
 
 	this->local_checksum = local_checksum;
-	this->client_checksum = client_checksum;
+	this->client_checksum = client_checksum[1];
 	this->server_checksum = server_checksum;
 
 	if (desync)
 	{
-		handle_desynch(local_checksum, server_checksum, client_checksum);
+		handle_desynch(local_checksum, server_checksum, this->client_checksum);
 	}
 }
 
 void Game::do_game_events() {_STACKTRACE("Game::do_game_events()")
-	int i;
 
-	//transmit from server
-	if (log->get_direction(channel_server) & Log::direction_write) {
-		COMPILE_TIME_ASSERT(sizeof(events_waiting) == sizeof(char));
-		log->buffer( channel_server + _channel_buffered, &events_waiting, sizeof(events_waiting) );
-		for (i = 0; i < events_waiting; i += 1) {
-			log->buffer ( channel_server + _channel_buffered, waiting_events[i], waiting_events[i]->size );
-		}
-		//deallocate transmitted events
-		for (i = 0; i < events_waiting; i += 1) free(waiting_events[i]);
-		events_waiting = 0;
-	}
+	int i, p;
+	for ( p = 0; p < num_humans; ++p )	// note, 0==server.
+	{
+		if ((glog->get_direction(channel_player[p]) & Log::direction_write) != 0)
+		{
+			COMPILE_TIME_ASSERT(sizeof(events_waiting) == sizeof(char));
 
-	//transmit from client
-	if (log->get_direction(channel_client) & Log::direction_write) {
-		COMPILE_TIME_ASSERT(sizeof(events_waiting) == sizeof(char));
-		log->buffer( channel_client + _channel_buffered, &events_waiting, sizeof(events_waiting) );
-		for (i = 0; i < events_waiting; i += 1) {
-			log->buffer ( channel_client + _channel_buffered, waiting_events[i], waiting_events[i]->size );
+			// you _always_ transmit the # of events (can be null)
+			glog->buffer( channel_player[p] + _channel_buffered, &events_waiting, sizeof(events_waiting) );
+
+			for (i = 0; i < events_waiting; i += 1)
+			{
+				glog->buffer ( channel_player[p] + _channel_buffered, waiting_events[i], waiting_events[i]->size );
+			}
+			//deallocate transmitted events
+			for (i = 0; i < events_waiting; i += 1)
+				free(waiting_events[i]);
+
+			events_waiting = 0;
 		}
-		//deallocate transmitted events
-		for (i = 0; i < events_waiting; i += 1) free(waiting_events[i]);
-		events_waiting = 0;
 	}
 
 	//double-check transmission
@@ -588,40 +721,29 @@ void Game::do_game_events() {_STACKTRACE("Game::do_game_events()")
 		events_waiting = 0;
 	}
 
-	//recieve
+	//receive
 	char ne;
 	COMPILE_TIME_ASSERT(sizeof(events_waiting) == sizeof(ne));
 	char buffy[1024];
 
-	//recieve from server
-	log->unbuffer(channel_server + _channel_buffered, &ne, sizeof(ne));
-	for (i = 0; i < ne; i += 1) {
-		char *tmp = buffy;
-		log->unbuffer(channel_server + _channel_buffered, &buffy, sizeof(GameEvent));
-		int s = ((GameEvent*)tmp)->size;
-		if (s > 1024) {
-			tmp = (char *)malloc(s);
-			memcpy(tmp, buffy, sizeof(GameEvent));
-		}
-		log->unbuffer(channel_server + _channel_buffered, tmp + sizeof(GameEvent), s - sizeof(GameEvent));
-		handle_game_event ( channel_server, ((GameEvent*)tmp));
-		if (tmp != buffy) free(tmp);
-	}
+	for ( p = 0; p < num_humans; ++p )	// note, 0==server.
+	{
+		// you _always_ read the # of events.
+		glog->unbuffer(channel_player[p] + _channel_buffered, &ne, sizeof(ne));
 
-
-	//recieve from client
-	log->unbuffer(channel_client + _channel_buffered, &ne, sizeof(ne));
-	for (i = 0; i < ne; i += 1) {
-		char *tmp = buffy;
-		log->unbuffer(channel_client + _channel_buffered, &buffy, sizeof(GameEvent));
-		int s = ((GameEvent*)tmp)->size;
-		if (s > 1024) {
-			tmp = (char *)malloc(s);
-			memcpy(tmp, buffy, sizeof(GameEvent));
+		for (i = 0; i < ne; i += 1) {
+			char *tmp = buffy;
+			//glog->unbuffer(channel_player[p] + _channel_buffered, &buffy, sizeof(GameEvent));
+			glog->unbuffer(channel_player[p] + _channel_buffered, buffy, sizeof(GameEvent));
+			int s = ((GameEvent*)tmp)->size;
+			if (s > 1024) {
+				tmp = (char *)malloc(s);
+				memcpy(tmp, buffy, sizeof(GameEvent));
+			}
+			glog->unbuffer(channel_player[p] + _channel_buffered, tmp + sizeof(GameEvent), s - sizeof(GameEvent));
+			handle_game_event ( channel_player[p], ((GameEvent*)tmp));
+			if (tmp != buffy) free(tmp);
 		}
-		log->unbuffer(channel_client + _channel_buffered, tmp + sizeof(GameEvent), s - sizeof(GameEvent));
-		handle_game_event ( channel_client, ((GameEvent*)tmp));
-		if (tmp != buffy) free(tmp);
 	}
 }
 
@@ -647,6 +769,32 @@ void Game::send_game_event ( class GameEvent *event ) {STACKTRACE
 	events_waiting += 1;
 }
 
+void Game::log_file (const char *fname)
+{
+	glog->log_file(fname);
+}
+
+
+void Game::net_expect(int val)
+{
+//	return;
+
+	int k;
+	int p;
+	bool result = true;
+	for ( p = 0; p < num_humans; ++p )
+	{
+		k= val;
+
+		log_int(k, channel_player[p] + _channel_buffered);
+
+		if (k != val)
+			result = false;
+	}
+
+	if (!result)
+		tw_error("error in buffered data");
+}
 
 void Game::calculate() {_STACKTRACE("Game::calculate")
 	int i;
@@ -655,8 +803,7 @@ void Game::calculate() {_STACKTRACE("Game::calculate")
 
 
 	paused_time = 0;
-	compare_checksums();
-	do_game_events();
+
 
 	for (i = 0; i < num_focuses; i += 1) {
 		if (!focus[i]->exists()) {
@@ -691,24 +838,37 @@ void Game::calculate() {_STACKTRACE("Game::calculate")
 	return;
 }
 
+static int tot_idle_time = 50;
+
 void Game::play() {_STACKTRACE("Game::play")
 	set_resolution(window->w, window->h);
 	prepare();
 	if (is_paused()) unpause();
+
 	try {
-		while(!game_done) {
+		while(!game_done)
+		{
+
 			unsigned int time = get_time();
 			poll_input();
 			videosystem.poll_redraw();
 			if(!sound.is_music_playing()) {
 				play_music();
 			}
-			if ((next_tic_time <= time) && (next_render_time > game_time) && game_ready()) {
+			if ((next_tic_time <= time) && (next_render_time > game_time) &&
+				(game_ready() || game_time == 0)) {		// note that game_time==0 is also needed, cause otherwise it'll wait for data, while no data've been generated yet.
 				_STACKTRACE("Game::play - Game physics")
+
+				// first some i/o and net-traffic
+				gen_buffered_data();
+				glog->flush_noblock();
+				glog->listen();
+
+				// then calculate game stuff
 				calculate();
+
 				if (auto_unload) unload_unused_ship_data();
-				log->flush();
-				log->listen();
+
 				if (key[KEY_F4])
 					turbo = f4_turbo;
 				else
@@ -720,13 +880,30 @@ void Game::play() {_STACKTRACE("Game::play")
 					next_fps_time += msecs_per_fps;
 					fps();
 				}
+
+//				message.print(10, 15, "Idle time = %i", tot_idle_time / frame_number);
+//				message.animate(0);
 			}
 			else if (interpolate_frames || (game_time > next_render_time - msecs_per_render)) {
 				_STACKTRACE("Game::play - Game rendering")
 				animate();
 				next_render_time = game_time + msecs_per_render;
 			}
-			else idle();
+			else
+			{
+				int n = 1;
+				idle(n);
+				tot_idle_time += n;
+				if (glog->type == Log::log_net1client || glog->type == Log::log_net1server)
+				{
+					NetLog *l = (NetLog*) glog;
+					l->recv_noblock();		// receive stuff, if you can
+
+					// this helps to reduce idle-time, cause it doesn't have to wait till
+					// data are received first (namely that's what game_ready() tests).
+					l->flush_noblock();			// this sends, if there's something to send at least
+				}
+			}
 			while (keypressed())
 				handle_key(readkey());
 		}
@@ -788,14 +965,23 @@ void Game::object_died(SpaceObject *who, SpaceLocation *source)
 
 #include "../util/profile2.h"
 void Game::fps() {STACKTRACE
-	if ((!log->playback) && ((log->type == Log::log_net1server) || (log->type == Log::log_net1client))) {
-		int ping = ((NetLog*)log)->ping;
-		char *tt = "good";
-		if (ping > 100) tt = "okay";
-		if (ping > 200) tt = "bad";
-		if (ping > 400) tt = "BAD!";
-		if (ping > 800) tt = "VERY BAD!";
-		message.print((int)msecs_per_fps, 12, "ping: %dms (that's %s)", ping, tt);
+	if ((!glog->playback) && ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)))
+	{
+		char tmp[512];
+		int conn;
+		strcpy(tmp, "ping: ");
+		for ( conn = 0; conn < ((NetLog*)glog)->num_connections; ++conn )
+		{
+			int ping = ((NetLog*)glog)->ping[conn];
+			int k =strlen(tmp);
+			sprintf(&tmp[k], " [%i] ", ping);
+		}
+//		char *tt = "good";
+//		if (ping > 100) tt = "okay";
+//		if (ping > 200) tt = "bad";
+//		if (ping > 400) tt = "BAD!";
+//		if (ping > 800) tt = "VERY BAD!";
+		message.print((int)msecs_per_fps, 12, tmp);
 	}
 
 	if (this->show_fps) {
@@ -846,7 +1032,6 @@ void Game::preinit() {STACKTRACE
 //	meleedata.planetSprite = meleedata.asteroidSprite = meleedata.asteroidExplosionSprite = meleedata.hotspotSprite = meleedata.kaboomSprite = meleedata.panelSprite = meleedata.sparkSprite = meleedata.xpl1Sprite = NULL;
 // you should reset it here (again), cause there can be subgames of this type.
 //	planet_victory = NULL;
-	log = NULL;
 	tic_history = render_history = NULL;
 
 	events_waiting = 0;
@@ -862,14 +1047,20 @@ void Game::preinit() {STACKTRACE
 	music = NULL;
 }
 
-void Game::init(Log *_log) {_STACKTRACE("Game::init")
+
+void Game::init(Log *_log) {_STACKTRACE("Game::init");
 	int i;
 
+	//display_channel_info("game::init");
+
+	register_events();
+
 	game_done = false;
-	log = _log;
-	if (!log) {
-		log = new Log();
+
+	if (!glog) {
+		Log *log = new Log();
 		log->init();
+		set_global(log);
 	}
 
 	lag_frames = 0;
@@ -883,7 +1074,7 @@ void Game::init(Log *_log) {_STACKTRACE("Game::init")
 	next_fps_time = game_time;
 	view_locked = false;
 	physics_locked = false;
-	if (log->type != Log::log_normal || log->playback) physics_locked = true;
+	if (glog->type != Log::log_normal || glog->playback) physics_locked = true;
 	local_checksum = client_checksum = server_checksum = 0;
 
 	Physics::init();
@@ -899,8 +1090,8 @@ void Game::init(Log *_log) {_STACKTRACE("Game::init")
 
 	window->add_callback(this);
 
-	if (!log->playback) {
-		switch (log->type) {
+	if (!glog->playback) {
+		switch (glog->type) {
 			case Log::log_normal: {
 			}
 			break;
@@ -926,61 +1117,35 @@ offset	size	format		data
 ?		4		int			lag frames
 
 */
-	int tmp = log->type;
-	log_int(channel_init, tmp);
-	if (log->playback) log->type = tmp;
 
-	char buffy[128];
-	i = strlen(type->name);
-	memcpy(buffy, type->name, i);
-	if (i > 127) {tw_error("long gamename1");}
-	log_int (channel_init, i);
-	if (i > 127) {tw_error("long gamename2");}
-	log_data(channel_init, buffy, i);
-	buffy[i] = 0;
-	if (strcmp(buffy, type->name)) {tw_error("wrong game type");}
+
+
+	//display_channel_info("game - log_int");
+
+	int tmp = glog->type;
+	log_int(tmp, channel_init);
+	if (glog->playback) glog->type = tmp;
+
+	log_debug("game::init rand\n");
+
+	//display_channel_info("game - log_int");
+
+	channel_current = channel_server;
 
 	i = rand();
 //	i = 9223;
-	log_int(channel_server, i);
+	log_int(i);
 	random_seed[0] = i;
 	rng.seed(i);
 	i = rand();
 //	i = 7386;
-	log_int(channel_server, i);
+	log_int(i);
 	random_seed[1] = i;
 	rng.seed_more(i);
 
 	if (!is_paused()) pause();
 
 	text_mode(-1);
-
-	/*
-	if (!melee) melee = load_datafile("melee.dat");
-	if (!melee) tw_error("Error loading melee data\n");
-
-	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
-	meleedata.kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	meleedata.hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	meleedata.sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED | SpaceSprite::MATCH_SCREEN_FORMAT);
-	meleedata.asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
-	meleedata.asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
-	meleedata.planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
-	meleedata.xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
-	*/
-/*	panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
-	kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES);
-	hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES);
-	sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES);
-	asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
-	asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
-	planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
-	xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES);*/
 
 
 	set_config_file("client.ini");
@@ -989,7 +1154,14 @@ offset	size	format		data
 	prediction = get_config_int("Network", "Prediction", 50);
 	if ((prediction < 0) || (prediction > 100)) {tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);}
 
+	log_debug("game::init sharing server.ini\n");
+
+	//display_channel_info("game - log_file server.ini");
+
 	log_file("server.ini");
+	
+	//display_channel_info("game - log_file server.ini was received");
+
 	camera_hides_cloakers = get_config_int("View", "CameraHidesCloakers", 1);
 	time_ratio = (int)(1000. / get_config_float ("Game", "SC2FrameRate", 20));
 	distance_ratio = (3840. / get_config_float ("Game", "SC2TotalDistance", 8000));
@@ -1004,47 +1176,92 @@ offset	size	format		data
 		get_config_float("Game", "MapHeight", 0)
 	);
 
+	log_debug("game::init init_lag\n");
+
+
+	//display_channel_info("game - init_lag");
+
 	init_lag();
-	log_int(channel_server, lag_frames);
-	log_int(channel_init, lag_frames);
+	
+	log_int(lag_frames, channel_server);
+//	log_int(channel_init, lag_frames);
 
 	tic_history = new Histograph(128);
 	render_history = new Histograph(128);
 
 	prepare();
 
+	log_debug("game::init done\n");
+
+
 	return;
 }
 
-void Game::init_lag() {STACKTRACE
-	if ((log->type == Log::log_net1server) || (log->type == Log::log_net1client)) {
+void Game::init_lag()
+{
+	STACKTRACE;
+	//message.out("init_lag");
+	//message.animate(0);
+
+	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) {
 		int lag_time = 0;//get_config_int("Network", "Lag", 200);
-		char blah = 0;
-		log_char(channel_server, blah);
-		log->flush();
-		log_char(channel_client, blah);
-		log->flush();
-		log_char(channel_server, blah);
-		log->flush();
-		log_char(channel_client, blah);
-		log->flush();
-		log_char(channel_server, blah);
-		log->flush();
-		lag_time = ((NetLog*)log)->ping;
-		log_int(channel_server, lag_time);
-		int lag_frames = (int) (1.5 + lag_time * normal_turbo / (double) frame_time );
+		int blah = 0;
+
+		//display_channel_info();
+
+		lag_time = 0;
+
+		NetLog* l = (NetLog*)glog;
+
+		int itry, Ntry;
+		Ntry = 5;
+		for ( itry = 0; itry < Ntry; ++itry )
+		{
+			int p;
+			for ( p = 0; p < num_humans; ++p )
+			{
+				// server-side lag-test ?
+				log_int(blah, channel_player[p]);
+			}
+				
+			if (itry > 0)
+			{
+				// get the average lag time over the connections
+				int conn;
+				for ( conn = 0; conn < l->num_connections; ++conn )
+				{
+					lag_time += l->ping[conn];
+					message.print(1500, 12, "lag[%i][%i] = %i", itry, conn, l->ping[conn]);
+				}
+			}
+		}
+		
+		lag_time /= ((Ntry-1) * l->num_connections);
+		
+
+//		lag_time = 10;
+
+
+		log_int(lag_time, channel_server);
+		int lagf = (int) (1.5 + lag_time * normal_turbo / (double) frame_time );
 #		ifdef _DEBUG
-//			lag_frames += 5;
+//			lagf += 5;
 #		endif
-//			lag_frames += 5;
-		message.print(15000, 15, "target ping set to: %d ms (pessimistically: %d ms)", lag_time, iround(lag_frames * frame_time / normal_turbo));
-		for (int i = 0; i < lag_frames; i += 1)
-			increase_latency();
+//			lagf += 5;
+		message.print(15000, 15, "target ping set to: %d ms (pessimistically: %d ms)", lag_time, iround(lagf * frame_time / normal_turbo));
+
+		// I think the computer is somewhat conservative in estimating lag.
+		lagf -= 1;
+
+		// a check, just in case.
+		if (lagf < 1)	// each accounts for 1 frame, which is 25 ms...
+			lagf = 1;
+
+		increase_latency(lagf);
 	}
 	else {
-		int lag_frames = 0;//10;//0;
-		for (int i = 0; i < lag_frames; i += 1)
-			increase_latency();//*/
+		int lagf = 0;//10;//0;
+		increase_latency(lagf);//*/
 	}
 }
 
@@ -1265,8 +1482,9 @@ bool Game::handle_key(int k) {STACKTRACE
 		default: {
 			if (chat_on) {
 				if ((k >> 8) == KEY_ENTER) {
-					send_game_event(new GameEventMessage(chat_buf));
+					//send_game_event(new GameEventMessage(chat_buf));
 //					player_said(0, chat_buf);
+					CALL(chat);
 					chat_on = 0;
 				}
 				else if (k & 255) {
@@ -1337,5 +1555,292 @@ void Game::play_music() {STACKTRACE
 	}
 	if (music) sound.play_music(music, TRUE);
 	return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EventClass::EventClass()
+{
+	N = 0;
+	Nreq = 0;
+}
+
+
+void EventClass::reg(GameEvent2 *g, char *id)
+{
+	event[N].call = g;
+	strncpy(event[N].name, id, 64);
+
+	++N;
+
+	if (N > max_events)
+		tw_error("pushing too many events");
+}
+
+
+// use this, to add a request to the stack ; it's searched by its id-string
+
+void EventClass::request(char *id)
+{
+	int i;
+	for ( i = 0; i < N; ++i )
+	{
+		if (strcmp(event[i].name, id) == 0)
+		{
+			req[Nreq] = i;
+			++Nreq;
+
+			if (Nreq > max_requests)
+				tw_error("pushing too many requests");
+			return;
+		}
+	}
+}
+
+void EventClass::issue(int i)
+{
+	event[i].call->calculate();
+}
+
+
+void EventClass::handle()
+{
+
+	// note, if you're in write-mode only, then you're faking buffered data ...
+
+	int i;
+	int p;
+
+	int Ne[max_player];	// the number of events per player.
+
+	for ( p = 0; p < num_humans; ++p )
+		Ne[p] = 0;
+
+	Ne[p_local] = Nreq;
+	Nreq = 0;
+
+
+	for ( p = 0; p < num_humans; ++p )
+	{
+		// note, you can send+receive on your own channel, cause it's already buffered; the
+		// receive reads from the start, and the send adds to the end of the log buffer.
+		
+		channel_current = channel_player[p] + _channel_buffered;
+
+		log_resetmode();
+
+		while (log_nextmode())
+		{
+
+			// this is needed, cause if there's a mix of read/write operations, in a buffered
+			// environment, "current" settings get overwritten by buffered settings with each
+			// call to the networking. This can mix up sequencing of shared data.
+
+			// in write-mode, this pushes N and N events onto the end of the log.
+			// in read-mode, this scans N and then N events from the bottom of the log.
+
+			log_int(Ne[p]);
+			
+			
+			for ( i = 0; i < Ne[p]; ++i )
+			{
+				log_int(req[i]);
+				issue(req[i]);		// executes a call to the function in the list, with that id-number
+			}
+		}
+
+	}
+	
+	// leave the logs in default mode for subsequent operations !!
+	log_resetmode();
+}
+
+
+EventClass events;
+
+
+
+
+static bool has_registered = false;
+void Game::register_events()
+{
+	EVENT(Game, chat);
+	EVENT(Game, change_lag);
+	EVENT(Game, test_event1);
+}
+
+
+
+
+
+
+void Game::do_game_events2()
+{
+	events.handle();
+}
+
+
+
+
+
+
+
+
+
+
+void Game::change_lag()
+{
+	STACKTRACE;
+
+	// always use channel_current
+	log_int(lagchange);
+
+	// note that write-mode acts directly - but you don't want that, you want to wait
+	// till the buffer catches up, and you're in read-mode to check it.
+
+	if (log_synched)
+	{
+		if (lagchange > 0)
+			increase_latency(lagchange);
+		else
+			decrease_latency(-lagchange);
+	}
+}
+
+
+
+
+void Game::chat()
+{
+	STACKTRACE;
+
+	// always use channel_current
+	int n = strlen(chat_buf+1) + 1;
+	log_int(n);
+	log_data(chat_buf, n);
+
+	if (log_synched)
+	{
+		message.out(chat_buf, 6000, 15);
+	}
+}
+
+
+
+#include "mcbodies.h"
+
+void Game::test_event1()
+{
+	// it's allowed to manipulate game physics directly, here, cause it's automatically
+	// synched.
+
+	if (log_synched)
+		add(new Asteroid());
+}
+
+
+
+
+
+void Game::heavy_compare()
+{
+	int p;
+	
+	const int max_comp = 512;
+	int posval[max_comp];
+	int velval[max_comp];
+
+	int N, Nprev;
+	for ( p = 0; p < num_humans; ++p )
+	{
+		channel_current = channel_player[p] + _channel_buffered;
+
+		log_resetmode();
+
+		while (log_nextmode())
+		{
+			// mode 0 : first, perform all write-actions.
+			// mode 1 : then, perform all read-actions.
+			//  needs to be done, since the first read (N) determines all following read/writes.
+			//  and read/writes cannot be mixed!!
+
+			N = num_items;
+			
+			if (N > max_comp)		// don't compare absurd much
+				N = max_comp;
+			log_int(N);
+			
+			if (log_synched)
+			{
+				// only update, in synched mode - in true-time, comparisons like this
+				// are impossible in a buffered channel.
+				Nprev = N;
+
+				// only compare for player > 0, otherwise you've nothing to compare to
+				if (p > 0 && N != Nprev)
+					tw_error("different number of items between games");
+
+			}
+			
+			
+			int i;
+			for ( i = 0; i < N; ++i )
+			{
+				
+				int testpos, testvel;
+				
+				if (!log_synched)
+				{
+					// only generate in true-time
+					// otherwise, N may differ from the true number of items in the game.
+					testpos = item[i]->pos.x + item[i]->pos.y;
+					testvel = item[i]->vel.x + item[i]->vel.y;
+				}
+
+
+				// exchange
+				log_int(testpos);
+
+				log_int(testvel);
+
+				// use the data in game-time
+				if (log_synched)
+				{
+					// also needs to be done for player 0
+					// only update/compare while you're in synched mode.
+					posval[i] = testpos;
+					velval[i] = testvel;
+					
+					if (p > 0)
+					{
+					// compare previous player to current player
+					if (testpos != posval[i])
+						tw_error("Differing position values between game items");
+
+					if (testvel != velval[i])
+						tw_error("Differing position values between game items");
+					}
+				}
+
+			}
+		}
+
+	}
+
+	// leave the logs in default mode for subsequent operations !!
+	log_resetmode();
 }
 

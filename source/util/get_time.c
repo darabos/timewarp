@@ -63,10 +63,8 @@ Three sections:
 
 //1.  idle() functions for Allegro / SDL / unknown platform
 
-
-
-
 int _no_idle = 0;
+
 
 #if defined(PLATFORM_IS_ALLEGRO) && !defined(NO_ALLEGRO_TIME)
 #	include <allegro.h>

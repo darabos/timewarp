@@ -27,7 +27,8 @@ REGISTER_FILE
 
 #include "../melee/mshot.h"
 
-#include "../twgui/gamebuttonevent.h"
+#include "twgui/twgui.h"
+#include "../other/configrw.h"
 
 
 static GamePlanetscan::ThePlaya *localplayer;
@@ -891,22 +892,39 @@ void GamePlanetscan::init()
 
 	// init stats ...
 	sprintf(txt, "gamex/planetscan/surface_%s.ini", st);
-	set_config_file(txt);
+	//set_config_file(txt);
+	set_conf(txt, CONFIG_READ);
+	section = 0;
 
-	nmin = get_config_int(0, "NumMin", 0);
-	nmax = get_config_int(0, "NumMax", 10);
-	avsize = get_config_int(0, "AvSize", 10);
+	conf("NumMin", nmin, 0);
+	conf("NumMax", nmax, 10);
+	conf("AvSize", avsize, 10);
 
+	section = "fraction_mine";
 	int i;
 	for ( i = 0; i < mineraltypelist->N; ++i )
-		frac[i] = get_config_float("fraction", mineraltypelist->type[i].type_string, 0.0);
+		conf(mineraltypelist->type[i].type_string, frac_mine[i], 0.0);
 
-	int totfrac = 0;
+	int totfrac;
+	totfrac = 0;
 	for ( i = 0; i < mineraltypelist->N; ++i )
-		totfrac += iround(frac[i]);
+		totfrac += iround(frac_mine[i]);
 
 	for ( i = 0; i < mineraltypelist->N; ++i )
-		frac[i] /= totfrac;
+		frac_mine[i] /= totfrac;
+	// so that the sum of all fractions == 1
+
+	section = "fraction_life";
+	
+	for ( i = 0; i < lifeformtypelist->N; ++i )
+		conf(lifeformtypelist->type[i].type_string, frac_life[i], 0.0);
+
+	totfrac = 0;
+	for ( i = 0; i < lifeformtypelist->N; ++i )
+		totfrac += iround(frac_life[i]);
+
+	for ( i = 0; i < lifeformtypelist->N; ++i )
+		frac_life[i] /= totfrac;
 	// so that the sum of all fractions == 1
 
 	// map_bmp should have 32 bit depth, because colors are assumed to come from
@@ -982,13 +1000,14 @@ void GamePlanetscan::init()
 	// you should delete dummy yourself ?
 
 
-	// read the mineral loactions/ types from disk :
+	// read the mineral locations/ types from disk :
 	
 	sprintf(txt, "gamex/gamedata/surface/%08X.ini", body->id);
-	set_config_file(txt);
+	set_conf(txt, CONFIG_READ);
 
+	section = "minerals";
 	int N;
-	N = get_config_int("minerals", "N", 0);
+	conf("N", N, 0);
 
 	for ( i = 0; i < N; ++i )
 	{
@@ -996,7 +1015,8 @@ void GamePlanetscan::init()
 		char val[512];
 
 		sprintf(id, "mineral%03i", i);
-		strcpy(val, get_config_string("minerals", id, ""));
+		//strcpy(val, get_config_string("minerals", id, ""));
+		conf(id, val, "");
 
 		double x, y;
 		sscanf(val, "%lf %lf %s", &x, &y, id);
@@ -1015,9 +1035,42 @@ void GamePlanetscan::init()
 		add(mine[i]);
 	}
 
+	// read the lifeform locations/ types from disk :
+	
+	section = "lifeforms";
+	conf("N", N, 0);
+
+	for ( i = 0; i < N; ++i )
+	{
+		char id[512];
+		char val[512];
+
+		sprintf(id, "lifeform%03i", i);
+		//strcpy(val, get_config_string("minerals", id, ""));
+		conf(id, val, "");
+
+		double x, y;
+		sscanf(val, "%lf %lf %s", &x, &y, id);
+
+		int k;
+		k = lifeformtypelist->get_index(id, 0);
+	
+		SpaceSprite *spr;
+		spr = mineraltype[k]->sprite;
+
+		life[i] = new Lifeform(0, Vector2(x,y) * scalesurface, 0, spr);
+		life[i]->type = lifeformtype[k];
+
+		add(life[i]);
+	}
+
+	//en nog zorgen dat je een lifeform met een editor kunt neerzetten !! 
+//	..
+
 
 	// read the structures
-	N = get_config_int("structures", "N", 0);
+	section = "structures";
+	conf("N", N, 0);
 
 	for ( i = 0; i < N; ++i )
 	{
@@ -1025,7 +1078,8 @@ void GamePlanetscan::init()
 		char val[512];
 
 		sprintf(id, "structure%03i", i);
-		strcpy(val, get_config_string("structures", id, ""));
+		//strcpy(val, get_config_string("structures", id, ""));
+		conf(id, val, "");
 
 		double x, y;
 		sscanf(val, "%lf %lf %s", &x, &y, id);
@@ -1273,6 +1327,76 @@ void GamePlanetscan::handle_edge(SpaceLocation *s)
 
 
 
+void GamePlanetscan::handle_ranlife()
+{
+	int i;
+
+	// delete existing lifeforms from the game:
+	for ( i = 0; i < num_items; ++i )
+	{
+		if (item[i]->id == ID_LIFEFORM)
+			item[i]->state = 0;
+	}
+
+	// place a number of lifeform sprites on the surface, of any type.
+
+	int N;
+	char txt[512];
+
+	N = random(iround(nmin), iround(nmax));
+
+	for ( i = 0; i < N; ++i )
+	{
+		// instead of :k = random(mineraltypelist->N);
+		// choose from a probability (-density-) distribution of the available types:
+		double r;
+		int k;
+
+		r = random(1.0);
+		for ( k = 0; k < lifeformtypelist->N; ++k )
+		{
+			r -= frac_life[k];
+			if (r <= 0)
+				break;
+		}
+		if (k == lifeformtypelist->N)	// invalid value (should not occur)
+			k = lifeformtypelist->N - 1;
+
+
+		SpaceSprite *spr;
+		spr = lifeformtype[k]->sprite;
+
+		life[i] = new Lifeform(0, random(Vector2(400,200)) * scalesurface, 0, spr);
+		life[i]->type = lifeformtype[k];
+		//life[i]->weight = 1;
+		//mine->init(mineralnamelist[k]);
+
+		add(life[i]);
+	}
+
+
+	// write the lifeform locations/ types to disk :
+	
+	sprintf(txt, "gamex/gamedata/surface/%08X.ini", body->id);
+	set_config_file(txt);
+
+	for ( i = 0; i < N; ++i )
+	{
+		char id[512];
+		char val[512];
+
+		set_config_int("lifeforms", "N", N);
+
+		sprintf(id, "lifeform%03i", i);
+		sprintf(val, "%f %f %s", life[i]->pos.x/scalesurface, life[i]->pos.y/scalesurface,
+									life[i]->type->id);
+		set_config_string("lifeforms", id, val);
+	}
+
+	flush_config_file();
+}
+
+
 void GamePlanetscan::handle_ranmin()
 {
 	int i;
@@ -1301,7 +1425,7 @@ void GamePlanetscan::handle_ranmin()
 		r = random(1.0);
 		for ( k = 0; k < mineraltypelist->N; ++k )
 		{
-			r -= frac[k];
+			r -= frac_mine[k];
 			if (r <= 0)
 				break;
 		}
@@ -1318,22 +1442,10 @@ void GamePlanetscan::handle_ranmin()
 		//mine->init(mineralnamelist[k]);
 
 		add(mine[i]);
-
-	
-		/*
-		k = random(Nlifeformtypes);
-		spr = lifeformtype[k]->sprite;
-
-		Lifeform *life;
-		life = new Lifeform(0, random(Vector2(400,200)) * scalesurface, 0, spr);
-		//mine->init(mineralnamelist[k]);
-
-		add(life);
-		*/
 	}
 
 
-	// write the mineral loactions/ types to disk :
+	// write the mineral locations/ types to disk :
 	
 	sprintf(txt, "gamex/gamedata/surface/%08X.ini", body->id);
 	set_config_file(txt);

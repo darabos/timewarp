@@ -516,7 +516,7 @@ void TWgui::calculate()
 	if (extraplanet->flag.left_mouse_press)
 	{
 		// copied from normalgame::handle_key()
-		if (log->type == Log::log_normal)
+		if (glog->type == Log::log_normal)
 		{
 			message.out("MUHAHAHAHAHA!!!!", 5000, 12);
 			create_planet(random(size));
@@ -780,7 +780,7 @@ void TWgui::choose_new_ships()
 				unscare_mouse();
 				for (;;)
 				{
-					idle();
+					idle(1);
 					
 					fleetsel->tree_calculate();
 					fleetsel->tree_animate();
@@ -817,18 +817,18 @@ void TWgui::choose_new_ships()
 
 			if (player_control[i]->channel != channel_none) {
 				slot[i] = intel_ordering(slot[i]);
-				log->buffer(player_control[i]->channel, &slot[i], sizeof(int));
-				log->flush();
+				glog->buffer(player_control[i]->channel, &slot[i], sizeof(int));
+				glog->flush_block();
 				//slot[i] = intel_ordering(slot[i]);
 				}
 			}
 		}
 	//recieve the ships that were chosen
-	log->listen();
+	glog->listen();
 	for (i = 0; i < num_players; i += 1) {
 		if (slot[i] == -2) continue;
 		if (player_control[i]->channel != channel_none) {
-			log->unbuffer(player_control[i]->channel, &slot[i], sizeof(int));
+			glog->unbuffer(player_control[i]->channel, &slot[i], sizeof(int));
 			slot[i] = intel_ordering(slot[i]);
 			}
 		}

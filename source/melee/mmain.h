@@ -34,8 +34,8 @@ class NormalGame : public Game {
 		} *kills;
 	void display_stats();
 
-	virtual int add_player (Control *c, int team_index, const char *name, const char *fleet, const char *fleet_file = "fleets.ini") ;
-	int num_players;
+	virtual int add_player (int num, Control *c, int team_index, const char *name, const char *fleet, const char *fleet_file = "fleets.ini") ;
+	//int num_players;		should be global, for networking (which should also be global)
 	Control **player_control;
 //	ShipPanel **player_panel;
 	Fleet **player_fleet;
