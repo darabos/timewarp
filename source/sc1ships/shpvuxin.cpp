@@ -103,8 +103,8 @@ void VuxLimpet::inflict_damage(SpaceObject *other) {
 		//find a random spot on the target ship where it "exist" 
 		tries = 0;
 		while (tries < 10) {
-			hx = 18 + (rand() % 27);  //NOT part of physics ; not synchronized in network games ; varies with graphics mode
-			hy = 15 + (rand() % 36);
+			hx = 18 + (rand() % 27);	//graphics
+			hy = 15 + (rand() % 36);	//graphics
 			tries++;
 			col = getpixel(bmp,hx,hy);
 			if (col == bitmap_mask_color(bmp)) continue;
@@ -152,30 +152,30 @@ void VuxIntruder::animate(Frame *space){
         if (turn_right)
 				data->spriteWeapon->animate(pos + 
 					rotate(Vector2(-frnt_x, frnt_y), angle-PI/2),
-					s_index + ((rand()%3) << 6), space);
+					s_index + ((rand()%3) << 6), space);	//graphics
         if (turn_left)
 				data->spriteWeapon->animate(pos + 
 					rotate(Vector2(frnt_x,frnt_y), angle-PI/2),
-					s_index + ((rand()%3) << 6), space);
+					s_index + ((rand()%3) << 6), space);	//graphics
 
         s_index += 32; s_index &= 63;
 
         if (thrust) {
 				data->spriteExtra->animate(pos + 
 					rotate(Vector2(back_x, back_y_1), angle-PI/2),
-					s_index + ((rand()%3) << 6), space);
+					s_index + ((rand()%3) << 6), space);	//graphics
                 data->spriteExtra->animate(pos + 
 					rotate(Vector2(-back_x, back_y_1), angle-PI/2),
-					s_index + ((rand()%3) << 6), space); }
+					s_index + ((rand()%3) << 6), space); }	//graphics
         else {
                 if (turn_left)
 						data->spriteWeapon->animate(pos + 
 							rotate(Vector2(-back_x, back_y), angle-PI/2),
-							s_index + ((rand()%3) << 6), space);
+							s_index + ((rand()%3) << 6), space);	//graphics
                 if (turn_right)
 						data->spriteWeapon->animate(pos + 
 							rotate(Vector2(back_x, back_y), angle-PI/2),
-							s_index + ((rand()%3) << 6), space); }
+							s_index + ((rand()%3) << 6), space); }	//graphics
 
         Ship::animate(space);
 };

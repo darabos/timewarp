@@ -167,7 +167,7 @@ void UmgahCone::animate(Frame* space) {
 //  calc_base();
   if (!umgahship || !umgahship->exists() || !umgahship->firing) return;
   int si = sprite_index;
-  sprite_index += ((rand()%6) << 6);
+  sprite_index += ((rand()%6) << 6);	//graphics
   SpaceObject::animate(space);
   sprite_index = si;
 }

@@ -808,7 +808,7 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 		else t1 = t1 << 8;
 	} else {
 		//uh.. what do we do now?
-		_aa.r = rand() & 255;
+		_aa.r = rand() & 255;	//graphics
 		t1 = 0;
 	}
 	_aa.trans = t1 + ((_aa.total - (_sx2 - _sx1) * (_sy2 - _sy1)) << 8);

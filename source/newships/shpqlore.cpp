@@ -136,8 +136,8 @@ void QlonLimpet::inflict_damage(SpaceObject *other) {
 		//find a random spot on the target ship where it "exist" 
 		tries = 0;
 		while (tries < 30) {
-			H.x = 18 + (rand() % 27);  //NOT part of physics ; not synchronized in network games ; varies with graphics mode
-			H.y = 15 + (rand() % 36);
+			H.x = 18 + (rand() % 27);	//graphics
+			H.y = 15 + (rand() % 36);	//graphics
 			tries++;
 			col = getpixel(bmp,iround(H.x),iround(H.y));
 			if (col == bitmap_mask_color(bmp)) continue;
@@ -175,26 +175,26 @@ void QlonRedeemer::animate(Frame *space){
 
         if (turn_right)
                 data->spriteWeapon->animate(Vector2(pos.x + frnt_y * tx - frnt_x * ty,
-                     pos.y + frnt_y * ty + frnt_x * tx), s_index + ((rand()%3) << 6), space);
+                     pos.y + frnt_y * ty + frnt_x * tx), s_index + ((rand()%3) << 6), space);	//graphics
         if (turn_left)
                 data->spriteWeapon->animate(Vector2(pos.x + frnt_y * tx + frnt_x * ty,
                      pos.y + frnt_y * ty - frnt_x * tx),
-					 s_index + ((rand()%3) << 6), space);
+					 s_index + ((rand()%3) << 6), space);	//graphics
 
         s_index += 32; s_index &= 63;
 
         if (thrust) {
                 data->spriteExtra->animate(Vector2(pos.x + back_y_1 * tx - back_x * ty,
-                     pos.y + back_y_1 * ty + back_x * tx), s_index + ((rand()%3) << 6), space);
+                     pos.y + back_y_1 * ty + back_x * tx), s_index + ((rand()%3) << 6), space);	//graphics
                 data->spriteExtra->animate(Vector2(pos.x + back_y_1 * tx + back_x * ty,
-                     pos.y + back_y_1 * ty - back_x * tx), s_index + ((rand()%3) << 6), space); }
+                     pos.y + back_y_1 * ty - back_x * tx), s_index + ((rand()%3) << 6), space); }	//graphics
         else {
                 if (turn_left)
                         data->spriteWeapon->animate(Vector2(pos.x + back_y * tx - back_x * ty,
-                             pos.y + back_y * ty + back_x * tx), s_index + ((rand()%3) << 6), space);
+                             pos.y + back_y * ty + back_x * tx), s_index + ((rand()%3) << 6), space);	//graphics
                 if (turn_right)
                         data->spriteWeapon->animate(Vector2(pos.x + back_y * tx + back_x * ty,
-                             pos.y + back_y * ty - back_x * tx), s_index + ((rand()%3) << 6), space); }
+                             pos.y + back_y * ty - back_x * tx), s_index + ((rand()%3) << 6), space); }	//graphics
 
         Ship::animate(space);
 };

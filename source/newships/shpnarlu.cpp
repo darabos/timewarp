@@ -417,10 +417,10 @@ void NaroolLurker::calc_lightning()
 		// create some kind of lightning now ? How ?
 		int i, N;
 		
-		N = 5 + rand() % 5;
+		N = 5 + rand() % 5;	//graphics
 
 		double ang, R;
-		ang = (rand() % 360) * PI/180;
+		ang = (rand() % 360) * PI/180;	//graphics
 		
 		for ( i = 0; i < N; ++i )
 		{
@@ -428,10 +428,8 @@ void NaroolLurker::calc_lightning()
 			//dx = (random(double(iw)) - 0.5*iw) / N;
 			//dy = (random(double(ih)) - 0.5*ih) / N;
 
-			//ang += rand(PI/2) - PI/4;
-			ang += (rand() % 180 - 90) * PI/180;
-			//R = rand(double(Rmax)) / N;
-			R = (rand() % int(Rmax+1)) / N;
+			ang += (rand() % 180 - 90) * PI/180;	//graphics
+			R = (rand() % int(Rmax+1)) / N;	//graphics
 			dx = R * cos(ang);
 			dy = R * sin(ang);
 			

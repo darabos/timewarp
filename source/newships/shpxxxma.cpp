@@ -320,7 +320,7 @@ void XXXMangler::animate(Frame *space)
   BodyFrames -= frame_time * 5;
 
   if ((tentacleFrames > 0) && (latched)) {
-    int RandFrame = rand() % 4;
+    int RandFrame = rand() % 4;	//graphics
 //    double TentacleX = ship->normal_x() + (cos(angle ) * height() * .75);
 //    double TentacleY = ship->normal_y() + (sin(angle ) * width()  * .75);
 

@@ -93,9 +93,13 @@ Control *getController(const char *type, const char *name, int channel) {STACKTR
 	}
 
 
-int Control::rand() {
-	if (channel == channel_none) return random();
-	return (::rand() ^ ((::rand() << 12) + (::rand() <<24))) & 0x7fffffff;
+int Control::rand()
+{
+	// this is synched with physics
+	if (channel == channel_none)
+		return random();
+	// this is local, so uses a local unsynched rand
+	return (::rand() ^ ((::rand() << 12) + (::rand() <<24))) & 0x7fffffff;	// local
 	}
 void Control::setup() {}
 void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE;
