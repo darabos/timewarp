@@ -99,6 +99,7 @@ bool UmgahCone::change_owner(SpaceLocation *new_owner) {
 
 void UmgahCone::calculate()
 {
+	SpaceObject::calculate();
 
 	if(!(ship && ship->exists()))
 	{

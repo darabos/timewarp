@@ -13,6 +13,12 @@
 class Mineral;
 class Lifeform;
 
+/** \brief Loads and handles the planetscan subgametype; this happens when you
+orbit a planet. There are 2 modes, (1) the actual scan, where you get an overview
+of the planet surface, and (2) the part where you control a planet lander to
+explore the surface.
+
+*/
 class GamePlanetscan : public GameBare
 {
 public:

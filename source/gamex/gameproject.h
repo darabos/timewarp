@@ -42,6 +42,9 @@ class Frame2 : public Frame {
 };
 
 
+/** \brief The basic gametype, which the game elements are derived from
+
+*/
 
 class GameBare : public Physics
 {
@@ -138,8 +141,9 @@ public:
 
 
 
-// pretty straightforward ... this has nothing to do with a real game, but, it's called first.
+/** \brief Manages gametypes,.
 
+*/
 class GameProject
 {
 public:

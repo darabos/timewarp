@@ -13,6 +13,10 @@
 const int ID_FLEETICON = 0x08235497;
 
 
+/** \brief Loads and handles the planetview subgametype, where you get
+a schematic overview of the planet and its moons in space.
+
+*/
 
 class Surface3D
 {

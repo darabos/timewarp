@@ -9,6 +9,9 @@
 #include "../melee/mgame.h"
 
 
+/** \brief Loads and handles the melee part of the game, where ships engage in combat
+
+*/
 class GameMelee : public GameBare
 {
 public:

@@ -347,6 +347,7 @@ void OrzMarine::inflict_damage(SpaceObject *other) {
 		invading = (Ship *) other;
         collide_flag_anyone = 0;
         play_sound(data->sampleExtra[1]);
+		damage(invading, 0, 1);
 		if (invading->spritePanel)
 		{
 		sprite->draw(14 + ((slot % 4) * 6), 16 + ((slot / 4) * 6), 0, invading->spritePanel->get_bitmap(0) );

@@ -54,6 +54,10 @@ public:
 };
 
 
+/** \brief Loads and handles the solarview subgametype; this is a space overview
+of the solar system and is loaded when you enter it from hyperspace.
+
+*/
 class GameSolarview : public GameBare
 {
 public:

@@ -14,6 +14,11 @@ const int Ntext = 2048;
 const int maxbranches = 16;
 const int maxdialotriggers = 16;
 
+/** \brief The record of a dialogue-node. A dialogue consists of many of these
+linked records.
+
+*/
+
 struct Dialo
 {
 	int version;	// can be used to rewrite stuff (if ever needed)

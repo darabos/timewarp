@@ -8,6 +8,8 @@ REGISTER_FILE
 #include "../frame.h"
 #include "../melee/mview.h"
 
+#include "../other/configrw.h"
+
 
 #include "gamedata.h"
 #include "gamedata_map.h"
@@ -26,6 +28,40 @@ MapEverything	mapeverything;
 RaceManager		racelist;
 
 
+PlayerFleetRec::PlayerFleetRec(const char *aid)
+{
+	strncpy(id, aid, sizeof(id));
+	crew = 1;
+}
+
+
+PlayerFleet::PlayerFleet()
+{
+	N = 0;
+}
+
+void PlayerFleet::add(const char *id)
+{
+	fr[N] = new PlayerFleetRec(id);
+	++N;
+}
+
+
+void PlayerFleet::config(bool option)
+{
+	config_read = option;
+
+	section = "Fleet";
+	conf("N", N);
+
+	int i;
+	for ( i = 0; i < N; ++i )
+	{
+		confnum("crew", i, fr[i]->crew);
+		confnum("id", i, fr[i]->id);
+	}
+}
+
 
 void PlayerInfo::init(char *filename)
 {
@@ -41,6 +77,11 @@ void PlayerInfo::init(char *filename)
 	imoon = get_config_int(0, "Moon", -1);	// of planets and moons
 
 	RU = get_config_float(0, "RU", 0);
+
+	strncpy(playername, get_config_string("Names", "player", "nobody"),  sizeof(playername));
+	strncpy(shipname,   get_config_string("Names", "ship",   "dustbin"), sizeof(shipname));
+
+	fleet.config(CONFIG_READ);
 }
 
 
@@ -57,6 +98,8 @@ void PlayerInfo::write()
 	//set_config_int(0, "PlanetCode", iplanetcode);
 
 	set_config_float(0, "RU", RU);
+
+	fleet.config(CONFIG_WRITE);
 }
 
 

@@ -167,6 +167,29 @@ extern RaceManager racelist;
 
 class LocalPlayerInfo;
 
+
+class PlayerFleetRec
+{
+public:
+	PlayerFleetRec(const char *aid);
+
+	char id[64];
+	int crew;
+};
+
+class PlayerFleet
+{
+public:
+	PlayerFleetRec *fr[100];
+	int N;
+
+	PlayerFleet();
+
+	void add(const char *id);
+	void config(bool option);	// use these options: CONF_READ or CONF_WRITE
+};
+
+
 // general game data about the player
 class PlayerInfo
 {
@@ -196,6 +219,11 @@ public:
 	// cargo bay
 	double mineral_weight[16];
 	double bio_weight;
+
+	char playername[64];
+	char shipname[64];
+
+	PlayerFleet fleet;
 };
 
 extern PlayerInfo playerinfo;

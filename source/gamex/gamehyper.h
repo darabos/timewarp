@@ -6,8 +6,6 @@
 #include "gamedata.h"
 #include "gamegeneral.h"
 
-
-
 class HyperspaceExplosions
 {
 	int		Nlevels;
@@ -31,6 +29,10 @@ public:
 
 
 
+
+/** \brief Loads and handles the hyperspace subgametype
+
+*/
 
 class GameHyperspace : public GameBare
 {

@@ -9,6 +9,10 @@
 
 // to implement a button, you add bitmaps-feedback to the box-area control
 
+/** \brief A single button.
+
+*/
+
 class Button : public GraphicButton
 {
 protected:
@@ -28,6 +32,9 @@ public:
 };
 
 
+/** \brief A general area for displaying graphics, which can be changed if needed.
+
+*/
 
 class Area : public GraphicButton
 {
@@ -52,6 +59,11 @@ public:
 
 
 
+/** \brief A more specialized area for displaying graphics. It allocates an extra
+drawing bitmap (i.e. adds an extra drawing layer), so that you can draw over
+the background without changing the background itself.
+
+*/
 // something which has a background, and its own drawing-area
 class AreaTablet : public Area
 {
@@ -73,9 +85,9 @@ public:
 
 
 
+/** \brief A button that toggles between two states, on or off, whenever it's pushed.
 
-// a switch, is a button that is always in 2 of states (on or off) :
-// (a "focus" is always indicated by some box around it).
+*/
 
 class SwitchButton : public GraphicButton
 {
@@ -100,6 +112,9 @@ public:
 };
 
 
+/** \brief An invisible button ; can be used to fake a trigger-button for a popup menu.
+
+*/
 
 class GhostButton : public EmptyButton
 {
@@ -111,6 +126,11 @@ public:
 
 
 
+/** \brief Manages a horizontal or vertical (auto-determined based on bitmap
+dimension) scrollbar. It has a background, and animates the bar-handle on top of
+that. This can be used together with a "manager" class, the ScrollControl.
+
+*/
 
 class ScrollBar : public AreaTablet
 {

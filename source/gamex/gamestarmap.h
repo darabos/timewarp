@@ -39,6 +39,10 @@ public:
 
 
 
+/** \brief Loads and handles the starmap, which gives a overview of
+the game-world (stars, territories).
+
+*/
 class GameStarmap : public GameBare
 {
 public:

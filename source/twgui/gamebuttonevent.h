@@ -1,7 +1,13 @@
 
 #ifndef __GAMEBUTTONEVENT_H__
 #define __GAMEBUTTONEVENT_H__
+/** \brief Referenced by pointer by a button; if the value is non-zero, it
+calls the routines in this struct, based on the mouse state. In this way you
+can define specific funtions inside your game code. It's a template, so that it allows
+you to pass pointers to game-class functions, i.e., functions which have access
+to all the variables you need.
 
+*/
 
 template <class G>
 class BEvent : public ButtonEvent

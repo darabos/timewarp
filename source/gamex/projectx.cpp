@@ -67,7 +67,7 @@ void ProjectX::init()
 	// leave solar view, you enter hyper space.
 
 
-	//*
+	/*
 	add( new GameHyperspace() );
 	
 	if (playerinfo.istar >= 0)
@@ -86,7 +86,7 @@ void ProjectX::init()
 //	add( new GamePlanetscan() );
 //	add( new GameMelee() );
 //	add( new GameDialogue() );		// the editor
-//	add( new GameAliendialog() );	// the alien interface -- need additional info, can't just load like this.
+	add( new GameAliendialog() );	// the alien interface -- need additional info, can't just load like this.
 //	add( new GameTriggerEdit() );
 //	add( new GameTriggerEdit() );
 	

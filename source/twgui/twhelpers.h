@@ -4,9 +4,12 @@
 
 #include "twbuttontypes.h"
 
-// discrete position (x,y = item number, not pixels)
-//class ScrollBar;
-//class EmptyButton;
+/** \brief Manages 2 scrollbars and 4 buttons to determine a position in 2D. This
+is used to determine item number, rather than pixels; the number of items is entered
+in initialization.
+
+*/
+
 
 class ScrollControl
 {
@@ -48,7 +51,10 @@ public:
 
 
 
-// a class you can use to edit text
+/** \brief Manage a string with enter-characters, generating info about the lines
+of text that are present in there.
+
+*/
 
 const int maxlines = 1024;
 

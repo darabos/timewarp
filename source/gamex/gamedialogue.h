@@ -10,9 +10,15 @@
 
 #include "../twgui/twgui.h"
 
+#include "../other/luaport.h"
 
+/** \brief Loads and handles the interface with the alien during the game.
+
+*/
 class GameAliendialog : public GameBare
 {
+    lua_State *L;
+
 	FileStore *fs;
 
 	Dialo *dialo, *firstdialo, *dialo_selected[32];
@@ -48,6 +54,8 @@ class GameAliendialog : public GameBare
 	void preptext(char *t);
 
 	bool eol(char c);
+
+	void exec_commands();
 
 public:
 	GameAliendialog();

@@ -24,6 +24,10 @@ class TWindow;
 
 
 
+/** \brief The bare button type. Any buttons are derived from this. Basically,
+only the i/o is defined here.
+
+*/
 class EmptyButton
 {
 
@@ -126,6 +130,10 @@ public:
 };
 
 
+/** \brief A more specialized button type, which provides graphical routines
+for display.
+
+*/
 
 class GraphicButton : public EmptyButton
 {
