@@ -121,6 +121,17 @@ void GobGame::config(bool option)
 //	conf("", s-, 1);
 
 	s->vel = 0;
+
+
+	section = "upgrades";
+
+	// each player keeps track of its own set of upgrades.
+	// hmm, and what if one of the upgrades gets deleted ?
+	int i;
+	for (i = 0; gp->upgrade_list[i]; i += 1)
+	{
+		confnum("num", i, gp->upgrade_list[i]->num);
+	}
 }
 
 
@@ -339,9 +350,13 @@ void GobGame::init(Log *_log) {
 
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
 
-	int ichoice = 1;
-	ichoice = tw_alert("Continue game?", "&YES", "&NO");
-	// check a menu to see what the player wants ... how ??
+
+	int ichoice = 2;	// default, "no" 'don't load a game
+	if (!lag_frames)
+	{
+		// check a menu to see what the player wants ... how ??
+		ichoice = tw_alert("Continue game?", "&YES", "&NO");
+	}
 
 	if (ichoice == 2)
 	{
