@@ -902,17 +902,32 @@ int VPlanet::handle_damage(SpaceLocation *source, double normal, double direct)
         return(1);
       }
   }
-  for(i=0;i<20;i++) {
-    j = tw_random()%12;
-    if(this->Installation[j]!=NULL)
-      if(this->Installation[j]->isDestroyed==false) {
-        //message.print(500,5,"j=%d",j);
-        this->Installation[j]->handle_damage(source, normal, direct);
-        return(1);
-      }
+
+  // select a random installation to handle the damage.
+  int k;
+  k = 0;
+  for ( i = 0; i < 12; i++)
+  {
+	  if (Installation[i] && !Installation[i]->isDestroyed)
+		  ++k;
+  }
+  if (k == 0)
+	  return 0;
+
+  j = random(k);
+
+  for ( i = 0; i < 12; i++)
+  {
+	  if (Installation[i] && !Installation[i]->isDestroyed)
+		  --k;
+	  if ( k == 0 )
+	  {
+		  Installation[j]->handle_damage(source, normal, direct);
+			  return(1);
+	  }
   }
   //twenty tries, can't find a valid damage recipient, give up now.
-  tw_error("about to try to VPlanet::handle damage #3");
+  tw_error("about to try to VPlanet::handle damage #3 -- this should never ever happen!");
   return(0);
 }
 

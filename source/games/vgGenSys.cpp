@@ -769,7 +769,7 @@ void VGenSystem::init_objects() {
 	register_init(&VGenSystem::init_objectsVSysBlueGiant, "Blue giant");
 	register_init(&VGenSystem::init_objectsVSysWhiteDwarf, "White dwarf");
 	register_init(&VGenSystem::init_objectsVSysWhiteStar, "White star");
-	register_init(&VGenSystem::init_objectsVSysYellowThreePlanets, "Yellow three planets");
+	register_init(&VGenSystem::init_objectsVSysYellowThreePlanets, "Yellow 3 planets");
 	register_init(&VGenSystem::init_objectsVSysVoid, "Void");
 	register_init(&VGenSystem::init_objectsVSysBrownDwarf, "Brown dwarf");
 	register_init(&VGenSystem::init_objectsVSysBinRedDwarf, "Red dwarf");
@@ -793,18 +793,20 @@ void VGenSystem::init_objects() {
 		PopupList *popupl;
 		popupl = new PopupList(screen, "interfaces/gametest/popuplist", "text/", 0, 0, videosystem.get_font(2), 0);
 		popupl->tbl->set_optionlist(functitle, Ninit, makecol(255,255,128));
-		popupl->show();
 		popupl->xshift = 0;
 		popupl->yshift = 0;
 		popupl->close_on_defocus = false;
 		
 		popupl->tree_doneinit();
+		popupl->show();
 
 		//WindowManager *winman;
 		//winman = new WindowManager;
 		//winman->add(popupl);
 		
 		popupl->tree_setscreen(screen);
+		popupl->center();
+
 		show_mouse(screen);
 		unscare_mouse();
 		
@@ -813,6 +815,8 @@ void VGenSystem::init_objects() {
 			idle(10);
 			
 			popupl->tree_calculate();
+
+			//clear_to_color(screen, 0);
 			popupl->tree_animate();
 		}
 		
