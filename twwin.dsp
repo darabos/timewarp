@@ -666,6 +666,10 @@ SOURCE=.\source\newships\shpforsh.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpfresc.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpgahmo.cpp
 # End Source File
 # Begin Source File

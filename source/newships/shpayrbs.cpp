@@ -16,6 +16,14 @@ static bool isintargetlist(SpaceObject *o);
 class AyronBS;
 class AutoGun;
 
+
+// this is read separately from the layout file - to keep things organized ?
+struct BigShipPartInfo
+{
+	double	crewmax, crew, batt, dynamo, turning, thrusting;
+	SpaceSprite	*spr_crewed, *spr_uncrewed;
+};
+
 class BigShipPart : public SpaceObject
 {
 
@@ -38,10 +46,13 @@ public:
 	SpaceObject *collider;
 	Vector2 Pcoll, Vcoll;
 
-	BigShipPart(AyronBS *aowner, Vector2 orelpos,
-				double acrew, double abatt, double adynamo,
-				double aturning, double athrusting,
-				SpaceSprite *spr, SpaceSprite *spr_uncrewed);
+//	BigShipPart(AyronBS *aowner, Vector2 orelpos,
+//				double acrew, double abatt, double adynamo,
+//				double aturning, double athrusting,
+//				SpaceSprite *spr, SpaceSprite *spr_uncrewed);
+
+	BigShipPart(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartInfo **info);
+	
 
 	virtual void animate(Frame *space);
 	virtual void calculate();
@@ -91,6 +102,9 @@ public:
 	BigShipPart **parts;
 //	int **parts;
 
+	int		nBSinfo;
+	BigShipPartInfo **BSinfo;
+
 	double	recharge_rate_ref, accel_rate_ref, turn_rate_ref;
 
 	double	weaponRange, weaponDamage;
@@ -103,9 +117,7 @@ public:
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct=0);
 
 	// you can overload this to load a different type of ship-part into the AyronBS.
-	virtual BigShipPart *init_part(Vector2 orelpos, int otype,
-				double acrew, double abatt, double adynamo,
-				double aturning, double athrusting);
+	virtual BigShipPart *init_part(Vector2 orelpos, int otype, BigShipPartInfo **info);
 
 	virtual int activate_weapon();
 	virtual int activate_special();
@@ -113,16 +125,11 @@ public:
 };
 
 
-BigShipPart *AyronBS::init_part(Vector2 orelpos, int otype,
-				double acrew, double abatt, double adynamo,
-				double aturning, double athrusting)
+BigShipPart *AyronBS::init_part(Vector2 orelpos, int otype, BigShipPartInfo **info)
 {
 
 	if (otype > 0)
-		return new BigShipPart(this, orelpos,
-					acrew, abatt, adynamo, aturning, athrusting,
-					data->more_sprites[otype-1],
-					data->more_sprites[otype-1 + Ntypes]);
+		return new BigShipPart(this, orelpos, otype, info);
 	else
 		return 0;
 }
@@ -137,14 +144,31 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 	int i;
 	int ix, iy;
 
-	// should also be in the file, really, but well... there are 2 sprites for each type.
-	Ntypes = data->num_more_sprites / 2;
-
 	// read the layout
 	FILE *inp;
 
 	inp = fopen("ships/shpayrbs_layout.txt", "rt");
 	if (!inp) {tw_error("couldn't find the AyronBS layout");}
+
+
+	
+	fscanf(inp, "%i\n", &nBSinfo);
+
+	Ntypes = nBSinfo;
+
+	BSinfo = new BigShipPartInfo* [nBSinfo];
+
+	for ( i = 0; i < nBSinfo; ++i )
+	{
+		BSinfo[i] = new BigShipPartInfo();
+
+		fscanf(inp, "%*10c %lf %lf %lf %lf %lf",
+			 &BSinfo[i]->crew, &BSinfo[i]->batt, &BSinfo[i]->dynamo,
+			 &BSinfo[i]->turning, &BSinfo[i]->thrusting);
+
+		BSinfo[i]->spr_crewed = data->more_sprites[i];
+		BSinfo[i]->spr_uncrewed = data->more_sprites[i + Ntypes];
+	}
 
 	fscanf(inp, "%i %i\n", &Nx, &Ny);
 	N = Nx * Ny;
@@ -154,24 +178,18 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 
 	int *itype, *iweapon;
-	double *anglecenter, *moveangle, *acrew, *abatt, *adynamo, *aturning, *athrusting;
+	double *anglecenter, *moveangle;
 
 	itype = new int [N];
 	iweapon = new int [N];
 	anglecenter = new double [N];
 	moveangle = new double [N];
 
-	acrew = new double [N];
-	abatt = new double [N];
-	adynamo = new double [N];
-	aturning = new double [N];
-	athrusting = new double [N];
-
 	// the ship hull sprites
 	for ( i = 0; i < N; ++i )
 	{
-		fscanf(inp, "%i %lf %lf %lf %lf %lf",
-			&itype[i], &acrew[i], &abatt[i], &adynamo[i], &aturning[i], &athrusting[i]);
+		fscanf(inp, "%i",
+			&itype[i]);
 	}
 
 	// the ship weapons
@@ -206,7 +224,7 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 			relpos = w * Vector2(0.5*(Ny-1) - iy, ix - 0.5*(Nx-1));
 			
-			parts[k] = init_part(relpos, itype[k], acrew[k], abatt[k], adynamo[k], aturning[k], athrusting[k]);
+			parts[k] = init_part(relpos, itype[k], BSinfo);
 			if (parts[k])
 				physics->add(parts[k]);
 
@@ -224,11 +242,9 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 	delete anglecenter;
 	delete moveangle;
 
-	delete acrew;
-	delete abatt;
-	delete adynamo;
-	delete aturning;
-	delete athrusting;
+	for ( i = 0; i < nBSinfo; ++i )
+		delete BSinfo[i];
+	delete BSinfo;
 
 
 	weaponColor  = get_config_int("Weapon", "Color", 0);
@@ -242,10 +258,11 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 
 	// remove this from the physics interaction
-	mass = 0;
+	//mass = 0; this value is needed by the ship parts
 	collide_flag_anyone = 0;
 	collide_flag_sameship = 0;
 	collide_flag_sameteam = 0;
+	attributes |= ATTRIB_UNDETECTABLE;
 
 	// also, add the ship's parts to the physics target list
 //	for (i = 0; i < N; ++i )
@@ -380,37 +397,39 @@ int AyronBS::handle_damage(SpaceLocation *source, double normal, double direct)
 
 
 
-BigShipPart::BigShipPart(AyronBS *aowner, Vector2 orelpos,
-				double acrew, double abatt, double adynamo,
-				double aturning, double athrusting,
-				SpaceSprite *spr, SpaceSprite *spr_uncrewed)
+//BigShipPart::BigShipPart(AyronBS *aowner, Vector2 orelpos,
+//				double acrew, double abatt, double adynamo,
+//				double aturning, double athrusting,
+//				SpaceSprite *spr, SpaceSprite *spr_uncrewed)
+
+BigShipPart::BigShipPart(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartInfo **info)
 :
-SpaceObject(aowner, 0, 0, spr)
+SpaceObject(aowner, 0, 0, info[otype-1]->spr_crewed)
 {
 	owner = aowner;
 	relpos = orelpos;
 
-	layer = LAYER_SHOTS;
+	layer = LAYER_SHIPS;
 	set_depth(DEPTH_SHIPS-0.1);		// the ship should come first in calculations.
 	mass = owner->mass;
 
 	oldpos = pos;
 	oldvel = vel;
 
-	crew = acrew;
-	crewmax = crew;
-	batt = abatt;
-	dynamo = adynamo;
-	turning = aturning;
-	thrusting = athrusting;
+	crew      = info[otype-1]->crew;
+	crewmax   = info[otype-1]->crew;
+	batt      = info[otype-1]->batt;
+	dynamo    = info[otype-1]->dynamo;
+	turning   = info[otype-1]->turning;
+	thrusting = info[otype-1]->thrusting;
 
-	sprite_uncrewed = spr_uncrewed;
+	sprite_uncrewed = info[otype-1]->spr_uncrewed;
 
 	relposrot = rotate(relpos, angle + owner->turn_step);
 
 	collide_flag_sameship = 0;
-//	collide_flag_sameteam = 0;
-//	collide_flag_anyone = 0;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_anyone = ALL_LAYERS;
 
 	// check if you've collided with something.
 	collider = 0;
@@ -491,7 +510,7 @@ int BigShipPart::handle_damage(SpaceLocation *source, double normal, double dire
 	//return owner->handle_damage(source, normal, direct);
 	// no ...
 	// handle damage locally. The big ship can test all parts to calculate its global
-	// parameters (like total cerw left, total thrust, etc)...
+	// parameters (like total crew left, total thrust, etc)...
 
 	if (!hascrew())
 		return 0;
@@ -513,6 +532,7 @@ int BigShipPart::handle_damage(SpaceLocation *source, double normal, double dire
 		collide_flag_sameship = 0;
 		collide_flag_sameteam = 0;
 		mass = 0;
+		attributes |= ATTRIB_UNDETECTABLE;
 
 		// as soon as this is done, it won't have to handle damage anymore ?
 
@@ -800,6 +820,8 @@ void BigShipPart::recrew(int howmany)
 		collide_flag_sameteam = ALL_LAYERS;
 
 		mass = owner->mass;
+
+		attributes &= ~ATTRIB_UNDETECTABLE;
 
 	
 		// add it back to the target list of the game
