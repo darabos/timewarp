@@ -555,7 +555,7 @@ void TeronBuilder::calculate(){
     }
     collecting = NULL;
   }else{
-    if( collect_step <= 0 ){
+    if( collect_step <= 0 && collectRange ){
       Query q;
       for( q.begin( this, bit(LAYER_CBODIES), collectRange ); q.currento; q.next() ){
         if( q.currento->isAsteroid() ){
