@@ -1,0 +1,1 @@
+These are the different game types - they're different, because they've different physics (different objects (sprite sizes), and interaction, eg collision).
