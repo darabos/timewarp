@@ -8,7 +8,7 @@
 /*			-Corona688, 2001	*/
 /************************************************/
 
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 int MAX_TARGETS=3;

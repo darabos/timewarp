@@ -1,6 +1,6 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
-#include "scp.h"
+#include "../scp.h"
 
 #define IMPERIAL_MIN_DEBRIS_LIFE 2000
 #define IMPERIAL_MAX_DEBRIS_LIFE 6000

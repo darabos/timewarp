@@ -1,7 +1,7 @@
 #ifndef __GAMEX_SPACE_BODY__
 #define __GAMEX_SPACE_BODY__
 
-#include "gamedata_map.h"
+#include "../gamedata_map.h"
 
 // ellips of planet orbit
 void drawellips(Frame *f, Vector2 center, double R, double b, int col);
@@ -9,10 +9,10 @@ void drawellips(Frame *f, Vector2 center, double R, double b, int col);
 // planet shading
 void shadowpaintcircle(SpaceSprite *spr, double fi_s);
 
-#include "twgui/twpopup.h"
-#include "twgui/twbuttontypes.h"
-#include "gameproject.h"
-#include "gamedata.h"
+#include "../../twgui/twpopup.h"
+#include "../../twgui/twbuttontypes.h"
+#include "../gameproject.h"
+#include "../gamedata.h"
 
 
 class TVarea : public Area

@@ -1,6 +1,6 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
-#include "melee/mcbodies.h"
+#include "../melee/mcbodies.h"
 
 class ClairconctlarPinnacle : public Ship {
   double       weaponRange;

@@ -1,7 +1,7 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
-#include "melee/mmain.h"
+#include "../melee/mmain.h"
 
 #define OWADISABLE_SPEC 0x36
 

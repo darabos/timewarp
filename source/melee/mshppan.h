@@ -1,7 +1,7 @@
 #ifndef __MSHPPAN_H__
 #define __MSHPPAN_H__
 
-#include "melee.h"
+#include "../melee.h"
 
 extern int PANEL_WIDTH;
 extern int PANEL_HEIGHT;

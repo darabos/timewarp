@@ -1,7 +1,7 @@
 #ifndef __GAMEHIERARCHY_H__
 #define __GAMEHIERARCHY_H__
 
-#include "melee/mgame.h"
+#include "../melee/mgame.h"
 
 /*
   This class should allow you to start, play, end a game from within a 

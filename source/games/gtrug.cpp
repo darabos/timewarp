@@ -1,20 +1,20 @@
 #include <allegro.h>
 #include <string.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
 
-#include "scp.h"
-#include "ais.h"
+#include "../scp.h"
+#include "../ais.h"
 
-#include "melee/mframe.h"
-#include "melee/mgame.h"
-#include "melee/mview.h"
-#include "melee/mcontrol.h"
-#include "melee/mcbodies.h"
-#include "melee/mlog.h"
-#include "melee/mshppan.h"
-#include "melee/mnet1.h"
+#include "../melee/mframe.h"
+#include "../melee/mgame.h"
+#include "../melee/mview.h"
+#include "../melee/mcontrol.h"
+#include "../melee/mcbodies.h"
+#include "../melee/mlog.h"
+#include "../melee/mshppan.h"
+#include "../melee/mnet1.h"
 
 #include "gtrug.h"
 

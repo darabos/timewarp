@@ -1,13 +1,13 @@
 
-#include <allegro.h>
+//#include <allegro.h>
 #include <string.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "id.h"
-#include "frame.h"
-#include "libs.h"
-#include "util/aastr.h"
+#include "../id.h"
+#include "../frame.h"
+#include "../libs.h"
+#include "../util/aastr.h"
 
 #include "mframe.h"
 #include "mgame.h"

@@ -1,7 +1,7 @@
 #ifndef __MMAIN_H__
 #define __MMAIN_H__
 
-#include "melee.h"
+#include "../melee.h"
 #include "mgame.h"
 
 class NormalGame : public Game {

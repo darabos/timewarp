@@ -1,7 +1,7 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
-#include "sc2ships.h"
+#include "../sc2ships.h"
 
 SupoxBlade::SupoxBlade(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code)

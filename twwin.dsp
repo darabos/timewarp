@@ -43,9 +43,9 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /Gi /GR /GX /O1 /Op /Ob2 /I "./include" /I "./source" /I "./source/gamex" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GR /GX /Ox /Ot /Og /Oi /Op /Ob2 /I "./include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
-# ADD MTL /nologo /I "C:\Games\fifteen\all\source\\" /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -53,8 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 ./lib/alleg.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ./lib/libjgmod.lib wsock32.lib winmm.lib opengl32.lib glu32.lib ./lib/lua.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin.exe"
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 ./lib/alleg.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/lua.lib /nologo /subsystem:windows /incremental:yes /machine:I386 /out:"twwin.exe"
 
 !ELSEIF  "$(CFG)" == "twwin - Win32 Debug"
 
@@ -70,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /ZI /Op /I "./include" /I "./source" /I "./source/gamex" /D "_DEBUG" /D "DEBUGMODE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /Fr /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /Zi /Op /Ob1 /I "./include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -80,8 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ./lib/alld.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ./lib/libjgmod.lib wsock32.lib winmm.lib opengl32.lib glu32.lib ./lib/luad.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin_DEBUG.exe" /pdbtype:sept
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 ./lib/alld.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/luad.lib /nologo /subsystem:windows /debug /machine:I386 /out:"twwin_DEBUG.exe" /pdbtype:sept
 
 !ENDIF 
 
@@ -94,7 +92,7 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Group "Melee"
 
-# PROP Default_Filter ""
+# PROP Default_Filter "*.cpp"
 # Begin Source File
 
 SOURCE=.\source\melee\manim.cpp
@@ -173,10 +171,6 @@ SOURCE=.\source\melee\mtarget.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\melee\mtarget.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\melee\mview.cpp
 # End Source File
 # End Group
@@ -237,6 +231,10 @@ SOURCE=.\source\util\round.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\util\sintable.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\util\sounds.cpp
 # End Source File
 # Begin Source File
@@ -246,6 +244,58 @@ SOURCE=.\source\util\types.cpp
 # Begin Source File
 
 SOURCE=.\source\util\vector2.cpp
+# End Source File
+# End Group
+# Begin Group "Other"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\other\gdialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\gevent.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\gquest.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\gup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\nullphas.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\objanim.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\orbit.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\planet3d.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\radar.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\shippart.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\vbodies.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\vtarget.cpp
 # End Source File
 # End Group
 # Begin Group "AIs"
@@ -313,10 +363,6 @@ SOURCE=.\source\games\gmissions_objects.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\games\gmissions_objects.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\games\gplanets.cpp
 # End Source File
 # Begin Source File
@@ -356,70 +402,106 @@ SOURCE=.\source\games\vanguard.cpp
 SOURCE=.\source\games\vgGenSys.cpp
 # End Source File
 # End Group
-# Begin Group "Other"
+# Begin Group "GameX"
+
+# PROP Default_Filter ""
+# Begin Group "edit"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\source\other\gdialog.cpp
+SOURCE=.\source\gamex\edit\disk_stuff.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\gevent.cpp
+SOURCE=.\source\gamex\edit\edit_dialogue.cpp
+# End Source File
+# End Group
+# Begin Group "stuff"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\gamex\stuff\backgr_stars.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\gquest.cpp
+SOURCE=.\source\gamex\stuff\space_body.cpp
+# End Source File
+# End Group
+# Begin Group "general"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\gamex\general\sprites.cpp
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\source\gamex\ai_fleet.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\gup.cpp
+SOURCE=.\source\gamex\ai_race.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\nullphas.cpp
+SOURCE=.\source\gamex\gamedata.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\objanim.cpp
+SOURCE=.\source\gamex\gamedata_map.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\orbit.cpp
+SOURCE=.\source\gamex\gamedialogue.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\planet3d.cpp
+SOURCE=.\source\gamex\gamegeneral.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\planet3d.h
+SOURCE=.\source\gamex\gamehyper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\radar.cpp
+SOURCE=.\source\gamex\gamemelee.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\shippart.cpp
+SOURCE=.\source\gamex\gameplanetmission.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\shippart.h
+SOURCE=.\source\gamex\gameplanetscan.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\vbodies.cpp
+SOURCE=.\source\gamex\gameplanetview.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\vtarget.cpp
+SOURCE=.\source\gamex\gameproject.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\gamex\gamesolarview.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\gamex\gamestarmap.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\gamex\projectx.cpp
 # End Source File
 # End Group
 # Begin Group "Ships"
 
 # PROP Default_Filter ""
-# Begin Group "SC1_ships"
+# Begin Group "SC1_Ships"
 
 # PROP Default_Filter ""
 # Begin Source File
@@ -479,7 +561,7 @@ SOURCE=.\source\sc1ships\shpvuxin.cpp
 SOURCE=.\source\sc1ships\shpyehte.cpp
 # End Source File
 # End Group
-# Begin Group "SC2_ships"
+# Begin Group "SC2_Ships"
 
 # PROP Default_Filter ""
 # Begin Source File
@@ -527,7 +609,7 @@ SOURCE=.\source\sc2ships\shputwju.cpp
 SOURCE=.\source\sc2ships\shpzfpst.cpp
 # End Source File
 # End Group
-# Begin Group "SC3_ships"
+# Begin Group "SC3_Ships"
 
 # PROP Default_Filter ""
 # Begin Source File
@@ -579,7 +661,7 @@ SOURCE=.\source\sc3ships\shpvyrin.cpp
 SOURCE=.\source\sc3ships\shpxchex.cpp
 # End Source File
 # End Group
-# Begin Group "TW_ships_1"
+# Begin Group "TW_Ships"
 
 # PROP Default_Filter ""
 # Begin Source File
@@ -609,10 +691,6 @@ SOURCE=.\source\newships\shparkpi.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpartem.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpastba.cpp
 # End Source File
 # Begin Source File
 
@@ -732,22 +810,6 @@ SOURCE=.\source\newships\shpgerhe.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpgerla.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpgerna.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpgeror.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpgerra.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpglacr.cpp
 # End Source File
 # Begin Source File
@@ -773,10 +835,6 @@ SOURCE=.\source\newships\shpiceco.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpilwsp.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpilwsp.h
 # End Source File
 # Begin Source File
 
@@ -849,18 +907,6 @@ SOURCE=.\source\newships\shpmoisp.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpmontr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpmurem.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpmurin.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpmurnc.cpp
 # End Source File
 # Begin Source File
 
@@ -1108,196 +1154,12 @@ SOURCE=.\source\newships\shpzeksh.cpp
 # End Source File
 # End Group
 # End Group
-# Begin Group "gamex"
+# Begin Group "TW_GUI"
 
 # PROP Default_Filter ""
-# Begin Group "edit"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\gamex\edit\disk_stuff.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\edit\disk_stuff.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\edit\edit_dialogue.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\edit\edit_dialogue.h
-# End Source File
-# End Group
-# Begin Group "stuff"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\gamex\stuff\backgr_stars.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\stuff\backgr_stars.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\stuff\space_body.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\stuff\space_body.h
-# End Source File
-# End Group
-# Begin Group "general"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\gamex\ai_race.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\general\sprites.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\general\sprites.h
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=.\source\gamex\ai_fleet.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\ai_fleet.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\ai_race.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedata.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedata.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedata_map.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedata_map.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedialogue.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedialogue.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamegeneral.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamegeneral.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamehyper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamehyper.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamemelee.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamemelee.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetmission.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetmission.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetscan.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetscan.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetview.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetview.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameproject.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameproject.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamesolarview.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamesolarview.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamestarmap.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamestarmap.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\projectx.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\projectx.h
-# End Source File
-# End Group
-# Begin Group "twgui"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\twgui\gamebuttonevent.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\source\twgui\gametest2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\twgui\gametest2.h
 # End Source File
 # Begin Source File
 
@@ -1305,15 +1167,7 @@ SOURCE=.\source\twgui\twbutton.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\twgui\twbutton.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\twgui\twbuttontypes.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\twgui\twbuttontypes.h
 # End Source File
 # Begin Source File
 
@@ -1321,15 +1175,7 @@ SOURCE=.\source\twgui\twgui.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\twgui\twgui.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\twgui\twhelpers.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\twgui\twhelpers.h
 # End Source File
 # Begin Source File
 
@@ -1337,15 +1183,7 @@ SOURCE=.\source\twgui\twmenuexamples.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\twgui\twmenuexamples.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\twgui\twpopup.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\twgui\twpopup.h
 # End Source File
 # Begin Source File
 
@@ -1353,15 +1191,7 @@ SOURCE=.\source\twgui\twwindow.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\twgui\twwindow.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\twgui\utils.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\twgui\utils.h
 # End Source File
 # End Group
 # Begin Source File
@@ -1441,6 +1271,10 @@ SOURCE=.\source\melee\mshppan.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\melee\mtarget.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\melee\mview.h
 # End Source File
 # End Group
@@ -1493,6 +1327,10 @@ SOURCE=.\source\util\round.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\util\sintable.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\util\sounds.h
 # End Source File
 # Begin Source File
@@ -1506,30 +1344,6 @@ SOURCE=.\source\util\types.h
 # Begin Source File
 
 SOURCE=.\source\util\vector2.h
-# End Source File
-# End Group
-# Begin Group "Games_h"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\games\gamehierarchy.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gflmelee.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\ggob.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gplexplr.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gtrug.h
 # End Source File
 # End Group
 # Begin Group "Other_h"
@@ -1565,7 +1379,15 @@ SOURCE=.\source\other\orbit.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\other\planet3d.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\other\radar.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\shippart.h
 # End Source File
 # Begin Source File
 
@@ -1574,6 +1396,38 @@ SOURCE=.\source\other\vbodies.h
 # Begin Source File
 
 SOURCE=.\source\other\vtarget.h
+# End Source File
+# End Group
+# Begin Group "Games_h"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\games\dialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\gamehierarchy.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\gflmelee.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\ggob.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\gmissions_objects.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\gplexplr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\gtrug.h
 # End Source File
 # End Group
 # Begin Group "Allegro_headers"
@@ -1593,35 +1447,7 @@ SOURCE=.\include\allegro\inline\3dmaths.inl
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\allegro\platform\aintbeos.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\aintdos.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\include\allegro\internal\aintern.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\aintlnx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\aintmac.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\aintqnx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\aintunix.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\internal\aintvga.h
 # End Source File
 # Begin Source File
 
@@ -1629,27 +1455,7 @@ SOURCE=.\include\allegro\platform\aintwin.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\allegro\platform\al386gcc.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\include\allegro\platform\al386vc.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\al386wat.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\albcc32.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\albecfg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\albeos.h
 # End Source File
 # Begin Source File
 
@@ -1661,31 +1467,7 @@ SOURCE=.\include\allegro\internal\alconfig.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\allegro\platform\aldjgpp.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\aldos.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\alinline.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\include\allegro.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\almac.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\almaccfg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\almngw32.h
 # End Source File
 # Begin Source File
 
@@ -1694,26 +1476,6 @@ SOURCE=.\include\allegro\platform\almsvc.h
 # Begin Source File
 
 SOURCE=.\include\allegro\platform\alplatf.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\alqnx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\alqnxcfg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\alucfg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\alunix.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\allegro\platform\alwatcom.h
 # End Source File
 # Begin Source File
 
@@ -1726,6 +1488,10 @@ SOURCE=.\include\allegro\inline\asm.inl
 # Begin Source File
 
 SOURCE=.\include\allegro\base.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\MSVS\VC98\Include\BASETSD.H
 # End Source File
 # Begin Source File
 
@@ -1821,7 +1587,7 @@ SOURCE=.\include\allegro\keyboard.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\allegro\platform\macdef.h
+SOURCE=.\include\lauxlib.h
 # End Source File
 # Begin Source File
 
@@ -1895,6 +1661,14 @@ SOURCE=.\include\winalleg.h
 
 SOURCE=.\include\jgmod.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\include\lua.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\lualib.h
+# End Source File
 # End Group
 # Begin Source File
 
@@ -1907,6 +1681,10 @@ SOURCE=.\source\frame.h
 # Begin Source File
 
 SOURCE=.\source\gui.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\gup.h
 # End Source File
 # Begin Source File
 
@@ -1944,14 +1722,6 @@ SOURCE=.\source\ship.h
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-# Begin Source File
-
-SOURCE=.\scpwin.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\scpwin.rc
-# End Source File
 # End Group
 # End Target
 # End Project

@@ -2,7 +2,7 @@
 #define __PLANET_3D__
 
 
-#include "melee/mcbodies.h"
+#include "../melee/mcbodies.h"
 
 
 class Planet3D : public Planet {

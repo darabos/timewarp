@@ -3,13 +3,13 @@
 
 #include <allegro.h>
 
-#include "melee.h"
+#include "../melee.h"
 
-#include "melee/mframe.h"
-#include "melee/mgame.h"
-#include "melee/mmain.h"
-#include "melee/mcbodies.h"
-#include "melee/mview.h"
+#include "../melee/mframe.h"
+#include "../melee/mgame.h"
+#include "../melee/mmain.h"
+#include "../melee/mcbodies.h"
+#include "../melee/mview.h"
 
 static bool animtoggle = 0;
 

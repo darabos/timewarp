@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <allegro.h>
 
-#include "melee.h"
-#include "id.h"
-#include "frame.h"
-#include "scp.h"
+#include "../melee.h"
+#include "../id.h"
+#include "../frame.h"
+#include "../scp.h"
 
-#include "melee/mframe.h"
-#include "melee/mgame.h"
-#include "melee/mmain.h"
-#include "melee/mship.h"
-#include "melee/mshot.h"
-#include "melee/mview.h"
-#include "melee/mcbodies.h"
+#include "../melee/mframe.h"
+#include "../melee/mgame.h"
+#include "../melee/mmain.h"
+#include "../melee/mship.h"
+#include "../melee/mshot.h"
+#include "../melee/mview.h"
+#include "../melee/mcbodies.h"
 
 #define LEAGUE_BALL_MASS         3
 #define LEAGUE_BALL_KICK_SPEED   0.7

@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <allegro.h>
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "id.h"
-#include "scp.h"
-#include "frame.h"
-#include "ship.h"
+#include "../id.h"
+#include "../scp.h"
+#include "../frame.h"
+#include "../ship.h"
 
-#include "melee/mgame.h"
-#include "melee/mview.h"
-#include "melee/mcbodies.h"
-#include "melee/manim.h"
-#include "melee/mship.h"
+#include "../melee/mgame.h"
+#include "../melee/mview.h"
+#include "../melee/mcbodies.h"
+#include "../melee/manim.h"
+#include "../melee/mship.h"
 
 #include "orbit.h"
 

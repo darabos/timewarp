@@ -19,17 +19,17 @@ the human player.
 
 #include <allegro.h> //allegro library header
 
-#include "melee.h"          //used by all TW source files.  well, mostly.  
+#include "../melee.h"          //used by all TW source files.  well, mostly.  
 REGISTER_FILE                  //done immediately after #including melee.h, just because I said so
-#include "melee/mgame.h"    //Game stuff
-#include "melee/mcbodies.h" //asteroids & planets
-#include "melee/mship.h"    //ships
-#include "melee/mlog.h"     //networking / demo recording / demo playback
-#include "melee/mcontrol.h" //controllers & AIs
-#include "melee/mview.h"    //Views & text messages
-#include "melee/mshppan.h"  //ship panels...
-#include "melee/mitems.h"   //indicators...
-#include "melee/mfleet.h"   //fleets...
+#include "../melee/mgame.h"    //Game stuff
+#include "../melee/mcbodies.h" //asteroids & planets
+#include "../melee/mship.h"    //ships
+#include "../melee/mlog.h"     //networking / demo recording / demo playback
+#include "../melee/mcontrol.h" //controllers & AIs
+#include "../melee/mview.h"    //Views & text messages
+#include "../melee/mshppan.h"  //ship panels...
+#include "../melee/mitems.h"   //indicators...
+#include "../melee/mfleet.h"   //fleets...
 
 
 class SampleGame1 : public Game { //declaring our game type

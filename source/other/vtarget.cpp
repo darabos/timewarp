@@ -1,19 +1,19 @@
-#include "ship.h"
-#include "frame.h"
-#include "vtarget.h"
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "id.h"
+#include "../id.h"
 
-#include "libs.h"
+//#include "../libs.h"
 
-#include "melee/mframe.h"
-#include "melee/mgame.h"
-#include "melee/manim.h"
-#include "melee/mview.h"
-#include "melee/mship.h"
-#include "melee/mcbodies.h"
+#include "../melee/mframe.h"
+#include "../melee/mgame.h"
+#include "../melee/manim.h"
+#include "../melee/mview.h"
+#include "../melee/mship.h"
+#include "../melee/mcbodies.h"
+#include "../ship.h"
+#include "../frame.h"
+#include "vtarget.h"
 
 //this file should be placed in the /other directory
 //MAX_X is the critical constant to remember when

@@ -1,9 +1,9 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
-#include "frame.h"
+#include "../frame.h"
 
-#include "sc1ships.h"
+#include "../sc1ships.h"
 
 YehatTerminator::YehatTerminator(Vector2 opos, double angle, ShipData *data, unsigned int code) 
 	:

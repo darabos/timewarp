@@ -1,9 +1,9 @@
 
-#include "util/aastr.h"
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
+#include "../util/aastr.h"
 
-#include "ship.h"
+#include "../ship.h"
 #include "mgame.h"
 #include "manim.h"
 

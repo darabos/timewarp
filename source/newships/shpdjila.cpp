@@ -3,17 +3,17 @@ Yet another cobbled-together ship from spare parts of other ships:
 Cruiser, Avatar, Xform, Hornet
 -Culture20
 */
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
-#include "melee/mmain.h"
-#include "melee/mcbodies.h"
+#include "../melee/mmain.h"
+#include "../melee/mcbodies.h"
 
 
 
-#include "melee/mshppan.h"
+#include "../melee/mshppan.h"
 
-#include "frame.h"
+#include "../frame.h"
 
 #define BCC 3
 

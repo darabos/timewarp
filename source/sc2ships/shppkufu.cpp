@@ -1,12 +1,12 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
-#include "melee/mcbodies.h"
+#include "../melee/mcbodies.h"
 
-#include "sc2ships.h"
+#include "../sc2ships.h"
 
-#include "melee/mshppan.h"
-#include "melee/mitems.h"
-#include "melee/mview.h"
+#include "../melee/mshppan.h"
+#include "../melee/mitems.h"
+#include "../melee/mview.h"
 
 
 PkunkFury::PkunkFury(Vector2 opos, double shipAngle,

@@ -1,11 +1,11 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 #define NAROOL_POISON_ID     0x1122
 
-#include "util/aastr.h"
-#include "melee/mview.h"
-#include "frame.h"
+#include "../util/aastr.h"
+#include "../melee/mview.h"
+#include "../frame.h"
 
 #include <stdlib.h>
 

@@ -17,10 +17,10 @@
 #include <stdlib.h>
 #include <allegro.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
 #include "mfleet.h"
-#include "util/net_tcp.h"
+#include "../util/net_tcp.h"
 
 #include <algorithm>
 #include <functional>

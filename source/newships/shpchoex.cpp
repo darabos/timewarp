@@ -1,5 +1,5 @@
-#include "ship.h"
-#include "melee/mcbodies.h"
+#include "../ship.h"
+#include "../melee/mcbodies.h"
 
 REGISTER_FILE
 /*

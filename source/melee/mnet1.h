@@ -2,7 +2,7 @@
 #define __MNET1_H__
 
 #include "mmain.h"
-#include "util/net_tcp.h"
+#include "../util/net_tcp.h"
 #include "mlog.h"
 #include "mship.h"
 

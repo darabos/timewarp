@@ -1,9 +1,9 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 #include <math.h>
 
-#include "sc2ships.h"
+#include "../sc2ships.h"
 
 class ZoqFotPikShot : public Shot {
   int frame_count;

@@ -1,7 +1,7 @@
 #ifndef __MFLEET_H__
 #define __MFLEET_H__
 
-#include "melee.h"
+#include "../melee.h"
 
 class Fleet;
 extern Fleet *reference_fleet;

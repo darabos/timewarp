@@ -1,4 +1,4 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 #define trace_lifetime 200.0

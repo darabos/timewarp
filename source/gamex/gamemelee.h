@@ -6,7 +6,7 @@
 #include "gamedata.h"
 #include "gamegeneral.h"
 
-#include "melee/mgame.h"
+#include "../melee/mgame.h"
 
 
 class GameMelee : public GameBare

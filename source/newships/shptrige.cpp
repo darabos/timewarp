@@ -5,11 +5,11 @@
 /********************************************************/
 
 
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
-#include "frame.h"
-#include "melee/mview.h"
+#include "../frame.h"
+#include "../melee/mview.h"
 #include <stdio.h>
 
 #define ARM_LENGTH 45

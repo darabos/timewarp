@@ -1,13 +1,13 @@
 
 
-#include "ship.h"
-#include "melee/mview.h"
+#include "../ship.h"
+#include "../melee/mview.h"
 REGISTER_FILE
 
 #include <stdio.h>
 
-#include "frame.h"
-#include "other/shippart.h"
+#include "../frame.h"
+#include "../other/shippart.h"
 
 
 

@@ -1,17 +1,17 @@
 #ifndef __GAME_PROJECT__
 #define __GAME_PROJECT__
 
-#include "melee/mframe.h"
-#include "melee/mview.h"
-#include "frame.h"
-#include "util/history.h"
+#include "../melee/mframe.h"
+#include "../melee/mview.h"
+#include "../frame.h"
+#include "../util/history.h"
 
-#include "twgui/twwindow.h"
-#include "twgui/twbuttontypes.h"
+#include "../twgui/twwindow.h"
+#include "../twgui/twbuttontypes.h"
 
 #include "gamegeneral.h"
 
-#include "melee/mtarget.h"
+#include "../melee/mtarget.h"
 
 extern BITMAP *game_screen;
 

@@ -2,7 +2,7 @@
 #ifndef __GAMEX_DISK_STUFF__
 #define __GAMEX_DISK_STUFF__
 
-#include "twgui/twgui.h"
+#include "../../twgui/twgui.h"
 
 // part of this, should go into the gamedata section ?!
 

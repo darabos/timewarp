@@ -1,6 +1,6 @@
 //ZekfahanShocker lousy code by Richardyzo@ig.com.br
 
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 class ZekfahanShocker : public Ship {

@@ -16,6 +16,8 @@
  * - Comments added.
  */
 
+#define INCLUDE_GAMEX
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -75,8 +77,10 @@ REGISTER_FILE
 #define SCPGUI_MUSIC   0
 #define SCPGUI_TITLE   1
 
-#include "gamex/projectx.h"
+#ifdef INCLUDE_GAMEX
+	#include "gamex/projectx.h"
 // for future use (Rob)
+#endif
 
 Game *old_game = NULL;
 
@@ -133,7 +137,9 @@ enum {
 	MAIN_DIALOG_OPTIONS,
 	MAIN_DIALOG_HELP,
 	MAIN_DIALOG_EXIT,
+#ifdef INCLUDE_GAMEX
 	MAIN_DIALOG_FG,
+#endif
 };
 
 DIALOG mainDialog[] = {
@@ -145,7 +151,9 @@ DIALOG mainDialog[] = {
   { d_button_proc,     45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
   { d_button_proc,     45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
   { d_button_proc,     45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
+#ifdef INCLUDE_GAMEX
   { d_button_proc,     550,  440,   50,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"FG" , NULL, NULL },
+#endif
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 };
@@ -642,13 +650,14 @@ void MainMenu::doit() {STACKTRACE
 				change_teams();
 				showTitle();
 				break;
+#ifdef INCLUDE_GAMEX
 			case MAIN_DIALOG_FG:
-
 				disable();
 				play_fg(&scp, SCPGUI_MUSIC);
 				enable();
 				showTitle();
 				break;
+#endif
 		}
 	} while((mainRet != MAIN_DIALOG_EXIT) && (mainRet != -1));
 
@@ -807,8 +816,9 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 			if (!strcmp(auto_play, "demo")) play_demo(auto_param);
 			if (!strcmp(auto_play, "net1client")) play_net1client(auto_param, auto_port);
 			if (!strcmp(auto_play, "net1server")) play_net1server(auto_param, auto_port);
+#ifdef INCLUDE_GAMEX
 			if (!strcmp(auto_play, "fg")) play_fg(&scp, SCPGUI_MUSIC);
-
+#endif
 		}
 		else {
 			mainmenu.preinit();

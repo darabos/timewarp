@@ -1,14 +1,14 @@
 
-#include "melee.h"
+#include "../../melee.h"
 REGISTER_FILE
 
-#include "melee/mframe.h"
-#include "frame.h"
-#include "melee/mview.h"
+#include "../../melee/mframe.h"
+#include "../../frame.h"
+#include "../../melee/mview.h"
 
 
 #include "backgr_stars.h"
-#include "general/sprites.h"
+#include "../general/sprites.h"
 
 
 

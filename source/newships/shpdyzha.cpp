@@ -1,12 +1,12 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 //#include "sc1ships.h"
 
-#include "melee.h"
-#include "melee/mshot.h"
-#include "melee/mship.h"
-#include "melee/manim.h"
+#include "../melee.h"
+#include "../melee/mshot.h"
+#include "../melee/mship.h"
+#include "../melee/manim.h"
 
 
 class DyzunHarbringer;

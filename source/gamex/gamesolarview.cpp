@@ -4,7 +4,7 @@
 #include <string.h>
 //#include <string.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
 
 
@@ -18,8 +18,8 @@ REGISTER_FILE
 #include "stuff/space_body.h"
 #include "stuff/backgr_stars.h"
 
-#include "twgui/twgui.h"
-#include "twgui/twmenuexamples.h"
+#include "../twgui/twgui.h"
+#include "../twgui/twmenuexamples.h"
 
 #include "general/sprites.h"
 #include "gamestarmap.h"

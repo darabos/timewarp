@@ -1,7 +1,7 @@
-#include "ship.h"
-#include "util/aastr.h"
-#include "melee/mview.h"
-#include "frame.h"
+#include "../ship.h"
+#include "../util/aastr.h"
+#include "../melee/mview.h"
+#include "../frame.h"
 
 REGISTER_FILE
 

@@ -1,4 +1,4 @@
-#include "ship.h"
+#include "../ship.h"
 
 REGISTER_FILE
 
@@ -6,7 +6,7 @@ REGISTER_FILE
 
 
 
-#include "sc2ships.h"
+#include "../sc2ships.h"
 
 
 

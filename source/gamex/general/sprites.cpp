@@ -2,12 +2,12 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "melee.h"
+#include "../../melee.h"
 
 REGISTER_FILE
 
-#include "util/aastr.h"
-#include "util/pmask.h"
+#include "../../util/aastr.h"
+#include "../../util/pmask.h"
 
 #include "sprites.h"
 

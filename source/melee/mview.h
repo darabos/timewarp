@@ -1,7 +1,7 @@
 #ifndef __MVIEW_H__
 #define __MVIEW_H__
 
-#include "melee.h"
+#include "../melee.h"
 #include "mframe.h"
 
 //global flags: read/write

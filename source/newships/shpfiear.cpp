@@ -1,6 +1,6 @@
-#include "ship.h"
-#include "frame.h"
-#include "melee/mview.h"
+#include "../ship.h"
+#include "../frame.h"
+#include "../melee/mview.h"
 REGISTER_FILE
 
 class FierasShotSpark : public SpaceLine

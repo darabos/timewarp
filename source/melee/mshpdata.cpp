@@ -13,9 +13,9 @@
 #include <string.h>
 #include <allegro.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "util/aastr.h"
+#include "../util/aastr.h"
 
 
 

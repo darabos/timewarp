@@ -17,22 +17,22 @@ networking
 
 
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "melee/mgame.h"
-#include "melee/mcbodies.h"
-#include "melee/mship.h"    //ships
-#include "melee/mlog.h"     //networking / demo recording / demo playback
-#include "melee/mcontrol.h" //controllers & AIs
-#include "melee/mframe.h"
-#include "melee/mview.h"
-#include "melee/mmain.h"
-#include "melee/mshppan.h"  //ship panels...
-#include "melee/mitems.h"
-#include "melee/mfleet.h"   //fleets...
+#include "../melee/mgame.h"
+#include "../melee/mcbodies.h"
+#include "../melee/mship.h"    //ships
+#include "../melee/mlog.h"     //networking / demo recording / demo playback
+#include "../melee/mcontrol.h" //controllers & AIs
+#include "../melee/mframe.h"
+#include "../melee/mview.h"
+#include "../melee/mmain.h"
+#include "../melee/mshppan.h"  //ship panels...
+#include "../melee/mitems.h"
+#include "../melee/mfleet.h"   //fleets...
 
-#include "other/orbit.h"
-#include "id.h"
+#include "../other/orbit.h"
+#include "../id.h"
 //#define STATION_LOG
 
 

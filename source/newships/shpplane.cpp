@@ -1,8 +1,8 @@
-#include "ship.h"
-#include "melee/mship.h"
-#include "other/orbit.h"
+#include "../ship.h"
+#include "../melee/mship.h"
+#include "../other/orbit.h"
 REGISTER_FILE
-#include "melee/mcbodies.h"
+#include "../melee/mcbodies.h"
 
 /*
 * created by: cyhawk@sch.bme.hu and forevian@freemail.hu

@@ -11,14 +11,14 @@
 #include "../melee.h"
 REGISTER_FILE
 
-#include "melee/mlog.h"
-#include "melee/mcontrol.h"
-#include "melee/mframe.h"
-#include "melee/mview.h"
-#include "melee/mitems.h"
+#include "../melee/mlog.h"
+#include "../melee/mcontrol.h"
+#include "../melee/mframe.h"
+#include "../melee/mview.h"
+#include "../melee/mitems.h"
 
-#include "scp.h"
-#include "util/history.h"
+#include "../scp.h"
+#include "../util/history.h"
 
 
 #include "gamesolarview.h"
@@ -28,14 +28,11 @@ REGISTER_FILE
 
 #include <string>
 
-#include "sc2ships.h"
+#include "../sc2ships.h"
 
-#include "melee/mcbodies.h"
+#include "../melee/mcbodies.h"
 
 
-
-#include "melee.h"
-#include "melee/mframe.h"
 
 #include "ai_fleet.h"
 

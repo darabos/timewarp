@@ -1,8 +1,8 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 #include <stdio.h>
-#include "melee/mview.h"
-#include "ais.h"
+#include "../melee/mview.h"
+#include "../ais.h"
 
 //#define TERON_COLLISION_FORWARDING
 #define TERON_TURRET_CONTROLLABLE

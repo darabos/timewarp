@@ -13,8 +13,8 @@ extern "C" {
 #endif
 
 #include "dialog.h"
-#include "util/aautil.h"
-#include "util/aastr.h"
+#include "../util/aautil.h"
+#include "../util/aastr.h"
 
 BITMAP* Dialog::btmAlien   = NULL;
 BITMAP* Dialog::btmPScreen = NULL;

@@ -1,7 +1,7 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 #include <string.h>
-#include "melee/mview.h"
+#include "../melee/mview.h"
 
 // platform relaying blink length [cyhawk]
 #define ESTION_PLATFORM_BLINK 100

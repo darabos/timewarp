@@ -1,8 +1,8 @@
-#include "ship.h"
+#include "../ship.h"
 
 REGISTER_FILE
 
-//#include "mview.h"
+//#include "../mview.h"
 
 
 

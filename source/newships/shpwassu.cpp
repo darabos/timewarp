@@ -1,9 +1,9 @@
 /* sorry for the tons of tests... dunno where to insert checks/validations */
 
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 #include <string.h>
-#include "melee/mview.h"
+#include "../melee/mview.h"
 
 class WasxClone;
 

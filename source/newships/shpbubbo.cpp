@@ -1,5 +1,5 @@
-#include "ship.h"
-#include "melee/mview.h"
+#include "../ship.h"
+#include "../melee/mview.h"
 
 // original by Tamaraw
 // cleaned up by Varith and GeomanNL

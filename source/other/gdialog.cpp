@@ -11,10 +11,10 @@
 #endif
 
 #include "gdialog.h"
-#include "games/ggob.h"
+#include "../games/ggob.h"
 
-#include "util/aautil.h"
-#include "util/aastr.h"
+#include "../util/aautil.h"
+#include "../util/aastr.h"
 
 #define gobgame ((GobGame*)game)
 

@@ -1,89 +1,47 @@
-#include "ship.h"
+#include "../ship.h"
 
-//#include "melee/mview.h"
+//#include "../melee/mview.h"
 
 REGISTER_FILE
 
 
 
 class XXXAssimilator : public Ship {
-
-
-
 	int          weaponFrames;
-
   int          weaponDamage;
-
-
-
 	int          orig_Damage;
-
 	int					 orig_WeaponDrain;
-
 	double			 orig_Speed;
-
 	double       orig_Acceleration;
-
 	int					 orig_HotspotRate;
-
 	double			 orig_TurnRate;
-
 	BITMAP			 *orig_bmp;
 
-
-
-	
-
-
-
 	double			 weaponRange;
-
 	double			 weaponVelocity;
-
 	int					 weaponArmour;
 
-
-
   bool         AssimilateReset;
-
 	double			 TheSpotAngle;
-
 	int					 TheSpotDelay;
-
 	int					 TheSpotDelayTimer;
-
 	int					 TheSpotAngleDelta;
-
 	int					 TheSpotRadius;
-
 	int					 RelX;
-
 	int					 RelY;
 
-
-
   int          BodyFrames;
-
   int          CurrBodyFrame;
-
   int          ToggleDirection;
-
-
 
   public:
 
   XXXAssimilator(Vector2 opos, double shipAngle,
-
 		ShipData *shipData, unsigned int code);
-
-
 
   RGB crewPanelColor(int k = 0);
 
-
-
   virtual int activate_weapon();
-
   virtual int activate_special();
 
 	virtual void calculate();

@@ -6,9 +6,9 @@
 #include "gamedata.h"
 #include "gamegeneral.h"
 
-#include "twgui/twbuttontypes.h"
-#include "twgui/twpopup.h"
-#include "twgui/twmenuexamples.h"
+#include "../twgui/twbuttontypes.h"
+#include "../twgui/twpopup.h"
+#include "../twgui/twmenuexamples.h"
 
 #include "stuff/space_body.h"
 

@@ -1,4 +1,4 @@
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
 
 #include "objanim.h"

@@ -2,9 +2,9 @@
 // so non-standard things were removed (IE: non-standard batt regen, and crew colors)
 #include <stdio.h>
 
-#include "ship.h"
-#include "util/aastr.h"
-#include "melee/mcbodies.h"
+#include "../ship.h"
+#include "../util/aastr.h"
+#include "../melee/mcbodies.h"
 
 
 REGISTER_FILE

@@ -1,9 +1,9 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
-#include "scp.h"
-#include "util/aastr.h"
-#include "melee/mview.h"
-#include "melee/manim.h"
+#include "../scp.h"
+#include "../util/aastr.h"
+#include "../melee/mview.h"
+#include "../melee/manim.h"
 
 // if you change the order you have to change the increment in the code too
 #define ALCHERO_TRACE_START_INDEX      88

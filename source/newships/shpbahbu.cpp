@@ -1,7 +1,7 @@
 
-#include "ship.h"
+#include "../ship.h"
 
-#include "frame.h"
+#include "../frame.h"
 
 REGISTER_FILE
 

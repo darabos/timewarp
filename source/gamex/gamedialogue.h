@@ -8,7 +8,7 @@
 
 #include "edit/disk_stuff.h"
 
-#include "twgui/twgui.h"
+#include "../twgui/twgui.h"
 
 
 class GameAliendialog : public GameBare

@@ -4,12 +4,12 @@
 	#pragma warning (disable:4786)
 #endif
 
-#include "gevent.h"
 
-//#include "games/ggob.h"
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "melee/mship.h"
+#include "../melee/mship.h"
+//#include "../games/ggob.h"
+#include "gevent.h"
 
 
 EventShipDie::EventShipDie()

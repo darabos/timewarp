@@ -1,9 +1,9 @@
 
 
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
-#include "frame.h"
+#include "../frame.h"
 
 const int ID_WOLLYPLASMA = 0x0f98a301;
 

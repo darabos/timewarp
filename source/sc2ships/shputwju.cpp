@@ -1,9 +1,9 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
-#include "frame.h"
+#include "../frame.h"
 
-#include "sc2ships.h"
+#include "../sc2ships.h"
 
 UtwigJugger::UtwigJugger(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code)

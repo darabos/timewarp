@@ -9,8 +9,8 @@
 
 #include "gamesolarview.h"
 
-#include "twgui/twbuttontypes.h"
-#include "twgui/twpopup.h"
+#include "../twgui/twbuttontypes.h"
+#include "../twgui/twpopup.h"
 
 #include "stuff/space_body.h"
 

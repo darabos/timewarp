@@ -1,9 +1,9 @@
 
 #include <allegro.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "id.h"
+#include "../id.h"
 #include "mgame.h"
 #include "mshot.h"
 #include "mship.h"

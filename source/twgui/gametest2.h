@@ -3,10 +3,10 @@
 
 #include "twgui.h"
 
-#include "melee/mgame.h"
-#include "melee/mmain.h"
+#include "../melee/mgame.h"
+#include "../melee/mmain.h"
 
-#include "games/gflmelee.h"
+#include "../games/gflmelee.h"
 
 #include "twbutton.h"
 #include "twwindow.h"

@@ -15,11 +15,11 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <allegro.h>
-#include "melee.h"
+//#include <allegro.h>
+#include "../melee.h"
 REGISTER_FILE
-#include "ais.h"
-#include "melee/mship.h"
+#include "../ais.h"
+#include "../melee/mship.h"
 
 
 #define JOY_DIALOG_BOX          0

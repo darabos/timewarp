@@ -1,10 +1,10 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 #define T_FORM 0
 #define Y_FORM 1
 
-#include "sc1ships.h"
+#include "../sc1ships.h"
 
 MmrnmhrmXForm::MmrnmhrmXForm(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code) 

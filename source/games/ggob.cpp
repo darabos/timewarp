@@ -9,30 +9,30 @@
 	#pragma warning (disable:4786)
 #endif
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "scp.h"
-#include "frame.h"
+#include "../scp.h"
+#include "../frame.h"
 
-#include "melee/mgame.h"
-#include "melee/mmain.h"
-#include "melee/mview.h"
-#include "melee/mcontrol.h"
-#include "melee/mcbodies.h"
-#include "melee/mshppan.h"
-#include "melee/mship.h"
-#include "melee/mshot.h"
-#include "melee/mlog.h"
-#include "melee/manim.h"
-#include "melee/mfleet.h"
+#include "../melee/mgame.h"
+#include "../melee/mmain.h"
+#include "../melee/mview.h"
+#include "../melee/mcontrol.h"
+#include "../melee/mcbodies.h"
+#include "../melee/mshppan.h"
+#include "../melee/mship.h"
+#include "../melee/mshot.h"
+#include "../melee/mlog.h"
+#include "../melee/manim.h"
+#include "../melee/mfleet.h"
 
-#include "util/aastr.h"
+#include "../util/aastr.h"
 
 #include "ggob.h"
-#include "sc1ships.h"
-#include "sc2ships.h"
+#include "../sc1ships.h"
+#include "../sc2ships.h"
 
-#include "other/gup.h"
+#include "../other/gup.h"
 
 
 #define gobgame ((GobGame*)game)

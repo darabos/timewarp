@@ -1,13 +1,98 @@
 #include <allegro.h>
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
 
 
-#include "frame.h"
+#include "../frame.h"
 #include "mframe.h"
 #include "mview.h"
 #include "mitems.h"
 #include "mgame.h"
+#include "mship.h"
+
+
+
+HealthBar::HealthBar(Ship *creator, int *toggle)
+{
+	scale = 2.0;
+	bartoggle = toggle;
+	mother = creator;
+}
+
+void HealthBar::calculate()
+{
+	STACKTRACE
+
+	if ( !(mother && mother->exists()) )
+	{
+		state = 0;
+		return;
+	}
+
+}
+
+
+void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fraction, int col1, int col2, Frame *space)
+{
+	STACKTRACE
+
+	Vector2 center;
+	int d;
+
+	H = iround(H * space_zoom);
+	if (H < 1)
+		H = 1;			// minimum thickness.
+
+	len = iround(len * space_zoom);	// scale
+
+	center = corner(s->pos);	// scales and shifts onto screen coord. of the (center of the) ship
+
+	int ix, iy;
+	ix = iround(center.x - len/2);
+	iy = iround(center.y - (0.6 * s->size.y + H/2 + yoffs) * space_zoom);
+	
+	d = iround(len * fraction);
+
+	H -= 1;		// for plotting, pixel 0 also counts
+
+	if (ix > space->surface->w) return;
+	if (iy > space->surface->h) return;
+	if (ix+len < 0) return;
+	if (iy+H < 0) return;
+
+	if (d > 0)
+		rectfill(space->surface, ix, iy, ix+d-1, iy+(int)H, col1);
+	rectfill(space->surface, ix+d, iy, ix+len, iy+(int)H, col2);
+
+	space->add_box(ix, iy, ix+len, iy+H);
+}
+
+
+void HealthBar::animate(Frame *space)
+{
+	STACKTRACE
+
+	if (!*bartoggle)
+		return;
+
+	if (mother->isInvisible())
+		return;
+
+	int H = 2;
+	double dy = 4;
+
+	if ((dy - H/2) * space_zoom < 1)
+		dy = H/2 + 1/space_zoom;
+
+
+	draw_bar(mother, -dy, iround(mother->crew_max * scale), H, mother->crew/mother->crew_max,
+		makecol(0, 255, 0), makecol(150, 0, 0), space);
+
+	draw_bar(mother,  dy, iround(mother->batt_max * scale), H, mother->batt/mother->batt_max,
+		makecol(255, 50, 50), makecol(150, 0, 0), space);
+
+}
+
 
 
 Indicator::Indicator() : Presence() {STACKTRACE

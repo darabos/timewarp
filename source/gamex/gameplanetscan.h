@@ -7,7 +7,7 @@
 #include "gamegeneral.h"
 
 
-#include "other/planet3d.h"
+#include "../other/planet3d.h"
 
 
 class Mineral;

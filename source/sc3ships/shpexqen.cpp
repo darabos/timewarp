@@ -1,4 +1,4 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 #define maxbarriers 16

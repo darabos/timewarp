@@ -2,7 +2,7 @@
 #ifndef __MCBODIES_H__
 #define __MCBODIES_H__
 
-#include "melee.h"
+#include "../melee.h"
 #include "mframe.h"
 
 

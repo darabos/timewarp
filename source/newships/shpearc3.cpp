@@ -1,5 +1,5 @@
-#include "ship.h"
-#include "util/aastr.h"
+#include "../ship.h"
+#include "../util/aastr.h"
 REGISTER_FILE
 
 class EarthlingCruiserMk3Beam;

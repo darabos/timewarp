@@ -1,13 +1,13 @@
 #include <string.h>
 
-#include "melee.h"
+#include "../../melee.h"
 
 REGISTER_FILE
 
-#include "frame.h"
-#include "melee/mframe.h"
-#include "melee/mview.h"
-#include "melee/mitems.h"
+#include "../../frame.h"
+#include "../../melee/mframe.h"
+#include "../../melee/mview.h"
+#include "../../melee/mitems.h"
 
 #include "space_body.h"
 

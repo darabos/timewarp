@@ -5,9 +5,10 @@
 #include <time.h>
 #include <allegro.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "scp.h"
+#include "../scp.h"
+#include "../frame.h"
 
 
 #include "mmain.h"
@@ -17,11 +18,12 @@ REGISTER_FILE
 #include "mshppan.h"
 #include "mship.h"
 #include "mlog.h"
-#include "mnet1.h"
+//#include "mnet1.h"
 #include "mitems.h"
 #include "mfleet.h"
 
-#include "games/gflmelee.h"
+#include "../games/gflmelee.h"
+//#include "../other/radar.h"
 
 
 /*void Game::player_said(int who, const char *what) {
@@ -419,7 +421,6 @@ void NormalGame::display_stats() {STACKTRACE
 	unpause();
 	return;
 }
-#include "../other/radar.h"
 bool NormalGame::handle_key(int k)
 {
 	STACKTRACE;

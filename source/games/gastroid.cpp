@@ -1,12 +1,12 @@
 #include <allegro.h>
 
-#include "melee.h"
+#include "../melee.h"
 
-#include "melee/mframe.h"
-#include "melee/mgame.h"
-#include "melee/mmain.h"
-#include "melee/mcbodies.h"
-#include "melee/mview.h"
+#include "../melee/mframe.h"
+#include "../melee/mgame.h"
+#include "../melee/mmain.h"
+#include "../melee/mcbodies.h"
+#include "../melee/mview.h"
 
 class AsteroidMelee : public NormalGame {
 	virtual void init_objects();

@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-#include "melee.h"
+#include "../melee.h"
 //#include "melee/mview.h"
 
 REGISTER_FILE

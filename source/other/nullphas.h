@@ -1,7 +1,7 @@
 #ifndef __NULLPHAS_H__
 #define __NULLPHAS_H__
 
-#include "melee/mship.h"
+#include "../melee/mship.h"
 
 class NullPhaser : public Phaser {
 // this phaser instantly calls the materialize function

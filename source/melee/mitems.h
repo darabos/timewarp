@@ -1,4 +1,17 @@
 
+class HealthBar : public Presence
+{
+public:
+	double	scale;
+	int		*bartoggle;
+	Ship	*mother;
+
+	HealthBar(Ship *creator, int *toggle);
+	void calculate();
+	void animate(Frame *space);
+
+	void draw_bar(Ship *s, double yoffs, int len, double H, double fraction, int col1, int col2, Frame *space);
+};
 
 class Indicator : public Presence {
 	public:

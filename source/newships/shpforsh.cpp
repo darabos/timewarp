@@ -1,6 +1,6 @@
 //ForevianShocker lousy code by Richardyzo@ig.com.br
 
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 class ForevianShocker : public Ship

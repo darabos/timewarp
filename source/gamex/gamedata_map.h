@@ -1,7 +1,7 @@
 #ifndef __GAMEX_DATA_MAP__
 #define __GAMEX_DATA_MAP__
 
-#include "melee/mframe.h"
+#include "../melee/mframe.h"
 
 #include <stdio.h>
 

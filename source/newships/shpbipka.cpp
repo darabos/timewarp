@@ -1,7 +1,7 @@
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
-#include "melee/mview.h"
-#include "other/nullphas.h"
+#include "../melee/mview.h"
+#include "../other/nullphas.h"
 
 #define BIPOLE_STABILITY 0.4
 

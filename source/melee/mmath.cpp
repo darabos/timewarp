@@ -1,10 +1,10 @@
 //#include <float.h>
 
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
 #include "mview.h"
 
-#include "util/vector2.h"
+#include "../util/vector2.h"
 double atan3(double y, double x) {STACKTRACE
 	if (y == 0) {
 		if (x >= 0) return 0;

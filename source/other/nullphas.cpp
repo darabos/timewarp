@@ -1,6 +1,6 @@
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "melee/mgame.h"
+#include "../melee/mgame.h"
 #include "nullphas.h"
 
 NullPhaser::NullPhaser( Ship* oship ):
