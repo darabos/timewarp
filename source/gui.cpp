@@ -733,12 +733,14 @@ char *fleetListboxGetter(int index, int *list_size, Fleet *fleet)
 }
 char *fleetpointsListboxGetter(int index, int *list_size, Fleet *fleet)
 {
-	static char buffy[256];
-  if(index < 0) {
+    //return "Disco!";
+   ASSERT(fleet);
+   static char buffy[256];
+   
+   if(index < 0) {
       *list_size = fleet->getSize();
-    //*list_size = MAX_FLEET_SIZE;
-    return NULL;
-  } else
+      return NULL;
+   } else
 	  if (fleet->getShipType(index)) {
 		  sprintf(buffy, "%3d %s", fleet->getShipType(index)->cost, fleet->getShipType(index)->name);
 		  return buffy;

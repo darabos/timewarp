@@ -36,6 +36,17 @@ static char _fleetsort_ini_item[80] = "";
 
 
 
+   char * Fleet::sortingMethodName[] = {
+        "Name",
+        "Cost", 
+        "Species",
+        "Ship Name",
+        "Coders",
+        "Origin"
+    };
+
+
+
 //global variable used in at least 42 places. 
 //TODO remove this global variable and use proper Object-oriented techinques.
 Fleet* reference_fleet = NULL;
@@ -333,7 +344,7 @@ void init_fleet() {STACKTRACE
     };
     
     
-    void Fleet::Sort(SortingMethod sortMethod, int startIndex, int endIndex) {
+    void Fleet::Sort(SortingMethod sortMethod, bool ascending, int startIndex, int endIndex) {
         MyFleetListType::iterator _begin, _end;
         int _size = ships.size();
 
@@ -364,71 +375,60 @@ void init_fleet() {STACKTRACE
             _end = ships.begin() + endIndex;
 
         switch (sortMethod) {
-            case SORTING_METHOD_COST_DESCENDING:
-                sort(_begin, _end, _costDecending());
+            case SORTING_METHOD_COST:
+                if (ascending)
+                   sort(_begin, _end, _costAscending());
+                else
+                   sort(_begin, _end, _costDecending());
                 break;
 
-            case SORTING_METHOD_COST_ASCENDING:
-                sort(_begin, _end, _costAscending());
-                break;
 
-            case SORTING_METHOD_NAME_ASCENDING:    
-                sort(_begin, _end, _nameAscending());
-                break;
-
-            case SORTING_METHOD_TWCOST_ASCENDING:
+            /*case SORTING_METHOD_TWCOST:
                 strcpy(_fleetsort_ini_item, "TWCost");
-                sort(_begin, _end, _NumericConfigAscending());
-                break;
+                if (ascending)
+                    sort(_begin, _end, _NumericConfigDescending());
+                else
+                    sort(_begin, _end, _NumericConfigAscending());
+                break;*/
 
-            case SORTING_METHOD_TWCOST_DESCENDING:    
-                strcpy(_fleetsort_ini_item, "TWCost");
-                sort(_begin, _end, _NumericConfigDescending());
-                break;
-
-            case SORTING_METHOD_NAME1_ASCENDING:
+            case SORTING_METHOD_NAME1:                
                 strcpy(_fleetsort_ini_item, "Name1");
-                sort(_begin, _end, _AlphabeticConfigAscending());
+                if (ascending)
+                    sort(_begin, _end, _AlphabeticConfigAscending());
+                else
+                    sort(_begin, _end, _AlphabeticConfigDescending());
                 break;
 
-            case SORTING_METHOD_NAME1_DESCENDING:    
+            case SORTING_METHOD_NAME2:
                 strcpy(_fleetsort_ini_item, "Name1");
-                sort(_begin, _end, _AlphabeticConfigDescending());
+                if (ascending)
+                    sort(_begin, _end, _AlphabeticConfigAscending());
+                else
+                    sort(_begin, _end, _AlphabeticConfigDescending());
                 break;
 
-            case SORTING_METHOD_NAME2_ASCENDING:
-                strcpy(_fleetsort_ini_item, "Name1");
-                sort(_begin, _end, _AlphabeticConfigAscending());
-                break;
-
-            case SORTING_METHOD_NAME2_DESCENDING:    
-                strcpy(_fleetsort_ini_item, "Name1");
-                sort(_begin, _end, _AlphabeticConfigDescending());
-                break;
-
-            case SORTING_METHOD_CODERS_ASCENDING:
+            case SORTING_METHOD_CODERS:
                 strcpy(_fleetsort_ini_item, "Coders");
-                sort(_begin, _end, _AlphabeticConfigAscending());
+                if (ascending)
+                    sort(_begin, _end, _AlphabeticConfigAscending());
+                else
+                    sort(_begin, _end, _AlphabeticConfigDescending());
                 break;
 
-            case SORTING_METHOD_CODERS_DESCENDING:    
-                strcpy(_fleetsort_ini_item, "Coders");
-                sort(_begin, _end, _AlphabeticConfigDescending());
-                break;
-
-            case SORTING_METHOD_ORIGIN_ASCENDING:
+            case SORTING_METHOD_ORIGIN:
                 strcpy(_fleetsort_ini_item, "Origin");
-                sort(_begin, _end, _AlphabeticConfigAscending());
+                if (ascending)
+                    sort(_begin, _end, _AlphabeticConfigAscending());
+                else
+                    sort(_begin, _end, _AlphabeticConfigDescending());
                 break;
 
-            case SORTING_METHOD_ORIGIN_DESCENDING:    
-                strcpy(_fleetsort_ini_item, "Origin");
-                sort(_begin, _end, _AlphabeticConfigDescending());
-                break;
-
-            case SORTING_METHOD_NAME_DESCENDING:    
-            case SORTING_METHOD_DEFAULT:
+            case SORTING_METHOD_NAME:    
             default:
-                sort(ships.begin(), ships.end(), _nameDecending());
+                if (ascending)
+                    sort(_begin, _end, _nameAscending());
+                else
+                    sort(_begin, _end, _nameDecending());
+                break;
         }
     }

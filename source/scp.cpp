@@ -1075,26 +1075,41 @@ void change_teams() {STACKTRACE
 
 // FLEET - dialog objects
 enum {
-	FLEET_DIALOG_FLEETTITLE = 0,
-	FLEET_DIALOG_FLEETLIST,
-	FLEET_DIALOG_SHIPLIST,
-	FLEET_DIALOG_SELECT,
-    FLEET_DIALOG_SELECT_ALL,
+    //FLEET_DIALOG_CLEAR_SCREEN=0,
+    FLEET_DIALOG_AVAILABLE_SHIPS_TEXT=0,
+    FLEET_DIALOG_SHIP_CATAGORIES_TEXT,
+    FLEET_DIALOG_SC1_TOGGLE,
+    FLEET_DIALOG_SC2_TOGGLE,
+    FLEET_DIALOG_SC3_TOGGLE,
+    FLEET_DIALOG_TW_OFFICIAL_TOGGLE,
+    FLEET_DIALOG_TW_EXP_TOGGLE,
+    FLEET_DIALOG_SORTBY_TEXT1,
+    FLEET_DIALOG_SORTBY_BUTTON1,
+    FLEET_DIALOG_SORTBY_ASCENDING1,
+    FLEET_DIALOG_AVAILABLE_SHIPS_LIST,
+    FLEET_DIALOG_FLEET_SHIPS_LIST,
+    FLEET_DIALOG_PLAYER_FLEET_BUTTON,
+    FLEET_DIALOG_PLAYER_FLEET_TITLE,
+    FLEET_DIALOG_SAVE_BUTTON,
+    FLEET_DIALOG_LOAD_BUTTON,
+    FLEET_DIALOG_POINT_LIMIT_TEXT,
+    FLEET_DIALOG_POINT_LIMIT_BUTTON,
+    FLEET_DIALOG_CURRENT_POINTS_TEXT,
+    FLEET_DIALOG_CURRENT_POINTS_VALUE,
+    FLEET_DIALOG_SORTBY_TEXT2,
+    FLEET_DIALOG_SORTBY_BUTTON2,
+    FLEET_DIALOG_SORTBY_ASCENDING2,
+	FLEET_DIALOG_ADD_BUTTON,
+    FLEET_DIALOG_ADD_ALL_BUTTON,
 	FLEET_DIALOG_CLEAR,
     FLEET_DIALOG_CLEARALL,
-	FLEET_DIALOG_INFO,
-	FLEET_DIALOG_PLAYERTEXT,
-	FLEET_DIALOG_SAVE,
-	FLEET_DIALOG_LOAD,
-	FLEET_DIALOG_SORTBYNAME,
-	FLEET_DIALOG_SORTBYCOST,
-	FLEET_DIALOG_TITLE,
-	FLEET_DIALOG_MAIN,
-	FLEET_DIALOG_FLEETBITMAP,
-	FLEET_DIALOG_SORTBYORIGIN,
-	FLEET_DIALOG_SORTBYCODERS,
-	FLEET_DIALOG_NULL
+    FLEET_DIALOG_SHIP_PICTURE_BITMAP,
+    FLEET_DIALOG_SHIP_STATS_BITMAP,
+    FLEET_DIALOG_SHIP_SUMMARY_TEXT,
+    FLEET_DIALOG_BACK_BUTTON,
+    FLEET_DIALOG_HELP_TEXT/**/
 };
+
 
 char *numeric_string[] = {"Zero", "One", "Two", "Three", "Four", 
 		"Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", 
@@ -1110,81 +1125,193 @@ int scp_fleet_dialog_bitmap_proc(int msg, DIALOG* d, int c);
 
 // FLEET - dialog structure
 DIALOG fleetDialog[] = {
-  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_textbox_proc,    390,  40,   240,  60,   255,  0,    0,    0,       0,    0,    (void *)fleetTitleString, NULL, NULL },//FLEET_DIALOG_FLEETTITLE
-  { d_list_proc2,      390,  110,  240,  280,  255,  0,    0,    D_EXIT,  0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEETLIST
-  { scp_fleet_dialog_text_list_proc,
-                       10,   90,   240,  380,  255,  0,    0,    D_EXIT,  0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_SHIPLIST
-  { d_button_proc,     256,  200,  128,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Add", NULL, NULL },//FLEET_DIALOG_SELECT
-  { d_button_proc,     256,  230,  128,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Add All", NULL, NULL },//FLEET_DIALOG_SELECT_ALL
-  { d_button_proc,     256,  280,  128,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
-  { d_button_proc,     256,  310,  128,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Remove All", NULL, NULL },//FLEET_DIALOG_CLEARALL
-  { d_button_proc,     256,  390,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Info", NULL, NULL },//FLEET_DIALOG_INFO
-  { d_textbox_proc,    390,  10,   240,  30,   255,  0,    0,    0,       0,    0,    (void *)fleetPlayer, NULL, NULL },//FLEET_DIALOG_PLAYERTEXT
-  { d_button_proc,     400,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE
-  { d_button_proc,     520,  400,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Load", NULL, NULL },//FLEET_DIALOG_LOAD
-  { d_button_proc,     25,   10,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by name", NULL, NULL },//FLEET_DIALOG_SORTBYNAME
-  { d_button_proc,     135,  10,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by cost", NULL, NULL },//FLEET_DIALOG_SORTBYCOST
-  { d_button_proc,     400,  440,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Title", NULL, NULL },//FLEET_DIALOG_TITLE
-  { d_button_proc,     256,  430,  128,  40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Main", NULL, NULL },//FLEET_DIALOG_MAIN
-  { scp_fleet_dialog_bitmap_proc,
-                       256,  10,   128,  200,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },//FLEET_DIALOG_FLEETBITMAP
-  
-  //{ d_button_proc,     520,  440,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Clear", NULL, NULL },//FLEET_DIALOG_CLEARALL
-  { d_button_proc,     25,   50,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by origin", NULL, NULL },//FLEET_DIALOG_SORTBYORIGIN
-  { d_button_proc,     135,  50,   100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"by coders", NULL, NULL },//FLEET_DIALOG_SORTBYCODERS
-  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },//FLEET_DIALOG_NULL
-  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }//???
-};
+  // (dialog proc)     (x)  (y)   (w)   (h)   (fg)(bg)(key) (flags)    (d1)   (d2)        (dp)
 
+  //{ d_clear_proc,       0,    0,    0,    0,   255,  0,    0,    0,       0,    0,    NULL },//FLEET_DIALOG_CLEAR_SCREEN
+  { d_textbox_proc,     10,  10,   240,  20,   255,  0,    0,     0,       0,    0,    (void *)"Available Ships", NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_TEXT TODO specify font here in d2 I think
+  { d_textbox_proc,     10,  35,   128,  17,   255,  0,    0,     0,       0,    0,    (void *)"Ship Catagories:", NULL, NULL },//FLEET_DIALOG_SHIP_CATAGORIES_TEXT
+  { d_check_proc,       30,  52,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
+  { d_check_proc,       30,  66,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
+  { d_check_proc,       30,  79,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
+  { d_check_proc,       30,  93,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
+  { d_check_proc,       30, 107,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
+
+  { d_textbox_proc,     10, 121,    64,  17,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT1
+  { d_button_proc,      69, 121,   128,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost TODO fix me", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON1
+  { d_button_proc,     197, 121,    16,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING1
+
+  { d_list_proc,       10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
+  { d_list_proc2,      390, 141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEET_SHIPS_LIST
+
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
+  { d_button_proc,     390,  10,   240,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Player 1 Fleet", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON
+  { d_textbox_proc,    390,  40,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Fleet Title", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_TITLE
+  { d_button_proc,     518,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE_BUTTON
+  { d_button_proc,     574,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Load", NULL, NULL },//FLEET_DIALOG_LOAD_BUTTON
+  { d_textbox_proc,    390,  60,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Point Limit", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_TEXT
+  { d_button_proc,     518,  60,   112,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"300", NULL, NULL },//FLEET_DIALOG_POINT_LIMIT_BUTTON
+  { d_textbox_proc,    390,  80,   128,  20,   255,  0,    0,     0,       0,    0,    (void *)"Current Points", NULL, NULL },//FLEET_DIALOG_CURRENT_POINTS_TEXT
+  { d_textbox_proc,    518,  80,   112,  20,   255,  0,    0,     0,       0,    0,    (void *)"100", NULL, NULL },//FLEET_DIALOG_CURRENT_POINTS_VALUE
+  { d_textbox_proc,    390, 120,    64,  20,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT2
+  { d_button_proc,     454, 120,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost TODO", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON2
+  { d_button_proc,     582, 120,    16,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING2
+
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
+  { d_button_proc,     270, 180,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add", NULL, NULL },//FLEET_DIALOG_ADD_BUTTON
+  { d_button_proc,     270, 210,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add All", NULL, NULL },//FLEET_DIALOG_ADD_ALL_BUTTON
+  { d_button_proc,     270, 260,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
+  { d_button_proc,     270, 290,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove All", NULL, NULL },//FLEET_DIALOG_CLEARALL
+  { scp_fleet_dialog_bitmap_proc,
+                       256,  10,  128,  200,   255,  0,    0,    0,       0,    0,    (void *)NULL, NULL, NULL },//FLEET_DIALOG_SHIP_PICTURE_BITMAP
+  { d_textbox_proc,     10, 372,  310,   85,   255,  0,    0,     0,       0,    0,    (void *)"SHIP PICTURE TODO", NULL, NULL },//FLEET_DIALOG_SHIP_STATS_BITMAP
+  { d_textbox_proc,    325, 372,  305,   85,   255,  0,    0,     0,       0,    0,    (void *)"Summary Text", NULL, NULL },//FLEET_DIALOG_SHIP_SUMMARY_TEXT
+  { d_button_proc,      10, 460,   64,   20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Back", NULL, NULL },//FLEET_DIALOG_BACK_BUTTON
+  { d_textbox_proc,     74, 460,  556,   20,   255,  0,    0,     0,       0,    0,    (void *)"Help Text", NULL, NULL },//FLEET_DIALOG_HELP_TEXT
+
+  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,     0,       0,    0,    NULL, NULL, NULL },
+  { NULL,              0,    0,    0,    0,    255,  0,    0,     0,       0,    0,    NULL, NULL, NULL }/**/
+};
 
 // FLEET - dialog function
 void edit_fleet(int player) {STACKTRACE
 	char tmp[40];
 	char path[80];
 
+    static Fleet::SortingMethod sortMethod1 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT,
+        sortMethod2 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT;
+    static bool sortAscending1 = false,
+        sortAscending2 = false;
+
+
 	sprintf (tmp, "Player%d", player+1);
-	Fleet* fleet = new Fleet;
+	Fleet* fleet = new Fleet();
 	fleet->load("fleets.ini", tmp);
+
 	if (player + 1 <= 12)
 		sprintf(fleetPlayer, "Player %s Fleet", numeric_string[player+1]);
 	else sprintf(fleetPlayer, "Player%d Fleet", player+1);
 	showTitle();
 
-	int fleetRet;
+    int fleetRet;
+    int selectedSlot;
+    
+
 	do {
 		sprintf(title_str, fleet->getTitle());
 		sprintf(fleetTitleString, "%s\n%d points", fleet->getTitle(), fleet->getCost());
+        
+        fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].dp3 = fleet;
+        fleetDialog[FLEET_DIALOG_SORTBY_BUTTON1].dp = Fleet::getSortingMethodName(sortMethod1);
+        fleetDialog[FLEET_DIALOG_SORTBY_BUTTON2].dp = Fleet::getSortingMethodName(sortMethod2);
+        if (sortAscending1)
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "^";
+        else
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "v";
+        
+        if (sortAscending2)
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "^";
+        else
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "v";        
 
-		fleetDialog[FLEET_DIALOG_FLEETLIST].dp3 = fleet;
-		fleetRet = tw_do_dialog(NULL, fleetDialog, FLEET_DIALOG_SHIPLIST);
+		fleetRet = tw_do_dialog(NULL, fleetDialog, -1);
 
-		if ((fleetRet == FLEET_DIALOG_SELECT) ||
-				(fleetRet == FLEET_DIALOG_SHIPLIST)) {
-            
-            int selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_SHIPLIST].d1));
+        switch( fleetRet ) {
+           case FLEET_DIALOG_AVAILABLE_SHIPS_TEXT: break;
+           case FLEET_DIALOG_SHIP_CATAGORIES_TEXT: break;
+           case FLEET_DIALOG_SC1_TOGGLE: break;
+           case FLEET_DIALOG_SC2_TOGGLE: break;
+           case FLEET_DIALOG_SC3_TOGGLE: break;
+           case FLEET_DIALOG_TW_OFFICIAL_TOGGLE: break;
+           case FLEET_DIALOG_TW_EXP_TOGGLE: break;
+           case FLEET_DIALOG_SORTBY_TEXT1: break;
+           case FLEET_DIALOG_SORTBY_BUTTON1: 
+               sortMethod1 = Fleet::cycleSortingMethod(sortMethod1);
+               reference_fleet->Sort( sortMethod1, sortAscending1 );
+               fleetDialog[FLEET_DIALOG_SORTBY_BUTTON1].dp = Fleet::getSortingMethodName(sortMethod1);
+               break;
+
+           case FLEET_DIALOG_SORTBY_ASCENDING1: 
+               sortAscending1 = 1 - sortAscending1;
+               reference_fleet->Sort( sortMethod1, sortAscending1 );
+               if (sortAscending1)
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "^";
+               else
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING1].dp = "v";
+               break;
+
+           case FLEET_DIALOG_FLEET_SHIPS_LIST: break;
+
+           case FLEET_DIALOG_AVAILABLE_SHIPS_LIST:
+	       case FLEET_DIALOG_ADD_BUTTON: 
+            selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].d1));
             if (selectedSlot != -1)
-                fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = selectedSlot;
-		}
+                fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1 = selectedSlot;
+               break;
 
-		if (fleetRet == FLEET_DIALOG_SELECT_ALL) {
+           case FLEET_DIALOG_PLAYER_FLEET_BUTTON: break;
+           case FLEET_DIALOG_PLAYER_FLEET_TITLE: break;
+           case FLEET_DIALOG_SAVE_BUTTON: break;
+           case FLEET_DIALOG_LOAD_BUTTON: break;
+           case FLEET_DIALOG_POINT_LIMIT_TEXT: break;
+           case FLEET_DIALOG_POINT_LIMIT_BUTTON: break;
+           case FLEET_DIALOG_CURRENT_POINTS_TEXT: break;
+           case FLEET_DIALOG_CURRENT_POINTS_VALUE: break;
+           case FLEET_DIALOG_SORTBY_TEXT2: break;
+           case FLEET_DIALOG_SORTBY_BUTTON2: 
+               sortMethod2 = Fleet::cycleSortingMethod(sortMethod2);
+               fleet->Sort( sortMethod2, sortAscending2 );
+               fleetDialog[FLEET_DIALOG_SORTBY_BUTTON2].dp = Fleet::getSortingMethodName(sortMethod2);
+               break;
+
+           case FLEET_DIALOG_SORTBY_ASCENDING2: 
+               sortAscending2 = 1 - sortAscending2;
+               fleet->Sort( sortMethod2, sortAscending2 );
+               if (sortAscending2)
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "^";
+               else
+                   fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = "v";
+               break;
+
+           case FLEET_DIALOG_ADD_ALL_BUTTON: break;
+	       case FLEET_DIALOG_CLEAR: break;
+           case FLEET_DIALOG_CLEARALL: break;
+           case FLEET_DIALOG_SHIP_PICTURE_BITMAP: break;
+           case FLEET_DIALOG_SHIP_STATS_BITMAP: break;
+           case FLEET_DIALOG_SHIP_SUMMARY_TEXT: break;
+           case FLEET_DIALOG_BACK_BUTTON: break;
+           case FLEET_DIALOG_HELP_TEXT:/**/
+           default:
+               ;
+        }
+
+		/*if ((fleetRet == FLEET_DIALOG_SELECT) ||
+				(fleetRet == FLEET_DIALOG_AVAILABLE_SHIPS_LIST)) {
+            
+		}*/
+
+		if (fleetRet == FLEET_DIALOG_ADD_ALL_BUTTON) {
             fleet->addFleet(reference_fleet);
 		}
 
 		if ((fleetRet == FLEET_DIALOG_CLEAR) ||
-				(fleetRet == FLEET_DIALOG_FLEETLIST)) {
-			fleet->clear_slot(fleetDialog[FLEET_DIALOG_FLEETLIST].d1);
+				(fleetRet == FLEET_DIALOG_FLEET_SHIPS_LIST)) {
+			fleet->clear_slot(fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1);
             if (fleet->getSize() <= 0)
-                fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = 0;
+                fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1 = 0;
 		}
 
-		if(fleetRet == FLEET_DIALOG_SAVE) {
+		if(fleetRet == FLEET_DIALOG_CLEARALL) {
+			fleet->reset();
+			fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1 = 0;
+		}
+
+		if(fleetRet == FLEET_DIALOG_SAVE_BUTTON) {
 			sprintf(path, "fleets/");
 			if(file_select("Save Fleet", path, "scf")) fleet->save(path, "Fleet");
 			showTitle();
 		}
 
-		if(fleetRet == FLEET_DIALOG_LOAD) {
+		if(fleetRet == FLEET_DIALOG_LOAD_BUTTON) {
 			sprintf(path, "fleets/");
 			if(file_select("Load Fleet", path, "scf")) fleet->load(path, "Fleet");
 			sprintf(title_str, fleet->getTitle());
@@ -1192,38 +1319,34 @@ void edit_fleet(int player) {STACKTRACE
 			showTitle();
 		}
 
-		if (fleetRet == FLEET_DIALOG_INFO) {
-			ship_view_dialog(fleetDialog[FLEET_DIALOG_SHIPLIST].d1, reference_fleet);
+		/*if (fleetRet == FLEET_DIALOG_INFO) {
+			ship_view_dialog(fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1, reference_fleet);
 			showTitle();
-		}
+		}*/
 
-		if(fleetRet == FLEET_DIALOG_SORTBYNAME) {
+		/*if(fleetRet == FLEET_DIALOG_SORTBYNAME_BUTTON) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_NAME_DESCENDING);
 		}
 
-		if(fleetRet == FLEET_DIALOG_SORTBYCOST) {
+		if(fleetRet == FLEET_DIALOG_SORTBYCOST_BUTTON) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_COST_DESCENDING);
 		}
 
-		if(fleetRet == FLEET_DIALOG_SORTBYORIGIN) {
+		if(fleetRet == FLEET_DIALOG_SORTBYORIGIN_BUTTON) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_ORIGIN_DESCENDING);
 		}
 
-		if(fleetRet == FLEET_DIALOG_SORTBYCODERS) {
+		if(fleetRet == FLEET_DIALOG_SORTBYCODERS_BUTTON) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_CODERS_DESCENDING);
-		}
+		}*/
 
-		if(fleetRet == FLEET_DIALOG_TITLE) {
+		/*if(fleetRet == FLEET_DIALOG_PLAYER_FLEET_TITLE) {
 			if(do_dialog(fleet_titleDialog, FLEET_TITLE_DIALOG_BOX) == FLEET_TITLE_DIALOG_OK)
 				sprintf(fleet->getTitle(), title_str);
 			showTitle();
-		}
+		}*/
 
-		if(fleetRet == FLEET_DIALOG_CLEARALL) {
-			fleet->reset();
-			fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = 0;
-		}
-	} while((fleetRet != FLEET_DIALOG_MAIN) && (fleetRet != -1));
+	} while((fleetRet != FLEET_DIALOG_BACK_BUTTON) && (fleetRet != -1));
 
 	fleet->save("fleets.ini", tmp);
 	delete fleet;
@@ -1266,11 +1389,12 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 			destroy_bitmap(tmp);
 		}
 
-		if(fleetDialog[FLEET_DIALOG_FLEETBITMAP].dp)
-			destroy_bitmap( (BITMAP*)fleetDialog[FLEET_DIALOG_FLEETBITMAP].dp );
-		fleetDialog[FLEET_DIALOG_FLEETBITMAP].dp = panel;
+		if(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp)
+			destroy_bitmap( (BITMAP*)fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp );
+		fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].dp = panel;
+        //TODO decide if these next 3 lines should be here
 		scare_mouse();
-		SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETBITMAP], MSG_DRAW, 0);
+        SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP], MSG_DRAW, 0);
 		unscare_mouse();
 	}
 
@@ -1458,7 +1582,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 		// update ship selection - end
 
 		// change the ship list sorting order - begin
-		if(r == SHIPVIEW_DIALOG_SORT) {
+		/*if(r == SHIPVIEW_DIALOG_SORT) {
 			i = shipviewDialog[SHIPVIEW_DIALOG_SORT].d1;
 
 			switch (i) {
@@ -1482,7 +1606,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 			}
 
 			SEND_MESSAGE(&shipviewDialog[SHIPVIEW_DIALOG_LIST], MSG_DRAW, 0);
-    }
+    }*/
 		// change the ship list sorting order - end
 
 		// change font size - begin

@@ -14,7 +14,6 @@ using namespace std;
 //TODO get rid of global variables used by this function; remove this function
 void init_fleet();	// inits reference_fleet [former shiptype array]
 
-
 /**	\brief	Contains a list of ships.
 */
 class Fleet{
@@ -25,6 +24,8 @@ protected:
     typedef ShipType * MyFleetShipType;
     typedef vector<MyFleetShipType> MyFleetListType;
 
+    static char * sortingMethodName[];
+
 public:
     //the maxiumum length of the fleet title
     enum { MAX_TITLE_LENGTH = 80 };
@@ -33,24 +34,34 @@ public:
     //const static int MAX_TITLE_LENGTH = 80;
 
     enum SortingMethod { 
-        SORTING_METHOD_DEFAULT = 0, /**< Currently does the same thing as SORTING_METHOD_NAME_DESCENDING */
-        SORTING_METHOD_NAME_DESCENDING, /**< combined Specied/ship name */
-        SORTING_METHOD_NAME_ASCENDING, 
-        SORTING_METHOD_COST_DESCENDING,
-        SORTING_METHOD_COST_ASCENDING, 
-        SORTING_METHOD_TWCOST_ASCENDING, 
-        SORTING_METHOD_TWCOST_DESCENDING,
-        SORTING_METHOD_NAME1_ASCENDING, /**< Species name */
-        SORTING_METHOD_NAME1_DESCENDING, /**< Species name */
-        SORTING_METHOD_NAME2_ASCENDING, /**< Ship name (not including species) */
-        SORTING_METHOD_NAME2_DESCENDING, /**< Ship name (not including species) */
-        SORTING_METHOD_CODERS_ASCENDING, /**<  */
-        SORTING_METHOD_CODERS_DESCENDING, /**<  */
-        SORTING_METHOD_ORIGIN_ASCENDING, /**< SC1-3, TW, or the group that made the ship */
-        SORTING_METHOD_ORIGIN_DESCENDING /**< SC1-3, TW, or the group that made the ship */
+        SORTING_METHOD_NAME = 0, /**< combined Specied/ship name */
+        SORTING_METHOD_COST, 
+        SORTING_METHOD_NAME1, /**< Species name */
+        SORTING_METHOD_NAME2, /**< Ship name (not including species) */
+        SORTING_METHOD_CODERS, /**<  */
+        SORTING_METHOD_ORIGIN, /**< SC1-3, TW, or the group that made the ship */
     };
 
+    enum { SORTING_METHOD_DEFAULT = SORTING_METHOD_NAME }; /**< Currently does the same thing as SORTING_METHOD_NAME_DESCENDING */
+    enum { MAX_SORTING_METHODS = SORTING_METHOD_ORIGIN };
 
+    
+    /**
+    */
+    static SortingMethod cycleSortingMethod(SortingMethod method) {
+        method = (SortingMethod)((int)method+1);
+        if (method > MAX_SORTING_METHODS) {
+            method = (SortingMethod)0;
+        }
+        return method;
+    }
+
+    /**
+    */
+    static char * getSortingMethodName(SortingMethod method) {
+        return sortingMethodName[method];
+    }
+    
 
 
 	/** \brief Default constructor with zero ships */
@@ -100,11 +111,6 @@ public:
     */
 	void load(const char *filename, const char *section);
 
-	/** \brief sorts this fleet according to each ShipType's operator<= function*/
-    //void sort();
-
-	
-
 	/** \brief sorts this fleet according to the given compare function.  May be called as Sort();
         \param method The method with which to sort.  Options are:
             -SORTING_METHOD_DEFAULT,
@@ -125,7 +131,7 @@ public:
         \param startIndex (default 0) the index of the first ship to sort
         \param endIndex (default -1) the index of the last ship in the fleet to sort.  -1 means the last ship.
     */
-    void Sort(SortingMethod method=SORTING_METHOD_DEFAULT, int startIndex=0, int endIndex=-1);
+    void Sort(SortingMethod method=(SortingMethod)SORTING_METHOD_DEFAULT, bool ascending=false, int startIndex=0, int endIndex=-1);
 
     
     /** \brief returns the number of ships in this fleet
@@ -141,8 +147,6 @@ public:
     /** \brief adds the ships in the specified fleet to this one
         \param fleetToAdd the fleet with ships to add */
     void addFleet(Fleet * fleetToAdd);
-
-
 
     /** \brief Returns the ship in a particular slot.
         \param slot The slot of the ShipType to return.  Returns NULL if slot is not (0 <= slot <= getSize())
@@ -172,7 +176,6 @@ protected:
 
 
 };
-
 
 
 
