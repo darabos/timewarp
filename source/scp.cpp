@@ -610,8 +610,6 @@ void MainMenu::doit() {STACKTRACE
 	showTitle();
 	enable();
 
-	meleedata.init();
-
 	/*
 				disable();
 				play_fg(&scp, SCPGUI_MUSIC);
@@ -654,7 +652,6 @@ void MainMenu::doit() {STACKTRACE
 		}
 	} while((mainRet != MAIN_DIALOG_EXIT) && (mainRet != -1));
 
-	meleedata.deinit();
 }
 
 int tw_main(int argc, char *argv[]);
@@ -803,6 +800,7 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		init_ships();
 		init_fleet();
 		init_time();
+		meleedata.init();
 
 		if (auto_play) {// FIX ME
 			if (!strcmp(auto_play, "game")) play_game(auto_param, NULL);
@@ -821,6 +819,7 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 			old_game = NULL;
 		}
 
+		meleedata.deinit();
 		sound.disable();
 		disable_input();
 		unload_datafile(scppal);
