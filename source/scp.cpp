@@ -1185,10 +1185,10 @@ DIALOG fleetDialog[] = {
   { d_button_proc,     454, 120,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost TODO", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON2
   { d_button_proc,     582, 120,    16,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING2
 
-  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_button_proc,     270, 180,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add", NULL, NULL },//FLEET_DIALOG_ADD_BUTTON
-  { d_button_proc,     270, 210,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add All", NULL, NULL },//FLEET_DIALOG_ADD_ALL_BUTTON
-  { d_button_proc,     270, 260,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)  
+  { d_button_proc,     270, 210,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add", NULL, NULL },//FLEET_DIALOG_ADD_BUTTON
+  { d_button_proc,     270, 235,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add All", NULL, NULL },//FLEET_DIALOG_ADD_ALL_BUTTON
+  { d_button_proc,     270, 265,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
   { d_button_proc,     270, 290,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove All", NULL, NULL },//FLEET_DIALOG_CLEARALL
   { scp_fleet_dialog_bitmap_proc,
                        256,  10,  128,  200,   255,  0,    0,    0,       0,    0,    (void *)NULL, NULL, NULL },//FLEET_DIALOG_SHIP_PICTURE_BITMAP
@@ -1271,10 +1271,10 @@ void edit_fleet(int player) {STACKTRACE
            case FLEET_DIALOG_FLEET_SHIPS_LIST: break;
 
            case FLEET_DIALOG_AVAILABLE_SHIPS_LIST:
-	       case FLEET_DIALOG_ADD_BUTTON: 
-            selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].d1));
-            if (selectedSlot != -1)
-                fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1 = selectedSlot;
+           case FLEET_DIALOG_ADD_BUTTON: 
+               selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].d1));
+               if (selectedSlot != -1)
+                   fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1 = selectedSlot;
                break;
 
            case FLEET_DIALOG_PLAYER_FLEET_BUTTON: break;
