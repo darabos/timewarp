@@ -72,7 +72,7 @@ void init_fleet() {STACKTRACE
         j = intel_ordering(getSize());
         memcpy(&buffy[s], &j, sizeof(j)); s += sizeof(j);
 
-        MyFleetListType::iterator iter = NULL;
+        MyFleetListType::iterator iter;
 
         for (iter = ships.begin(); iter != ships.end(); iter++) {
             char k = strlen((*iter)->id);
@@ -162,8 +162,8 @@ void init_fleet() {STACKTRACE
     void Fleet::clear_slot (int slot) {STACKTRACE
         if ( (slot >= getSize()) || (slot<=0) )
             return;
-        cost -= ships.at(slot)->cost;
-        ships.erase( &ships.at(slot) );
+        cost -= ships[slot]->cost;
+        ships.erase( ships.begin() + slot );
     
     }
 
@@ -367,12 +367,12 @@ void init_fleet() {STACKTRACE
         if (startIndex == 0)
             _begin = ships.begin();
         else
-            _begin = &ships.at(startIndex);
+            _begin = ships.begin() + startIndex;
 
         if (endIndex == -1)
             _end = ships.end();
         else
-            _end = &ships.at(endIndex);
+            _end = ships.begin() + endIndex;
 
         switch (sortMethod) {
             case SORTING_METHOD_COST_DESCENDING:
