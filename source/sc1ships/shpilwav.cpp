@@ -25,7 +25,9 @@ double IlwrathAvenger::isInvisible() const {
 	}
 
 int IlwrathAvenger::activate_weapon() {
-	if (cloak && (target != NULL)) {
+	// note that target=0 is only set after this routine is called in ship::calculate
+	// so we need to check if it exists ...
+	if (cloak && target && target->exists()) {
 		if (distance(target) < weaponRange * 3) {
 			angle = 
 				intercept_angle2(pos, vel * 1.0, weaponVelocity, 

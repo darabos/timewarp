@@ -195,7 +195,7 @@ BubalosBomber::BubalosBomber  (Vector2 opos, double shipAngle, ShipData *shipDat
 
 int BubalosBomber::activate_weapon()
 {
-	STACKTRACE
+	STACKTRACE;
   if (fire_special && shipCanReverseThrusters) return false;
 
   BubalosMIRV* BMIRV;
@@ -218,7 +218,7 @@ int BubalosBomber::activate_weapon()
     }
 
   if (t != NULL) target = t;
-  if ((target != NULL) && (!target->isInvisible())) {
+  if (target && target->exists() && (!target->isInvisible())) {
     DeltaA = fabs(angle - trajectory_angle(target));
     if (DeltaA > PI*3/2) DeltaA = 0; 
     }
@@ -403,7 +403,7 @@ int BubalosBomber::activate_special() {
   double Direction; 
   double DeltaA;
 
-    if ((target != NULL) && (!target->isInvisible())) {
+    if (target && target->exists() && (!target->isInvisible())) {
       DeltaA = fabs(angle - trajectory_angle(target));
       if (DeltaA > PI*3/2) DeltaA = 0;
     } else DeltaA = 0;

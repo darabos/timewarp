@@ -65,7 +65,7 @@ int OstokDisplacer::activate_special()
 {
 	STACKTRACE
 
-	if ((target != NULL) && (!target->isInvisible()) && (target->mass > 0)) 
+	if (target && target->exists() && (!target->isInvisible()) && (target->mass > 0)) 
 	{
 		//from Arilou code
 		//dx = (double)(random() % (int)(3000)) - 1500;

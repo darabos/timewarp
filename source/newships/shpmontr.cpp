@@ -277,7 +277,7 @@ void MonoMissile::calculate() {
   if( target != last_target ) set_up_beacons();
   last_target = target;
 
-  if( !target || !target->exists() || target->isInvisible() ){
+  if( !(target && target->exists()) || target->isInvisible() ){
     target = NULL;
     return;
   }

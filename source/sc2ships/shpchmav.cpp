@@ -106,7 +106,7 @@ int ChmmrAvatar::activate_weapon()
 
 int ChmmrAvatar::activate_special()
 {
-	if ((target != NULL) && (!target->isInvisible()) && (target->mass > 0) && (distance(target) < specialRange)) {
+	if (target && target->exists() && (!target->isInvisible()) && (target->mass > 0) && (distance(target) < specialRange)) {
 		add(new ChmmrBeam(this, special_rate));
 		target->accelerate(this, target->trajectory_angle(this), specialForce / target->mass, MAX_SPEED);
 		return (true);

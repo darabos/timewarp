@@ -22,8 +22,6 @@ PkunkFury::PkunkFury(Vector2 opos, double shipAngle,
 
 	reborn = 0;
 	update_panel = true;
-
-	crew = 1;
 }
 
 int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct) {
@@ -34,7 +32,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 	game->add(new Animation(this, pos,	meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 
-	/*
+	
 	if (random() % 2) {
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH){
 			game->ship_died(this, source);
@@ -43,7 +41,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 		die();
 		return r;
 	}
-	*/
+	
 	
 
 	pos = random(Vector2(3000,3000)) - Vector2(1500,1500);
@@ -118,7 +116,8 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 
 	// copied from normalgame::choose_new_ships
 	int i;
-	i = 0;	// the player
+	i = this->get_team()-1;	// the player
+	if (i < 0) i = 0;
 	add ( new WedgeIndicator ( s, 30, i ) );
 	ShipPanel *panel = new ShipPanel(s);
 	panel->window->init(game->window);

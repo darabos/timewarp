@@ -81,7 +81,7 @@ void RekojAssassin::calculate()
 
 	Ship::calculate();
 
-	if (target != NULL) {
+	if (target && target->exists()) {
 		
 			if (distance(target) > weaponRange) 
 				 specialMatchSpeed = false;
@@ -110,7 +110,7 @@ void RekojAssassin::calculate()
 
 
 	//Laser finder
-	if (target != NULL)
+	if (target && target->exists())
 		if (target->isInvisible()) {
 			extraBlip++;
 			if (extraBlip==extraDelay) {
