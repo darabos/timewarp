@@ -1319,7 +1319,7 @@ void edit_fleet(int player) {STACKTRACE
 					   while (i < old_reference_fleet->getSize())
 					   {
 						   ShipType *st = old_reference_fleet->getShipType(i);
-						   if (st->origin == 1)
+						   if (st->origin == SHIP_ORIGIN_SC1)
 							   reference_fleet->addShipType(st);
 
 						   ++i;
@@ -1332,7 +1332,7 @@ void edit_fleet(int player) {STACKTRACE
 					   while (i < reference_fleet->getSize())
 					   {
 						   ShipType *st = reference_fleet->getShipType(i);
-						   if (st->origin == 1)
+						   if (st->origin == SHIP_ORIGIN_SC1)
 							   reference_fleet->clear_slot(i);
 						   else
 							   ++i;

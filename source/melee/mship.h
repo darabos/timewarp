@@ -57,6 +57,17 @@ class Phaser : public SpaceObject {
 	virtual void calculate();
 	};
 
+/** the classification of where a given ship comes from */
+enum ShipOrigin { 
+    SHIP_ORIGIN_NONE = 0, /**< None, no classification given*/
+    SHIP_ORIGIN_SC1,/**< from Star Control 1*/
+    SHIP_ORIGIN_SC2,/**< from Star Control 2*/
+    SHIP_ORIGIN_SC3,/**< from Star Control 3*/
+    SHIP_ORIGIN_TW_ALPHA,/**< Timewarp "Alpha"*/
+    SHIP_ORIGIN_TW_BETA/**< Timewarp "Beta"*/
+};
+
+
 class Ship : public SpaceObject {
 	protected:
 

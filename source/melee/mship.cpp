@@ -129,18 +129,18 @@ static void register_shiptype ( const char *file ) {
 	shiptypes[i].id = strdup(tmp - 5);
 
 	int &ori = shiptypes[i].origin;
-	ori = 0;
+	ori = SHIP_ORIGIN_NONE;
 	const char *origname = get_config_string("Info", "Origin", NULL);
 	if (strcmp(origname, "SC1") == 0)
-		ori = 1;
+		ori = SHIP_ORIGIN_SC1;
 	if (strcmp(origname, "SC2") == 0)
-		ori = 2;
+		ori = SHIP_ORIGIN_SC2;
 	if (strcmp(origname, "SC3") == 0)
-		ori = 3;
+		ori = SHIP_ORIGIN_SC3;
 	if (strcmp(origname, "TWa") == 0)		// alpha ships
-		ori = 4;
+		ori = SHIP_ORIGIN_TW_ALPHA;
 	if (strcmp(origname, "TWb") == 0)		// beta ships
-		ori = 5;
+		ori = SHIP_ORIGIN_TW_BETA;
 
 
 	const char *name = get_config_string("Info", "Name", NULL);
