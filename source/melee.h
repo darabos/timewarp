@@ -53,9 +53,7 @@
 #include "util/sounds.h"
 //#include "util/aastr.h"
 
-//#include "util/sintable.h"
-//#define sin fast_sin2
-//#define cos fast_cos2
+
 
 
 /*
