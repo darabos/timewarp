@@ -67,7 +67,7 @@ class JnkdwoLazelMissile : public Missile {
 class JnkdwoLazelLaser : public Laser {
   int    power_left;
   double base_length;
-  double aim, max_angle, lng;
+  double aim, max_angle, lng, d_a;
   SpaceObject *tgt;
 
   public:
@@ -305,6 +305,8 @@ Laser(creator, langle, lcolor, lrange, 1, lfcount/ldamage, opos, 0, 0) {
 	max_angle = mangle; lng = length;
 	base_length = length;
 	angle = normalize(angle + spread * (1000 - (random()%2001))/1000.0, PI2);
+
+	d_a = 0;
 }
 
 void JnkdwoLazelLaser::calculate() {
@@ -316,8 +318,12 @@ void JnkdwoLazelLaser::calculate() {
 		state = 0;
 	}
 	if (state == 0) return;
-	if (frame < frame_count) frame += frame_time;
-	else {
+
+	if (frame < frame_count)
+	{
+		frame += frame_time;
+	} else {
+
 		if (!(tgt && tgt->exists())) {
 			tgt = 0;
 			state = 0;
@@ -339,16 +345,13 @@ void JnkdwoLazelLaser::calculate() {
 	if (tgt) { if (!tgt->exists()) tgt = NULL;}
 	else tgt = NULL;
 	
-	double d_a;
 	if (tgt)
 		d_a = normalize(trajectory_angle(tgt) - angle, PI2);
-	else {  //d_a = pos->get_angle();
+	else {
 		base_length = lng * (frame_count - frame) / frame_count; 
-		tw_error("Using uninitialized variable d_a bellow few line");
-		d_a = -12345;
 	}
+
 	length = base_length;
-	//        state = 0; return;
 	SpaceLine::calculate();
 	
 	if (d_a > PI) d_a -= PI2;

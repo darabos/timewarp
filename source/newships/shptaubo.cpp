@@ -188,19 +188,23 @@ void TauBomberBomb::calculate()
 	SpaceObject *old_tgt = tgt;
 	tgt = NULL;
 
-	double r0 = 1e40, r = -1;
+	double r0 = 1e40;
 	Query q;
 	for (q.begin(this, OBJECT_LAYERS, proximity_range); q.currento; q.next())
 		if (q.currento->isShip() && q.currento->exists()
 			&& (!q.currento->isInvisible()) && (!q.currento->sameTeam(this))) {
+			
+			double r;
 			r = distance(q.currento);
+
 			if (r < r0) {
 				r0 = r;
 				tgt = q.currento; }
 		}
 	q.end();
-	assert(r>0&&"Using uninitialized variable");
-	if ((old_tgt?old_tgt->exists():false) && (tgt?(r>old_range):true) && active) {
+
+
+	if ((old_tgt?old_tgt->exists():false) && (tgt?(r0>old_range):true) && active) {
 		damage(this, 9999); return; }
 	old_range = r0;
 	if (lifetime <= 0) {

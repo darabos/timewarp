@@ -240,31 +240,37 @@ void CromeShot::calculate()
 
 void CromeShot::animateExplosion()
 {
-        if (exploded_already) return;
-        exploded_already = true;
+	// this is part of physics (although the name suggests otherwise)
+	
+	if (exploded_already) return;
+	exploded_already = true;
+	
+	game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 8, 50, LAYER_EXPLOSIONS));
+	game->add(new Animation(this, pos, data->spriteExtraExplosion, 0, 12, 50, LAYER_HOTSPOTS));
+	
+	Query q;
 
-        game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 8, 50, LAYER_EXPLOSIONS));
-        game->add(new Animation(this, pos, data->spriteExtraExplosion, 0, 12, 50, LAYER_HOTSPOTS));
+	
+	for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next())
+	{
+		if (q.currento != direct_hit)
+		{
+			// damage everything in range...
+			double r;
+			r = distance(q.currento) / blast_range;
 
-        Query q;
+			if (q.currento->sameShip(this))
+				r *= 2;				// reduced damage for your own ship ??
 
-        double r;
-
-        for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next()) {
-                if (q.currento != direct_hit) {
-		  tw_error("Using uninitialized variable r");
-		  r = -1000;
-                        if (q.currento->sameShip(this)) r *= 2;
-                        if (r > blast_range) continue;
-
-                        r = distance(q.currento) / blast_range;
-
-                        if (q.currento->isShot())
-							damage(q.currento, (int)ceil(blast_damage_shots * (1 - r*r*r*r)));
-						else
-							damage(q.currento, (int)ceil(blast_damage * (1 - r*r*r*r)));
-
-		} }
+			if (r > 1) continue;	// out of damage range
+			
+			
+			if (q.currento->isShot())
+				damage(q.currento, (int)ceil(blast_damage_shots * (1 - r*r*r*r)));
+			else
+				damage(q.currento, (int)ceil(blast_damage * (1 - r*r*r*r)));
+		}
+	}
 
 }
 
