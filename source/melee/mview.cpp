@@ -983,11 +983,11 @@ void View_Split4::calculate (Game *game) {STACKTRACE
 
 
 REGISTER_VIEW ( View_Hero, "Hero" )
-REGISTER_VIEW ( View_Everything, "Everything" )
 REGISTER_VIEW ( View_Enemy, "Enemy" )
 REGISTER_VIEW ( View_Enemy_Discrete, "Enemy_Discrete" )
 REGISTER_VIEW ( View_Split2a, "Split_2_Horizontal" )
 REGISTER_VIEW ( View_Split2b, "Split_2_Vertical" )
 REGISTER_VIEW ( View_Split3, "Split_3_Horizontal" )
 REGISTER_VIEW ( View_Split4, "Split_4_Quad" )
+REGISTER_VIEW ( View_Everything, "Everything" )
 
