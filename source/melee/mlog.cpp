@@ -181,6 +181,7 @@ int Log::file_ready(const char *fname, void **location) {
 			i += strlen((char*) log_data[channel_file_names] + i) + 1;
 			int k;
 			memcpy(&k, (log_data[channel_file_names] + i), sizeof(int));
+			k = intel_ordering(k);
 
 			if (j+k > log_len[channel_file_data]) { tw_error ("Log::file_ready - uh, that's bad"); }
 			if (location) *location = log_data[channel_file_data] + j;
