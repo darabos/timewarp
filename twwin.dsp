@@ -768,6 +768,10 @@ SOURCE=.\source\newships\shpraame.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpradfi.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shprekas.cpp
 # End Source File
 # Begin Source File
