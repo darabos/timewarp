@@ -478,3 +478,32 @@ void init_fleet() {STACKTRACE
                 break;
         }
     }
+
+    int Fleet::getNextFleetEntryByCharacter(int currentShip, char c) {
+        
+        ASSERT(ships.at(currentShip) != null);
+        ASSERT(currentShip < ships.size());
+        ASSERT(currentShip >=0);
+        c = toupper(c);
+
+        for (int i=currentShip+1; i<ships.size(); i++) {
+            MyFleetShipType temp = ships.at(i);
+            ASSERT(temp!=NULL);
+            ASSERT(temp->name != NULL);
+
+            if (toupper(temp->name[0]) == c) {
+                return i;
+            }
+        }
+
+        for (i=0; i<currentShip; i++) {
+            MyFleetShipType temp = ships.at(i);
+            ASSERT(temp!=NULL);
+            ASSERT(temp->name != NULL);
+
+            if (temp->name[0] == c) {
+                return i;
+            }
+        }
+        return currentShip;
+    }

@@ -11,6 +11,7 @@ extern Fleet *reference_fleet;
 using namespace std;
 
 
+extern int lastFleetItemShown;
 
 //TODO get rid of global variables used by this function; remove this function
 void init_fleet();	// inits reference_fleet [former shiptype array]
@@ -233,6 +234,18 @@ public:
 
     /** @brief returns the maximum sum of costs of each ship in the fleet */
     FleetCost getMaxCost() { return maxFleetCost; }
+
+    /** @brief returns the next entry in the fleet with name starting with the given character. 
+        returns the next entry in the fleet with name starting with the given character.  The ship
+        returned will be relative to currentShip.  It will be either the next ship past currentShip
+        with name starting with c, or it will return currentShip if there's no such animal.  Seaching
+        will start at currentShip, and if necessary, cylce past the end of the list back to the begining.
+        @param currentShip the index of the ship to start searching from.
+        @param c the character to search for
+        @return the index of the ship whose name starts with c, and is next in the list, 
+        relative to currentShip.
+    */
+    int getNextFleetEntryByCharacter(int currentShip, char c);
 
 
 

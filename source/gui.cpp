@@ -730,6 +730,7 @@ char *shipListboxGetter(int index, int *list_size)
 	  if (reference_fleet->getShipType(index)) return (char *) reference_fleet->getShipType(index)->name;
 	  else return "(none)";
 }
+
 char *shippointsListboxGetter(int index, int *list_size)
 {
 	static char buffy[256];
@@ -737,6 +738,7 @@ char *shippointsListboxGetter(int index, int *list_size)
 		*list_size = reference_fleet->getSize();
 		return NULL;
 	} else {
+        lastFleetItemShown = index;
         ShipType * type = reference_fleet->getShipType(index);
 		sprintf(buffy, "%3d %s", type->cost, type->name);
 	}

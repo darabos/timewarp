@@ -1515,10 +1515,47 @@ void edit_fleet(int player) {STACKTRACE
 	showTitle();
 }
 
+
+int lastFleetItemShown = 0;
+
 int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 	static int next_anim_time = get_time();
 	int old_d1 = d->d1;
-	int ret = d_text_list_proc( msg, d, c );
+    int old_d2 = d->d2;
+   
+
+    // allow user to select the ships based on keystrokes:
+    // select based on the ship's name
+    bool shouldConsumeChar = false;
+    if (msg == MSG_CHAR) {
+        char typed = (char)(0xff & c);
+        if (isalnum (typed)) {
+            d->d1 = reference_fleet->getNextFleetEntryByCharacter( d->d1, typed);
+            shouldConsumeChar = true;
+            if (d->d1 != old_d1) {
+                d->flags = D_DIRTY;
+
+                /*int size = lastFleetItemShown - old_d1;
+                
+                if (size > reference_fleet->getSize() {
+                    
+                    if (
+                        (d->d2 + size > d->d1) 
+                        )
+                    {
+                        //d->d2 = d->d1;
+                        d->d2 = d->d1 - size/2;
+                    }
+                }*/
+            }
+        }
+    }
+    
+    int ret = d_text_list_proc( msg, d, c );
+
+    if (shouldConsumeChar)
+        ret = D_USED_CHAR;
+
 
     static BITMAP* panel = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
                                          fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
