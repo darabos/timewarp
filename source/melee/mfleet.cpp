@@ -145,6 +145,11 @@ void init_fleet() {STACKTRACE
         return ships.size()-1;
     }
 
+    void Fleet::addFleet(Fleet * fleetToAdd) {
+        for (int i=0; i<fleetToAdd->getSize(); i++)
+            addShipType(fleetToAdd->getShipType(i));
+    }
+
     void Fleet::clear_slot (int slot) {STACKTRACE
         if ( (slot >= getSize()) || (slot<0) )
             return;

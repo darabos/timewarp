@@ -33,21 +33,21 @@ public:
     //const static int MAX_TITLE_LENGTH = 80;
 
     enum SortingMethod { 
-        SORTING_METHOD_DEFAULT = 0,
-        SORTING_METHOD_NAME_DESCENDING,
-        SORTING_METHOD_NAME_ASCENDING,
+        SORTING_METHOD_DEFAULT = 0, /**< Currently does the same thing as SORTING_METHOD_NAME_DESCENDING */
+        SORTING_METHOD_NAME_DESCENDING, /**< combined Specied/ship name */
+        SORTING_METHOD_NAME_ASCENDING, 
         SORTING_METHOD_COST_DESCENDING,
-        SORTING_METHOD_COST_ASCENDING,
-        SORTING_METHOD_TWCOST_ASCENDING,
+        SORTING_METHOD_COST_ASCENDING, 
+        SORTING_METHOD_TWCOST_ASCENDING, 
         SORTING_METHOD_TWCOST_DESCENDING,
-        SORTING_METHOD_NAME1_ASCENDING,
-        SORTING_METHOD_NAME1_DESCENDING,
-        SORTING_METHOD_NAME2_ASCENDING,
-        SORTING_METHOD_NAME2_DESCENDING,
-        SORTING_METHOD_CODERS_ASCENDING,
-        SORTING_METHOD_CODERS_DESCENDING,
-        SORTING_METHOD_ORIGIN_ASCENDING,
-        SORTING_METHOD_ORIGIN_DESCENDING
+        SORTING_METHOD_NAME1_ASCENDING, /**< Species name */
+        SORTING_METHOD_NAME1_DESCENDING, /**< Species name */
+        SORTING_METHOD_NAME2_ASCENDING, /**< Ship name (not including species) */
+        SORTING_METHOD_NAME2_DESCENDING, /**< Ship name (not including species) */
+        SORTING_METHOD_CODERS_ASCENDING, /**<  */
+        SORTING_METHOD_CODERS_DESCENDING, /**<  */
+        SORTING_METHOD_ORIGIN_ASCENDING, /**< SC1-3, TW, or the group that made the ship */
+        SORTING_METHOD_ORIGIN_DESCENDING /**< SC1-3, TW, or the group that made the ship */
     };
 
 
@@ -107,21 +107,21 @@ public:
 
 	/** \brief sorts this fleet according to the given compare function.  May be called as Sort();
         \param method The method with which to sort.  Options are:
-        SORTING_METHOD_DEFAULT,
-        SORTING_METHOD_NAME_DESCENDING,
-        SORTING_METHOD_NAME_ASCENDING,
-        SORTING_METHOD_COST_DESCENDING,
-        SORTING_METHOD_COST_ASCENDING,
-        SORTING_METHOD_TWCOST_ASCENDING,
-        SORTING_METHOD_TWCOST_DESCENDING,
-        SORTING_METHOD_NAME1_ASCENDING,
-        SORTING_METHOD_NAME1_DESCENDING,
-        SORTING_METHOD_NAME2_ASCENDING,
-        SORTING_METHOD_NAME2_DESCENDING,
-        SORTING_METHOD_CODERS_ASCENDING,
-        SORTING_METHOD_CODERS_DESCENDING,
-        SORTING_METHOD_ORIGIN_ASCENDING,
-        SORTING_METHOD_ORIGIN_DESCENDING
+            -SORTING_METHOD_DEFAULT,
+            -SORTING_METHOD_NAME_DESCENDING,
+            -SORTING_METHOD_NAME_ASCENDING,
+            -SORTING_METHOD_COST_DESCENDING,
+            -SORTING_METHOD_COST_ASCENDING,
+            -SORTING_METHOD_TWCOST_ASCENDING,
+            -SORTING_METHOD_TWCOST_DESCENDING,
+            -SORTING_METHOD_NAME1_ASCENDING,
+            -SORTING_METHOD_NAME1_DESCENDING,
+            -SORTING_METHOD_NAME2_ASCENDING,
+            -SORTING_METHOD_NAME2_DESCENDING,
+            -SORTING_METHOD_CODERS_ASCENDING,
+            -SORTING_METHOD_CODERS_DESCENDING,
+            -SORTING_METHOD_ORIGIN_ASCENDING,
+            -SORTING_METHOD_ORIGIN_DESCENDING
         \param startIndex (default 0) the index of the first ship to sort
         \param endIndex (default -1) the index of the last ship in the fleet to sort.  -1 means the last ship.
     */
@@ -137,6 +137,10 @@ public:
 
     inline char * getTitle() { return title; }
     inline char * setTitle(char * newTitle) { strncpy(title, newTitle, MAX_TITLE_LENGTH); return title; }
+
+    /** \brief adds the ships in the specified fleet to this one
+        \param fleetToAdd the fleet with ships to add */
+    void addFleet(Fleet * fleetToAdd);
 
 
 
