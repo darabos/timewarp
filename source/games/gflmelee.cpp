@@ -2,15 +2,6 @@
 Fight between a player fleet (set in the ini file) and a random adversary fleet (never
 equal to the player's fleet).
 
-  To-do:
-
-  pointer ImIndicators
-
-  array sizes
-
-  ship panel
-
-
 
 about identifying the killer (for his stats):
 
@@ -52,6 +43,9 @@ REGISTER_FILE
 //#define STATION_LOG
 
 #include "gflmelee.h"
+
+#include "../melee/mlog.h"
+
 
 #define Num_Planet_Pics 7
 
@@ -194,8 +188,10 @@ public:
 	Control *oldcontrol;	// remember the original control when you take possession of a ship
 	ShipPanelBmp *player_panel[2];
 
+	int		localplayer;	// which player number is "local" ... is this needed at all ?
+
 	int		toggle_showstats, toggle_playership, toggle_healthbars, toggle_fleetlist, toggle_radar, toggle_panel, toggle_radarpos;
-	int		lastkey_playership, lastkey_healthbars, lastkey_fleetlist, lastkey_radar, lastkey_panel, lastkey_radarpos, lastkey_radarlayout;
+	int		lastkey_playership[2], lastkey_healthbars, lastkey_fleetlist, lastkey_radar, lastkey_panel, lastkey_radarpos, lastkey_radarlayout;
 	StatsManager	*statsmanager;
 
 	int radar_pos_id;
@@ -504,8 +500,39 @@ void FlMelee::init(Log *_log)
 	}
 	*/
 
-	start_menu(allyfleet);
+	if (log->type == Log::log_net1server || log->type == Log::log_normal)
+	{
+		start_menu(allyfleet);
+	}
+	// send (or receive) ... channel_server is locally either the server, or the client.
+	log_int(channel_server, allyfleet[0]);
+	log_int(channel_server, allyfleet[1]);
 
+
+	// initialize server/client controls.
+	localplayer = 0;
+
+	Control *c;
+	
+	// create the local player
+	c = create_control(channel_server, "Human");
+	playercontrols[0] = c;
+	add_focus(c, c->channel);
+	
+	// create the remote player
+	if (log->type == Log::log_net1server || log->type == Log::log_net1client)
+	{
+		// it's "client" from local perspective ???
+		c  = create_control(channel_client, "Human");
+		playercontrols[1] = c;
+		add_focus(c, c->channel);
+	} else
+		playercontrols[1] = 0;
+
+	// player 0 = local ?
+	// player 1 = remote ?
+	
+	
 
 	log_file("gflmelee.ini");
 
@@ -515,10 +542,11 @@ void FlMelee::init(Log *_log)
 	alliance[0] = new_team();
 	alliance[1] = new_team();
 
-	playercontrols[0] = 0;
-	playercontrols[1] = 0;
+//	if (!playercontrols[0])
 
-	Ship *takeovership = NULL;
+//	playercontrols[1] = 0;
+
+	Ship *takeovership = 0;
 
 	for ( iplayer = 0; iplayer < 2; ++iplayer )
 	{
@@ -580,6 +608,7 @@ void FlMelee::init(Log *_log)
 
 			Ship *s;
 
+			/*
 			if ( iplayer == 0 && iship == 0 )
 			{
 				Control *c  = create_control(channel_server, "Human");
@@ -588,6 +617,7 @@ void FlMelee::init(Log *_log)
 				// he controls ;)
 				add_focus(c, c->channel);
 			}
+			*/
 
 
 			//s = create_ship(shipname, "Wussiebot", P, a, alliance[iplayer]);
@@ -602,6 +632,7 @@ void FlMelee::init(Log *_log)
 
 			if ( iplayer == 0 && iship == 0 )
 				takeovership = s;
+			
 			
 
 			// have to do this, since the ship-init loads different ini files.
@@ -635,7 +666,8 @@ void FlMelee::init(Log *_log)
 
 	toggle_showstats = 0;
 	toggle_playership = 0;
-	lastkey_playership = 0;
+	lastkey_playership[0] = 0;
+	lastkey_playership[1] = 0;
 	lastkey_healthbars = 0;
 	lastkey_fleetlist = 0;
 	lastkey_radar = 0;
@@ -909,6 +941,7 @@ void FlMelee::calculate()
 
 	Control *c = playercontrols[0];
 
+
 	// check death ...
 
 	// not if the player is captain of one fixed vessel: a command ship
@@ -997,6 +1030,7 @@ void FlMelee::calculate()
 		toggle_showstats = 0;
 	//toggle_showstats = 1;
 
+	/*
 	if (!lastkey_playership && key[KEY_V])
 		toggle_playership = 1;
 	else if (!lastkey_playership && key[KEY_C])
@@ -1004,6 +1038,7 @@ void FlMelee::calculate()
 	else
 		toggle_playership = 0;
 	lastkey_playership = key[KEY_V] || key[KEY_C];
+	*/
 
 	// (...)
 	// choosing targets is done elsewhere already
@@ -1097,58 +1132,82 @@ void FlMelee::calculate()
 	lastkey_radarlayout = key[KEY_L];
 
 
-
-	if ( playercontrols[0]->ship && toggle_playership )
+	int iplayer;
+	for ( iplayer = 0; iplayer < 2; ++iplayer )
 	{
-		// jump to the ship in this list:
-		int itarget, lastitarget;
+		if (!playercontrols[iplayer])
+			continue;
 
-		itarget = 0;
-		while ( game->target[itarget] != c->ship && itarget < num_targets-1 )
-			++itarget;
-
-		lastitarget = itarget;
-
-		// then start searching for the next entry;
-		itarget = lastitarget + toggle_playership;
-		while ( itarget != lastitarget )
-		{
-
-			if ( itarget > num_targets-1 )
-				itarget -= num_targets;
-			if ( itarget < 0 )
-				itarget += num_targets;
+		int k = playercontrols[iplayer]->keys;
 		
-			SpaceObject *o = game->target[itarget];
+		// next player ship
+		if (!lastkey_playership[iplayer] && (k & keyflag::extra1) )
+			toggle_playership = 1;
+
+		// previous player ship
+		else if (!lastkey_playership[iplayer] && (k & keyflag::extra2) )
+			toggle_playership = -1;
+
+		else
+			toggle_playership = 0;
+
+		lastkey_playership[iplayer] = k & (keyflag::extra1 | keyflag::extra2);
+		
+		
+		if ( playercontrols[iplayer]->ship && toggle_playership )
+		{
+			c = playercontrols[iplayer];
+
+			// jump to the ship in this list:
+			int itarget, lastitarget;
 			
-//			Control *c = playercontrols[0];	// is already done earlier
+			itarget = 0;
+			while ( game->target[itarget] != c->ship && itarget < num_targets-1 )
+				++itarget;
 			
-			if ( o->isShip() && is_in_team(o, alliance[0]) )
+			lastitarget = itarget;
+			
+			// then start searching for the next entry;
+			itarget = lastitarget + toggle_playership;
+			while ( itarget != lastitarget )
 			{
-				Ship *shp = (Ship*) o;
 				
-				Control *c1, *c2;
-				Ship *s1, *s2;
-
-				c1 = shp->control;
-				s1 = shp;
-
-				c2 = playercontrols[0];
-				s2 = c2->ship;
-
-				oldcontrol->select_ship(s2, "none");	// re-assign original control ai.
-				oldcontrol = s1->control;		// remember control ai of the new ship
-				playercontrols[0]->select_ship(s1, "none");	// take over the new ship
-
-
-				break;
+				if ( itarget > num_targets-1 )
+					itarget -= num_targets;
+				if ( itarget < 0 )
+					itarget += num_targets;
+				
+				SpaceObject *o = game->target[itarget];
+				
+				//			Control *c = playercontrols[0];	// is already done earlier
+				
+				if ( o->isShip() && is_in_team(o, alliance[iplayer]) )
+				{
+					Ship *shp = (Ship*) o;
+					
+					Control *c1, *c2;
+					Ship *s1, *s2;
+					
+					c1 = shp->control;
+					s1 = shp;
+					
+					c2 = playercontrols[iplayer];
+					s2 = c2->ship;
+					
+					oldcontrol->select_ship(s2, "none");	// re-assign original control ai.
+					oldcontrol = s1->control;		// remember control ai of the new ship
+					playercontrols[iplayer]->select_ship(s1, "none");	// take over the new ship
+					
+					
+					break;
+				}
+				
+				itarget += toggle_playership;
 			}
-
-			itarget += toggle_playership;
+			
 		}
-
+		
 	}
-	
 
 	// check if the player panel(s) still exist (shouldn't be needed, since
 	// the panel's calculate function isn't called):

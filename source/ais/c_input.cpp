@@ -115,6 +115,12 @@ void ControlHuman::load (const char *inifile, const char *inisection) {
 	next    = get_config_int(inisection, "Next_Target", 0);
 	prev    = get_config_int(inisection, "Prev_Target", 0);
 	closest = get_config_int(inisection, "Closest_Target", 0);
+	extra1  = get_config_int(inisection, "Extra1", 0);
+	extra2  = get_config_int(inisection, "Extra2", 0);
+	extra3  = get_config_int(inisection, "Extra3", 0);
+	extra4  = get_config_int(inisection, "Extra4", 0);
+	extra5  = get_config_int(inisection, "Extra5", 0);
+	extra6  = get_config_int(inisection, "Extra6", 0);
 	return;
 }
 
@@ -130,6 +136,12 @@ void ControlHuman::save (const char *inifile, const char *inisection) {
 	set_config_int(inisection, "Next_Target",    next);
 	set_config_int(inisection, "Prev_Target",    prev);
 	set_config_int(inisection, "Closest_Target", closest);
+	set_config_int(inisection, "Extra1", extra1);
+	set_config_int(inisection, "Extra2", extra2);
+	set_config_int(inisection, "Extra3", extra3);
+	set_config_int(inisection, "Extra4", extra4);
+	set_config_int(inisection, "Extra5", extra5);
+	set_config_int(inisection, "Extra6", extra6);
 	return;
 }
 
@@ -149,15 +161,22 @@ int ControlHuman::think() {
 	if (key_pressed(next)) r |= keyflag::next;
 	if (key_pressed(prev)) r |= keyflag::prev;
 	if (key_pressed(closest)) r |= keyflag::closest;
+	if (key_pressed(extra1)) r |= keyflag::extra1;
+	if (key_pressed(extra2))
+		r |= keyflag::extra2;
+	if (key_pressed(extra3)) r |= keyflag::extra3;
+	if (key_pressed(extra4)) r |= keyflag::extra4;
+	if (key_pressed(extra5)) r |= keyflag::extra5;
+	if (key_pressed(extra6)) r |= keyflag::extra6;
 	return r;
 }
 
 ControlHuman::ControlHuman(const char *name, int channel) : Control(name, channel) {}
 
 #define KEY_DIALOG_MODIFY    0
-#define KEY_DIALOG_OK        11
-#define KEY_DIALOG_CANCEL    12
-#define KEY_DIALOG_CALIBRATE 13
+#define KEY_DIALOG_OK        17
+#define KEY_DIALOG_CANCEL    18
+#define KEY_DIALOG_CALIBRATE 19
 
 DIALOG keyDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
@@ -171,7 +190,14 @@ DIALOG keyDialog[] = {
   { d_button_proc,     60,   270,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[7], NULL, NULL },
   { d_button_proc,     60,   300,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[8], NULL, NULL },
   { d_button_proc,     60,   330,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[9], NULL, NULL },
-  { d_button_proc,     60,   360,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[10], NULL, NULL },
+  { d_button_proc,     60,   360,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[10], NULL, NULL },
+  { d_button_proc,     60,   375,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[11], NULL, NULL },
+  { d_button_proc,     60,   390,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[12], NULL, NULL },
+  { d_button_proc,     60,   405,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[13], NULL, NULL },
+  { d_button_proc,     60,   420,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[14], NULL, NULL },
+  { d_button_proc,     60,   435,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[15], NULL, NULL },
+  { d_button_proc,     60,   450,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[16], NULL, NULL },
+
   { d_button_proc,     180,  20,   180,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void*)"Accept Changes", NULL, NULL },
   { d_button_proc,     180,  50,   180,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void*)"Cancel", NULL, NULL },
   { d_button_proc,     360,  35,   200,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void*)"Calibrate Joysticks", NULL, NULL },
@@ -185,9 +211,12 @@ void ControlHuman::setup() {
 	while (true) {
 		char *s;
 		int index = 0;
+
 		s = dialog_string[index]; index += 1;
+
 		s += sprintf(s, "Set Your Keys\nController %s", getDescription());
 		s = dialog_string[index]; index += 1;
+
 		s += sprintf ( s, "Left:           ");
 		key_to_description(left, s);
 		s = dialog_string[index]; index += 1;
@@ -217,6 +246,26 @@ void ControlHuman::setup() {
 		s = dialog_string[index]; index += 1;
 		s += sprintf ( s, "Closest Target: ");
 		key_to_description ( closest, s );
+
+		s = dialog_string[index]; index += 1;
+		s += sprintf ( s, "Extra1: ");
+		key_to_description ( extra1, s );
+		s = dialog_string[index]; index += 1;
+		s += sprintf ( s, "Extra2: ");
+		key_to_description ( extra2, s );
+		s = dialog_string[index]; index += 1;
+		s += sprintf ( s, "Extra3: ");
+		key_to_description ( extra3, s );
+		s = dialog_string[index]; index += 1;
+		s += sprintf ( s, "Extra4: ");
+		key_to_description ( extra4, s );
+		s = dialog_string[index]; index += 1;
+		s += sprintf ( s, "Extra5: ");
+		key_to_description ( extra5, s );
+		s = dialog_string[index]; index += 1;
+		s += sprintf ( s, "Extra6: ");
+		key_to_description ( extra6, s );
+
 		s = dialog_string[index]; index += 1;
 
 		int maxlen = 0;
@@ -249,6 +298,12 @@ void ControlHuman::setup() {
 			case 8:  next    = t; break;
 			case 9:  prev    = t; break;
 			case 10: closest = t; break;
+			case 11: extra1 = t; break;
+			case 12: extra2 = t; break;
+			case 13: extra3 = t; break;
+			case 14: extra4 = t; break;
+			case 15: extra5 = t; break;
+			case 16: extra6 = t; break;
 			case KEY_DIALOG_OK:  save("scp.ini", getDescription()); return;
 			case KEY_DIALOG_CANCEL: load("scp.ini", getDescription()); return;
 			case KEY_DIALOG_CALIBRATE: calibrate_joysticks(); break;
