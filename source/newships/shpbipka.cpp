@@ -141,6 +141,7 @@ double BipoleKatamaran::isInvisible() const{
 }
 
 int BipoleKatamaran::activate_weapon(){
+	STACKTRACE
   if( !left || !right ) return FALSE;
   weapon_sample = random(11);
   int left_w = left->activate_weapon();
@@ -149,6 +150,7 @@ int BipoleKatamaran::activate_weapon(){
 }
 
 int BipoleKatamaran::activate_special(){
+	STACKTRACE
   if( !left || !right ) return FALSE;
   if( range >= specialMaxRange ){
     range = specialMaxRange;
@@ -164,6 +166,7 @@ void BipoleKatamaran::animate(Frame* space){
 }
 
 void BipoleKatamaran::calculate(){
+	STACKTRACE
   if( left ) if( !left->exists() ){
     left = NULL;
     if( right ){
@@ -301,6 +304,7 @@ void BipoleKatamaran::calculate(){
 }
 
 void BipoleKatamaran::calculate_thrust(){
+	STACKTRACE
   if( !left || !right ) return;
   if( left->thrust && !left->turn_left && !left->turn_right ){
     left->accelerate(this, angle, accel_rate * frame_time, speed_max);
@@ -310,6 +314,7 @@ void BipoleKatamaran::calculate_thrust(){
   }
 }
 void BipoleKatamaran::calculate_turn_left(){
+	STACKTRACE
   if( !left || !right ) return;
   if( left->turn_left ){
     left->nextkeys &= ~keyflag::thrust;
@@ -321,6 +326,7 @@ void BipoleKatamaran::calculate_turn_left(){
   }
 }
 void BipoleKatamaran::calculate_turn_right(){
+	STACKTRACE
   if( !left || !right ) return;
   if( left->turn_right ){
     left->nextkeys |= keyflag::thrust;
@@ -337,6 +343,7 @@ void BipoleKatamaran::calculate_hotspots(){
 }
 
 void BipoleKatamaran::materialize(){
+	STACKTRACE
   int i;
   for( i = 0; game->target[i] != this; i++ );
   game->num_targets--;
@@ -348,6 +355,7 @@ void BipoleKatamaran::materialize(){
 }
 
 void BipoleKatamaran::death(){
+	STACKTRACE
 	// bug fix Geo.
 	// added exists(), because I *think* that the "invisible" ships can be destroyed
 	// by some field weapon ? At the same time, this field weapon can destroy the
@@ -376,6 +384,7 @@ BipoleShip::BipoleShip(Vector2 opos, double shipAngle,
 }
 
 int BipoleShip::activate_weapon(){
+	STACKTRACE
   shooting = !shooting;
   if( !shooting ) return FALSE;  // if we would return TRUE single ship would fire slower
 
@@ -387,6 +396,7 @@ int BipoleShip::activate_weapon(){
 }
 
 int BipoleShip::activate_special(){
+	STACKTRACE
 
 	if ( vel != 0 )
 	{
@@ -401,18 +411,23 @@ int BipoleShip::activate_special(){
 }
 
 void BipoleShip::calculate_fire_weapon(){
+	STACKTRACE
   if( !sibling ) Ship::calculate_fire_weapon();
 }
 void BipoleShip::calculate_fire_special(){
+	STACKTRACE
   if( !sibling ) Ship::calculate_fire_special();
 }
 void BipoleShip::calculate_thrust(){
+	STACKTRACE
   if( !sibling ) Ship::calculate_thrust();
 }
 void BipoleShip::calculate_turn_left(){
+	STACKTRACE
   if( !sibling ) Ship::calculate_turn_left();
 }
 void BipoleShip::calculate_turn_right(){
+	STACKTRACE
   if( !sibling ) Ship::calculate_turn_right();
 }
 
@@ -428,6 +443,7 @@ void BipoleShip::calculate_turn_right(){
 }*/
 
 int BipoleShip::handle_damage(SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
 	int s = exists();
 	int i = Ship::handle_damage(source, normal, direct);
 	if (s && !exists()) destroyed( source );
@@ -435,6 +451,7 @@ int BipoleShip::handle_damage(SpaceLocation *source, double normal, double direc
 	}
 
 void BipoleShip::destroyed( SpaceLocation* source ){
+	STACKTRACE
 	play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 	game->add(new Animation(this, pos,
     game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, LAYER_EXPLOSIONS));
@@ -446,6 +463,7 @@ void BipoleShip::destroyed( SpaceLocation* source ){
 
 ShipType *BipoleShip::get_shiptype()
 {
+	STACKTRACE
 	// this is necessary, otherwise the Kat Poly ship crashes.
 	// also, "type" cannot be redirected inside the constructor, cause the
 	// parents' type is declared outside of its constructor (bad?).

@@ -241,6 +241,7 @@ BigShip(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 void AyronBS::calculate()
 {
+	STACKTRACE
 	int i;
 
 
@@ -338,6 +339,7 @@ BigShipPart(aowner, orelpos, 0.0, info[otype-1]->spr_crewed, info[otype-1]->spr_
 
 int AyronShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 
 	// transmit damage to the ship owner ...
 	//return owner->handle_damage(source, normal, direct);
@@ -395,6 +397,7 @@ bool AyronShipPart::isdisabled()
 
 void AyronShipPart::recrew(int howmany)
 {
+	STACKTRACE
 	if (crew == 0 && howmany > 0)
 	{
 		// restore physical interaction
@@ -447,6 +450,7 @@ BigShipPartDevice(aowner, spr)
 
 void AutoGun::calculate()
 {
+	STACKTRACE
 	BigShipPartDevice::calculate();
 
 	if (!(ownerpart && !ownerpart->isdisabled()))
@@ -572,6 +576,7 @@ void AutoGun::calculate()
 
 void AyronShipPart::animate(Frame *space)
 {
+	STACKTRACE
 	SpaceSprite *spr;
 
 	if (!hascrew())
@@ -600,6 +605,7 @@ void AyronShipPart::animate(Frame *space)
 
 int AyronBS::activate_weapon()
 {
+	STACKTRACE
 	double dx, dy;
 
 	dx = 75;
@@ -622,6 +628,7 @@ int AyronBS::activate_weapon()
 
 int AyronBS::activate_special()
 {
+	STACKTRACE
 	// add to the crew of one of the damaged compartments.
 
 	// first, check how many are "damaged"

@@ -69,6 +69,7 @@ ArchTempest::ArchTempest(Vector2 pos, double angle, ShipData *data, unsigned int
 
 void ArchTempest::calculate()
 {
+	STACKTRACE
 
 	Ship::calculate();
 
@@ -76,6 +77,7 @@ void ArchTempest::calculate()
 
 int ArchTempest::activate_weapon()
 {
+	STACKTRACE
 
 	if (ready_to_fire) {
 		add(new TempestWave(Vector2(0.0, (size.y / 2.0)), angle,
@@ -89,6 +91,7 @@ int ArchTempest::activate_weapon()
 
 int ArchTempest::activate_special()
 {
+	STACKTRACE
 
     if (target && !target->isInvisible()) //&& !fire_weapon) // Requires more skill to fly
 		angle = trajectory_angle(target);
@@ -97,6 +100,7 @@ int ArchTempest::activate_special()
 }
 
 void ArchTempest::calculate_fire_weapon() {
+	STACKTRACE
 
 	if (ready_to_fire)
 		Ship::calculate_fire_weapon();
@@ -104,6 +108,7 @@ void ArchTempest::calculate_fire_weapon() {
 
 void ArchTempest::calculate_fire_special()
 {
+	STACKTRACE
 
 	// This is just to override any ini changes.  Special MUST be free with a constant rate.
 
@@ -134,6 +139,7 @@ void ArchTempest::calculate_fire_special()
 }
 
 void ArchTempest::calculate_thrust() {
+	STACKTRACE
 
 	if (thrust && !fire_special) // Thrust like normal
 		accelerate_gravwhip(this, angle, accel_rate * frame_time, speed_max);
@@ -156,6 +162,7 @@ void ArchTempest::calculate_thrust() {
 
 void ArchTempest::calculate_turn_left()
 {
+	STACKTRACE
 
 	if (fire_special) {
 
@@ -174,6 +181,7 @@ void ArchTempest::calculate_turn_left()
 
 void ArchTempest::calculate_turn_right()
 {
+	STACKTRACE
 
 	if (fire_special) {
 
@@ -191,6 +199,7 @@ void ArchTempest::calculate_turn_right()
 }
 
 void ArchTempest::calculate_hotspots() { // My ultra-cool hotspot code.  It 0wnz you.
+	STACKTRACE
 
 	if (hotspot_frame <= 0) {
 
@@ -273,6 +282,7 @@ TempestWave::TempestWave(Vector2 pos, double oangle, double ov,
 
 void TempestWave::calculate()
 {
+	STACKTRACE
 	double shit_angle = angle * (180 / PI); // FIXME: Goddamn radians
 
 	if ( (d / range) > (.25) )
@@ -297,6 +307,7 @@ void TempestWave::calculate()
 
 void TempestWave::death()
 {
+	STACKTRACE
 
 	if (!wave_range && tempest->exists())
 		tempest->ready_to_fire = true;

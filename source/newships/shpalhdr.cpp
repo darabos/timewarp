@@ -132,6 +132,7 @@ AlhordianDreadnought::~AlhordianDreadnought(void) {
 }
 
 void AlhordianDreadnought::calculate() {
+	STACKTRACE
   if(this->batt<1 || !fire_special) {
     currentSweepTime = 0; //pulling up on
     sweepIsOn = FALSE;
@@ -142,6 +143,7 @@ void AlhordianDreadnought::calculate() {
 
 
 int AlhordianDreadnought::activate_weapon() {
+	STACKTRACE
   weaponSpriteNumber = 2;
   if(weaponSpriteNumber>3) weaponSpriteNumber=3;
   if(weaponSpriteNumber<0) weaponSpriteNumber=0;
@@ -153,12 +155,14 @@ int AlhordianDreadnought::activate_weapon() {
 }
 
 int AlhordianDreadnought::activate_special() {
+	STACKTRACE
   sweepIsOn = TRUE;
   this->calculate_laser_sweep();
   return(TRUE);
 }
 
 void AlhordianDreadnought::weapon_flash() {
+	STACKTRACE
   game->add(new Laser(this, angle+flashAngle1, pallete_color[flashColor],
     flashRange1, flashDamage1, 50, this, Vector2(size.y *0.0, size.y*0.5)));
   game->add(new Laser(this, angle-flashAngle1, pallete_color[flashColor],
@@ -210,11 +214,13 @@ osprite, orelativity),
 
 void AlhordianDrBolt::calculate()
 {
+	STACKTRACE
 	Missile::calculate();
 }
 
 
 void AlhordianDreadnought::calculate_laser_sweep(void) {
+	STACKTRACE
   double fractionDone;
   double X, Y, Angle, Length;
   if(currentSweepTime>specialTime) currentSweepTime = specialTime;

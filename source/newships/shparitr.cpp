@@ -70,6 +70,7 @@ trapShip::trapShip(SpaceLocation *creator, Ship *oship, int drainDelayRate, int 
 
 void trapShip::calculate()
   {
+	STACKTRACE
     if(!(ship && ship->exists()))
       {
 		ship = 0;		// you've to do it yourself cause you return before the other calculate call !!
@@ -135,6 +136,7 @@ quasiTrap::quasiTrap(Vector2 opos, double oangle, double trapInitialVelocity, do
 
 void quasiTrap::calculate()
   {
+	STACKTRACE
     if(vDelay < 5)
       vDelay++;
     else
@@ -147,6 +149,7 @@ void quasiTrap::calculate()
 
 void quasiTrap::inflict_damage(SpaceObject *other)
   {
+	STACKTRACE
     if (other->isShip())
       //add(new trapShip( ship, (Ship *)(other), drainDelay, drainAmount, data->spriteWeaponExplosion, 20, 50));
 	  add(new trapShip( this, (Ship *)(other), drainDelay, drainAmount, data->spriteWeaponExplosion, 20, 50));
@@ -158,6 +161,7 @@ void quasiTrap::inflict_damage(SpaceObject *other)
 
 int quasiTrap::handle_damage(SpaceLocation *source, double norm, double direct)
   {
+	STACKTRACE
     return 1;
   }
 
@@ -264,6 +268,7 @@ double ArilouTrapper::isInvisible() const
 
 int ArilouTrapper::handle_damage(SpaceLocation *source, double normal, double direct)
   {
+	STACKTRACE
     if ( cloak == TRUE )
       {
         normal = normal/2;
@@ -275,6 +280,7 @@ int ArilouTrapper::handle_damage(SpaceLocation *source, double normal, double di
 
 int ArilouTrapper::activate_weapon()
   {
+	STACKTRACE
     if(cloak)
       {
         play_sound2(data->sampleSpecial[0]);
@@ -295,6 +301,7 @@ int ArilouTrapper::activate_weapon()
 
 void ArilouTrapper::calculate_fire_special()
   {
+	STACKTRACE
     special_low = FALSE;
     if(fire_special)
       {
@@ -324,12 +331,14 @@ void ArilouTrapper::calculate_fire_special()
 
 void ArilouTrapper::calculate_hotspots()
   {
+	STACKTRACE
     if(!cloak)
       Ship::calculate_hotspots();
   }
 
 void ArilouTrapper::calculate()
   {
+	STACKTRACE
     if (regenerating)
       {
         if ((batt < batt_max) || (crew >= crew_max ))
@@ -368,6 +377,7 @@ void ArilouTrapper::calculate()
 
 void ArilouTrapper::calculate_thrust()
   {
+	STACKTRACE
     if (thrust)
       {
         if (cloak)
@@ -383,6 +393,7 @@ void ArilouTrapper::calculate_thrust()
 
 void ArilouTrapper::calculate_turn_left()
   {
+	STACKTRACE
     if(turn_left && !turn_right)
       {
         accelerate_gravwhip(this, angle + PI*3/4, accel_rate * frame_time/3, speed_max);
@@ -394,6 +405,7 @@ void ArilouTrapper::calculate_turn_left()
 
 void ArilouTrapper::calculate_turn_right()
   {
+	STACKTRACE
     if(turn_right && !turn_left)
       {
         accelerate_gravwhip(this, angle - PI*3/4, accel_rate * frame_time/3, speed_max);
@@ -405,6 +417,7 @@ void ArilouTrapper::calculate_turn_right()
 
 void ArilouTrapper::animate(Frame *space)
   {
+	STACKTRACE
     if((cloak_frame > 0) && (cloak_frame < 300))
       sprite->animate_character( pos, sprite_index, pallete_color[cloak_color[(int)(cloak_frame / 100)]], space);
     else

@@ -199,6 +199,7 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 
 void AlaryBC::calculate()
 {
+	STACKTRACE
 	update_panel = true;
 
 	if (crew <= 0) {
@@ -286,6 +287,7 @@ void AlaryBC::calculate()
 
 int AlaryBC::activate_weapon()
 {
+	STACKTRACE
 	if (crew <= 0) return false;
 
 	game->add(new AlaryBCTorpedo(this, 30*side, 0, angle, 350/*oinactive*/, weaponAccel, weaponVelocity,
@@ -298,6 +300,7 @@ int AlaryBC::activate_weapon()
 
 void AlaryBC::calculate_fire_special()
 {
+	STACKTRACE
 	if (crew <= 0) return;
 
 	if (fire_special && can_switch) {
@@ -308,12 +311,14 @@ void AlaryBC::calculate_fire_special()
 
 void AlaryBC::calculate_thrust()
 {
+	STACKTRACE
 	if (crew <= 0) return;
     Ship::calculate_thrust();
 }
 
 void AlaryBC::calculate_turn_left()
 {
+	STACKTRACE
 	if (crew <= 0) return;
 	if ((turn_left)&&(!turn_right))
 		turn_step_128 -= turn_rate * frame_time;
@@ -321,6 +326,7 @@ void AlaryBC::calculate_turn_left()
 
 void AlaryBC::calculate_turn_right()
 {
+	STACKTRACE
 	if (crew <= 0) return;
 	if ((turn_right)&&(!turn_left))
 		turn_step_128 += turn_rate * frame_time;
@@ -328,6 +334,7 @@ void AlaryBC::calculate_turn_right()
 
 void AlaryBC::calculate_hotspots()
 {
+	STACKTRACE
 	if (crew <= 0) return;
 	if (engines_armour > 0) return;
 	if((thrust) && (hotspot_frame <= 0)) {
@@ -344,6 +351,7 @@ void AlaryBC::calculate_hotspots()
 
 void AlaryBC::animate(Frame *space)
 {
+	STACKTRACE
 	if (state == 0) return;
 
 	double tx = cos(angle), ty = sin(angle);
@@ -384,6 +392,7 @@ void AlaryBC::animate(Frame *space)
 
 int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 {
+	STACKTRACE
 	double total = 0;
 
 //	check for "repair"
@@ -496,12 +505,14 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 
 int AlaryBC::handle_fuel_sap(SpaceLocation *source, double normal)
 {
+	STACKTRACE
 	normal = (normal / extraFuelSapReduction);
 	return Ship::handle_fuel_sap(source, normal);
 }
 
 double AlaryBC::handle_speed_loss(SpaceLocation *source, double normal)
 {
+	STACKTRACE
 	normal = normal / extraSpeedLossReduction;
 	return Ship::handle_speed_loss(source, normal);
 }
@@ -534,6 +545,7 @@ AlaryBCTorpedo::AlaryBCTorpedo(SpaceLocation *creator, double ox, double oy, dou
 
 void AlaryBCTorpedo::calculate()
 {
+	STACKTRACE
 	SpaceObject::calculate();
 	lifetime -= frame_time;
 	if (lifetime < 0) {
@@ -599,6 +611,7 @@ void AlaryBCTorpedo::calculate()
 
 void AlaryBCTorpedo::inflict_damage(SpaceObject *other)
 {
+	STACKTRACE
 	if (!other->isShot()) {
 		game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 10, 50, DEPTH_EXPLOSIONS));
 		state = 0; 
@@ -608,6 +621,7 @@ void AlaryBCTorpedo::inflict_damage(SpaceObject *other)
 
 int AlaryBCTorpedo::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	STACKTRACE
 	if (direct+normal > 0) armour -= direct+normal;
 	if (armour <= 0) {
 		game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 10, 50, DEPTH_EXPLOSIONS));
@@ -632,6 +646,7 @@ AlaryBCWarhead::AlaryBCWarhead(SpaceLocation *creator, double ox, double oy, dou
 
 void AlaryBCWarhead::calculate()
 {
+	STACKTRACE
 	HomingMissile::calculate();
 	
 	while (smoke_frame <= 0) {
@@ -646,6 +661,7 @@ void AlaryBCWarhead::calculate()
 
 void AlaryBCTurret::sinc_it()
 {
+	STACKTRACE
 	double tx = cos(ship->angle);
 	double ty = sin(ship->angle);
 
@@ -692,6 +708,7 @@ AlaryBCTurret::AlaryBCTurret (AlaryBC *oship, double blah_or, double oa, double 
 
 double AlaryBCTurret::get_aim(SpaceObject *tgt)
 {
+	STACKTRACE
 
 	if (tgt == NULL)
 		return (-1);
@@ -738,6 +755,7 @@ double AlaryBCTurret::get_aim(SpaceObject *tgt)
 
 SpaceObject *AlaryBCTurret::get_target(SpaceObject *tgt)
 {
+	STACKTRACE
 	double d_a, prix=-1, prix_c, aim; //!!!
 	Query q;
 	SpaceObject *tgt0=tgt;
@@ -785,6 +803,7 @@ SpaceObject *AlaryBCTurret::get_target(SpaceObject *tgt)
 
 void AlaryBCTurret::calculate()
 {
+	STACKTRACE
 	if (!(ship && ship->exists()))
 	{
 		ship = 0;

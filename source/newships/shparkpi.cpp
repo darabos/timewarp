@@ -210,6 +210,7 @@ ArkanoidPincerShip::~ArkanoidPincerShip(void) {
 }
 
 void ArkanoidPincerShip::animate(Frame* space) {
+	STACKTRACE
   //message.print(1500,6,"ArkanoidPincerShipAnimate1 %d", this->sprite_index);
   Ship::animate(space);
   //message.print(1500,6,"ArkanoidPincerShipAnimate2 %d", this->sprite_index);
@@ -217,6 +218,7 @@ void ArkanoidPincerShip::animate(Frame* space) {
 
 
 void ArkanoidPincerShip::calculate(void) {
+	STACKTRACE
   //message.print(1500,9,"angle = %f turn_step = %f",this->angle, this->turn_step);
   Ship::calculate();
   isScuttlingOld = isScuttling;
@@ -260,6 +262,7 @@ void ArkanoidPincerShip::calculate(void) {
 }
 
 int ArkanoidPincerShip::activate_weapon() {
+	STACKTRACE
   //message.print(1500,5,"ActivateWeapon1");
   if(areJawsOpening)return(FALSE);
   if(areJawsClosing)return(FALSE);
@@ -289,6 +292,7 @@ int ArkanoidPincerShip::activate_special() {
 
 void ArkanoidPincerShip::calculate_turn_left()
 {
+	STACKTRACE
 //message.print(1500,6,"CalcTurnLeft1");
 	double motionAngle;
 	if(isScuttling==FALSE) {
@@ -312,6 +316,7 @@ void ArkanoidPincerShip::calculate_turn_left()
 }
 
 void ArkanoidPincerShip::calculate_turn_right() {
+	STACKTRACE
   //message.print(1500,6,"CalcTurnRight1");
   double motionAngle;
   if(isScuttling==FALSE) {
@@ -342,6 +347,7 @@ void ArkanoidPincerShip::calculate_turn_right() {
 }
 
 void ArkanoidPincerShip::calculate_thrust(){
+	STACKTRACE
   //message.print(1500,6,"CalcThrust1");
 
   if(isScuttling==FALSE) {
@@ -352,6 +358,7 @@ void ArkanoidPincerShip::calculate_thrust(){
 }
 
 double ArkanoidPincerShip::handle_speed_loss(SpaceLocation* source, double normal) {
+	STACKTRACE
 	double speed_loss = normal;
 	if(speed_loss > 0.0) {
 		double sl = (30/(mass+30)) * speed_loss;
@@ -374,6 +381,7 @@ int ArkanoidPincerShip::getSpriteIndex(void) {
 }
 
 void ArkanoidPincerShip::collide(SpaceObject *other) {
+	STACKTRACE
   if(pincerL)
     if(other==pincerL) return;
   if(pincerR)
@@ -383,6 +391,7 @@ void ArkanoidPincerShip::collide(SpaceObject *other) {
 }
 
 int ArkanoidPincerShip::handle_damage(SpaceLocation* source, double normal, double direct) {
+	STACKTRACE
   int x;
   //message.print(1500,6,"ArkanoidPincerShipHandleDamage1");
   x = Ship::handle_damage(source, normal, direct);
@@ -396,6 +405,7 @@ int ArkanoidPincerShip::handle_damage(SpaceLocation* source, double normal, doub
 
 
 void ArkanoidPincerShip::OpenPincers(void) {
+	STACKTRACE
   //message.print(1500,11,"OpenPincers1");
   fractionJawsOpen += (double)frame_time / (double)weaponTimeToOpen;
   if(fractionJawsOpen>1.00) {
@@ -413,6 +423,7 @@ void ArkanoidPincerShip::OpenPincers(void) {
 }
 
 void ArkanoidPincerShip::ClosePincers(void) {
+	STACKTRACE
   //message.print(1500,11,"ClosePincers1");
   if(pincerL) pincerL->mass = 0;
   if(pincerR) pincerR->mass = 0;
@@ -432,6 +443,7 @@ void ArkanoidPincerShip::ClosePincers(void) {
 }
 
 void ArkanoidPincerShip::Regrow(void) {
+	STACKTRACE
   //message.print(1500,11,"Regrow1");
   if(pincerL) {
     if(pincerL->isAlive==FALSE) {
@@ -463,6 +475,7 @@ void ArkanoidPincerShip::Regrow(void) {
 }
 
 void ArkanoidPincerShip::death(void) {
+	STACKTRACE
   //message.print(1500,13,"ShipDeath1");
   if (pincerL && pincerL->exists()) {
       pincerL->creator = NULL;
@@ -517,6 +530,7 @@ ArkanoidPincer::~ArkanoidPincer(void) {
 }
 
 void ArkanoidPincer::death(void) {
+	STACKTRACE
   //message.print(1500,14,"ArkanoidPincerDeath1");
   //state=1;
   //isAlive = 0;
@@ -525,6 +539,7 @@ void ArkanoidPincer::death(void) {
 }
 
 bool ArkanoidPincer::die(void) {
+	STACKTRACE
   bool x;
   //message.print(1500,14,"ArkanoidPincerDie1");
   //state = 1;
@@ -535,6 +550,7 @@ bool ArkanoidPincer::die(void) {
 }
 
 void ArkanoidPincer::animate(Frame* space) {
+	STACKTRACE
   //message.print(1500,4,"ArkanoidPincerAnimate1 %d", this->sprite_index);
   if(isAlive) SpaceObject::animate(space);
   //message.print(1500,4,"ArkanoidPincerAnimate2 %d", this->sprite_index);
@@ -542,6 +558,7 @@ void ArkanoidPincer::animate(Frame* space) {
 
 
 void ArkanoidPincer::MoveToRelativeLocation(Ship* ocreator, double ox, double oy) {
+	STACKTRACE
   double ddx, ddy, aRad;
   //message.print(1500,15,"MoveToRelativeLocation1");
   if(ocreator==NULL) return;
@@ -556,6 +573,7 @@ void ArkanoidPincer::MoveToRelativeLocation(Ship* ocreator, double ox, double oy
 }
 
 void ArkanoidPincer::MoveToRelativeLocationPolar(Ship* ocreator, double oangle, double odistance) {
+	STACKTRACE
   double aRad;
   //message.print(1500,15,"MoveToRelativeLocationPolar1");
   if(!creator) return;
@@ -569,6 +587,7 @@ void ArkanoidPincer::MoveToRelativeLocationPolar(Ship* ocreator, double oangle, 
 }
 
 void ArkanoidPincer::calculate(void) {
+	STACKTRACE
   double angleDirection;
   //message.print(1500,15,"ArkanoidPincerCalculate1");
   angleDirection = creator->angle + creator->turn_step + angleShift + angleSkew;
@@ -582,6 +601,7 @@ void ArkanoidPincer::calculate(void) {
 }
 
 void ArkanoidPincer::collide(SpaceObject *other) {
+	STACKTRACE
   Vector2 vv;
   if(!isAlive) return;
   if(other==this->creator) return;
@@ -597,6 +617,7 @@ void ArkanoidPincer::collide(SpaceObject *other) {
 }
 
 void ArkanoidPincer::inflict_damage(SpaceObject *other) {
+	STACKTRACE
   int i;
 	i = damage_factor / 2;
   //double oldMass;
@@ -628,6 +649,7 @@ void ArkanoidPincer::inflict_damage(SpaceObject *other) {
 }
 
 int ArkanoidPincer::handle_damage (SpaceLocation *source, double normal, double direct) {
+	STACKTRACE
   int x;
 
   if (source->isPlanet())

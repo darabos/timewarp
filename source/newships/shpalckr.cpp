@@ -160,6 +160,7 @@ AlcheroKronos::AlcheroKronos(Vector2 opos, double shipAngle,
 }
 
 int AlcheroKronos::activate_weapon(){
+	STACKTRACE
   if( !weaponObject ){
     weaponObject = new AlcheroLaser( this, angle, pallete_color[ALCHERO_TRACE_START_INDEX], weaponDamage,
       weaponRate, this, 0, 0.5*size.y, weaponDeccel, weaponMinSpeed, weaponVelocity, weaponGrowth,
@@ -171,6 +172,7 @@ int AlcheroKronos::activate_weapon(){
 }
 
 void AlcheroKronos::calculate(){
+	STACKTRACE
   Ship::calculate();
   dial_angle += turbo_change * frame_time / (1.0 + turbo_change) * PI/180;
   dial_index = get_index(angle + dial_angle);
@@ -182,6 +184,7 @@ void AlcheroKronos::calculate(){
 }
 
 int AlcheroKronos::activate_special(){
+	STACKTRACE
 	double t = game->get_turbo();
 	if( t - specialSpeedDown > specialMinTime ){
 		turbo_change -= specialSpeedDown;
@@ -206,6 +209,7 @@ int AlcheroKronos::activate_special(){
 }
 
 int AlcheroKronos::deactivate_special(){
+	STACKTRACE
   double t = game->get_turbo();
   if( turbo_change == 0 ) return TRUE;
   if( turbo_change + specialSpeedUp < 0 ){
@@ -234,6 +238,7 @@ int AlcheroKronos::deactivate_special(){
 }
 
 void AlcheroKronos::compensate( double t ){
+	STACKTRACE
   turn_rate = turn_rate_orig / t;
   speed_max = speed_max_orig / t;
   accel_rate = accel_rate_orig / (t * t);
@@ -245,6 +250,7 @@ void AlcheroKronos::compensate( double t ){
 }
 
 void AlcheroKronos::calculate_fire_weapon(){
+	STACKTRACE
   weapon_low = FALSE;
 
   if (fire_weapon) {
@@ -267,6 +273,7 @@ void AlcheroKronos::calculate_fire_weapon(){
 }
 
 void AlcheroKronos::calculate_fire_special(){
+	STACKTRACE
   special_low = FALSE;
 
   if(fire_special && batt >= special_drain) {
@@ -293,6 +300,7 @@ void AlcheroKronos::calculate_fire_special(){
 }
 
 void AlcheroKronos::calculate_hotspots() {
+	STACKTRACE
   if((thrust) && (hotspot_frame <= 0)) {
     game->add(new Animation( this, 
 	  pos - unit_vector(angle) * size.x / 4.5,
@@ -306,12 +314,14 @@ void AlcheroKronos::calculate_hotspots() {
 }
 
 void AlcheroKronos::animate( Frame* space ){
+	STACKTRACE
   Ship::animate( space );
 //  if( dial_index != sprite_index )
   data->spriteWeapon->animate( pos, dial_index, space );
 }
 
 void AlcheroKronos::death(){
+	STACKTRACE
   if( turbo_change != 0 ){
     double t = game->get_turbo();
     t -= turbo_change;
@@ -322,6 +332,7 @@ void AlcheroKronos::death(){
 }
 
 AlcheroKronos::~AlcheroKronos(){
+	STACKTRACE
   delete copy_of_sampleSpecial;
   copy_of_sampleSpecial = NULL;
 }
@@ -346,6 +357,7 @@ AlcheroLaser::AlcheroLaser(SpaceLocation *creator, double langle, int lcolor, in
 }
 
 void AlcheroLaser::calculate(){
+	STACKTRACE
   if( step > 0 ) step -= frame_time;
   if( step <= 0 ){
     step += rate;
@@ -422,6 +434,7 @@ AlcheroLaserTrace::AlcheroLaserTrace( SpaceLocation *creator, double langle,
 }
 
 void AlcheroLaserTrace::calculate(){
+	STACKTRACE
   while( step <= 0 ){
     step += rate;
     color_index++;
