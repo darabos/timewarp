@@ -99,7 +99,9 @@ void ShipPanel::calculate() {STACKTRACE
 	return;
 	}
 
-void ShipPanel::animate(Frame *space) {STACKTRACE
+void ShipPanel::animate(Frame *space) {
+	STACKTRACE;
+
 	BITMAP *screen = window->surface;
 	if (!screen) return;
 	int panel_x, panel_y, panel_width, panel_height;
@@ -118,6 +120,7 @@ void ShipPanel::animate(Frame *space) {STACKTRACE
 			acquire_screen();
 //			blit(panel, screen, 0, 0, panel_x, panel_y, 64, 100);
 //			blit(captain, screen, 0, 0, captain_x, captain_y, CAPTAIN_WIDTH, CAPTAIN_HEIGHT);
+			aa_set_mode(AA_NO_AA);
 			aa_stretch_blit(panel, screen, 0, 0, panel->w, panel->h, panel_x, panel_y, panel_width, panel_height);
 			release_screen();
 			}
@@ -136,7 +139,7 @@ void ShipPanel::animate(Frame *space) {STACKTRACE
 		blit (captain, panel, 0, 0, CAPTAIN_X, CAPTAIN_Y, captain->w, captain->h);
 		acquire_screen();
 //		blit(captain, screen, 0, 0, captain_x, captain_y, CAPTAIN_WIDTH, CAPTAIN_HEIGHT);
-		aa_set_mode(0);
+		aa_set_mode(AA_NO_AA);
 		aa_stretch_blit(panel, screen, 0, 0, panel->w, panel->h, panel_x, panel_y, panel_width, panel_height);
 		release_screen();
 		return;
@@ -196,7 +199,7 @@ void ShipPanel::animate(Frame *space) {STACKTRACE
 		window->lock();
 //		blit(panel, screen, 0, 0, panel_x, panel_y, 64, 100);
 //		blit(captain, screen, 0, 0, captain_x, captain_y, CAPTAIN_WIDTH, CAPTAIN_HEIGHT);
-		aa_set_mode(0);
+		aa_set_mode(AA_NO_AA);
 		aa_stretch_blit(panel, window->surface, 0, 0, panel->w, panel->h, panel_x, panel_y, panel_width, panel_height);
 		window->unlock();
 		}
