@@ -223,6 +223,8 @@ SpaceObject(creator, opos, oangle, osprite)
 
 	OrbitDecayFactor = odecay;
 	WellSize = oWellSize;
+
+	isblockingweapons = false;
 }
 
 

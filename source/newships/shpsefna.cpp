@@ -220,6 +220,8 @@ SpaceObject(creator, creator->pos+orelpos, creator->angle, osprite)
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = ALL_LAYERS;
+
+	isblockingweapons = false;
 }
 
 

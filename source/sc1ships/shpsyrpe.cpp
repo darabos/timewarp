@@ -41,9 +41,13 @@ SyreenPenetrator::SyreenPenetrator(Vector2 opos, double angle, ShipData *data, u
 
 int SyreenPenetrator::activate_weapon()
 {
-  add(new Missile(this, Vector2(0.0, size.y / 2.0),
-    angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
-    this, data->spriteWeapon));
+	Missile *m;
+	m = new Missile(this, Vector2(0.0, size.y / 2.0 + 10),
+			angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
+			this, data->spriteWeapon);
+	add(m);
+	m->collide_flag_sameship = ALL_LAYERS;
+
   return(TRUE);
 }
 
@@ -96,6 +100,8 @@ CrewPod::CrewPod(Vector2 opos, double oVelocity, int oLifeTime,
 	collide_flag_sameteam = ALL_LAYERS;
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
+
+	isblockingweapons = false;
 }
 
 int CrewPod::sameTeam(SpaceLocation *other) {

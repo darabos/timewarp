@@ -439,6 +439,7 @@ NechanziStun::NechanziStun(Ship *oship, SpaceSprite *osprite,
 {
 	collide_flag_anyone = 0;
   layer = LAYER_EXPLOSIONS;
+  isblockingweapons = false;
 }
 
 void NechanziStun::calculate() {

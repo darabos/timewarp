@@ -216,6 +216,8 @@ SpaceObject( creator,
   vel = ship->get_vel();
   sprite_index = get_index(angle);
   countdown = 1000 + random() % 2000;
+
+  isblockingweapons = true;
 }
 
 void JyglarBubble::calculate(){

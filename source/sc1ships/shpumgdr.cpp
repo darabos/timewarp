@@ -85,6 +85,8 @@ UmgahCone::UmgahCone(double odist, int odamage, UmgahDrone *oship,
 	sprite_index = get_index(angle);
 
 	collide_flag_sameship = 0;
+
+	isblockingweapons = false;
 }
 
 bool UmgahCone::change_owner(SpaceLocation *new_owner) {

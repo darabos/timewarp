@@ -287,6 +287,8 @@ SpaceObject( creator, opos->pos+rpos, oangle, osprite)
 {
 	layer = LAYER_SHOTS;
 
+	isblockingweapons = false;
+
 	target = otarget;
 
 	mass = 1.0;

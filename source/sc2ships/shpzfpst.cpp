@@ -99,6 +99,8 @@ ZoqFotPikTongue::ZoqFotPikTongue(double odist, int odamage, Ship *oship,
   vel = ship->get_vel();
   sprite_index = get_index(ship->get_angle());
   sprite_index += (64 * frame);
+
+  isblockingweapons = true;
 }
 
 void ZoqFotPikTongue::calculate()

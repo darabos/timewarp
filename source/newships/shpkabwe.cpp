@@ -208,6 +208,8 @@ hostiletime(ohostiletime)
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = 0;
+
+	isblockingweapons = false;
 }
 
 

@@ -642,6 +642,8 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	collide_flag_sameship = 0;
 	collide_flag_anyone = ALL_LAYERS;
 	id = SPACE_OBJECT;
+
+	isblockingweapons = true;
 	}
 
 void SpaceObject::animate(Frame *space) {STACKTRACE

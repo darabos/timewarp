@@ -541,6 +541,8 @@ AlaryBCTorpedo::AlaryBCTorpedo(SpaceLocation *creator, double ox, double oy, dou
 //        explosionFrameCount = 10;
 //        explosionFrameSize  = 50;
 //        explosionSample = data->sampleWeapon[1];
+
+	isblockingweapons = false;
 }
 
 void AlaryBCTorpedo::calculate()
@@ -612,7 +614,9 @@ void AlaryBCTorpedo::calculate()
 void AlaryBCTorpedo::inflict_damage(SpaceObject *other)
 {
 	STACKTRACE
-	if (!other->isShot()) {
+	//if (!other->isShot()) {
+	if (other->isblockingweapons)
+	{
 		game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 10, 50, DEPTH_EXPLOSIONS));
 		state = 0; 
 		play_sound((SAMPLE *)(melee[MELEE_BOOM].dat));

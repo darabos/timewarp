@@ -233,6 +233,8 @@ ChmmrZapSat::ChmmrZapSat(double oangle, double orange, int odamage,
 		ship = 0;
 		state = 0;
 	}
+
+	isblockingweapons = false;
 }
 
 void ChmmrZapSat::calculate() {

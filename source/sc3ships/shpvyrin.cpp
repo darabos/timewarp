@@ -150,6 +150,8 @@ VyroIngoSheild::VyroIngoSheild (Vector2 opos, int odamage, int oframes,
   damage_factor = odamage;
   sprite_index = 1;
 	vel = ship->get_vel();
+
+	isblockingweapons = true;
 }
 
 void VyroIngoSheild::calculate()

@@ -219,6 +219,8 @@ mother(oship)
 	collide_flag_sameteam = ALL_LAYERS;
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
+
+	isblockingweapons = false;
 }
 
 int CrewPodPP::sameTeam(SpaceLocation *other)

@@ -234,6 +234,8 @@ SpaceObject(omother, opos, oangle, osprite)
 	//collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = bit(LAYER_SHIPS) | bit(LAYER_SHOTS);
 
+	isblockingweapons = false;
+
 	mass = 0.001;
 
 	armour = oarmour;

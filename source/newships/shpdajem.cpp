@@ -356,6 +356,8 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
   collide_flag_anyone = ALL_LAYERS;
   collide_flag_sameteam = bit(LAYER_SHIPS)|bit(LAYER_SHOTS);
   collide_flag_sameship = bit(LAYER_SHIPS)|bit(LAYER_SHOTS);
+  isblockingweapons = false;
+
   defenseEfficiency = creator->specialDefenseEfficiency;
   damage_factor = creator->sanctuaryDamage;
   mass = creator->sanctuaryMass;

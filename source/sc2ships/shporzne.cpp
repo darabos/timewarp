@@ -205,6 +205,8 @@ OrzMarine::OrzMarine(Vector2 opos, Ship *oship, double oAccelRate,
 		layer = LAYER_SPECIAL;
 		set_depth(DEPTH_SPECIAL);
         mass = 0.001;
+
+		isblockingweapons = true;
 }
 
 void OrzMarine::calculate() {

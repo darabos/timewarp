@@ -132,6 +132,8 @@ SpaceObject(creator, opos, oangle, osprite)
 	damage_factor = mother->specialDamage;
 
 	armour = mother->specialArmour;
+
+	isblockingweapons = false;
 }
 
 void QuaiEngine::calculate()

@@ -283,6 +283,7 @@ class SpaceObject : public SpaceLocation {
 	public:
 	Vector2 size;      //size of sprite
 	double  mass; //mass of object
+	bool isblockingweapons;	// this object blocks weaponry (shots)
 	protected:
 	SpaceSprite *sprite; //the pictures that this object looks like
 	int          sprite_index; //which one of those pictures is active at the moment

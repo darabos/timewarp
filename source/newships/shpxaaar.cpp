@@ -183,6 +183,8 @@ SpaceObject(omother, omother->pos+rpos, omother->angle+rangle, osprite)
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
 	//collide_flag_sameship = ALL_LAYERS;
+
+	isblockingweapons = false;
 }
 
 

@@ -199,6 +199,8 @@ SpaceObject(creator, 0, 0, osprite)
 
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
+
+	isblockingweapons = false;
 }
 
 

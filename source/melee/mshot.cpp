@@ -41,6 +41,8 @@ Shot::Shot(SpaceLocation *creator, Vector2 rpos, double oangle, double ov,
 	id |= SPACE_SHOT;
 
 	if (range < 0) range = 99999999999999.0;
+
+	isblockingweapons = false;
 }
 
 void Shot::calculate() {
@@ -76,7 +78,8 @@ int Shot::handle_damage(SpaceLocation *source, double normal, double direct) {
 void Shot::inflict_damage(SpaceObject *other) {
 	if (!other->exists()) return;
 	damage(other, damage_factor);
-	if (!other->isShot()) state = 0;
+	//if (!other->isShot()) state = 0;
+	if (other->isblockingweapons) state = 0;
 	if (state == 0) {
 	animateExplosion();
 	soundExplosion(); 

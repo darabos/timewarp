@@ -156,7 +156,9 @@ XchaggerSpecial::XchaggerSpecial(Vector2 opos, double oangle,
   disableFrames(oframes),
   disableSprite(oship->data->spriteExtra),
   disableSound(oship->data->sampleSpecial[1])
-{}
+{
+	isblockingweapons = false;
+}
 
 void XchaggerSpecial::animateExplosion() {}
 

@@ -360,6 +360,7 @@ TauMercurySpark::TauMercurySpark (SpaceLocation *creator, double ox, double oy, 
 	pos = normalize(creator->normal_pos() + rotate(Vector2(-ox, oy), -PI/2+creator->get_angle()));
 
 	vel = creator->get_vel() * relativity + ov * unit_vector(angle);
+
 }
 
 void TauMercurySpark::calculate()

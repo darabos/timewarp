@@ -74,7 +74,9 @@ void MyconPlasma::calculate()
 void MyconPlasma::inflict_damage(SpaceObject *other)
 {
   SpaceObject::inflict_damage(other);
-  if (!other->isShot()) {
+  //if (!other->isShot()) {
+  if (other->isblockingweapons)
+  {
 	  if (other->exists()) {
 		  add(new FixedAnimation(this, other,
 				spriteWeaponExplosion, 0, 20, 50, DEPTH_EXPLOSIONS));

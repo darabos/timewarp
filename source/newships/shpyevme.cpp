@@ -277,6 +277,7 @@ layer = LAYER_SHOTS;
 
 id    = SPACE_SHOT;
 calculate();
+isblockingweapons = true;
 
 }
 
@@ -332,6 +333,7 @@ YevSaber::YevSaber(YevMech *oship,SpaceSprite *osprite) :
 {
 
 	  layer = LAYER_SPECIAL;
+	  isblockingweapons = true;
   calculate();
 }
 

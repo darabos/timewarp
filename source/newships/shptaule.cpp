@@ -217,7 +217,8 @@ void LeviathanMissile::inflict_damage(SpaceObject *other)
 
 	damage (other, damage_factor);
 
-	if (!other->isShot()) {
+//	if (!other->isShot()) {
+	if (other->isblockingweapons) {
 
 		state = 0;
 

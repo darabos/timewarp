@@ -281,6 +281,8 @@ SpaceObject(creator, opos, oangle, osprite)
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = ALL_LAYERS;
+
+	isblockingweapons = false;
 }
 
 int SlownessMine::handle_damage(SpaceLocation* source, double normal, double direct)

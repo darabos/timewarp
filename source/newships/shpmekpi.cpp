@@ -236,6 +236,8 @@ SpaceObject(oship, oship->pos+odist*unit_vector(a), a, ospr)
 
 	mass = 0;	// so that it can slice through without pushing it away
 	layer = LAYER_SPECIAL;
+
+	isblockingweapons = true;
 }
 
 

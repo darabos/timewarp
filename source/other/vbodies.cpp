@@ -1195,7 +1195,8 @@ void VMetalShard::inflict_damage(SpaceObject *other) {
 	damage(other, 0, damage_factor);
   if(other->isShip()) ((Ship*)other)->update_panel=1;
   if(VMetalShard::noBounce) 
-    if(!other->isShot()) state=0;
+    //if(!other->isShot()) state=0;
+	if (other->isblockingweapons) state = 0;
 	return;
 }
 
@@ -1272,7 +1273,8 @@ void VMetalAsteroid::inflict_damage(SpaceObject *other) {STACKTRACE
 	damage(other, 0, damage_factor);
   if(other->isShip()) ((Ship*)other)->update_panel=1;
   if(VMetalAsteroid::noBounce) 
-    if(!other->isShot()) state=0;
+    //if(!other->isShot()) state=0;
+	if (other->isblockingweapons) state = 0;
 	return;
 }
 
@@ -1375,7 +1377,8 @@ void VSmallAsteroid::inflict_damage(SpaceObject *other) {
 	damage(other, 0, damage_factor);
   if(other->isShip()) ((Ship*)other)->update_panel=1;
   if(VSmallAsteroid::noBounce) 
-    if(!other->isShot()) state=0;
+    //if(!other->isShot()) state=0;
+	if (other->isblockingweapons) state = 0;
 	return;
 }
 
@@ -1445,7 +1448,8 @@ void VLargeAsteroid::inflict_damage(SpaceObject *other) {
 	damage(other, 0, damage_factor);
   if(other->isShip()) ((Ship*)other)->update_panel=1;
   if(VLargeAsteroid::noBounce) 
-    if(!other->isShot()) state=0;
+    //if(!other->isShot()) state=0;
+	if (other->isblockingweapons) state = 0;
 	return;
 }
 

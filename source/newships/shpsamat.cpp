@@ -299,6 +299,8 @@ SpaceObject(ocreator, opos, oangle, osprite)
 	timer = 0;
 	ftime = 0.3;
 	sprite_index = 0;
+
+	isblockingweapons = false;
 }
 
 
@@ -585,6 +587,8 @@ SpaceObject(ocreator, opos, oangle, osprite)
 	collide_flag_sameship = 0;
 	collide_flag_sameteam = 0;
 	collide_flag_anyone = ALL_LAYERS;
+
+	isblockingweapons = false;
 
 
 	mass = 0;

@@ -542,6 +542,7 @@ SpaceObject(creator, opos, oangle, osprite)
 {
 	layer = LAYER_SHOTS;
 	vel = 0;
+	isblockingweapons = true;
 
 	lifetime = olifetime;
 	existtime = 0;

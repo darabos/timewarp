@@ -86,6 +86,8 @@ armour(oarmour)
 	collide_flag_sameship = 0;
 
 	damage_factor = odamage;
+
+	isblockingweapons = false;
 }
 
 void TimedShot::calculate()
@@ -121,7 +123,8 @@ void TimedShot::inflict_damage(SpaceObject *other)
 
 	damage(other, damage_factor);
 
-	if (!other->isShot()) state = 0;
+	//if (!other->isShot()) state = 0;
+	if (other->isblockingweapons) state = 0;
 
 	if (state == 0)
 	{
