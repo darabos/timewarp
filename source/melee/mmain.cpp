@@ -590,7 +590,8 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		}
 		
 
-		}
+		
+	}
 
 	log_test();
 
@@ -718,23 +719,36 @@ void NormalGame::handle_end()
 	// I suppose, each player is making/ has made such a choice ...
 	int choices[32];
 	int k;
+	int local_choice = 0;	// only 1 local player needs to make a choice; the rest can be copied for local players
 	for ( k = 0; k < num_players; ++k )
 	{
-		int ichoice = 9;
+		// zero indicates an invalid choice (note that valid choices as 1 and 2 --> see the tw_alert menu below
+		int ichoice = 0;
 		
-		// channel_server is always the local channel ?
 		if (is_local(player_control[k]->channel))
 		{
-			char *endmessage;
-			if (player_isalive(k))
-				endmessage = "Victory";
-			else
-				endmessage = "Game Over";
-			
-			char tmp[512];
-			sprintf(tmp, "%s  num = %i  channel = %i framenum = %i", endmessage, k, player_control[k]->channel, frame_number);
-			
-			ichoice = tw_alert(tmp, "&QUIT", "&RESTART");
+			// note, that a "local" player can also be an AI ship, but that doesn't matter,
+			// what matters is that all players on one computer (AI or human) submit the
+			// same choice.
+			if (!local_choice)
+			{
+				char *endmessage;
+				if (player_isalive(k))
+					endmessage = "Victory";
+				else
+					endmessage = "Game Over";
+				
+				char tmp[512];
+				sprintf(tmp, "%s  num = %i  channel = %i framenum = %i", endmessage, k, player_control[k]->channel, frame_number);
+				
+				ichoice = tw_alert(tmp, "&QUIT", "&RESTART");
+				
+				local_choice = ichoice;
+
+			} else {
+				// copy the local choice
+				ichoice = local_choice;
+			}
 		}
 		
 		//log_int(player_control[k]->channel, ichoice);
@@ -751,6 +765,13 @@ void NormalGame::handle_end()
 
 
 	log_test();
+
+	// extra test, check if all choices are "valid" (ie non-zero)
+	for ( i = 0; i < num_players; ++i )
+	{
+		if (!choices[i])
+			tw_error("an invalid choice was encountered at end of the game");
+	}
 
 
 	// check if all the players want to restart, or quit, if not, give a warning and quit
@@ -812,17 +833,17 @@ void NormalGame::log_test()
 	k = random();
 	m = k;
 	
-	log_int(player_control[0]->channel, k);
-	if ( k != m )
-		tw_error("weird, log stack is probably mixed up");
-
-	log_int(player_control[1]->channel, k);
-	if ( k != m )
-		tw_error("weird, log stack is probably mixed up");
+	int i;
+	for ( i = 0; i < num_players; ++i )
+	{
+		log_int(player_control[i]->channel, k);
+		if ( k != m )
+			tw_error("weird, log stack is probably mixed up");
+	}
 
 	// check if the "log stack" of data is empty
 	if (log_totalsize() > 0)
-		tw_error("Log isn't empty (A)  %i %i", log_size_pl(0), log_size_pl(1));
+		tw_error("Log isn't empty  %i %i", log_size_pl(0), log_size_pl(1));
 #endif
 // otherwise, it's just an empty routine.
 }
