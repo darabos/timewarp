@@ -137,7 +137,7 @@ TrideminGemini::TrideminGemini(Vector2 opos, double shipAngle,
 
 
 	angularSpeed=.5;
-	turretAngle=turretMax;
+	turretAngle=0;//(turretMax - turretMin) / 2;
 	turret=new TrideminTurret(this,Vector2(0,0),turretAngle,data->spriteSpecial);
 	add(turret);
 }
