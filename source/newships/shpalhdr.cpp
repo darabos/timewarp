@@ -36,14 +36,19 @@ public:
 	double flashAngle7, flashRange7, flashDamage7;
 	int flashColor;
 	
-	double specialStartX, specialStartY;
-	double specialEndX, specialEndY;
+//	double specialStartX, specialStartY;
+//	double specialEndX, specialEndY;
 	double specialStartAngle, specialEndAngle;
 	double specialStartRange, specialEndRange;
 	//double specialStartLength, specialEndLength;
 	double specialTime;
 	double specialDamage;
 	int specialSustain;
+
+	double	laser_angle;
+	int		laser_direction;
+	int		laser_direction_change;
+	Vector2	rP1, rP2;
 	
 public:
 	AlhordianDreadnought(Vector2 opos, double angle, ShipData *data, unsigned int code);
@@ -52,13 +57,9 @@ protected:
 	virtual int activate_weapon();
 	virtual int activate_special();
 	virtual void calculate();
+	virtual void animate(Frame *f);
 	void weapon_flash();
 	void calculate_laser_sweep();
-	
-private:
-	
-//	int weaponSpriteNumber;
-//	int justBorn;
 };
 
 
@@ -85,7 +86,6 @@ public:
 	double friction;
 
 	virtual void calculate(void);
-	//virtual void animateExplosion(void);
 	void inflict_damage(SpaceObject *other);
 };
 
@@ -131,10 +131,10 @@ Ship(opos, angle, data, code)
 	flashDamage6 = get_config_int("Flash", "Damage6", 0);
 	flashDamage7 = get_config_int("Flash", "Damage7", 0);
 	
-	specialStartX = get_config_float("Special", "StartX", 0);
-	specialStartY = get_config_float("Special", "StartY", 0);
-	specialEndX = get_config_float("Special", "EndX", 0);
-	specialEndY = get_config_float("Special", "EndY", 0);
+//	specialStartX = get_config_float("Special", "StartX", 0);
+//	specialStartY = get_config_float("Special", "StartY", 0);
+//	specialEndX = get_config_float("Special", "EndX", 0);
+//	specialEndY = get_config_float("Special", "EndY", 0);
 	specialStartAngle = get_config_float("Special", "StartAngle", 0) * ANGLE_RATIO;
 	specialEndAngle = get_config_float("Special", "EndAngle", 0) * ANGLE_RATIO;
 	specialStartRange = scale_range(get_config_float("Special", "StartRange", 0));
@@ -146,6 +146,18 @@ Ship(opos, angle, data, code)
 	//currentSweepTime = (int)specialTime + 1;
 	currentSweepTime = 0; //pulling up on
 	sweepIsOn = FALSE;
+
+	laser_angle = specialStartAngle;
+	laser_direction = 1;
+	laser_direction_change = 0;
+
+	int dx, dy;
+	dx = get_config_int("Special", "DX", -5);
+	dy = get_config_int("Special", "DY", -5);
+	rP1 = Vector2(dx,  dy);
+	rP2 = Vector2(dx, -dy);
+//	rP1 = Vector2(-5, -17);
+//	rP2 = Vector2(-5,  17);
 }
 
 AlhordianDreadnought::~AlhordianDreadnought(void) {
@@ -163,11 +175,21 @@ void AlhordianDreadnought::calculate()
 
 	if (sweepIsOn)
 	{
-		if (!fire_weapon && fire_special)
-			currentSweepTime += frame_time;
+//		if (!fire_weapon && fire_special)
+//			currentSweepTime += frame_time;
+//
+//		else if (fire_weapon && fire_special)
+//			currentSweepTime -= frame_time;
+		currentSweepTime += laser_direction * frame_time;
 
-		else if (fire_weapon && fire_special)
-			currentSweepTime -= frame_time;
+		if (laser_direction_change > 0)
+			laser_direction_change -= frame_time;
+
+		if (fire_weapon && laser_direction_change <= 0)
+		{
+			laser_direction = -laser_direction;
+			laser_direction_change = 250;
+		}
 	}
 }
 
@@ -177,7 +199,9 @@ int AlhordianDreadnought::activate_weapon()
 	STACKTRACE;
 
 	if (fire_special)
+	{
 		return false;
+	}
 
 	AlhordianTorpedo* KT;
 	KT = new AlhordianTorpedo(this, Vector2(0, size.y * 0.4), this->angle,
@@ -251,7 +275,8 @@ void AlhordianDreadnought::calculate_laser_sweep(void)
 	STACKTRACE;
 	
 	double fractionDone;
-	double X, Y, Angle, Length;
+	//double X, Y, 
+	double Angle, Length;
 	
 	if ( currentSweepTime < 0 )
 		currentSweepTime = 0;
@@ -266,17 +291,24 @@ void AlhordianDreadnought::calculate_laser_sweep(void)
 	}
 	
 	fractionDone = currentSweepTime / specialTime;
-	X = specialStartX * (1-fractionDone) + specialEndX * fractionDone;
-	Y = specialStartY * (1-fractionDone) + specialEndY * fractionDone;
+//	X = specialStartX * (1-fractionDone) + specialEndX * fractionDone;
+//	Y = specialStartY * (1-fractionDone) + specialEndY * fractionDone;
 
 	Angle = specialStartAngle * (1-fractionDone) + specialEndAngle * (fractionDone);
 	Length = specialStartRange * (1-fractionDone) + specialEndRange * (fractionDone);
-	
+
+	laser_angle = Angle;
+
+	Vector2 rP;
+	rP = rotate(rP2, PI/2);
+
 	game->add(new Laser(this,Angle+angle, palette_color[9], Length, specialDamage, specialSustain,
-		this, Vector2(size.y * X, size.y * Y), TRUE));
+		this, rP /*Vector2(size.y * X, size.y * Y)*/, TRUE));
 	
+	rP = rotate(rP1, PI/2);
+
 	game->add(new Laser(this,-Angle+angle, palette_color[9], Length, specialDamage, specialSustain,
-		this, Vector2(-size.y * X, size.y * Y), TRUE));
+		this, rP/*Vector2(-size.y * X, size.y * Y)*/, TRUE));
 }
 
 
@@ -355,6 +387,24 @@ void AlhordianTorpedo::inflict_damage(SpaceObject *other)
 }
 
 
+
+void AlhordianDreadnought::animate(Frame *f)
+{
+	Ship::animate(f);
+
+	int laser_index;
+	Vector2 P;
+
+	P = pos + rotate(rP1, angle);
+	laser_index = get_index(angle + laser_angle);
+
+	data->spriteExtra->animate(P, laser_index, f);
+
+	P = pos + rotate(rP2, angle);
+	laser_index = get_index(angle - laser_angle);
+
+	data->spriteExtra->animate(P, laser_index, f);
+}
 
 REGISTER_SHIP (AlhordianDreadnought)
 

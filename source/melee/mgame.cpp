@@ -467,24 +467,30 @@ void game_create_errorlog(const char *exitmessage = 0)
 	fprintf(f, "local time = %i-%02i-%02i %02i:%02i\n\n", td->tm_mday, td->tm_mon+1, 1900+td->tm_year,
 		td->tm_hour, td->tm_min);
 
-	fprintf(f, "name, pos(x,y), vel(x,y), state, obj-pointer(this), ship-pointer(ship), target pointer(target)\n\n");
-	int i;
-	for (i = 0; i < physics->num_items; i += 1)
+	if (physics)
 	{
-		SpaceLocation *s;
-		s = physics->item[i];
-
-		if (!(s && s->exists() && s->detectable()))
-			continue;
-
-		int is = s->state;
-		Vector2 p = s->normal_pos();
-		Vector2 v = s->vel;
-
-		// set "enable run-type information" for this feature
-		// (rebuild all after changing that option)
-		fprintf(f, "%030s %09.1e %09.1e %09.1e %09.1e %03i 0x%08X 0x%08X 0x%08X\n",
-			typeid(*s).name(), p.x, p.y, v.x, v.y, is, (unsigned int)s, (unsigned int)s->ship, (unsigned int)s->target );
+		fprintf(f, "name, pos(x,y), vel(x,y), state, obj-pointer(this), ship-pointer(ship), target pointer(target)\n\n");
+		
+		int i;
+		for (i = 0; i < physics->num_items; i += 1)
+		{
+			SpaceLocation *s;
+			s = physics->item[i];
+			
+			if (!(s && s->exists() && s->detectable()))
+				continue;
+			
+			int is = s->state;
+			Vector2 p = s->normal_pos();
+			Vector2 v = s->vel;
+			
+			// set "enable run-type information" for this feature
+			// (rebuild all after changing that option)
+			fprintf(f, "%030s %09.1e %09.1e %09.1e %09.1e %03i 0x%08X 0x%08X 0x%08X\n",
+				typeid(*s).name(), p.x, p.y, v.x, v.y, is, (unsigned int)s, (unsigned int)s->ship, (unsigned int)s->target );
+		}
+	} else {
+		fprintf(f, "No physics defined\n");
 	}
 
 	#ifdef DO_STACKTRACE
@@ -497,6 +503,7 @@ void game_create_errorlog(const char *exitmessage = 0)
 	const char *fname = 0;
 	int *linenum = 0, *level = 0;
 
+	int i;
 	i = 0;	// start with the most recent one.
 	while (	get_stacklist_info(i, &fname, &linenum, &level) )
 	{
