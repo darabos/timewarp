@@ -475,14 +475,14 @@ void Solar::init_objects()
 			Satellite->gravity_force *= GasGrav;
 
 			handler = new OrbitHandler(Centre,size/2,random(PI2), (SpaceLocation *)Centre,
-			(SpaceLocation *)Satellite, (num+1)*Radius, 10.0,1);
+			(SpaceLocation *)Satellite, (num+1)*Radius, 10.0 * PI/180.0, 1);
 
 		}
 		else {               // normal planet
 			Satellite = new Planet(size/2,PlanetPics[random()%Num_Planet_Pics],0);
 
 			handler = new OrbitHandler(Centre,size/2,random(PI2), (SpaceLocation *)Centre,
-			(SpaceLocation *)Satellite, (num+1)*Radius, 10.0,1);
+			(SpaceLocation *)Satellite, (num+1)*Radius, 10.0 * PI/180.0, 1);
 		}
 
 		game->add(Satellite);
@@ -498,7 +498,7 @@ void Solar::init_objects()
 			Moon->id=MOON_ID;
 
 			handler = new OrbitHandler(Satellite,size/2,random(PI2), (SpaceLocation *)Satellite,
-			(SpaceLocation *)Moon, (i+1)*MRadius, 10.0,0);
+			(SpaceLocation *)Moon, (i+1)*MRadius, 10.0 * PI/180.0, 0);
 
 			game->add(Moon);
 			game->add(handler);
@@ -563,3 +563,4 @@ void Solar::init_objects()
 	}    */
 
 REGISTER_GAME (Solar, "Melee in solar system (INI)");
+

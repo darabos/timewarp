@@ -27,8 +27,8 @@ int total_presences;
 //setting it too high will waste CPU power and RAM
 //the recommended value is 4
 
-#define QUADS_X 16
-#define QUADS_Y 16
+#define QUADS_X 8
+#define QUADS_Y 8
 //setting these too high waste CPU power & RAM in in small games
 //setting these too low can waste CPU power in large games
 
@@ -53,10 +53,10 @@ Vector2 map_size;
 double MAX_SPEED = 0;
 
 
-void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange) {
+void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange) {STACKTRACE
 	if (qrange < 0) tw_error("Query::begin - negative range");
 	layers = qlayers;
-	range = qrange;
+	range_sqr = qrange * qrange;
 	target = qtarget;
 	current = NULL;
 	target_pos = target->normal_pos();
@@ -85,10 +85,10 @@ void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange) {
 	return;
 	}
 
-void Query::begin (Vector2 center, int qlayers, double qrange) {
+void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double qrange) {STACKTRACE
 	layers = qlayers;
-	range = qrange;
-	target = NULL;
+	range_sqr = qrange * qrange;
+	target = qtarget;
 	current = NULL;
 	target_pos = center;
 	if ((qrange < map_size.x/2.5) && (qrange < map_size.y/2.5)) {
@@ -140,7 +140,7 @@ tail_recurse4:
 	return;
 	}
 
-void Query::next () {
+void Query::next () {STACKTRACE
 tail_recurse3:
 	if (current == current->qnext) tw_error ("Query::next - current = next");
 	current = current->qnext;
@@ -152,14 +152,142 @@ tail_recurse3:
 	return;
 	}
 
-void Query::end() {
+void Query::end() {STACKTRACE
 	}
 
-SpaceLocation::~SpaceLocation() {
+
+
+
+
+
+
+
+
+void Query2::begin (SpaceLocation *qtarget, Uint64 attribute_filter, double qrange) {STACKTRACE
+	if (qrange < 0) tw_error("Query::begin - negative range");
+	if (Uint32(attribute_filter) & ~Uint32(attribute_filter >> 32)) {
+		tw_error("incorrect Query attributes");
+	}
+	attributes_mask = attribute_filter >> 32;
+	attributes_desired = attribute_filter;
+	range_sqr = qrange * qrange;
+	target = qtarget;
+	current = NULL;
+	target_pos = target->normal_pos();
+	if ((qrange < map_size.x/2.5) && (qrange < map_size.y/2.5)) {
+		qx_min = (int)floor((target->normal_pos().x - qrange) * QUADI_X);
+		qx_max = (int)ceil ((target->normal_pos().x + qrange) * QUADI_X) + 1;
+		if (qx_min < 0) qx_min += QUADS_X;
+		if (qx_max >= QUADS_X) qx_max -= QUADS_X;
+		qy_min = (int)floor((target->normal_pos().y - qrange) * QUADI_Y);
+		qy_max = (int)ceil ((target->normal_pos().y + qrange) * QUADI_Y) + 1;
+		if (qy_min < 0) qy_min += QUADS_Y;
+		if (qy_max >= QUADS_Y) qy_max -= QUADS_Y;
+		}
+	else {
+		qx_min = 0;
+		qx_max = 0;
+		qy_min = 0;
+		qy_max = 0;
+		}
+	qy = qy_min;
+	qx = qx_min;
+	current = physics->quadrant[qy * QUADS_X + qx];
+	if (!current) next_quadrant();
+	if (!current) return;
+	if (current_invalid()) next();
+	return;
+	}
+
+void Query2::begin (SpaceLocation *qtarget, Vector2 center, Uint64 attribute_filter, double qrange) {STACKTRACE
+	if (Uint32(attribute_filter) & ~Uint32(attribute_filter >> 32)) {
+		tw_error("incorrect Query attributes");
+	}
+	attributes_mask = attribute_filter >> 32;
+	attributes_desired = attribute_filter;
+	range_sqr = qrange * qrange;
+	target = qtarget;
+	current = NULL;
+	target_pos = center;
+	if ((qrange < map_size.x/2.5) && (qrange < map_size.y/2.5)) {
+		qx_min = (int)floor((target_pos.x - qrange) * QUADI_X);
+		qx_max = (int)ceil ((target_pos.x + qrange) * QUADI_X) + 1;
+		if (qx_min < 0) qx_min += QUADS_X;
+		if (qx_max >= QUADS_X) qx_max -= QUADS_X;
+		qy_min = (int)floor((target_pos.y - qrange) * QUADI_Y);
+		qy_max = (int)ceil ((target_pos.y + qrange) * QUADI_Y) + 1;
+		if (qy_min < 0) qy_min += QUADS_Y;
+		if (qy_max >= QUADS_Y) qy_max -= QUADS_Y;
+		}
+	else {
+		qx_min = 0;
+		qx_max = 0;
+		qy_min = 0;
+		qy_max = 0;
+		}
+	qy = qy_min;
+	qx = qx_min;
+	current = physics->quadrant[qy * QUADS_X + qx];
+	if (!current) next_quadrant();
+	if (!current) return;
+	if (current_invalid()) next();
+	return;
+	}
+
+
+void Query2::next_quadrant () {
+tail_recurse4:
+	qx += 1;
+	if (qx == QUADS_X) qx = 0;
+	if (qx == qx_max) {
+		qy += 1;
+		if (qy == QUADS_Y) qy = 0;
+		if (qy == qy_max) {
+			current = NULL;
+			qy -= 1;
+			qx -= 1;
+			return;
+			}
+		qx = qx_min;
+		}
+	int tmp = qy * QUADS_X + qx;
+	if (tmp < 0) tw_error ("tmp was less than 0");
+	if (tmp > QUADS_TOTAL) tw_error ("tmp was too large");
+	current = physics->quadrant[tmp];
+	if (!current) goto tail_recurse4;
+	return;
+	}
+
+void Query2::next () {STACKTRACE
+tail_recurse3:
+	if (current == current->qnext) tw_error ("Query::next - current = next");
+	current = current->qnext;
+	if (!current) {
+		next_quadrant();
+		if (!current) return;
+		}
+	if (current_invalid()) goto tail_recurse3;
+	return;
+	}
+
+void Query2::end() {STACKTRACE
+	}
+
+
+
+
+
+
+
+
+
+
+
+SpaceLocation::~SpaceLocation() {STACKTRACE
 	if (data) data->unlock();
 	}
 
-Presence::Presence() {
+Presence::Presence() {STACKTRACE
 	total_presences += 1;
 	attributes = 0;
 	state = 1;
@@ -169,20 +297,20 @@ Presence::Presence() {
 	set_depth(DEPTH_PRESENCE);
 	}
 
-void Presence::animate(Frame *space) {
+void Presence::animate(Frame *space) {STACKTRACE
 	return;
 	}
-void Presence::animate_predict(Frame *space, int time) {
+void Presence::animate_predict(Frame *space, int time) {STACKTRACE
 	animate(space);
 	}
-void Presence::calculate() {
+void Presence::calculate() {STACKTRACE
 	}
-bool Presence::die() {
+bool Presence::die() {STACKTRACE
 	if (!exists()) tw_error("Presence::die - already dead");
 	state = 0;
 	return true;
 	}
-Presence::~Presence() {
+Presence::~Presence() {STACKTRACE
 	total_presences -= 1;
 	}
 
@@ -217,10 +345,10 @@ bool Presence::isSynched() const {
 	return ((attributes & ATTRIB_SYNCHED) != 0);
 	}
 
-SpaceLocation *Presence::get_focus() {
+SpaceLocation *Presence::get_focus() {STACKTRACE
 	return NULL;
 	}
-SpaceLocation *SpaceLocation::get_focus() {
+SpaceLocation *SpaceLocation::get_focus() {STACKTRACE
 	return this;
 	}
 
@@ -234,7 +362,7 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 	collide_flag_sameteam(0),
 	collide_flag_sameship(0),
 	qnext(NULL)
-{
+{STACKTRACE
 	id |= SPACE_LOCATION;
 	attributes |= ATTRIB_SYNCHED;
 	attributes |= ATTRIB_LOCATION;
@@ -253,7 +381,7 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 		}
 }
 
-bool SpaceLocation::change_owner(SpaceLocation *new_owner) {
+bool SpaceLocation::change_owner(SpaceLocation *new_owner) {STACKTRACE
 	if (new_owner) {
 		ally_flag = new_owner->ally_flag;
 		ship = new_owner->ship;
@@ -267,7 +395,7 @@ bool SpaceLocation::change_owner(SpaceLocation *new_owner) {
 	return true;
 	}
 
-void SpaceLocation::death() {
+void SpaceLocation::death() {STACKTRACE
 	}
 
 double SpaceLocation::get_angle_ex() const
@@ -285,12 +413,12 @@ int SpaceLocation::getID() const
 }
 
 Vector2 SpaceLocation::normal_pos() const
-{
+{STACKTRACE
   return(normalize(pos, map_size));
 }
 
 Vector2 SpaceLocation::nearest_pos(SpaceLocation *l) const 
-{
+{STACKTRACE
 	Vector2 p1, p2;
 	p1 = normal_pos();
 	p2 = l->normal_pos();
@@ -301,30 +429,30 @@ Vector2 SpaceLocation::nearest_pos(SpaceLocation *l) const
 }
 
 double SpaceLocation::distance(SpaceLocation *l)
-{
+{STACKTRACE
   return(distance_from(normal_pos(), l->normal_pos()));
 }
 
-int SpaceLocation::handle_damage (SpaceLocation *source, double normal, double direct) {
+int SpaceLocation::handle_damage (SpaceLocation *source, double normal, double direct) {STACKTRACE
 	return 0;
 }
 
-int SpaceLocation::handle_fuel_sap (SpaceLocation *source, double normal) {
+int SpaceLocation::handle_fuel_sap (SpaceLocation *source, double normal) {STACKTRACE
 	return 0;
 }
 
-double SpaceLocation::handle_speed_loss (SpaceLocation *source, double normal) {
+double SpaceLocation::handle_speed_loss (SpaceLocation *source, double normal) {STACKTRACE
 	return 0;
 }
 
-void SpaceLocation::ship_died() {
+void SpaceLocation::ship_died() {STACKTRACE
 	ship = NULL;
 }
 void SpaceLocation::target_died() {
 	target = NULL;
 }
 
-double SpaceLocation::trajectory_angle(SpaceLocation *l) {
+double SpaceLocation::trajectory_angle(SpaceLocation *l) {STACKTRACE
 	return ::trajectory_angle(pos, l->normal_pos());
 }
 
@@ -342,23 +470,23 @@ bool SpaceLocation::sameTeam(const SpaceLocation *other) const {
 	return !((ally_flag ^ other->ally_flag) & (team_mask));
 }
 
-double SpaceLocation::isProtected() {
+double SpaceLocation::isProtected() const {
 	return 0;
 }
 
-double SpaceLocation::isInvisible() {
+double SpaceLocation::isInvisible() const {
 	return 0;
 }
 
-void Presence::set_depth(double d) {
+void Presence::set_depth(double d) {STACKTRACE
 	_depth = int(floor(ldexp(d, 8)));
 }
 
-double Presence::get_depth() {
+double Presence::get_depth() {STACKTRACE
 	return ldexp(_depth, -8);
 }
 
-Planet *SpaceLocation::nearest_planet() {
+Planet *SpaceLocation::nearest_planet() {STACKTRACE
 	Planet *p = NULL;
 	double r = 99999999;
 	Query q;
@@ -375,28 +503,28 @@ Planet *SpaceLocation::nearest_planet() {
 	}
 	return p;
 }
-void SpaceLocation::play_sound (SAMPLE *sample, int vol, int freq) {
+void SpaceLocation::play_sound (SAMPLE *sample, int vol, int freq) {STACKTRACE
 	physics->play_sound(sample, this, vol, freq);
 	return;
 }
-void SpaceLocation::play_sound2 (SAMPLE *sample, int vol, int freq) {
+void SpaceLocation::play_sound2 (SAMPLE *sample, int vol, int freq) {STACKTRACE
 	physics->play_sound2(sample, this, vol, freq);
 	return;
 }
-int SpaceLocation::translate( Vector2 delta) {
+int SpaceLocation::translate( Vector2 delta) {STACKTRACE
 	pos = normalize ( pos + delta, map_size );
 	return true;
 }
 
-int SpaceLocation::accelerate(SpaceLocation *source, double angle, double velocity, double max_speed) {
+int SpaceLocation::accelerate(SpaceLocation *source, double angle, double velocity, double max_speed) {STACKTRACE
 	_accelerate(angle, velocity, max_speed);
 	return true;
 }
-int SpaceLocation::accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed) {
+int SpaceLocation::accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed) {STACKTRACE
 	_accelerate(delta_v, max_speed);
 	return true;
 }
-void SpaceLocation::_accelerate(double angle, double velocity, double max_speed) {
+void SpaceLocation::_accelerate(double angle, double velocity, double max_speed) {STACKTRACE
 	double ovm, nvm;
 	Vector2 nv;
 
@@ -413,7 +541,7 @@ void SpaceLocation::_accelerate(double angle, double velocity, double max_speed)
 	}
 	return;
 }
-void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {
+void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {STACKTRACE
 	double ovm, nvm;
 	Vector2 nv;
 
@@ -431,7 +559,7 @@ void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {
 	return;
 }
 
-int SpaceLocation::accelerate_gravwhip(SpaceLocation *source, double angle, double velocity, double max_speed) {
+int SpaceLocation::accelerate_gravwhip(SpaceLocation *source, double angle, double velocity, double max_speed) {STACKTRACE
 	Planet *p = nearest_planet();
 	if (!p) return SpaceLocation::accelerate(source, angle, velocity, max_speed);
 	double tmp;
@@ -440,11 +568,11 @@ int SpaceLocation::accelerate_gravwhip(SpaceLocation *source, double angle, doub
 	return SpaceLocation::accelerate(source, angle, velocity, max_speed * (p->gravity_whip * tmp + 1) + tmp * p->gravity_whip2);
 }
 
-void SpaceLocation::animate(Frame *space) {
+void SpaceLocation::animate(Frame *space) {STACKTRACE
 	return;
 }
 
-void SpaceLocation::animate_predict(Frame *space, int time) {
+void SpaceLocation::animate_predict(Frame *space, int time) {STACKTRACE
 	Vector2 opos = pos;
 	pos += vel * time;
 	animate(space);
@@ -452,7 +580,7 @@ void SpaceLocation::animate_predict(Frame *space, int time) {
 	return;
 }
 
-void SpaceLocation::calculate() {
+void SpaceLocation::calculate() {STACKTRACE
 	if (target && !target->exists()) {
 		target_died();
 	}
@@ -462,12 +590,12 @@ void SpaceLocation::calculate() {
 	return;
 }
 
-void SpaceObject::set_sprite(SpaceSprite *new_sprite) {
+void SpaceObject::set_sprite(SpaceSprite *new_sprite) {STACKTRACE
 	sprite = new_sprite;
 	size = new_sprite->size();
 }
 
-void SpaceObject::calculate() {
+void SpaceObject::calculate() {STACKTRACE
 	SpaceLocation::calculate();
 	if ((attributes & ATTRIB_STANDARD_INDEX) && sprite) {
 		sprite_index = get_index(angle, PI/2, sprite->frames());
@@ -483,7 +611,7 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	mass(0),
 	sprite(osprite),
 	sprite_index(0)
-	{
+	{STACKTRACE
 	attributes |= ATTRIB_OBJECT;
 	if (game->friendly_fire) collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = 0;
@@ -491,12 +619,12 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	id = SPACE_OBJECT;
 	}
 
-void SpaceObject::animate(Frame *space) {
+void SpaceObject::animate(Frame *space) {STACKTRACE
 	sprite->animate(pos, sprite_index, space);
 	return;
 	}
 
-void SpaceObject::collide(SpaceObject *other) {
+void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 //	double dx, dy;
 //	double dvx, dvy;
 	double tmp;
@@ -504,6 +632,7 @@ void SpaceObject::collide(SpaceObject *other) {
 //	int x1, y1;
 //	int x2, y2;
 
+	if (this == other) {tw_error("SpaceObject::collide - self!");}
 	if((!canCollide(other)) || (!other->canCollide(this))) return;
 	if (!exists() || !other->exists()) return;
 
@@ -586,7 +715,7 @@ void SpaceObject::collide(SpaceObject *other) {
 }
 
 double SpaceObject::collide_ray(Vector2 lp1, Vector2 lp2, double llength)
-{
+{STACKTRACE
 	int collide_x = (int)(lp2.x);
 	int collide_y = (int)(lp2.y);
 	Vector2 d;
@@ -603,7 +732,7 @@ double SpaceObject::collide_ray(Vector2 lp1, Vector2 lp2, double llength)
 	return(llength);
 }
 
-void SpaceObject::inflict_damage(SpaceObject *other) {
+void SpaceObject::inflict_damage(SpaceObject *other) {STACKTRACE
 	int i;
 	if (damage_factor > 0) {
 		i = round_down(damage_factor / 2);
@@ -621,7 +750,7 @@ SpaceLine::SpaceLine(SpaceLocation *creator, Vector2 lpos, double langle,
 	SpaceLocation(creator, lpos, langle),
 	length(llength),
 	color(lcolor)
-	{
+	{STACKTRACE
 	id = SPACE_LINE;
 	attributes |= ATTRIB_LINE;// | ATTRIB_COLLIDE_STATIC;
 	layer = LAYER_LINES;
@@ -651,7 +780,7 @@ Vector2 SpaceLine::edge() const
   return(length);
 }
 
-void SpaceLine::inflict_damage(SpaceObject *other) {
+void SpaceLine::inflict_damage(SpaceObject *other) {STACKTRACE
 	int i;
 	i = round_down(damage_factor / 2);
 	if(i >= BOOM_SAMPLES)
@@ -665,7 +794,7 @@ void SpaceLine::inflict_damage(SpaceObject *other) {
 	return;
 	}
 
-void SpaceLine::animate(Frame *space) {
+void SpaceLine::animate(Frame *space) {STACKTRACE
 
 	Vector2 p1 = corner( pos );
 	Vector2 p2 = p1 + edge() * space_zoom;
@@ -674,7 +803,7 @@ void SpaceLine::animate(Frame *space) {
 	}
 
 void SpaceLine::collide(SpaceObject *o)
-{
+{STACKTRACE
 	double old_length = length;
   
 	if((!canCollide(o)) || (!o->canCollide(this)))
@@ -686,17 +815,17 @@ void SpaceLine::collide(SpaceObject *o)
 	return;
 }
 
-void Listed::init(Presence *p) {
+void Listed::init(Presence *p) {STACKTRACE
 	pointer = p;
 	serial = p->get_serial();
 	if (serial == 0) tw_error("bad serial #");
 	}
-void Listed::clear() {
+void Listed::clear() {STACKTRACE
 	pointer = NULL;
 	serial = 0;
 	}
 
-Presence *Physics::find_serial(int serial) {
+Presence *Physics::find_serial(int serial) {STACKTRACE
 	int i;
 	for (i = 0; i < num_presences; i += 1) {
 		if (presence[i]->_serial == serial) return presence[i];
@@ -707,7 +836,7 @@ Presence *Physics::find_serial(int serial) {
 	return NULL;
 	}
 
-int Physics::_find_serial(int serial) {
+int Physics::_find_serial(int serial) {STACKTRACE
 	int i;
 	for (i = 0; i < num_listed; i += 1) {
 		if (listed[i].serial == serial) return i;
@@ -715,7 +844,7 @@ int Physics::_find_serial(int serial) {
 	return -1;
 	}
 
-Physics::~Physics() {
+Physics::~Physics() {STACKTRACE
 	int i;
 	for (i = 0; i < num_presences; i += 1) {
 		delete presence[i];
@@ -730,7 +859,7 @@ Physics::~Physics() {
 	if (quadrant) delete quadrant;
 	}
 
-void Physics::preinit() {
+void Physics::preinit() {STACKTRACE
 	quadrant = NULL;
 	num_items = max_items = 0;
 	item = NULL;
@@ -745,7 +874,7 @@ void Physics::preinit() {
 	return;
 	}
 
-unsigned int Physics::get_code(unsigned int ship, TeamCode team) {
+unsigned int Physics::get_code(unsigned int ship, TeamCode team) {STACKTRACE
 	return (ship << SpaceLocation::ship_shift) | (team << SpaceLocation::team_shift);
 	}
 
@@ -765,7 +894,7 @@ TeamCode Physics::new_team() {
 	last_team += 1;
 	return last_team;
 	}
-void Physics::switch_team(unsigned int ship, TeamCode team) {
+void Physics::switch_team(unsigned int ship, TeamCode team) {STACKTRACE
 	int i, j;
 	j = (ship & SpaceLocation::ship_mask) | (team << SpaceLocation::team_shift);
 	for (i = 0; i < num_items; i += 1) {
@@ -773,7 +902,7 @@ void Physics::switch_team(unsigned int ship, TeamCode team) {
 		}
 	return;
 	}
-void Physics::merge_teams(TeamCode team1, TeamCode team2) {
+void Physics::merge_teams(TeamCode team1, TeamCode team2) {STACKTRACE
 	int i;
 	for (i = 0; i < num_items; i += 1) {
 		if ((item[i]->ally_flag & SpaceLocation::team_mask) == (team2 << SpaceLocation::team_shift)) 
@@ -782,7 +911,7 @@ void Physics::merge_teams(TeamCode team1, TeamCode team2) {
 	return;
 	}
 
-void Physics::init() {
+void Physics::init() {STACKTRACE
 	int i;
 	size = Vector2(3840.0, 3840.0);
 	frame_time = 25;
@@ -799,7 +928,7 @@ void Physics::init() {
 	return;
 	}
 
-void Physics::_list(Presence *p) {
+void Physics::_list(Presence *p) {STACKTRACE
 	if (!p->exists()) return;
 	if (num_listed == max_listed) {
 		max_listed += 256;
@@ -818,7 +947,7 @@ void Physics::_list(Presence *p) {
 	return;
 	}
 
-void Physics::add(SpaceLocation *o) {
+void Physics::add(SpaceLocation *o) {STACKTRACE
 	if (o->attributes & ATTRIB_INGAME) tw_error("addItem - already added");
 	if (!o->isLocation()) tw_error("addItem - catastrophic");
 	if (!o->_serial) _list(o);
@@ -841,7 +970,7 @@ void Physics::add(SpaceLocation *o) {
 	return;
 	}
 
-bool Physics::remove(SpaceLocation *o) {
+bool Physics::remove(SpaceLocation *o) {STACKTRACE
 	int i;
 	if (!(o->attributes & ATTRIB_INGAME)) tw_error("removeItem - not added");
 	o->attributes &= ~ATTRIB_INGAME;
@@ -858,7 +987,7 @@ bool Physics::remove(SpaceLocation *o) {
 	return false;
 	}
 
-void Physics::add(Presence *p) {
+void Physics::add(Presence *p) {STACKTRACE
 	if (p->attributes & ATTRIB_INGAME) tw_error("addPresence - already added");
 	if (p->isLocation()) {
 		add((SpaceLocation*)p);
@@ -874,7 +1003,7 @@ void Physics::add(Presence *p) {
 	return;
 	}
 
-bool Physics::remove(Presence *o) {
+bool Physics::remove(Presence *o) {STACKTRACE
 	int i;
 	if (!(o->attributes & ATTRIB_INGAME)) tw_error("removePresence - not added");
 	if (o->isLocation()) return remove((SpaceLocation*)o);
@@ -889,7 +1018,7 @@ bool Physics::remove(Presence *o) {
 	return false;
 	}
 
-void Physics::calculate() {
+void Physics::calculate() {STACKTRACE
 	int i;
 
 	//adjust time
@@ -903,29 +1032,35 @@ void Physics::calculate() {
 
 
 checksync();
+{STACKTRACE
 	//move objects
 	for (i = 0; i < num_items; i += 1) {
 		if (!item[i]->exists()) continue;
 		//if (i == 1 && game_time == 100) tw_error("debug me!");
 		item[i]->pos = normalize(item[i]->pos + item[i]->vel * frame_time, map_size);
 		}
+}
 checksync();
 
 
+{STACKTRACE
 	//call Presence calculate functions
 	for (i = 0; i < num_presences; i += 1) {
 		if (presence[i]->exists()) presence[i]->calculate();
 checksync();
 		}
-
+}
 
 	//call objects calculate functions
+{STACKTRACE
 	for (i = 0; i < num_items; i += 1) {
 		if (item[i]->exists()) item[i]->calculate();
 checksync();
 		}
+}
 
 	//prepare quadrants stuff
+{STACKTRACE
 	for(i = 0; i < QUADS_TOTAL; i += 1) {
 		quadrant[i] = NULL;
 		}
@@ -939,6 +1074,7 @@ checksync();
 			}
 		else item[i]->qnext = NULL;
 		}
+}
 
 checksync();
 	//check for collisions
@@ -947,6 +1083,7 @@ checksync();
 
 checksync();
 
+{STACKTRACE
 	//remove presences that have been dead long enough
 	int deleted = 0;
 	for(i = 0; i < num_presences; i ++) {
@@ -959,19 +1096,21 @@ checksync();
 			//i -= 1;
 			//deleted += 1;
 			delete tmp;
-			}
+		}
 		else {
 			if (!presence[i]->exists()) {
 				//if (presence[i]->state == 0) presence[i]->death();
 				presence[i]->state -= 1;
-				}
 			}
 		}
+	}
+}
 
 checksync();
 
 	//remove objects that have been dead long enough
-	deleted = 0;
+{STACKTRACE
+	int deleted = 0;
 	for(i = 0; i < num_items; i ++) {
 		item[i] = item[i+deleted];
 		if (item[i]->state == -DEATH_FRAMES) {
@@ -982,26 +1121,28 @@ checksync();
 			//deleted += 1;
 			i -= 1;
 			delete tmp;
-			}
 		}
+	}
 	for(i = 0; i < num_items; i ++) {
 		if (!item[i]->exists()) {
 			if (item[i]->state == 0) {
 				item[i]->death();
-				}
-			item[i]->state -= 1;
 			}
+			item[i]->state -= 1;
 		}
-
+	}
+}
 checksync();
 
 	//remove dead listings
-	deleted = 0;
+{STACKTRACE
+	int deleted = 0;
 	for (i = 0; i + deleted < num_listed; i += 1) {
 		if (listed[i].serial == 0) deleted += 1;
 		if (deleted) listed[i] = listed[i+deleted];
-		}
+	}
 	num_listed -= deleted;
+}
 
 checksync();
 
@@ -1016,7 +1157,7 @@ int compare_depth (const void *_a, const void *_b) {
 }
 static Presence *animate_buffer[ANIMATE_BUFFER_SIZE];
 
-void Physics::animate (Frame *frame) {
+void Physics::animate (Frame *frame) {STACKTRACE
 	int i, j;
 
 	::render_time = this->game_time;
@@ -1042,7 +1183,7 @@ void Physics::animate (Frame *frame) {
 	return;
 }
 
-void Physics::animate_predict(Frame *frame, int time) {
+void Physics::animate_predict(Frame *frame, int time) {STACKTRACE
 	int i, j;
 
 	::render_time = this->game_time + time;
@@ -1068,14 +1209,38 @@ void Physics::animate_predict(Frame *frame, int time) {
 	return;
 }
 
-void Physics::collide() {
+#include "../util/pmask.h"
+void Physics::collide() {STACKTRACE
 	int i;
+	PMASKDATA_FLOAT *tmp;
+	int l = 0;
+	tmp = new PMASKDATA_FLOAT[num_items];
+	for (i = 0; i < num_items; i += 1) {
+		if (item[i] && item[i]->exists() && item[i]->isObject()) {
+			SpaceObject *o = (SpaceObject *) item[i];
+			Vector2 p = o->pos - o->size / 2;
+			tmp[l].x = p.x;
+			tmp[l].y = p.y;
+			if (tmp[l].y < 0) tmp[l].y += size.y;
+			tmp[l].pmask = o->get_sprite()->get_pmask(o->get_sprite_index());
+			tmp[l].data = o;
+			l += 1;
+		}
+	}
+	SpaceObject *col[128 * 2];
+	int nc = check_pmask_collision_list_float_wrap(size.x, size.y, tmp, l, (const void**)&col[0], 128);
+	delete tmp;
+//	return;
+	for (i = 0; i < nc; i += 1) {
+		col[i*2]->collide(col[i*2+1]);
+	}//*/
 	Query q;
 	for (i = 0; i < num_items; i += 1) {
 		if (item[i]->exists() && 
 			(item[i]->collide_flag_sameship | item[i]->collide_flag_sameteam | item[i]->collide_flag_anyone) && 
 			!(item[i]->attributes & ATTRIB_COLLIDE_STATIC)) {
 			if (item[i]->isObject()) {
+/*
 				for (q.begin(item[i], OBJECT_LAYERS, (192+
 						((SpaceObject*)item[i])->get_size().x+
 						((SpaceObject*)item[i])->get_size().y)/2); q.current && item[i]->exists(); q.next()) {
@@ -1085,20 +1250,21 @@ void Physics::collide() {
 						((SpaceObject*)item[i])->collide(q.currento);
 					}
 				}
-				q.end();
+				q.end();//*/
 			}
 			else if (item[i]->isLine()) {
-				for (q.begin(item[i], OBJECT_LAYERS, 96 + 
-						((SpaceLine*)item[i])->get_length()); q.current && item[i]->exists(); q.next()) {
+				SpaceLine *l = (SpaceLine*)item[i];
+				for (q.begin(l, l->normal_pos()+l->edge()/2, OBJECT_LAYERS, 96 + l->get_length()/2); q.current && l->exists(); q.next()) {
 					((SpaceLine*)item[i])->collide(q.currento);
 				}
 				q.end();
 			}
 		}
 	}
+//*/
 	return;
 }
-void Physics::prepare() {
+void Physics::prepare() {STACKTRACE
 	::physics_time = this->game_time;
 	::render_time = this->game_time;
 	::frame_time = this->frame_time;
@@ -1106,7 +1272,7 @@ void Physics::prepare() {
 	::MAX_SPEED  = this->max_speed;
 	return;
 }
-int Physics::checksum() {
+int Physics::checksum() {STACKTRACE
 	int i;
 	Uint32 g = 0;
 	//prepare();
@@ -1120,14 +1286,14 @@ int Physics::checksum() {
 //	return (((unsigned int)(fmod(floor(g * 1024), 0xFFffFFffUL))) & 255);
 	return g;// + (tw_random_state_checksum()) & 255));
 }
-void Physics::dump_state ( const char *file_name ) {
+void Physics::dump_state ( const char *file_name ) {STACKTRACE
 	//unimplemented
 }
-void Physics::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {
+void Physics::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {STACKTRACE
 	sound.play(sample, vol, 128, freq * turbo);
 	return;
 }
-void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {
+void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {STACKTRACE
 	sound.stop(sample);
 	play_sound(sample, source, vol, freq);
 	return;

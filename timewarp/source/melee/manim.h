@@ -19,6 +19,8 @@ class Animation : public SpaceObject {
 
 	virtual void calculate();
 	virtual void animate ( Frame * space ) ;
+	public:
+	float transparency;
 };
 
 class FixedAnimation : public Animation {

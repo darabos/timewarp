@@ -40,7 +40,7 @@ Vector2 space_center;       // game-pixels : center
 
 
 
-View * ViewType::create( View * old ) {
+View * ViewType::create( View * old ) {STACKTRACE
 	View * r = _create();
 	r->preinit();
 	r->type = this;
@@ -56,7 +56,7 @@ char **view_name = NULL;
 ViewType *viewtypelist = NULL;
 
 
-void set_view ( View * new_default ) {
+void set_view ( View * new_default ) {STACKTRACE
 	if (!new_default) tw_error( "new default view is NULL");
 	if (!new_default->type) tw_error("new default view has no type info");
 	if (_default_view) delete _default_view;
@@ -67,7 +67,7 @@ void set_view ( View * new_default ) {
 
 
 
-View *get_view ( const char *name, View *old ) {
+View *get_view ( const char *name, View *old ) {STACKTRACE
 	int i;
 	if ((name == NULL) && _default_view) {
 		name = _default_view->type->name;
@@ -80,7 +80,7 @@ View *get_view ( const char *name, View *old ) {
 	return v;
 }
 
-int get_view_num ( const char *name ) {
+int get_view_num ( const char *name ) {STACKTRACE
 	int i;
 	if (!name) return -1;
 	for (i = 0; i < num_views; i += 1) {
@@ -93,18 +93,18 @@ int get_view_num ( const char *name ) {
 
 
 
-void View::preinit() {
+void View::preinit() {STACKTRACE
 	frame = NULL;
 	window = NULL;
 	type = NULL;
 }
 
-void View::refresh () { 
+void View::refresh () { STACKTRACE
 	if (frame) frame->full_redraw = true; 
 	return; 
 }
 
-void View::prepare ( Frame *frame, int time ) {
+void View::prepare ( Frame *frame, int time ) {STACKTRACE
 
 	Vector2 oc = camera.pos;
 	camera.pos += camera.vel * time;
@@ -133,7 +133,7 @@ void View::prepare ( Frame *frame, int time ) {
 	return;
 }
 
-void View::animate(Game *game) {
+void View::animate(Game *game) {STACKTRACE
 	if (FULL_REDRAW) frame->full_redraw = true;
 	frame->erase();
 	prepare(frame);
@@ -151,7 +151,7 @@ void View::animate(Game *game) {
 	return;
 	}
 
-void View::animate_predict(Game *game, int time) {
+void View::animate_predict(Game *game, int time) {STACKTRACE
 	if (FULL_REDRAW) frame->full_redraw = true;
 	frame->erase();
 	prepare(frame, time);
@@ -167,10 +167,11 @@ void View::animate_predict(Game *game, int time) {
 	return;
 	}
 
-void View::config() {
+void View::config() {STACKTRACE
 	return;
 	}
 bool View::screen2game(Vector2 *_pos) {
+	STACKTRACE
 	Vector2 pos = *_pos;
 	Vector2 opos = pos;
 
@@ -190,6 +191,7 @@ bool View::screen2game(Vector2 *_pos) {
 	return true;
 	}
 int View::focus(CameraPosition *pos, SpaceLocation *la, SpaceLocation *lb) {
+	STACKTRACE
 	if (!la && !lb) return 0;
 	if (!la) la = lb;
 	if (!lb) lb = la;
@@ -237,6 +239,7 @@ int View::focus(CameraPosition *pos, SpaceLocation *la, SpaceLocation *lb) {
 //make these static...
 
 void View::track (const CameraPosition &target, CameraPosition *origin) {
+	STACKTRACE
 	if (!origin) origin = &this->camera;
 	Vector2 d;
 	d = target.pos - origin->pos;
@@ -248,6 +251,7 @@ void View::track (const CameraPosition &target, CameraPosition *origin) {
 	origin->z = target.z;
 }
 void View::track (const CameraPosition &target, double smooth_time, CameraPosition *origin) {
+	STACKTRACE
 	if (!origin) origin = &this->camera;
 	Vector2 d;
 	d.x = -min_delta( origin->pos.x, target.pos.x, map_size.x);
@@ -280,7 +284,7 @@ void View::track (const CameraPosition &target, double smooth_time, CameraPositi
 	return;
 }
 
-void View::init(View *old) {
+void View::init(View *old) {STACKTRACE
 	if (old) {
 		camera = old->camera;
 		key_zoom_in = old->key_zoom_in;
@@ -307,7 +311,7 @@ void View::init(View *old) {
 	if (window->surface) ;
 	return;
 }
-void View::replace ( View * v ) {
+void View::replace ( View * v ) {STACKTRACE
 	if (frame) delete frame;
 	frame = v->frame;
 	window = frame->window;
@@ -322,11 +326,11 @@ void View::replace ( View * v ) {
 
 	return;
 }
-View::~View() {
+View::~View() {STACKTRACE
 	}
 void View::calculate(Game *game) {}
 
-void message_type::out(char *string, int dur, int c) {
+void message_type::out(char *string, int dur, int c) {STACKTRACE
 	ASSERT (c < 256);
 	if (num_messages == max_messages - 1) {
 		messages[0].end_time = -1;
@@ -344,7 +348,7 @@ void message_type::out(char *string, int dur, int c) {
 	clean();
 	return;
 	}
-void message_type::print(int dur, int c, const char *format, ...) {
+void message_type::print(int dur, int c, const char *format, ...) {STACKTRACE
 	char buf[1024];
 	va_list those_dots;
 	va_start (those_dots, format);
@@ -359,7 +363,7 @@ void message_type::print(int dur, int c, const char *format, ...) {
 	out(buf, dur, c);
 	return;
 	}
-void message_type::clean() {
+void message_type::clean() {STACKTRACE
 	int kill_time;
 	if (game) kill_time = game->game_time;
 	else kill_time = 0;
@@ -373,7 +377,7 @@ void message_type::clean() {
 		}
 	return;
 	}
-void message_type::flush() {
+void message_type::flush() {STACKTRACE
 	for (int i = 0; i < num_messages; i += 1) {
 		free (messages[i].string);
 		}
@@ -381,7 +385,7 @@ void message_type::flush() {
 	return;
 	}
 
-void message_type::animate(Frame *frame) {
+void message_type::animate(Frame *frame) {STACKTRACE
 	int i, x = 0, y = 0, tmp;
 	BITMAP *bmp;
 	if (frame) {
@@ -409,7 +413,7 @@ void message_type::animate(Frame *frame) {
 	}
 message_type message;
 
-void View::_event( Event *e ) {
+void View::_event( Event *e ) {STACKTRACE
 	if ( e->type == Event::VIDEO ) {
 		const VideoEvent *ve = (const VideoEvent*) e;
 		const VideoWindow *w = ve->window;
@@ -427,7 +431,7 @@ class View_Everything : public View {
 	public:
 	virtual void calculate(Game *game);
 	};
-void View_Everything::calculate (Game *game) {
+void View_Everything::calculate (Game *game) {STACKTRACE
 	double a, b, c;
 	//sqrt(view_w * view_w + view_h * view_h) / 1.41421356237309504880168872
 	c = 1.414 / magnitude(view_size);
@@ -449,7 +453,7 @@ class View_Hero : public View {
 	virtual void init(View *old);
 	//virtual void set_window (BITMAP *dest, int x, int y, int w, int h);
 	};
-void View_Hero::init(View *old) {
+void View_Hero::init(View *old) {STACKTRACE
 	View::init(old);
 	f = 0;
 	min = 30;//480;
@@ -457,7 +461,7 @@ void View_Hero::init(View *old) {
 	return;
 	}
 
-void View_Hero::calculate (Game *game) {
+void View_Hero::calculate (Game *game) {STACKTRACE
 	CameraPosition n = camera;
 	if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
 	if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
@@ -484,7 +488,7 @@ class View_Enemy : public View {
 	public:
 	virtual void calculate(Game *game);
 	};
-void View_Enemy::calculate (Game *game) {
+void View_Enemy::calculate (Game *game) {STACKTRACE
 	SpaceLocation *c = NULL;
 	if (game->num_focuses) c = game->focus[game->focus_index]->get_focus();
 	if (!c) return;
@@ -509,7 +513,7 @@ class View_Enemy_Discrete : public View {
 	public:
 	virtual void calculate(Game *game);
 	};
-void View_Enemy_Discrete::calculate (Game *game) {
+void View_Enemy_Discrete::calculate (Game *game) {STACKTRACE
 	SpaceLocation *c = NULL;
 	if (game->num_focuses) c = game->focus[game->focus_index]->get_focus();
 	if (!c) return;
@@ -550,7 +554,7 @@ class View_Split : public View {
 	virtual void animate(Game *game);
 	//virtual void set_window (BITMAP *dest, int x, int y, int w, int h);
 	};
-void View_Split::init(View *old) {
+void View_Split::init(View *old) {STACKTRACE
 	View::init(old);
 
 	c1 = camera;
@@ -570,7 +574,7 @@ void View_Split::init(View *old) {
 	sub[1]->locate(0,0.5, 0,0, 0,0.5, 0, 1);
 	return;
 	}
-void View_Split::animate(Game *game) {
+void View_Split::animate(Game *game) {STACKTRACE
 	VideoWindow *tmpw;
 	Frame *tmpf;
 
@@ -592,7 +596,7 @@ void View_Split::animate(Game *game) {
 	view_size.y = window->w;
 }
 
-void View_Split::calculate (Game *game) {
+void View_Split::calculate (Game *game) {STACKTRACE
 	CameraPosition n;
 	SpaceLocation *c;
 

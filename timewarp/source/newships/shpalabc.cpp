@@ -14,7 +14,7 @@ class AlaryBC : public Ship
 
 	bool		dying;
 
-	SpaceSprite	*dummy, *sprite_turret, *sprite_fire, *(sprite_engines[4]);
+	SpaceSprite	*dummy;
 
 	bool		supersprite;
 	int			ship_forceAA, turret_forceAA, fire_forceAA, engines_forceAA;
@@ -69,7 +69,7 @@ public:
 	virtual int  handle_damage(SpaceLocation* source, double normal, double direct);
 	virtual int  handle_fuel_sap(SpaceLocation *source, double normal);
 	virtual double handle_speed_loss(SpaceLocation *source, double normal);
-	virtual		~AlaryBC();
+//	virtual		~AlaryBC();
   
 };
 
@@ -139,6 +139,7 @@ public:
 AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code) :
         Ship(opos, shipAngle, shipData, code)
 {
+
 	engines_armour  = get_config_int("Ship", "EnginesArmour", 99);
 
 	weaponVelocity	= scale_velocity(get_config_float("Weapon", "Velocity", 0));
@@ -208,6 +209,9 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 	sprite_index = iround(angle / (PI2/128)) + 32;
 	sprite_index &= 127;
 
+	dummy = data->more_sprites[7];
+
+/*
 	DATAFILE *rawdata = load_datafile("ships/shpalabs.dat");
 	if(!rawdata) error("Error loading 'shpalabs.dat'", "xxx");
 
@@ -230,7 +234,7 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 	}
 
 	unload_datafile(rawdata);
-
+*/
 }
 
 void AlaryBC::calculate()
@@ -390,13 +394,13 @@ void AlaryBC::animate_simple(Frame *space)
 	set_tw_aa_mode((engines_forceAA<0)?old_aa:engines_forceAA);
 	if ((thrust)&&(engines_armour > 0)&&(crew>0)) {
 		engine_phase = (engine_phase + 1) % 2;
-		sprite_engines[0]->animate(Vector2(pos.x+0.5-50*tx, pos.y+0.5-50*ty), engine_phase, space);
-		sprite_engines[1]->animate(Vector2(pos.x+0.5-49*tx-16*ty, pos.y+0.5-49*ty+16*tx), engine_phase, space);
-		sprite_engines[1]->animate(Vector2(pos.x+0.5-49*tx+16*ty, pos.y+0.5-49*ty-16*tx), engine_phase, space);
-		sprite_engines[2]->animate(Vector2(pos.x+0.5-49.5*tx-28.5*ty, pos.y+0.5-49.5*ty+28.5*tx), engine_phase, space);
-		sprite_engines[2]->animate(Vector2(pos.x+0.5-49.5*tx+28.5*ty, pos.y+0.5-49.5*ty-28.5*tx), engine_phase, space);
-		sprite_engines[3]->animate(Vector2(pos.x+0.5-48*tx-39*ty, pos.y+0.5-48*ty+39*tx), engine_phase, space);
-		sprite_engines[3]->animate(Vector2(pos.x+0.5-48*tx+39*ty, pos.y+0.5-48*ty-39*tx), engine_phase, space);
+		data->more_sprites[3]->animate(Vector2(pos.x+0.5-50*tx, pos.y+0.5-50*ty), engine_phase, space);
+		data->more_sprites[4]->animate(Vector2(pos.x+0.5-49*tx-16*ty, pos.y+0.5-49*ty+16*tx), engine_phase, space);
+		data->more_sprites[4]->animate(Vector2(pos.x+0.5-49*tx+16*ty, pos.y+0.5-49*ty-16*tx), engine_phase, space);
+		data->more_sprites[5]->animate(Vector2(pos.x+0.5-49.5*tx-28.5*ty, pos.y+0.5-49.5*ty+28.5*tx), engine_phase, space);
+		data->more_sprites[5]->animate(Vector2(pos.x+0.5-49.5*tx+28.5*ty, pos.y+0.5-49.5*ty-28.5*tx), engine_phase, space);
+		data->more_sprites[6]->animate(Vector2(pos.x+0.5-48*tx-39*ty, pos.y+0.5-48*ty+39*tx), engine_phase, space);
+		data->more_sprites[6]->animate(Vector2(pos.x+0.5-48*tx+39*ty, pos.y+0.5-48*ty-39*tx), engine_phase, space);
 	}
 
 	set_tw_aa_mode((ship_forceAA<0)?old_aa:ship_forceAA);
@@ -413,15 +417,15 @@ void AlaryBC::animate_simple(Frame *space)
             ttx = cos(ta); tty = sin(ta);
 			set_tw_aa_mode((fire_forceAA<0)?old_aa:fire_forceAA);
 			if (turret[i]->fire_frame[0] < 4)
-				sprite_fire->animate(Vector2(pos.x+0.5+ry*tx-rx*ty + 13*ttx+3*tty, pos.y+0.5+ry*ty+rx*tx + 13*tty-3*ttx), turret[i]->fire_frame[0], space);
+				data->more_sprites[2]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty + 13*ttx+3*tty, pos.y+0.5+ry*ty+rx*tx + 13*tty-3*ttx), turret[i]->fire_frame[0], space);
 			if (turret[i]->fire_frame[1] < 4)
-				sprite_fire->animate(Vector2(pos.x+0.5+ry*tx-rx*ty + 13*ttx-3*tty, pos.y+0.5+ry*ty+rx*tx + 13*tty+3*ttx), turret[i]->fire_frame[1], space);
+				data->more_sprites[2]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty + 13*ttx-3*tty, pos.y+0.5+ry*ty+rx*tx + 13*tty+3*ttx), turret[i]->fire_frame[1], space);
 			set_tw_aa_mode((turret_forceAA<0)?old_aa:turret_forceAA);
-			sprite_turret->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), (iround(si) + 32) & 127, space);
+			data->more_sprites[0]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), (iround(si) + 32) & 127, space);
 		}
 		else	{
 			set_tw_aa_mode((turret_forceAA<0)?old_aa:turret_forceAA);
-			sprite_turret->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127) + 128, space); }
+			data->more_sprites[1]->animate(Vector2(pos.x+0.5+ry*tx-rx*ty, pos.y+0.5+ry*ty+rx*tx), ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127) + 128, space); }
 	}
 
 	set_tw_aa_mode(old_aa);
@@ -429,9 +433,11 @@ void AlaryBC::animate_simple(Frame *space)
 
 void AlaryBC::animate(Frame *space)
 {
+
 	if (!supersprite) {
 		animate_simple(space);
-		return; }
+		return; 
+	}
 
 	int i;
 
@@ -445,13 +451,13 @@ void AlaryBC::animate(Frame *space)
 
 	if ((thrust)&&(engines_armour > 0)&&(crew>0)) {
 		engine_phase = (engine_phase + 1) % 2;
-        sprite_engines[0]->draw(Vector2(91+0.5-50*tx, 91+0.5-50*ty), sprite_engines[0]->size(), engine_phase, bmp);
-        sprite_engines[1]->draw(Vector2(92.5+0.5-49*tx-16*ty, 92.5+0.5-49*ty+16*tx), sprite_engines[1]->size(), engine_phase, bmp);
-	    sprite_engines[1]->draw(Vector2(92.5+0.5-49*tx+16*ty, 92.5+0.5-49*ty-16*tx), sprite_engines[1]->size(), engine_phase, bmp);
-        sprite_engines[2]->draw(Vector2(94+0.5-49.5*tx-28.5*ty, 94+0.5-49.5*ty+28.5*tx), sprite_engines[2]->size(), engine_phase, bmp);
-	    sprite_engines[2]->draw(Vector2(94+0.5-49.5*tx+28.5*ty, 94+0.5-49.5*ty-28.5*tx), sprite_engines[2]->size(), engine_phase, bmp);
-        sprite_engines[3]->draw(Vector2(95.5+0.5-48*tx-39*ty, 95.5+0.5-48*ty+39*tx), sprite_engines[3]->size(), engine_phase, bmp);
-	    sprite_engines[3]->draw(Vector2(95.5+0.5-48*tx+39*ty, 95.5+0.5-48*ty-39*tx), sprite_engines[3]->size(), engine_phase, bmp);
+        data->more_sprites[3]->draw(Vector2(91+0.5-50*tx, 91+0.5-50*ty), data->more_sprites[3]->size(), engine_phase, bmp);
+        data->more_sprites[4]->draw(Vector2(92.5+0.5-49*tx-16*ty, 92.5+0.5-49*ty+16*tx), data->more_sprites[4]->size(), engine_phase, bmp);
+	    data->more_sprites[4]->draw(Vector2(92.5+0.5-49*tx+16*ty, 92.5+0.5-49*ty-16*tx), data->more_sprites[4]->size(), engine_phase, bmp);
+        data->more_sprites[5]->draw(Vector2(94+0.5-49.5*tx-28.5*ty, 94+0.5-49.5*ty+28.5*tx), data->more_sprites[5]->size(), engine_phase, bmp);
+	    data->more_sprites[5]->draw(Vector2(94+0.5-49.5*tx+28.5*ty, 94+0.5-49.5*ty-28.5*tx), data->more_sprites[5]->size(), engine_phase, bmp);
+        data->more_sprites[6]->draw(Vector2(95.5+0.5-48*tx-39*ty, 95.5+0.5-48*ty+39*tx), data->more_sprites[6]->size(), engine_phase, bmp);
+	    data->more_sprites[6]->draw(Vector2(95.5+0.5-48*tx+39*ty, 95.5+0.5-48*ty-39*tx), data->more_sprites[6]->size(), engine_phase, bmp);
 	}
 
 
@@ -470,13 +476,13 @@ void AlaryBC::animate(Frame *space)
 			ta = si * (PI2/128);
             ttx = cos(ta); tty = sin(ta);
 			if (turret[i]->fire_frame[0] < 4)
-				sprite_fire->draw(97+0.5+ry*tx-rx*ty + 13*ttx+3*tty, 97+0.5+ry*ty+rx*tx + 13*tty-3*ttx, turret[i]->fire_frame[0], bmp);
+				data->more_sprites[2]->draw(97+0.5+ry*tx-rx*ty + 13*ttx+3*tty, 97+0.5+ry*ty+rx*tx + 13*tty-3*ttx, turret[i]->fire_frame[0], bmp);
 			if (turret[i]->fire_frame[1] < 4)
-				sprite_fire->draw(97+0.5+ry*tx-rx*ty + 13*ttx-3*tty, 97+0.5+ry*ty+rx*tx + 13*tty+3*ttx, turret[i]->fire_frame[1], bmp);
-			sprite_turret->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, (iround(si) + 32) & 127, bmp);
+				data->more_sprites[2]->draw(97+0.5+ry*tx-rx*ty + 13*ttx-3*tty, 97+0.5+ry*ty+rx*tx + 13*tty+3*ttx, turret[i]->fire_frame[1], bmp);
+			data->more_sprites[0]->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, (iround(si) + 32) & 127, bmp);
 		}
 		else
-			sprite_turret->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127) + 128, bmp);
+			data->more_sprites[0]->draw(84+0.5+ry*tx-rx*ty, 84+0.5+ry*ty+rx*tx, ((iround(normalize(angle+turret[i]->angle,PI2)/(PI2/128)) + 32) & 127) + 128, bmp);
 	}
 
 	
@@ -615,17 +621,17 @@ double AlaryBC::handle_speed_loss(SpaceLocation *source, double normal)
 
 
 
-AlaryBC::~AlaryBC()
+/*AlaryBC::~AlaryBC()
 {
 	if (supersprite) delete dummy;
-	delete sprite;
-	delete sprite_turret;
-	delete sprite_fire;
-	int i;
-	for (i=0; i<4; i++)
-		delete sprite_engines[i];
+//	delete sprite;
+//	delete sprite_turret;
+//	delete sprite_fire;
+//	int i;
+//	for (i=0; i<4; i++)
+//		delete sprite_engines[i];
 }
-
+*/
 
 
 AlaryBCTorpedo::AlaryBCTorpedo(SpaceLocation *creator, double ox, double oy, double oangle, int oinactive, double oaccel, double  omaxspeed,

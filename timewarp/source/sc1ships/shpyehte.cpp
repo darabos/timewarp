@@ -56,7 +56,7 @@ int YehatTerminator::handle_damage(SpaceLocation *source, double normal, double 
 	return Ship::handle_damage(source, normal, direct);
 	}
 
-double YehatTerminator::isProtected()
+double YehatTerminator::isProtected() const
 {
   return (shieldFrames > 0);
 }

@@ -315,20 +315,20 @@ class VideoSystem : public BaseClass {
 	DATAFILE *font_data; //fonts
 	FONT *basic_font; //font to use if no other is available
 	Color *palette;
-	volatile int needs_redraw;
-	int last_redraw;
+	volatile int queued_redraws;
+	int last_poll;
 	Surface *surface;
 	VideoWindow window;
 
 	FONT *get_font(int size);
 
 	void preinit() ;
+	int poll_redraw();
 	int set_resolution (int width, int height, int bpp, int fullscreen) ; //returns 0 on failure
 	void set_palette(Color *pal);
 	void (*color_effects)(Color *color);
 	void update_colors();
 	void redraw();
-	int optional_redraw();
 } extern videosystem;
 int get_gamma();
 void set_gamma(int gamma);
@@ -413,8 +413,8 @@ class SpaceSprite {
 	int originaltype;
 	int         w;
 	int         h;
-	PMASK **m;
-	Surface     **b[MAX_MIP_LEVELS];
+	struct PMASK **m;
+	Surface **b[MAX_MIP_LEVELS];
 
 	//char *type;
 	int references;
@@ -445,6 +445,7 @@ class SpaceSprite {
 //methods for direct access:
 	Surface     *get_bitmap(int index);
 	Surface     *get_bitmap_readonly(int index);
+	const struct PMASK *get_pmask(int index) {return m[index];}
 	void lock();	//make surface writable
 	void unlock();
 
@@ -460,7 +461,7 @@ class SpaceSprite {
 	void draw(int x, int y, int index, Surface *bmp) ;
 
 	void animate(Vector2 pos, int index, Frame *space, double scale = 1);
-	void animate_character(Vector2 pos, int index, int color, Frame *space);
+	void animate_character(Vector2 pos, int index, int color, Frame *space, double scale = 1);
 
 	void draw_character(int x, int y, int index, int color, Surface *bmp);
 	void draw_character(int x, int y, int index, int color, Frame *space);

@@ -130,7 +130,7 @@ public:
 	static int cloak_color[3];
 	IlwrathAvenger(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
-	virtual double isInvisible();
+	virtual double isInvisible() const;
 	virtual int activate_weapon();
 	virtual void calculate_fire_special();
 	virtual void calculate_hotspots();
@@ -338,7 +338,7 @@ public:
 
 	public:
 	YehatTerminator(Vector2 opos, double angle, ShipData *data, unsigned int code);
-	virtual double isProtected();
+	virtual double isProtected() const;
 
 	protected:
 	virtual int activate_weapon();

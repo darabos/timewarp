@@ -1,5 +1,5 @@
 [Player1]
-Slot0 = andgu
+Slot0 = alabc
 Slot1 = arisk
 Slot2 = chebr
 Slot3 = earcr
@@ -163,29 +163,9 @@ Slot76 = wassu
 Slot77 = yevme
 Slot78 = yusra
 Slot79 = zeksh
-Size = 80
+Slot80 = arkpi
+Slot81 = batde
+Slot82 = taume
+Slot83 = hotsp
+Size = 84
 Title = Fleet with one of each
-
-[Player3]
-Slot0 = druma
-Slot1 = druma
-Slot2 = druma
-Slot3 = druma
-Slot4 = druma
-Slot5 = druma
-Slot6 = druma
-Slot7 = druma
-Slot8 = druma
-Slot9 = druma
-Slot10 = druma
-Slot11 = druma
-Slot12 = druma
-Slot13 = druma
-Slot14 = druma
-Slot15 = druma
-Slot16 = druma
-Slot17 = druma
-Slot18 = druma
-Slot19 = druma
-Size = 20
-Title = 300 point Armada!

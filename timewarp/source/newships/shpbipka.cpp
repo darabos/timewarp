@@ -35,7 +35,7 @@ class BipoleKatamaran : public Ship {
   BipoleKatamaran(Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code);
 
-  virtual double  isInvisible();          // this ship should not be percievable in any way
+  virtual double  isInvisible() const; // this ship should not be percievable in any way
   virtual int  activate_weapon();      // fires the weapons of the ships
   virtual int  activate_special();     // increases range
   virtual void animate(Frame* space);  // does not appear
@@ -128,7 +128,7 @@ BipoleKatamaran::BipoleKatamaran(Vector2 opos, double shipAngle,
   id = 0; /* this is nothing */
 }
 
-double BipoleKatamaran::isInvisible(){
+double BipoleKatamaran::isInvisible() const{
   return 2;
 }
 

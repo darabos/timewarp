@@ -27,7 +27,7 @@ REGISTER_FILE
 	message.print(8000, 15, "%s: %s", name[who], what);
 	return;
 	}*/
-int NormalGame::add_player (Control *c, int team_index, const char *name, const char *fleet_section, const char *fleet_file) {
+int NormalGame::add_player (Control *c, int team_index, const char *name, const char *fleet_section, const char *fleet_file) {STACKTRACE
 	int i = num_players;
 	num_players += 1;
 	player_control = (Control**) realloc(player_control,   sizeof(Control*)   * num_players);
@@ -78,17 +78,18 @@ int NormalGame::add_player (Control *c, int team_index, const char *name, const 
 	player_fleet[i]->save("fleets.tmp", sect);
 	return i;
 	}
-void NormalGame::init_objects() {
+void NormalGame::init_objects() {STACKTRACE
 	int i;
 	//add(new Stars2());
 	add(new Stars());
 	Planet *planet = new Planet (size/2, planetSprite, random(planetSprite->frames()));
 	add (planet);
+	if (view) view->camera.pos = size/2;
 	add(new WedgeIndicator(planet, 75, 4));
 	for (i = 0; i < num_asteroids; i += 1) add(new Asteroid());
 	}
 
-void NormalGame::init_players() {
+void NormalGame::init_players() {STACKTRACE
 	switch (log->type) {
 		case Log::log_normal: {
 			for (int i = 0; true; i += 1) {
@@ -164,7 +165,7 @@ void NormalGame::preinit() {
 	kills = NULL;
 	num_players = 0;
 	}
-void NormalGame::init(Log *_log) {
+void NormalGame::init(Log *_log) {STACKTRACE
 	Game::init(_log);
 
 	team_table_size = 0;
@@ -235,7 +236,7 @@ void NormalGame::init(Log *_log) {
 	return;
 	}
 
-NormalGame::~NormalGame() {
+NormalGame::~NormalGame() {STACKTRACE
 	if (player_control) free (player_control);
 	int i;
 	if (player_name) {
@@ -250,7 +251,7 @@ NormalGame::~NormalGame() {
 	if (kills) free(kills);
 	}
 
-void NormalGame::calculate() {
+void NormalGame::calculate() {STACKTRACE
 	Game::calculate();
 	if (next_choose_new_ships_time <= game_time) {
 		choose_new_ships();
@@ -259,7 +260,7 @@ void NormalGame::calculate() {
 	return;
 	}
 
-void NormalGame::ship_died(Ship *who, SpaceLocation *source) {
+void NormalGame::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
 	int n = game_time + 4000;
 	if (next_choose_new_ships_time > n) next_choose_new_ships_time = n;
 	Game::ship_died(who, source);
@@ -274,7 +275,7 @@ void NormalGame::ship_died(Ship *who, SpaceLocation *source) {
 	num_kills += 1;
 	return;
 	}
-void NormalGame::display_stats() {
+void NormalGame::display_stats() {STACKTRACE
 	pause();
 	int i;
 	for (i = 0; i < num_players; i += 1) {
@@ -298,7 +299,7 @@ void NormalGame::display_stats() {
 	return;
 }
 #include "../other/radar.h"
-bool NormalGame::handle_key(int k) {
+bool NormalGame::handle_key(int k) {STACKTRACE
 	switch (k >> 8) {
 		default: {
 			return Game::handle_key(k);
@@ -324,7 +325,7 @@ bool NormalGame::handle_key(int k) {
 		}
 	return false;
 	}
-void NormalGame::choose_new_ships() {
+void NormalGame::choose_new_ships() {STACKTRACE
 	char tmp[40];
 	int i;
 	pause();

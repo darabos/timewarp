@@ -5,8 +5,48 @@
 #include "../melee.h"
 REGISTER_FILE
 
-
-
+#if defined DO_STACKTRACE
+	struct StackTraceData {
+		const char *file;
+		int line;
+	};
+	#define MAX_STACKTRACE_LEVELS 64
+	#define MAX_STACKTRACE_LEVELS_MASK (MAX_STACKTRACE_LEVELS-1)
+	int _stacktrace_level = 0;
+	static StackTraceData _stacktrace_data[MAX_STACKTRACE_LEVELS];
+	UserStackTraceHelper::UserStackTraceHelper(const char *file, int line) {
+		_stacktrace_data[_stacktrace_level & MAX_STACKTRACE_LEVELS_MASK].file = file;
+		_stacktrace_data[_stacktrace_level & MAX_STACKTRACE_LEVELS_MASK].line = line;
+		_stacktrace_level += 1;
+	}
+	UserStackTraceHelper::~UserStackTraceHelper() {
+		_stacktrace_level -= 1;
+	}
+	char *get_stack_trace_string(int max) {
+		int l = 30;
+		int i = 0;
+		if (_stacktrace_level < 0) return "\nError in stack trace\n";
+//		if (_stacktrace_level > 256) return "\n
+		if (max > MAX_STACKTRACE_LEVELS) max = MAX_STACKTRACE_LEVELS;
+		if (max > _stacktrace_level) max = _stacktrace_level;
+		for (i = 0; i < max; i += 1) {
+			l += strlen(_stacktrace_data[(_stacktrace_level-i-1) & MAX_STACKTRACE_LEVELS_MASK].file);
+			l += 25;
+		}
+		char *buf = (char*)malloc(l);
+		char *tmp = buf;
+		tmp += sprintf(tmp, "\nStack Trace:\n");
+		for (i = 0; i < max; i += 1) {
+			if (i != 0) tmp += sprintf(tmp, "called from");
+			const char *str = _stacktrace_data[(_stacktrace_level-i-1) & MAX_STACKTRACE_LEVELS_MASK].file;
+			const char *tmp2 = strstr(str, "source");
+			if (tmp2 && tmp2[6]) str = tmp2 + 7;
+			int line = _stacktrace_data[(_stacktrace_level-i-1) & MAX_STACKTRACE_LEVELS_MASK].line;
+			tmp += sprintf(tmp, "  %s : %d\n", str, line);
+		}
+		return buf;
+	}
+#endif
 static DIALOG tw_alert_dialog1[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { d_box_proc,        180,  170,  280,  140,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
@@ -107,7 +147,7 @@ int tw_alert(const char *message, const char *b1, const char *b2, const char *b3
 
 
 static void tw_error_handler (const char *file, int line, const char *message) {
-	char error_string[2048];
+	char error_string[4096];
 	int i;
 
 	if (!strncmp(message, "quit", 4)) throw 0;
@@ -121,6 +161,11 @@ static void tw_error_handler (const char *file, int line, const char *message) {
 		sprintf(error_string + strlen(message), 
 				"\n\n%s, Line %d", file, line);
 	}
+#ifdef DO_STACKTRACE
+	char *STstring = get_stack_trace_string(8);
+	sprintf(error_string + strlen(message), "\n\n%s", STstring);
+	free(STstring);
+#endif
 
 	if (videosystem.width <= 0) {
 		allegro_message("Critical Error$: %s\n", error_string);
@@ -169,7 +214,7 @@ void tw_error_exit(const char* message) {
 }
 
 void caught_error(const char *format, ...) {
-	char error_string[2048];
+	char error_string[4096];
 	if (format) {
 		va_list those_dots;
 		va_start(those_dots, format);
@@ -177,6 +222,13 @@ void caught_error(const char *format, ...) {
 		va_end(those_dots);
 	}
 
+#ifdef DO_STACKTRACE
+	int l = strlen(error_string);
+	char *STstring = get_stack_trace_string(8);
+	if (l + strlen(STstring) < 4000) 
+		sprintf(error_string + l, "\n\n%s", STstring);
+	free(STstring);
+#endif
 	int i = tw_alert(error_string, "Okay", "Debug");
 	if (i == 2) __error_flag |= 1;
 
@@ -184,6 +236,39 @@ void caught_error(const char *format, ...) {
 }
 
 
+#if defined(USE_ALLEGRO) && defined(DO_STACKTRACE)
 
+volatile int _crash_detected = 0;
+static void _crash_detector() {
+	if (_crash_detected) return;
+	int i = get_time();
+	if (videosystem.last_poll < i - 2500) {
+		if (videosystem.last_poll == -1) return;
+		_crash_detected = 1;
+		char *STstring = get_stack_trace_string(16);
+		log_debug("\nPossible Infinite Loop:\n%s", STstring);
+		free(STstring);
+	}
+}
+END_OF_STATIC_FUNCTION(_crash_detector)
+
+void init_error() {
+	int i;
+	LOCK_VARIABLE(_crash_detected);
+	i = install_int(_crash_detector, 1000);
+	if (i) {
+		log_debug("init_error() - failed to install crash detector");
+		tw_error("init_error() - failed to install crash detector");
+	}
+}
+
+void deinit_error() {
+	remove_int(_crash_detector);
+}
+
+#else
+
+
+#endif
 
 

@@ -20,7 +20,7 @@ class PlanetShip : public Ship {
     ShipData *shipData, unsigned int code);
 
   virtual int activate_special();
-  virtual double isInvisible();
+  virtual double isInvisible() const;
   virtual void calculate_hotspots();
   virtual void calculate();
   virtual int handle_damage( SpaceLocation* other, double normal, double direct );
@@ -53,7 +53,7 @@ PlanetShip::PlanetShip( Vector2 opos, double shipAngle,
   planet = new InvisiblePlanet( this, pos, sprite, sprite_index );
 }
 
-double PlanetShip::isInvisible(){
+double PlanetShip::isInvisible() const{
 	return (special_recharge > 0) ? 1 : 0;
 }
 

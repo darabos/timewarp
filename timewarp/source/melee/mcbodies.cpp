@@ -17,7 +17,7 @@ REGISTER_FILE
 
 Asteroid::Asteroid() 
 :	SpaceObject(NULL, random(map_size), random(PI2), game->asteroidSprite), explosion(game->asteroidExplosionSprite)
-{
+{STACKTRACE
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = ALL_LAYERS;
 	layer = LAYER_CBODIES;
@@ -31,7 +31,7 @@ Asteroid::Asteroid()
 }
 
 void Asteroid::calculate()
-{
+{STACKTRACE
 	step-= frame_time;
 	while(step <= 0) {
 		step += speed * time_ratio;
@@ -43,7 +43,7 @@ void Asteroid::calculate()
 	SpaceObject::calculate();
 }
 
-int Asteroid::handle_damage(SpaceLocation *source, double normal, double direct) {
+int Asteroid::handle_damage(SpaceLocation *source, double normal, double direct) {STACKTRACE
 	if (!exists()) return 0;
 	if (!normal && !direct) return 0;
 
@@ -51,7 +51,7 @@ int Asteroid::handle_damage(SpaceLocation *source, double normal, double direct)
 	return 1;
 	}
 
-void Asteroid::death() {
+void Asteroid::death() {STACKTRACE
 
 	Animation *a = new Animation(this, pos,
 			explosion, 0, explosion->frames(), time_ratio, get_depth());
@@ -66,7 +66,7 @@ void Asteroid::death() {
 Planet::Planet(Vector2 loc, SpaceSprite *sprite, int index) 
 	:
 	SpaceObject(NULL, loc, 0.0, sprite) 
-	{
+	{STACKTRACE
 	collide_flag_sameship = ALL_LAYERS;
 	layer = LAYER_CBODIES;
 	set_depth(DEPTH_PLANETS);
@@ -85,7 +85,7 @@ Planet::Planet(Vector2 loc, SpaceSprite *sprite, int index)
 
 	}
 
-void Planet::inflict_damage(SpaceObject *other) {
+void Planet::inflict_damage(SpaceObject *other) {STACKTRACE
 	int i = 1;
 	if (other->isShip()) {
 		i = (int) ceil(((Ship*)other)->crew / 3.0);
@@ -99,7 +99,7 @@ void Planet::inflict_damage(SpaceObject *other) {
 	return;
 	}
 
-void Planet::calculate() {
+void Planet::calculate() {STACKTRACE
 	SpaceObject::calculate();
 	SpaceObject *o;
 	Query a;
@@ -150,7 +150,7 @@ void _draw_starfield_raw (
 	//anti-aliasing mode to use
 	int aa_mode
 ) 
-{
+{STACKTRACE
 	int i;
 	double wx, wy;
 	wx = sprite->width() * zoom;
@@ -199,7 +199,7 @@ void _draw_starfield_cached (
 	//anti-aliasing mode to use
 	int aa_mode
 ) 
-{
+{STACKTRACE
 	int i;
 	double wx, wy;
 	int iwx, iwy;
@@ -261,7 +261,7 @@ void _draw_starfield_cached (
 
 SpaceSprite *Stars2::starpics = NULL;
 Stars2::Stars2() 
-{
+{STACKTRACE
 	int i;
 	set_depth(DEPTH_STARS);
 	if (!starpics) {
@@ -297,7 +297,7 @@ Stars2::Stars2()
 	}
 }
 
-void Stars2::load_next ( const char *sect, const StarLayer *old ) {
+void Stars2::load_next ( const char *sect, const StarLayer *old ) {STACKTRACE
 	if (!sect) return;
 	int l = num_layers;
 	num_layers += 1;
@@ -331,12 +331,12 @@ void Stars2::load_next ( const char *sect, const StarLayer *old ) {
 	}
 }
 
-Stars2::~Stars2() {
+Stars2::~Stars2() {STACKTRACE
 	if (layer) delete layer;
 }
 
 void Stars2::animate ( Frame * space ) 
-{
+{STACKTRACE
 //	return;
 	if (starpics->frames() == 0) return;
 	int i;
@@ -371,11 +371,11 @@ void Stars2::animate ( Frame * space )
 
 
 
-void Stars::select_view( View **view) {
+void Stars::select_view( View **view) {STACKTRACE
 	v = view;
 }
 
-void Stars::_event( Event *e) {
+void Stars::_event( Event *e) {STACKTRACE
 	if (e->type == Event::TW_CONFIG) {
 		ConfigEvent *ce = (ConfigEvent *) e;
 		if (0) ;
@@ -398,7 +398,7 @@ void Stars::_event( Event *e) {
 	return;
 }
 
-Stars::Stars() {
+Stars::Stars() {STACKTRACE
 	int i;
 	v = NULL;
 	set_depth(DEPTH_STARS);
@@ -453,14 +453,14 @@ Stars::Stars() {
 	aa_mode = get_config_int("Stars", "Quality", 5);
 	}
 */
-Stars::~Stars() {
+Stars::~Stars() {STACKTRACE
 	int i;
 	for(i = 0; i < num_pics; i++) delete pic[i];
 	delete pic;
 	}
 
 
-void Stars::animate(Frame *space) {
+void Stars::animate(Frame *space) {STACKTRACE
 	if (v && (space_view != *v)) return;
 
 	double d = space_zoom;

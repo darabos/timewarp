@@ -124,6 +124,7 @@ char **control_name = gcc_sucks_dick;
 
 
 void animate_target(Frame *frame, SpaceLocation *t, int dx, int dy, int r, int c) {
+	STACKTRACE
 /*	double x, y;
 	r = int( r * space_zoom/2);
 	x = t->normal_x() - space_x;
@@ -152,7 +153,7 @@ void animate_target(Frame *frame, SpaceLocation *t, int dx, int dy, int r, int c
 
 
 
-int control2number(const char *name) {
+int control2number(const char *name) {STACKTRACE
 	if (!name) return 0;
 	for (int i = 0; i < num_controls+1; i += 1) {
 		if (!strcmp(name, control_name[i])) return i;
@@ -160,7 +161,7 @@ int control2number(const char *name) {
 	return 0;
 	}
 
-Control *getController(const char *type, const char *name, int channel) {
+Control *getController(const char *type, const char *name, int channel) {STACKTRACE
 	switch (control2number(type)) {
 		case  ai_index_human:     return new ControlHuman(name, channel);
 		case  ai_index_moron:     return new ControlMoron(name, channel);
@@ -176,7 +177,7 @@ int Control::rand() {
 	return (::rand() ^ ((::rand() << 12) + (::rand() <<24))) & 0x7fffffff;
 	}
 void Control::setup() {}
-void Control::select_ship(Ship* ship_pointer, const char* ship_name) {
+void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE
 	ship = ship_pointer;
 	if (ship) {
 		ship->control = this;
@@ -192,7 +193,7 @@ void Control::load(const char* inifile, const char* inisection) {
 void Control::save(const char* inifile, const char* inisection) {
 	return;
 	}
-SpaceLocation *Control::get_focus() {
+SpaceLocation *Control::get_focus() {STACKTRACE
 	if (ship) return ship->get_focus();
 	else return NULL;
 	}
@@ -259,7 +260,7 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 	}
 	return ret;
 }
-int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
+int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {STACKTRACE
 	int ret = -1, slot = 0;
 	if (fleet->size == 0) tw_error ("Empty fleet! (prompt:%s)", prompt);
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
@@ -274,7 +275,7 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
 	if ((ret == SELECT_DIALOG_ARANDOM) || (ret == -1)) always_random = 1;
 	return(slot);
 	}
-void Control::set_target(int i) {
+void Control::set_target(int i) {STACKTRACE
 	if (i >= game->num_targets) tw_error("oscar hamburger!!!!!!!!!");
 	if (i == -1) {
 		index = i;
@@ -286,7 +287,7 @@ void Control::set_target(int i) {
 	target = game->target[index];
 	return;
 	}
-void Control::target_stuff() {
+void Control::target_stuff() {STACKTRACE
 	if (index == -1) {
 		if (game->num_targets) {
 			index = random() % game->num_targets;
@@ -342,7 +343,7 @@ change:
 done:
 	return;
 	}
-void Control::calculate() {
+void Control::calculate() {STACKTRACE
 
 	target_stuff();
 
@@ -388,17 +389,17 @@ void Control::calculate() {
 
 	return;
 	}
-int Control::think() {
+int Control::think() {STACKTRACE
 	return 0;
 	}
-char *Control::getDescription() {
+char *Control::getDescription() {STACKTRACE
 	return iname;
 	}
 Control::Control(const char *name, int _channel) : ship(NULL), 
 	target(NULL), index(-1), _prediction_keys(NULL), 
 	always_random(0), channel(_channel), 
 	already(0), temporary(false), target_sign_color(255)
-	{
+	{STACKTRACE
 	id |= ID_CONTROL;
 	attributes |= ATTRIB_SYNCHED;
 	if (channel != Game::channel_none) {
@@ -408,7 +409,7 @@ Control::Control(const char *name, int _channel) : ship(NULL),
 	}
 	iname = strdup(name);
 	}
-Control::~Control() { 
+Control::~Control() { STACKTRACE
 	if (_prediction_keys) delete _prediction_keys;
 	}
 bool Control::valid_target(SpaceObject *t) {
@@ -417,7 +418,7 @@ bool Control::valid_target(SpaceObject *t) {
 	if (!t->exists()) return false;
 	return true;
 	}
-void Control::animate(Frame *space) {
+void Control::animate(Frame *space) {STACKTRACE
 	if (!ship) return;
 	if (!target || target->isInvisible()) return;
 	if (!(attributes & ATTRIB_ACTIVE_FOCUS)) return;

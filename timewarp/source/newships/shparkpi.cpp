@@ -464,15 +464,15 @@ void ArkanoidPincerShip::death(void) {
     if(pincerL->exists()) {
       pincerL->creator = NULL;
       pincerL->otherPincer = NULL;
-      pincerL = NULL;
       pincerL->state = 0;
+      pincerL = NULL;
     }
   if(pincerR)
     if(pincerR->exists()) {
       pincerR->creator = NULL; 
       pincerR->otherPincer = NULL;
-      pincerR = NULL;
       pincerR->state = 0;
+      pincerR = NULL;
     }
   Ship::death();
   //message.print(1500,13,"ShipDeath2");

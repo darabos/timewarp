@@ -239,8 +239,8 @@ protected: public://aught to be protected, but we're lazy
 	double distance(SpaceLocation *l);
 	double trajectory_angle(SpaceLocation *l);
 
-	virtual double isProtected();  // returns 0 normally, or a positive number if shielded
-	virtual double isInvisible();  // returns 0 normally, or a positive number if cloaked
+	virtual double isProtected() const;  // returns 0 normally, or a positive number if shielded
+	virtual double isInvisible() const;  // returns 0 normally, or a positive number if cloaked
 
 	Planet *nearest_planet(); //returns the nearest planet, or NULL if no planets are nearby
 
@@ -318,7 +318,7 @@ struct Query {
 	int qy_min, qy_max;
 	int qx, qy;
 	Vector2 target_pos;
-	double range;
+	double range_sqr;
 	void next_quadrant ();
 	public:
 	union {
@@ -327,13 +327,45 @@ struct Query {
 		SpaceLocation *current;
 	};
 	void begin (SpaceLocation *target, int layers, double range);
-	void begin (Vector2 center, int layers, double range);
+	void begin (SpaceLocation *target, Vector2 center, int layers, double range);
 	void next ();
 	void end();
 	private:
 	bool current_invalid() {
 		if (!(bit(current->layer) & layers) || (current == target) || !current->exists()) return true;
-		if (distance_from(target_pos, current->normal_pos()) > range) return true;
+		if (magnitude_sqr(min_delta(target_pos, current->normal_pos())) > range_sqr) return true;
+		return false;
+	}
+};
+
+inline Uint64 REQUIRE_ATTRIBUTES(Uint32 a) {return a | (Uint64(a) << 32);}
+inline Uint64 PROHIBIT_ATTRIBUTES(Uint32 a) {return Uint64(a) << 32;}
+
+struct Query2 {
+	private:
+	int attributes_desired;
+	int attributes_mask;
+	SpaceLocation *target;
+	int qx_min, qx_max;
+	int qy_min, qy_max;
+	int qx, qy;
+	Vector2 target_pos;
+	double range_sqr;
+	void next_quadrant ();
+	public:
+	union {
+		SpaceObject   *currento;
+		SpaceLine     *currentl;
+		SpaceLocation *current;
+	};
+	void begin (SpaceLocation *target, Uint64 attribute_filter, double range);
+	void begin (SpaceLocation *target, Vector2 center, Uint64 attribute_filter, double range);
+	void next ();
+	void end();
+	private:
+	bool current_invalid() {
+		if (((current->attributes & attributes_mask) != attributes_desired) || (current == target) || !current->exists()) return true;
+		if (magnitude_sqr(min_delta(target_pos, current->normal_pos())) > range_sqr) return true;
 		return false;
 	}
 };

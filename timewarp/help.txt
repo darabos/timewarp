@@ -10,16 +10,15 @@ like that.  What should I do?
 A.  Use the command line options -res, -bpp, and -fullscreen or
 -window to force it to start in a graphics mode your video card
 and video driver like.  Example:
-"scpwin -res 640 480 -bpp 8 -fullscreen -nosound" runs the windows version
+"twwin -res 640 480 -bpp 8 -fullscreen -nosound" runs the windows version
 of TimeWarp at 640x480 with 8 bits per pixel in a fullscreen mode.  This
 is generally a safe setting, although 8 bits per pixel looks ugly.  
-Once you get it running, click on options and then select "Okay" so
+Once you get it running, click on options and then select "Set Default" so
 that those settings will be the default the next time you run it.  
 
 Note: "twdos -res 320 200 -bpp 8 -fullscreen" will cause TimeWarp 
 to run in standard VGA mode (13h).  TimeWarp is actually playable at 
-this outdated resolution, though not all of the menus function 
-properly there.  "twdos -res 320 240 -bpp 8 -fullscreen" should also 
-work on any VGA card.  This can also be usefull if you want to run 
-twdos on a windows NT dos box that doesn't permit dos programs to 
-use super VGA mode graphics.  
+this outdated resolution.  "twdos -res 320 240 -bpp 8 -fullscreen"
+should also work on any VGA card.  This can also be usefull if you want
+to run twdos on a windows NT dos box that doesn't permit dos programs
+to use super VGA mode graphics.  

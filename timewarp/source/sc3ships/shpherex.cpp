@@ -15,7 +15,7 @@ class HeraldExterminator : public Ship {
   HeraldExterminator(Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code);
 
-  virtual double isInvisible();
+  virtual double isInvisible() const;
   virtual int activate_weapon();
   virtual void calculate_fire_special();
   virtual void calculate_hotspots();
@@ -38,7 +38,7 @@ HeraldExterminator::HeraldExterminator(Vector2 opos, double shipAngle,
   cloak_frame = 0;
 }
 
-double HeraldExterminator::isInvisible() {
+double HeraldExterminator::isInvisible() const {
 	if(cloak_frame >= 300)
 		return(1);
 	return(false);

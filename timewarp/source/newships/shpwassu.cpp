@@ -33,7 +33,7 @@ class WasxSuperposition : public Ship {
 
 	friend class WasxClone;
 	
-	virtual double  isInvisible(); 
+	virtual double  isInvisible() const;
 	virtual int  activate_weapon();
 	virtual int  activate_special();
 	// virtual int  canCollide(SpaceLocation *source);
@@ -134,7 +134,7 @@ void WasxShot::inflict_damage(SpaceObject *other) {
 	return;
 	}
 
-double WasxSuperposition::isInvisible() {
+double WasxSuperposition::isInvisible() const {
 	if (num_Clone == max_Clone) return(1);
 	 else return 0;
 } 

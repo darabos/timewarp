@@ -25,7 +25,7 @@ ShipType* empty_slot = &es;
 
 Fleet* reference_fleet = NULL;
 
-void init_fleet() {
+void init_fleet() {STACKTRACE
 	if(reference_fleet)
 		return;
 	reference_fleet = new Fleet();
@@ -41,14 +41,14 @@ Fleet::Fleet() {
 	reset();
 }
 
-void Fleet::reset() {
+void Fleet::reset() {STACKTRACE
 	size = 0;
 	cost = 0;
 	for( int i = 0; i < MAX_FLEET_SIZE; i++ ) ship[i] = empty_slot;
 	sprintf(title, "Untitled");
 }
 
-void *Fleet::serialize(int *psize) {
+void *Fleet::serialize(int *psize) {STACKTRACE
 	unsigned char buffy[65536];
 	int s = 0;
 	int j;
@@ -69,7 +69,7 @@ void *Fleet::serialize(int *psize) {
 	return holder;
 }
 
-void Fleet::deserialize(void *data, int psize) {
+void Fleet::deserialize(void *data, int psize) {STACKTRACE
 
 #define READ(a) if (int(s+sizeof(a))>psize) {delete k;tw_error ("deserialize_fleet - bad!");}memcpy(&a, &buffy[s], sizeof(a)); s += sizeof(a);
 #define READ2(a,b) if (b+s>psize) {delete k;tw_error ("deserialize_fleet - bad!");}memcpy(&a, &buffy[s], b); s += b;
@@ -117,7 +117,7 @@ void Fleet::deserialize(void *data, int psize) {
 	return;
 }
 
-void Fleet::select_slot(int slot, ShipType *type) {
+void Fleet::select_slot(int slot, ShipType *type) {STACKTRACE
 	if (slot < 0)
 		return;
 	if (!type)
@@ -133,7 +133,7 @@ void Fleet::select_slot(int slot, ShipType *type) {
 	return;
 }
 
-void Fleet::clear_slot(int slot) {
+void Fleet::clear_slot(int slot) {STACKTRACE
 	if (slot < 0) return;
   if (ship[slot] == empty_slot)
     return;
@@ -143,7 +143,7 @@ void Fleet::clear_slot(int slot) {
   size--;
 }
 
-void Fleet::save(const char *filename, const char *section) {
+void Fleet::save(const char *filename, const char *section) {STACKTRACE
 	int i, count = 0;
 	char slot_str[8];
 
@@ -191,7 +191,7 @@ int Fleet::ship_idtoindex(const char *id_str)
 }
 */
 
-void Fleet::load(const char *filename, const char *section) {
+void Fleet::load(const char *filename, const char *section) {STACKTRACE
   int i, count;
   ShipType *type;
   char slot_str[8];
@@ -241,7 +241,7 @@ int fleetsort_by_cost(const Fleet::Index *_i1, const Fleet::Index *_i2) {
 	else return i;
 }
 
-void Fleet::sort(int (*compare_function)(const Index *p1, const Index *p2)) {
+void Fleet::sort(int (*compare_function)(const Index *p1, const Index *p2)) {STACKTRACE
 	Index indexes[MAX_FLEET_SIZE];
 	int i;
 	for (i = 0; i < MAX_FLEET_SIZE; i += 1) {
@@ -310,142 +310,24 @@ static int _fleetsort_numerical(const Fleet::Index *_i1, const Fleet::Index *_i2
 	else return i;
 }
 
-void Fleet::sort_alphabetical(const char *item, const char *section) {
+void Fleet::sort_alphabetical(const char *item, const char *section) {STACKTRACE
 	_fleetsort_ini_section = section;
 	_fleetsort_ini_item = item;
 	sort(_fleetsort_alphabetical);
 	return;
 }
 
-void Fleet::sort_numerical(const char *item, const char *section) {
+void Fleet::sort_numerical(const char *item, const char *section) {STACKTRACE
 	_fleetsort_ini_section = section;
 	_fleetsort_ini_item = item;
 	sort(_fleetsort_numerical);
 	return;
 }
 
-void Fleet::sort() {
+void Fleet::sort() {STACKTRACE
 	sort(fleetsort_clean);
 	return;
 }
 
-/*
-void Fleet::sort_by_name(){
-	qsort_by_name( 0, MAX_FLEET_SIZE - 1 );
-}
 
-void Fleet::qsort_by_name( int lo0, int hi0 ){
-  if( hi0 > lo0 ){
-    int lo = lo0;
-    int hi = hi0;
-    const char* mid = ship[(int)((lo0 + hi0) / 2)]->name;
-    while( lo <= hi ){
-      while( lo < hi0 && strcmp( mid, ship[lo]->name ) > 0 )
-        lo++;
-      while( hi > lo0 && strcmp( mid, ship[hi]->name ) < 0 )
-        hi--;
-      if( lo <= hi ){
-        if( strcmp( ship[lo]->name, ship[hi]->name )){
-          shiptype_type* tmp = ship[lo];
-          ship[lo] = ship[hi];
-          ship[hi] = tmp;
-        }
-        lo++;
-        hi--;
-      }
-    }
-    if( lo0 < hi ) qsort_by_name( lo0, hi );
-    if( lo < hi0 ) qsort_by_name( lo, hi0 );
-  }
-}
-
-
-void Fleet::sort_by_cost(){
-	empty_slot->cost = 999999;
-	qsort_by_cost( 0, MAX_FLEET_SIZE - 1 );
-	empty_slot->cost = 0;
-}
-
-void Fleet::qsort_by_cost( int lo0, int hi0 ){
-  if( hi0 > lo0 ){
-    int lo = lo0;
-    int hi = hi0;
-    int mid = ship[(int)((lo0 + hi0) / 2)]->cost;
-    while( lo <= hi ){
-      while( lo < hi0 && mid > ship[lo]->cost )
-        lo++;
-      while( hi > lo0 && mid < ship[hi]->cost )
-        hi--;
-      if( lo <= hi ){
-        if( ship[lo]->cost != ship[hi]->cost ){
-          shiptype_type* tmp = ship[lo];
-          ship[lo] = ship[hi];
-          ship[hi] = tmp;
-        }
-        lo++;
-        hi--;
-      }
-    }
-    if( lo0 < hi ) qsort_by_cost( lo0, hi );
-    if( lo < hi0 ) qsort_by_cost( lo, hi0 );
-  }
-}
-
-void Fleet::sort_by( const char* property ){
-	int i;
-	char *properties[MAX_FLEET_SIZE];
-	for( i = 0; i < MAX_FLEET_SIZE; i++ ){
-		char fn[256];
-		sprintf( fn, "ships/%s.ini", ship[i]->id );
-		set_config_file( fn );
-		properties[i] = (char*)malloc( 256 );
-		sprintf( properties[i], get_config_string( "Info", property, "\255\255\255" ));
-	}
-	qsort_by( properties, 0, MAX_FLEET_SIZE - 1 );
-	for( i = 0; i < MAX_FLEET_SIZE; i++ ) free( properties[i] );
-	sort();		// just to be sure
-}
-
-void Fleet::qsort_by( char** properties, int lo0, int hi0 ){
-  if( hi0 > lo0 ){
-    int lo = lo0;
-    int hi = hi0;
-    char* mid = properties[(int)((lo0 + hi0) / 2)];
-    while( lo <= hi ){
-      while( lo < hi0 && strcmp( mid, properties[lo] ) > 0 )
-        lo++;
-      while( hi > lo0 && strcmp( mid, properties[hi] ) < 0 )
-        hi--;
-      if( lo <= hi ){
-        if( strcmp( properties[lo], properties[hi] )){
-          shiptype_type* tmp = ship[lo];
-          ship[lo] = ship[hi];
-          ship[hi] = tmp;
-          char *tmpc = properties[lo];
-          properties[lo] = properties[hi];
-          properties[hi] = tmpc;
-        }
-        lo++;
-        hi--;
-      }
-    }
-    if( lo0 < hi ) qsort_by( properties, lo0, hi );
-    if( lo < hi0 ) qsort_by( properties, lo, hi0 );
-  }
-}
-
-void Fleet::sort(){
-  int i = 0;
-  int j; 
-  while( true ){
-    while( ship[i] != empty_slot && i < MAX_FLEET_SIZE - 1 ) i++;
-    j = i;
-    while( ship[j] == empty_slot && j < MAX_FLEET_SIZE - 1 ) j++;
-    if( i == j ) break;
-    if( ship[j] == empty_slot ) break;
-    ship[i] = ship[j];
-    ship[j] = empty_slot;
-  }
-}
-*/
 

@@ -37,8 +37,15 @@ int aa_get_mode ( ) { return _aa_mode; }
 
 int _aa_trans = 0;
 int _aa_trans2 = 0;
-void aa_set_trans ( int a ) { _aa_trans2 = a; _aa_trans = (a<<8)/(256-a);}
-int aa_get_trans ( ) { return _aa_trans2; }
+void aa_set_trans ( int a ) { 
+	if (a < 0) a = 0;
+	if (a > 256) a = 255;
+	_aa_trans2 = a;
+	if (a < 256) _aa_trans = (a<<8)/(256-a);
+}
+int aa_get_trans ( ) {
+	return _aa_trans2;
+}
 
 void aa_set_background ( RGB rgb ) {
 	_aa.background.rgb = rgb;
@@ -114,6 +121,8 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 	put = get_aa_put_function(dest, mode);
 	if (!add || !put) return;
 
+	bmp_select(dest);
+
 	y1 = (dy        >> aa_BITS);
 	y2 = ((dy+dh-1) >> aa_BITS);
 	x1 = (dx        >> aa_BITS);
@@ -127,7 +136,7 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 	if (cw < aa_SIZE) cw = aa_SIZE;
 	if (ch < aa_SIZE) ch = aa_SIZE;
 	_aa.total = cw * ch;
-	if (!(mode & AA_NO_ALIGN)) {
+	if (!(mode & (AA_NO_ALIGN | AA_NO_FILTER))) {
 		if (_aa.total > aa_MAX_NUM) {
 			if (cw > aa_MAX_SIZE) {
 //				xbase -= (cw - aa_MAX_SIZE) >> 1;
@@ -145,40 +154,42 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 	if (_aa_mode & AA_VFLIP) {
 		ybase -= yscale * (y2-idy);
 		yscale *= -1;
-		}
+	}
 	if (_aa_mode & AA_HFLIP) {
 		xbase -= xscale * (x2-idx);
 		xscale *= -1;
-		}
+	}
 	if (dest->clip) {
 		if (y1 < dest->ct) y1 = dest->ct;
 		if (y2 >= dest->cb) y2 = dest->cb - 1;
 		if (x1 < dest->cl) x1 = dest->cl;
 		if (x2 >= dest->cr) x2 = dest->cr - 1;
-		}
+	}
 	if (_aa_trans) {
-		//if (_aa_trans2 == 255) return;
+		if (_aa_trans2 >= 256) return;
 		_aa.total += (_aa.total * (Uint64)_aa_trans) >> 8;
 	}
+	_aa.inverse = 1 + (0xffffffffUL /  _aa.total );
 	for (iy = y1; iy <= y2; iy += 1) {
 		int th;
 		cy = (iy-idy) * yscale - ybase;
 		addr = bmp_write_line(dest, iy); //this helps if dest is a video bitmap
+		//addr = (int)dest->line[iy];
 		_aa.y = iy;
 		th = ch;
 		if (cy < 0) { //top edge of image
 			th += cy;
 			cy = 0;
-			}
+		}
 		if (cy + th > mh) { //bottom edge of image
 			th = mh - cy;
-			}
+		}
 		if (th < aa_SIZE) { //either edge
 			cy -= (aa_SIZE - th) / 2;
 			th = aa_SIZE;
 			if (cy < 0) cy = 0;
 			if (cy > (int)(mh - aa_SIZE)) cy = mh - aa_SIZE;
-			}
+		}
 		for (ix = x1; ix <= x2; ix += 1) {
 			int tw;
 			cx = (ix-idx) * xscale - xbase;
@@ -186,23 +197,23 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 			if (cx < 0) {//left edge of image
 				tw += cx;
 				cx = 0;
-				}
+			}
 			if (cx + tw > mw) {//right edge of image
 				tw = mw - cx;
-				}
+			}
 			if (tw < aa_SIZE) {//either edge of image
 				cx -= (aa_SIZE - tw) / 2;
 				tw = aa_SIZE;
 				if (cx < 0) cx = 0;
 				if (cx > (int)(mw - aa_SIZE)) cx = mw - aa_SIZE;
-				}
+			}
 			add ((BITMAP *)src, cx, cx + tw, cy, cy + th);
 			AA_PUT_PIXEL (put, addr, ix);
-			}
 		}
+	}
 	bmp_unwrite_line(dest); //this helps if dest is a video bitmap
 	return;
-	}
+}
 
 /*
  * Anti-aliased bitmap stretching with blit.

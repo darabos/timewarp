@@ -10,7 +10,7 @@ Pre-0.05u6 new improvements:
   * Added frame interpolation (actually extrapolation)
   * Added MANY MANY MANY original ships (thanks to: Launchpad, Tau,
     Richardyzo, me, Slag-786B, Standard Time, ][amaraw, Forevian,
-    Cyhawk, Geoman, Varith, lots more)
+    Cyhawk, Geoman, Varith, more)
   * ...and all 12 ships from Star Control 3 (thanks (or blame) go to
     Launchpad)
   * Added new game modes, including GOB!, Asteroid Field, Hyperspace,

@@ -286,14 +286,16 @@ SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index)
 	if (!argc) return NULL;
 	count = atoi(argv[0]);
 	if (!count) return NULL;
-	if (tp = strchr(argv[0], 'r')) {
-		rotations = atoi(tp+1);
-		if (rotations == 0) rotations = 64;
-	}
+	tp = strchr(argv[0], 'r');
 	for (i = 1; i < argc; i += 1) {
 		if ((argv[i][0] == '-') || (argv[i][0] == '+')) {
-			cp += sprintf(buffy, "%s", argv[i]);
+			cp += sprintf(cp, "%s ", argv[i]);
 		}
+		else if (argv[i][0] == 'r') tp = argv[i];
+	}
+	if (tp) {
+		rotations = atoi(tp+1);
+		if (rotations == 0) rotations = 64;
 	}
 	SpaceSprite *sprite = NULL;
 	int attrib = string_to_sprite_attributes(buffy);

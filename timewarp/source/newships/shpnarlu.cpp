@@ -24,7 +24,7 @@ class NaroolLurker : public Ship {
 		ShipData *shipData, unsigned int code);
 
 
-	virtual double isInvisible() ;
+	virtual double isInvisible() const;
 	virtual int activate_weapon();
 	virtual void calculate_fire_special();
 	virtual void calculate_hotspots();
@@ -81,7 +81,7 @@ NaroolLurker::NaroolLurker(Vector2 opos, double shipAngle,
 }
 
 
-double NaroolLurker::isInvisible() {
+double NaroolLurker::isInvisible() const {
 	if (cloak_frame >= 300) return(1);
 	return 0;
 	}

@@ -22,7 +22,7 @@ int batt_x = 56;
 int batt_y = 53;
 
 
-ShipPanel::ShipPanel(Ship *_ship) {
+ShipPanel::ShipPanel(Ship *_ship) {STACKTRACE
 	id |= ID_SHIP_PANEL;
 
 	panel   = create_bitmap(64, 100);
@@ -56,19 +56,19 @@ ShipPanel::ShipPanel(Ship *_ship) {
 	}
 
 ShipPanel::~ShipPanel()
-{
+{STACKTRACE
   destroy_bitmap(captain);
   destroy_bitmap(panel);
   delete window;
 }
 
-void ShipPanel::refresh() {
+void ShipPanel::refresh() {STACKTRACE
 	panel_needs_update = 1;
 	captain_needs_update = 1;
 	return;
 	}
 
-void ShipPanel::calculate() {
+void ShipPanel::calculate() {STACKTRACE
 	if (!ship) {
 		deathframe -= frame_time;
 		if (deathframe <= 0) this->die();
@@ -96,7 +96,7 @@ void ShipPanel::calculate() {
 	return;
 	}
 
-void ShipPanel::animate(Frame *space) {
+void ShipPanel::animate(Frame *space) {STACKTRACE
 	BITMAP *screen = window->surface;
 	if (!screen) return;
 	int panel_x, panel_y, panel_width, panel_height;
@@ -199,7 +199,7 @@ void ShipPanel::animate(Frame *space) {
 	return;
 	}
 
-void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int color, int bcolor) {
+void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int color, int bcolor) {STACKTRACE
 	int i;
 	w -= 1;
 	h -= 1;

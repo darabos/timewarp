@@ -84,7 +84,7 @@ void CargoLink::calculate()
 {
 	Link::calculate();
 	sprite_index = get_index(angle);
-	if (!Prev_Link->exists()) Prev_Link = NULL;
+	if (Prev_Link && !Prev_Link->exists()) Prev_Link = NULL;
 }
 
 

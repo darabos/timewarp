@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "pmask.h"
 
 #ifdef USE_ALLEGRO
@@ -18,7 +19,7 @@
 
 #define MAX_INTVAL(int_type) ((((unsigned int_type)(-1))-1)/2)
 
-int get_pmask_pixel(struct PMASK *mask, int x, int y) {
+int get_pmask_pixel(CONST struct PMASK *mask, int x, int y) {
 	return 1 & (mask->mask[(mask->h * (x >> MASK_WORD_BITBITS)) + y] >> (x & (MASK_WORD_BITS-1)));
 }
 void set_pmask_pixel(struct PMASK *mask, int x, int y, int value) {
@@ -36,7 +37,7 @@ void install_pmask() {
 	return;
 }
 
-void init_pmask       (struct PMASK *mask, int w, int h)
+void init_pmask (struct PMASK *mask, int w, int h)
 {
 	int words, total_words, x, error = 0;
 
@@ -91,6 +92,127 @@ void deinit_pmask(struct PMASK *mask) {
 #endif
 	return;
 }
+
+#define BYTE_N(word,index) (((word)>>((index)*8)) & 255)
+
+int serialize_pmask(void *destination, int maxsize, CONST PMASK *source) {
+	unsigned char *dest = destination;
+	int i, j, k;
+	int bytes = 1 + ((source->w-1) >> 3);
+	int words = 1 + ((source->w-1) >> MASK_WORD_BITBITS);
+	int size = sizeof(source->w) + sizeof(source->h) + bytes * source->h;
+	if (size > maxsize) return -1;
+	for (i = 0; i < sizeof(source->w); i += 1) {
+		*dest = BYTE_N(source->w, i);
+		dest += 1;
+	}
+	for (i = 0; i < sizeof(source->h); i += 1) {
+		*dest = BYTE_N(source->h, i);
+		dest += 1;
+	}
+	for (j = 0; j < words; j += 1) {
+		int base = j * sizeof(MASK_WORD_TYPE);
+		for (k = 0; k < source->h; k += 1) {
+			MASK_WORD_TYPE tmp = source->mask[j * source->h + k];
+			base += bytes;
+			for (i = 0; i < sizeof(MASK_WORD_TYPE); i += 1) {
+				if ((int)(j*sizeof(MASK_WORD_TYPE)+i) < bytes)
+					dest[i+base] = BYTE_N(tmp, i);
+			}
+		}
+	}
+	return size;
+}
+
+#define PUSH_BYTE(word,byte) ((word) = (word<<8) | (byte))
+
+int init_deserialize_pmask(void *source, int maxsize, PMASK *pmask) {
+	unsigned char *src = source;
+	int w = 0, h = 0;
+	int i, j, k;
+	int size, bytes, words;
+
+	pmask->w = 0;
+	pmask->h = 0;
+#ifndef MASK_SINGLE_MEMORY_BLOCK
+	pmask->mask = NULL;
+#endif
+	size = sizeof(pmask->w) + sizeof(pmask->h);
+	if (maxsize < size) return -1;
+
+	for (i = sizeof(pmask->w)-1; i >= 0; i -= 1) {
+		PUSH_BYTE(w, src[i]);
+	}
+	src += sizeof(pmask->w);
+	for (i = sizeof(pmask->h)-1; i >= 0; i -= 1) {
+		PUSH_BYTE(h, src[i]);
+	}
+	src += sizeof(pmask->h);
+
+	bytes = 1 + ((w-1) >> 3);
+	words = 1 + ((w-1) >> MASK_WORD_BITBITS);
+	size += bytes * h;
+	if (maxsize < size) return -1;
+	init_pmask(pmask, w, h);
+	if (pmask->w != w) return -1;
+
+	for (j = 0; j < words; j += 1) {
+		int base = j * sizeof(MASK_WORD_TYPE);
+		for (k = 0; k < pmask->h; k += 1) {
+			MASK_WORD_TYPE tmp;
+			base += bytes;
+			for (i = sizeof(MASK_WORD_TYPE)-1; i >= 0; i -= 1) {
+				if ((int)(j*sizeof(MASK_WORD_TYPE)+i) > bytes) PUSH_BYTE(tmp,0);
+				else PUSH_BYTE(tmp, src[base+i]);
+			}
+			pmask->mask[j * h + k] = tmp;
+		}
+	}
+	return size;
+}
+PMASK *create_deserialize_pmask(void *source, int maxsize, int *ret_size) {
+	int w = 0, h = 0;
+	int i, j, k;
+	int size, bytes, words;
+	PMASK *pmask;
+	unsigned char *src = source;
+
+	*ret_size = -1;
+	size = sizeof(pmask->w) + sizeof(pmask->h);
+	if (maxsize < size) return NULL;
+
+	for (i = sizeof(pmask->w)-1; i >= 0; i -= 1) {
+		PUSH_BYTE(w, src[i]);
+	}
+	src += sizeof(pmask->w);
+	for (i = sizeof(pmask->h)-1; i >= 0; i -= 1) {
+		PUSH_BYTE(h, src[i]);
+	}
+	src += sizeof(pmask->h);
+
+	bytes = 1 + ((w-1) >> 3);
+	words = 1 + ((w-1) >> MASK_WORD_BITBITS);
+	size += bytes * h;
+	if (maxsize < size) return NULL;
+	pmask = create_pmask(w, h);
+	if (!pmask) return NULL;
+	*ret_size = size;
+
+	for (j = 0; j < words; j += 1) {
+		int base = j * sizeof(MASK_WORD_TYPE);
+		for (k = 0; k < pmask->h; k += 1) {
+			MASK_WORD_TYPE tmp;
+			base += bytes;
+			for (i = sizeof(MASK_WORD_TYPE)-1; i >= 0; i -= 1) {
+				if ((int)(j*sizeof(MASK_WORD_TYPE)+i) > bytes) PUSH_BYTE(tmp,0);
+				else PUSH_BYTE(tmp, src[base+i]);
+			}
+			pmask->mask[j * h + k] = tmp;
+		}
+	}
+	return pmask;
+}
+
 
 void destroy_pmask(struct PMASK *mask) {
 	deinit_pmask(mask);
@@ -186,17 +308,20 @@ void pmask_load_pixels (struct PMASK *mask, void *pixels, int pitch, int bytes_p
 }
 
 #ifdef USE_ALLEGRO
+static void load_allegro_pmask(PMASK *mask, BITMAP *sprite) {
+	pmask_load_func (mask, 0, 0, sprite, bitmap_mask_color(sprite), (int (*)(void*,int,int))getpixel);
+}
 void init_allegro_pmask(struct PMASK *mask, struct BITMAP *sprite) {
 	init_pmask(mask, sprite->w, sprite->h);
-	pmask_load_func (mask, 0, 0, sprite, bitmap_mask_color(sprite), (int (*)(void*,int,int))getpixel);
+	load_allegro_pmask(mask, sprite);
 }
 PMASK *create_allegro_pmask(struct BITMAP *sprite) {
 	PMASK *ret;
 	ret = create_pmask(sprite->w, sprite->h);
-	init_allegro_pmask(ret, sprite);
+	load_allegro_pmask(ret, sprite);
 	return ret;
 }
-void draw_allegro_pmask(PMASK *mask, BITMAP *destination, int x, int y, int color) {
+void draw_allegro_pmask(CONST PMASK *mask, BITMAP *destination, int x, int y, int color) {
 	int mx, my;
 	for (my = 0; my < mask->h; my += 1) {
 		for (mx = 0; mx < mask->w; mx += 1) {
@@ -206,7 +331,7 @@ void draw_allegro_pmask(PMASK *mask, BITMAP *destination, int x, int y, int colo
 	}
 	return;
 }
-void draw_allegro_pmask_stretch(PMASK *mask, BITMAP *destination, int x, int y, int w, int h, int color) {
+void draw_allegro_pmask_stretch(CONST PMASK *mask, BITMAP *destination, int x, int y, int w, int h, int color) {
 	int _x, _xmin, _y, _w, _h;
 	int scale;
 	if (y >= 0) _y = 0; else _y = -y;
@@ -346,20 +471,23 @@ static int SDL_getpixel(void *_surface, int x, int y)
         return 0;       /* shouldn't happen, but avoids warnings */
     }
 }
+static void load_sdl_pmask(PMASK *mask, SDL_Surface *sprite, , int trans_color) {
+	pmask_load_func (mask, 0, 0, sprite, trans_color, SDL_getpixel);
+}
 void init_sdl_pmask(struct PMASK *mask, struct SDL_Surface *sprite, int trans_color) {
 	init_pmask(mask, sprite->w, sprite->h);
-	pmask_load_func (mask, 0, 0, sprite, trans_color, SDL_getpixel);
+	load_sdl_pmask(mask, sprite, trans_color);
 }
 PMASK *create_sdl_pmask(struct SDL_Surface *sprite, int trans_color) {
 	PMASK *ret;
 	ret = create_pmask(sprite->w, sprite->h);
-	init_sdl_pmask(ret, sprite, trans_color);
+	load_sdl_pmask(ret, sprite, trans_color);
 	return ret;
 }
 #endif
 
 
-int check_pmask_collision(struct PMASK *mask1, struct PMASK *mask2, int x1, int y1, int x2, int y2)
+int check_pmask_collision(CONST struct PMASK *mask1, CONST struct PMASK *mask2, int x1, int y1, int x2, int y2)
 {
 	int h1, h2, words1, words2, max1, max2;
 	int dx1, dx2, dy1, dy2; //We will use this deltas...
@@ -373,7 +501,7 @@ int check_pmask_collision(struct PMASK *mask1, struct PMASK *mask2, int x1, int 
 
 	if (0) { //swap 1 & 2
 		int tmp;
-		PMASK *mtmp;
+		CONST PMASK *mtmp;
 		tmp = x1; x1 = x2; x2 = tmp;//swap x
 		tmp = y1; y1 = y2; y2 = tmp;//swap y
 		mtmp = mask1; mask1 = mask2; mask2 = mtmp;//swap masks
@@ -447,3 +575,167 @@ int check_pmask_collision(struct PMASK *mask1, struct PMASK *mask2, int x1, int 
 	return 0;
 }
 
+static int pmaskdata_sort ( CONST void *_a, CONST void *_b ) {
+	CONST struct PMASKDATA *a = _a;
+	CONST struct PMASKDATA *b = _b;
+	return a->y - b->y;
+}
+
+static int pmaskdata_float_sort ( CONST void *_a, CONST void *_b ) {
+	CONST struct PMASKDATA_FLOAT *a = _a;
+	CONST struct PMASKDATA_FLOAT *b = _b;
+	if (a->y - b->y > 0) return 1;
+	else return -1;
+}
+
+int check_pmask_collision_list ( PMASKDATA *input, int num, CONST void **output, int max_collisions ) 
+{
+	int i, j, ret = 0;
+	if (max_collisions <= 0) return 0;
+	qsort ( input, num, sizeof(PMASKDATA), pmaskdata_sort);
+	for (i = 0; i < num; i += 1) {
+		int h = input[i].y + input[i].pmask->h;
+		for (j = i+1; (j < num) && (input[j].y < h); j += 1) {
+			if (check_pmask_collision(
+				input[i].pmask, input[j].pmask, 
+				input[i].x, input[i].y, 
+				input[j].x, input[j].y)) 
+			{
+				output[ret * 2] = input[i].data;
+				output[ret * 2 + 1] = input[j].data;
+				ret += 1;
+				if (ret == max_collisions) return ret;
+			}
+		}
+	}
+	return ret;
+}
+
+int check_pmask_collision_list_float ( PMASKDATA_FLOAT *input, int num, CONST void **output, int max_collisions ) 
+{
+	int i, j, ret = 0;
+	if (max_collisions <= 0) return 0;
+	qsort ( input, num, sizeof(PMASKDATA), pmaskdata_float_sort);
+	for (i = 0; i < num; i += 1) {
+		float h = input[i].y + input[i].pmask->h;
+		for (j = i+1; (j < num) && (input[j].y < h); j += 1) {
+			if (check_pmask_collision(
+				input[i].pmask, input[j].pmask, 
+				input[i].x - input[j].x, input[i].y - input[j].y, 
+				0, 0)) 
+			{
+				output[ret * 2] = input[i].data;
+				output[ret * 2 + 1] = input[j].data;
+				ret += 1;
+				if (ret == max_collisions) return ret;
+			}
+		}
+	}
+	return ret;
+}
+
+int check_pmask_collision_list_wrap ( int maxx, int maxy, PMASKDATA *input, int num, CONST void **output, int max_collisions ) 
+{
+	int i, j, ret = 0, maxxh = (maxx+1) >> 1;
+	if (max_collisions <= 0) return 0;
+	if (maxx <= 0) return 0;
+	if (maxy <= 0) return 0;
+	qsort ( input, num, sizeof(PMASKDATA), pmaskdata_sort);
+	for (i = 0; i < num; i += 1) {
+		int h = input[i].y + input[i].pmask->h;
+		for (j = i+1; (j < num) && (input[j].y < h); j += 1) {
+			int cr;
+			int dx = input[i].x - input[j].x;
+			if ( abs( dx ) >= maxxh ) {
+				while (dx >= maxxh) dx -= maxx;
+				while (dx <= -maxxh) dx += maxx;
+			}
+			cr = check_pmask_collision(
+				input[i].pmask, input[j].pmask, 
+				dx, input[i].y-input[j].y, 
+				0, 0);
+			if ( cr ) 
+			{
+				output[ret * 2] = input[i].data;
+				output[ret * 2 + 1] = input[j].data;
+				ret += 1;
+				if (ret == max_collisions) return ret;
+			}
+		}
+		if (h > maxy) {
+			h -= maxy;
+			for (j = 0; (j < i) && (input[j].y < h); j += 1) {
+				int dx = input[i].x - input[j].x;
+				if ( abs( dx ) >= maxxh ) {
+					while (dx >=  maxxh) dx -= maxx;
+					while (dx <= -maxxh) dx += maxx;
+				}
+				if (check_pmask_collision(
+					input[i].pmask, input[j].pmask, 
+					dx, input[i].y-maxy-input[j].y, 
+					0, 0)) 
+				{
+					output[ret * 2] = input[i].data;
+					output[ret * 2 + 1] = input[j].data;
+					ret += 1;
+					if (ret == max_collisions) return ret;
+				}
+			}
+		}
+	}
+	return ret;
+}
+
+
+int check_pmask_collision_list_float_wrap ( float maxx, float maxy, PMASKDATA_FLOAT *input, int num, CONST void **output, int max_collisions ) 
+{
+	int i, j, ret = 0; 
+	float maxxh = maxx / 2;
+	if (max_collisions <= 0) return 0;
+	if (maxx <= 0) return 0;
+	if (maxy <= 0) return 0;
+	qsort ( input, num, sizeof(PMASKDATA_FLOAT), pmaskdata_float_sort);
+	for (i = 0; i < num; i += 1) {
+		float h = input[i].y + input[i].pmask->h;
+		for (j = i+1; (j < num) && (input[j].y < h); j += 1) {
+			int cr;
+			float dx = input[i].x - input[j].x;
+			if ( fabs( dx ) >= maxxh ) {
+				while (dx >= maxxh) dx -= maxx;
+				while (dx <= -maxxh) dx += maxx;
+			}
+			cr = check_pmask_collision(
+				input[i].pmask, input[j].pmask, 
+				dx, input[i].y-input[j].y, 
+				0, 0);
+			if ( cr ) 
+			{
+				output[ret * 2] = input[i].data;
+				output[ret * 2 + 1] = input[j].data;
+				ret += 1;
+				if (ret == max_collisions) return ret;
+			}
+		}
+		if (h > maxy) {
+			h -= maxy;
+			for (j = 0; (j < i) && (input[j].y < h); j += 1) {
+				int dx = input[i].x - input[j].x;
+				if ( abs( dx ) >= maxxh ) {
+					while (dx >=  maxxh) dx -= maxx;
+					while (dx <= -maxxh) dx += maxx;
+				}
+				if (check_pmask_collision(
+					input[i].pmask, input[j].pmask, 
+					dx, input[i].y-maxy-input[j].y, 
+					0, 0)) 
+				{
+					output[ret * 2] = input[i].data;
+					output[ret * 2 + 1] = input[j].data;
+					ret += 1;
+					if (ret == max_collisions) return ret;
+				}
+			}
+		}
+	}
+	return ret;
+}

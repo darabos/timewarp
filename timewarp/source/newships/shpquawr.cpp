@@ -37,7 +37,7 @@ class QuarKathWraith : public Ship {
 
   RGB crewPanelColor();
 
-	virtual double isInvisible() ;
+	virtual double isInvisible() const;
   virtual void calculate_hotspots();
   virtual int activate_weapon();
 	virtual int activate_special();
@@ -116,7 +116,7 @@ RGB QuarKathWraith::crewPanelColor()
 	return c;
 }
 
-double QuarKathWraith::isInvisible() {
+double QuarKathWraith::isInvisible() const {
 	if(cloak_frame >= 300) return(1);
 	return 0;
 	}

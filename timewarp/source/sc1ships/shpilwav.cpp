@@ -18,7 +18,7 @@ IlwrathAvenger::IlwrathAvenger(Vector2 opos, double angle, ShipData *data, unsig
   cloak_frame = 0;
 }
 
-double IlwrathAvenger::isInvisible() {
+double IlwrathAvenger::isInvisible() const {
 	if(cloak_frame >= 300)
 		return 1.0;
 	return false;

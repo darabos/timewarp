@@ -210,7 +210,7 @@ void _register_shiptype_dir ( const char *fn, int attrib, int param ) {
 	for_each_file ( buffy, FA_ARCH|FA_RDONLY, _register_shiptype, 0 );
 }
 
-void init_ships() {
+void init_ships() {STACKTRACE
 	_register_shiptype_dir ( "ships", FA_DIREC|FA_RDONLY, 3 );
 
 /*	shiptype_type tmp;
@@ -288,7 +288,7 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	target_pressed(false),
 	control(NULL),
 	death_counter(-1)
-{
+{STACKTRACE
 	attributes |= ATTRIB_SHIP;
 	layer = LAYER_SHIPS;
 	set_depth(DEPTH_SHIPS);
@@ -321,7 +321,7 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	target_pressed(false),
 	control(NULL),
 	death_counter(-1)
-{
+{STACKTRACE
 	shipData->lock();
 	attributes |= ATTRIB_SHIP;
 	layer = LAYER_SHIPS;
@@ -409,7 +409,7 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	sprite_index = get_index(angle);
 }
 
-void Ship::death() {
+void Ship::death() {STACKTRACE
 	if (attributes & ATTRIB_NOTIFY_ON_DEATH) {
 		game->ship_died(this, NULL);
 		attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
@@ -417,7 +417,7 @@ void Ship::death() {
 	return;
 }
 
-Ship::~Ship() {
+Ship::~Ship() {STACKTRACE
 	delete spritePanel;
 }
 
@@ -443,7 +443,7 @@ RGB Ship::battPanelColor()
 	return c;
 }
 
-void Ship::locate() {
+void Ship::locate() {STACKTRACE
 	int tries = 0;
 	double mindist = 1000;
 	while (tries < 15) {
@@ -460,7 +460,7 @@ void Ship::locate() {
 }
 
 void Ship::calculate()
-{
+{STACKTRACE
 
 //added by Tau - start
 	if (exists() && death_counter >= 0) {
@@ -491,6 +491,7 @@ void Ship::calculate()
 				ff = random(25);
 				a = new Animation(this, pos, game->xpl1Sprite,
 					ff, 40-ff, 25, DEPTH_EXPLOSIONS);
+				a->transparency = 1.0 / 4;
 				game->add(a);
 				a->accelerate(this, vel.angle(), vv, MAX_SPEED);
 				a->accelerate(this, random(PI2),
@@ -629,7 +630,7 @@ void Ship::calculate()
 	SpaceObject::calculate();
 }
 
-int Ship::handle_fuel_sap(SpaceLocation *source, double normal) {
+int Ship::handle_fuel_sap(SpaceLocation *source, double normal) {STACKTRACE
 
 	if (death_counter >= 0) return 0; //added by Tau
 
@@ -648,7 +649,7 @@ int Ship::handle_fuel_sap(SpaceLocation *source, double normal) {
 	return 1;
 }
 
-double Ship::handle_speed_loss(SpaceLocation *source, double normal) {
+double Ship::handle_speed_loss(SpaceLocation *source, double normal) {STACKTRACE
 	double speed_loss = normal;
 	if(speed_loss > 0.0) {
 
@@ -673,7 +674,7 @@ double Ship::handle_speed_loss(SpaceLocation *source, double normal) {
 	return 1;
 }
 
-int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {
+int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {STACKTRACE
 
 	if (death_counter >= 0) return 0; //added by Tau
 
@@ -718,25 +719,25 @@ int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {
 void Ship::materialize() {
 }
 
-void Ship::calculate_thrust() {
+void Ship::calculate_thrust() {STACKTRACE
 	if (thrust)
 		accelerate_gravwhip(this, angle, accel_rate * frame_time, speed_max);
 	return;
 }
 
 void Ship::calculate_turn_left()
-{
+{STACKTRACE
   if(turn_left)
 		turn_step -= turn_rate * frame_time;
 }
 
 void Ship::calculate_turn_right()
-{
+{STACKTRACE
   if(turn_right)
 		turn_step += turn_rate * frame_time;
 }
 
-void Ship::calculate_fire_weapon() {
+void Ship::calculate_fire_weapon() {STACKTRACE
 	weapon_low = FALSE;
 
 	if (fire_weapon) {
@@ -763,7 +764,7 @@ void Ship::calculate_fire_weapon() {
 }
 
 void Ship::calculate_fire_special()
-{
+{STACKTRACE
   special_low = FALSE;
 
   if(fire_special) {
@@ -786,7 +787,7 @@ void Ship::calculate_fire_special()
   }
 }
 
-void Ship::calculate_hotspots() {
+void Ship::calculate_hotspots() {STACKTRACE
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation(this,
 			normal_pos() - unit_vector(angle) * size.x / 2.5,
@@ -878,7 +879,7 @@ Phaser::Phaser(
 	phaser_step_position(0),
 	phaser_steps(steps),
 	phaser_step_size(step_size)
-{
+{STACKTRACE
 	layer = LAYER_HOTSPOTS;
 	set_depth(DEPTH_HOTSPOTS);
 	collide_flag_anyone = 0;
@@ -892,7 +893,7 @@ void Phaser::animate(Frame *space) {
 	return;
 }
 
-void Phaser::calculate() {
+void Phaser::calculate() {STACKTRACE
 	if (!exists())
 		return;
 	frame_step -= frame_time;
@@ -923,7 +924,7 @@ void Phaser::calculate() {
 	SpaceObject::calculate();
 }
 
-SpaceLocation *Ship::get_ship_phaser() {
+SpaceLocation *Ship::get_ship_phaser() {STACKTRACE
 	return new Phaser(this,
 		pos - unit_vector(angle ) * PHASE_MAX * size.x,
 		unit_vector(angle ) * PHASE_MAX * size.x,

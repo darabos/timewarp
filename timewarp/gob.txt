@@ -12,7 +12,8 @@ Try to get as bad-ass a ship as you can.
 Kill lots of enemies.
 If you survive for long enough and accumulate enough wealth, you will
 eventually be able to purchase the "Hyper Dynamo" upgrade.  Once you
-get that, you can basically consider yourself to have won the game.  
+get that, you can basically consider yourself to have won the game.
+Try to win Gob with as many different ships as you can.  
 
 3.  What are the controls in Gob?
 The keyboard controls for config 0 in TimeWarp
@@ -44,7 +45,7 @@ There are a number of generic upgrades that are available for most
 types of ships.  
 
 Each purchasable ship type has a number of ship specific upgrades
-available for it, including at least special ship specific upgrade.  
+available for it, including at least one special ship specific upgrade.  
 Most special ship specific upgrades can only be purchased once.
 
 There are also a number of very special upgrades.  These can
@@ -99,7 +100,7 @@ These upgrades are available for Utwig only:
 Bolt Regulator          Increase maximum range
 Bolt Charger            Increase damage inflicted.  Also slows your
                         rate of fire.
-Bolt Generator          Speeds of your rate of fire
+Bolt Generator          Speeds up your rate of fire
 Mask of Honest Demeanor        ???
 Mask of Elephantine Fortitude  ???
         (note that you are only allowed to purchase one mask)
@@ -115,7 +116,8 @@ Devil Protects His Own         ???
 Hyper Dynamo                   ???
 Rainbow Abyss                  ???
 
-8.  What enemies are possible in Gob?  How much do you get for killing them?  
+8.  What enemies are possible in Gob?  How much do you get for killing them?
+
 Special
         Asteroid                             1 buckazoid
 Weak

@@ -97,8 +97,10 @@ VideoSystem videosystem;
 		}
 	}*/
 static void tw_display_switch_in() {
-	videosystem.needs_redraw += 1;
-	videosystem.redraw();
+	if (get_time() > videosystem.last_poll + 1000) {
+		videosystem.redraw();
+	}
+	else videosystem.queued_redraws = 1;
 }
 static int _gamma = -1;
 static unsigned char _gamma_map[256];
@@ -129,14 +131,16 @@ int tw_color (int r, int g, int b) {
 	RGB c = {r,g,b};
 	return makecol(c.r, c.g, c.b);
 }
-int VideoSystem::optional_redraw() {
-	if (last_redraw <= needs_redraw) {
+int VideoSystem::poll_redraw() {
+	last_poll = get_time();
+	if (queued_redraws) {
+		queued_redraws -= 1;
 		videosystem.redraw();
 		return 1;
 	}
 	return 0;
 }
-void VideoSystem::preinit() {
+void VideoSystem::preinit() {STACKTRACE
 	int i;
 	surface = NULL;
 	width = -1;
@@ -189,13 +193,13 @@ void VideoSystem::preinit() {
 	}
 	color_effects = gamma_color_effects;
 
-	needs_redraw = 0;
-	last_redraw = 0;
+	queued_redraws = 0;
+	last_poll = -1;
 	window.preinit();
 	window.init( &window );
 	window.locate(0,0,0,0,  0,1,0,1);
 }
-FONT *VideoSystem::get_font(int s) {
+FONT *VideoSystem::get_font(int s) {STACKTRACE
 	if (!font_data) {
 		if (basic_font) return basic_font;
 		if (!font) {
@@ -207,12 +211,12 @@ FONT *VideoSystem::get_font(int s) {
 	if (s > 7) s = 7;
 	return (FONT*) font_data[s].dat;
 }
-void VideoSystem::set_palette(RGB *new_palette) {
+void VideoSystem::set_palette(RGB *new_palette) {STACKTRACE
 	memcpy(palette, new_palette, sizeof(RGB) * 256);
 	update_colors();
 	return;
 }
-void VideoSystem::update_colors() {
+void VideoSystem::update_colors() {STACKTRACE
 	RGB tmp[256];
 	if (!palette) return;
 	memcpy(tmp, palette, sizeof(RGB) * 256);
@@ -234,9 +238,8 @@ void VideoSystem::redraw() {
 	ve.window = &window;
 	window._event(&ve);
 	//clear_to_color(surface, palette_color[4]);
-	last_redraw = needs_redraw;
 }
-int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen) {
+int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen) {STACKTRACE
 	VideoEvent ve;
 	ve.type = Event::VIDEO;
 	ve.window = &window;

@@ -48,7 +48,7 @@ public:
 	virtual int  accelerate(SpaceLocation *source, double angle, double vel, double max_speed);
 	virtual void animate(Frame *space);
 	virtual double  isProtected();
-	virtual double  isInvisible();
+	virtual double  isInvisible() const;
 	virtual void calculate_hotspots();
 	virtual void calculate_turn_left();
 	virtual void calculate_turn_right();
@@ -332,7 +332,7 @@ double TauHunter::isProtected()
 		return Ship::isProtected();
 }
 
-double TauHunter::isInvisible()
+double TauHunter::isInvisible() const
 {
 	if ( in_jump )
 		return 1.0;

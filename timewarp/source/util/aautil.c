@@ -313,11 +313,11 @@ static PUT_TYPE *put_array_alpha_dither_notrans[num_bpps] = {
 };
 
 
-void _aa_put_raw_16 ( unsigned long _addr, int _x ) {
+void _aa_put_raw_16a ( unsigned long _addr, int _x ) {
 	bmp_write32(_addr+_x*4, makeacol16a(_aa.r, _aa.g, _aa.b, _aa.trans) ); 
 }
 
-void _aa_put_raw_32 ( unsigned long _addr, int _x ) {
+void _aa_put_raw_32a ( unsigned long _addr, int _x ) {
 	bmp_write32(_addr+_x*4, 
 		(_aa.r<<_rgb_r_shift_32) | 
 		(_aa.g<<_rgb_g_shift_32) | 
@@ -365,7 +365,7 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int options) {
 	j = 0;
 	if (options & AA_BLEND)   j += 1;
 	if (options & AA_DITHER)  j += 2;
-	if (options & AA_NOTRANS) j += 4;
+	if (options & AA_MASKED_DEST) j += 4;
 
 #	ifdef GFX_MODEX
 		if (is_planar_bitmap(destination)) {
@@ -375,8 +375,8 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int options) {
 #	endif
 
 	if (options & AA_RAW_ALPHA) {
-		if (bpp == 32) return &_aa_put_raw_32;
-		if (bpp == 16) return &_aa_put_raw_16;
+		if (bpp == 32) return &_aa_put_raw_32a;
+		if (bpp == 16) return &_aa_put_raw_16a;
 	}
 	
 	return master_put_array[j][i];
@@ -387,10 +387,10 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int options) {
 
 
 void _aa_masked_add_bpp_independant_calculations() {
-	if (_aa.total-(_aa.trans>>8) <= 0) {
+	if (_aa.total-(_aa.trans>>8) <= 1) {
 		_aa.transparent = -1;
 		return;
-		}
+	}
 	else _aa.transparent = 0;
 
 	if (_aa.current.i) {
@@ -403,16 +403,17 @@ void _aa_masked_add_bpp_independant_calculations() {
 		_aa.g = _aa.g >> (2 * aa_BITS);
 		_aa.b = _aa.b >> (2 * aa_BITS);
 		_aa.trans = _aa.trans >> (2 * aa_BITS);
-		}
+	}
 	else {
-		unsigned int tmp = 1 + (0xffffffffUL /  _aa.total );
+/*		tmp = 1 + (0xffffffffUL /  _aa.total );
 		_aa.r = (int)((_aa.r * (Uint64)tmp) >> 32);
 		_aa.g = (int)((_aa.g * (Uint64)tmp) >> 32);
 		_aa.b = (int)((_aa.b * (Uint64)tmp) >> 32);
-		_aa.trans = (int)((_aa.trans * (Uint64)tmp) >> 32);
-//		_aa.r = _aa.r / (_aa.total);
-//		_aa.g = _aa.g / (_aa.total);
-//		_aa.b = _aa.b / (_aa.total);
+		_aa.trans = (int)((_aa.trans * (Uint64)_aa.inverse) >> 32);*/
+		_aa.r = (int)((_aa.r * (Uint64)_aa.inverse) >> 32);
+		_aa.g = (int)((_aa.g * (Uint64)_aa.inverse) >> 32);
+		_aa.b = (int)((_aa.b * (Uint64)_aa.inverse) >> 32);
+		_aa.trans = (int)((_aa.trans * (Uint64)_aa.inverse) >> 32);
 	}
 }
 
@@ -498,53 +499,46 @@ _aa_add_rgba32 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 
 	// Middle lines.  
 	sy2i = _sy2 >> aa_BITS;
-	if (++sy < sy2i)
-		{
+	if (++sy < sy2i) {
 		r2 = g2 = b2 = t2 = a2 = 0;
-		do
-			{
+		do {
 			sx = sx1i;
 			sline = (unsigned long*) (_src->line[sy]) + sx;
 
 			scolor = *sline;
-			if (scolor != _aa.mask_color)
-				{
+			if (scolor != _aa.mask_color) {
 				ta = geta32(scolor);
 				r2 += MUL (getr32 (scolor), sx1f*ta);
 				g2 += MUL (getg32 (scolor), sx1f*ta);
 				b2 += MUL (getb32 (scolor), sx1f*ta);
 				a2 += MUL (ta, sx1f);
-				}
+			}
 			else t2 += sx1f;
 
-			for (sline++, sx++; sx < sx2i; sline++, sx++)
-				{
+			for (sline++, sx++; sx < sx2i; sline++, sx++) {
 				scolor = *sline;
-				if (scolor != _aa.mask_color)
-					{
+				if (scolor != _aa.mask_color) {
 					ta = geta32(scolor);
 					r2 += (getr32 (scolor) * ta) << aa_BITS;
 					g2 += (getg32 (scolor) * ta) << aa_BITS;
 					b2 += (getb32 (scolor) * ta) << aa_BITS;
 					a2 += (ta) << aa_BITS;
-					}
-				else t2 += aa_SIZE;
 				}
+				else t2 += aa_SIZE;
+			}
 
-			if (sx2f != 0)
-				{
+			if (sx2f != 0) {
 				scolor = *sline;
-				if (scolor != _aa.mask_color)
-					{
+				if (scolor != _aa.mask_color) {
 					ta = geta32(scolor);
 					r2 += MUL (getr32 (scolor), sx2f * ta);
 					g2 += MUL (getg32 (scolor), sx2f * ta);
 					b2 += MUL (getb32 (scolor), sx2f * ta);
 					a2 += MUL (ta, sx2f);
-					}
-				else t2 += sx2f;
 				}
+				else t2 += sx2f;
 			}
+		}
 		while (++sy < sy2i);
 
 		r1 += (r2 << aa_BITS) >> 8;
@@ -552,75 +546,67 @@ _aa_add_rgba32 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 		b1 += (b2 << aa_BITS) >> 8;
 		a1 += a2 << aa_BITS;
 		t1 += t2 << aa_BITS;
-		}
+	}
 
 	// Last line.  
 	sy2f = _sy2 & aa_MASK;
-	if (sy2f != 0)
-		{
+	if (sy2f != 0) {
 		sx = sx1i;
 		sline = (unsigned long*) (_src->line[sy]) + sx;
 
 		scolor = *sline;
-		if (scolor != _aa.mask_color)
-			{
+		if (scolor != _aa.mask_color) {
 			ta = geta32(scolor);
 			r2 = MUL (getr32 (scolor), sx1f * ta);
 			g2 = MUL (getg32 (scolor), sx1f * ta);
 			b2 = MUL (getb32 (scolor), sx1f * ta);
 			a2 = MUL (ta, sx1f);
 			t2 = 0;
-			}
-		else
-			{
+		}
+		else {
 			r2 = g2 = b2 = a2 = 0;
 			t2 = sx1f;
-			}
+		}
 
-		for (sline++, sx++; sx < sx2i; sline++, sx++)
-			{
+		for (sline++, sx++; sx < sx2i; sline++, sx++) {
 			scolor = *sline;
-			if (scolor != _aa.mask_color)
-				{
+			if (scolor != _aa.mask_color) {
 				ta = geta32(scolor);
 				r2 += (getr32 (scolor) * ta) << aa_BITS;
 				g2 += (getg32 (scolor) * ta) << aa_BITS;
 				b2 += (getb32 (scolor) * ta) << aa_BITS;
 				a2 += ta << aa_BITS;
-				}
-			else t2 += aa_SIZE;
 			}
+			else t2 += aa_SIZE;
+		}
 
-		if (sx2f != 0)
-			{
+		if (sx2f != 0) {
 			scolor = *sline;
-			if (scolor != _aa.mask_color)
-				{
+			if (scolor != _aa.mask_color) {
 				ta = geta32(scolor);
 				r2 += MUL (getr32 (scolor), sx2f * ta);
 				g2 += MUL (getg32 (scolor), sx2f * ta);
 				b2 += MUL (getb32 (scolor), sx2f * ta);
 				a2 += MUL (ta, sx2f);
-				}
-			else t2 += sx2f;
 			}
+			else t2 += sx2f;
+		}
 		r1 += MUL (r2, sy2f) >> 8;
 		g1 += MUL (g2, sy2f) >> 8;
 		b1 += MUL (b2, sy2f) >> 8;
 		a1 += MUL (a2, sy2f);
 		t1 += MUL (t2, sy2f);
-		}
+	}
 
-	t1 = a1 + (t1 << aa_BITS);
+	t1 = a1 + (t1 << 8);
 
 	_aa.r = r1;
 	_aa.g = g1;
 	_aa.b = b1;
 	_aa.trans = t1 + ((_aa.total - (_sx2 - _sx1) * (_sy2 - _sy1)) << 8);
-	//_aa.trans = _aa.total - ((_sx2 - _sx1) * (_sy2 - _sy1) - t1);
 	_aa_masked_add_bpp_independant_calculations();
 	return;
-	}
+}
 
 //32 bit color with alpha channel, premultiplied
 void 
@@ -808,16 +794,15 @@ _aa_add_rgba8888 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 		_aa.r = r1;
 		_aa.g = g1;
 		_aa.b = b1;
-		t1 = a1 + (t1 << aa_BITS);
+		t1 = a1 + (t1 << 8);
 	}
 	else if (_rgb_r_shift_32 = 16) {
 		_aa.r = b1;
 		_aa.g = g1;
 		_aa.b = r1;
-		t1 = a1 + (t1 << aa_BITS);
+		t1 = a1 + (t1 << 8);
 	}
 	_aa.trans = t1 + ((_aa.total - (_sx2 - _sx1) * (_sy2 - _sy1)) << 8);
-//	_aa.trans = _aa.total - ((_sx2 - _sx1) * (_sy2 - _sy1) - t1);
 	_aa_masked_add_bpp_independant_calculations();
 	return;
 	}
@@ -1006,9 +991,9 @@ _aa_add_rgba4444 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 	_aa.r = r1 + (r1 >> 4);
 	_aa.g = g1 + (g1 >> 4);
 	_aa.b = b1 + (b1 >> 4);
-	t1 = a1 + (a1 >> 4) + (t1 << aa_BITS);
+	t1 = a1 + (a1 >> 4) + (t1 << 8);
 
-	_aa.trans = _aa.total - ((_sx2 - _sx1) * (_sy2 - _sy1) - t1);
+	_aa.trans = t1 + ((_aa.total - (_sx2 - _sx1) * (_sy2 - _sy1)) << 8);
 	_aa_masked_add_bpp_independant_calculations();
 	return;
 	}
@@ -1063,7 +1048,6 @@ _aa_add_rgba4444 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)
 #endif
 
 
-
 #define DECLARE_GET_FUNC(name, bpp, bpp2) \
 void \
 _aa_get_##name (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)\
@@ -1080,16 +1064,33 @@ _aa_get_##name (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)\
 	_aa.r = getr##bpp2(scolor);\
 	_aa.g = getg##bpp2(scolor);\
 	_aa.b = getb##bpp2(scolor);\
-	_aa.trans = 0;\
+	_aa.trans = geta##bpp2(scolor);\
 	return;\
 }
 
 
-DECLARE_GET_FUNC(rgb8,   8,  8)
-DECLARE_GET_FUNC(rgb15, 16, 15)
-DECLARE_GET_FUNC(rgb16, 16, 16)
-DECLARE_GET_FUNC(rgb24, 24, 24)
-DECLARE_GET_FUNC(rgb32, 32, 32)
+#define DECLARE_GET_FUNC2(name, bpp, bpp2) \
+void \
+_aa_get_##name (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)\
+{\
+	int sy, sx;\
+	int scolor;\
+	int a;\
+	unsigned long _address;\
+	sy = (_sy1 + _sy2) >> (1+aa_BITS);\
+	sx = (_sx1 + _sx2) >> (1+aa_BITS);\
+	_address = (sx * (32 / 8)) + (unsigned long)(_src->line[sy]);\
+	scolor = _READ_##bpp(_src->line[sy]+(sx * (bpp/8)));\
+	if (scolor == _aa.mask_color) {_aa.transparent = -1; return;}\
+	else _aa.transparent = 0;\
+	a = (_sx2-_sx1) * (_sy2-_sy1);\
+	_aa.r = getr##bpp2(scolor) * a;\
+	_aa.g = getg##bpp2(scolor) * a;\
+	_aa.b = getb##bpp2(scolor) * a;\
+	_aa.trans = geta##bpp2(scolor) * a;\
+	_aa_masked_add_bpp_independant_calculations();\
+	return;\
+}
 
 #define DECLARE_ADD_FUNC(name, bpp, bpp2) \
 void \
@@ -1259,7 +1260,7 @@ _aa_add_##name (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2)\
 	_aa.r = r1;\
 	_aa.g = g1;\
 	_aa.b = b1;\
-	t1 = (t1 << aa_BITS);\
+	t1 = (t1 << 8);\
 \
 	_aa.trans = t1 + ((_aa.total - (_sx2 - _sx1) * (_sy2 - _sy1)) << 8);\
 	_aa_masked_add_bpp_independant_calculations();\
@@ -1287,12 +1288,37 @@ ADD_TYPE *add_array[5] = {
 	_aa_add_rgb32
 };
 
+DECLARE_GET_FUNC(rgb8,   8,  8)
+DECLARE_GET_FUNC(rgb15, 16, 15)
+DECLARE_GET_FUNC(rgb16, 16, 16)
+DECLARE_GET_FUNC(rgb24, 24, 24)
+DECLARE_GET_FUNC(rgb32, 32, 32)
+
+DECLARE_GET_FUNC(rgb16a, 16, 16a)
+DECLARE_GET_FUNC(rgb32a, 32, 32a)
+DECLARE_GET_FUNC2(rgb16a_t, 16, 16a)
+DECLARE_GET_FUNC2(rgb32a_t, 32, 32a)
+
+DECLARE_GET_FUNC2(rgb8_t,   8,  8)
+DECLARE_GET_FUNC2(rgb15_t, 16, 15)
+DECLARE_GET_FUNC2(rgb16_t, 16, 16)
+DECLARE_GET_FUNC2(rgb24_t, 24, 24)
+DECLARE_GET_FUNC2(rgb32_t, 32, 32)
+
 ADD_TYPE *get_array[5] = {
 	_aa_get_rgb8,
 	_aa_get_rgb15,
 	_aa_get_rgb16,
 	_aa_get_rgb24,
 	_aa_get_rgb32
+};
+
+ADD_TYPE *get_array2[5] = {
+	_aa_get_rgb8_t,
+	_aa_get_rgb15_t,
+	_aa_get_rgb16_t,
+	_aa_get_rgb24_t,
+	_aa_get_rgb32_t
 };
 
 ADD_TYPE *get_aa_add_function(BITMAP *source, int mode) {
@@ -1313,16 +1339,22 @@ ADD_TYPE *get_aa_add_function(BITMAP *source, int mode) {
 	if (AA_ALPHA & mode) {
 		if (bpp == 32) {
 			if (_aa.mask_color == -1) _aa.mask_color = 0xff000000;
+			if (AA_NO_AA & mode) return &_aa_get_rgb32a_t;
 			return &_aa_add_rgba8888;
-			}
+		}
 		if (bpp == 16) {
 			if (_aa.mask_color == -1) _aa.mask_color = 0xf000;
+			if (AA_NO_AA & mode) return &_aa_get_rgb16a_t;
 			return &_aa_add_rgba4444;
-			}
 		}
-	if (AA_NO_AA & mode) return get_array[i];
-	return add_array[i];
 	}
+	if (AA_NO_AA & mode) {
+		if ((aa_get_trans() != 0) || (mode & AA_NO_ALIGN)) 
+			return get_array2[i];
+		else return get_array[i];
+	}
+	return add_array[i];
+}
 
 void invert_alpha ( BITMAP *bob ) {
 	int x, y;

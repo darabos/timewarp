@@ -5,7 +5,7 @@ Separation of Physics & Rendering:
 
 Rendering functions (things like SpaceObject::animate()) are NOT allowed
 to do any physics.  Not even a little bit.  This means that they are not
-allowed to change any values in in any SpaceObjects.  Of convenience sake,
+allowed to change any values in any SpaceObjects.  Of convenience sake,
 animate_predict() does change some things, but it changes them back right
 afterwards.  If you don't do this, networking will break.
 
@@ -35,7 +35,7 @@ random(Vector2(3,1)) returns a random vector V such that 0 <= V.x < 3 and
 ::rand() or Control::rand().  
 Final Note: actually, there is now third random number generator included
 in TW, called fs_random(), but you probably don't need to know about that
-one.  
+one, and it might get removed sometime.  
 
 Trivial Conventions:
 
@@ -109,13 +109,10 @@ button will attempt to stop the program in a debugger friendly manner so
 that you can see the exact circumstances in which the error occured if you
 have a good debugger installed.
 Warning: Due to the funky way in which tw_error is implemented, it can
-behave incorrectly in certain extremely rare circumstances.  If you seem to
-be getting a bug which causes an "Ack!" error on a line which contains both
-an "if" statement and a call to tw_error, you might have run into this bug.
-It can be easily worked around by surrounding your tw_error call with curly
-brackets like this: {tw_error(whatever);}  Such a bug will only occur if
-the tw_error parameters include a pointer deference operator, and the
-pointer is checked for validity inside the "if" statement.
+behave incorrectly in certain unusual circumstances.  If you seem to be
+getting a compile or run-time error on a line with a call to tw_error(),
+try surround it with curly brackets, like this:
+        {tw_error("My error message");}
 Update: there is now also an "Ignore" button, which causes future error
 messages to be suppressed.  
 
@@ -141,7 +138,11 @@ lines, refer to Query::currentl.  Call Query::next() when you want to find
 the next item.  Query searches intelligently by location (i.e. it is fast 
 if there are few objects in the region you are searching).
 Note: there are now some additional types of queries available that don't
-require that the search center around an item... 
+require that the search center around an item...
+Update: now a Query2 is also available, which uses attributes instead of
+layers.  Eventually Query will be phased out in favor of Query2, at which
+time Query2 will be renamed to Query.  I'll document how to use Query2
+later...
 
 Controls:
 
@@ -242,7 +243,7 @@ Acceleration: internally game-pixels per millisecond per millisecond,
 externally... for most things it's in SC2-velocity-units per SC2-frames,
 but for ships it's in a combination of an SC2-velocity-units # and an
 SC2-time-units #.  It's kinda funky, but that's the format of the data
-we got from SC2 data files.
+we ripped from SC2 data files.
 double accel = scale_acceleration( sc2_vel_units_per_sc2_frame );
 double ship_accel = scale_acceleration ( sc2_vel_units, sc2_time_units);
 Warning: If SC2-time-units are used then the conversion is non-linear and

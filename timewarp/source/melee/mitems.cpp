@@ -10,10 +10,10 @@ REGISTER_FILE
 #include "mgame.h"
 
 
-Indicator::Indicator() : Presence() {
+Indicator::Indicator() : Presence() {STACKTRACE
 	}
 
-bool Indicator::coords(Frame *space, SpaceLocation *l, Vector2 *pos, Vector2 *a_pos) {
+bool Indicator::coords(Frame *space, SpaceLocation *l, Vector2 *pos, Vector2 *a_pos) {STACKTRACE
 	Vector2 p = corner(l->normal_pos());
 	Vector2 op = p;
 
@@ -44,7 +44,7 @@ bool Indicator::coords(Frame *space, SpaceLocation *l, Vector2 *pos, Vector2 *a_
 	return true;
 	}
 
-BlinkyIndicator::BlinkyIndicator(SpaceObject *target, int color) : Indicator() {
+BlinkyIndicator::BlinkyIndicator(SpaceObject *target, int color) : Indicator() {STACKTRACE
 	this->target = target;
 	this->color = color;
 	}
@@ -74,11 +74,11 @@ void BlinkyIndicator::animate(Frame *space) {
 	}
 	return;
 	}
-void BlinkyIndicator::calculate() {
+void BlinkyIndicator::calculate() {STACKTRACE
 	if (!target->exists()) die();
 	}
 
-WedgeIndicator::WedgeIndicator(SpaceLocation *target, int length, int color) : Indicator() {
+WedgeIndicator::WedgeIndicator(SpaceLocation *target, int length, int color) : Indicator() {STACKTRACE
 	this->target = target;
 	this->length = length;
 	this->color = color;
@@ -117,7 +117,7 @@ void WedgeIndicator::calculate() {
 
 Orbiter::Orbiter ( SpaceSprite *pic, SpaceLocation *orbit_me, double distance) : 
 		SpaceObject(NULL, orbit_me->normal_pos(), random(PI2), pic) 
-	{
+	{STACKTRACE
 	layer = LAYER_CBODIES;
 	mass = 99;
 	center = orbit_me;
@@ -126,7 +126,7 @@ Orbiter::Orbiter ( SpaceSprite *pic, SpaceLocation *orbit_me, double distance) :
 	accelerate(this, angle + PI/2 + PI*(random()&1), 0.15, MAX_SPEED);
 	}
 
-void Orbiter::calculate() {
+void Orbiter::calculate() {STACKTRACE
 	angle = trajectory_angle(center) + PI;
 	sprite_index = get_index(angle);
 	double r = distance(center) / radius;

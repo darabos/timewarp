@@ -23,6 +23,13 @@
 
 #include <allegro.h>
 
+/*
+ * Sub-pixel precision
+ * 8 or 4 are probably the fastest for i386+.  
+ * Recompile the package after changing aa_BITS.  
+ */
+#define aa_BITS		8
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,7 +62,8 @@ enum {
 	                          //otherwise, coordinates will be rounded to integer positions
 	AA_RAW_ALPHA    = 0x0040, //treat destination as an alpha bitmap (16bpp / 32bpp only), overwrite alpha channel
 	AA_DITHER       = 0x0080, //dither (spatially)
-	AA_NOTRANS      = 0x0100, //do not write any transparent (mask color) pixels in the ouput
+	AA_MASKED_DEST  = 0x0100, //do not write any transparent (mask color) pixels in the ouput
+	AA_NO_FILTER    = 0x2000, //disables bi-linear filtering
 
 //	AA_BLENDER_A    = 0x0400, //use Allegro blenders w/ alpha channel
 //	AA_BLENDER_N    = 0x0800, //use Allegro blenders w/ constant
@@ -80,7 +88,13 @@ Non-integer destinations: (AA_NO_ALIGN)
 	later when I have time.  Yeah right.  It can make 
 	slow-moving sprites moving at certain angles look much 
 	better.  This option is not yet implemented for rotations, 
-	only for stretching.  
+	only for stretching.  This option makes drawing small 
+	destination rectangles substancially slower, but has no 
+	significant impact upon larger destination rectangles.  
+
+No bi-linear filtering: (AA_NO_FILTER)
+	If this option is enabled, then sprites drawn with large 
+	scaling factors will look blocky instead of blurry.  
 
 Dithering: (AA_DITHER)
 	If you are drawing a 32 bpp image onto an 8 bpp surface, 
@@ -96,12 +110,12 @@ Dithering: (AA_DITHER)
 	algorithm used is somewhat primitive.  Image quality 
 	improvements are usually only substancial at 8 bpp.  
 
-No mask-color in output: (AA_OPTION_NO_TRANSOUT)
+No mask-color in output: (AA_MASKED_DEST)
 	This option makes sure that the transparent color is not 
 	drawn on the destination.  It is a good idea if the 
 	destination is a sprite.  If the destination is not a sprite, 
-	this just slows things down and (very slightly) reduces image 
-	quality.  
+	this just slows things down and reduce image quality, though 
+	not significantly.  
 
 Blending & Alpha Blending: (AA_ALPHA, AA_BLEND, AA_RAW_ALPHA)
 
@@ -113,13 +127,13 @@ Blending & Alpha Blending: (AA_ALPHA, AA_BLEND, AA_RAW_ALPHA)
 	neither 32 bpp or 16 bpp, then the AA_OPTION_ALPHA flag will 
 	be ignored.  
 	WARNING!: AASTR2 operates on a different internal understanding 
-	of alpha bitmaps.  You need to use pre_multiply_alpha() on your 
-	bitmap before you can expect it's alpha channel stuff to work 
+	of alpha bitmaps.  You need to use convert_alpha() on your 
+	bitmap before you can expect its alpha channel stuff to work 
 	with AASTR2
 	RGBA4444 is implemented, but not yet tested.  
 
 
-	If AA_BLEND and AA_RAW_ALPHA effect how the destination 
+	AA_BLEND and AA_RAW_ALPHA effect how the destination 
 	bitmap is treated.  They are mutually exclusive - if both are 
 	specified at once, the result is undefined.  
 
@@ -207,7 +221,7 @@ void _aa_stretch_blit (BITMAP* src, BITMAP* dest,
 		int dx, int dy, int dw, int dh, 
 		int mode);
 //does NOT perform checking/clipping on the source rectangle
-//parameters are fixed point (24.8) numbers
+//parameters are fixed point (32-aa_BITS.aa_BITS) numbers
 
 void _aa_rotate_bitmap (BITMAP *_src, BITMAP *_dst, 
 		int _x, int _y, fixed _angle,
@@ -216,6 +230,7 @@ void _aa_rotate_bitmap (BITMAP *_src, BITMAP *_dst,
 //destination is in integer format
 //rotation does not yet support the following new features:
 // (aa_set_trans, aa_get_trans) transparency
+// (AA_NO_FILTER) disabling of bi-linear filtering
 // (AA_NO_ALIGN) non-integer source/destination rectangles
 // (AA_VFLIP and/or AA_HFLIP) inverting axis
 

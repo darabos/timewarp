@@ -135,6 +135,7 @@ void TW_Dialog_Player::deinit() {
 	return;
 }
 int TW_Dialog_Player::update() {
+	videosystem.poll_redraw();
 	BITMAP *old = screen;
 	screen = subscreen;
 	if (!player) player = init_dialog(dialog, ifocus);
@@ -665,18 +666,8 @@ int d_tw_bitmap_proc(int msg, DIALOG *d, int c)
 int d_tw_yield_proc(int msg, DIALOG *d, int c)
 {
 
-	if (msg == MSG_START) {
-		int nt = videosystem.needs_redraw;
-		d->d1 = nt;
-	}
 	if (msg == MSG_IDLE) {
-		int ot = d->d1;
-		int nt = videosystem.needs_redraw;
-		if (ot < nt) {
-			d->d1 = nt;
-			return D_REDRAW;
-		}
-		else rest(20);
+		rest(20);
 	}
 
 	return D_O_K;

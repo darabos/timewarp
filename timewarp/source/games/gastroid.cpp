@@ -19,7 +19,7 @@ void AsteroidMelee::init_objects() {
 	size *= 1;
 	prepare();
 	add(new Stars());
-	for (i = 0; i < 50; i += 1) add(new Asteroid());
+	for (i = 0; i < 100; i += 1) add(new Asteroid());
 	}
 
 REGISTER_GAME ( AsteroidMelee, "Melee in Asteroid Field");
@@ -30,7 +30,7 @@ class DeepSpaceMelee : public NormalGame {
 
 void DeepSpaceMelee::init_objects() {
 	add ( new Stars() );
-	add(new Asteroid());
+	add ( new Asteroid() );
 	}
 
 REGISTER_GAME ( DeepSpaceMelee, "Melee in Deep Space");

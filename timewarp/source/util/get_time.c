@@ -173,12 +173,14 @@ int _no_idle = 0;
 	static volatile int allegro_get_time() {
 		return allegro_time - allegro_base;
 	}
+	END_OF_STATIC_FUNCTION(allegro_get_time);
 	static void global_timer(void) {
 		allegro_time += allegro_period;
 	}
 	END_OF_STATIC_FUNCTION(global_timer);
 	void init_allegro_time() {
 		LOCK_FUNCTION(global_timer);
+		LOCK_FUNCTION(allegro_get_time);
 		LOCK_VARIABLE(allegro_time);
 		if (install_timer() < 0) tw_error("Allegro timer installation failed");
 		install_int(&global_timer, allegro_period);
@@ -233,6 +235,9 @@ volatile int get_time() {
 #	error No integer time function specified!
 #endif
 }
+#ifdef USE_ALLEGRO
+	END_OF_FUNCTION(get_time);
+#endif
 
 volatile double get_time2() {
 #	if 0
@@ -278,6 +283,7 @@ void init_time() {
 		sdl_base = sdl_get_time() - 1;
 #	endif
 #	if defined PLATFORM_IS_ALLEGRO
+		LOCK_FUNCTION(get_time);
 		init_allegro_time();
 		allegro_base = allegro_get_time() - 1;
 #	endif

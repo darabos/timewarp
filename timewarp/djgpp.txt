@@ -163,7 +163,7 @@ remove old stuff by typing this:
 
 c:
 cd \tw
-del scpdos.exe
+del twdos.exe
 
 compile by typing this:
 
@@ -177,19 +177,19 @@ link by typing this:
 
 c:
 cd \tw
-gcc -o scpdos.exe source\*.o -lalleg -ljgmod
+gcc -o twdos.exe source\*.o -lalleg -ljgmod
 
 run your newly built version by typing this:
 
 c:
 cd \tw
-scpdos
+twdos
 
 compress your newly built version by typing this:
 
 c:
 cd \tw
-upx scpdos.exe
+upx twdos.exe
 
 
 

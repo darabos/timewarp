@@ -11,14 +11,14 @@ REGISTER_FILE
 #include <string.h>
 
 GameEventMessage::GameEventMessage (const char *text)
-{
+{STACKTRACE
 	int l = strlen(text);
 	if (l > max_message_length) l = max_message_length;
 	memcpy(message, text, l);
 	size = sizeof(GameEvent) + l;
 	type = Game::event_message;
 }
-void GameEventMessage::execute( int source ) {
+void GameEventMessage::execute( int source ) {STACKTRACE
 	char buffy[64+max_message_length];
 	char *tmp = buffy;
 	int c = 15;
@@ -32,7 +32,7 @@ void GameEventMessage::execute( int source ) {
 	::message.out(buffy, 6000, c);
 }
 
-void GameEventChangeLag::execute( int source ) {
+void GameEventChangeLag::execute( int source ) {STACKTRACE
 	if (source != Game::channel_server) return;
 	if (old_lag != game->lag_frames) return;
 	int i;
@@ -50,7 +50,7 @@ void GameEventChangeLag::execute( int source ) {
 
 
 
-int read_length_code (int max, int *clen, int *len, unsigned char *where) {
+int read_length_code (int max, int *clen, int *len, unsigned char *where) {STACKTRACE
 	if (max < 1) return -1;
 	*clen = 1;
 	*len = where[0];
@@ -64,7 +64,7 @@ int read_length_code (int max, int *clen, int *len, unsigned char *where) {
 	*len = where[3] + (where[4] << 8) + (where[5] << 16) + (where[6] << 24);
 	return 0;
 	}
-int write_length_code (int max, int *clen, int len, unsigned char *where) {
+int write_length_code (int max, int *clen, int len, unsigned char *where) {STACKTRACE
 	if (len <= 0) tw_error( "write_length_code -- bad length");
 	if (max < 1) return -1;
 	if (len < 255) {
@@ -95,7 +95,7 @@ int write_length_code (int max, int *clen, int len, unsigned char *where) {
 		}
 	}
 
-void NetLog::init() {
+void NetLog::init() {STACKTRACE
 	remote_time = 0;
 	ping = -1;
 	log_transmitted = NULL;
@@ -103,14 +103,14 @@ void NetLog::init() {
 	net.init();
 	Log::init();
 	}
-void NetLog::deinit() {
+void NetLog::deinit() {STACKTRACE
 	net.deinit();
 	}
-NetLog::~NetLog() {
+NetLog::~NetLog() {STACKTRACE
 	free (log_transmitted);
 	}
 
-void NetLog::send_packet() {
+void NetLog::send_packet() {STACKTRACE
 	int i, j, k, pos = 8;
 	if (!net.isConnected()) tw_error("NetLog::send_packet() - no connection!");
 	for (i = 0; i < log_num; i += 1) if (log_dir[i] & direction_write) {
@@ -143,7 +143,7 @@ void NetLog::send_packet() {
 	need_to_transmit = false;
 	return;
 	}
-void NetLog::recv_packet() {
+void NetLog::recv_packet() {STACKTRACE
 	int pos, len;
 	int i, j, k, l;
 	len = net.recv(4, 4, &buffy);
@@ -178,12 +178,12 @@ void NetLog::recv_packet() {
 	return;
 	}
 
-void NetLog::send_code(unsigned int code) {
+void NetLog::send_code(unsigned int code) {STACKTRACE
 	if (!(code & 0x80000000)) tw_error ("NetLog::send_special -- bade code!");
 	net.send(sizeof(unsigned int), &code);
 	return;
 	}
-void NetLog::send_message(char *string) {
+void NetLog::send_message(char *string) {STACKTRACE
 	int i;
 	i = sprintf((char*)&buffy[4], "remote: %s", string);
 	if (i > 1000) tw_error ("net1_send_message -- message length exceeds maximum");
@@ -195,7 +195,7 @@ void NetLog::send_message(char *string) {
 	message.out((char*)&buffy[4], 5000, 9);
 	return;
 	}
-void NetLog::handle_code(unsigned int code) {
+void NetLog::handle_code(unsigned int code) {STACKTRACE
 	switch (code & 0xF0000000) {
 		case NET1_CODE_QUIT & 0xF0000000: {
 			switch (code) {
@@ -219,7 +219,7 @@ void NetLog::handle_code(unsigned int code) {
 	return;
 	}
 
-void NetLog::expand_logs(int num_channels) {
+void NetLog::expand_logs(int num_channels) {STACKTRACE
 	int old_log_num = log_num;
 	Log::expand_logs(num_channels);
 	if (log_num) {
@@ -233,7 +233,7 @@ void NetLog::expand_logs(int num_channels) {
 		}
 	return;
 	}
-void NetLog::_log(int channel, const void *data, int size) {
+void NetLog::_log(int channel, const void *data, int size) {STACKTRACE
 	if (channel >= log_num) expand_logs(channel+1);
 	Log::_log(channel, data, size);
 	need_to_transmit = true;
@@ -248,7 +248,7 @@ void NetLog::_unlog(int channel, void *data, int size) {
 	Log::_unlog(channel, data, size);
 	return;
 	}
-void NetLog::log_file(const char *fname) {
+void NetLog::log_file(const char *fname) {STACKTRACE
 	if (!(log_dir[channel_file_data] & direction_write)) {
 			while (file_ready(fname, NULL) == -1) {
 			if (game) game->idle(1);
@@ -259,7 +259,7 @@ void NetLog::log_file(const char *fname) {
 	return;
 	}
 
-void NetLog::flush() {
+void NetLog::flush() {STACKTRACE
 	if (!need_to_transmit) return;
 	while (!net.ready2send()) {
 		if (game) game->idle();
@@ -268,7 +268,7 @@ void NetLog::flush() {
 	send_packet();
 	}
 
-bool NetLog::listen() {
+bool NetLog::listen() {STACKTRACE
 	bool b = false;
 	while (net.ready2recv()) {
 		recv_packet();
@@ -277,7 +277,7 @@ bool NetLog::listen() {
 	return b;
 	}
 
-int NetLog::ready(int channel) {
+int NetLog::ready(int channel) {STACKTRACE
 	if (net.ready2recv()) recv_packet();
 	return Log::ready(channel);
 	}

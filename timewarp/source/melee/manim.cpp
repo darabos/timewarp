@@ -1,4 +1,5 @@
 
+#include "../util/aastr.h"
 #include "../melee.h"
 REGISTER_FILE
 
@@ -13,8 +14,9 @@ Animation::Animation(SpaceLocation *creator, Vector2 opos,
 	frame_count(num_frames),
 	frame_size(frame_length),
 	frame_step(frame_length),
-	scale(_scale)
-	{
+	scale(_scale),
+	transparency(0)
+	{STACKTRACE
 	if (frame_size <= 0) {
 		tw_error("Animation::Animation - frame_size == %d", frame_size);
 		frame_size = 1;
@@ -26,7 +28,7 @@ Animation::Animation(SpaceLocation *creator, Vector2 opos,
 	mass = 0;
 	}
 
-void Animation::calculate() {
+void Animation::calculate() {STACKTRACE
 	frame_step -= frame_time;
 	while (frame_step < 0) {
 		frame_step += frame_size;
@@ -38,8 +40,15 @@ void Animation::calculate() {
 	SpaceObject::calculate();
 	}
 
-void Animation::animate(Frame *space) {
-	sprite->animate(pos, sprite_index, space, scale);
+void Animation::animate(Frame *space) {STACKTRACE
+	if (transparency != 0) {
+		int old = aa_get_trans();
+		aa_set_trans( iround(old * (1 - transparency) + 255 * transparency) );
+		sprite->animate(pos, sprite_index, space, scale);
+		aa_set_trans( old );
+
+	}
+	else sprite->animate(pos, sprite_index, space, scale);
 }
 
 FixedAnimation::FixedAnimation(SpaceLocation *creator, SpaceLocation *opos, 
@@ -48,14 +57,14 @@ FixedAnimation::FixedAnimation(SpaceLocation *creator, SpaceLocation *opos,
 	:
 	Animation(creator, opos->normal_pos(), osprite, first_frame, num_frames, frame_length, depth),
 	follow(opos)
-	{
+	{STACKTRACE
 	if(!follow->exists()) {
 		state = 0;
 		follow = NULL;
 		}
 	}
 
-void FixedAnimation::calculate() {
+void FixedAnimation::calculate() {STACKTRACE
 	if (follow->exists()) {
 		pos = follow->normal_pos();
 		Animation::calculate();
@@ -72,11 +81,15 @@ PositionedAnimation::PositionedAnimation(SpaceLocation *creator,
 	:
 	FixedAnimation(creator, opos, osprite, first_frame, num_frames, frame_length, depth),
 	relative_pos(rel_pos)
-	{
+	{STACKTRACE
+	if (!follow || !follow->exists()) {
+		state = 0;
+		return;
+	}
 	pos += rotate(relative_pos, follow->get_angle());
 	}
 
-void PositionedAnimation::calculate() {
+void PositionedAnimation::calculate() {STACKTRACE
 	FixedAnimation::calculate();
 	if (!exists()) return;
 	pos += rotate(relative_pos, follow->get_angle());

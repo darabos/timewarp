@@ -277,7 +277,7 @@ void RadarMap::animate(Frame *frame)
 
 	Query a;
 	SpaceObject *o;
-	for (a.begin(Vector2(x0, y0), bit(LAYER_SHIPS) + bit(LAYER_CBODIES) + bit(LAYER_SHOTS),
+	for (a.begin(NULL, Vector2(x0, y0), bit(LAYER_SHIPS) + bit(LAYER_CBODIES) + bit(LAYER_SHOTS),
 		scandist); a.current; a.next())
 	{
 		o = a.currento;
@@ -564,7 +564,7 @@ void add_dialog_icon_proc( DIALOG *Dialog_star, int *k, DATAFILE *tmpdata,
 	{
 		char tmpname[512];
 		sprintf(tmpname, "%s%02i", name, i+1);
-		BITMAP *tmpbmp;
+//		BITMAP *tmpbmp;
 		bmps[i] = get_data_bmp(tmpdata, tmpname, scale);	// already does an error check
 	}
 	// 3 bitmaps, neutral, mouse-over, and on-click ... or something ;)

@@ -23,7 +23,7 @@ class KatPoly : public Ship {
   KatPoly( Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code );
 
-  virtual double  isInvisible();             // not visible when morphed
+  virtual double  isInvisible() const;    // not visible when morphed
   virtual int handle_damage( SpaceLocation* other, double normal, double direct );  // not vulnerable when morphed
   virtual void animate( Frame* space );   // not animating when morphed
   virtual void calculate();
@@ -52,7 +52,7 @@ KatPoly::KatPoly( Vector2 opos, double shipAngle,
   morph = NULL;  // start unmorphed
 }
 
-double  KatPoly::isInvisible(){
+double  KatPoly::isInvisible() const{
 	return morph ? 1 : 0;
 }
 int KatPoly::handle_damage( SpaceLocation* other, double normal, double direct ){

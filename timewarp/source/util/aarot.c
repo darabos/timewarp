@@ -135,6 +135,7 @@ _aa_rotate_bitmap (BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
 	}
 
 	_aa.total = num;
+	_aa.inverse = 1 + (0xffffffffUL /  _aa.total );
 
 	/* Coordinates of corners in source.  */
 	if (_scalex < 0)

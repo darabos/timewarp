@@ -63,12 +63,12 @@ static void tw_random_cycle () {
 
 	//adjust cycle_state0
 	_tw_random_state.cycle_state0 = 
-		(_tw_random_state.cycle_state1 * 0x343FD) + 0x269EC3;
+		(_tw_random_state.cycle_state0 * 0x343FD) + 0x269EC3;
 
 	int i, j;
 
 	//pick an index into array0
-	i = 15 & ((_tw_random_state.cycle_state0 >> 4) + _tw_random_state.carry);
+	i = 15 & ((_tw_random_state.cycle_state0 >> 8) + _tw_random_state.carry);
 	while (i > tw_random_length0) i -= tw_random_length0;
 
 	//pick a bit to start reading at

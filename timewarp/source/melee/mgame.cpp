@@ -81,14 +81,14 @@ GameType::GameType(const char *name, Game *(*new_game)(), double order) {
 	game_names[num_games] = NULL;
 }
 
-Game *GameType::new_game() {
+Game *GameType::new_game() {STACKTRACE
 	Game *tmp = _new_game();
 	tmp->preinit();
 	tmp->type = this;
 	return tmp;
 }
 
-GameType *gametype (const char *name) {
+GameType *gametype (const char *name) {STACKTRACE
 	GameType ** g;
 	for (g = games; *g; g ++)
 		if (!strcmp((*g)->name, name))
@@ -149,7 +149,7 @@ void Game::add_focus(Presence *new_focus, int channel) {
 	if (focus_index == -1) focus_index = 0;
 }
 
-void Game::add_target(SpaceObject *new_target) {
+void Game::add_target(SpaceObject *new_target) {STACKTRACE
 	num_targets += 1;
 	target = (SpaceObject **) realloc(target, sizeof(SpaceObject *) * num_targets);
 	target[num_targets - 1] = new_target;
@@ -170,7 +170,7 @@ void Game::set_resolution(int screen_x, int screen_y) {
 	return;
 }
 
-void Game::redraw() {
+void Game::redraw() {STACKTRACE
 	if (!window->surface) return;
 	scare_mouse();
 	window->lock();
@@ -184,7 +184,7 @@ void Game::redraw() {
 	return;
 }
 
-Ship *Game::create_ship(const char *id, Control *c, Vector2 pos, double angle, int team) {
+Ship *Game::create_ship(const char *id, Control *c, Vector2 pos, double angle, int team) {STACKTRACE
 	ShipType *type = shiptype(id);
 	if (!type)
 		tw_error("Game::create_ship - bad ship id (%s)", id);
@@ -203,7 +203,7 @@ Ship *Game::create_ship(const char *id, Control *c, Vector2 pos, double angle, i
 	return s;
 }
 
-Ship *Game::create_ship(int channel, const char *id, const char *control, Vector2 pos, double angle, int team) {
+Ship *Game::create_ship(int channel, const char *id, const char *control, Vector2 pos, double angle, int team) {STACKTRACE
 	Control *c = create_control(channel, control);
 	if (!c)
 		tw_error("bad Control type!");
@@ -212,7 +212,7 @@ Ship *Game::create_ship(int channel, const char *id, const char *control, Vector
 	return s;
 }
 
-void Game::increase_latency() {
+void Game::increase_latency() {STACKTRACE
 	if (CHECKSUM_CHANNEL) {
 		log->buffer(channel_server + Game::_channel_buffered, NULL, 2);
 		log->buffer(channel_client + Game::_channel_buffered, NULL, 2);
@@ -223,7 +223,7 @@ void Game::increase_latency() {
 	lag_frames += 1;
 }
 
-void Game::decrease_latency() {
+void Game::decrease_latency() {STACKTRACE
 	if (lag_frames <= 1) tw_error("latency decreased too far");
 	if (CHECKSUM_CHANNEL) {
 		log->unbuffer(channel_server + Game::_channel_buffered, NULL, 2);
@@ -234,14 +234,14 @@ void Game::decrease_latency() {
 	lag_frames -= 1;
 }
 
-int Game::is_local (int channel) {
+int Game::is_local (int channel) {STACKTRACE
 	return (log->get_direction (channel) & Log::direction_write);
 }
-void Game::log_file (const char *fname) {
+void Game::log_file (const char *fname) {STACKTRACE
 	log->log_file(fname);
 }
 
-void Game::log_fleet(int channel, Fleet *fleet) {
+void Game::log_fleet(int channel, Fleet *fleet) {STACKTRACE
 	int fl;
 	void *tmpdata = fleet->serialize(&fl);
 	char buffer[16384];
@@ -257,7 +257,7 @@ void Game::log_fleet(int channel, Fleet *fleet) {
 	fleet->deserialize(buffer, fl);
 }
 
-Control *Game::create_control (int channel, const char *type, char *config, char *file) {
+Control *Game::create_control (int channel, const char *type, char *config, char *file) {STACKTRACE
 	if ((channel != channel_none) && !(log->get_direction(channel) & Log::direction_write)) {
 		type = "VegetableBot";
 		config = "Config0";
@@ -274,13 +274,13 @@ Control *Game::create_control (int channel, const char *type, char *config, char
 	return c;
 }
 
-void Game::log_char(int channel, char &data) {
+void Game::log_char(int channel, char &data) {STACKTRACE
 	if (!log) return;
 	log->log  (channel, &data, 1);
 	return;
 }
 
-void Game::log_short(int channel, short &data) {
+void Game::log_short(int channel, short &data) {STACKTRACE
 	if (!log) return;
 	data = intel_ordering_short(data);	
 	log->log  (channel, &data, sizeof(short));
@@ -288,7 +288,7 @@ void Game::log_short(int channel, short &data) {
 	return;
 }
 
-void Game::log_int(int channel, int &data) {
+void Game::log_int(int channel, int &data) {STACKTRACE
 	if (!log) return;
 	data = intel_ordering(data);
 	log->log  (channel, &data, sizeof(int));
@@ -296,23 +296,23 @@ void Game::log_int(int channel, int &data) {
 	return;
 }
 
-void Game::log_data(int channel, void *data, int size) {
+void Game::log_data(int channel, void *data, int size) {STACKTRACE
 	if (!log) return;
 	log->log  (channel, data, size);
 	return;
 }
 
-void Game::idle(int time) {
+void Game::idle(int time) {STACKTRACE
 	if (log->listen()) return;
 	::idle(time);
 	return;
 }
 
-void Game::animate(Frame *frame) {
+void Game::animate(Frame *frame) {STACKTRACE
 	Physics::animate(frame);
 }
 
-void Game::animate() {
+void Game::animate() {STACKTRACE
 	double t = get_time2();
 	paused_time = 0;
 	int prediction_time = 0;
@@ -331,7 +331,7 @@ void Game::animate() {
 	return;
 }
 
-bool Game::game_ready() { 
+bool Game::game_ready() {STACKTRACE
 	if (CHECKSUM_CHANNEL == 0) return 1;
 	if (log->playback) {
 		return (log->ready(channel_server + Game::_channel_buffered) != 0);
@@ -351,7 +351,7 @@ bool Game::game_ready() {
 	return true;
 }
 
-void Game::handle_desynch(int local_checksum, int server_checksum, int client_checksum) {
+void Game::handle_desynch(int local_checksum, int server_checksum, int client_checksum) {STACKTRACE
 	char buf[100000];
 	char *f = buf;
 	error("Game Desynchronized\nTime=%d Frame=%d\nClient=%d Server=%d Local=%d", game_time, frame_number, (int)client_checksum, (int)server_checksum, (int)local_checksum);
@@ -362,7 +362,7 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 //static int old_frame;
 //static char old_checksum_buf[200][200];
 
-void Game::compare_checksums() {
+void Game::compare_checksums() {STACKTRACE
 	unsigned char local_checksum = checksum() & 255;
 	unsigned char client_checksum = local_checksum;
 	unsigned char server_checksum = local_checksum;
@@ -387,7 +387,7 @@ void Game::compare_checksums() {
 	if (desync) handle_desynch(local_checksum, server_checksum, client_checksum);
 }
 
-void Game::do_game_events() {
+void Game::do_game_events() {STACKTRACE
 	int i;
 
 	//transmit from server
@@ -458,7 +458,7 @@ void Game::do_game_events() {
 	}
 }
 
-void Game::handle_game_event ( int source, class GameEvent *event ) {
+void Game::handle_game_event ( int source, class GameEvent *event ) {STACKTRACE
 	if ((event->type <= event_invalid) || (event->type >= event_last)) {
 		tw_error("Game::handle_game_event - Bad event type: %d", event->type);
 	}
@@ -470,7 +470,7 @@ void Game::handle_game_event ( int source, class GameEvent *event ) {
 	}
 }
 
-void Game::send_game_event ( class GameEvent *event ) {
+void Game::send_game_event ( class GameEvent *event ) {STACKTRACE
 	if (events_waiting == maximum_events_waiting) {
 		tw_error("too many GameEvents");
 		return;
@@ -481,7 +481,7 @@ void Game::send_game_event ( class GameEvent *event ) {
 }
 
 
-void Game::calculate() {
+void Game::calculate() {STACKTRACE
 	int i;
 	double t = get_time2();
 	int active_focus_destroyed = false;
@@ -529,13 +529,14 @@ void Game::calculate() {
 	return;
 }
 
-void Game::play() {
+void Game::play() {STACKTRACE
 	set_resolution(window->w, window->h);
 	if (is_paused()) unpause();
 	try {
 		while(!game_done) {
 			unsigned int time = get_time();
 			poll_input();
+			videosystem.poll_redraw();
 			if(!sound.is_music_playing()) {
 				play_music();
 			}
@@ -589,7 +590,7 @@ void Game::play() {
 	return;
 }
 
-void Game::ship_died(Ship *who, SpaceLocation *source) {
+void Game::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
 	if (source && source->data) {
 		Music *tmp = NULL;
 		if (source && source->ship && source->ship->data) tmp = source->ship->data->moduleVictory;
@@ -599,7 +600,7 @@ void Game::ship_died(Ship *who, SpaceLocation *source) {
 }
 
 //#include "mcbodies.h"
-void Game::fps() {
+void Game::fps() {STACKTRACE
 	if ((!log->playback) && ((log->type == Log::log_net1server) || (log->type == Log::log_net1client))) {
 		int ping = ((NetLog*)log)->ping;
 		char *tt = "good";
@@ -653,7 +654,7 @@ void Game::fps() {
 		message.print(msecs_per_fps, 15, "say: %s", chat_buf);
 }
 
-void Game::preinit() {
+void Game::preinit() {STACKTRACE
 	Physics::preinit();
 	planetSprite = asteroidSprite = asteroidExplosionSprite = hotspotSprite = kaboomSprite = panelSprite = sparkSprite = xpl1Sprite = NULL;
 	planet_victory = NULL;
@@ -672,7 +673,7 @@ void Game::preinit() {
 	music = NULL;
 }
 
-void Game::init(Log *_log) {
+void Game::init(Log *_log) {STACKTRACE
 	int i;
 
 	game_done = false;
@@ -873,15 +874,15 @@ offset	size	format		data
 	log_int(channel_server, lag_frames);
 	log_int(channel_init, lag_frames);
 
-	tic_history = new Histograph(16);
-	render_history = new Histograph(16);
+	tic_history = new Histograph(128);
+	render_history = new Histograph(128);
 
 	prepare();
 
 	return;
 }
 
-void Game::init_lag() {
+void Game::init_lag() {STACKTRACE
 	if ((log->type == Log::log_net1server) || (log->type == Log::log_net1client)) {
 		int lag_time = 0;//get_config_int("Network", "Lag", 200);
 		char blah = 0;
@@ -913,7 +914,7 @@ void Game::init_lag() {
 	}
 }
 
-void Game::change_view(View *new_view) {//this function looks wrong to me
+void Game::change_view(View *new_view) {STACKTRACE//this function looks wrong to me
 	View *v = new_view;
 	v->preinit();
 	v->init(view);
@@ -932,7 +933,7 @@ void Game::change_view(View *new_view) {//this function looks wrong to me
 	return;
 }
 
-void Game::change_view(const char * name) {
+void Game::change_view(const char * name) {STACKTRACE
 	View *v = get_view(name, view);
 	if (!v)
 		tw_error("Game::change_view - invalid view name");
@@ -952,7 +953,7 @@ void Game::change_view(const char * name) {
 	return;
 }
 
-Game::~Game() {
+Game::~Game() {STACKTRACE
 	message.out("deleteing GameEvents");
 	int i;
 	for (i = 0; i < events_waiting; i += 1) free(waiting_events[i]);
@@ -998,17 +999,17 @@ Game::~Game() {
 	delete window;
 }
 
-bool Game::is_paused() {
+bool Game::is_paused() {STACKTRACE
 	if (time_paused != -1) return true;
 	return false;
 }
 
-void Game::pause() {
+void Game::pause() {STACKTRACE
 	if (time_paused != -1) tw_error ("can't pause -- already paused");
 	time_paused = get_time();
 }
 
-void Game::unpause() {
+void Game::unpause() {STACKTRACE
 	if (time_paused == -1) tw_error ("can't unpause -- not paused");
 	redraw();
 	paused_time += get_time() - time_paused;
@@ -1016,7 +1017,7 @@ void Game::unpause() {
 	return;
 }
 
-void Game::save_screenshot() {
+void Game::save_screenshot() {STACKTRACE
 	static int shot_index = 0;
 	char path[80];
 
@@ -1043,9 +1044,8 @@ void Game::save_screenshot() {
 	return;
 }
 
-bool Game::handle_key(int k) {
+bool Game::handle_key(int k) {STACKTRACE
 	switch (k >> 8) {
-
 		case KEY_1: {
 			interpolate_frames = !interpolate_frames;
 			return true;
@@ -1174,13 +1174,13 @@ bool Game::handle_key(int k) {
 	return false;
 }
 
-int Game::set_frame_time(int t) {
+int Game::set_frame_time(int t) {STACKTRACE
 	this->frame_time = t;
 	prepare();
 	return 1;
 }
 
-int Game::set_turbo(double t) {
+int Game::set_turbo(double t) {STACKTRACE
 	this->normal_turbo = t;
 	prepare();
 	return 1;
@@ -1190,7 +1190,7 @@ double Game::get_turbo() {
 	return this->normal_turbo;
 }
 
-void Game::play_music() {
+void Game::play_music() {STACKTRACE
 	if (-1 == (int)music) return;
 	if (!music) {
 		set_config_file("client.ini");

@@ -1,6 +1,9 @@
 #ifndef _ERRORS_H
 #define _ERRORS_H
 
+#define DO_STACKTRACE
+#define USE_ALLEGRO
+
 /*
  * int tw_alert(char *message, char *b1, char *b2, char *b3)
  *
@@ -18,8 +21,22 @@ void caught_error(const char *format, ...);
 //used for catastrophic errors
 void tw_error_exit(const char* message) ;
 
+#ifdef DO_STACKTRACE
+	class UserStackTraceHelper { public:
+		UserStackTraceHelper(const char *file, int line);
+		~UserStackTraceHelper();
+	};
+#	define STACKTRACE UserStackTraceHelper _stacktrace ## __LINE__ (__FILE__,__LINE__);
+#else
+#	define STACKTRACE
+#endif
+
 extern "C" {
 #endif
+
+
+void init_error() ;   //initialize error handling routines
+void deinit_error();  //de-initialize error handling routines
 
 
 /*

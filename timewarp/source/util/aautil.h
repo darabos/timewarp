@@ -18,12 +18,6 @@
 
 #include <allegro.h>
 
-/*
- * Change aa_BITS, and never aa_SIZE or aa_MASK.
- * 8 or 4 are probably the fastest for i386+.
- * Recompile the package after changing aa_BITS.
- */
-#define aa_BITS		8
 
 typedef void PUT_TYPE(unsigned long _addr, int _x);
 typedef void ADD_TYPE(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2);
@@ -64,6 +58,7 @@ struct _aa_type {
 	int mask_color;       //the current input mask color
 	int transparent;      // 2-level transperancy (0 = solid, other = transparent)
 	unsigned long total;  // total # of pixels
+	unsigned long inverse;  // total # of pixels
 	unsigned long trans;  // # of transperant pixels (normalized to parts / 255 before the _aa_put call)
 	union {
 		struct RGBA rgba;
@@ -105,10 +100,23 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int mode);
 
 //#define makeacol16a(r,g,b,a) ( (r>>4)+(g&0xf0)+((b>>4)<<8)+((a>>4)<<12) )
 #define makeacol16a(r,g,b,a) ( ((g+(a<<8))&0xf0f0) + (r>>4) + ((b>>4)<<8) )
-#define getr16a(c) ((c<<4)&0xff)
-#define getg16a(c) (c&0xf0)
-#define getb16a(c) ((c>>4)&0xf0)
+#define makeacol12(r,g,b) makecol16a(r,g,b,0)
+#define getr12(c) ((c<<4)&0xff)
+#define getg12(c) (c&0xf0)
+#define getb12(c) ((c>>4)&0xf0)
+#define geta12(c) 0
+#define getr16a(c) getr12(c)
+#define getg16a(c) getg12(c)
+#define getb16a(c) getb12(c)
 #define geta16a(c) ((c>>8)&0xf0)
+#define geta8(c) 0
+#define geta15(c) 0
+#define geta16(c) 0
+#define geta24(c) 0
+#define getr32a(c) getr32(c)
+#define getg32a(c) getg32(c)
+#define getb32a(c) getb32(c)
+#define geta32a(c) geta32(c)
 
 /* Prepare Bresenham line parameters.  */
 #define aa_PREPARE(inc,dd,i1,i2,_yw,_xw)        \

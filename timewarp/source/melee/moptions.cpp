@@ -75,7 +75,7 @@ DIALOG options_dialog[] = {
   { NULL,              0,    0,     0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 	};
 
-void options_menu (Game *game) {
+void options_menu (Game *game) {STACKTRACE
 	int a;
 	while (true) {
 		a = tw_popup_dialog(NULL, options_dialog, 0);
@@ -161,7 +161,7 @@ DIALOG video_dialog[] = {
 	};
 
 
-void video_menu (Game *game) {
+void video_menu (Game *game) {STACKTRACE
 	int choice = -1;
 	while (choice != DIALOG_VIDEO_EXIT) {
 		sprintf(dialog_string[3], "%dx%d", videosystem.width, videosystem.height);
@@ -261,7 +261,7 @@ DIALOG audio_dialog[] = {
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 	};
 
-void audio_menu (Game *game) {
+void audio_menu (Game *game) {STACKTRACE
 	int i;
 
 	//set dialog values
@@ -358,7 +358,7 @@ DIALOG old_optionsDialog[] =
    { NULL,            0,   0,   0,   0,   0,   0,   0,    0,      0,   0,   NULL,                       NULL, NULL          }
 };
 
-void change_options() {
+void change_options() {STACKTRACE
 	int optionsRet, i;
 
 	set_config_file("client.ini");
@@ -437,10 +437,10 @@ void change_options() {
 	return;
 	}
 
-void config_menu (Game *game) {
+void config_menu (Game *game) {STACKTRACE
 	change_options();
 	};
-void physics_menu (Game *game) {
+void physics_menu (Game *game) {STACKTRACE
 	};
 
 

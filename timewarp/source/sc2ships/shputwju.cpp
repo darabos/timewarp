@@ -74,13 +74,13 @@ int UtwigJugger::handle_damage(SpaceLocation *source, double normal, double dire
 		normal = 0;
 	}
 	if (fortitude && (normal > 0)) {
-		if (normal > rand() % 3) normal -= fortitude;
+		if (normal > random(3)) normal -= fortitude;
 		if (normal < 0) normal = 0;
 	}
 	return Ship::handle_damage(source, normal, direct);
 }
 
-double UtwigJugger::isProtected()
+double UtwigJugger::isProtected() const
 {
 	return (special_recharge > 0) ? 1 : 0;
 }

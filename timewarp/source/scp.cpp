@@ -191,7 +191,7 @@ DIALOG fleet_titleDialog[] = {
 
 
 
-Log *new_log (int logtype) {
+Log *new_log (int logtype) { STACKTRACE
 	union { Log *log; NetLog *netlog; };
 	log = NULL;
 
@@ -212,7 +212,7 @@ Log *new_log (int logtype) {
 	return log;
 }
 
-char *detect_gametype( Log *_log ) {
+char *detect_gametype( Log *_log ) { STACKTRACE
 	int ltype;
 	_log->unbuffer(Game::channel_init, &ltype, sizeof(int));
 	ltype = intel_ordering(ltype);
@@ -263,7 +263,7 @@ static DIALOG connect_dialog[] = {
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 };
 
-int connect_menu(VideoWindow *window, char **address, int *port) {
+int connect_menu(VideoWindow *window, char **address, int *port) { STACKTRACE
 	int i = 0;
 
 	if (*address)
@@ -298,7 +298,7 @@ static DIALOG listen_dialog[] =
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
 
-static int listen_menu(VideoWindow *window, int port) {
+static int listen_menu(VideoWindow *window, int port) { STACKTRACE
 	dialog_string[1][0] = '\0';
 	int p = -1;
 	sprintf(dialog_string[1], "%d", port);
@@ -317,7 +317,7 @@ int is_escape_pressed() {
 	return key[KEY_ESC];
 }
 
-void play_net1client ( const char *_address, int _port ) {
+void play_net1client ( const char *_address, int _port ) {STACKTRACE
 	NetLog *log = new NetLog();
 	log->init();
 	log->type = Log::log_net1client;
@@ -360,7 +360,7 @@ void play_net1client ( const char *_address, int _port ) {
 	return;
 }
 
-void play_net1server(const char *_gametype_name, int _port) {
+void play_net1server(const char *_gametype_name, int _port) {STACKTRACE
 	NetLog *log = new NetLog();
 	log->init();
 
@@ -392,7 +392,7 @@ void play_net1server(const char *_gametype_name, int _port) {
 	return;
 }
 
-void play_demo ( const char * file_name ) {
+void play_demo ( const char * file_name ) {STACKTRACE
 	Log *log = new PlaybackLog();
 	log->init();
 	log->load(file_name);
@@ -402,7 +402,7 @@ void play_demo ( const char * file_name ) {
 	return;
 }
 
-void play_game(const char *_gametype_name, Log *_log) {
+void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 	bool gui_stuff = false;
 	char gametype_name[1024];
 	char *c;
@@ -491,18 +491,18 @@ char *viewListboxGetter(int index, int *list_size) ;
 FONT *TW_font = NULL;
 
 // dialog results
-int mainRet = 0;
+/*int mainRet = 0;
 int shipRet = 0;
 int keyRet = 0;
 int fleetRet = 0;
-int optionsRet= 0;
+int optionsRet= 0;*/
 
 
 char **player_type = NULL;
 int *player_config = NULL;
 int *player_team = NULL;
 
-Control *load_player(int i) {
+Control *load_player(int i) {STACKTRACE
 	char tmp[32];
 	Control *r = NULL;
 
@@ -531,12 +531,12 @@ void MainMenu::_event(Event *e) {
 	}
 }
 
-void MainMenu::enable() {
+void MainMenu::enable() {STACKTRACE
 	if (!(state & 2)) window->add_callback(this);
 	state |= 3;
 }
 
-void MainMenu::disable() {
+void MainMenu::disable() {STACKTRACE
 	state &=~ 1;
 }
 
@@ -545,7 +545,7 @@ void MainMenu::preinit() {
 	state = 0;
 }
 
-void MainMenu::doit() {
+void MainMenu::doit() {STACKTRACE
 	int i;
 	char tmp[32];
 
@@ -572,6 +572,7 @@ void MainMenu::doit() {
 
 	showTitle();
 	enable();
+	int mainRet;
 	do {
 		//mainRet = popup_dialog(mainDialog, MAIN_DIALOG_MELEE);
 		mainRet = tw_do_dialog(window, mainDialog, MAIN_DIALOG_MELEE);
@@ -602,12 +603,14 @@ void MainMenu::doit() {
 
 int tw_main(int argc, char *argv[]);
 
-int main(int argc, char *argv[]) {
-	return tw_main(argc, argv);
+int main(int argc, char *argv[]) { STACKTRACE
+	int r;
+	r = tw_main(argc, argv);
+	return r;
 }
 END_OF_MAIN();
 
-int tw_main(int argc, char *argv[]) {
+int tw_main(int argc, char *argv[]) { STACKTRACE
 	int i;
 	const char *auto_game = NULL, *auto_log = NULL;
 
@@ -628,6 +631,8 @@ int tw_main(int argc, char *argv[]) {
 	log_debug("Log started(%d)\n", 1);
 	if (allegro_init() < 0)
 		tw_error_exit("Allegro initialization failed");
+	videosystem.preinit();
+	init_error();
 
 	try {
 		set_window_title("Star Control : TimeWarp");
@@ -717,7 +722,6 @@ int tw_main(int argc, char *argv[]) {
 		enable_input(inputs);
 		sound.init();
 		sound.load();
-		videosystem.preinit();
 		videosystem.set_resolution(screen_width, screen_height, screen_bpp, fullscreen);
 
 		View *v = get_view ( get_config_string("View", "View", NULL) , NULL );
@@ -802,7 +806,7 @@ DIALOG select_game_dialog[] = {
   { d_tw_yield_proc,   0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 };
-const char *select_game_menu () {
+const char *select_game_menu () {STACKTRACE
 	select_game_dialog[2].dp3 = game_names;
 	int i = tw_popup_dialog(NULL, select_game_dialog, 2);
 	if (i == -1) return NULL;
@@ -847,7 +851,7 @@ DIALOG melee_ex_dialog[] = {
 
 
 // MELEE_EX - dialog function
-void extended_menu(int i) {
+void extended_menu(int i) {STACKTRACE
 //	melee_ex_dialog[MELEE_EX_DIALOG_GAMELIST].dp3 = game_names;
 	if (i == -1)
 		i = tw_popup_dialog(NULL, melee_ex_dialog, MELEE_EX_DIALOG_PLAY_GAME);
@@ -955,7 +959,7 @@ DIALOG teamsDialog[] = {
 
 
 // TEAMS - dialog function
-void change_teams() {
+void change_teams() {STACKTRACE
 	int a;
 
 	set_config_file("scp.ini");
@@ -1079,7 +1083,7 @@ DIALOG fleetDialog[] = {
 
 
 // FLEET - dialog function
-void edit_fleet(int player) {
+void edit_fleet(int player) {STACKTRACE
 	char tmp[40];
 	char path[80];
 
@@ -1091,6 +1095,7 @@ void edit_fleet(int player) {
 	else sprintf(fleetPlayer, "Player%d Fleet", player+1);
 	showTitle();
 
+	int fleetRet;
 	do {
 		sprintf(title_str, fleet->title);
 		sprintf(fleetTitleString, "%s\n%d points", fleet->title, fleet->cost);
@@ -1469,7 +1474,7 @@ static DIALOG diagnostics_dialog[] =
 
 
 // DIAGNOSTICS - dialog function
-void show_diagnostics() {
+void show_diagnostics() {STACKTRACE
 	int i;
 	char buffy [16000];//fix sometime
 	char buffy2[100000];//fix sometime
@@ -1542,7 +1547,7 @@ void show_diagnostics() {
  */
 
 
-void keyjamming_tester() {
+void keyjamming_tester() {STACKTRACE
 	int i, j = 0;
 	char blah[256];
 
@@ -1555,6 +1560,15 @@ void keyjamming_tester() {
 	unscare_mouse();
 
 	while (!key[KEY_F10] && !key[KEY_ESC]) {
+		if (videosystem.poll_redraw()) {
+			scare_mouse();
+			videosystem.window.lock();
+			clear_to_color(videosystem.window.surface, 0);
+			textprintf(screen, font, 40, 20, palette_color[15], "Press the keys combinations you wish to test");
+			textprintf(screen, font, 40, 40, palette_color[15], "When you're finished, press ESCAPE or F10");
+			videosystem.window.unlock();
+			unscare_mouse();
+		}
 		rectfill(screen, 50, 60, 500, 60 + 20 * j, palette_color[0]);
 		j = 0;
 		poll_input();

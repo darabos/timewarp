@@ -253,7 +253,7 @@ class UtwigJugger : public Ship {
   UtwigJugger(Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code);
   virtual void calculate();
-  virtual double isProtected();
+  virtual double isProtected() const;
 
   protected:
   virtual void calculate_fire_weapon();
