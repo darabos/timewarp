@@ -18,13 +18,13 @@ class AutoGun;
 
 
 // this is read separately from the layout file - to keep things organized ?
-struct BigShipPartInfo
+struct BigShipPartOrigInfo
 {
 	double	crewmax, crew, batt, dynamo, turning, thrusting;
 	SpaceSprite	*spr_crewed, *spr_uncrewed;
 };
 
-class BigShipPart : public SpaceObject
+class BigShipPartOrig : public SpaceObject
 {
 
 protected:
@@ -46,12 +46,12 @@ public:
 	SpaceObject *collider;
 	Vector2 Pcoll, Vcoll;
 
-//	BigShipPart(AyronBS *aowner, Vector2 orelpos,
+//	BigShipPartOrig(AyronBS *aowner, Vector2 orelpos,
 //				double acrew, double abatt, double adynamo,
 //				double aturning, double athrusting,
 //				SpaceSprite *spr, SpaceSprite *spr_uncrewed);
 
-	BigShipPart(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartInfo **info);
+	BigShipPartOrig(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartOrigInfo **info);
 	
 
 	virtual void animate(Frame *space);
@@ -65,19 +65,19 @@ public:
 };
 
 
-class BigShipPartDevice : public SpaceObject
+class BigShipPartOrigDevice : public SpaceObject
 {
 protected:
-	BigShipPart *ownerpart;
+	BigShipPartOrig *ownerpart;
 
 public:
-	BigShipPartDevice(BigShipPart *aownerpart, SpaceSprite *ospr);
+	BigShipPartOrigDevice(BigShipPartOrig *aownerpart, SpaceSprite *ospr);
 	virtual void calculate();
 	virtual void animate(Frame *space);
 };
 
 
-class AutoGun : public BigShipPartDevice
+class AutoGun : public BigShipPartOrigDevice
 {
 
 	double shotrange, shotvel, shotdamage, shotarmour, shotdrain;
@@ -87,7 +87,7 @@ class AutoGun : public BigShipPartDevice
 
 public:
 
-	AutoGun(BigShipPart *aowner, Vector2 orelpos, double centerangle, double moveangle,
+	AutoGun(BigShipPartOrig *aowner, Vector2 orelpos, double centerangle, double moveangle,
 		SpaceSprite *spr, SpaceSprite *osprshot);
 	//virtual void animate(Frame *space);
 	virtual void calculate();
@@ -99,11 +99,11 @@ class AyronBS : public Ship
 public:
 	int		N, Nx, Ny, Ntypes;
 	double	w;
-	BigShipPart **parts;
+	BigShipPartOrig **parts;
 //	int **parts;
 
 	int		nBSinfo;
-	BigShipPartInfo **BSinfo;
+	BigShipPartOrigInfo **BSinfo;
 
 	double	recharge_rate_ref, accel_rate_ref, turn_rate_ref;
 
@@ -117,7 +117,7 @@ public:
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct=0);
 
 	// you can overload this to load a different type of ship-part into the AyronBS.
-	virtual BigShipPart *init_part(Vector2 orelpos, int otype, BigShipPartInfo **info);
+	virtual BigShipPartOrig *init_part(Vector2 orelpos, int otype, BigShipPartOrigInfo **info);
 
 	virtual int activate_weapon();
 	virtual int activate_special();
@@ -125,11 +125,11 @@ public:
 };
 
 
-BigShipPart *AyronBS::init_part(Vector2 orelpos, int otype, BigShipPartInfo **info)
+BigShipPartOrig *AyronBS::init_part(Vector2 orelpos, int otype, BigShipPartOrigInfo **info)
 {
 
 	if (otype > 0)
-		return new BigShipPart(this, orelpos, otype, info);
+		return new BigShipPartOrig(this, orelpos, otype, info);
 	else
 		return 0;
 }
@@ -156,11 +156,11 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 
 	Ntypes = nBSinfo;
 
-	BSinfo = new BigShipPartInfo* [nBSinfo];
+	BSinfo = new BigShipPartOrigInfo* [nBSinfo];
 
 	for ( i = 0; i < nBSinfo; ++i )
 	{
-		BSinfo[i] = new BigShipPartInfo();
+		BSinfo[i] = new BigShipPartOrigInfo();
 
 		fscanf(inp, "%*10c %lf %lf %lf %lf %lf",
 			 &BSinfo[i]->crew, &BSinfo[i]->batt, &BSinfo[i]->dynamo,
@@ -173,8 +173,8 @@ Ship(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 	fscanf(inp, "%i %i\n", &Nx, &Ny);
 	N = Nx * Ny;
 
-//	parts = new (BigShipPart*) [N];
-	parts = new BigShipPart* [N];
+//	parts = new (BigShipPartOrig*) [N];
+	parts = new BigShipPartOrig* [N];
 
 
 	int *itype, *iweapon;
@@ -397,12 +397,12 @@ int AyronBS::handle_damage(SpaceLocation *source, double normal, double direct)
 
 
 
-//BigShipPart::BigShipPart(AyronBS *aowner, Vector2 orelpos,
+//BigShipPartOrig::BigShipPartOrig(AyronBS *aowner, Vector2 orelpos,
 //				double acrew, double abatt, double adynamo,
 //				double aturning, double athrusting,
 //				SpaceSprite *spr, SpaceSprite *spr_uncrewed)
 
-BigShipPart::BigShipPart(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartInfo **info)
+BigShipPartOrig::BigShipPartOrig(AyronBS *aowner, Vector2 orelpos, int otype, BigShipPartOrigInfo **info)
 :
 SpaceObject(aowner, 0, 0, info[otype-1]->spr_crewed)
 {
@@ -442,7 +442,7 @@ SpaceObject(aowner, 0, 0, info[otype-1]->spr_crewed)
 // this is in a separate routine, so that it can be called (again) by
 // the owner if necessary (collision)
 
-void BigShipPart::syncpos()
+void BigShipPartOrig::syncpos()
 {
 	// maintain (relative) position wrt the ship
 	angle = owner->angle;	// this is the discrete angle (64 values).
@@ -459,7 +459,7 @@ void BigShipPart::syncpos()
 	vel = owner->vel;
 }
 
-void BigShipPart::calculate()
+void BigShipPartOrig::calculate()
 {
 	if ( !(owner && owner->exists()) )
 	{
@@ -504,7 +504,7 @@ void BigShipPart::calculate()
 }
 
 
-int BigShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
+int BigShipPartOrig::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 	// transmit damage to the ship owner ...
 	//return owner->handle_damage(source, normal, direct);
@@ -548,7 +548,7 @@ int BigShipPart::handle_damage(SpaceLocation *source, double normal, double dire
 
 
 
-void BigShipPart::inflict_damage(SpaceObject *other)
+void BigShipPartOrig::inflict_damage(SpaceObject *other)
 {
 	SpaceObject::inflict_damage(other);
 
@@ -563,10 +563,10 @@ void BigShipPart::inflict_damage(SpaceObject *other)
 
 
 
-AutoGun::AutoGun(BigShipPart *aowner, Vector2 orelpos, double centerangle, double moveangle,
+AutoGun::AutoGun(BigShipPartOrig *aowner, Vector2 orelpos, double centerangle, double moveangle,
 				 SpaceSprite *spr, SpaceSprite *osprshot)
 :
-BigShipPartDevice(aowner, spr)
+BigShipPartOrigDevice(aowner, spr)
 {
 	sprshot = osprshot;
 
@@ -591,7 +591,7 @@ BigShipPartDevice(aowner, spr)
 
 void AutoGun::calculate()
 {
-	BigShipPartDevice::calculate();
+	BigShipPartOrigDevice::calculate();
 
 	if (!(ownerpart && ownerpart->hascrew()))
 		return;
@@ -649,7 +649,7 @@ void AutoGun::calculate()
 
 				// required movement is relative to the gun's current position
 				// note that at this moment, you cannot use the value of "angle"
-				// which is overridden by the call to BigShipPart::calculate; so,
+				// which is overridden by the call to BigShipPartOrig::calculate; so,
 				// use "b" instead.
 				b += a_track;
 				da_track = a - b;
@@ -714,7 +714,7 @@ void AutoGun::calculate()
 
 
 
-void BigShipPart::animate(Frame *space)
+void BigShipPartOrig::animate(Frame *space)
 {
 	SpaceSprite *spr;
 
@@ -806,12 +806,12 @@ int AyronBS::activate_special()
 }
 
 
-bool BigShipPart::hascrew()
+bool BigShipPartOrig::hascrew()
 {
 	return crew != 0;
 }
 
-void BigShipPart::recrew(int howmany)
+void BigShipPartOrig::recrew(int howmany)
 {
 	if (crew == 0 && howmany > 0)
 	{
@@ -836,7 +836,7 @@ void BigShipPart::recrew(int howmany)
 
 
 
-BigShipPartDevice::BigShipPartDevice(BigShipPart *aownerpart, SpaceSprite *ospr)
+BigShipPartOrigDevice::BigShipPartOrigDevice(BigShipPartOrig *aownerpart, SpaceSprite *ospr)
 :
 SpaceObject(aownerpart, aownerpart->pos, aownerpart->angle, ospr)
 {
@@ -856,7 +856,7 @@ SpaceObject(aownerpart, aownerpart->pos, aownerpart->angle, ospr)
 }
 
 
-void BigShipPartDevice::calculate()
+void BigShipPartOrigDevice::calculate()
 {
 	if ( !(ownerpart && ownerpart->exists()) )
 	{
@@ -875,7 +875,7 @@ void BigShipPartDevice::calculate()
 	SpaceObject::calculate();
 }
 
-void BigShipPartDevice::animate(Frame *space)
+void BigShipPartOrigDevice::animate(Frame *space)
 {
 	if (!ownerpart->hascrew())
 		return;
@@ -893,7 +893,7 @@ void BigShipPartDevice::animate(Frame *space)
 // you'll need to hack into inflict_damage(other),
 // since at least that routine is always called then ....
 
-void BigShipPart::collide(SpaceObject *other)
+void BigShipPartOrig::collide(SpaceObject *other)
 {
 	if (sameShip(other))
 		return;

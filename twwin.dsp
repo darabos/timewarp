@@ -387,6 +387,14 @@ SOURCE=.\source\other\radar.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\other\shippart.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\shippart.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\other\vbodies.cpp
 # End Source File
 # Begin Source File
@@ -787,6 +795,10 @@ SOURCE=.\source\newships\shpneodr.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpnisha.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpoliha.cpp
 # End Source File
 # Begin Source File
 

@@ -447,6 +447,16 @@ double SpaceLocation::handle_speed_loss (SpaceLocation *source, double normal) {
 	return 0;
 }
 
+void SpaceLocation::change_vel(Vector2 dvel)
+{
+	vel += dvel;
+}
+
+void SpaceLocation::change_pos(Vector2 dpos)
+{
+	pos = normalize(pos + dpos);
+}
+
 void SpaceLocation::ship_died() {STACKTRACE
 	ship = NULL;
 }
@@ -709,8 +719,10 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	tmp = ( -2 * tmp );
 	tmp = tmp * (mass * other->mass) / (mass + other->mass);
 	if (tmp >= 0) {
-		vel += _dp * tmp / mass;
-		other->vel -= _dp * tmp / other->mass;
+		//vel += _dp * tmp / mass;
+		//other->vel -= _dp * tmp / other->mass;
+		change_vel(_dp * tmp / mass);
+		other->change_vel( -_dp * tmp / other->mass);
 	}
 	
 	Vector2 nd;
@@ -718,8 +730,10 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	nd /= (mass + other->mass);
 	while (sprite->collide(p1.x, p1.y, sprite_index, p2.x, p2.y, 
 			other->sprite_index, other->sprite)) {
-		pos = normalize(pos + nd * other->mass);
-		other->pos = normalize(other->pos - nd * mass);
+		//pos = normalize(pos + nd * other->mass);
+		//other->pos = normalize(other->pos - nd * mass);
+		change_pos(nd * other->mass);
+		other->change_pos(-nd * mass);
 
 		p1 = pos;
 		p2 = other->normal_pos();

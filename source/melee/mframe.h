@@ -228,6 +228,9 @@ protected: public://aught to be protected, but we're lazy
 	virtual int handle_fuel_sap(SpaceLocation *source, double normal);
 	virtual double handle_speed_loss(SpaceLocation *source, double normal);
 
+	virtual void change_vel(Vector2 dvel);
+	virtual void change_pos(Vector2 dpos);
+
 	SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle);
 	virtual void death();      // called after an item is killed
 	virtual ~SpaceLocation();  // called when an item is deallocated
