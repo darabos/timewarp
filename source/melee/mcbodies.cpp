@@ -416,8 +416,12 @@ void Stars::_event( Event *e) {STACKTRACE
 	return;
 }
 
-Stars::Stars() {STACKTRACE
+Stars::Stars()
+{
+	STACKTRACE;
+
 	int i;
+	push_config_state();
 	v = NULL;
 	set_depth(DEPTH_STARS);
 	DATAFILE *stardat = load_datafile("stars.dat");
@@ -450,6 +454,8 @@ Stars::Stars() {STACKTRACE
 	set_config_file("client.ini");
 	aa_mode = get_config_int("Stars", "Quality", 5);
 	unload_datafile(stardat);
+
+	pop_config_state();
 }
 /*
 Stars::Stars() {

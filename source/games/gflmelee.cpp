@@ -350,7 +350,7 @@ PlayerInformation *FlMelee::new_player()	// should return a pointer to a new pla
 
 void FlMelee::init(Log *_log)
 {
-	STACKTRACE;;
+	STACKTRACE;
 
 	// disable "bots", cause it's humans first, bots are the rest of the ships by default
 	num_players -= num_bots;
@@ -377,10 +377,9 @@ void FlMelee::init(Log *_log)
 	//opening your .ini file.
 
 	log_file("plhuge.ini");
-	int Comets = get_config_int(NULL, "Comets",0);
+
 	int CoMass = get_config_int(NULL, "Comet_mass",0);
 	int ComMax = get_config_int(NULL, "Comet_max",0);
-	int Asteroids=get_config_int(NULL,"Asteroids",0);
 	int ComAcc = get_config_int(NULL, "Comet_acc",0);
 
 //	int MapSize=get_config_int(NULL,"MapSize",0);
@@ -391,10 +390,8 @@ void FlMelee::init(Log *_log)
 	int PlanetType=get_config_int(NULL,"PlanetType",0);
 	
 	//Make sure variables being read properly	
-	iMessage("Comets    = %d",Comets);
 	iMessage("CoMass    = %d",CoMass);
 	iMessage("ComMax    = %d",ComMax);
-	iMessage("Asteroids = %d",Asteroids);
 	iMessage("ComAcc    = %d",ComAcc);
 	iMessage("MapSize   = %d",MapSize);
 	iMessage("PlanetType= %d",PlanetType);
@@ -432,7 +429,7 @@ void FlMelee::init(Log *_log)
 		
 		// copied from Planet::Planet :
 		// note that Planet constructor calls another log file.
-		log_file("plhuge.ini");
+		//log_file("plhuge.ini");
 		Centre->gravity_mindist = scale_range(get_config_float("GPlanet", "GravityMinDist", 0));
 		Centre->gravity_range = scale_range(get_config_float("GPlanet", "GravityRange", 0));
 		Centre->gravity_power = get_config_float("GPlanet", "GravityPower", 0);
@@ -442,6 +439,11 @@ void FlMelee::init(Log *_log)
 	}
 
 
+	log_file("gflmelee.ini");
+
+	int Asteroids = get_config_int("Environment", "Asteroids", 0);
+	/*
+	int Comets = get_config_int("Environment", "Comets",0);
 	int num;
 
 	//comet code
@@ -457,9 +459,9 @@ void FlMelee::init(Log *_log)
 						get_config_int(NULL, "Comet_max", 2));
 		add (c);
 	}
+	*/
 
 	//asteroids code
-	Asteroids = get_config_int(NULL, "Asteroids", 0);
 	if (Asteroids > 0)
 	{
 		for (int num = 0; num < Asteroids; num += 1)
@@ -495,10 +497,14 @@ void FlMelee::init(Log *_log)
 	}
 	*/
 
+	log_file("gflmelee.ini");
+
 	if (p_local == 0)
 	{
 		start_menu(allyfleet);
 	}
+
+	log_file("gflmelee.ini");
 	// send (or receive) ... channel_server is locally either the server, or the client.
 	// fleet numbers are fixed: fleet 0 vs fleet 1
 	channel_current = channel_server;
@@ -518,8 +524,6 @@ void FlMelee::init(Log *_log)
 
 	
 	
-
-	log_file("gflmelee.ini");
 
 	statsmanager = new StatsManager;
 
@@ -572,7 +576,8 @@ void FlMelee::init(Log *_log)
 
 			strcpy(shipname, st);
 
-			message.out(shipname);
+			message.print(1500, 15, "ship[%s]", shipname);
+			message.animate(0);
 
 
 			// add the ships to the game, note that the first ship of the first fleet
@@ -701,6 +706,16 @@ void FlMelee::init(Log *_log)
 //	vradar->addTeam(human_team,makecol(65,255,128));	//A pleasant green
 //	vradar->addTeam(enemy_team,makecol(255,65,0));		//A violent red
 //	add(vradar);
+
+
+	message.print(1500, 15, "local[%i]", p_local);
+	for ( i = 0; i < num_players; ++i )
+	{
+		if (player[i]->control->ship)
+			message.print(1500, 15, "player[%i] team[%i] ship[%s]", i, player[i]->team, player[i]->control->ship->get_shiptype()->name);
+	}
+	message.animate(0);
+	//readkey();
 
 
 }
@@ -993,7 +1008,7 @@ void FlMelee::calculate()
 
 			if (o->isShip())
 			{
-				if (is_in_team(o, alliance[iplayer]))
+				if (is_in_team(o, player[iplayer]->team))
 					++n[0];
 				else
 					++n[1];
@@ -1107,44 +1122,32 @@ void FlMelee::calculate()
 			
 			// then start searching for the next entry;
 			itarget = lastitarget + toggle_playership;
+			if ( itarget > gametargets.N-1 )
+				itarget -= gametargets.N;
+			if ( itarget < 0 )
+				itarget += gametargets.N;
+			
 			while ( itarget != lastitarget )
 			{
 				
-				if ( itarget > gametargets.N-1 )
-					itarget -= gametargets.N;
-				if ( itarget < 0 )
-					itarget += gametargets.N;
 				
 				SpaceObject *o = targets->item[itarget];
 				
 				//			Control *c = playercontrols[0];	// is already done earlier
-				
-				if ( o->isShip() && is_in_team(o, alliance[iplayer])
+
+				if ( o->isShip() && is_in_team(o, player[iplayer]->team)
 					&& !underplayercontrol(o))
 				{
 					Ship *shp = (Ship*) o;
-					
-					/*
-					Control *c1, *c2;
-					Ship *s1, *s2;
-					
-					c1 = shp->control;
-					s1 = shp;
-					
-					c2 = c;
-					s2 = c2->ship;
-					
-					oldcontrol[iplayer]->select_ship(s2, "none");	// re-assign original control ai.
-					oldcontrol[iplayer] = s1->control;		// remember control ai of the new ship
-					playercontrols[iplayer]->select_ship(s1, "none");	// take over the new ship
-					*/
 					take_control(iplayer, shp);
-					
-					
 					break;
 				}
 				
 				itarget += toggle_playership;
+				if ( itarget > gametargets.N-1 )
+					itarget -= gametargets.N;
+				if ( itarget < 0 )
+					itarget += gametargets.N;
 			}
 			
 		}
