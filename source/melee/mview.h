@@ -10,7 +10,7 @@ extern int camera_hides_cloakers;
 extern int FULL_REDRAW;
 
 
-
+void constrain(double x1, double *x, double x2);
 //View stuff: READ ONLY!
                               // units
 extern View  *space_view;

@@ -133,4 +133,54 @@ void _draw_starfield_cached (
 	int aa_mode
 );
 
+void _draw_starfield_cached (
+	//surface to draw starfield on
+	Frame *frame,
+	//star sprite
+	SpaceSprite *sprite, 
+	//index into star sprite
+	int index,
+	//number of stars
+	int n, 
+	//center of screen for drawing purposes
+	double cx, double cy, 
+	//scrolly amount
+	double x, double y, 
+	//size of starfield (usually the same as wrap point, sometimes smaller)
+	double w, double h, 
+	//wrap point
+	double mx, double my, 
+	//size of stars
+	double zoom,
+	//64-bit seed for RNG
+	Uint64 s64,
+	//anti-aliasing mode to use
+	int aa_mode
+) ;
+
+void _draw_starfield_raw (
+	//surface to draw starfield on
+	Frame *frame,
+	//star sprite
+	SpaceSprite *sprite, 
+	//index into star sprite
+	int index, int num_indeces, 
+	//number of stars
+	int n, 
+	//center of screen for drawing purposes
+	double cx, double cy, 
+	//scrolly amount
+	double x, double y, 
+	//size of starfield (usually the same as wrap point, sometimes smaller)
+	double w, double h, 
+	//wrap point
+	double mx, double my, 
+	//size of stars
+	double zoom,
+	//64-bit seed for RNG
+	Uint64 s64,
+	//anti-aliasing mode to use
+	int aa_mode
+) ;
+
 #endif // __MCBODIES_H__

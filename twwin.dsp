@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GR /GX /Zi /O1 /Op /Ob2 /I "./include" /I "./source" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GR /GX /Zi /O1 /Op /Ob2 /I "./include" /I "./source" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -446,6 +446,14 @@ SOURCE=.\source\games\gsolar.cpp
 # Begin Source File
 
 SOURCE=.\source\games\gtrug.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\ShipDocGenerator.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\ShipDocGenerator.h
 # End Source File
 # Begin Source File
 

@@ -25,7 +25,7 @@ $Id$
 */
 
 #ifndef PLAY_LOCAL_MENU_HEADER
-#define PLAY_LOCAL_HEADER 1
+#define PLAY_LOCAL_MENU_HEADER 1
 
 #include "MASkinG.h"
 using namespace MAS;
