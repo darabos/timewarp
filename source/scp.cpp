@@ -536,7 +536,7 @@ void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 		if (type)
 			new_game = type->new_game();
 		else
-			throw "wait a sec... I can't find that game type";
+			tw_error("wait a sec... I can't find that game type");
 
 		new_game->preinit();
 		new_game->window = new VideoWindow;
