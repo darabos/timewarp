@@ -6,7 +6,7 @@
 #include <allegro.h>
 
 #ifdef ALLEGRO_MSVC
-	#pragma warning (disable:4786)
+#pragma warning (disable:4786)
 #endif
 
 #include "../melee.h"
@@ -43,15 +43,15 @@ REGISTER_FILE
 ////////////////////////////////////////////////////////////////////////
 
 /*! \brief Player who kill asteroid get his bukazoid.
-  \param source ??????
-  \param normal normal damage 
-  \param direct direct damage
-  \return total damage to asteroid
- */
+\param source ??????
+\param normal normal damage 
+\param direct direct damage
+\return total damage to asteroid
+*/
 int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double direct) {
 	STACKTRACE
 
-	if (!exists()) return 0;
+		if (!exists()) return 0;
 	int i = Asteroid::handle_damage(source, normal, direct);
 	if (!exists()) {
 		GobPlayer *p = gobgame->get_player(source);
@@ -65,8 +65,8 @@ void GobAsteroid::death () {
 	STACKTRACE
 
 
-	Animation *a = new Animation(this, pos,
-			explosion, 0, explosion->frames(), time_ratio, get_depth());
+		Animation *a = new Animation(this, pos,
+		explosion, 0, explosion->frames(), time_ratio, get_depth());
 	a->match_velocity(this);
 	game->add(a);
 
@@ -78,7 +78,7 @@ void GobAsteroid::death () {
 void GobGame::preinit() {
 	STACKTRACE
 
-	Game::preinit();
+		Game::preinit();
 
 	gobplayers = 0;
 	gobplayer = NULL;
@@ -94,15 +94,16 @@ void GobGame::preinit() {
 	for (i = 0; i < 3; i += 1)
 		station_build_name[i] = NULL;
 	defenderSprite = NULL;
+
 }
 
 /*! \brief Add player to game
-  \param control Player control
+\param control Player control
 */
 void GobGame::add_gobplayer(Control *control) {
 	STACKTRACE
 
-	int i = gobplayers;
+		int i = gobplayers;
 	gobplayers += 1;
 	gobplayer = (GobPlayer**) realloc(gobplayer, sizeof(GobPlayer*) * gobplayers);
 	gobplayer[i] = new GobPlayer();
@@ -111,32 +112,32 @@ void GobGame::add_gobplayer(Control *control) {
 	return;
 }
 /*! \brief Handle player death
-  At this point divinefavor upgrade can save player from such fate
-  \param killer ???
+At this point divinefavor upgrade can save player from such fate
+\param killer ???
 */
 void GobPlayer::died(SpaceLocation *killer) {
 	STACKTRACE
 
-	if (upgrade_list[UpgradeIndex::divinefavor]->num && (random()&1)) { //divine favor
-		ship->crew = ship->crew_max;
-		ship->batt = ship->batt_max;
-		ship->translate(random(Vector2(-2048,-2048), Vector2(2048,2048)));
-		ship->state = 1;
-	}
-	else ship = NULL;
-	return;
+		if (upgrade_list[UpgradeIndex::divinefavor]->num && (random()&1)) { //divine favor
+			ship->crew = ship->crew_max;
+			ship->batt = ship->batt_max;
+			ship->translate(random(Vector2(-2048,-2048), Vector2(2048,2048)));
+			ship->state = 1;
+		}
+		else ship = NULL;
+		return;
 }
 
 /*! \brief ???
-  \param sample ???
-  \param source ???
-  \param vol ???
-  \param freq ???
- */
+\param sample ???
+\param source ???
+\param vol ???
+\param freq ???
+*/
 void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {
 	STACKTRACE
 
-	double v;
+		double v;
 	Vector2 d = source->normal_pos() - space_center;
 	d = normalize(d + size/2, size) - size/2;
 	v = 1000;
@@ -146,24 +147,24 @@ void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int fr
 }
 
 /*! \brief Init Game Stuff
-  Alloc memory for enemies, load game settings, load various game
-  sprites, set Hero view, include some hard understandable code for network 
-  play
-  \param _log Game log I think
+Alloc memory for enemies, load game settings, load various game
+sprites, set Hero view, include some hard understandable code for network 
+play
+\param _log Game log I think
 */
 void GobGame::init(Log *_log) {
 	STACKTRACE
 
-	int i;
-/*	switch(_log->type) {
-//		case Log::log_net1server:
-//		case Log::log_net1client: {
-//			error("unsupported game/log type");
-//		}
-//		break;
-		default: {
-		}
-		break;
+		int i;
+	/*	switch(_log->type) {
+	//		case Log::log_net1server:
+	//		case Log::log_net1client: {
+	//			error("unsupported game/log type");
+	//		}
+	//		break;
+	default: {
+	}
+	break;
 	}*/
 	Game::init(_log);
 
@@ -175,7 +176,7 @@ void GobGame::init(Log *_log) {
 
 	enemy_team = new_team();
 
-//	set_resolution(videosystem.width, videosystem.height);
+	//	set_resolution(videosystem.width, videosystem.height);
 
 
 	DATAFILE *tmpdata; 
@@ -269,6 +270,9 @@ void GobGame::init(Log *_log) {
 		0,0.9,
 		0,1
 		);
+
+	quest_source = new QuestSource();
+	quest_source->LoadQuestList( "gamedata/TestQuestSource.lua" );
 	return;
 }
 /*! \brief Free game resources */
@@ -286,20 +290,22 @@ GobGame::~GobGame() {
 		delete gobenemy[i];
 	}
 	free(gobenemy);
+
+	delete quest_source;
 	return;
 }
 
 /*! \brief Add planet and station
-  \param planet_sprite ???
-  \param planet_index ???
-  \param station_sprite ???
-  \param builds ???
-  \param background ???
+\param planet_sprite ???
+\param planet_index ???
+\param station_sprite ???
+\param builds ???
+\param background ???
 */
 void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background) {
 	STACKTRACE
 
-	Planet *p = new Planet (size/2, planet_sprite, planet_index);
+		Planet *p = new Planet (size/2, planet_sprite, planet_index);
 	if (num_planets) while (true) {
 		SpaceLocation *n;
 		n = p->nearest_planet();
@@ -309,7 +315,7 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 	add ( p );
 
 	GobStation *gs = new GobStation(station_sprite, p, builds, 
-					background, "NOT_IMPLEMENTED" );
+		background, "NOT_IMPLEMENTED" );
 	gs->collide_flag_sameship = ALL_LAYERS;
 	gs->collide_flag_sameteam = ALL_LAYERS;
 	gs->collide_flag_anyone = ALL_LAYERS;
@@ -324,7 +330,7 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 void GobGame::fps() {
 	STACKTRACE
 
-	Game::fps();
+		Game::fps();
 
 	message.print((int)msecs_per_fps, 15, "enemies: %d", gobenemies);
 	message.print((int)msecs_per_fps, 15, "time: %d", game_time / 1000);
@@ -335,8 +341,8 @@ void GobGame::fps() {
 
 		if (gobplayer[i]->ship) {
 			message.print((int)msecs_per_fps, 15-i, "coordinates: %d x %d", 
-					iround(gobplayer[i]->ship->normal_pos().x), 
-					iround(gobplayer[i]->ship->normal_pos().y));
+				iround(gobplayer[i]->ship->normal_pos().x), 
+				iround(gobplayer[i]->ship->normal_pos().y));
 		}
 		message.print((int)msecs_per_fps, 15-i, "starbucks: %d", gobplayer[i]->starbucks);
 		message.print((int)msecs_per_fps, 15-i, "buckazoids: %d", gobplayer[i]->buckazoids);
@@ -346,24 +352,12 @@ void GobGame::fps() {
 }
 
 /*! \brief Add enemy to game 
-  This function called once per frame of physics, used to add new enemys to the game
+This function called once per frame of physics, used to add new enemys to the game
 */
 void GobGame::calculate() {
 	STACKTRACE
-	  int i;
-	for ( i = 0; i< gobplayers; i++)
-	  {
-	    GobPlayer * p = gobplayer[i];
-	    if(! p->ship )
-	      continue;
 
-	    for ( std::list<Quest*>::iterator iQ = p->quest.begin();
-		  iQ != p->quest.end();
-		  iQ++ )
-	      {
-			(*iQ)->Process();
-	      }
-	  }
+		quest_source->ProcessQuests();
 
 	if (next_add_new_enemy_time <= game_time) {
 		next_add_new_enemy_time = game_time;
@@ -384,13 +378,13 @@ void GobGame::calculate() {
 }
 
 /*! \brief Search for requested enemy ship
-  \param what space location of enemy ship
-  \return enemy ship index, -1 if not found
+\param what space location of enemy ship
+\return enemy ship index, -1 if not found
 */
 int GobGame::get_enemy_index(SpaceLocation *what) {
 	STACKTRACE
 
-	int i;
+		int i;
 	Ship *s = what->ship;
 	if (!s) return -1;
 	for (i = 0; i < gobenemies; i += 1) {
@@ -400,13 +394,13 @@ int GobGame::get_enemy_index(SpaceLocation *what) {
 }
 
 /*! \brief ship death
-  \param who is killed
-  \param source loacation that killed?
+\param who is killed
+\param source loacation that killed?
 */
 void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 	STACKTRACE
 
-	EventShipDie esd;
+		EventShipDie esd;
 	esd.victim        = who;
 	esd.player_killer = get_player(source);
 	gobgame->GenerateEvent(&esd);
@@ -431,14 +425,14 @@ void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 }
 
 /*! \brief Get Player from location
-  \param what player location
-  \return player, NULL if no player
+\param what player location
+\return player, NULL if no player
 */
 GobPlayer *GobGame::get_player(SpaceLocation *what) {
 	STACKTRACE
-	
-	if ( what == NULL )
-		return NULL;
+
+		if ( what == NULL )
+			return NULL;
 
 	int i;
 	for (i = 0; i < gobplayers; i += 1) {		
@@ -447,20 +441,20 @@ GobPlayer *GobGame::get_player(SpaceLocation *what) {
 	return NULL;
 }
 /*! \brief Create enemy ship
-  Create random enemy ship if enemy limit is not riched. Also it patch some of the ships.
+Create random enemy ship if enemy limit is not riched. Also it patch some of the ships.
 */
 void GobGame::add_new_enemy () {
 	STACKTRACE
 
-	const int num_enemy_types = 19;
+		const int num_enemy_types = 19;
 	static char *enemy_types[num_enemy_types] = {
 		"thrto", "zfpst", "shosc", "dragr", 
-		"ktesa", "kahbo", "ilwsp", 
-		"syrpe", "kzedr", "mmrxf", 
-		"lk_sa", "druma", "earcr", 
-		"yehte", "herex", "virli", 
-		"chmav", "plopl", "narlu"
-		};
+			"ktesa", "kahbo", "ilwsp", 
+			"syrpe", "kzedr", "mmrxf", 
+			"lk_sa", "druma", "earcr", 
+			"yehte", "herex", "virli", 
+			"chmav", "plopl", "narlu"
+	};
 
 	if (gobenemies == max_enemies) return;
 	GobEnemy *ge = new GobEnemy();
@@ -474,16 +468,16 @@ void GobGame::add_new_enemy () {
 	base = iround(base / 1.5);
 	int e = 99999;
 	while (e >= num_enemy_types) {
-/*
-base	time	low		high
+		/*
+		base	time	low		high
 
-  1		.5		-0.1	3.7
-  10	5		2.62	7.47
-  50	25		5.89	14.24
- 100	50		8.1		17.3
- 200	100		11.01	26.49
+		1		.5		-0.1	3.7
+		10	5		2.62	7.47
+		50	25		5.89	14.24
+		100	50		8.1	17.3
+		200	100		11.01	26.49
 
-*/
+		*/
 		e = base;
 		e = random() % (e + 2);
 		e = random() % (e + 3);
@@ -493,7 +487,7 @@ base	time	low		high
 			e = random() % (e + 1);
 		//if (e > num_enemy_types * 2) e = e % num_enemy_types;
 		e = e;
-		}
+	}
 	Ship *ship = create_ship(channel_server, enemy_types[e], "WussieBot", random(size), random(PI2), enemy_team);
 	if (!strcmp(enemy_types[e], "shosc")) ((ShofixtiScout*)ship)->specialDamage /= 4;
 	if (!strcmp(enemy_types[e], "zfpst")) ((ZoqFotPikStinger*)ship)->specialDamage /= 2;
@@ -516,27 +510,27 @@ base	time	low		high
 	add(ship->get_ship_phaser());
 	//add(ship);
 	return;
-	}
+}
 /*! \brief Set amount starbucks and bukazoids for death
-  \param ship enemy ship
-  \param kill_starbucks amount starbucks
-  \param kill_buckazoids amount buckazoids
+\param ship enemy ship
+\param kill_starbucks amount starbucks
+\param kill_buckazoids amount buckazoids
 */
 void GobEnemy::init(Ship *ship, int kill_starbucks, int kill_buckazoids) {
 	STACKTRACE
 
-	this->ship = ship;
+		this->ship = ship;
 	this->starbucks = kill_starbucks;
 	this->buckazoids = kill_buckazoids;
 	return;
-	}
+}
 /*! \brief Give player his bounty
-  \param what location of player
+\param what location of player
 */
 void GobEnemy::died(SpaceLocation *what) {
 	STACKTRACE
 
-	GobPlayer *p = gobgame->get_player(what);
+		GobPlayer *p = gobgame->get_player(what);
 	if (p) {
 		p->starbucks += starbucks;
 		p->buckazoids += buckazoids;
@@ -547,26 +541,17 @@ void GobEnemy::died(SpaceLocation *what) {
 
 /*! \brief Free player resources */
 GobPlayer::~GobPlayer() {
-  // Free quest resources
-  for( std::list<Quest*>::iterator iQ = quest.begin();
-       iQ != quest.end();
-       iQ++)
-    {
-      delete *iQ;
-    }
 	free (pair_list);
 }
 
 /*! brief Init player 
-  \param c player control
-  \param team player team
+\param c player control
+\param team player team
 */
 void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 	STACKTRACE
 
-	quest.clear();
-	
-	channel = c->channel;
+		channel = c->channel;
 	starbucks = 0;
 	buckazoids = 0;
 	kills = 0;
@@ -586,7 +571,7 @@ void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 	for (j = 0; j < i; j += 1) {
 		upgrade_list[j] = ::upgrade_list[j]->duplicate();
 		upgrade_list[j]->clear(NULL, NULL, this);
-		}
+	}
 	return;
 }
 
@@ -594,7 +579,7 @@ void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
 	STACKTRACE
 
-	if (!pair_list) return NULL;
+		if (!pair_list) return NULL;
 	int i;
 	for (i = 0; i < num_pairs; i += 1) {
 		if (!strcmp(pair_list[i].id, id)) 
@@ -607,22 +592,22 @@ GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
 void GobPlayer::_add_pair(const char *id, int value) {
 	STACKTRACE
 
-	if (_get_pair(id)) {
-		error("GobPlayer::_add_pair - \"%s\" already exists", id);
+		if (_get_pair(id)) {
+			error("GobPlayer::_add_pair - \"%s\" already exists", id);
+			return;
+		}
+		pair_list = (pair*)realloc(pair_list, sizeof(pair) * (num_pairs+1));
+		pair_list[num_pairs].id = strdup(id);
+		pair_list[num_pairs].value = value;
+		num_pairs += 1;
 		return;
-	}
-	pair_list = (pair*)realloc(pair_list, sizeof(pair) * (num_pairs+1));
-	pair_list[num_pairs].id = strdup(id);
-	pair_list[num_pairs].value = value;
-	num_pairs += 1;
-	return;
 }
 
 /*! \brief Part of map<const char *, int> implementation, to be removed */
 int GobPlayer::read_pair(const char *id) {
 	STACKTRACE
 
-	pair *p = _get_pair(id);
+		pair *p = _get_pair(id);
 	if (p) return p->value;
 	return -1;
 }
@@ -631,27 +616,27 @@ int GobPlayer::read_pair(const char *id) {
 void GobPlayer::write_pair(const char *id, int value) {
 	STACKTRACE
 
-	pair *p = _get_pair(id);
+		pair *p = _get_pair(id);
 	if (p) p->value = value;
 	else _add_pair(id, value);
 	return;
 }
 
 /*! \brief Conform purch, take charge for purch upgrade
-  \param name upgrade name
-  \param price_starbucks price
-  \param price_buckazoids price
- */
+\param name upgrade name
+\param price_starbucks price
+\param price_buckazoids price
+*/
 int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
 	STACKTRACE
 
-	char buffy1[512];
+		char buffy1[512];
 	sprintf(buffy1, "Price: %d starbucks plus %d buckazoids", price_starbucks, price_buckazoids);
 	if ((starbucks < price_starbucks) || (buckazoids < price_buckazoids)) {
 		if (game->is_local(channel)) 
 			alert("You don't have enough.", name, buffy1, "Cancel", NULL, 0, 0);
 		return 0;
-		}
+	}
 	int r = 0;
 	if (game->is_local(channel)) 
 		r = alert ("Do you wish to make this purchase?", name, buffy1, "&No", "&Yes", 'n', 'y');
@@ -660,24 +645,24 @@ int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
 		starbucks -= price_starbucks;
 		buckazoids -= price_buckazoids;
 		return 1;
-		}
+	}
 	return 0;
 }
 
 /*! \brief Create new ship, remove upgrades
-  \param type type of new ship
+\param type type of new ship
 */
 void GobPlayer::new_ship(ShipType *type) {
 	STACKTRACE
 
-	Ship *old = ship;
+		Ship *old = ship;
 	Vector2 pos = 0;
 	double a = 0;
 	int i;
 	if (old) {
 		pos = old->normal_pos();
 		a = old->get_angle();
-		}
+	}
 
 	ship = game->create_ship ( type->id, control, pos, a, team);
 
@@ -692,7 +677,7 @@ void GobPlayer::new_ship(ShipType *type) {
 			0,0,
 			0,0.1,
 			0,0.25
-		);
+			);
 	}
 	else {
 		panel->window->locate(
@@ -700,29 +685,29 @@ void GobPlayer::new_ship(ShipType *type) {
 			0,0.25,
 			0,0.1,
 			0,0.25
-		);
+			);
 	}
 	panel->set_depth(10);
 	game->add(panel);
 
 	for (i = 0; upgrade_list[i]; i += 1) {
 		upgrade_list[i]->clear(old, ship, this);
-		}
+	}
 	if (old) {
 		old->die();
 		game->add(ship);
-		}
+	}
 	else game->add(ship->get_ship_phaser());
 	return;
-	}
+}
 
 /*! \brief Check money, ask questions
-  \param s player
- */
+\param s player
+*/
 void GobStation::buy_new_ship_menu(GobPlayer *s) {
 	STACKTRACE
 
-	char buffy1[512], buffy2[512];
+		char buffy1[512], buffy2[512];
 	ShipType *otype = s->ship->type;
 	ShipType *ntype = shiptype(build_type);
 	if (otype == ntype) {
@@ -730,7 +715,7 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 		if (game->is_local(s->channel)) 
 			alert(buffy1, NULL, NULL, "&Cancel", NULL, 'c', 0);
 		return;
-		}
+	}
 	int ossb = (s->value_starbucks*3) / 4 + (s->ship->type->cost*1)/1;
 	int osbz = (s->value_buckazoids*3) / 4 + (s->ship->type->cost*1)/1;
 	int nssb = ntype->cost;
@@ -746,36 +731,33 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 			s->starbucks -= nssb - ossb;
 			s->buckazoids -= nsbz - osbz;
 			s->new_ship(ntype);
-			}
 		}
+	}
 	else {
 		if (game->is_local(s->channel)) 
 			alert (buffy1, buffy2, "You don't have enough to buy it", "Cancel", NULL, 0, 0);
 	}
 	return;
-	}
+}
 /*! \brief Create station 
-  \param pic ???
-  \param orbit_me ???
-  \param ship ???
-  \param background ???
+\param pic ???
+\param orbit_me ???
+\param ship ???
+\param background ???
 */
 GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, 
-			 const char *ship, const char *background, 
-			 const char * qlist) : 
-  Orbiter(pic, orbit_me, random() % 200 + 500) 
+						const char *ship, const char *background, 
+						const char * qlist) : 
+Orbiter(pic, orbit_me, random() % 200 + 500) 
 {
-  build_type = ship;
-  background_pic = background;
-  layer = LAYER_CBODIES;
-  mass = 99;
-
-  quest_source = new QuestSource();
+	build_type = ship;
+	background_pic = background;
+	layer = LAYER_CBODIES;
+	mass = 99;
 }
 
 GobStation::~GobStation()
 {
-  delete quest_source;
 }
 
 #define STATION_DIALOG_DEPART  0
@@ -785,27 +767,27 @@ GobStation::~GobStation()
 #define STATION_DIALOG_QUEST   4
 static DIALOG station_dialog[] =
 {// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
-  { d_button_proc,     385,  50,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Depart Station" , NULL, NULL },
-  { my_d_button_proc,  385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },
-  { my_d_button_proc,  385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },
-  { my_d_button_proc,  385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },
-  { my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },
-  { d_text_proc,       185,  420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
-  { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
+	{ d_button_proc,     385,  50,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Depart Station" , NULL, NULL },
+	{ my_d_button_proc,  385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },
+	{ my_d_button_proc,  385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },
+	{ my_d_button_proc,  385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },
+	{ my_d_button_proc,  385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },
+	{ d_text_proc,       185,  420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
+	{ d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+	{ NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
 
 /*! \brief Process station dialog
-  \param s Player at the station
+\param s Player at the station
 */
 void GobStation::station_screen(GobPlayer *s) {
 	STACKTRACE
 
-	BITMAP *background = load_bitmap(background_pic, NULL);
+		BITMAP *background = load_bitmap(background_pic, NULL);
 	if (!background) {
 		message.print(1000, 15, "%s", background_pic);
 		error ("couldn't load station background");
-		}
+	}
 	game->window->lock();
 	aa_set_mode(AA_DITHER);
 	aa_stretch_blit(background, game->window->surface, 
@@ -825,78 +807,79 @@ void GobStation::station_screen(GobPlayer *s) {
 			r = tw_do_dialog(game->window, station_dialog, STATION_DIALOG_DEPART);
 		game->log_int(s->channel, r);
 		switch (r) {
-			case STATION_DIALOG_UPGRADE: {
-				upgrade_menu(this, s);
-				aa_set_mode(AA_DITHER);
-				aa_stretch_blit(background, game->window->surface, 
-					0,0,background->w,background->h, 
-					game->window->x,game->window->y,
-					game->window->w, game->window->h);
-				}
-			break;
-			case STATION_DIALOG_NEWSHIP: {
-				buy_new_ship_menu(s);
-				}
-			break;
-			case STATION_DIALOG_REPAIR: {
-				if (s->ship->crew == s->ship->crew_max) {
-					if (game->is_local(s->channel)) 
-						alert("You don't need repairs", "", "", "Oh, okay", "I knew that", 0, 0);
+	case STATION_DIALOG_UPGRADE: {
+		upgrade_menu(this, s);
+		aa_set_mode(AA_DITHER);
+		aa_stretch_blit(background, game->window->surface, 
+			0,0,background->w,background->h, 
+			game->window->x,game->window->y,
+			game->window->w, game->window->h);
+								 }
+								 break;
+	case STATION_DIALOG_NEWSHIP: {
+		buy_new_ship_menu(s);
+								 }
+								 break;
+	case STATION_DIALOG_REPAIR: {
+		if (s->ship->crew == s->ship->crew_max) {
+			if (game->is_local(s->channel)) 
+				alert("You don't need repairs", "", "", "Oh, okay", "I knew that", 0, 0);
 
-					break;
-					}
-				int p = 0;
-				if (game->is_local(s->channel)) 
-					p = alert3("Which would you prefer", "to pay for your repairs", "", "1 &Starbuck", "1 &Buckazoid", "&Nothing!", 's', 'b', 'n');
-				game->log_int(s->channel, p);
-				switch (p) {
-					case 1: {
-						if (s->starbucks) {
-							s->starbucks -= 1;
-							s->ship->crew = s->ship->crew_max;
-							}
-						else {
-							if (game->is_local(s->channel)) 
-								alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
-							}
-						}
-					break;
-					case 2: {
-						if (s->buckazoids) {
-							s->buckazoids -= 1;
-							s->ship->crew = s->ship->crew_max;
-							}
-						else {
-							if (game->is_local(s->channel)) 
-								alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
-							}
-						}
-					break;
-					case 3: {
-						r = STATION_DIALOG_DEPART;
-						}
-					break;
-					}
-				}
 			break;
-    case STATION_DIALOG_QUEST:
-		// experiment code
-      Quest * q = new Quest ( "gamedata/TestQuest.lua", s  );
-      s->quest.push_back(q);
-      break;
-			}
-		if (r == STATION_DIALOG_DEPART) break;
 		}
+		int p = 0;
+		if (game->is_local(s->channel)) 
+			p = alert3("Which would you prefer", "to pay for your repairs", "", "1 &Starbuck", "1 &Buckazoid", "&Nothing!", 's', 'b', 'n');
+		game->log_int(s->channel, p);
+		switch (p) {
+	case 1: {
+		if (s->starbucks) {
+			s->starbucks -= 1;
+			s->ship->crew = s->ship->crew_max;
+		}
+		else {
+			if (game->is_local(s->channel)) 
+				alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
+		}
+			}
+			break;
+	case 2: {
+		if (s->buckazoids) {
+			s->buckazoids -= 1;
+			s->ship->crew = s->ship->crew_max;
+		}
+		else {
+			if (game->is_local(s->channel)) 
+				alert("You don't have enough!", NULL, NULL, "&Shit", NULL, 's', 0);
+		}
+			}
+			break;
+	case 3: {
+		r = STATION_DIALOG_DEPART;
+			}
+			break;
+		}
+								}
+								break;
+	case STATION_DIALOG_QUEST:
+		// experiment code
+		EventAskForQuest e;
+		e.player = s;
+		gobgame->GenerateEvent(&e);
+		break;
+		}
+		if (r == STATION_DIALOG_DEPART) break;
+	}
 	return;
 }
 
 /*! \brief  Meet with station
-  \param other location of object that colide with station
+\param other location of object that colide with station
 */
 void GobStation::inflict_damage(SpaceObject *other) {
 	STACKTRACE
 
-	SpaceObject::inflict_damage(other);
+		SpaceObject::inflict_damage(other);
 	if (!other->isShip()) return;
 	GobPlayer *p = gobgame->get_player(other);
 	if (!p) return;
@@ -914,7 +897,7 @@ void GobStation::inflict_damage(SpaceObject *other) {
 	station_screen(p);
 	gobgame->unpause();
 	return;
-	}
+}
 
 
 
@@ -923,43 +906,43 @@ int upgrade_index[999];
 GobPlayer *upgrade_list_for;
 
 /*! \brief ???
-  \param index ???
-  \param list_size ???
+\param index ???
+\param list_size ???
 */
 char *upgradeListboxGetter(int index, int *list_size) {
 	STACKTRACE
 
-	static char tmp[150];
+		static char tmp[150];
 	if(index < 0) {
 		*list_size = num_upgrade_indexes;
 		return NULL;
-		}
+	}
 	int i = upgrade_index[index];
 	sprintf(tmp, "%1d %3d s$ / %3d b$  :  %s", upgrade_list_for->upgrade_list[i]->num, upgrade_list_for->upgrade_list[i]->starbucks, upgrade_list_for->upgrade_list[i]->buckazoids, upgrade_list_for->upgrade_list[i]->name);
 	return tmp;
-	}
+}
 
 #define UPGRADE_DIALOG_EXIT 0
 #define UPGRADE_DIALOG_LIST 3
 static DIALOG upgrade_dialog[] =
 {// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
-  { my_d_button_proc,  10,  415,  170,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Station menu" , NULL, NULL },
-  { d_textbox_proc,    20,  40,   250,  40,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Menu", NULL, NULL },
-  { d_text_proc,       10,  100,  540,  20,   255,  0,    0,    D_EXIT,     0,    0,    (void *)" # Starbucks Buckazoids Description                     ", NULL, NULL },
-  { d_list_proc,       10,  120,  540,  280,  255,  0,    0,    D_EXIT,     0,    0,    (void *) upgradeListboxGetter, NULL, NULL },
-  { d_text_proc,       185, 420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
-  { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { NULL,              0,    0,    0,    0,   255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
+	{ my_d_button_proc,  10,  415,  170,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Station menu" , NULL, NULL },
+	{ d_textbox_proc,    20,  40,   250,  40,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Menu", NULL, NULL },
+	{ d_text_proc,       10,  100,  540,  20,   255,  0,    0,    D_EXIT,     0,    0,    (void *)" # Starbucks Buckazoids Description                     ", NULL, NULL },
+	{ d_list_proc,       10,  120,  540,  280,  255,  0,    0,    D_EXIT,     0,    0,    (void *) upgradeListboxGetter, NULL, NULL },
+	{ d_text_proc,       185, 420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
+	{ d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+	{ NULL,              0,    0,    0,    0,   255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
 
 /*! \brief show upgrade dialog
-  \param station station where player upgraded
-  \param gs Player
+\param station station where player upgraded
+\param gs Player
 */
 void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
 	STACKTRACE
 
-	int i;
+		int i;
 	upgrade_list_for = gs;
 	clear_to_color(screen, palette_color[8]);
 	while (true) {
@@ -969,8 +952,8 @@ void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
 			if (gs->upgrade_list[i]->update(gs->ship, station, gs)) {
 				upgrade_index[j] = i;
 				j += 1;
-				}
 			}
+		}
 		num_upgrade_indexes = j;
 		int m = 0;
 		if (game->is_local(gs->channel))
@@ -987,14 +970,14 @@ void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
 			if (gs->charge(u->name, u->starbucks, u->buckazoids)) {
 				u->execute(gs->ship, station, gs);
 				u->charge(gs);
-				}
 			}
 		}
-	return;
 	}
+	return;
+}
 
 /*! \brief ???
-  \param ship ???
+\param ship ???
 */
 GobDefender::GobDefender ( Ship *ship) 
 : SpaceObject (ship, ship->normal_pos(), 0, gobgame->defenderSprite)
@@ -1004,12 +987,12 @@ GobDefender::GobDefender ( Ship *ship)
 	collide_flag_anyone = 0;
 }
 /*! \brief AI for GobDefender 
-  Called once per physics frame
+Called once per physics frame
 */
 void GobDefender::calculate() {
 	STACKTRACE
 
-	SpaceObject::calculate();
+		SpaceObject::calculate();
 	if (!ship) {
 		die();
 		return;
@@ -1057,12 +1040,12 @@ RainbowRift::RainbowRift ()
 	next_time2 = game->game_time;
 }
 /*! \brief ??? 
-  \param frame ???
+\param frame ???
 */
 void RainbowRift::animate( Frame *frame ) {
 	STACKTRACE
 
-	Vector2 s;
+		Vector2 s;
 	s = corner(pos, Vector2(300,300));
 	if ((s.x < -500) || (s.x > space_view_size.x + 500) || 
 		(s.y < -500) || (s.y > space_view_size.y + 500))
@@ -1088,7 +1071,7 @@ void RainbowRift::animate( Frame *frame ) {
 void RainbowRift::squiggle() {
 	STACKTRACE
 
-	int i;
+		int i;
 	int m = n*6+2;
 	for (i = 0; i < m - 6; i += 1) {
 		p[i] = p[i+6];
@@ -1115,36 +1098,36 @@ void RainbowRift::squiggle() {
 void RainbowRift::calculate() {
 	STACKTRACE
 
-	while (game->game_time > next_time) {
-		next_time += 25;
-		squiggle();
-	}
-	while (game->game_time > next_time2) {
-		next_time2 += random() % 10000;
-		Query q;
-		for (q.begin(this, bit(LAYER_SHIPS), 40); q.current; q.next()) {
-			GobPlayer *p = gobgame->get_player(q.currento);
-			if (q.currento == p->ship) {
-				int i = 0;
-				i = p->control->choose_ship(game->window, "You found the Rainbow Rift!", reference_fleet);
-				game->log_int(p->channel, i);
-				if (i == -1) i = random(reference_fleet->getSize());
-				game->redraw();
-				if (reference_fleet->getShipType(i) == p->ship->type) {
-					p->starbucks += random() % 80;
-					p->buckazoids += random() % 80;
-					game->add(new RainbowRift());
+		while (game->game_time > next_time) {
+			next_time += 25;
+			squiggle();
+		}
+		while (game->game_time > next_time2) {
+			next_time2 += random() % 10000;
+			Query q;
+			for (q.begin(this, bit(LAYER_SHIPS), 40); q.current; q.next()) {
+				GobPlayer *p = gobgame->get_player(q.currento);
+				if (q.currento == p->ship) {
+					int i = 0;
+					i = p->control->choose_ship(game->window, "You found the Rainbow Rift!", reference_fleet);
+					game->log_int(p->channel, i);
+					if (i == -1) i = random(reference_fleet->getSize());
+					game->redraw();
+					if (reference_fleet->getShipType(i) == p->ship->type) {
+						p->starbucks += random() % 80;
+						p->buckazoids += random() % 80;
+						game->add(new RainbowRift());
+					}
+					else {
+						p->starbucks += random() % (1+p->value_starbucks);
+						p->buckazoids += random() % (1+p->value_buckazoids);
+						p->new_ship(reference_fleet->getShipType(i));
+					}
+					die();
 				}
-				else {
-					p->starbucks += random() % (1+p->value_starbucks);
-					p->buckazoids += random() % (1+p->value_buckazoids);
-					p->new_ship(reference_fleet->getShipType(i));
-				}
-				die();
 			}
 		}
-	}
-	return;
+		return;
 }
 
 

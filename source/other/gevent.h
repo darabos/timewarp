@@ -63,27 +63,27 @@ class EventEnterStation: public IEvent
   virtual unsigned int GetEventType();
 };
 
-class EventCleanQuestTrash: IEvent
+class EventCleanQuestTrash: public IEvent
 {
  public:
   virtual unsigned int GetEventType();
 };
 
-class EventQuestSuccess: IEvent
-{
- public:
-  Quest* quest;
-  virtual unsigned int GetEventType();
-};
-
-class EventQuestFailed: IEvent
+class EventQuestSuccess: public IEvent
 {
  public:
   Quest* quest;
   virtual unsigned int GetEventType();
 };
 
-class EventAskForQuest: IEvent
+class EventQuestFailed: public IEvent
+{
+ public:
+  Quest* quest;
+  virtual unsigned int GetEventType();
+};
+
+class EventAskForQuest: public IEvent
 {
  public:
   GobPlayer* player;

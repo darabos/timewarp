@@ -32,6 +32,7 @@ class Quest: public EventListner
   void Process();
   bool exist();
   const char * GetName() const;
+  GobPlayer * GetPlayer();
 
   /*! \brief Process Event */
   virtual void  ProcessEvent( IEvent* event);
@@ -60,14 +61,17 @@ class QuestSource : public EventListner
  public:
   QuestSource();
   virtual ~QuestSource();
+
   virtual int LoadQuestList( const char* qlist );
   virtual Quest* GetNextQuest( GobPlayer* p );
   virtual Quest* GetQuest ( const char * name, GobPlayer* p );
   virtual int QuestSuccess( Quest* q );
   virtual int QuestFailed( Quest* q );
   
-  virtual void RemoveTrash();
+  virtual void RemoveTrash(GobPlayer* pl = NULL);
   virtual void ProcessEvent(IEvent* event);
+
+  virtual void ProcessQuests();
 };
 
 
