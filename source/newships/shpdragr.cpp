@@ -85,8 +85,9 @@ DraxGryphon::DraxGryphon(Vector2 opos, double shipAngle,
 
 int DraxGryphon::activate_weapon()
 {
-  STACKTRACE
-	weaponoffset++;
+	STACKTRACE;
+  weaponoffset++;
+
   if (weaponoffset > 3)
     weaponoffset = 0;
 
@@ -101,7 +102,9 @@ int DraxGryphon::activate_weapon()
 
 int DraxGryphon::activate_special()
 {
-  STACKTRACE
+
+	STACKTRACE;
+
 	if (numMines == maxMines) {
 	  weaponObject[0]->state = 0;
 	  numMines -= 1;
@@ -120,9 +123,11 @@ int DraxGryphon::activate_special()
 
 void DraxGryphon::calculate()
 {
-  STACKTRACE
-	int j = 0;
-  for (int i = 0; i < numMines; i += 1) {
+STACKTRACE;
+
+   int j = 0;
+   for (int i = 0; i < numMines; i += 1) {
+
     weaponObject[i-j] = weaponObject[i];
     if (!weaponObject[i]->exists()) j += 1;
 	if (j) weaponObject[i] = NULL;
@@ -133,15 +138,11 @@ void DraxGryphon::calculate()
 }
 
 
-DraxMine::DraxMine(double ox,double oy,double ov, double oangle, int 
-				   odamage, int oarmour,
-				   Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double 
-				   miner,
-				   int minet, double minera, double mines, double minesv) :
-  AnimatedShot(oship, Vector2(ox,oy), oangle, ov, odamage, -1.0, oarmour, 
-			   oship,
-			   osprite, ofcount, ofsize)
-
+DraxMine::DraxMine(double ox,double oy,double ov, double oangle, int odamage, int oarmour,
+    Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double miner,
+    int minet, double minera, double mines, double minesv) :
+    AnimatedShot(oship, Vector2(ox,oy), oangle, ov, odamage, -1.0, oarmour, oship,
+      osprite, ofcount, ofsize)
 {
   MineMoving = TRUE;
   MineRange = miner;
@@ -149,63 +150,85 @@ DraxMine::DraxMine(double ox,double oy,double ov, double oangle, int
   MineRadius = minera;
   MineSeek = mines;
   MineSeekVel = minesv;
+
+  isblockingweapons = false;
 }
 
 void DraxMine::calculate() {
-  STACKTRACE
+
+	STACKTRACE;
+
 	AnimatedShot::calculate();
-  if (!exists()) return;
-  if (MineMoving) {
-	MineRange -= frame_time;
-	if (MineRange <= 0) {
-	  MineMoving = FALSE;
-	  AnimatedShot::stop();
-	}
-  }
-  Query a;
-  Shot *o = NULL,*f = NULL;
-  double r=99999;
-  int Seek=FALSE;
 
-  for (a.begin(this, bit(LAYER_SHOTS),MineRadius);
-	   a.current; a.next()) {
-	if (a.currento->isShot()) {
-	  o = (Shot *) a.currento;
-	  if ((distance(o) < MineRadius) && (o->canCollide(this))
-		  && (o->isHomingMissile()))
-		((HomingMissile *) o)->target = this;
-	}
-  }
+	if (!exists()) return;
 
-  for (a.begin(this, bit(LAYER_SHOTS),MineSeek);
-	   a.current; a.next()) {
-	if (a.currento->isShot())
-	  assert(o!=NULL&&"Using uninited variable");
-	if ((distance(a.current) < r) && (!a.current->sameTeam(this)) &&
-		(a.current->exists() && !o->isInvisible())) {
-	  f = (Shot *) a.currento;
-	  r = distance(f);
-	  Seek = TRUE;
+	// this is only needed to make the mine move a short distance away
+	// from the ship, just after it's spawned.
+	if (MineMoving) {
+		MineRange -= frame_time;
+		if (MineRange <= 0) {
+			MineMoving = FALSE;
+			AnimatedShot::stop();
+			}
+		}
+
+	Query a;
+	double r=99999;
+	int Seek=FALSE;
+
+	// re-direct homingmissiles
+	for (a.begin(this, bit(LAYER_SHOTS),MineRadius); a.current; a.next()) {
+		if (a.currento->isShot()) {
+			Shot *o = NULL;
+			o = (Shot *) a.currento;
+			if ((distance(o) < MineRadius) && (o->canCollide(this))
+					&& (o->isHomingMissile()))
+				((HomingMissile *) o)->target = this;
+			}
+		}
+	
+	// find the closest shot(f) which the mine seeks out (if it is visible).
+	Shot *f = NULL;
+	for (a.begin(this, bit(LAYER_SHOTS),MineSeek); a.current; a.next()){
+		if (a.current->exists() && a.currento->isShot())
+		{
+			if ((distance(a.current) < r) && (!a.current->sameTeam(this)) &&
+				(!a.current->isInvisible())) {
+				f = (Shot *) a.currento;
+				r = distance(f);
+				Seek = TRUE;
+			}
+		}
 	}
-  }
-  if (Seek && (!MineMoving)) {
-	angle = intercept_angle2(pos, 0, MineSeekVel,
-							 f->normal_pos(), f->get_vel());
-	v = MineSeekVel;
-	vel = MineSeekVel * unit_vector(angle);
-  }
-  if ((!Seek) && (!MineMoving))
-	AnimatedShot::stop();
-  MineTimer -= frame_time;
-  if (MineTimer < 0)
-	state = 0;
-  return;
+
+	// only become active after the delay factor, when it's moved away from
+	// the ship.
+	if (!MineMoving)
+	{
+		if (Seek)
+		{
+			angle = intercept_angle2(pos, 0, MineSeekVel,
+				f->normal_pos(), f->get_vel());
+			v = MineSeekVel;
+			vel = MineSeekVel * unit_vector(angle);
+
+		} else {
+			AnimatedShot::stop();
+		}
+	}
+
+	MineTimer -= frame_time;
+	if (MineTimer < 0)
+		state = 0;
+	return;
 }
 
 void DraxMine::inflict_damage(SpaceObject *other) {
-  STACKTRACE
-	if (other->isShip())
-	  damage_factor = 0;
+
+	STACKTRACE;
+  if (other->isShip())
+     damage_factor = 0;
+
   AnimatedShot::inflict_damage(other);
   return;
 }
