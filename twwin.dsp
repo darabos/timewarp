@@ -626,6 +626,10 @@ SOURCE=.\source\newships\shpconho.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpcrapl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpcresu.cpp
 # End Source File
 # Begin Source File
