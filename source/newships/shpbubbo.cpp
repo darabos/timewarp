@@ -232,7 +232,9 @@ int BubalosBomber::activate_weapon()
     { FireAngle = angle + PI; Direction = -1; }
 
   int wo = (weapon_offset>3)?(6-weapon_offset):weapon_offset;
-  weapon_offset = (weapon_offset + 1) % 6;
+
+  // remove the alternating fire
+/* weapon_offset = (weapon_offset + 1) % 6;
 
   double dx;
 	switch (wo) {
@@ -242,6 +244,9 @@ int BubalosBomber::activate_weapon()
 	case 3: dx = 12;  break;
 	default: tw_error("Unexpected value of weapon_offset"); dx=0;break;
 	}
+*/
+  double dx;
+  dx = 0;
   
   BMIRV = new BubalosMIRV(dx, 54 * Direction, FireAngle,weaponVelocity,
           weaponDamage,DetonateRange,weaponArmour,
