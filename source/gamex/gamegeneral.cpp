@@ -189,8 +189,10 @@ SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, in
 		// load the bitmap data in the correct color depth (since then you
 		// can use the masked_blit operation without problems).
 		bmplist[i] = 0;
+		
 		if (vidmem)
-			create_video_bitmap(tmpbmp->w, tmpbmp->h);
+			bmplist[i] = create_video_bitmap(tmpbmp->w, tmpbmp->h);
+
 		if (!bmplist[i])
 			bmplist[i] = create_bitmap_ex(bpp, tmpbmp->w, tmpbmp->h);
 
@@ -199,9 +201,12 @@ SpaceSprite *create_sprite(char *bmpfilename, int _attributes, int rotations, in
 
 		if (scale != 1)
 		{
+			tmpbmp = 0;
+
 			if (vidmem)
 				tmpbmp = create_video_bitmap(iround(bmplist[i]->w * scale), iround(bmplist[i]->h * scale));
-			else
+
+			if (!tmpbmp)
 				tmpbmp = create_bitmap_ex(bpp, iround(bmplist[i]->w * scale), iround(bmplist[i]->h * scale));
 
 			stretch_blit(bmplist[i], tmpbmp, 0, 0, bmplist[i]->w, bmplist[i]->h,
