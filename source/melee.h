@@ -67,7 +67,8 @@
 //some random space for stings to use for GUIs & whatnot that need short term storage
 extern char dialog_string[20][128];
 
-
+// added GEO
+// moved to Game::checksyn() as an overloadable subroutine.
 //used to debug desynchronization errors 
 //does nothing if LOTS_OF_CHECKSUMS isn't defined in libs.h)
 #ifdef _DEBUG
@@ -76,6 +77,7 @@ extern char dialog_string[20][128];
 #else
 #	define checksync()
 #endif
+//*/
 
 class Logger;
 
@@ -222,6 +224,9 @@ extern class Game *&game;
 extern class NormalGame *&normalgame;
 extern class GobGame *&gobgame;
 extern Vector2 map_size;
+
+// added ROB
+extern class MeleeData meleedata;
 
 //melee/mhelpers.cpp
 class ConfigEvent : public Event {
@@ -445,12 +450,16 @@ class SpaceSprite {
 	SpaceSprite(BITMAP *image, int _attributes = -1);
 	SpaceSprite(SpaceSprite &old);
 //	SpaceSprite(const char *sourcename, const char *spritename);
+	// added GEO    (should be deleted)
+//	SpaceSprite::SpaceSprite(char *bmpfilename, int _attributes);
+	// added GEO
+	SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int rotations, int _attributes);
 
 	virtual ~SpaceSprite();
 
 
 //methods for direct access:
-	Surface     *get_bitmap(int index);
+	Surface     *get_bitmap(int index, int miplevel = 0);
 	Surface     *get_bitmap_readonly(int index);
 	const struct PMASK *get_pmask(int index) {return m[index];}
 	void lock();	//make surface writable
@@ -467,7 +476,8 @@ class SpaceSprite {
 	//void draw(int x, int y, int index, Frame *frame) ;
 	void draw(int x, int y, int index, Surface *bmp) ;
 
-	void animate(Vector2 pos, int index, Frame *space, double scale = 1);
+	// added GEO
+	virtual void animate(Vector2 pos, int index, Frame *space, double scale = 1);
 	void animate_character(Vector2 pos, int index, int color, Frame *space, double scale = 1);
 
 	void draw_character(int x, int y, int index, int color, Surface *bmp);
@@ -488,7 +498,8 @@ class SpaceSprite {
 			int sindex);
 
 	inline int frames() const {return count;}
-	Vector2  size()   const {return Vector2(w, h);}
+	// changed Rob.
+	Vector2  size(int i = 0) const;//   const {return Vector2(b[0][i]->w, b[0][i]->h);}
 	int      width()  const {return w;}
 	int      height() const {return h;}
 };

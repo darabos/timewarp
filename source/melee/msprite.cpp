@@ -366,6 +366,15 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 	return;
 }
 
+
+Vector2 SpaceSprite::size(int i)  const
+{
+	// in case the sprite is irregular, you cannot return a default size, but must check
+	// each bitmap size.
+
+	return Vector2(b[0][i]->w, b[0][i]->h);
+}
+
 SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attributes, int rotations) {
 	STACKTRACE
 	int i, j, obpp;
@@ -767,14 +776,19 @@ SpaceSprite::~SpaceSprite() {
 	return;
 }
 
-BITMAP *SpaceSprite::get_bitmap(int index)
+BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 {STACKTRACE
-	if (general_attributes & MIPMAPED) if (highest_mip > 0) 
-		{tw_error ("get_bitmap on a mipmaped sprite!\n(retry likely to work)");}
+	// changed ROB
+	//if (general_attributes & MIPMAPED) if (highest_mip > 0) 
+	//	{tw_error ("get_bitmap on a mipmaped sprite!\n(retry likely to work)");}
+	if (general_attributes & MIPMAPED) if (miplevel >= highest_mip) 
+		{tw_error ("get_bitmap on undefined mipmap level");}
 	if (index >= count) {tw_error("SpaceSprite::get_bitmap - index %d > count %d", index, count);}
 	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);}
-	highest_mip = 0;
-	return(b[0][index]);
+	// changed ROB
+	//highest_mip = 0;
+	// changed ROB
+	return(b[miplevel][index]);
 }
 BITMAP *SpaceSprite::get_bitmap_readonly(int index)
 {STACKTRACE
@@ -894,7 +908,7 @@ void SpaceSprite::animate(Vector2 pos, int index, Frame *space, double scale)
 		tw_error("SpaceSprite::animate - index %d < 0 (count %d)", index, count);
 		return;
 	}
-	Vector2 s = size() * scale;
+	Vector2 s = size(index) * scale;
 	draw(corner(pos, s ), s * space_zoom, index, space);
 	return;
 }
