@@ -3,14 +3,14 @@
 
 #include <list>
 
-#include "../melee.h"
-#include "../melee/mframe.h"
-#include "../melee/mgame.h"
+#include "melee.h"
+#include "melee/mframe.h"
+#include "melee/mgame.h"
 
-#include "../melee/mitems.h"
-#include "../melee/mcbodies.h"
+#include "melee/mitems.h"
+#include "melee/mcbodies.h"
 
-#include "gquest.h"
+#include "other/gquest.h"
 
 class Upgrade;
 class GobStation;

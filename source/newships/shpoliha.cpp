@@ -1,10 +1,10 @@
 
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../frame.h"
-#include "../other/shippart.h"
+#include "frame.h"
+#include "other/shippart.h"
 
 
 class Olidandee : public BigShip

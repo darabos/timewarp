@@ -1,9 +1,9 @@
-#include "../ship.h"
+#include "ship.h"
 
 REGISTER_FILE
-#include "../frame.h"
-#include "../melee/mcbodies.h"
-#include "../melee/mview.h"
+#include "frame.h"
+#include "melee/mcbodies.h"
+#include "melee/mview.h"
 
 /*
 

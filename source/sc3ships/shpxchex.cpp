@@ -1,7 +1,7 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../frame.h"
+#include "frame.h"
 
 #define XCHAGGERDISABLE_SPEC 0x37
 

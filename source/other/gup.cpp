@@ -1,15 +1,15 @@
 #include <string.h>
 #include <allegro.h>
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../melee/mframe.h"
-#include "../melee/mship.h"
-#include "../melee/mcbodies.h"
-#include "../melee/mview.h"
-#include "../frame.h"
-#include "../sc1ships.h"
-#include "../sc2ships.h"
-#include "../games/ggob.h"
+#include "melee/mframe.h"
+#include "melee/mship.h"
+#include "melee/mcbodies.h"
+#include "melee/mview.h"
+#include "frame.h"
+#include "sc1ships.h"
+#include "sc2ships.h"
+#include "games/ggob.h"
 #include "gup.h"
 
 /* this file contains the ship upgrades used by Gob */

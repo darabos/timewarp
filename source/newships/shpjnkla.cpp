@@ -1,4 +1,4 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
 #define jnk_marker_id 0x2071

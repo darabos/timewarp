@@ -1,4 +1,4 @@
-#include "../ais.h"
+#include "ais.h"
 REGISTER_FILE
 
 /*! \brief Get control name */

@@ -1,9 +1,9 @@
 /* Modified from Vivisector */
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../melee/mview.h"
+#include "melee/mview.h"
 
 class XXXManglerMine;
 

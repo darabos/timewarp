@@ -1,21 +1,21 @@
 #include <allegro.h>
 #include <stdio.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../melee/mframe.h"
-#include "../melee/mgame.h"
-#include "../melee/mmain.h"
-#include "../melee/mcbodies.h"
-#include "../melee/mview.h"
+#include "melee/mframe.h"
+#include "melee/mgame.h"
+#include "melee/mmain.h"
+#include "melee/mcbodies.h"
+#include "melee/mview.h"
 
-#include "../twgui/twgui.h"
-#include "../twgui/twmenuexamples.h"
+#include "twgui/twgui.h"
+#include "twgui/twmenuexamples.h"
 
-#include "../melee/mlog.h"
+#include "melee/mlog.h"
 
 #ifndef _V_BODIES_H
-#include "../other/vbodies.h"
+#include "other/vbodies.h"
 #endif
 
 class VGenSystem : public NormalGame {

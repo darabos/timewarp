@@ -1,6 +1,6 @@
 
-#include "../util/aastr.h"
-#include "../melee.h"
+#include "util/aastr.h"
+#include "melee.h"
 REGISTER_FILE
 
 #include "mgame.h"

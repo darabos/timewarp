@@ -3,12 +3,12 @@
 #define __GAMEX_EDIT_DIALOGUE__
 
 
-#include "../gameproject.h"
+#include "gameproject.h"
 
 #include "disk_stuff.h"
 
-#include "../../twgui/twgui.h"
-#include "../../twgui/twmenuexamples.h"
+#include "twgui/twgui.h"
+#include "twgui/twmenuexamples.h"
 
 const int Ntext = 2048;
 const int maxbranches = 16;

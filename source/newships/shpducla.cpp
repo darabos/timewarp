@@ -22,10 +22,10 @@ on the screen,
   y > 0 points _down_ (which is the screen coordinate system)
 */
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../frame.h"
+#include "frame.h"
 
 
 class ShipPart;

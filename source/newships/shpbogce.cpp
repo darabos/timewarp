@@ -1,4 +1,4 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
 #define BOGEI_CENTURION_ID SPACE_SHIP+0x00FE

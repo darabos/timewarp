@@ -3,7 +3,7 @@
 #ifndef __GAME_PLANET_VIEW__
 #define __GAME_PLANET_VIEW__
 
-//#include "../twgui/subgame.h"
+//#include "twgui/subgame.h"
 
 
 

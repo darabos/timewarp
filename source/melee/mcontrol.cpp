@@ -2,18 +2,18 @@
 #include <stdio.h>
 #include <allegro.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../ais.h"
-#include "../id.h"
+#include "ais.h"
+#include "id.h"
 
-#include "../frame.h"
-#include "../gui.h"
+#include "frame.h"
+#include "gui.h"
 
 #include "mnet1.h"
 #include "mview.h" //remove this
 #include "mfleet.h"
-#include "../scp.h"
+#include "scp.h"
 
 
 

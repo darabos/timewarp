@@ -1,7 +1,7 @@
 #ifndef __GTRUG_H__
 #define __GTRUG_H__
 
-#include "../util/t_rarray.h"
+#include "util/t_rarray.h"
 
 struct MouseState;
 struct TrugOrder;

@@ -9,12 +9,12 @@ PlanetUsespec = 1         ; 1 = uses spec and shading, 0 = uses only shading.
 
 */
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
-#include "../melee/mview.h"
+#include "melee/mview.h"
 
-#include "../util/pmask.h"
-#include "../util/aastr.h"
+#include "util/pmask.h"
+#include "util/aastr.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -1,14 +1,14 @@
 #include <allegro.h>
 
-#include "../melee.h"
-#include "../frame.h"
+#include "melee.h"
+#include "frame.h"
 
-#include "../melee/mframe.h"
-#include "../melee/mgame.h"
-#include "../melee/mmain.h"
-#include "../melee/mview.h"
-#include "../melee/mcbodies.h"
-#include "../melee/mshot.h"
+#include "melee/mframe.h"
+#include "melee/mgame.h"
+#include "melee/mmain.h"
+#include "melee/mview.h"
+#include "melee/mcbodies.h"
+#include "melee/mshot.h"
 
 void HyperspaceColorEffects (RGB *c) {
 	int alpha = (c->filler ^ 255) + 1;

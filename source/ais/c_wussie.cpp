@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <allegro.h>
 
-#include "../melee.h"
-#include "../ais.h"
-#include "../melee/mcontrol.h"
-#include "../melee/mframe.h"
-#include "../melee/mship.h"
-#include "../melee/mmain.h"
+#include "melee.h"
+#include "ais.h"
+#include "melee/mcontrol.h"
+#include "melee/mframe.h"
+#include "melee/mship.h"
+#include "melee/mmain.h"
 
 #define OPTION_UNKNOWN 0
 #define OPTION_NONE 1

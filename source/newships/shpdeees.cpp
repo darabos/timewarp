@@ -1,7 +1,7 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
-#include "../melee/mcbodies.h"
-#include "../other/objanim.h"
+#include "melee/mcbodies.h"
+#include "other/objanim.h"
 
 #define DEEP_SPACE_ANIM_RATE 90
 #define DEEP_SPACE_WARRIOR_TRAIL_RATE 25

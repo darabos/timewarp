@@ -5,9 +5,9 @@
 #include <time.h>
 #include <allegro.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../scp.h"
+#include "scp.h"
 
 
 #include "mmain.h"
@@ -21,7 +21,7 @@ REGISTER_FILE
 #include "mitems.h"
 #include "mfleet.h"
 
-#include "../games/gflmelee.h"
+#include "games/gflmelee.h"
 
 
 /*void Game::player_said(int who, const char *what) {

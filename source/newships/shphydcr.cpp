@@ -1,14 +1,14 @@
-#include "../ship.h"
+#include "ship.h"
 
 REGISTER_FILE
 
-//#include "../melee/mview.h"
-//#include "../melee/manim.h"
+//#include "melee/mview.h"
+//#include "melee/manim.h"
 
-#include "../melee/mcbodies.h"
+#include "melee/mcbodies.h"
 
-//#include "../vtarget.h"
-//#include "../sc1ships.h"
+//#include "vtarget.h"
+//#include "sc1ships.h"
 
 
 

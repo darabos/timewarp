@@ -6,13 +6,13 @@
 #include <stdio.h>
 
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../libs.h"
-#include "../util/pmask.h"
-#include "../util/aastr.h"
-#include "../frame.h"
-#include "../scp.h"
+#include "libs.h"
+#include "util/pmask.h"
+#include "util/aastr.h"
+#include "frame.h"
+#include "scp.h"
 
 #include "mview.h"
 

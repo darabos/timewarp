@@ -1,10 +1,10 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../melee/mview.h"
-#include "../melee/mcbodies.h"
+#include "melee/mview.h"
+#include "melee/mcbodies.h"
 
-#include "../sc2ships.h"
+#include "sc2ships.h"
 
 class OrzMissile : public Missile {
   public:

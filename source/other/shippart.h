@@ -1,7 +1,7 @@
 #ifndef __SHIPPART__
 #define __SHIPPART__
 
-#include "../ship.h"
+#include "ship.h"
 
 
 //void removefromtargetlist(SpaceObject *o);

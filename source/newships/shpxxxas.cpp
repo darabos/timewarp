@@ -1,6 +1,6 @@
-#include "../ship.h"
+#include "ship.h"
 
-//#include "../melee/mview.h"
+//#include "melee/mview.h"
 
 REGISTER_FILE
 

@@ -24,10 +24,10 @@
    Imperial Katana. Thats all that comes to mind. -rump*/
 
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../frame.h"
+#include "frame.h"
 
 class PlanetLander : public Ship {
 	double		weaponRange;

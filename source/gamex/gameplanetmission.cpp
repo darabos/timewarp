@@ -4,17 +4,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../melee.h"
+#include "melee.h"
 REGISTER_FILE
 
-#include "../../melee/mlog.h"
-#include "../../melee/mcontrol.h"
-#include "../../melee/mframe.h"
-#include "../../melee/mview.h"
-#include "../../melee/mitems.h"
+#include "melee/mlog.h"
+#include "melee/mcontrol.h"
+#include "melee/mframe.h"
+#include "melee/mview.h"
+#include "melee/mitems.h"
 
-#include "../../scp.h"
-#include "../../util/history.h"
+#include "scp.h"
+#include "util/history.h"
 
 
 #include "subgame.h"

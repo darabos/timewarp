@@ -1,5 +1,5 @@
-#include "../ship.h"
-#include "../frame.h"
+#include "ship.h"
+#include "frame.h"
 REGISTER_FILE
 
 /*

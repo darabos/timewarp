@@ -3,13 +3,13 @@
 #ifndef __VBODIES_H__
 #define __VBODIES_H__
 
-#include "../melee.h"
-#include "../melee/mcbodies.h"
-#include "../other/orbit.h"
-#include "../melee/mframe.h"
-#include "../melee/mshot.h"
+#include "melee.h"
+#include "melee/mcbodies.h"
+#include "other/orbit.h"
+#include "melee/mframe.h"
+#include "melee/mshot.h"
 
-#include "../other/vtarget.h"
+#include "other/vtarget.h"
 
 SpaceSprite* _VGetSprite(char *fileName, char *spriteName, int attribs, int rotations);
 bool _VGetSpriteTo64Rot(SpaceSprite *Pics[], char *fileName, char *cmdStr, 

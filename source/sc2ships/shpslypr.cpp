@@ -1,8 +1,8 @@
 
-#include "../ship.h"
+#include "ship.h"
 
-#include "../sc2ships.h"
-#include "../frame.h"
+#include "sc2ships.h"
+#include "frame.h"
 REGISTER_FILE
 
 static const int Ndirections = 16;

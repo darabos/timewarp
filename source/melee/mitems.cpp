@@ -1,9 +1,9 @@
 #include <allegro.h>
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
 
 
-#include "../frame.h"
+#include "frame.h"
 #include "mframe.h"
 #include "mview.h"
 #include "mitems.h"

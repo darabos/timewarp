@@ -1,4 +1,4 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
 #define TAU_TURBO_MISSILE SPACE_HOMING_MISSILE+0x106C

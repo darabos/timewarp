@@ -5,17 +5,17 @@ exists with no function*/
 
 #include <allegro.h>
 #include <stdio.h>
-#include "../melee.h"
+#include "melee.h"
 
 REGISTER_FILE
-#include "../melee/mframe.h"
-#include "../melee/mgame.h"
-#include "../melee/mmain.h"
-#include "../melee/mcbodies.h"
-#include "../melee/mview.h"
-#include "../other/orbit.h"
-#include "../melee/mitems.h"
-#include "../util/aastr.h"
+#include "melee/mframe.h"
+#include "melee/mgame.h"
+#include "melee/mmain.h"
+#include "melee/mcbodies.h"
+#include "melee/mview.h"
+#include "other/orbit.h"
+#include "melee/mitems.h"
+#include "util/aastr.h"
 //#define STATION_LOG
 
 #define Num_Planet_Pics 7

@@ -1,4 +1,4 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
 class DoogConstructor : public Ship {

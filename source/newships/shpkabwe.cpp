@@ -1,8 +1,8 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
-#include "../melee/mview.h"
-#include "../frame.h"
-#include "../util/aastr.h"
+#include "melee/mview.h"
+#include "frame.h"
+#include "util/aastr.h"
 
 
 /* How does this ship work

@@ -5,10 +5,10 @@
 #include <allegro.h>
 
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../scp.h"
-#include "../frame.h"
+#include "scp.h"
+#include "frame.h"
 
 #include "mview.h"
 #include "mgame.h"
@@ -17,7 +17,7 @@ REGISTER_FILE
 #include "mcontrol.h"
 #include "mship.h"
 
-#include "../util/aastr.h"
+#include "util/aastr.h"
 
 int FULL_REDRAW = 0;
 int camera_hides_cloakers = 0;

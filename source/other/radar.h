@@ -4,18 +4,18 @@
 #include <allegro.h>
 #include <stdio.h>
 
-#include "../melee.h"
-#include "../id.h"
-#include "../scp.h"
-#include "../frame.h"
+#include "melee.h"
+#include "id.h"
+#include "scp.h"
+#include "frame.h"
 
-#include "../melee/mgame.h"
-#include "../melee/mview.h"
-#include "../melee/mcbodies.h"
-#include "../melee/manim.h"
-#include "../melee/mship.h"
+#include "melee/mgame.h"
+#include "melee/mview.h"
+#include "melee/mcbodies.h"
+#include "melee/manim.h"
+#include "melee/mship.h"
 
-#include "../melee/mframe.h"
+#include "melee/mframe.h"
 
 class ZRadar : public Presence
 {

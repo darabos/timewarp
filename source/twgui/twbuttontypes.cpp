@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../melee.h"
-#include "../melee/mview.h"
+#include "melee.h"
+#include "melee/mview.h"
 REGISTER_FILE
 
 #include "twwindow.h"

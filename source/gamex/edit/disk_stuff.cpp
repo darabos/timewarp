@@ -14,7 +14,7 @@ is not really needed for that...
 #include <stdio.h>
 #include <string.h>
 
-#include "../../melee.h"
+#include "melee.h"
 REGISTER_FILE
 
 

@@ -7,32 +7,32 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
 
-//#include "../melee/mcbodies.h"
-//#include "../melee/mship.h"    //ships
-#include "../melee/mlog.h"     //networking / demo recording / demo playback
-#include "../melee/mcontrol.h" //controllers & AIs
-#include "../melee/mframe.h"
-#include "../melee/mview.h"
-#include "../melee/mshppan.h"  //ship panels...
-#include "../melee/mitems.h"
-//#include "../melee/mfleet.h"   //fleets...
+//#include "melee/mcbodies.h"
+//#include "melee/mship.h"    //ships
+#include "melee/mlog.h"     //networking / demo recording / demo playback
+#include "melee/mcontrol.h" //controllers & AIs
+#include "melee/mframe.h"
+#include "melee/mview.h"
+#include "melee/mshppan.h"  //ship panels...
+#include "melee/mitems.h"
+//#include "melee/mfleet.h"   //fleets...
 
-#include "../melee/mcbodies.h"
+#include "melee/mcbodies.h"
 
-#include "../scp.h"
-#include "../util/history.h"
+#include "scp.h"
+#include "util/history.h"
 
 #include "gametest2.h"
 #include "twgui.h"
 //#include "GamePlanetView.h"
 
-#include "../scp.h"
-#include "../melee/mfleet.h"
+#include "scp.h"
+#include "melee/mfleet.h"
 
-#include "../frame.h"
+#include "frame.h"
 
 #include "gamebuttonevent.h"
 

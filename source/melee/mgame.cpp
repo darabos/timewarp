@@ -23,15 +23,15 @@ using std::exception;
 #include <string.h>
 #include <allegro.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../scp.h"
-#include "../util/net_tcp.h"
-#include "../util/history.h"
-#include "../util/sounds.h"
-#include "../util/get_time.h"
-#include "../frame.h"
-#include "../libs.h"
+#include "scp.h"
+#include "util/net_tcp.h"
+#include "util/history.h"
+#include "util/sounds.h"
+#include "util/get_time.h"
+#include "frame.h"
+#include "libs.h"
 
 #include "mframe.h"
 #include "mgame.h"

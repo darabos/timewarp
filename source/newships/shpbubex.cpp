@@ -1,9 +1,9 @@
 /* Modified from Xchagger */
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../frame.h"
+#include "frame.h"
 
 class BubalosExecutioner : public Ship {
   double       weaponRange;

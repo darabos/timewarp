@@ -1,12 +1,12 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../util/aastr.h"
+#include "util/aastr.h"
 
 #include <string.h>
 #include <stdio.h>
 
-#include "../melee/mview.h"
+#include "melee/mview.h"
 
 
 /*

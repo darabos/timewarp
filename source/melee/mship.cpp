@@ -14,10 +14,10 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../id.h"
-#include "../frame.h"
+#include "id.h"
+#include "frame.h"
 
 #include "mcbodies.h"
 #include "mgame.h"

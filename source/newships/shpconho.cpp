@@ -1,10 +1,10 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../melee/mmain.h"
-#include "../melee/mcbodies.h"
+#include "melee/mmain.h"
+#include "melee/mcbodies.h"
 
-#include "../frame.h"
+#include "frame.h"
 
 #define BCC 3
 

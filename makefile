@@ -15,7 +15,7 @@
 
 CC = g++
 LD = g++
-CFLAGS = -fsigned-char -Wall
+CFLAGS = -fsigned-char -Wall 
 OBJDIR = obj
 NAME = timewarp
 
@@ -58,6 +58,10 @@ else
 	CFLAGS += $(INCLUDES)
 	LIBS += ${shell allegro-config --libs}
 endif
+
+CFLAGS += -I./source -I./source/gamex
+
+#CFLAGS += ${addprefix -I./, $(VPATH)}
 
 LIBS += -llualib -llua
  

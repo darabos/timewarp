@@ -7,3 +7,8 @@ b = 2;
 c = a + b;
 end
 
+DialogStart "pkunk-standing.bmp"
+--DialogWrite "Hello, I have no quest for you yet"
+DialogAnswer ("OK", "NOOOOOOOO")
+DialogEnd()
+

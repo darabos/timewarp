@@ -2,7 +2,7 @@
 #define __GAMEX_FLEETAI__
 
 
-#include "../ais.h"
+#include "ais.h"
 
 
 class FleetFormation

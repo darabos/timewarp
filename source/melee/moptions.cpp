@@ -3,13 +3,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
 
-#include "../scp.h"
-#include "../gui.h"
+#include "scp.h"
+#include "gui.h"
 
-#include "../util/aastr.h"
+#include "util/aastr.h"
 
 /*
 

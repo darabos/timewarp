@@ -3,8 +3,8 @@
 
 
 
-#include "../melee/mgame.h"    //Game stuff
-#include "../melee/mview.h"    //Views & text messages
+#include "melee/mgame.h"    //Game stuff
+#include "melee/mview.h"    //Views & text messages
 
 #include <stdio.h>
 

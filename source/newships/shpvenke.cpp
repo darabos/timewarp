@@ -1,5 +1,5 @@
-#include "../ship.h"
-#include "../melee/mview.h"
+#include "ship.h"
+#include "melee/mview.h"
 #include <math.h>
 
 REGISTER_FILE

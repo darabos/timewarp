@@ -26,25 +26,25 @@ orzagonal: and that's a unique identifier for the ship that spawed it
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
-#include "../melee.h"
-#include "../other/radar.h"
-#include "../melee/mshppan.h"
+#include "melee.h"
+#include "other/radar.h"
+#include "melee/mshppan.h"
 
 REGISTER_FILE
-#include "../melee/mframe.h"
-#include "../melee/mgame.h"
-#include "../melee/mmain.h"
-#include "../melee/mcbodies.h"
-#include "../melee/mview.h"
-#include "../other/orbit.h"
-#include "../melee/mitems.h"
-#include "../util/aastr.h"
-#include "../melee/mcontrol.h"
+#include "melee/mframe.h"
+#include "melee/mgame.h"
+#include "melee/mmain.h"
+#include "melee/mcbodies.h"
+#include "melee/mview.h"
+#include "other/orbit.h"
+#include "melee/mitems.h"
+#include "util/aastr.h"
+#include "melee/mcontrol.h"
 //#define STATION_LOG
 
 #include "gflmelee.h"
 
-#include "../melee/mlog.h"
+#include "melee/mlog.h"
 
 
 #define Num_Planet_Pics 7

@@ -4,10 +4,10 @@ Ok ... well, there's the monotron already, but nevertheless, this ship may
 also be fun.
 */
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../frame.h"
+#include "frame.h"
 
 
 static double cross_product( Vector2 a, Vector2 b )

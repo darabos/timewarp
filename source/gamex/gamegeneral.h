@@ -1,7 +1,7 @@
 #ifndef __GAMEX_GENERAL__
 #define __GAMEX_GENERAL__
 
-#include "../melee.h"
+#include "melee.h"
 
 Vector2 uncorner ( Vector2 pos );
 void replace_color(BITMAP *bmp, int col1, int col2);

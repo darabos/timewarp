@@ -25,19 +25,19 @@ Samples 5 and 6 have not yet been started
 #include <stdio.h>   //standard io libary (needed for sprintf)
 #include <allegro.h> //allegro library header
 
-#include "../melee.h"          //used by all TW source files.  well, mostly.  
+#include "melee.h"          //used by all TW source files.  well, mostly.  
 REGISTER_FILE                  //done immediately after #including melee.h, just because I said so
-#include "../melee/mgame.h"    //Game stuff
-#include "../melee/mcbodies.h" //asteroids & planets
-#include "../melee/mship.h"    //ships
-#include "../melee/mshot.h"   //shots, missiles, lasers
-#include "../melee/mlog.h"     //networking / demo recording / demo playback
-#include "../melee/mcontrol.h" //controllers & AIs
-#include "../melee/mview.h"    //Views & messages
-#include "../melee/mshppan.h"  //ship panels...
+#include "melee/mgame.h"    //Game stuff
+#include "melee/mcbodies.h" //asteroids & planets
+#include "melee/mship.h"    //ships
+#include "melee/mshot.h"   //shots, missiles, lasers
+#include "melee/mlog.h"     //networking / demo recording / demo playback
+#include "melee/mcontrol.h" //controllers & AIs
+#include "melee/mview.h"    //Views & messages
+#include "melee/mshppan.h"  //ship panels...
 
-#include "../melee/mitems.h"  //ship panels...
-#include "../melee/manim.h"  //ship panels...
+#include "melee/mitems.h"  //ship panels...
+#include "melee/manim.h"  //ship panels...
 
 
 // Sample game 4: Defender of the Starbase

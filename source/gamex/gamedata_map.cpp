@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
 
-#include "../frame.h"
-#include "../melee/mview.h"
+#include "frame.h"
+#include "melee/mview.h"
 
 
 #include "gamedata.h"

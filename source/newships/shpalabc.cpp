@@ -1,7 +1,7 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../util/aastr.h"
+#include "util/aastr.h"
 
 #define turret_fire_frame_size 40
 

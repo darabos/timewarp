@@ -1,6 +1,6 @@
 
-#include "../ship.h"
-//#include "../melee/mview.h"
+#include "ship.h"
+//#include "melee/mview.h"
 
 class QuarKathWraith : public Ship {
   int frame;

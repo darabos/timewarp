@@ -1,5 +1,5 @@
-#include "../ship.h"
-#include "../util/aastr.h"
+#include "ship.h"
+#include "util/aastr.h"
 
 #define RAALRITH_POISON_ID     0x2233
 

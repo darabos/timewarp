@@ -1,15 +1,15 @@
 #include <allegro.h>
 #include <stdio.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../melee/mframe.h"
-#include "../melee/mgame.h"
-#include "../melee/mmain.h"
-#include "../melee/mcbodies.h"
-#include "../melee/mview.h"
-#include "../other/orbit.h"
-#include "../ship.h"
+#include "melee/mframe.h"
+#include "melee/mgame.h"
+#include "melee/mmain.h"
+#include "melee/mcbodies.h"
+#include "melee/mview.h"
+#include "other/orbit.h"
+#include "ship.h"
 #define STATION_LOG
 
 

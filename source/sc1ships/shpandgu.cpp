@@ -1,7 +1,7 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../sc1ships.h"
+#include "sc1ships.h"
 
 class AndrosynthBubble : public AnimatedShot {
   int courseFrames;

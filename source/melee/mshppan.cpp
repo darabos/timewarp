@@ -1,14 +1,14 @@
 
 #include <allegro.h>
 
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
 #include "mgame.h"
 #include "mshppan.h"
 #include "mship.h"
 #include "mview.h"
-#include "../id.h"
-#include "../util/aastr.h"
+#include "id.h"
+#include "util/aastr.h"
 
 int PANEL_WIDTH = 64;
 int PANEL_HEIGHT = 100;

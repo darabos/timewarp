@@ -1,8 +1,8 @@
 #ifndef __OBJANIM_H__
 #define __OBJANIM_H__
 
-#include "../melee/mframe.h"
-#include "../melee/manim.h"
+#include "melee/mframe.h"
+#include "melee/manim.h"
 
 class ObjectAnimation : public Animation {
 // maintains speed and angle

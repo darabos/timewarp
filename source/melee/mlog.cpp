@@ -2,11 +2,11 @@
 #include <string.h>
 #include <allegro.h>
 
-#include "../melee.h"
+#include "melee.h"
 
 #include "mlog.h"
 #include "mgame.h"
-#include "../util/net_tcp.h"
+#include "util/net_tcp.h"
 
 
 ////////////////////////////////////////////////////////////////////////

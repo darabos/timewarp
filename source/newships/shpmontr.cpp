@@ -1,6 +1,6 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
-#include "../melee/mview.h"
+#include "melee/mview.h"
 
 #define MONO_TRON_SEGMENTS_PER_SPACE 6
 

@@ -4,10 +4,10 @@ This is a variation on the Xchagger exclave, to see if the confusion
 concept can be used in a different version of gameplay.
 */
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../frame.h"
+#include "frame.h"
 
 class IceciConfusion : public Ship {
   double       weaponRange;

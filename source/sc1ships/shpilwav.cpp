@@ -1,7 +1,7 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../sc1ships.h"
+#include "sc1ships.h"
 
 int IlwrathAvenger::cloak_color[3] = { 15, 11, 9 };
 

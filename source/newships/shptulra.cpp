@@ -1,6 +1,6 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
-#include "../melee/mview.h"
+#include "melee/mview.h"
 
 #define TULKON_DEVICE_MIN_DIST 26
 #define TULKON_DEVICE_MAX_DIST 50

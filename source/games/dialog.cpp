@@ -8,8 +8,8 @@ extern "C" {
 
 #include <allegro.h>
 #include "dialog.h"
-#include "../util/aautil.h"
-#include "../util/aastr.h"
+#include "util/aautil.h"
+#include "util/aastr.h"
 
 BITMAP* Dialog::btmAlien   = NULL;
 BITMAP* Dialog::btmPScreen = NULL;
@@ -45,6 +45,7 @@ Dialog::~Dialog()
   destroy_bitmap(btmPScreen);
   btmPScreen = NULL;
 }
+
 ////////////////////////////////////////////////////////////////////////////
 //Lua function implementation
 ///////////////////////////////////////////////////////////////////////////

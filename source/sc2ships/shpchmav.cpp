@@ -1,8 +1,8 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../util/aastr.h"
-#include "../sc2ships.h"
+#include "util/aastr.h"
+#include "sc2ships.h"
 
 
 class ChmmrLaser : public Laser {

@@ -1,6 +1,6 @@
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
-#include "../other/objanim.h"
+#include "other/objanim.h"
 
 class YushSpear;
 

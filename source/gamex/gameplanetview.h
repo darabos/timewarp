@@ -6,8 +6,8 @@
 #include "gamedata.h"
 #include "gamegeneral.h"
 
-#include "../twgui/twwindow.h"
-#include "../twgui/twbuttontypes.h"
+#include "twgui/twwindow.h"
+#include "twgui/twbuttontypes.h"
 
 
 const int ID_FLEETICON = 0x08235497;

@@ -1,7 +1,7 @@
 #ifndef __MCONTROL_H__
 #define __MCONTROL_H__
 
-#include "../melee.h"
+#include "melee.h"
 #include "mframe.h"
 #include "mship.h"
 

@@ -1,9 +1,9 @@
 
-#include "../ship.h"
+#include "ship.h"
 REGISTER_FILE
 
-#include "../melee/mframe.h"
-#include "../melee/mview.h"
+#include "melee/mframe.h"
+#include "melee/mview.h"
 
 class DajielkaCruiser;
 class DajielkaTendril;

@@ -2,11 +2,11 @@
 #include <allegro.h>
 #include <string.h>
 #include <stdio.h>
-#include "../melee.h"
+#include "melee.h"
 REGISTER_FILE
-#include "../id.h"
-#include "../scp.h"
-#include "../frame.h"
+#include "id.h"
+#include "scp.h"
+#include "frame.h"
 
 #include "mgame.h"
 #include "mview.h"
