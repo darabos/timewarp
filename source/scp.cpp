@@ -1112,6 +1112,7 @@ enum {
     FLEET_DIALOG_SC3_TOGGLE,
     FLEET_DIALOG_TW_OFFICIAL_TOGGLE,
     FLEET_DIALOG_TW_EXP_TOGGLE,
+    FLEET_DIALOG_TW_SPECIAL_TOGGLE,
     FLEET_DIALOG_SORTBY_TEXT1,
     FLEET_DIALOG_SORTBY_BUTTON1,
     FLEET_DIALOG_SORTBY_ASCENDING1,
@@ -1194,16 +1195,21 @@ DIALOG fleetDialog[] = {
   { d_textbox_proc,     10,  10,   240,  20,   255,  0,    0,     0,       0,    0,    (void *)"Available Ships", NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_TEXT TODO specify font here in d2 I think
   { d_textbox_proc,     10,  35,   128,  17,   255,  0,    0,     0,       0,    0,    (void *)"Ship Catagories:", NULL, NULL },//FLEET_DIALOG_SHIP_CATAGORIES_TEXT
 
-  { d_check_proc_fleeteditor,
-                        30,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
+  { d_check_proc_fleeteditor,	// x=30-->x=10
+                        10,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
   { d_check_proc_fleeteditor,		
-                        30,  66,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
+                        10,  66,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
   { d_check_proc_fleeteditor,		
-                        30,  79,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
+                        10,  79,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
   { d_check_proc_fleeteditor,		
-                        30,  93,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
+//                      30,  93,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
+                        80,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
   { d_check_proc_fleeteditor,       
-                        30, 107,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
+//                      30, 107,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
+                        80,  66,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
+  { d_check_proc_fleeteditor,       
+//                      30, 107,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Special)", NULL, NULL },//FLEET_DIALOG_TW_SPECIAL_TOGGLE
+                        80,  79,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Special)", NULL, NULL },//FLEET_DIALOG_TW_SPECIAL_TOGGLE
 
   { d_textbox_proc,     10, 121,    64,  17,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT1
   { d_button_proc,      69, 121,   128,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON1
@@ -1334,6 +1340,11 @@ void edit_fleet(int player) {STACKTRACE
                     if (fleetDialog[FLEET_DIALOG_TW_EXP_TOGGLE].flags & D_SELECTED)
                         reference_fleet->addShipType(&shiptypes[c]);
                     break;
+
+                case SHIP_ORIGIN_TW_SPECIAL:
+                    if (fleetDialog[FLEET_DIALOG_TW_SPECIAL_TOGGLE].flags & D_SELECTED)
+                        reference_fleet->addShipType(&shiptypes[c]);
+                    break;
                 }
             }
             reference_fleet->Sort( sortMethod1, sortAscending1 );
@@ -1351,6 +1362,7 @@ void edit_fleet(int player) {STACKTRACE
            case FLEET_DIALOG_SC3_TOGGLE:
            case FLEET_DIALOG_TW_OFFICIAL_TOGGLE:
            case FLEET_DIALOG_TW_EXP_TOGGLE:
+           case FLEET_DIALOG_TW_SPECIAL_TOGGLE:
                availableFleetDirty = true;
 			   break;
 

@@ -143,6 +143,8 @@ static void register_shiptype ( const char *file ) {
 		ori = SHIP_ORIGIN_TW_ALPHA;
 	if (strcmp(origname, "TWB") == 0)		// beta ships
 		ori = SHIP_ORIGIN_TW_BETA;
+	if (strcmp(origname, "TWS") == 0)		// special ships
+		ori = SHIP_ORIGIN_TW_SPECIAL;
 
 
 	const char *name = get_config_string("Info", "Name", NULL);

@@ -64,7 +64,8 @@ enum ShipOrigin {
     SHIP_ORIGIN_SC2,/**< from Star Control 2*/
     SHIP_ORIGIN_SC3,/**< from Star Control 3*/
     SHIP_ORIGIN_TW_ALPHA,/**< Timewarp "Alpha"*/
-    SHIP_ORIGIN_TW_BETA/**< Timewarp "Beta"*/
+    SHIP_ORIGIN_TW_BETA,/**< Timewarp "Beta"*/
+    SHIP_ORIGIN_TW_SPECIAL/**< Timewarp "Special"*/
 };
 
 
