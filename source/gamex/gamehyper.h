@@ -2,6 +2,7 @@
 #define __GAMEX_HYPER__
 
 #include "gameproject.h"
+#include "gamedata_map.h"
 #include "gamedata.h"
 #include "gamegeneral.h"
 

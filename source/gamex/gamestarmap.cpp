@@ -14,6 +14,7 @@ REGISTER_FILE
 #include "../scp.h"
 #include "../util/history.h"
 
+#include "gamedata.h"
 #include "gamestarmap.h"
 
 #include "general/sprites.h"
@@ -96,6 +97,41 @@ void GameStarmap::init_menu()
 }
 
 
+
+void GameStarmap::load_startypes(SpaceSprite ***planettypespr)
+{
+	// load star sprites
+	startypespr = new SpaceSprite* [startypelist->N];
+	int i;
+	for ( i = 0; i < startypelist->N; ++i )
+	{
+		char tmp[512];
+		sprintf(tmp, "%s%s_01.bmp",
+			startypelist->basename,
+			startypelist->type[i].type_string);
+		startypespr[i] = create_sprite( tmp, SpaceSprite::MASKED );
+	}
+}
+
+
+void GameStarmap::load_surfacetypes(BITMAP ***surfacebmp)
+{
+	// load surface bitmaps
+	(*surfacebmp) = new BITMAP* [starsurfacetypelist->N];
+	int i;
+	for ( i = 0; i < starsurfacetypelist->N; ++i )
+	{
+		char tmp[512];
+		sprintf(tmp, "%s%s_01.bmp",
+			starsurfacetypelist->basename,
+			starsurfacetypelist->type[i].type_string);
+		load_bitmap32(&(*surfacebmp)[i], tmp);
+		scale_bitmap32(&(*surfacebmp)[i], 0.2);
+	}
+}
+
+
+
 void GameStarmap::init()
 {
 
@@ -110,13 +146,12 @@ void GameStarmap::init()
 
 	prepare();
 
-//	mapwrap = false;
-	//wininfo.init( Vector2(400,400), 800.0, tempframe );
 	wininfo.zoomlimit(size.x);
 	wininfo.center(Vector2(0,0));
 	wininfo.scaletowidth(0.5 * size.x);	// zoom out to this width.
 
 
+	/*
 	// load star sprites
 	startypespr = new SpaceSprite* [startypelist->N];
 	int i;
@@ -126,12 +161,18 @@ void GameStarmap::init()
 		sprintf(tmp, "gamex/stars/star_%s_01.bmp", startypelist->type[i].type_string);
 		startypespr[i] = create_sprite( tmp, SpaceSprite::MASKED );
 	}
+	*/
 
-	// create star objects ?!
-	starmap = mapeverything.region[0];	// use the starmap of the 1st region
+	// load planet sprites
+	load_startypes(&startypespr);
+	load_surfacetypes(&surfacebmp);
+
+	// create star objects
+	starmap = mapeverything.sub[0];	// use the starmap of the 1st region
 	starmap->scalepos = scalepos;
 
-	starspr = new SpaceSprite* [starmap->Nsub];
+	int i;
+	char tmp[512];
 
 	for ( i = 0; i < starmap->Nsub; ++i )
 	{
@@ -139,12 +180,18 @@ void GameStarmap::init()
 		int k;
 
 		k = starmap->sub[i]->type;
-		starspr[i] = new SpaceSprite(startypespr[k]->get_bitmap(0));
-		double T = 6000.0;
-		colorize(starspr[i], spec_r(T), spec_g(T), spec_b(T));
-		brighten(starspr[i]);
+		starspr = new SpaceSprite(startypespr[k]->get_bitmap(0));
 
-		star = new MapObj(0, starmap->sub[i]->position * scalepos, 0.0, starspr[i]);
+		double T;
+
+		sprintf(tmp, "gamex/gamedata/surface/%08X.ini", starmap->sub[i]->id);
+		set_config_file(tmp);
+		T = get_config_float(0, "temperature", 5000.0);
+
+		colorize(starspr, spec_r(T), spec_g(T), spec_b(T));
+		brighten(starspr);
+
+		star = new MapObj(0, starmap->sub[i]->position * scalepos, 0.0, starspr);
 		star->starnum = i;
 
 		add(star);
@@ -165,50 +212,33 @@ void GameStarmap::init()
 	mouseper = new Periodics(0.1);
 	keyper = new Periodics(0.1);
 
-//	selectionstar = 0;
-//	lastselectionstar = 0;
-//	maphaschanged = false;	// check if the map changed; if so, it's to be written back to disk
-
 
 	// define another (sub)menu
 
-	Tedit = new IconTV("gamex/interface/starmap/edit", 400, 200, game_screen);
-	Tedit->exclusive = false;
-	bnew = new Button(Tedit, "new_");
-	breplace = new Button(Tedit, "replace_");
-	Tedit->tv->set(startypespr, startypelist->N);
+//	Tedit = new IconTV("gamex/interface/starmap/edit", 400, 200, game_screen);
+//	Tedit->exclusive = false;
+//	bnew = new Button(Tedit, "new_");
+//	breplace = new Button(Tedit, "replace_");
+//	Tedit->tv->set(startypespr, startypelist->N);
 
 
 
-	T->add(Tedit);
+	FONT *usefont = videosystem.get_font(3);
+
+	mapeditor = new MapEditor1();
+	mapeditor->set_game(this, ptr);
+//	mapeditor->init_interface(T, usefont, startypespr, surfacebmp);
+	mapeditor->init_interface(T, usefont, startypespr, startypelist->N,
+		surfacebmp, starsurfacetypelist->N);
+	mapeditor->set_mapinfo( starmap, scalepos);
+
+
 	T->tree_doneinit();
 
-	Tedit->show();
-	Tedit->focus();
-	Tedit->layer = 1;	// shown first
+	mapeditor->Tedit->show();
+	mapeditor->Tedit->focus();
 	T->layer = 2;		// always shown later
 
-	mapeditor = new MapEditor();
-	mapeditor->set_game(this, ptr);
-	mapeditor->set_interface( Tedit, breplace, bnew );
-	mapeditor->set_mapinfo( starmap, 1, scalepos);
-
-
-
-
-	/*
-	// create a colony somewhere ?? For testing purpose only ...
-	RaceInfo *race;
-	RaceColony *colony;
-
-	race = new RaceInfo("testrace", makecol(100,20,20));
-	add(race);
-
-	colony = new RaceColony(race);
-	colony->locate(0, 0, -1);
-	colony->patrol.range = 1000;
-	add(colony);
-	*/
 }
 
 
@@ -264,7 +294,7 @@ void GameStarmap::animate(Frame *frame)
 
 	if (ptr->pos.x == 0 || ptr->pos.y == 0 || !maparea->hasmouse())
 		hideallegromouse = false;
-	else if (Tedit->grabbedmouse)
+	else if (mapeditor->Tedit->grabbedmouse)
 		hideallegromouse = false;
 	else
 		hideallegromouse = true;
@@ -325,9 +355,9 @@ void GameStarmap::quit()
 		delete startypespr[i];
 	delete startypespr;
 
-	for ( i = 0; i < starmap->Nsub; ++i )
-		delete starspr[i];
-	delete starspr;
+	for ( i = 0; i < starsurfacetypelist->N; ++i )
+		del_bitmap(&surfacebmp[i]);
+	delete surfacebmp;
 
 	if (mapeditor->maphaschanged)
 	{
@@ -340,6 +370,98 @@ void GameStarmap::quit()
 
 
 
+
+
+
+
+
+
+void MapEditor1::define_stats()
+{
+	ved->values[0]->set(vtype_float, "temperature", 2000.0, 100000.0);
+	ved->values[1]->set(vtype_float, "radius (s)", 0.01, 1000.0);
+}
+
+
+
+void MapEditor1::set_config()
+{
+	set_config_float(0, "temperature",    ved->values[0]->value);
+	set_config_float(0, "radius",  ved->values[1]->value);
+
+	// and the surface type string ?
+	char *t;
+	t = starsurfacetypelist->type[tvsurf->isel].type_string;
+	set_config_string(0, "surface", t);
+}
+
+
+void MapEditor1::get_config()
+{
+
+	ved->values[0]->value = get_config_float(0, "temperature", 0);
+	ved->values[1]->value = get_config_float(0, "radius", 0);
+
+	ved->edit_update();
+
+	// and the surface type ?
+	char tmp[512];
+	strcpy(tmp, get_config_string(0, "surface", "default"));
+	tvsurf->set_sel ( surfacetypelist->get_index(tmp, 0) );
+
+}
+
+
+
+
+MapObj *MapEditor1::create_mapobj(Vector2 pos)
+{
+
+	MapObj *s;
+
+	s = new MapObj(0, pos, 0.0, Tedit->tv->makespr());
+	s->starnum = Tedit->tv->isel;
+
+	return s;
+}
+
+
+
+void MapEditor1::move()
+{
+	MapEditor::move();
+
+	SolarBody	*s;
+	s = (SolarBody*) selection;
+	
+	s->stayhere = s->pos;	// in this case, movement is allowed ...
+	
+}
+
+
+
+
+void MapEditor1::colorizeobj(SolarBody *s)
+{
+	SpaceSprite *spr = s->get_sprite();
+
+	double temperature = ved->values[0]->value;
+	
+	double rat, gat, bat;	// extra atmospheric weight.
+	rat = 0.7;	// you don't have that on a starship,
+	gat = 0.6;	// but well, this makes it more understandable
+	bat = 0.4;	// for us earthdwellers ... otherwise the sun would look slightly blueish ...
+	// the blue reduction is somewhat exaggerated
+	
+	double rc, gc, bc;
+	rc = spec_r(temperature) * rat;
+	gc = spec_g(temperature) * gat;
+	bc = spec_b(temperature) * bat;
+	
+	balance(&rc, &gc, &bc);
+	colorize(spr, rc, gc, bc);
+	brighten(spr);
+}
 
 
 

@@ -36,7 +36,9 @@ void load_planettypes(SpaceSprite ***planettypespr)
 	for ( i = 0; i < planettypelist->N; ++i )
 	{
 		char tmp[512];
-		sprintf(tmp, "gamex/solarview/planet_%s_01.bmp", planettypelist->type[i].type_string);
+		sprintf(tmp, "%s%s_01.bmp",
+			"gamex/solarview/planet_",
+			planettypelist->type[i].type_string);
 		(*planettypespr)[i] = create_sprite( tmp, SpaceSprite::MASKED );
 	}
 }
@@ -49,7 +51,9 @@ void load_surfacetypes(BITMAP ***surfacebmp)
 	for ( i = 0; i < surfacetypelist->N; ++i )
 	{
 		char tmp[512];
-		sprintf(tmp, "gamex/planetscan/surface_%s_01.bmp", surfacetypelist->type[i].type_string);
+		sprintf(tmp, "%s%s_01.bmp",
+			surfacetypelist->basename,
+			surfacetypelist->type[i].type_string);
 		load_bitmap32(&(*surfacebmp)[i], tmp);
 		scale_bitmap32(&(*surfacebmp)[i], 0.2);
 	}
@@ -142,24 +146,9 @@ void ellipsparams(Vector2 relpos, double ellb,
 }
 
 
-void MapEditor2::init_interface(TWindow *T,
-								FONT *usefont, SpaceSprite **planettypespr,
-								BITMAP **surfacebmp)
+
+void MapEditor2::define_stats()
 {
-	Tedit = new IconTV("gamex/interface/planetview/edit", 1400, 900, game_screen);
-	Tedit->exclusive = false;
-	bnew = new Button(Tedit, "new_");
-	breplace = new Button(Tedit, "replace_");
-	Tedit->tv->set(planettypespr, planettypelist->N);
-
-	tvsurf = new TVarea(Tedit, "plot2_");
-	tvsurf->set(surfacebmp, surfacetypelist->N);
-
-	ved = new ValueEdit(Tedit, "values_", usefont, 64);
-
-	ved->info->text_color = makecol(200,200,200);
-	ved->edit->text_color = makecol(200,200,200);
-
 	ved->values[0]->set(vtype_float, "atmospheric pressure", 0.0, 100.0);
 	ved->values[1]->set(vtype_float, "radius (es)", 0.1, 100.0);
 	ved->values[2]->set(vtype_float, "density (kg/m3)", 0.5, 6.0);
@@ -169,6 +158,29 @@ void MapEditor2::init_interface(TWindow *T,
 	ved->values[6]->set(vtype_float, "greenhouse", 0.0, 1.0);
 	ved->values[7]->set(vtype_int, "weather", 0, 9);
 	ved->values[8]->set(vtype_int, "tectonics", 0, 9);
+}
+
+
+
+void MapEditor2::init_interface(TWindow *T,
+								FONT *usefont, SpaceSprite **planettypespr, int N1,
+								BITMAP **surfacebmp, int N2)
+{
+	Tedit = new IconTV("gamex/interface/planetview/edit", 1400, 900, game_screen);
+	Tedit->exclusive = false;
+	bnew = new Button(Tedit, "new_");
+	breplace = new Button(Tedit, "replace_");
+	Tedit->tv->set(planettypespr, N1);
+
+	tvsurf = new TVarea(Tedit, "plot2_");
+	tvsurf->set(surfacebmp, N2);
+
+	ved = new ValueEdit(Tedit, "values_", usefont, 64);
+
+	ved->info->text_color = makecol(200,200,200);
+	ved->edit->text_color = makecol(200,200,200);
+
+	define_stats();
 
 	T->add(Tedit);
 
@@ -236,7 +248,7 @@ void MapEditor2::replace()
 
 	colorizeobj((SolarBody*) selection);
 
-	save_surface();
+	save_stats();
 }
 
 
@@ -245,7 +257,7 @@ void MapEditor2::newselection()
 	// if a new planet is selected, read its info from the star file !
 	MapEditor::newselection();
 
-	init_surface();
+	init_stats();
 
 	isurfacetype = tvsurf->isel;
 
@@ -304,26 +316,15 @@ void MapEditor2::add()
 
 	// write stuff to a .ini file ...
 
-	save_surface();
+	save_stats();
 }
 
 
 
 
 
-
-void MapEditor2::save_surface()
+void MapEditor2::set_config()
 {
-	if (!selection)
-		return;
-
-	int id;
-	id = objmap->sub[ selection->starnum ]->id;
-
-	char tmp[512];
-	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
-	set_config_file(tmp);
-
 	set_config_float(0, "atmo",    ved->values[0]->value);
 	set_config_float(0, "radius",  ved->values[1]->value);
 	set_config_float(0, "density", ved->values[2]->value);
@@ -338,15 +339,10 @@ void MapEditor2::save_surface()
 	char *t;
 	t = surfacetypelist->type[tvsurf->isel].type_string;
 	set_config_string(0, "surface", t);
-
-
-	flush_config_file();
 }
 
 
-
-
-void MapEditor2::init_surface()
+void MapEditor2::save_stats()
 {
 	if (!selection)
 		return;
@@ -358,6 +354,14 @@ void MapEditor2::init_surface()
 	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
 	set_config_file(tmp);
 
+	set_config();
+
+	flush_config_file();
+}
+
+
+void MapEditor2::get_config()
+{
 	ved->values[0]->value = get_config_float(0, "atmo", 0);
 	ved->values[1]->value = get_config_float(0, "radius", 0);
 	ved->values[2]->value = get_config_float(0, "density", 0);
@@ -371,9 +375,25 @@ void MapEditor2::init_surface()
 	ved->edit_update();
 
 	// and the surface type ?
+	char tmp[512];
 	strcpy(tmp, get_config_string(0, "surface", "default"));
 	tvsurf->set_sel ( surfacetypelist->get_index(tmp, 0) );
+}
 
+
+void MapEditor2::init_stats()
+{
+	if (!selection)
+		return;
+
+	int id;
+	id = objmap->sub[ selection->starnum ]->id;
+
+	char tmp[512];
+	sprintf(tmp, "gamex/gamedata/surface/%08X.ini", id);
+	set_config_file(tmp);
+
+	get_config();
 }
 
 
@@ -461,7 +481,7 @@ void GameSolarview::init()
 
 	// create star objects ?!
 	
-	starmap = mapeverything.region[0];	// use the starmap of the 1st region
+	starmap = mapeverything.sub[0];	// use the starmap of the 1st region
 
 //	playerinfo.istar = 0;
 	int istar;
@@ -615,9 +635,10 @@ void GameSolarview::init()
 	mapeditor = new MapEditor2();
 	mapeditor->set_game(this, ptr);
 
-	mapeditor->init_interface(T, usefont, planettypespr, surfacebmp);
+	mapeditor->init_interface(T, usefont, planettypespr, planettypelist->N,
+		surfacebmp, surfacetypelist->N);
 
-	mapeditor->set_mapinfo( solarmap, 2, 1.0);
+	mapeditor->set_mapinfo( solarmap, 1.0);
 
 	mapeditor->mapcenter = sunpos;
 
@@ -720,7 +741,7 @@ void GameSolarview::quit()
 	{
 		// set the player position exactly equal to the star for appearing in solar orbit
 		MapSpacebody *starmap;
-		starmap = mapeverything.region[0];
+		starmap = mapeverything.sub[0];
 		playerinfo.pos = starmap->sub[playerinfo.istar]->position * starmap->scalepos;
 		playerinfo.vel = 0;
 

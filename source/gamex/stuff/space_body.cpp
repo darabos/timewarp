@@ -267,8 +267,6 @@ MapEditor::MapEditor()
 	bnew = 0;
 	breplace = 0;
 
-	maplevel = 0;
-
 	scalepos = 0;
 
 	moveselection = false;
@@ -298,10 +296,9 @@ void MapEditor::set_interface( IconTV *aTedit, Button *abreplace, Button *abnew 
 		bnew = abnew;
 }
 
-void MapEditor::set_mapinfo( MapSpacebody *aobjmap, int amaplevel, double ascalepos)
+void MapEditor::set_mapinfo( MapSpacebody *aobjmap, double ascalepos)
 {
 	objmap = aobjmap;
-	maplevel = amaplevel;
 	scalepos = ascalepos;
 }
 
@@ -332,7 +329,7 @@ void MapEditor::add()
 	moveselection = true;
 	
 	// also ... add it to the map ?? with default settings ..
-	selection->starnum = objmap->add(maplevel);	// level 1 = stars
+	selection->starnum = objmap->add();	// level 1 = stars
 	
 	int k;
 	k = selection->starnum;

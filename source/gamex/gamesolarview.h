@@ -41,9 +41,15 @@ public:
 
 	virtual void colorizeobj(SolarBody *s);
 
-	void init_interface(TWindow *T, FONT *usefont, SpaceSprite **planettypespr, BITMAP **surfacebmp);
-	void save_surface();
-	void init_surface();
+	virtual void define_stats();
+	void init_interface(TWindow *T, FONT *usefont, SpaceSprite **planettypespr,
+		int N1, BITMAP **surfacebmp, int N2);
+
+	virtual void save_stats();
+	virtual void set_config();
+	virtual void init_stats();
+	virtual void get_config();
+
 	void check_radius();
 };
 

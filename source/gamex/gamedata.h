@@ -5,9 +5,10 @@
 
 #include <stdio.h>
 
+//#include "gamedata_map.h"
 
 
-
+const bool hascontent(char *t);
 
 class RaceInfo;
 
@@ -216,59 +217,6 @@ public:
 
 
 
-class MapSpacebody;
-
-class SpacebodyInfo
-{
-public:
-	virtual void init(MapSpacebody *planet) {};
-	virtual void write(MapSpacebody *planet) {};
-};
-
-
-
-// the branches
-class MapSpacebody
-{
-public:
-	SpacebodyInfo *info;
-
-	//char type[32];
-	int type;			// the char version should be in a table - why ... because indexed stuff is easier to work with!!
-	Vector2 position;	// 0,0 = center
-	char name[64];
-	SpaceObject *o;
-	double scalepos;
-
-	int id;
-	int Nsub;
-	MapSpacebody **sub;	// at most 3 moons.
-
-	virtual void init(FILE *f, int level);
-	virtual void save(FILE *f, int level);
-	virtual int add(int level);
-	virtual int rem(int k);
-
-	bool check_id(int id2);
-};
-
-
-
-// the root
-class MapEverything
-{
-public:
-	int Nregions;
-	MapSpacebody **region;
-
-	void init(char *filename);
-	void save(char *filename);
-
-	int gen_id();
-};
-
-extern MapEverything mapeverything;
-
 
 
 
@@ -286,6 +234,8 @@ struct IndexType
 
 struct IndexTypeList
 {
+	char basename[512];
+
 	int N, max;
 	IndexType *type;
 	
@@ -300,6 +250,7 @@ extern IndexTypeList *startypelist;
 extern IndexTypeList *planettypelist;
 //extern IndexTypeList *moontypelist;	// moons or small planets are not distinguishable
 extern IndexTypeList *surfacetypelist;
+extern IndexTypeList *starsurfacetypelist;
 
 #endif
 

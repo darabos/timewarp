@@ -80,9 +80,9 @@ void ProjectX::init()
 		
 		
 
-//	add( new GameStarmap() );
+	add( new GameStarmap() );
 //	add( new GameSolarview() );
-	add( new GamePlanetview() );
+//	add( new GamePlanetview() );
 //	add( new GamePlanetscan() );
 //	add( new GameMelee() );
 //	add( new GameDialogue() );		// the editor
@@ -99,4 +99,6 @@ void ProjectX::quit()
 
 	// save edited races info (only saves changes)
 	racelist.writeracelist();
+
+	mapeverything.discard();
 }

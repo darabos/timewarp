@@ -10,12 +10,14 @@ REGISTER_FILE
 
 
 #include "gamedata.h"
+#include "gamedata_map.h"
 #include "gamegeneral.h"
 
 
 IndexTypeList *startypelist;
 IndexTypeList *planettypelist;
 IndexTypeList *surfacetypelist;
+IndexTypeList *starsurfacetypelist;
 
 PlayerInfo		playerinfo;
 MapEverything	mapeverything;
@@ -124,73 +126,6 @@ void LocalPlayerInfo::inflict_damage(SpaceObject *other)
 
 
 
-void MapEverything::init(char *filename)
-{
-	startypelist = new IndexTypeList("gamex/types/star_*.ini");
-	planettypelist = new IndexTypeList("gamex/types/planet_*.ini");
-	surfacetypelist = new IndexTypeList("gamex/planetscan/surface_*.ini");
-	
-	FILE *f = fopen(filename, "rt");
-	if (!f) { tw_error("failed to initialize map info");}
-
-	fscanf(f, "%i", &Nregions);
-
-	region = new MapSpacebody* [Nregions];
-
-	int i;
-	for ( i = 0; i < Nregions; ++i )
-	{
-		region[i] = new MapSpacebody();
-		region[i]->init(f, 0);
-	}
-
-	fclose(f);
-
-}
-
-
-
-void MapEverything::save(char *filename)
-{
-	
-	FILE *f = fopen(filename, "wt");
-	if (!f)	{tw_error("failed to save map info");}
-
-	fprintf(f, "%i\n\n", Nregions);
-
-	int i;
-	for ( i = 0; i < Nregions; ++i )
-	{
-		region[i]->save(f, 0);
-	}
-
-	fclose(f);
-}
-
-
-// generate a unique (random) id for a map item
-int MapEverything::gen_id()
-{
-	int id;
-
-	for (;;)
-	{
-		id = random();
-
-		int i;
-		for ( i = 0; i < Nregions; ++i )
-		{
-			if (region[i]->check_id(id))
-				break;
-		}
-
-		if (i == Nregions)	// id not found
-			break;
-	}
-
-	return id;
-}
-
 
 const bool hascontent(char *t)
 {
@@ -208,166 +143,26 @@ const bool hascontent(char *t)
 	return false;
 }
 
-void MapSpacebody::init(FILE *f, int level)
-{
-	if (!f)
-	{
-		// default settings ..
-		Nsub = 0;
-		sub = 0;
-		strcpy(name, "noname");
-		type = 0;
-		position = 0;
-		o = 0;
-
-		return;
-	}
-
-	char txt[512], chartype[512];
-	txt[0] = 0;
-	while (!hascontent(txt))
-		fgets(txt, 512, f);		// reads a line, skipping empty lines
-
-	strncpy(name, txt, 64);
-	if (name[strlen(name)-1] == '\n')
-		name[strlen(name)-1] = 0;
-
-	fscanf(f, "%s", chartype);
-	// this includes a newline character, which must be skipped:
-	if (chartype[strlen(chartype)-1] == '\n')
-		chartype[strlen(chartype)-1] = 0;
-
-	// it's a region, star, planet, or moon.
-
-	if (level == 0)
-		type = -1;
-
-	if (level == 1)
-		type = startypelist->get_index(chartype);
-
-	if (level == 2)
-		type = planettypelist->get_index(chartype);
-
-	if (level == 3)
-		type = planettypelist->get_index(chartype);
-
-	fscanf(f, "%lf %lf %X", &position.x, &position.y, &id);
-	fscanf(f, "%i\n\n", &Nsub);
-
-	if (Nsub < 0 || Nsub > 20) {tw_error("error: invalid system");}
-
-	sub = new MapSpacebody* [Nsub];
-
-	int i;
-	for ( i = 0; i < Nsub; ++i )
-	{
-		sub[i] = new MapSpacebody();
-		sub[i]->init(f, level+1);
-	}
-
-	scalepos = 1;
-}
 
 
 
-void MapSpacebody::save(FILE *f, int level)
-{
-	char base[128];
-	int i;
-
-	if (!f)
-		return;
-
-	for ( i = 0; i < level; ++i )
-		base[i] = '\t';
-	base[i] = 0;
-
-	fprintf(f, "%s %s\n", base, name);
-
-	if (level == 0)
-		fprintf(f, "%s empty_type\n", base);
-
-	if (level == 1)
-		fprintf(f, "%s %s\n", base, startypelist->type[this->type].type_string);
-
-	if (level == 2)
-		fprintf(f, "%s %s\n", base, planettypelist->type[this->type].type_string);
-
-	if (level == 3)
-		fprintf(f, "%s %s\n", base, planettypelist->type[this->type].type_string);
-
-
-	fprintf(f, "%s %lf %lf %X\n", base, position.x, position.y, id);
-	fprintf(f, "%s %i\n\n", base, Nsub);
-
-	for ( i = 0; i < Nsub; ++i )
-		sub[i]->save(f, level+1);
-
-}
-
-
-int MapSpacebody::add(int level)
-{
-
-	int i;
-	MapSpacebody **oldsub;
-
-	oldsub = sub;
-	sub = new MapSpacebody* [Nsub + 1];
-
-	for ( i = 0; i < Nsub; ++i )
-		sub[i] = oldsub[i];
-
-	delete oldsub;
-
-	sub[Nsub] = new MapSpacebody();
-	sub[Nsub]->init(0, level);	// the level does not matter.
-
-
-	++Nsub;
-
-	return Nsub-1;
-}
 
 
 
-int MapSpacebody::rem(int k)
-{
 
-	if (k < 0 || k >= Nsub || Nsub == 0)
-		return 0;
-
-	int i;
-	for ( i = k; i < Nsub-1; ++i )
-		sub[i] = sub[i+1];
-	--Nsub;
-
-	return Nsub-1;
-}
-
-
-bool MapSpacebody::check_id(int id2)
-{
-	if (id == id2)
-		return true;
-
-	// check if one of the sub-items have identical id
-	int i;
-	for ( i = 0; i < Nsub; ++i )
-	{
-		if (sub[i]->check_id(id2))
-			return true;
-	}
-
-	// neither this nor any subitem has this id.
-	return false;
-}
 
 
 
 IndexTypeList::IndexTypeList(char *scanname)
 {
 	char **templist;
+
+	strcpy(basename, scanname);
+	char *tmp = strrchr(basename, '*');	// remove the *.ini from the scanname.
+	if (tmp)
+		tmp[0] = 0;
+	else
+	{ tw_error("invalid scanname"); }
 
 	createfilelist(&templist, &N, scanname, 1);
 
@@ -380,6 +175,7 @@ IndexTypeList::IndexTypeList(char *scanname)
 	}
 
 	delete templist;
+
 }
 
 
@@ -473,7 +269,7 @@ void RaceSettlement::animate_map(Frame *f, int imap)
 
 	MapSpacebody *starmap = 0, *solarmap = 0, *planetmap = 0;
 
-	starmap = mapeverything.region[0];
+	starmap = mapeverything.sub[0];
 
 	if (istar >= 0)
 		solarmap = starmap->sub[istar];

@@ -496,7 +496,7 @@ public:
 
 */
 
-
+/*
 class SurfaceInfo : public SpacebodyInfo
 {
 public:
@@ -542,7 +542,7 @@ SurfaceInfo::SurfaceInfo()
 
 void SurfaceInfo::write(MapSpacebody *planet)
 {
-	/* CHANGED: this is edited/written only in solarview/planetview mode !!
+	 CHANGED: this is edited/written only in solarview/planetview mode !!
 	char tmp[16];
 	sprintf(tmp, "%X", planet->id);
 
@@ -568,7 +568,7 @@ void SurfaceInfo::write(MapSpacebody *planet)
 
 	set_config_int("stats", "weather", weatherclass);
 	set_config_int("stats", "tectonics", tectonicsclass);
-	*/
+	
 }
 
 
@@ -677,7 +677,7 @@ void StarInfo::init(MapSpacebody *star)
 	sunradius = get_config_float("stats", "radius", 0.001);
 }
 
-
+*/
 
 
 
@@ -716,7 +716,7 @@ void GamePlanetscan::init()
 	// create star objects ?!
 	int istar, iplanet, imoon;
 	MapSpacebody *starmap, *solarmap, *planetmap, *moonmap;
-	starmap = mapeverything.region[0];	// use the starmap of the 1st region
+	starmap = mapeverything.sub[0];	// use the starmap of the 1st region
 
 	istar = playerinfo.istar;
 	iplanet = playerinfo.iplanet;

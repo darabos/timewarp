@@ -73,7 +73,7 @@ void GamePlanetview::init()
 
 	// create star objects ?!
 	int istar, iplanet;
-	starmap = mapeverything.region[0];	// use the starmap of the 1st region
+	starmap = mapeverything.sub[0];	// use the starmap of the 1st region
 
 
 	istar = playerinfo.istar;
@@ -229,10 +229,12 @@ void GamePlanetview::init()
 	mapeditor = new MapEditor3();
 	mapeditor->set_game(this, ptr);
 
-	mapeditor->init_interface(T, usefont, planettypespr, surfacebmp);
+	//mapeditor->init_interface(T, usefont, planettypespr, surfacebmp);
+	mapeditor->init_interface(T, usefont, planettypespr, planettypelist->N,
+		surfacebmp, surfacetypelist->N);
 
 
-	mapeditor->set_mapinfo( planetmap, 3, 1.0);
+	mapeditor->set_mapinfo( planetmap, 1.0);
 
 	mapeditor->mapcenter = centerpos;
 
@@ -261,7 +263,7 @@ void GamePlanetview::quit()
 	{
 		// set the player position exactly equal to the planet for appearing in solar orbit
 		MapSpacebody *solarmap;
-		solarmap = mapeverything.region[0]->sub[playerinfo.istar];
+		solarmap = mapeverything.sub[0]->sub[playerinfo.istar];
 		playerinfo.pos = solarmap->sub[playerinfo.iplanet]->position * solarmap->scalepos;
 		playerinfo.vel = 0;
 

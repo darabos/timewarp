@@ -1,6 +1,7 @@
 #ifndef __GAMEX_SPACE_BODY__
 #define __GAMEX_SPACE_BODY__
 
+#include "../gamedata_map.h"
 
 // ellips of planet orbit
 void drawellips(Frame *f, Vector2 center, double R, double b, int col);
@@ -81,7 +82,6 @@ public:
 	MousePtr *ptr;
 
 	MapSpacebody	*objmap;
-	int				maplevel;
 
 	IconTV	*Tedit;
 	Button	*breplace, *bnew;
@@ -105,7 +105,7 @@ public:
 
 	void set_game(GameBare *agame, MousePtr *aptr);
 	void set_interface( IconTV *aTedit, Button *abreplace, Button *abnew );
-	void set_mapinfo( MapSpacebody *aobjmap, int amaplevel, double ascalepos);
+	void set_mapinfo( MapSpacebody *aobjmap, double ascalepos);
 
 	virtual MapObj *create_mapobj(Vector2 pos);
 };

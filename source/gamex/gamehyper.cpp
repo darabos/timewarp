@@ -76,7 +76,7 @@ void HyperFleet::calculate()
 	double R;
 	R = distance(follow);
 
-	double s = mapeverything.region[0]->scalepos;
+	double s = mapeverything.sub[0]->scalepos;
 	if (R > s * r_visual * 1.1)
 		state = 0;
 }
@@ -104,7 +104,7 @@ void GameHyperspace::calc_enemies()
 		while (b)
 		{
 			Vector2 P;
-			P = mapeverything.region[0]->sub[b->istar]->position;
+			P = mapeverything.sub[0]->sub[b->istar]->position;
 
 
 			double r;
@@ -377,7 +377,7 @@ LocalPlayerInfo(osprite, playinf)
 {
 	if (playinf->istar >= 0)
 	{
-		MapSpacebody *starmap = mapeverything.region[0];
+		MapSpacebody *starmap = mapeverything.sub[0];
 		pos = starmap->sub[playinf->istar]->position;
 	}
 
@@ -490,7 +490,7 @@ void GameHyperspace::init()
 	// you can make the map a bit bigger to prevent that ...
 
 	// create star objects
-	starmap = mapeverything.region[0];	// use the starmap of the 1st region
+	starmap = mapeverything.sub[0];	// use the starmap of the 1st region
 
 
 	// initialization of sprites
