@@ -343,11 +343,13 @@ void BipoleKatamaran::calculate_hotspots(){
 }
 
 void BipoleKatamaran::materialize(){
-	STACKTRACE
-  int i;
-  for( i = 0; game->target[i] != this; i++ );
-  game->num_targets--;
-  game->target[i] = game->target[game->num_targets];
+	STACKTRACE;
+	
+//  int i;
+//  for( i = 0; game->target[i] != this; i++ );
+//  game->num_targets--;
+//  game->target[i] = game->target[game->num_targets];
+	game->rem_target(this);
   left->control = control;
   right->control = control;
   game->add( left->get_ship_phaser() );

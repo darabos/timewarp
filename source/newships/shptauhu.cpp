@@ -199,10 +199,11 @@ void TauHunter::jump_in(TauHunterPortal *portal)
 
 
 // not targetable
-	int i;
-	for(i=0; game->target[i] != this; i++);
-	game->num_targets--;
-	game->target[i] = game->target[game->num_targets];
+//	int i;
+//	for(i=0; game->target[i] != this; i++);
+//	game->num_targets--;
+//	game->target[i] = game->target[game->num_targets];
+	game->rem_target(this);
 }
 
 void TauHunter::calculate_fire_special()

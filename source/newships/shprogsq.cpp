@@ -238,9 +238,10 @@ void RogueSquadron::materialize()
 	// HOW ??
 	
 // copied from tauhu code.
-	for(i=0; game->target[i] != this; i++);
-	game->num_targets--;
-	game->target[i] = game->target[game->num_targets];
+//	for(i=0; game->target[i] != this; i++);
+//	game->num_targets--;
+//	game->target[i] = game->target[game->num_targets];
+	game->rem_target(this);
 
 	// not used in queries
 	attributes |= ATTRIB_UNDETECTABLE;
