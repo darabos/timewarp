@@ -34,6 +34,8 @@ class Shot : public SpaceObject {
 
 	virtual void changeDirection(double oangle);
 	int isHomingMissile();
+
+	virtual void scale_vel(double scale);
 	};
 
 class AnimatedShot : public Shot {

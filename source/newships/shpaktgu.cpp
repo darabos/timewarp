@@ -97,7 +97,8 @@ Ship(opos, shipAngle, shipData, shipCollideFlag)
 	for (int i = 0; i < max_ComSats; i += 1) {
 		ComSat[i] = NULL;
 	}
-	
+	// for debugging purpose
+	debug_id = 5;	
 }
 
 int AktunGunner::activate_weapon()
@@ -157,6 +158,8 @@ Laser(creator, langle, pallete_color[lweaponColor], lrange,
 	  ldamage, lfcount, opos, relpos, true),
 	  owner(lowner)
 {
+	// for debugging purpose
+	debug_id = 6;
 }
 
 void AktunLaser::inflict_damage(SpaceObject *other)
@@ -185,6 +188,8 @@ armour(oarmour)
 	angle = oangle;
 	pos = ship->normal_pos();
 	if(!(ship && ship->exists())) state = 0;
+	// for debugging purpose
+	debug_id = 7;
 }
 
 void AktunComSat::calculate() {

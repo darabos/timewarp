@@ -25,6 +25,7 @@ HowTo_1::HowTo_1(Vector2 opos, double shipAngle, ShipData *shipData, int shipCol
 :
 Ship(opos, shipAngle, shipData, shipCollideFlag)
 {
+	debug_id = 3;	// for debugging purpose
 };
 
 

@@ -450,6 +450,11 @@ void SpaceLocation::change_vel(Vector2 dvel)
 	vel += dvel;
 }
 
+void SpaceLocation::scale_vel(double scale)
+{
+	vel *= scale;
+}
+
 /*** Change a location by translation
 */
 void SpaceLocation::change_pos(Vector2 dpos)

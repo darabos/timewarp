@@ -157,6 +157,9 @@ AlcheroKronos::AlcheroKronos(Vector2 opos, double shipAngle,
 
   dial_angle = 0;
   dial_index = get_index(angle + dial_angle);
+
+	// for debugging purpose
+	debug_id = 50;
 }
 
 int AlcheroKronos::activate_weapon(){
@@ -354,6 +357,9 @@ AlcheroLaser::AlcheroLaser(SpaceLocation *creator, double langle, int lcolor, in
   collide_flag_anyone = ALL_LAYERS;
   step = 0;
   sparkNfactor = osparkNfactor;
+
+	// for debugging purpose
+	debug_id = 51;
 }
 
 void AlcheroLaser::calculate(){
@@ -431,6 +437,9 @@ AlcheroLaserTrace::AlcheroLaserTrace( SpaceLocation *creator, double langle,
   step( 0 ), rate( orate ), color_index( lcolor ){
   collide_flag_anyone = collide_flag_sameship = collide_flag_sameteam = 0;
   vel = 0;//vx = vy = 0;
+
+	// for debugging purpose
+	debug_id = 52;
 }
 
 void AlcheroLaserTrace::calculate(){

@@ -52,7 +52,7 @@ public:
 	
 public:
 	AlhordianDreadnought(Vector2 opos, double angle, ShipData *data, unsigned int code);
-	~AlhordianDreadnought(void);
+	virtual ~AlhordianDreadnought(void);
 protected:
 	virtual int activate_weapon();
 	virtual int activate_special();
@@ -158,6 +158,9 @@ Ship(opos, angle, data, code)
 	rP2 = Vector2(dx, -dy);
 //	rP1 = Vector2(-5, -17);
 //	rP2 = Vector2(-5,  17);
+
+	// for debugging purpose
+	debug_id = 60;
 }
 
 AlhordianDreadnought::~AlhordianDreadnought(void) {
@@ -333,6 +336,9 @@ Shot(ocreator, rpos, oangle, oStartVelocity, oStartDamage, orange,
 	endVelocity = oEndVelocity;
 	sprite_index = 0;
 	this->lifetimeCounter = 0;
+
+	// for debugging purpose
+	debug_id = 61;
 }
 
 void AlhordianTorpedo::calculate(void)

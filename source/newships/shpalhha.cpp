@@ -161,6 +161,9 @@ Ship(opos, angle, data, code)
 	rP2 = Vector2(dx, -dy);
 //	rP1 = Vector2(-5, -17);
 //	rP2 = Vector2(-5,  17);
+
+	// for debugging purpose
+	debug_id = 70;
 }
 
 AlhordianHalo::~AlhordianHalo(void) {
@@ -354,6 +357,9 @@ Shot(ocreator, rpos, oangle, oStartVelocity, oStartDamage, orange,
 	endVelocity = oEndVelocity;
 	sprite_index = 0;
 	this->lifetimeCounter = 0;
+
+	// for debugging purpose
+	debug_id = 71;
 }
 
 void AlhordianTorp::calculate(void)

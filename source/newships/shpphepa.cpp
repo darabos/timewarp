@@ -85,6 +85,8 @@ Ship(opos, angle, data, code)
 	int i;
 	for ( i = 0; i < maxcrew; ++i )
 		crewinspace[i] = 0;
+
+	debug_id = 1;	// for debugging purpose
 }
 
 
@@ -225,6 +227,8 @@ mother(oship)
 	set_depth(DEPTH_SPECIAL);
 
 	isblockingweapons = false;
+
+	debug_id = 2;	// for debugging purpose
 }
 
 int CrewPodPP::sameTeam(SpaceLocation *other)

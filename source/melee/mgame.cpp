@@ -43,7 +43,11 @@ REGISTER_FILE
 #include <stdarg.h>
 
 
-
+/** \brief this causes lots of extra checks to be performed on object-by-object
+synch comparison. This is ok for testing on lan, but is best set to false
+for internet play, and non-testing compilations.
+*/
+bool detailed_network_check = false;
 
 
 
@@ -634,7 +638,6 @@ void Game::compare_checksums()
 	STACKTRACE;
 
 	heavy_compare();	// compare all "live" items
-	return;	// the minor compare is irrelevant, and hardly useful
 
 	unsigned char local_checksum = checksum() & 255;
 	unsigned char client_checksum[max_player];
@@ -777,7 +780,8 @@ void Game::log_file (const char *fname)
 
 void Game::net_expect(int val)
 {
-//	return;
+	if (!detailed_network_check)
+		return;
 
 	int k;
 	int p;
@@ -1757,11 +1761,13 @@ void Game::test_event1()
 
 void Game::heavy_compare()
 {
+	if (!detailed_network_check)
+		return;
+
 	int p;
 	
 	const int max_comp = 512;
-	int posval[max_comp];
-	int velval[max_comp];
+	int val[max_comp];
 
 	int N, Nprev;
 	for ( p = 0; p < num_humans; ++p )
@@ -1785,14 +1791,13 @@ void Game::heavy_compare()
 			
 			if (log_synched)
 			{
-				// only update, in synched mode - in true-time, comparisons like this
-				// are impossible in a buffered channel.
-				Nprev = N;
-
 				// only compare for player > 0, otherwise you've nothing to compare to
 				if (p > 0 && N != Nprev)
 					tw_error("different number of items between games");
 
+				// only update, in synched mode - in true-time, comparisons like this
+				// are impossible in a buffered channel.
+				Nprev = N;
 			}
 			
 			
@@ -1800,39 +1805,36 @@ void Game::heavy_compare()
 			for ( i = 0; i < N; ++i )
 			{
 				
-				int testpos, testvel;
+				int test, id;
 				
 				if (!log_synched)
 				{
 					// only generate in true-time
 					// otherwise, N may differ from the true number of items in the game.
-					testpos = item[i]->pos.x + item[i]->pos.y;
-					testvel = item[i]->vel.x + item[i]->vel.y;
+					test = item[i]->pos.x + item[i]->pos.y +
+								item[i]->vel.x + item[i]->vel.y;
+					id = item[i]->debug_id;
 				}
 
 
 				// exchange
-				log_int(testpos);
-
-				log_int(testvel);
+				log_int(test);
+				log_int(id);
 
 				// use the data in game-time
 				if (log_synched)
 				{
-					// also needs to be done for player 0
-					// only update/compare while you're in synched mode.
-					posval[i] = testpos;
-					velval[i] = testvel;
-					
 					if (p > 0)
 					{
-					// compare previous player to current player
-					if (testpos != posval[i])
-						tw_error("Differing position values between game items");
-
-					if (testvel != velval[i])
-						tw_error("Differing position values between game items");
+						// compare previous player to current player
+						if (test != val[i])
+							tw_error("Differing position/velocity values between game items, debug_id = %i", id);
 					}
+
+					// also needs to be done for player 0
+					// only update/compare while you're in synched mode.
+					val[i] = test;
+					
 				}
 
 			}

@@ -141,6 +141,15 @@ int Shot::isHomingMissile() {
 	return ((id & BASE_MASK3) == SPACE_HOMING_MISSILE);
 }
 
+void Shot::scale_vel(double scale)
+{
+	SpaceLocation::scale_vel(scale);
+	v *= scale;
+	range = d + (range - d) * scale;
+	// the remaining distance should also be scaled, otherwise it could live forever.
+}
+
+
 AnimatedShot::AnimatedShot(SpaceLocation *creator, Vector2 rpos, 
 	double oangle, double ov, double odamage, double orange, double oarmour, SpaceLocation *opos,
 	SpaceSprite *osprite, int ofcount, int ofsize, double relativity) 

@@ -66,6 +66,9 @@ trapShip::trapShip(SpaceLocation *creator, Ship *oship, int drainDelayRate, int 
 			break;
 		}
 	}
+
+	// for debugging purpose
+	debug_id = 80;
   }
 
 void trapShip::calculate()
@@ -132,6 +135,9 @@ quasiTrap::quasiTrap(Vector2 opos, double oangle, double trapInitialVelocity, do
     drainDelay = drainDelayRate;
     drainAmount = drainAmountof;
     accel = trapAccel;
+
+	// for debugging purpose
+	debug_id = 81;
   }
 
 void quasiTrap::calculate()
@@ -182,6 +188,9 @@ ArilouTrapperThrust::ArilouTrapperThrust(SpaceLocation *creator, double ox, doub
                                         0, 1, 25, LAYER_SHOTS)
   {
     sprite_index = get_index((follow->get_angle())+offset);
+
+	// for debugging purpose
+	debug_id = 82;
   }
 /*************************************
 **************Ship Class**************
@@ -258,6 +267,9 @@ ArilouTrapper::ArilouTrapper(Vector2 opos, double shipAngle, ShipData *shipData,
     normalRechargeAmount = recharge_amount;
     cloak = FALSE;
     cloak_frame = 0;
+
+	// for debugging purpose
+	debug_id = 83;
   }
 
 double ArilouTrapper::isInvisible() const

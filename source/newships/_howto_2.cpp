@@ -32,6 +32,9 @@ Ship(opos, shipAngle, shipData, shipCollideFlag)
 	weaponDamage   = get_config_int("Weapon", "Damage", 0);
 	// armour = how many hit points it absorbs, before it dies.
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
+
+	// for debugging purpose
+	debug_id = 4;
 };
 
 int HowTo_2::activate_weapon()

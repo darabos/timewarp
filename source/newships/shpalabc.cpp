@@ -193,6 +193,8 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 	sprite_index = iround(angle / (PI2/128)) + 32;
 	sprite_index &= 127;
 
+	// for debugging purpose
+	debug_id = 40;
 }
 
 void AlaryBC::calculate()
@@ -575,6 +577,8 @@ AlaryBCTorpedo::AlaryBCTorpedo(SpaceLocation *creator, double ox, double oy, dou
 //        explosionSample = data->sampleWeapon[1];
 
 	isblockingweapons = false;
+	// for debugging purpose
+	debug_id = 41;
 }
 
 void AlaryBCTorpedo::calculate()
@@ -677,6 +681,8 @@ AlaryBCWarhead::AlaryBCWarhead(SpaceLocation *creator, double ox, double oy, dou
 	explosionSample = data->sampleWeapon[2];
 	smoke_frame = 0;
 	play_sound(data->sampleWeapon[1], 64);
+	// for debugging purpose
+	debug_id = 42;
 }
 
 
@@ -740,6 +746,8 @@ AlaryBCTurret::AlaryBCTurret (AlaryBC *oship, double blah_or, double oa, double 
 	fire_frame[0] = fire_frame[1] = 10;
 
 	alive = true;
+	// for debugging purpose
+	debug_id = 43;
 }
 
 double AlaryBCTurret::get_aim(SpaceObject *tgt)
@@ -968,6 +976,8 @@ AlaryBCTShot::AlaryBCTShot(double ox, double oy, double oangle, double ov, doubl
 //	x = opos->normal_x() + oy*tx - ox*ty;
 //	y = opos->normal_y() + oy*ty + ox*tx;
 	pos = normalize(opos->normal_pos() + rotate(Vector2(-ox, oy), -PI/2+angle));
+	// for debugging purpose
+	debug_id = 44;
 }
 
 

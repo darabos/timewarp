@@ -22,7 +22,7 @@ class ArkanoidPincer : public SpaceObject {
   double angleSkew;
   ArkanoidPincer(ArkanoidPincerShip* ocreator, Vector2 opos, 
 	double oangle, SpaceSprite *osprite);
-  ~ArkanoidPincer(void);
+  virtual ~ArkanoidPincer(void);
   virtual void calculate();
   virtual void collide(SpaceObject *other);
   virtual void inflict_damage(SpaceObject *other);
@@ -91,7 +91,7 @@ public:
 
   public:
   ArkanoidPincerShip(Vector2 opos, double angle, ShipData *data, unsigned int code);
-  ~ArkanoidPincerShip(void);
+  virtual ~ArkanoidPincerShip(void);
   ArkanoidPincer* pincerL;
   ArkanoidPincer* pincerR;
   double jawAngle;
@@ -194,6 +194,9 @@ ArkanoidPincerShip::ArkanoidPincerShip(Vector2 opos, double angle, ShipData *dat
   baseV = 0;
   regrowthCount=0;
   //message.print(1500,2,"ArkanoidPincerShipCreator2");
+
+	// for debugging purpose
+	debug_id = 90;
 }
 
 ArkanoidPincerShip::~ArkanoidPincerShip(void) {
@@ -517,6 +520,9 @@ ArkanoidPincer::ArkanoidPincer(ArkanoidPincerShip *ocreator, Vector2 opos,
   if(creator)armour = creator->weaponArmour;
   isAlive = TRUE;
   //message.print(1500,13,"ArkanoidPincerCreate2");
+
+	// for debugging purpose
+	debug_id = 91;
 }
 
 ArkanoidPincer::~ArkanoidPincer(void) {

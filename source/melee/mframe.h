@@ -245,6 +245,7 @@ protected: public://aught to be protected, but we're lazy
 	virtual double handle_speed_loss(SpaceLocation *source, double normal);
 
 	virtual void change_vel(Vector2 dvel);
+	virtual void scale_vel(double scale);
 	virtual void change_pos(Vector2 dpos);
 	virtual void change_pos(double scale);
 
@@ -291,6 +292,8 @@ protected: public://aught to be protected, but we're lazy
 
 	void play_sound (SAMPLE *sample, int vol = 256, int freq = 1000); //plays a sound
 	void play_sound2 (SAMPLE *sample, int vol = 256, int freq = 1000);//like play_sound, only stops the previous sound
+
+	int debug_id;	// for debugging purpose
 };
 
 class SpaceObject : public SpaceLocation {

@@ -22,7 +22,7 @@ void HyperspaceColorEffects (RGB *c) {
 class HyperMelee : public NormalGame {
 	public:
 	double friction;
-	virtual void calculate(int time);
+	virtual void calculate();
 	virtual void init(Log *_log);
 	virtual void set_resolution (int screen_x, int screen_y);
 	virtual void init_objects();
@@ -81,21 +81,20 @@ void HyperMelee::set_resolution (int screen_x, int screen_y) {
 	return;
 	}
 
-void HyperMelee::calculate(int time) {
-	STACKTRACE
+void HyperMelee::calculate()
+{
+	STACKTRACE;
+
+	int time = frame_time;
 
 	int i;
-	for (i = 0; i < num_items; i += 1) {
-		if (item[i]->exists() && !item[i]->isPlanet()) {
-			item[i]->vel *= 1 - friction * time;
-			if (item[i]->isShot()) {
-				Shot *s = (Shot*)item[i];
-				s->v *= 1 - friction * time;
-				s->range = s->d + (s->range - s->d) * (1 - friction * time);
-				}
-			}
-		}
-	NormalGame::calculate();
+	for (i = 0; i < num_items; i += 1)
+	{
+		if (item[i]->exists() && !item[i]->isPlanet())
+			item[i]->scale_vel(1 - friction * time);
 	}
+
+	NormalGame::calculate();
+}
 
 REGISTER_GAME ( HyperMelee, "Melee in Hyperspace");

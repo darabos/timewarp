@@ -801,6 +801,7 @@ void play_net (bool ishost)
 		set_config_file("client.ini");
 		set_config_int("Network", "Nhumans", Nplayers);
 		set_config_int("Network", "Nbots", Nbots);
+		set_config_string("Network", "GameName", temp_gamename);
 		
 		p_local = 0;		// IMPORTANT TO SET THIS !!
 
@@ -924,8 +925,8 @@ void play_net (bool ishost)
 		// note, that tmp can be changed by the menu, so that it points to a different string?!
 
 		// user menu: enter adress and port number
-		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
-			return;
+//		if (connect_menu(&videosystem.window, &tmp, &port) == -1) 
+//			return;
 
 		// saving address
 		set_config_string("Network", "Address", tmp);

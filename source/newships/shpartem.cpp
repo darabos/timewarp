@@ -65,6 +65,9 @@ ArchTempest::ArchTempest(Vector2 pos, double angle, ShipData *data, unsigned int
   specialDamage   = get_config_int("Special", "Damage", 0);
   specialArmour   = get_config_int("Special", "Armour", 0);
   specialTurnRate = scale_turning(get_config_float("Special", "TurnRate", 0));
+
+	// for debugging purpose
+	debug_id = 100;
 }
 
 void ArchTempest::calculate()
@@ -278,6 +281,9 @@ TempestWave::TempestWave(Vector2 pos, double oangle, double ov,
 	tempest = oship;
 	wave_range = false;
 
+
+	// for debugging purpose
+	debug_id = 101;
 }
 
 void TempestWave::calculate()

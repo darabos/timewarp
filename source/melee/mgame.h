@@ -7,6 +7,8 @@
 extern int random_seed[2];
 extern int interpolate_frames;
 
+extern bool detailed_network_check;
+
 void idle_extra(int time = 5);	// adding extra network-share to avoid total standstill which may happen, very occasionally...
 
 class GameType {
