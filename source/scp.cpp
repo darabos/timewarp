@@ -1249,7 +1249,6 @@ void edit_fleet(int player) {STACKTRACE
     char fleetCostString[80] = "";
     char maxFleetCostString[80] = "";
     bool availableFleetDirty = true;
-    
 
     static Fleet::SortingMethod sortMethod1 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT,
         sortMethod2 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT;
@@ -1274,12 +1273,6 @@ void edit_fleet(int player) {STACKTRACE
     
 	// the reference_fleet is used in the list in a hardcoded way, so over"load" it
     Fleet *old_reference_fleet = reference_fleet;
-
-	//Fleet new_ref_fleet(*reference_fleet);	// make a copy
-	//reference_fleet = &new_ref_fleet;	// overload it. Now you can mess with it as you like
-    
-
-   //fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags |= D_SELECTED;	// don't override the D_EXIT
 
 	do {
 		sprintf(title_str, fleet->getTitle());
@@ -1343,8 +1336,8 @@ void edit_fleet(int player) {STACKTRACE
                     break;
                 }
             }
+            reference_fleet->Sort( sortMethod1, sortAscending1 );
             fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].flags |= D_DIRTY;
-
         }/**/
 
 		fleetRet = tw_do_dialog(NULL, fleetDialog, -1);
@@ -1359,38 +1352,8 @@ void edit_fleet(int player) {STACKTRACE
            case FLEET_DIALOG_TW_OFFICIAL_TOGGLE:
            case FLEET_DIALOG_TW_EXP_TOGGLE:
                availableFleetDirty = true;
-			   /*{
-			   
-				   int i;
-				   if (fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags & D_SELECTED)
-				   {
-					   // add the ships to the list
-					   i = 0;
-					   while (i < old_reference_fleet->getSize())
-					   {
-						   ShipType *st = old_reference_fleet->getShipType(i);
-						   if (st->origin == SHIP_ORIGIN_SC1)
-							   reference_fleet->addShipType(st);
-
-						   ++i;
-					   }
-
-				   } else {
-					   
-					   // remove the ships from the list:
-					   i = 0;
-					   while (i < reference_fleet->getSize())
-					   {
-						   ShipType *st = reference_fleet->getShipType(i);
-						   if (st->origin == SHIP_ORIGIN_SC1)
-							   reference_fleet->clear_slot(i);
-						   else
-							   ++i;
-					   }
-				   }
-				   
-			   }*/
 			   break;
+
            case FLEET_DIALOG_SORTBY_TEXT1: break;
            case FLEET_DIALOG_SORTBY_BUTTON1: 
                sortMethod1 = Fleet::cycleSortingMethod(sortMethod1);
