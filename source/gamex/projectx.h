@@ -6,13 +6,15 @@
 
 
 // this manipulates the *scp pointer (loads/ unloads data ... real nasty).
-extern void play_fg(DATAFILE **scp, int scpguimusic);
+extern void play_fg(DATAFILE **scp, int scpguimusic, const char *id = "normal");
+
 
 
 
 class ProjectX : public GameProject
 {
 public:
+	const char *startoption;
 
 	// you can use this to add the first gametype, or initialize some data as well.
 	// should be overloaded for each project.

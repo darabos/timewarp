@@ -49,12 +49,17 @@ void PlayerFleet::add(const char *id)
 
 void PlayerFleet::config(bool option)
 {
+	int i;
+
 	config_read = option;
 
 	section = "Fleet";
 	conf("N", N);
 
-	int i;
+	if (option == CONFIG_READ)
+		for (i = 0; i < N; ++i)
+			fr[i] = new PlayerFleetRec("none");
+
 	for ( i = 0; i < N; ++i )
 	{
 		confnum("crew", i, fr[i]->crew);
@@ -65,10 +70,11 @@ void PlayerFleet::config(bool option)
 
 
 
+
 void PlayerInfo::config(char *filename, bool option)
 {
 	//configfilename = filename;
-	set_config_file(filename);
+	set_conf(filename);
 
 	config_read = option;
 	section = 0;

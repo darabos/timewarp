@@ -19,10 +19,13 @@ REGISTER_FILE
 
 #include "general/sprites.h"
 
+#include "../other/configrw.h"
+
 
 static const int BlistLen = 128;
 
 
+static GameAliendialog *dgame;
 
 
 /** \brief add a ship to the player fleet
@@ -38,6 +41,33 @@ lua_func(addship)
 lua_ret
 
 
+/** \brief toggle state of a certain node in a active dialogue.
+id = the node identifier
+*/
+
+
+lua_func(enable)
+{
+	Dialo *root = dgame->firstdialo;
+
+	arg_string(id);
+
+	Dialo *d;
+	d = root->findnode(id);
+	
+	if (d)
+		d->enable();
+
+}
+lua_ret
+
+/*
+lua_func(disable)
+{
+	arg_string(id);
+}
+lua_ret
+*/
 
 
 
@@ -79,8 +109,17 @@ int GameAliendialog::Nlines(char *text)
 				++n;
 		}
 
-		if (text[i] == '<' && strcmp(&text[i], "<lua>") == 0)
-			break;
+		if (text[i] == '<')
+		{
+			if (strncmp(&text[i], "<lua>", 5) == 0)
+			{
+				if (i > 0)
+					if (text[i-1] == '\n')
+						--n;		// you don't need to show the <lua> remark
+
+				break;
+			}
+		}
 
 		++i;
 	}
@@ -132,6 +171,8 @@ void GameAliendialog::init_menu()
 
 void GameAliendialog::init()
 {
+	dgame = this;
+
 	// the TTF library
 //	antialias_init(0);
 
@@ -226,8 +267,24 @@ void GameAliendialog::init()
 
 	// dialo should be defined BEFORE the game is initialized by a call to set_colony
 	initBlist(dialo);
+
 }
 
+
+
+char constr_savename_return[512];
+char *construct_savename(char *savename, char *ext)
+{
+	char *fname = constr_savename_return;
+
+	strcpy(fname, target_dir);
+	strcat(fname, "/");
+	strcat(fname, savename);
+	strcat(fname, ".");
+	strcat(fname, ext);
+
+	return fname;
+}
 
 void GameAliendialog::quit()
 {
@@ -243,6 +300,9 @@ void GameAliendialog::quit()
 	GameBare::quit();
 
 	lua_close(L);
+
+//	FILE *outfile = savefile("...../... .dialogstate");
+//	firstdialo->save_state(outfile);
 
 	// stop the ttf
 //	antialias_exit();
@@ -372,6 +432,14 @@ void GameAliendialog::calculate()
 				// the alien-talk node.
 				if (dialo->mother)
 				{
+					// and there is other stuff to do ... if the dialog has some
+					// commands, then we'll need to execute those ...
+					exec_commands(dialo_done);
+					// do this before initblist, because of ... well, state change
+					// otherwise, a node which has been altered, doesn't show up correctly
+					// in the option-list (cause altering it after initblist makes the
+					// alteration take no effect --> must be done before initblist).
+
 					// disable the question node, and go back
 					// (a bit simple ... should really only be done after checking that
 					// all sub-questions are disabled already - but this is a simple
@@ -385,11 +453,11 @@ void GameAliendialog::calculate()
 					// since you return, that means that the previous
 					// node has already been "done"
 					showline_num = showline_Nlines;
+					
+					char *txt = showline(dialo->T, showline_num);
+					A->set_textinfo( txt, strlen(txt) );
 
 
-					// and there is other stuff to do ... if the dialog has some
-					// commands, then we'll need to execute those ...
-					exec_commands(dialo_done);
 				}
 			}
 		}
@@ -498,6 +566,11 @@ void GameAliendialog::set_dialog(char *fname)
 char playername[64];
 char shipname[64];
 
+/** \brief Stores relation between an look-up string and a value-string (a simple map system),
+which is used to replace stuff in dialogues with strings stored in the game (eg ship name and
+player name).
+*/
+
 struct fgNamePtr
 {
 	char id[64];
@@ -530,7 +603,7 @@ void replace_text(char *txt, char *rem, char *ins)
 }
 
 
-/** \brief Scans for special <identifiers> in the text, and replaces those with game-content.
+/** \brief Scans for special <identifiers> (fgnameptr) in the text, and replaces those with game-content.
 
 Currently the following commands are recognized:
 <player>  inserts player name

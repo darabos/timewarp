@@ -65,6 +65,10 @@ struct Dialo
 	Dialo *mother;			// the mother
 
 	void discard_branches();
+
+	Dialo *findnode(const char *id);	// finds the node with the specified id; returns 0 on failure.
+	void save_state(FILE *f);
+	void read_state(FILE *f);
 };
 
 

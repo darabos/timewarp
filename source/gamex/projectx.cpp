@@ -19,7 +19,7 @@ REGISTER_FILE
 
 
 
-void play_fg(DATAFILE **scp, int scpguimusic)
+void play_fg(DATAFILE **scp, int scpguimusic, const char *id)
 {
 	// destroy the gui
 	bool gui_stuff = false;
@@ -34,7 +34,9 @@ void play_fg(DATAFILE **scp, int scpguimusic)
 	// the new "thing", for the "big game"
 	ProjectX *px;
 	px = new ProjectX();
+	px->startoption = id;
 	px->play();
+
 	//nm = 1;
 	delete px;
 	
@@ -47,11 +49,27 @@ void play_fg(DATAFILE **scp, int scpguimusic)
 }
 
 
+char new_init_dir[512];
+char new_source_dir[512];
+char new_target_dir[512];
+
 void ProjectX::init()
 {
 	GameProject::init();
 
-	playerinfo.config("gamex/player/playerinfo.ini", CONFIG_READ);
+	// setup directories for default/ loading/ saving.
+	strcpy(new_init_dir, "gamex");
+	init_dir = new_init_dir;
+
+	strcpy(new_source_dir, "gamex");
+	source_dir = new_source_dir;
+
+	strcpy(new_target_dir, "gamex"); // /save/save01");
+	target_dir = new_target_dir;
+
+
+
+	playerinfo.config("player/playerinfo.ini", CONFIG_READ);
 
 	// initialize races info
 	racelist.readracelist();
@@ -68,36 +86,49 @@ void ProjectX::init()
 	// leave solar view, you enter hyper space.
 
 
-	/*
-	add( new GameHyperspace() );
-	
-	if (playerinfo.istar >= 0)
+	if (strcmp(startoption, "normal") == 0)
+	{
+		add( new GameHyperspace() );
+		
+		if (playerinfo.istar >= 0)
+			add( new GameSolarview() );
+		
+		if (playerinfo.iplanet >= 0)
+			add( new GamePlanetview() );
+	}
+		
+		
+		
+
+	if (strcmp(startoption, "starmap") == 0)
+		add( new GameStarmap() );
+
+	if (strcmp(startoption, "solar") == 0)
 		add( new GameSolarview() );
 
-	if (playerinfo.iplanet >= 0)
+	if (strcmp(startoption, "planet") == 0)
 		add( new GamePlanetview() );
-//		*/
-		
-		
-		
 
-//	add( new GameStarmap() );
-//	add( new GameSolarview() );
-//	add( new GamePlanetview() );
-//	add( new GamePlanetscan() );
-//	add( new GameMelee() );
-//	add( new GameDialogue() );		// the editor
-	add( new GameAliendialog() );	// the alien interface -- need additional info, can't just load like this.
-//	add( new GameTriggerEdit() );
-//	add( new GameTriggerEdit() );
-	
+	if (strcmp(startoption, "scan") == 0)
+		add( new GamePlanetscan() );
+
+	if (strcmp(startoption, "melee") == 0)
+		add( new GameMelee() );
+
+	// the dialog editor
+	if (strcmp(startoption, "editor") == 0)
+		add( new GameDialogue() );
+
+	// the alien dialog interface
+	if (strcmp(startoption, "dialog") == 0)
+		add( new GameAliendialog() );
 }
 
 
 void ProjectX::quit()
 {
 	//playerinfo.write();
-	playerinfo.config("gamex/player/playerinfo.ini", CONFIG_WRITE);
+	playerinfo.config("player/playerinfo.ini", CONFIG_WRITE);
 
 	// save edited races info (only saves changes)
 	racelist.writeracelist();

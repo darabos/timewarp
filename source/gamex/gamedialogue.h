@@ -21,7 +21,7 @@ class GameAliendialog : public GameBare
 
 	FileStore *fs;
 
-	Dialo *dialo, *firstdialo, *dialo_selected[32];
+	Dialo *dialo, *dialo_selected[32];
 
 	char *Blist[maxbranches];
 	int branchindex[maxbranches];
@@ -63,6 +63,8 @@ public:
 	char *race_id;
 	void set_colony(RaceColony *rc);
 	void set_dialog(char *fname);
+
+	Dialo *firstdialo;
 };
 
 

@@ -596,3 +596,68 @@ int Dialo::get_branch()
 	else
 		return 0;
 }
+
+
+
+
+
+/** \brief recursively finds the node with the specified id; returns 0 on failure.
+*/
+
+Dialo *Dialo::findnode(const char *findid)
+{
+	if (strcmp(id, findid) == 0)
+		return this;
+
+	int i;
+	Dialo *d = 0;
+	for ( i = 0; i < Nbranches; ++i )
+	{
+		d = branch[i]->findnode(findid);
+		if (d)
+			break;
+	}
+
+	return d;
+}
+
+
+
+
+/** \brief recursively saves the dialog states
+*/
+
+void Dialo::save_state(FILE *f)
+{
+	if (!f)
+		return;
+
+	int i = fwrite(&state, 1, sizeof(int), f);
+	
+	if (!i)
+		return;
+
+	for ( i = 0; i < Nbranches; ++i )
+		branch[i]->save_state(f);
+}
+
+
+/** \brief recursively reads (and overwrites) the dialog states
+*/
+
+void Dialo::read_state(FILE *f)
+{
+	if (!f)
+		return;
+
+	int i = fread(&state, 1, sizeof(int), f);
+	
+	if (!i)
+		return;
+
+	for ( i = 0; i < Nbranches; ++i )
+		branch[i]->read_state(f);
+}
+
+
+
