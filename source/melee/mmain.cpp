@@ -323,15 +323,24 @@ NormalGame::~NormalGame() {STACKTRACE
 	}
 
 static int kill_all_delay_counter = 0;
-void NormalGame::calculate() {STACKTRACE
+void NormalGame::calculate()
+{
+	STACKTRACE;
+
 	Game::calculate();
+
 	if (next_choose_new_ships_time <= game_time)
 	{
-		choose_new_ships();
-		next_choose_new_ships_time = game_time + 24*60*60*1000;
-		
 		if (check_end())
+		{
 			handle_end();
+			//return;
+		}
+		else
+		{
+			choose_new_ships();
+			next_choose_new_ships_time = game_time + 24*60*60*1000;
+		}
 		
 	}
 
@@ -624,6 +633,9 @@ void TeamIndicator::animate_predict(Frame *space, int time)
 
 
 
+
+
+
 bool NormalGame::player_isalive(int i)
 {
 	return (player_control[i]->ship || player_fleet[i]->getSize() > 0);
@@ -647,38 +659,102 @@ bool NormalGame::check_end()
 }
 
 
-void NormalGame::handle_end()
+int NormalGame::local_player()
 {
-	// dunno if this is ok in a networked game.
+	int i;
+	for ( i = 0; i < num_players; ++i )
+		if (is_local(player_control[i]->channel))
+			return i;
+	return -1;
+}
 
-	// find the local player
+int NormalGame::log_totalsize()
+{
+	int test = 0;
 	int i;
 	for ( i = 0; i < num_players; ++i )
 	{
-		if (player_control[i]->channel == channel_server &&
-			strcmp(player_control[i]->getTypeName(), "Keyboard/Joystick") == 0)
-			break;
+		int k = player_control[i]->channel;
+		test += game->log->log_len[k] - game->log->log_pos[k];
 	}
 
-	if (i == num_players)	// error?
-		i = 0;
+	return test;
+}
 
-	char *endmessage = 0;
-	if (player_isalive(i))
-		endmessage = "Victory";
-	else
-		endmessage = "Game Over";
 
-	// in a networked game, I suppose just the host should have this option. How to do that ??
-	int ichoice = tw_alert(endmessage, "&QUIT", "&RESTART");
+void NormalGame::handle_end()
+{
+	// pause all players, so that networking sends are only within this routine !!
+	pause();
 
-	if (ichoice == 1)
+	int i;
+	// I guess, you've to make sure, the log-buffer is empty, before writing/reading
+	// values to/from it ..
+
+	
+	if (log_totalsize() > 0)
+		tw_error("Log isn't empty (a)");
+
+	// I suppose, each player is making/ has made such a choice ...
+	int choices[16];
+	int k;
+	for ( k = 0; k < num_players; ++k )
 	{
-		quit(endmessage);
+		int ichoice = 9;
+		
+		// channel_server is always the local channel ?
+		if (is_local(player_control[k]->channel))
+		{
+			char *endmessage;
+			if (player_isalive(k))
+				endmessage = "Victory";
+			else
+				endmessage = "Game Over";
+			
+			char tmp[512];
+			sprintf(tmp, "%s  num = %i  channel = %i", endmessage, k, player_control[k]->channel);
+			
+			ichoice = tw_alert(tmp, "&QUIT", "&RESTART");
+		}
+		
+		//log_int(player_control[k]->channel, ichoice);
+		
+		choices[k] = ichoice;
+
+		// networking
+		share(player_control[k]->channel, &choices[k]);
 	}
+
+	// networking
+	share_update();
+
+
+	if (log_totalsize() > 0)
+		tw_error("Log isn't empty (b)");
+	
+
+	// check if all the players want to restart, or quit, if not, give a warning and quit
+	k = 0;
+	for ( i = 0; i < num_players; ++i )
+		if (k += choices[i])
+
+	// disagreement
+	if ( k != 1*num_players && k != 2*num_players )
+	{
+		// give a warning to the local player
+		if (choices[ local_player() ] == 2)
+			tw_alert("Someone aborted", "&Continue");
+
+		quit("none");
+	}
+	// agreement on quitting
+	else if ( k == 1*num_players )
+	{
+		quit("none");
+	}
+	// agreement on restarting
 	else
 	{
-		int i;
 		char buffy[512];
 		for ( i = 0; i < num_players; ++i )
 		{
@@ -695,7 +771,10 @@ void NormalGame::handle_end()
 		}
 	}
 
+	unpause();
 }
+
+
 
 
 REGISTER_GAME(NormalGame, "Melee")

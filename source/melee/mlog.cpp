@@ -312,3 +312,52 @@ void PlaybackLog::set_all_directions( char direction ) {
 	tw_error("set_all_directions - your not supposed to do that in a demo playback!");
 	return;
 }
+
+
+
+
+static int Nshare = 0;
+static int share_channel[512];
+static int share_size[512];
+static void *share_address[512];
+
+
+void share_buffer(int channel, void *value, int size)
+{
+	share_channel[Nshare] = channel;
+	share_address[Nshare] = value;
+	share_size[Nshare] = size;
+
+	game->log->buffer(share_channel[Nshare], share_address[Nshare], share_size[Nshare]);
+	game->log->flush();
+
+	++Nshare;
+}
+
+/** \brief Share an integer value at a memory location across the network. This is pushed
+on a stack, and has to be read afterwards. Note that no other networking operation should
+occur between the share and share_update(). It uses the global game->log. NOTE, that there
+is no "intel_buffering" done, so it's probably a problem between different machine types.
+*/
+
+void share(int channel, int *value)
+{
+	share_buffer(channel, value, sizeof(int));
+}
+
+/** \brief Retrieves the values that were sent for sharing, and writes the values
+to the proper memory locations.
+*/
+void share_update()
+{
+	game->log->listen();
+
+	int i;
+	for ( i = 0; i < Nshare; ++i )
+	{
+		game->log->unbuffer(share_channel[i], share_address[i], share_size[i]);
+	}
+
+	Nshare = 0;
+
+}

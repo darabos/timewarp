@@ -57,6 +57,8 @@ class NormalGame : public Game {
 	bool check_end();
 	void handle_end();
 	bool player_isalive(int i);
+	int local_player();
+	int log_totalsize();
 
 	};
 

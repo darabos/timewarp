@@ -63,4 +63,8 @@ class PlaybackLog : public Log { //Logging system, usefull for networking & demo
 	virtual void set_all_directions (char direction);
 	};
 
+void share(int channel, int *value);
+void share_update();
+
+
 #endif  // __MLOG_H__
