@@ -380,7 +380,7 @@ ESC goes back to previous
 
 
 Section: Confgure Local Players ********************************************
-Goals: Declares which players are available for a given instance of a game; player availability and options may vary by the selected gametype. Some common options:
+Goals: Declares which players are available for a given instance of a game; player availability and options may vary by the selected gametype. Some options the should appear for some gametypes:
    * declare the player as playing
    * for each player, set the starting team
    * for each player, set his controls
