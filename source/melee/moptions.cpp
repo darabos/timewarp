@@ -318,6 +318,9 @@ void video_menu (Game *game) {STACKTRACE
 	return;
 }
 
+int handleSoundSliderChange(void *dp3, int d2);
+int handleMusicSliderChange(void *dp3, int d2);
+
 enum {
 	DIALOG_AUDIO_BOX = 0,
 	DIALOG_AUDIO_OK,
@@ -333,9 +336,9 @@ DIALOG audio_dialog[] = {
   { d_button_proc,     100,  60,  80,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"OK", NULL, NULL },
   { d_button_proc,     200,  60,  80,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Cancel", NULL, NULL },
   { d_check_proc,      40,  110,  160,  20,   255,  0,    0,    0,       0,    0,    (void *)"Sound Volume ", NULL, NULL },  
-  { d_slider_proc,     205, 110,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, NULL, NULL },
+  { d_slider_proc,     205, 110,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, handleSoundSliderChange, NULL },
   { d_check_proc,      40,  140,  160,  20,   255,  0,    0,    0,       0,    0,    (void *)"Music Volume ", NULL, NULL },  
-  { d_slider_proc,     205, 140,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, NULL, NULL },
+  { d_slider_proc,     205, 140,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, handleMusicSliderChange, NULL },
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 	};
@@ -364,6 +367,25 @@ void audio_menu (Game *game) {STACKTRACE
 	sound.save();
 	};
 
+int handleSoundSliderChange(void *dp3, int d2) {
+	sound.set_volumes(
+		audio_dialog[DIALOG_AUDIO_SOUND_VOL].d2,
+		audio_dialog[DIALOG_AUDIO_MUSIC_VOL].d2,
+		audio_dialog[DIALOG_AUDIO_SOUND_ON].flags & D_SELECTED,
+		audio_dialog[DIALOG_AUDIO_MUSIC_ON].flags & D_SELECTED
+		);
+    return 0;
+}
+
+int handleMusicSliderChange(void *dp3, int d2) {
+	sound.set_volumes(
+		audio_dialog[DIALOG_AUDIO_SOUND_VOL].d2,
+		audio_dialog[DIALOG_AUDIO_MUSIC_VOL].d2,
+		audio_dialog[DIALOG_AUDIO_SOUND_ON].flags & D_SELECTED,
+		audio_dialog[DIALOG_AUDIO_MUSIC_ON].flags & D_SELECTED
+		);
+    return 0;
+}
 
 
 
