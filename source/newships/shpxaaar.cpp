@@ -9,7 +9,7 @@ class XaaarShot;
 
 class Xaaar : public Ship
 {
-	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
+	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, weaponOffs;
 	XaaarShot *xs1, *xs2;
 	
 public:
@@ -49,6 +49,7 @@ Ship(opos,  shipAngle, shipData, code)
 	
 	weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
 	weaponDamage   = get_config_int("Weapon", "Damage", 0);
+	weaponOffs     = get_config_float("Weapon", "ReleaseAngle", 0);
 
 	xs1 = 0;
 	xs2 = 0;
@@ -76,7 +77,7 @@ int Xaaar::activate_weapon()
 	// let the bombs fly !!
 	dpos = bombpos(1);
 
-	aoffs = 0.05 * PI;
+	aoffs = weaponOffs * PI / 180;
 
 	xs1 = new XaaarShot( this, dpos, aoffs,
 			weaponVelocity, weaponDamage,
@@ -174,8 +175,10 @@ SpaceObject(omother, omother->pos+rpos, omother->angle+rangle, osprite)
 
 	layer = LAYER_SHOTS;
 
+	mass = 0;	// don't collide
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
+	//collide_flag_sameship = ALL_LAYERS;
 }
 
 
@@ -199,7 +202,7 @@ void XaaarShot::calculate()
 
 int XaaarShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	if (!mother->fire_special)
+	if (!mother->fire_special && source != mother)
 	{
 		state = 0;
 	}
@@ -208,6 +211,9 @@ int XaaarShot::handle_damage(SpaceLocation *source, double normal, double direct
 
 void XaaarShot::inflict_damage(SpaceObject *other)
 {
+	if (other == mother)
+		return;
+
 	SpaceObject::inflict_damage(other);
 
 	// test if this bomb can be destroyed.
