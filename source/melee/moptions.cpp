@@ -413,6 +413,8 @@ OPTIONS_DIALOG_STARS_SLIDER,
 OPTIONS_DIALOG_RELATIVITY_TEXT,
 OPTIONS_DIALOG_RELATIVITY_SLIDER,
 OPTIONS_DIALOG_FRIENDLY_FIRE,
+OPTIONS_DIALOG_HIDE_CLOAKERS,
+OPTIONS_DIALOG_3DPLANET,
 //OPTIONS_DIALOG_TURBO_TEXT
 //OPTIONS_DIALOG_TURBO_SLIDER
 //OPTIONS_DIALOG_TURBOF4_TEXT
@@ -446,7 +448,9 @@ DIALOG old_optionsDialog[] =
    { d_slider_proc,   212, 56,  160, 16,  255, 0,   0,    0,      255, 0,   NULL,                       NULL, NULL          },
    { d_text_proc,     40,  94,  160, 20,  255, 0,   0,    0,      0,   0,   (void*)"Shot Relativity",   NULL, NULL          },
    { d_slider_proc,   212, 96,  160, 16,  255, 0,   0,    0,      1000,0,   NULL,                       NULL, NULL          },
-   { d_check_proc,    60,  144, 184, 20,  255, 0,   0,    0,      1,   0,   (void*)"Friendly Fire",     NULL, NULL          },
+   { d_check_proc,    40,  144, 184, 20,  255, 0,   0,    0,      1,   0,   (void*)"Friendly Fire",     NULL, NULL          },	//OPTIONS_DIALOG_FRIENDLY_FIRE,
+   { d_check_proc,    40,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Camera hides cloakers",     NULL, NULL  },	//OPTIONS_DIALOG_HIDE_CLOAKERS,
+   { d_check_proc,    40,  190, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"3D Planet",         NULL, NULL          },	//OPTIONS_DIALOG_3DPLANET,
    { d_text_proc,     292, 244, 120, 20,  255, 0,   0,    0,      0,   0,   (void *)"View",             NULL, NULL          },
    { d_list_proc,     284, 264, 180, 90,  255, 0,   0,    0,      0,   0,   (void *) viewListboxGetter, NULL, NULL          },
    { d_button_proc,   400, 60,  80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"OK",               NULL, NULL          },
@@ -493,8 +497,18 @@ void change_options() {STACKTRACE
 	else
 		old_optionsDialog[OPTIONS_DIALOG_FRIENDLY_FIRE].flags = 0;
 
+	if (get_config_int("View", "CameraHidesCloakers", 1)) 
+		old_optionsDialog[OPTIONS_DIALOG_HIDE_CLOAKERS].flags = D_SELECTED;
+	else
+		old_optionsDialog[OPTIONS_DIALOG_HIDE_CLOAKERS].flags = 0;
 
 	set_config_file("client.ini");
+
+	if (get_config_int("Planet", "PlanetDimension", 2) == 3) 
+		old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags = D_SELECTED;
+	else
+		old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags = 0;
+
 	i = get_view_num ( get_config_string ( "View", "View", NULL ) );
 	if (i == -1) i = 0;
 	old_optionsDialog[OPTIONS_DIALOG_VIEW].d1 = i;
@@ -522,6 +536,12 @@ void change_options() {STACKTRACE
 	set_config_int("Rendering", "AA_Mode", aa);
 	set_tw_aa_mode(aa);
 
+	if (old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags == D_SELECTED)
+		i = 3;
+	else
+		i = 2;
+	set_config_int("Planet", "PlanetDimension", i);
+
 	View *v = get_view(
 		view_name[old_optionsDialog[OPTIONS_DIALOG_VIEW].d1],
 		NULL
@@ -544,6 +564,11 @@ void change_options() {STACKTRACE
 		i = 1;
 	else i = 0;
 	twconfig_set_int("/cfg/server.ini/game/friendlyfire", i);
+
+	if (old_optionsDialog[OPTIONS_DIALOG_HIDE_CLOAKERS].flags & D_SELECTED) 
+		i = 1;
+	else i = 0;
+	twconfig_set_int("/cfg/server.ini/view/camerahidescloakers", i);
 
 	return;
 	}
