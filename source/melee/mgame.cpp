@@ -689,6 +689,10 @@ void Game::compare_checksums()
 		int i;
 		for ( i = 1; i < num_network; ++i )	// note, 0==server.
 		{
+			// this checks for "null" channels...
+			if (glog->log_dir[channel_network[i] + CHECKSUM_CHANNEL] == 0)
+				continue;
+
 			client_checksum[i] = local_checksum;
 			log_char(client_checksum[i], channel_network[i] + CHECKSUM_CHANNEL);
 
@@ -1929,7 +1933,7 @@ void Game::disconnect()
 {
 	// THIS IS (more or less) THE OLD STUFF
 	// it'll stop all connected games as well...
-	if (log_synched)
+	if (false && log_synched)
 	{
 		game->quit("none");
 		tw_alert("Stopped", "&Ok");
@@ -1974,39 +1978,54 @@ PlayerInformation *Game::new_player()
 
 void Game::remove_player(int i)
 {
-	// THIS DESYNCHES THE GAME !!
-
 	message.print(1500, 15, "removing player[%i]", i);
 	message.animate(0);
+
 	// if you're the local player, simply quit the game
 	if (is_local(player[i]->channel))
 	{
-		//game->quit("quit - Game aborted from keyboard");
-//		player[i]->control->select_ship(0, "none");
+		game->quit("none");
+		//tw_alert("Stopping", "&Ok");
+
+		// remove the connections to all other players
+		int k;
+		for ( k = 0; k < num_network; ++k )
+			((NetLog*)glog)->rem_conn(k);
 	}
 
-	player[i]->status = 0;	// tell the game, that this player is gone ?!
-	// not really used.
 
-//	player[i]->die();
-	message.print(1500, 14, "frame[%i] time[%i]", frame_number, game_time);
+
+	player[i]->status = 0;	// tell the game, that this player is gone ?!
+
 	
 	// Disable that players buffered channel ... (but keep the direct channel)
-	int ch = player[i]->channel + _channel_buffered;
+	// cause it's still in the networking part ...
+	int ch;
+	int k;
+
+	ch = player[i]->channel + _channel_buffered;
 	glog->log_dir[ch] = 0;
 
 	// remove the players network-connection from the network... which network conn.
-	// goes to that player... ?
-	int k;
-	k = channel_conn_recv[ player[i]->channel + _channel_buffered ];
-	((NetLog*)glog)->rem_conn(k);
-	//-- num_network;
-	//channel_network[k] = channel_network[num_network];
+	// goes to that player... well, that's analyzed on-the-fly by the packet
+	// receiving algorithm (most channels are only owned by 1 player, on 1 network
+	// connection)
+	k = channel_conn_recv[ ch ];
+	message.print(1500, 14, "REMOVE channel[%i] conn[%i]", ch, k );
+	message.animate(0);
+	if (p_local == 0) readkey();
+
+	if (k >= 0)
+		((NetLog*)glog)->rem_conn(k);
 
 	// remove the player from the player-list, so that its data won't be used anymore...
 	-- num_players;
 	player[i] = player[num_players];
 
+
+
+
+	message.print(1500, 14, "frame[%i] time[%i]", frame_number, game_time);
 }
 
 

@@ -726,5 +726,6 @@ void NetLog::reset()
 void NetLog::rem_conn(int conn)
 {
 	net_status[conn] = false;
+	net[conn].disconnect();
 }
 

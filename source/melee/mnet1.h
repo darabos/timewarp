@@ -47,7 +47,7 @@ class LagHandler {
 };*/
 
 
-const int max_connections = 20;
+const int max_connections = 100;
 // note, that I'll assume that (channel/4) equals the connection number.
 
 class NetLog : public Log { //Logging system, useful for networking & demo recording/playback

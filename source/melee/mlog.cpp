@@ -545,6 +545,9 @@ void share_buffer(int player, void *value, int num, int size, share_types st)
 	//game->log->flush();
 
 	++Nshare;
+
+	message.print(1500, 15, "Nshare[%i] size[%i]", Nshare, share_num[Nshare-1] * share_size[Nshare-1]);
+	message.animate(0);
 }
 
 /** \brief Share an integer value at a memory location across the network. This is pushed

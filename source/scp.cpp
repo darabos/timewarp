@@ -759,6 +759,9 @@ void play_net( bool ishost )
 	log->init();
 	set_global(log);	// this sets glog
 
+	log_set_nofake();	// perhaps some (global) settings were still present
+	log_resetmode();	// after leaving the last game ... (duh!)
+
 	// resets the channels to their default values ; that's needed, cause if there are
 	// bots in the game, channel values can be set to non-human values (-1)
 	init_channels();
@@ -838,7 +841,7 @@ void play_net( bool ishost )
 		int n;
 		int val;
 		char *addr = 0;
-		int Lstr;
+//		int Lstr;
 
 		for ( n = 1; n < Nplayers; ++n )	// exclude the local player from this.
 		{
@@ -865,10 +868,13 @@ void play_net( bool ishost )
 			share(-1, &val);
 			share(-1, &n);
 			
+			/*
 			Lstr = strlen(addr) + 1;
 			share(-1, &Lstr);
 			share_update();
 			share(-1, addr, Lstr);
+			*/
+			share_string(addr);
 			
 			share_update();
 
@@ -877,21 +883,23 @@ void play_net( bool ishost )
 
 		}
 
-		if (addr)
-		{
-		int kstart = 0;
+		addr = "signalstart";
+		int kstart = 0;		// this signals the end for the client.
+
 		share(-1, &val);
 		share(-1, &kstart);
 		
+		/*
 		Lstr = strlen(addr) + 1;
 		share(-1, &Lstr);
 		share_update();
 		share(-1, addr, Lstr);	
 		share_update();
+		*/
+		share_string(addr);
 
 		message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, kstart, addr);
 		message.animate(0);
-		}
 
 
 		// you're the host, so you determine the gametype !
@@ -936,7 +944,7 @@ void play_net( bool ishost )
 		
 		// receive some data on channel_init
 		
-		int Lstr;
+//		int Lstr;
 		int val = -1;
 		message.print(1500, 14, "SHARING(receiving)");
 		message.animate(0);
@@ -950,10 +958,13 @@ void play_net( bool ishost )
 			share(-1, &val);
 			share(-1, &p);	// you receive your own (local) player number
 			
+			/*
 			share(-1, &Lstr);
 			share_update();
 			share(-1, addr, Lstr);
 			share_update();
+			*/
+			share_string(addr);
 
 			message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, p, addr);
 			message.animate(0);
@@ -1000,9 +1011,25 @@ void play_net( bool ishost )
 		//gname = detect_gametype(log);
 	}
 
+	// note that the server has "local" settings which overwrite other players' setting
+	num_network = Nplayers;
+	num_bots = Nbots;
+
+	message.print(1500, 13, "numnet [%i]", num_network);
+
+	share(-1, &num_network);
+	share(-1, &num_bots);
+	share_update();
+	// you've to share num_network this as early as possible, cause it's also
+	// important for the debugging part (log_test).
+
+	// for log_test, also (re-)initialize the rng
+	rand_resync();
+
+
 	log_test("a1");
 
-	log_resetmode();
+	//log_resetmode();
 
 	log->reset();
 
@@ -1033,17 +1060,21 @@ void play_net( bool ishost )
 
 
 
-
-
-	// quick hack for testing.
-	// note that the server has "local" settings which overwrite other players' setting
-	num_network = Nplayers;
-	num_bots = Nbots;
-
-	share(-1, &num_network);
-	share(-1, &num_bots);
+	int k1 = 2, k2 = 3, k3 = 5;
+	share(-1, &k1);
+	share(-1, &k2);
+	share(-1, &k3);
 	share_update();
+	log_test("a10");
 
+
+	message.print(1500, 13, "numnet [%i]", num_network);
+	message.animate(0);
+
+	// NOTE NOTE NOTE
+	// that log_test depends on num_network,
+	// also, it depends on random()
+	log_test("a3");
 
 	message.print(1500, 13, "numnet [%i]  numhotseat [%i][%i]", num_network, num_hotseats[0], num_hotseats[1]);
 
@@ -1055,6 +1086,8 @@ void play_net( bool ishost )
 		log_int(num_hotseats[p], channel_network[p]);
 	}
 	//share_update();
+
+	log_test("a4");
 
 
 	for ( p = 0; p < num_network; ++p )
@@ -1251,6 +1284,20 @@ void play_single(const char *_gametype_name, Log *_log)
 }
 
 
+void remove_players()
+{
+	int i;
+	for ( i = 0; i < num_players; ++i )
+	{
+		if (player[i])
+		{
+			delete player[i];
+			player[i] = 0;
+		}
+	}
+}
+
+
 void play_game(const char *_gametype_name, Log *_log)
 {
 	STACKTRACE
@@ -1308,6 +1355,8 @@ void play_game(const char *_gametype_name, Log *_log)
 		game = NULL;
 		new_game->game_done = true;
 		old_game = new_game;
+
+		remove_players();
 	}
 
 	catch (int i) {

@@ -602,8 +602,10 @@ void NormalGame::download_file(char *filename)
 
 	int count = 0;
 
+
 	// first you've to check if you're synched
 	int k = 0;
+
 	log_int(k, channel_server);
 	// this is probably enough --> the server has sent all data to you.
 	// there's nothing you've to send to the server, so it's ok.
@@ -615,6 +617,8 @@ void NormalGame::download_file(char *filename)
 		// how does the server determine, who needs the data ?
 		// each should send a value to the server, telling whether
 		// the data are ok, or not ...
+		int p = 0;	// should be opposite player?
+		k = channel_conn_recv[ player[p]->channel + _channel_buffered ];
 
 		// duh, this is getting complicated 
 		
@@ -1035,6 +1039,8 @@ void NormalGame::handle_end()
 different network actions. This only applies to the "unbuffered channels", which
 have routines that synchronize the two games explicitly in the code (ie synchronized
 halts). This buffer should be empty most of the time, except in special situations.
+Note that it uses calls to random(), so be sure that the random() is synched before
+you use these routines.
 */
 void log_test(char *comment)
 {
@@ -1043,6 +1049,9 @@ void log_test(char *comment)
 	int k, m;
 	k = random();
 	m = k;
+
+	message.print(1500, 13, "log_test ran[%i]", k);
+	message.animate(0);
 	
 	int i;
 	for ( i = 0; i < num_network; ++i )
