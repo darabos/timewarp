@@ -236,8 +236,8 @@ int Quest::l_MakeEnemy(lua_State* ls)
 		tw_error ("Wrong argument count for AddEnemyShip");
 	}
 	Vector2 pos;
-	pos.x = lua_tonumber(ls, 2);
-	pos.y = lua_tonumber(ls, 3);
+	pos.x = lua_tonumber(ls, 1);
+	pos.y = lua_tonumber(ls, 2);
 
 	Query q;
 	for (q.begin(g_player->ship, bit(LAYER_CBODIES), 24000); q.current; q.next())
@@ -258,13 +258,13 @@ int Quest::l_MakeAlly(lua_State* ls)
 		tw_error ("Wrong argument count for AddEnemyShip");
 	}
 	Vector2 pos;
-	pos.x = lua_tonumber(ls, 2);
-	pos.y = lua_tonumber(ls, 3);
+	pos.x = lua_tonumber(ls, 1);
+	pos.y = lua_tonumber(ls, 2);
 
 	Query q;
 	for (q.begin(g_player->ship, bit(LAYER_CBODIES), 24000); q.current; q.next())
 		{
-			if( (q.current)->pos  == pos)
+			if( (q.current)->pos.round()  == pos.round())
 			{
 				((GobStation*)(q.current))->set_team(g_player->ship->get_team());
 			}
