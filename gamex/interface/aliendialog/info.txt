@@ -1,4 +1,6 @@
-gamex/interface/aliendialog/B/backgr_y = 430
-gamex/interface/aliendialog/B/backgr_x = 146
-gamex/interface/aliendialog/A/backgr_y = 38
-gamex/interface/aliendialog/A/backgr_x = 9
+gamex/interface/aliendialog/B/backgr_y = 431
+gamex/interface/aliendialog/B/backgr_x = 148
+gamex/interface/aliendialog/A/backgr_y = 40
+gamex/interface/aliendialog/A/backgr_x = 26
+res = 800
+autoplace = 0

@@ -1,3 +1,5 @@
+gamex/interface/starmap/edit/plot_backgr_y = 50
+gamex/interface/starmap/edit/plot_backgr_x = 50
 gamex/interface/starmap/edit/plot_default_y = 50
 gamex/interface/starmap/edit/plot_default_x = 50
 gamex/interface/starmap/edit/replace_default_y = 9

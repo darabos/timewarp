@@ -30,3 +30,6 @@ Note: type <<playername>> if you want to insert the player name, or <<shipname>>
 Esc: stop. The dialogues are permanently saved on disk.
 Note: if the program crashes before you press Esc, you lose all data.
 
+
+ctrl+V = insert text from the clipboard. There's only this paste function (no copy).
+
