@@ -1,2 +1,0 @@
-This code is property of the timewarpx project.
-For information, contact rob.devilee@planet.nl
