@@ -29,6 +29,9 @@ void GdebugOnly::init(Log *_log)
 	//turbo = 100;
 	normal_turbo = 1000.0;
 	turbo = normal_turbo;
+
+	msecs_per_render = 1000;	// draw 1 frame/second.
+
 	prepare();
 
 	// create a list of all the active ships ?

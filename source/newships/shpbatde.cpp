@@ -64,7 +64,7 @@ class BathaDeviant : public Ship
 
 	double cloudLifeTime;
 
-	double	gravforce, gravforce_default;
+	double	gravforce, gravforce_default, gravRange;
 
 	double well_size;
 	double whipfactor;
@@ -83,6 +83,7 @@ class BathaDeviant : public Ship
 
 	int activate_weapon();
 	int activate_special();
+	int accelerate_gravwhip( SpaceLocation *source, double angle, double velocity, double max_speed );
 
 	virtual void calculate();
 
@@ -153,6 +154,8 @@ Ship(opos, angle, data, code)
 	CrewShipHit = get_config_int("Quirk", "DieShip", 0);		// 10
 	CrewPlanetHit = get_config_int("Quirk", "DiePlanet", 0);
 
+	gravRange = scale_range( get_config_float("Quirk", "GravRange", 0) );
+
 	Ntailsprites = 8;
 	tailsprites = &(data->more_sprites[0]);
 
@@ -181,8 +184,8 @@ int BathaDeviant::activate_special()
 {
 	STACKTRACE
 
-	// come to an immediate halt.
-//	vel = 0;
+	// come slowly a halt.
+	vel *= (1 - 5*frame_time*1E-3);
 
 
 	// and also put up a single extra smoke cloud
@@ -199,7 +202,7 @@ int BathaDeviant::activate_special()
 }
 
 
-void BathaDeviant :: calculate ()
+void BathaDeviant::calculate ()
 {
 	STACKTRACE
 
@@ -223,18 +226,20 @@ void BathaDeviant :: calculate ()
 	// the anti-grav force depends on the battery,
 	// but there is some minimum default level (to aid in escaping)
 
-	gravforce = gravforce_default * (0.5 + 0.5 * batt / batt_max);
+	//gravforce = gravforce_default * (0.5 + 0.5 * batt / batt_max);
+	gravforce = gravforce_default * (0.05 + 0.95 * batt / batt_max);
 
 	
-	int layers = bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) +
-		bit(LAYER_CBODIES);
-	double passiveRange = 1000.0;	// outside this area, gravity doesn't do anything
+	int layers = int(bit(LAYER_CBODIES)) | int(bit(LAYER_SHOTS)) |
+				int(bit(LAYER_SHIPS)) | int(bit(LAYER_SPECIAL));
+
+//	double passiveRange = 1000.0;	// outside this area, gravity doesn't do anything
 
 	Query a;
-	for (a.begin(this, layers, passiveRange); a.current; a.next())
+	for (a.begin(this, layers, gravRange); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
-		if (!(o->isPlanet()) && o->mass != 0 && o != ship )
+		if (/*!(o->isPlanet()) &&*/ o->mass != 0 && o != ship )
 		{
 
 			Vector2 Vd = min_delta(pos - o->pos, map_size);
@@ -250,20 +255,38 @@ void BathaDeviant :: calculate ()
 			// not R*R gravity, but slightly less for better feel (R*root(R))
 			// also adds an extra velocity increase.
 			else
-				bb = sin(Rscaled*0.5*PI);				// inside the gravity well
+				//bb = sin(Rscaled*0.5*PI);				// inside the gravity well
 			// this sine function is stable, probably because it's smooth
 			// at R=0 (has a derivative). It works good, much better than bb=const
 			// or bb=Rscaled.
+				bb = 1.0;
 			
 			
 			bb *= frame_time;
+
+			// directional tweak
+
+			double ang;
+			ang = trajectory_angle(o);
+			ang = angle - ang;
+			while (ang < -PI) ang += PI2;
+			while (ang >  PI) ang -= PI2;
+
+			bb *= fabs( sin(0.5 * ang) );
 			
 			// accelerate towards (or away from) the source
 
 			Vector2 Vacc = -(Vd/R) * gravforce*bb;
 			
-			o->vel += Vacc;
-			this->vel -= Vacc;
+			if (!o->isPlanet())
+				o->vel += Vacc;
+			else
+				vel -= Vacc;
+
+			vel -= Vacc;
+
+			if (vel.length() > speed_max)
+				vel *= speed_max / vel.length();
 
 
 		}
@@ -339,6 +362,21 @@ void BathaDeviant::animate(Frame *frame)
 
 }
 
+
+
+int BathaDeviant::accelerate_gravwhip( SpaceLocation *source, double angle, double velocity, double max_speed )
+{
+	STACKTRACE
+		
+	//Planet *p = nearest_other_planet();
+	//if( !p )
+	return SpaceLocation::accelerate( source, angle, velocity, max_speed );
+	//double tmp;
+	//tmp = distance( p ) / p->gravity_range;
+	//if( tmp > 1 ) return SpaceLocation::accelerate( source, angle, velocity, max_speed );
+	//return SpaceLocation::accelerate( source, angle, velocity,
+//		max_speed * (p->gravity_whip * tmp + 1) );
+}
 
 
 BathaMissile::BathaMissile(SpaceLocation *creator, Vector2 rpos, 

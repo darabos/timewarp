@@ -782,11 +782,13 @@ void Planet3D::animate( Frame* space )
 
 			unsigned char *col;
 			unsigned char *speccol;
-			unsigned short int specshade, colorshade;
-
+			unsigned short int specshade;
 
 		#if (defined (_MSC_VER))// && defined (__ia32__))
+		//#ifdef _MSC_VER
 			// for better efficiency, I'll rewrite this stuff in assembler code:
+
+			unsigned short int colorshade;
 
 			if (!PlanetUsespec)
 			_asm
@@ -907,13 +909,13 @@ void Planet3D::animate( Frame* space )
 //			shade = *base_sorted;
 
 			// store the shade
-			mov edx, base_sorted;
+			mov edx, base_sorted
 			mov al, byte ptr [edx]
 			xor ah, ah
 			mov colorshade, ax
 
 			// store the specshade (is the next byte)
-			mov edx, base_sorted;
+			mov edx, base_sorted
 			inc edx
 			mov al, byte ptr [edx]
 			xor ah, ah
