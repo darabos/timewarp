@@ -118,6 +118,8 @@ void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double q
 
 
 void Query::next_quadrant () {
+	STACKTRACE
+
 tail_recurse4:
 	qx += 1;
 	if (qx == QUADS_X) qx = 0;

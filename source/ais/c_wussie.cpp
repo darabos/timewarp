@@ -46,6 +46,8 @@
 
 double ControlWussie::check_danger ()
 {
+	STACKTRACE
+
 	double d = 0;
 	Query q;
 	q.begin (ship, OBJECT_LAYERS, ship->size.x + ship->size.y + 200);
@@ -90,6 +92,8 @@ int absf (double x)
 
 double ControlWussie::evasion (Ship * ship)
 {
+	STACKTRACE
+
 	double closetime = 500;
 	double angle, dodgeangle = -1;
 	Query b;
@@ -170,6 +174,8 @@ double ControlWussie::evasion (Ship * ship)
 
 int ControlWussie::think ()
 {
+	STACKTRACE
+
 	int action = 0;
 	float velocity, distance;
 	double angle = 0, va, pangle, dangle;
@@ -594,6 +600,8 @@ ControlWussie::ControlWussie (const char *name, int channel):Control (name,
 
 void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 {
+	STACKTRACE
+
 	char tmp[20];
 	int i, j, k;
 	Control::select_ship (ship_pointer, ship_name);

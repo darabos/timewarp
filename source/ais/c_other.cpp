@@ -17,6 +17,8 @@ const char *ControlMoron::getTypeName() {
 	return "MoronBot";
 	}
 int stupid_bot(Ship *ship) {
+	STACKTRACE
+
 	int r = 0;
 	double a;
 	if (!ship->target) return 0;
