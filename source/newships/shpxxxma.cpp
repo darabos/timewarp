@@ -22,6 +22,8 @@ class XXXMangler : public Ship {
   double       grabdistance;
   double       grabshipangle;
   int          weaponDartThrust;
+
+  double		weaponSuperSpeed;
   
   double       specialLaunch;
   double       specialRange;
@@ -115,6 +117,7 @@ XXXMangler::XXXMangler(Vector2 opos, double shipAngle,
   tentacleFrames   = 0;
   weaponDamage     = get_config_int("Weapon", "Damage", 0);
   weaponDartThrust = get_config_int("Weapon", "DartThrust",0);
+  weaponSuperSpeed = scale_velocity(get_config_float("Weapon", "SuperSpeed", 0));
 
   specialRange    = scale_range(get_config_float("Special", "Range", 0));
   specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
@@ -151,10 +154,15 @@ RGB XXXMangler::crewPanelColor()
 
 int XXXMangler::activate_weapon()
 { 
-    if (!latched) accelerate(this, angle, weaponDartThrust, MAX_SPEED);
-    if (tentacleFrames <= 0) tentacleFrames = weaponFrames;
-		else return false;
-		return true;
+    if (!latched)
+		accelerate(this, angle, weaponDartThrust, weaponSuperSpeed);
+
+    if (tentacleFrames <= 0)
+		tentacleFrames = weaponFrames;
+	else
+		return false;
+
+	return true;
 }
 
 int XXXMangler::activate_special()
