@@ -682,9 +682,15 @@ void gmissions::removesubgame(int k)
 		i = missionlist[chosenmission]->playgame->quit_value;
 
 		if ( i == 1 )
+		{
 			alertlose->show();
+			alertlose->focus();
+		}
 		if ( i == 2 )
+		{
 			alertwin->show();
+			alertwin->focus();
+		}
 
 		if ( chosenmission < Nmissions-1 && i == 2 )		// only advance if you win.
 		{
