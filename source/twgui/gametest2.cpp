@@ -1,7 +1,7 @@
 
 
 #include <allegro.h>
-#include <winalleg.h>
+//#include <winalleg.h>
 //#include <windows.h>
 
 #include <stdio.h>
@@ -108,7 +108,12 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 	DATAFILE	*data;//, *data_cached;
 
 	// create the cache/ directory (if needed ?)
+	#ifdef LINUX
+	mkdir("cache", 0755); 
+	#else
 	mkdir("cache");
+	#endif
+
 	
 	
 	fleet_bmp = new BITMAP* [fleet->getSize()+1];

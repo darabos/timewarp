@@ -1,6 +1,8 @@
 
 #include <allegro.h>
+#ifndef LINUX
 #include <winalleg.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 
@@ -687,7 +689,9 @@ void TextEditBox::calculate()
 	}
 
 	// Insert text from the clipboard (?)
+#ifdef LINUX
 
+#else
 	if (keyhandler.keyhit[KEY_V] && keyhandler.keynew[KEY_LCONTROL])
 	{
 		//Test: this can show contents of the clipboard ...
@@ -713,6 +717,7 @@ void TextEditBox::calculate()
 		
 		CloseClipboard();
 	}
+#endif
 			
 	// check the special keys ?
 	if ( keyhandler.keyhit[KEY_BACKSPACE] && charpos > 0 )

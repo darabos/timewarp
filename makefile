@@ -8,8 +8,8 @@
 # Running just make builds the release version of TimeWarp for *nix          #
 # (Linux, FreeBSD, ...)                                                      #
 #                                                                            #
-# The game depends on Allegro (4.0.x) library, so you need to install it     #
-# before running make                                                        #
+# The game depends on Allegro (4.0.x) and Lua (5.0.x) libraries, so you need #
+# to install them before running make                                        #
 #                                                                            #
 ##############################################################################
 
@@ -23,7 +23,7 @@ VPATH = source source/ais source/games source/games/triggers source/melee \
         source/newships source/other source/sc1ships source/sc2ships \
         source/sc3ships source/twgui source/util source/gamex \
         source/gamex/edit source/gamex/general source/gamex/stuff \
-	source/util/lua source/util/lua/lib
+        source/gamex/dialogs
 
 FILELIST= ${shell find source -type f "(" -name "*.c" -o -name "*.cpp" ")"}
 BASE_NAMES = $(basename $(notdir $(FILELIST)))
@@ -59,6 +59,8 @@ else
 	LIBS += ${shell allegro-config --libs}
 endif
 
+LIBS += -llualib -llua
+ 
 OBJS = $(addprefix $(OBJDIR)/,$(POBJS))
 DEPS = $(addprefix $(OBJDIR)/,$(PDEPS))
 
