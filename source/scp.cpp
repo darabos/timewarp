@@ -138,9 +138,9 @@ void show_diagnostics();
 void keyjamming_tester();
 
 
-void play_game(const char *_gametype_name, Log *_log = NULL) ;
+//void play_game(const char *_gametype_name, Log *_log = NULL) ;
 
-void play_single(const char *_gametype_name, Log *_log = NULL);
+//void play_single(const char *_gametype_name, Log *_log = NULL);
 void play_net (bool ishost);
 void play_demo(const char *file_name = "demo.dmo") ;
 

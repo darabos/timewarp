@@ -1629,6 +1629,14 @@ SOURCE=.\source\interface\OptionsMenu.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\interface\OverlayMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\OverlayMenu.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\interface\PlayLocalMenu.cpp
 # End Source File
 # Begin Source File

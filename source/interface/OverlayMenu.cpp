@@ -1,9 +1,9 @@
 /** 
-SettingsPage.h
+OverlayMenu.cpp
 $Id$
 
-  Defines the SettingsPage class, which can add a bunch of configuration
-  settings to an existing dialog.  
+  Definition of the OverlayMenu class.  This Dialog subclass allows a
+  background to be drawn underneath.
   
   Revision history:
     2004.06.16 yb started
@@ -23,41 +23,18 @@ $Id$
   GNU General Public License for more details.
 */
 
-#ifndef SETTINGS_PAGE_HEADER
-#define SETTINGS_PAGE_HEADER 1
 
-#include "MASkinG.h"
-using namespace MAS;
 
-#include <vector>
-using namespace std;
 
 #include "OverlayMenu.h"
-#include "Interface.h"
+
+BITMAP * MyUpdateDriver::GetCanvas() {
+   return _dialog->_buffer;
+}
 
 
+void OverlayDialog::SelectDriver() {
+    if (!driver)
+	    CreateUpdateDriver(new MyUpdateDriver(this));
+}
 
-
-class SettingsPage {
-private:
-	PanelRaised rightPanel;
-
-	PanelRaised labelBackground3;
-	Label label3;
-	
-public:
-	SettingsPage(char * subtitle)
-	{
-        init(subtitle);
-	}
-
-	virtual void populate(Dialog * dialog);
-	virtual void unpopulate(Dialog * dialog);
-
-	virtual void init(char * subtitle);
-
-	// handle key presses mouse moves, etc. in this function 
-	virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);/**/
-};
-
-#endif

@@ -32,6 +32,7 @@ $Id$
 #include "MASkinG.h"
 using namespace MAS;
 
+#include "OverlayMenu.h"
 #include "Interface.h"
 using namespace Interface;
 
@@ -50,27 +51,8 @@ public:
 	{
 	  init();
 	}
-
-	virtual void init()
-	{
-	  int x = 10, 
-		  y = 10;
-  
-	  panel.Shape(x, y, 32, 52, true);
-  
-	  x++;
-	  y++;
-  
-	  gametypeList.Shape(x, y, 32, 30, true);
-  
-	  gametypeList.InsertItem( new ListItemString("Melee1") );
-	  gametypeList.InsertItem( new ListItemString("Melee2") );
-	  gametypeList.InsertItem( new ListItemString("Melee3") );
-  
-	  bQuit.SetupNormalized(x, y+=10, 30, 10, KEY_Q, D_EXIT, "&Quit");
-  
-	  Add(bQuit);
-	}
+	
+	virtual void init();
 
 	/** handle key presses mouse moves, etc. in this function */
 	virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);

@@ -30,17 +30,7 @@ using namespace Interface;
 #include "MainMenu.h"
 #include "PlayLocalMenu.h"
 #include "PlayOnlineMenu.h"
-
-
-BITMAP * MyUpdateDriver::GetCanvas() {
-   return _dialog->_buffer;
-}
-
-
-void OverlayDialog::SelectDriver() {
-    if (!driver)
-	    CreateUpdateDriver(new MyUpdateDriver(this));
-}
+#include "OverlayMenu.h"
 
 
 
@@ -97,7 +87,7 @@ void doMyEngine() {
 		
 		// update the GUI (will redraw itself)
 		currentMenu->MsgIdle();
-		
+
 		// do the double buffering thingy
 		blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
 
@@ -149,9 +139,7 @@ void doMyEngine() {
 	// deinitialize the dialog and delete it
 	currentMenu->MsgEnd();
 	
-	
 	delete mainMenu;
-	
 	
 	// destory the backbuffer
 	destroy_bitmap(buffer);
@@ -163,6 +151,7 @@ void doMainMenu() {
 	Settings::antialiasing = false;
 	Settings::mouseShadow = false;
 	strcpy(Settings::skinPath, "skins/Dinks.ini");
+	//strcpy(Settings::skinPath, "skins/Selenium.ini");
 	
 	Color::OnColorDepthChange();
 	alfont_init();

@@ -30,10 +30,12 @@ $Id$
 #include "MASkinG.h"
 using namespace MAS;
 
+#include "OverlayMenu.h"
 #include "Interface.h"
 using namespace Interface;
 
 #include "../melee/mgame.h"
+#include "SettingsPage.h" //remove
 
 
 class PlayLocalMenu : public OverlayDialog {
@@ -42,17 +44,20 @@ private:
 	PanelRaised leftPanel;
 	ListBox gametypeList;
 	Button bQuit;
-	Label label, label2, label3;
-	PanelRaised labelBackground, labelBackground2, labelBackground3;
-	Button bOk;
+	Label label, label2;
+	PanelRaised labelBackground, labelBackground2;
+	Button bStart;
 	
-	PanelRaised rightPanel;
 	TextArea descriptionText;
+	
+	SettingsPage * currentPage;
+	vector <SettingsPage *> pages;
 
 public:
 
 	PlayLocalMenu(BITMAP *buffer, MenuDialogs prev) : 
-	  OverlayDialog(buffer, prev)
+	  OverlayDialog(buffer, prev),
+	  currentPage(NULL)
 	{
        init();
 	}
@@ -64,69 +69,22 @@ public:
 			gametypeList.DeleteItem(0);
 		}
 		gametypeList.DeleteAllItems();
+
+		while (pages.size() >0) {
+			delete pages.back();
+		}
+		pages.clear();
 	}
 
 
-	virtual void init() {
-
-	  //left side stuff -- select game type
-      leftPanel.Shape(1, 11, 42, 76, true);
-	  
-	  labelBackground.Shape(1,1,32,8,true);
-	  label.Shape(1,1,32,7,true);
-	  label.SetText("Play Local");
-	  label.SetAlignment(2);//this means centered... MASKING should really enum this 
-	  
-	  labelBackground2.Shape(2,12,28,5,true);
-	  label2.Shape(2,12,27,5,true);
-	  label2.SetText("Select Gametype:");
-	  label2.SetAlignment(2);
-	  
-	  gametypeList.Shape(2, 18, 40, 68, true);
-
-      gametypeList.DeleteAllItems();
-	  for (int i=0; i<num_games; i++) {
-		  gametypeList.InsertItem( new ListItemString(game_names[i]),0 );
-	  }
-	  gametypeList.Sort();
-  
-	  bQuit.SetupNormalized(0, 90, 15, 10, KEY_B, D_EXIT, "&Back");
-	  bOk.SetupNormalized(85, 90, 15, 10, KEY_S, D_EXIT, "&Start Game");
-
-
-	  descriptionText.Shape(15,90,70,10, true);
-	  descriptionText.SetText("");
-
-	  // right side stuff -- game settings
-	  rightPanel.Shape( 44,11,55,76, true);
-	  
-	  labelBackground3.Shape(45,12,28,5,true);
-	  label3.Shape(46,12,27,5,true);
-	  label3.SetText("Game Settings:");
-	  label3.SetAlignment(2);
-
-  
-	  Add(leftPanel);
-	  Add(rightPanel);
-
-	  Add(labelBackground);
-	  Add(label);
-
-	  Add(labelBackground2);
-	  Add(label2);
-
-	  Add(labelBackground3);
-	  Add(label3);
-
-
-	  Add(gametypeList);
-	  Add(bQuit);
-	  Add(descriptionText);
-	  Add(bOk);
-	}
+	/** */
+	virtual void init(); 
 
 	/** handle key presses mouse moves, etc. in this function */
 	virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);
+
+	virtual void setSettingsPage(int page);
+	virtual void MsgIdle() { OverlayDialog::MsgIdle(); }
 };
 
 

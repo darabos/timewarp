@@ -28,6 +28,7 @@ $Id$
 #include "MASkinG.h"
 using namespace MAS;
 
+#include "OverlayMenu.h"
 #include "Interface.h"
 using namespace Interface;
 
@@ -51,28 +52,7 @@ public:
 		  init();
 	  }
 
-	  virtual void init() {
-		  int x = 10, 
-			  y = 10;
-		  
-		  panel.Shape(x, y, 32, 52, true);
-		  
-		  x++; 
-		  y++;
-		  
-		  bPlayLocal.SetupNormalized(x, y, 30, 10, KEY_P, D_EXIT, "&Play Local");
-		  bPlayOnline.SetupNormalized(x, y+=10, 30, 10, KEY_L, 0, "Play On&line");
-		  bHostGame.SetupNormalized(x, y+=10, 30, 10, KEY_H, 0, "&Host Game");
-		  bOptions.SetupNormalized(x, y+=10, 30, 10, KEY_O, 0, "&Options");
-		  bQuit.SetupNormalized(x, y+=10, 30, 10, KEY_Q, D_EXIT, "&Quit Game");
-		  
-		  Add(panel);
-		  Add(bPlayLocal);
-		  Add(bPlayOnline);
-		  Add(bHostGame);
-		  Add(bOptions);
-		  Add(bQuit);
-	  }
+	  virtual void init(); 
 
 	  virtual void SelectDriver() { OverlayDialog::SelectDriver(); }
 	  

@@ -3,6 +3,7 @@
 #define __SCP_H__
 
 #include "melee/mlog.h"
+#include "melee.h"
 
 const char *tw_version();
 
@@ -27,6 +28,8 @@ void log_file (const char *fname);
 
 void test_net();
 
+void play_game(const char *_gametype_name, Log *_log = NULL) ;
+void play_single(const char *_gametype_name, Log *_log = NULL);
 
 extern SAMPLE * menuAccept;
 extern SAMPLE * menuFocus;
