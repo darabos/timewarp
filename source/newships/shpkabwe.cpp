@@ -772,11 +772,11 @@ void KaboHaze::animate(Frame *space)
 			if (icheck > 100)
 				break;	// too bad !!
 
-			dy = random() % hshield;
+			dy = rand() % hshield;
 			if (edge_left[dy] == -1)
 				continue;
 			
-			if ( !(random() % 2) )
+			if ( !(rand() % 2) )
 				dx = edge_left[dy];
 			else
 				dx = edge_right[dy];

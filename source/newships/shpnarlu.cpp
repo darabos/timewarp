@@ -7,6 +7,8 @@ REGISTER_FILE
 #include "../melee/mview.h"
 #include "../frame.h"
 
+#include <stdlib.h>
+
 
 class NaroolPoison;
 
@@ -403,10 +405,10 @@ void NaroolLurker::calc_lightning()
 		// create some kind of lightning now ? How ?
 		int i, N;
 		
-		N = 5 + random(5);
+		N = 5 + rand() % 5;
 
 		double ang, R;
-		ang = random(PI2);
+		ang = (rand() % 360) * PI/180;
 		
 		for ( i = 0; i < N; ++i )
 		{
@@ -414,8 +416,10 @@ void NaroolLurker::calc_lightning()
 			//dx = (random(double(iw)) - 0.5*iw) / N;
 			//dy = (random(double(ih)) - 0.5*ih) / N;
 
-			ang += random(PI/2) - PI/4;
-			R = random(double(Rmax)) / N;
+			//ang += rand(PI/2) - PI/4;
+			ang += (rand() % 180 - 90) * PI/180;
+			//R = rand(double(Rmax)) / N;
+			R = (rand() % int(Rmax+1)) / N;
 			dx = R * cos(ang);
 			dy = R * sin(ang);
 			

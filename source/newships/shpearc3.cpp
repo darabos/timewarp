@@ -291,9 +291,9 @@ void EarthlingCruiserMk3Beam::animate(Frame *space)
 	SpaceLine::animate(space);
 	if ((aa & AA_BLEND) && (aa & AA_ALPHA) && !(aa & AA_NO_AA) && (length < base_length*0.9999) && (target)) {
 		int	_old_trans = aa_get_trans();
-		aa_set_trans(tw_random()%156);
+		aa_set_trans(rand()%156);
 		data->spriteSpecial->animate(pos, 0, space);
-		aa_set_trans(tw_random()%156);
+		aa_set_trans(rand()%156);
 		data->spriteSpecialExplosion->animate(pos+edge(), 0, space);
 		aa_set_trans(_old_trans); }
 }

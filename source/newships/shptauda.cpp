@@ -148,7 +148,8 @@ void TauDaggerBeam::animate(Frame *space)
 	SpaceLine::animate(space);
 	if ((aa & AA_BLEND) && (aa & AA_ALPHA) && !(aa & AA_NO_AA) && (length < base_length*0.9999) && (target)) {
 		int	_old_trans = aa_get_trans();
-		aa_set_trans(tw_random()%136);
+		// changed tw_random into rand - GEO - so that physics are not affected by the animation
+		aa_set_trans(rand()%136);
 		data->spriteWeaponExplosion->animate(pos+edge(), 0, space);
 		aa_set_trans(_old_trans); }
 }
