@@ -7,7 +7,7 @@ class Fleet;
 extern Fleet *reference_fleet;
 
 
-#include <list> //needed for STL list, the using namespace thingy allows STL classes
+#include <vector> //needed for STL list, the using namespace thingy allows STL classes
 using namespace std;
 
 
@@ -23,19 +23,41 @@ class Fleet{
 protected:
     typedef unsigned int Index;
     typedef ShipType * MyFleetShipType;
-    typedef list<MyFleetShipType> MyFleetListType;
+    typedef vector<MyFleetShipType> MyFleetListType;
 
 public:
     //the maxiumum length of the fleet title
-    enum { MAX_TITLE_LENGTH = 80 };    
+    enum { MAX_TITLE_LENGTH = 80 };
+
+    //dunno why this doesn't work in VC++ ... ?
     //const static int MAX_TITLE_LENGTH = 80;
 
+    enum SortingMethod { 
+        SORTING_METHOD_DEFAULT = 0,
+        SORTING_METHOD_NAME_DESCENDING,
+        SORTING_METHOD_NAME_ASCENDING,
+        SORTING_METHOD_COST_DESCENDING,
+        SORTING_METHOD_COST_ASCENDING,
+        SORTING_METHOD_TWCOST_ASCENDING,
+        SORTING_METHOD_TWCOST_DESCENDING,
+        SORTING_METHOD_NAME1_ASCENDING,
+        SORTING_METHOD_NAME1_DESCENDING,
+        SORTING_METHOD_NAME2_ASCENDING,
+        SORTING_METHOD_NAME2_DESCENDING,
+        SORTING_METHOD_CODERS_ASCENDING,
+        SORTING_METHOD_CODERS_DESCENDING,
+        SORTING_METHOD_ORIGIN_ASCENDING,
+        SORTING_METHOD_ORIGIN_DESCENDING
+    };
 
-	//default constructor with zero ships
+
+
+
+	/** \brief Default constructor with zero ships */
     Fleet();
 
 	
-    //removes all ships and sets the cost to zero
+    /** \brief removes all ships and sets the cost to zero */
     void reset();
 
 	
@@ -65,11 +87,6 @@ public:
         \param slot the slot the ship to be removed appears in */
     void clear_slot (int slot);
 
-    
-    //deprecated
-    //	int ship_idtoindex(const char *id_str);
-
-	
     /** \brief saves the fleet to a config file, given the config filename and section
         \param filename the filename to open and save to
         \param section the section within the specified config file to save to
@@ -84,32 +101,31 @@ public:
 	void load(const char *filename, const char *section);
 
 	/** \brief sorts this fleet according to each ShipType's operator<= function*/
-    void sort();
+    //void sort();
 
 	
 
-	/** \brief sorts this fleet according to the given compare function 
-        \param compare_function the function to compare ShipTypes with
-        \TODO reimplement this function; make each sort type available from a public context
+	/** \brief sorts this fleet according to the given compare function.  May be called as Sort();
+        \param method The method with which to sort.  Options are:
+        SORTING_METHOD_DEFAULT,
+        SORTING_METHOD_NAME_DESCENDING,
+        SORTING_METHOD_NAME_ASCENDING,
+        SORTING_METHOD_COST_DESCENDING,
+        SORTING_METHOD_COST_ASCENDING,
+        SORTING_METHOD_TWCOST_ASCENDING,
+        SORTING_METHOD_TWCOST_DESCENDING,
+        SORTING_METHOD_NAME1_ASCENDING,
+        SORTING_METHOD_NAME1_DESCENDING,
+        SORTING_METHOD_NAME2_ASCENDING,
+        SORTING_METHOD_NAME2_DESCENDING,
+        SORTING_METHOD_CODERS_ASCENDING,
+        SORTING_METHOD_CODERS_DESCENDING,
+        SORTING_METHOD_ORIGIN_ASCENDING,
+        SORTING_METHOD_ORIGIN_DESCENDING
+        \param startIndex (default 0) the index of the first ship to sort
+        \param endIndex (default -1) the index of the last ship in the fleet to sort.  -1 means the last ship.
     */
-    void sort ( int (*compare_function)(const Index *, const Index *)) ;
-
-    /**	\brief  function to compare ShipTypes with, such that they will be sorted alphabetically
-        \param	the item to compare ...?	
-        \param	??? */
-	void sort_alphabetical(const char *item, const char *section = "Info") ;
-
-
-    /**	\brief  function to compare ShipTypes with, such that they will be sorted numerically
-        \param	the item to compare ...?	
-        \param	??? */
-	void sort_numerical(const char *item, const char *section = "Info") ;
-
-
-    /**	\brief  function to compare ShipTypes with, such that they will be sorted by their names
-        \param	the item to compare ...?	
-        \param	??? */
-    int fleetsort_by_name ( const Index *_i1, const Index *_i2 ) ;
+    void Sort(SortingMethod method=SORTING_METHOD_DEFAULT, int startIndex=0, int endIndex=-1);
 
     
     /** \brief returns the number of ships in this fleet
@@ -132,30 +148,31 @@ public:
     /** \brief Returns the ship in a particular slot.
         \param offset The slot of the ShipType to return.  Returns NULL if slot is not (0 <= slot <= getSize())
         \return The chosen ShipType, or NULL if slot was outside the selectable range of ShipTypes.*/    
-/*    ShipType * operator[](int offset) {
+    ShipType * operator[](int offset) {
         return getShipType( offset );
-    }*/
+    }
 
 
 
 protected:
     //STL list
     
-	//the title of this fleet
+	/** \brief the title of this fleet*/
     char title[MAX_TITLE_LENGTH];
 
-    //the total cost of all ships in this fleet
+    /** \brief the total cost of all ships in this fleet */
 	int cost;
 
-    //the list of ships
+    /** \brief the list of ships*/
     MyFleetListType ships;
+
 
 };
 
 
-/*int fleetsort_clean ( const Fleet::Index *_i1, const Fleet::Index *_i2 ) ;
-int fleetsort_by_name ( const Fleet::Index *_i1, const Fleet::Index *_i2 ) ;
-int fleetsort_by_cost ( const Fleet::Index *_i1, const Fleet::Index *_i2 ) ;*/
+
+
+
 
 #endif
 

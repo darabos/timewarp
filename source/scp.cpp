@@ -1159,14 +1159,8 @@ void edit_fleet(int player) {STACKTRACE
 				(fleetRet == FLEET_DIALOG_SHIPLIST)) {
             
             int selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_SHIPLIST].d1));
-            fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = selectedSlot;
-            //fleetDialog[FLEET_DIALOG_FLEETLIST].d1++;
-
-			//replaced by above line
-            /*fleet->select_slot(
-				fleetDialog[FLEET_DIALOG_FLEETLIST].d1,
-				reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_SHIPLIST].d1));*/
-			
+            if (selectedSlot != -1)
+                fleetDialog[FLEET_DIALOG_FLEETLIST].d1 = selectedSlot;
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_FLEETLIST], MSG_DRAW, 0);
 		}
 
@@ -1199,25 +1193,30 @@ void edit_fleet(int player) {STACKTRACE
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYNAME) {
-			reference_fleet->sort_alphabetical("Name2");
-			reference_fleet->sort_alphabetical("Name1");
+            reference_fleet->Sort(Fleet::SORTING_METHOD_NAME_DESCENDING);
+			//reference_fleet->sort_alphabetical("Name2");
+			//reference_fleet->sort_alphabetical("Name1");
 			//reference_fleet->sort(fleetsort_by_name);
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYCOST) {
-			reference_fleet->sort_numerical("TWCost");
+            reference_fleet->Sort(Fleet::SORTING_METHOD_COST_DESCENDING);
+			//reference_fleet->sort_numerical("TWCost");
 			//reference_fleet->sort(fleetsort_by_cost);
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYORIGIN) {
-			reference_fleet->sort_alphabetical("Origin");
+            reference_fleet->Sort(Fleet::SORTING_METHOD_ORIGIN_DESCENDING);
+			//reference_fleet->sort_alphabetical("Origin");
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYCODERS) {
-			reference_fleet->sort_alphabetical("Coders");
+            reference_fleet->Sort(Fleet::SORTING_METHOD_CODERS_DESCENDING);
+            //reference_fleet->m
+			//reference_fleet->sort_alphabetical("Coders");
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
@@ -1472,17 +1471,21 @@ void ship_view_dialog(int si, Fleet *fleet) {
 
 			switch (i) {
 			case SHIPVIEW_DIALOG_SORT_BYNAME:
-				reference_fleet->sort_alphabetical("Name2");
-				reference_fleet->sort_alphabetical("Name1");
+                reference_fleet->Sort(Fleet::SORTING_METHOD_NAME1_DESCENDING);
+				//reference_fleet->sort_alphabetical("Name2");
+				//reference_fleet->sort_alphabetical("Name1");
 				break;
 			case SHIPVIEW_DIALOG_SORT_BYCOST:
-				reference_fleet->sort_numerical("TWCost");
+                reference_fleet->Sort(Fleet::SORTING_METHOD_COST_DESCENDING);
+				//reference_fleet->sort_numerical("TWCost");
 				break;
 			case SHIPVIEW_DIALOG_SORT_BYORIGIN:
-				reference_fleet->sort_alphabetical("Origin");
+                reference_fleet->Sort();
+				//reference_fleet->sort_alphabetical("Origin");
 				break;
 			case SHIPVIEW_DIALOG_SORT_BYCODERS:
-				reference_fleet->sort_alphabetical("Coders");
+                reference_fleet->Sort();
+				//reference_fleet->sort_alphabetical("Coders");
 				break;
 			}
 

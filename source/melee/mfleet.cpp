@@ -22,9 +22,17 @@ REGISTER_FILE
 #include "mfleet.h"
 #include "../util/net_tcp.h"
 
-#include <iostream>
+#include <algorithm>
+#include <functional>
 using namespace std;
 
+
+//
+static const char *_fleetsort_ini_alphabetical_default = "\255\255\255";
+static const int _fleetsort_ini_numerical_default = 0x0fffffff;
+
+static char _fleetsort_ini_section[80] = "Info";
+static char _fleetsort_ini_item[80] = "";
 
 
 
@@ -42,11 +50,12 @@ void init_fleet() {STACKTRACE
 	int i;
 	for(i = 0; i < num_shiptypes; i++)
         reference_fleet->addShipType( &shiptypes[i] );
-		//reference_fleet->select_slot(i, &shiptypes[i] );
+		//reference_fleet->select_slot(i, &shiptypes[i] );//replaced by preceding line
 
-	//TODO figure out what next line was supposed to do
+	reference_fleet->Sort();
+    //TODO figure out what next line was supposed to do; was replaced by preceding line
     //reference_fleet->sort(fleetsort_by_name);
-	reference_fleet->sort_alphabetical("Origin");
+	//reference_fleet->sort_alphabetical("Origin");
     
 }
 
@@ -381,59 +390,24 @@ void Fleet::sort() {STACKTRACE
     }
 
     void Fleet::clear_slot (int slot) {STACKTRACE
-        int i=0;
-        MyFleetListType::iterator iter = ships.begin();
-
-        while ( (i<ships.size()) && (iter!=ships.end())  ) {
-
-            //found the slot, remove it and return
-            if (i==slot) {
-                cost -= (*iter)->cost;
-
-                // should never happen
-                ASSERT(cost >= 0);
-
-                
-                ships.erase(iter);
-                    
-                    //ships.remove( *iter );
-                return;
-            }
-
-            iter++;
-            i++;
-        }
+        ships.erase( &ships.at(slot) );
     }
 
     ShipType * Fleet::getShipType(int slot) {STACKTRACE
-        int i=0;
-        MyFleetListType::iterator iter = ships.begin();
-        if ( (i<0) || (i>=ships.size()))
+        if ( (slot<0) || (slot>=ships.size()))
             return NULL;
 
-        while ( (i<ships.size()) && (iter!=ships.end())  ) {
-
-            //found the slot, return it
-            if (i==slot) {
-                return *iter;
-            }
-
-            iter++;
-            i++;
-        }
-        return NULL;
+        return ships.at(slot);
     }
 
     void Fleet::save(const char *filename, const char *section) {STACKTRACE
         int i=0, count = 0;
         char slot_str[8];
     
-        sort();
+        sort(ships.begin(), ships.end());
         
         if (filename) 
             set_config_file(filename);
-
-        //MyFleetListType::iterator iter = NULL;
 
         for (MyFleetListType::iterator iter = ships.begin(); iter != ships.end(); iter++) {
             sprintf(slot_str, "Slot%d", count);
@@ -441,12 +415,6 @@ void Fleet::sort() {STACKTRACE
             count ++;
         }
 
-        //probably not necessary now
-        /*for(i = count; i < MAX_FLEET_SIZE; i++) {
-            sprintf(slot_str, "Slot%d", i);
-            set_config_string(section, slot_str, NULL);
-        }*/
-        
         set_config_int(section, "Size", count);
         set_config_string(section, "Title", title);
     }
@@ -480,26 +448,224 @@ void Fleet::sort() {STACKTRACE
     }
 
 
-    void Fleet::sort() {STACKTRACE
-        ships.sort();
-    }
+    struct _NumericConfigDescending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
 
-   	void Fleet::sort ( int (*compare_function)(const Index *, const Index *)) {
-        ships.sort();
-    }
+            if (!x || !y)
+                return false;
 
-    void Fleet::sort_alphabetical(const char *item, const char *section) {
-        ships.sort();
-    }
+            set_config_file(x->file);
+            int tmp1 = get_config_int(_fleetsort_ini_section,
+                                      _fleetsort_ini_item, 
+                                      _fleetsort_ini_numerical_default);
+            set_config_file(y->file);
+            int tmp2 = get_config_int(_fleetsort_ini_section,
+                                      _fleetsort_ini_item, 
+                                      _fleetsort_ini_numerical_default);
+            if (!tmp1 || !tmp2)
+                return false;
 
-    void Fleet::sort_numerical(const char *item, const char *section) {
-        ships.sort();
-    }
+            return (tmp1 < tmp2);
+       }
+    };/**/
 
-    int Fleet::fleetsort_by_name ( const Index *_i1, const Index *_i2 ) {
-        ships.sort();
-        return 0;
-    }
+    struct _NumericConfigAscending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
 
-	//static Fleet *sorting;
-/**/
+            if (!x || !y)
+                return false;
+
+            set_config_file(x->file);
+            int tmp1 = get_config_int(_fleetsort_ini_section,
+                                      _fleetsort_ini_item, 
+                                      _fleetsort_ini_numerical_default);
+            set_config_file(y->file);
+            int tmp2 = get_config_int(_fleetsort_ini_section,
+                                      _fleetsort_ini_item, 
+                                      _fleetsort_ini_numerical_default);
+            if (!tmp1 || !tmp2)
+                return false;
+
+            return (tmp1 > tmp2);
+       }
+    };/**/
+
+    struct _AlphabeticConfigAscending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+
+            if (!x || !y)
+                return false;
+
+            set_config_file(x->file);
+            char * tmp1 = strdup(get_config_string(_fleetsort_ini_section,
+                                                   _fleetsort_ini_item, 
+                                                   _fleetsort_ini_alphabetical_default));
+            set_config_file(y->file);
+            char * tmp2 = strdup(get_config_string(_fleetsort_ini_section,
+                                                   _fleetsort_ini_item, 
+                                                   _fleetsort_ini_alphabetical_default));
+            if (!tmp1 || !tmp2)
+                return false;
+
+            return (strncmp(tmp1,tmp2,80) > 0);
+       }
+    };/**/
+
+    struct _AlphabeticConfigDescending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+
+            if (!x || !y)
+                return false;
+
+            set_config_file(x->file);
+            char * tmp1 = strdup(get_config_string(_fleetsort_ini_section,
+                                                   _fleetsort_ini_item, 
+                                                   _fleetsort_ini_alphabetical_default));
+            set_config_file(y->file);
+            char * tmp2 = strdup(get_config_string(_fleetsort_ini_section,
+                                                   _fleetsort_ini_item, 
+                                                   _fleetsort_ini_alphabetical_default));
+            if (!tmp1 || !tmp2)
+                return false;
+
+            return (strncmp(tmp1,tmp2,80) < 0);
+       }
+    };/**/
+
+
+
+    struct _nameDecending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+            if ((x) && (y))
+                return strcmp(x->name, y->name) < 0; 
+            else 
+                return false; 
+        }
+    };
+
+    struct _nameAscending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+            if (x && y)
+                return strcmp(x->name, y->name) > 0; 
+            else 
+                return false; 
+        }
+    };
+
+    struct _costDecending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+            if (x && y)
+               return (x->cost > y->cost);  
+            else
+                return false;
+        }
+    };
+    struct _costAscending : public binary_function<ShipType *, ShipType *, bool> {
+        bool operator()(ShipType * x, ShipType * y) { 
+            if (x && y)
+                return (x->cost < y->cost); 
+            else 
+                return false; 
+        }
+    };
+    
+    
+    void Fleet::Sort(SortingMethod sortMethod, int startIndex, int endIndex) {
+        MyFleetListType::iterator _begin, _end;
+        int _size = ships.size();
+
+        if (startIndex < 0) startIndex = 0;
+        if (startIndex >= _size) startIndex = _size;
+        if ( (endIndex < 0) && (endIndex != -1) ) endIndex = 0;
+        if (endIndex > _size) endIndex = _size;
+
+        if  ( (startIndex > endIndex) && (endIndex != -1) )
+        {
+            int temp = endIndex;
+            endIndex = startIndex;
+            startIndex = temp;
+        }
+
+        if (startIndex == endIndex)
+            return;
+
+
+        if (startIndex == 0)
+            _begin = ships.begin();
+        else
+            _begin = &ships.at(startIndex);
+
+        if (endIndex == -1)
+            _end = ships.end();
+        else
+            _end = &ships.at(endIndex);
+
+        switch (sortMethod) {
+            case SORTING_METHOD_COST_DESCENDING:
+                sort(_begin, _end, _costDecending());
+                break;
+
+            case SORTING_METHOD_COST_ASCENDING:
+                sort(_begin, _end, _costAscending());
+                break;
+
+            case SORTING_METHOD_NAME_ASCENDING:    
+                sort(_begin, _end, _nameAscending());
+                break;
+
+            case SORTING_METHOD_TWCOST_ASCENDING:
+                strcpy(_fleetsort_ini_item, "TWCost");
+                sort(_begin, _end, _NumericConfigAscending());
+                break;
+
+            case SORTING_METHOD_TWCOST_DESCENDING:    
+                strcpy(_fleetsort_ini_item, "TWCost");
+                sort(_begin, _end, _NumericConfigDescending());
+                break;
+
+            case SORTING_METHOD_NAME1_ASCENDING:
+                strcpy(_fleetsort_ini_item, "Name1");
+                sort(_begin, _end, _AlphabeticConfigAscending());
+                break;
+
+            case SORTING_METHOD_NAME1_DESCENDING:    
+                strcpy(_fleetsort_ini_item, "Name1");
+                sort(_begin, _end, _AlphabeticConfigDescending());
+                break;
+
+            case SORTING_METHOD_NAME2_ASCENDING:
+                strcpy(_fleetsort_ini_item, "Name1");
+                sort(_begin, _end, _AlphabeticConfigAscending());
+                break;
+
+            case SORTING_METHOD_NAME2_DESCENDING:    
+                strcpy(_fleetsort_ini_item, "Name1");
+                sort(_begin, _end, _AlphabeticConfigDescending());
+                break;
+
+            case SORTING_METHOD_CODERS_ASCENDING:
+                strcpy(_fleetsort_ini_item, "Coders");
+                sort(_begin, _end, _AlphabeticConfigAscending());
+                break;
+
+            case SORTING_METHOD_CODERS_DESCENDING:    
+                strcpy(_fleetsort_ini_item, "Coders");
+                sort(_begin, _end, _AlphabeticConfigDescending());
+                break;
+
+            case SORTING_METHOD_ORIGIN_ASCENDING:
+                strcpy(_fleetsort_ini_item, "Origin");
+                sort(_begin, _end, _AlphabeticConfigAscending());
+                break;
+
+            case SORTING_METHOD_ORIGIN_DESCENDING:    
+                strcpy(_fleetsort_ini_item, "Origin");
+                sort(_begin, _end, _AlphabeticConfigDescending());
+                break;
+
+            case SORTING_METHOD_NAME_DESCENDING:    
+            case SORTING_METHOD_DEFAULT:
+            default:
+                sort(ships.begin(), ships.end(), _nameDecending());
+        }
+    }

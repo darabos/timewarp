@@ -487,7 +487,7 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		if (slot[i] == -1) slot[i] = random() % fleet->getSize();
 		Ship *s = create_ship(fleet->getShipType(slot[i])->id, player_control[i], random(size), random(PI2), player_team[i]);
 		fleet->clear_slot(slot[i]);
-		fleet->sort();
+		fleet->Sort();
 		//fleet->save("./fleets.tmp", tmp);
 		s->locate();
 		add ( new WedgeIndicator ( s, 30, i+1 ) );
