@@ -72,8 +72,9 @@ REGISTER_FILE
 
 #include "util/sounds.h"
 
+#ifndef NO_JGMOD
 #include "jgmod.h"
-
+#endif
 
 //deprecated.  This mode of using dat files is terrible, I can't believe
 //this technique was ever created.
@@ -237,12 +238,13 @@ void prepareTitleScreenAssets() {
   if (!scp)
       tw_error("Couldnt load title music");
         
+#ifndef NO_JGMOD
   Music * mymusic = load_mod("TitleScreen.dat#TITLEMUSIC");
   if (!mymusic)
      tw_error("Couldnt load title music");
 
   sound.play_music( mymusic, TRUE);
-
+#endif
   {DATAFILE * data = load_datafile_object("TitleScreen.dat", "MENUACCEPT");
   if (data != null && data->type==DAT_SAMPLE) {
       menuAccept = (SAMPLE*) data->dat;

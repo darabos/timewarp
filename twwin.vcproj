@@ -20,22 +20,21 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="1"
+				Optimization="3"
+				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
 				ImproveFloatingPointConsistency="TRUE"
-				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories="./include,./source,./source/gamex"
+				FavorSizeOrSpeed="1"
+				AdditionalIncludeDirectories="./include"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;__i386__"
-				StringPooling="TRUE"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Release/twwin.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
-				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
@@ -43,18 +42,16 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./lib/alleg.lib odbc32.lib odbccp32.lib ./lib/libjgmod.lib wsock32.lib winmm.lib opengl32.lib glu32.lib ./lib/lua.lib"
+				AdditionalDependencies="./lib/alleg.lib odbc32.lib odbccp32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/lua.lib"
 				OutputFile="twwin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile=".\Release/twwin.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
-				AdditionalIncludeDirectories="C:\Games\fifteen\all\source\"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -92,9 +89,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="4"
+				InlineFunctionExpansion="1"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="./include,./source,./source/gamex"
-				PreprocessorDefinitions="_DEBUG;DEBUGMODE;WIN32;_WINDOWS;__i386__"
+				AdditionalIncludeDirectories="./include"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;__i386__"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
@@ -104,20 +102,18 @@
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				BrowseInformation="1"
-				BrowseInformationFile=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./lib/alld.lib odbc32.lib odbccp32.lib ./lib/libjgmod.lib wsock32.lib winmm.lib opengl32.lib glu32.lib ./lib/luad.lib"
+				AdditionalDependencies="./lib/alld.lib odbc32.lib odbccp32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/luad.lib"
 				OutputFile="twwin_DEBUG.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/twwin_DEBUG.pdb"
 				SubSystem="2"
@@ -164,10 +160,9 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="1"
+						Optimization="3"
 						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
+						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -185,10 +180,9 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="1"
+						Optimization="3"
 						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
+						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -206,10 +200,9 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="1"
+						Optimization="3"
 						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
+						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -227,10 +220,9 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						Optimization="1"
+						Optimization="3"
 						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BrowseInformation="1"/>
+						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -244,17 +236,16 @@
 			</File>
 			<Filter
 				Name="Melee"
-				Filter="">
+				Filter="*.cpp">
 				<File
 					RelativePath="source\melee\manim.cpp">
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -272,10 +263,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -293,10 +283,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -314,10 +303,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -335,10 +323,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -356,10 +343,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -377,10 +363,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -398,10 +383,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -419,10 +403,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -440,10 +423,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -461,10 +443,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -482,10 +463,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -503,10 +483,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -524,10 +503,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -545,10 +523,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -566,10 +543,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -587,10 +563,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -608,10 +583,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -629,10 +603,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -645,18 +618,14 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="source\melee\mtarget.h">
-				</File>
-				<File
 					RelativePath="source\melee\mview.cpp">
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -678,10 +647,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -699,10 +667,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -720,10 +687,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -741,10 +707,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -762,10 +727,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -783,10 +747,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -804,10 +767,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -825,10 +787,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -846,10 +807,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -867,10 +827,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -888,10 +847,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -909,10 +867,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -930,10 +887,29 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\util\sintable.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -951,10 +927,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -972,10 +947,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -993,525 +967,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="AIs"
-				Filter="">
-				<File
-					RelativePath="source\ais\c_input.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\ais\c_other.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\ais\c_wussie.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="Games"
-				Filter="">
-				<File
-					RelativePath="source\games\dialog.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gamehierarchy.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gastroid.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gdebugonly.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gflmelee.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\ggob.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\ghyper.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gleague.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gluagame.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gmissions.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gmissions_objects.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gmissions_objects.h">
-				</File>
-				<File
-					RelativePath="source\games\gplanets.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gplexplr.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gplhuge.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gsamp2.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gsample.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gsarena.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gsolar.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\gtrug.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\vanguard.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\games\vgGenSys.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1533,10 +991,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1554,10 +1011,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1575,10 +1031,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1596,10 +1051,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1617,10 +1071,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1638,10 +1091,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1659,10 +1111,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1680,10 +1131,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1696,18 +1146,14 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="source\other\planet3d.h">
-				</File>
-				<File
 					RelativePath="source\other\radar.cpp">
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1725,10 +1171,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1741,18 +1186,14 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="source\other\shippart.h">
-				</File>
-				<File
 					RelativePath="source\other\vbodies.cpp">
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1770,10 +1211,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1787,10 +1227,914 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="AIs"
+				Filter="">
+				<File
+					RelativePath="source\ais\c_input.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\ais\c_other.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\ais\c_wussie.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="Games"
+				Filter="">
+				<File
+					RelativePath="source\games\dialog.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gamehierarchy.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gastroid.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gdebugonly.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gflmelee.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\ggob.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\ghyper.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gleague.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gluagame.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gmissions.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gmissions_objects.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gplanets.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gplexplr.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gplhuge.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gsamp2.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gsample.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gsarena.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gsolar.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\gtrug.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\vanguard.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\games\vgGenSys.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="GameX"
+				Filter="">
+				<File
+					RelativePath="source\gamex\ai_fleet.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\ai_race.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamedata.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamedata_map.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamedialogue.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamegeneral.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamehyper.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamemelee.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gameplanetmission.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gameplanetscan.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gameplanetview.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gameproject.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamesolarview.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\gamestarmap.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="source\gamex\projectx.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="3"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions=""
+							BasicRuntimeChecks="3"
+							BrowseInformation="1"/>
+					</FileConfiguration>
+				</File>
+				<Filter
+					Name="edit"
+					Filter="">
+					<File
+						RelativePath="source\gamex\edit\disk_stuff.cpp">
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="3"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"
+								BrowseInformation="1"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="source\gamex\edit\edit_dialogue.cpp">
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="3"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"
+								BrowseInformation="1"/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="stuff"
+					Filter="">
+					<File
+						RelativePath="source\gamex\stuff\backgr_stars.cpp">
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="3"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"
+								BrowseInformation="1"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="source\gamex\stuff\space_body.cpp">
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="3"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"
+								BrowseInformation="1"/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="general"
+					Filter="">
+					<File
+						RelativePath="source\gamex\general\sprites.cpp">
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								Optimization="3"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories=""
+								PreprocessorDefinitions=""
+								BasicRuntimeChecks="3"
+								BrowseInformation="1"/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
 				Name="Ships"
 				Filter="">
 				<Filter
-					Name="SC1_ships"
+					Name="SC1_Ships"
 					Filter="">
 					<File
 						RelativePath="source\sc1ships\shpandgu.cpp">
@@ -1798,10 +2142,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1819,10 +2162,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1840,10 +2182,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1861,10 +2202,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1882,10 +2222,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1903,10 +2242,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1924,10 +2262,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1945,10 +2282,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1966,10 +2302,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -1987,10 +2322,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2008,10 +2342,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2029,10 +2362,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2050,10 +2382,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2071,10 +2402,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2088,7 +2418,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="SC2_ships"
+					Name="SC2_Ships"
 					Filter="">
 					<File
 						RelativePath="source\sc2ships\shpchmav.cpp">
@@ -2096,10 +2426,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2117,10 +2446,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2138,10 +2466,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2159,10 +2486,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2180,10 +2506,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2201,10 +2526,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2222,10 +2546,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2243,10 +2566,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2264,10 +2586,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2285,10 +2606,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2306,10 +2626,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2323,7 +2642,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="SC3_ships"
+					Name="SC3_Ships"
 					Filter="">
 					<File
 						RelativePath="source\sc3ships\shpclapi.cpp">
@@ -2331,10 +2650,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2352,10 +2670,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2373,10 +2690,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2394,10 +2710,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2415,10 +2730,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2436,10 +2750,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2457,10 +2770,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2478,10 +2790,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2499,10 +2810,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2520,10 +2830,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2541,10 +2850,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2562,10 +2870,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2579,7 +2886,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="TW_ships_1"
+					Name="TW_Ships"
 					Filter="">
 					<File
 						RelativePath="source\newships\shpaktgu.cpp">
@@ -2587,10 +2894,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2608,10 +2914,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2629,10 +2934,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2650,10 +2954,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2671,10 +2974,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2692,10 +2994,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2713,10 +3014,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2734,10 +3034,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2755,10 +3054,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2776,10 +3074,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2797,10 +3094,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2818,10 +3114,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2839,10 +3134,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2860,10 +3154,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2881,10 +3174,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2902,10 +3194,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2923,10 +3214,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2944,10 +3234,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2965,10 +3254,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2986,10 +3274,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3007,10 +3294,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3028,10 +3314,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3049,10 +3334,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3070,10 +3354,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3091,10 +3374,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3112,10 +3394,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3133,10 +3414,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3154,10 +3434,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3175,10 +3454,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3196,10 +3474,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3217,10 +3494,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3238,10 +3514,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3259,10 +3534,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3280,10 +3554,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3301,10 +3574,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3322,10 +3594,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3343,10 +3614,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3364,10 +3634,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3385,10 +3654,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3406,10 +3674,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3427,10 +3694,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3448,10 +3714,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3469,10 +3734,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3490,10 +3754,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3511,10 +3774,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3532,10 +3794,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3553,10 +3814,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3574,10 +3834,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3595,10 +3854,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3616,10 +3874,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3637,10 +3894,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3658,10 +3914,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3679,10 +3934,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3700,10 +3954,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3721,10 +3974,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3742,10 +3994,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3763,10 +4014,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3784,10 +4034,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3805,10 +4054,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3826,10 +4074,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3847,10 +4094,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3868,10 +4114,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3889,10 +4134,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3910,10 +4154,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3931,10 +4174,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3952,10 +4194,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3973,10 +4214,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -3994,10 +4234,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4015,10 +4254,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4036,10 +4274,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4057,10 +4294,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4078,10 +4314,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4099,10 +4334,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4120,10 +4354,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4141,10 +4374,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4162,10 +4394,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4183,10 +4414,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4204,10 +4434,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4225,10 +4454,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4246,10 +4474,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4267,10 +4494,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4288,10 +4514,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4309,10 +4534,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4330,10 +4554,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4351,10 +4574,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4372,10 +4594,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4393,10 +4614,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4414,10 +4634,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4435,10 +4654,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4456,10 +4674,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4477,10 +4694,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4498,10 +4714,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4519,10 +4734,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4540,10 +4754,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4561,10 +4774,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4582,10 +4794,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4603,10 +4814,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4624,10 +4834,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4645,10 +4854,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4666,10 +4874,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4687,10 +4894,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4708,10 +4914,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4729,10 +4934,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4750,10 +4954,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4771,10 +4974,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4792,10 +4994,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4813,10 +5014,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4834,10 +5034,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4855,10 +5054,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4876,10 +5074,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4897,10 +5094,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4918,10 +5114,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4939,10 +5134,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4960,10 +5154,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -4981,10 +5174,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5002,10 +5194,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5023,10 +5214,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5044,10 +5234,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5065,10 +5254,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5086,10 +5274,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5107,10 +5294,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5128,10 +5314,9 @@
 							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
-								Optimization="1"
+								Optimization="3"
 								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
+								PreprocessorDefinitions=""/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -5146,517 +5331,17 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="gamex"
+				Name="TW_GUI"
 				Filter="">
-				<File
-					RelativePath="source\gamex\ai_fleet.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\ai_fleet.h">
-				</File>
-				<File
-					RelativePath="source\gamex\ai_race.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamedata.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamedata.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamedata_map.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamedata_map.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamedialogue.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamedialogue.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamegeneral.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamegeneral.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamehyper.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamehyper.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamemelee.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamemelee.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gameplanetmission.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gameplanetmission.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gameplanetscan.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gameplanetscan.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gameplanetview.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gameplanetview.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gameproject.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gameproject.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamesolarview.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamesolarview.h">
-				</File>
-				<File
-					RelativePath="source\gamex\gamestarmap.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\gamestarmap.h">
-				</File>
-				<File
-					RelativePath="source\gamex\projectx.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="1"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\gamex\projectx.h">
-				</File>
-				<Filter
-					Name="edit"
-					Filter="">
-					<File
-						RelativePath="source\gamex\edit\disk_stuff.cpp">
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								Optimization="1"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BasicRuntimeChecks="3"
-								BrowseInformation="1"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="source\gamex\edit\disk_stuff.h">
-					</File>
-					<File
-						RelativePath="source\gamex\edit\edit_dialogue.cpp">
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								Optimization="1"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BasicRuntimeChecks="3"
-								BrowseInformation="1"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="source\gamex\edit\edit_dialogue.h">
-					</File>
-				</Filter>
-				<Filter
-					Name="stuff"
-					Filter="">
-					<File
-						RelativePath="source\gamex\stuff\backgr_stars.cpp">
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								Optimization="1"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BasicRuntimeChecks="3"
-								BrowseInformation="1"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="source\gamex\stuff\backgr_stars.h">
-					</File>
-					<File
-						RelativePath="source\gamex\stuff\space_body.cpp">
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								Optimization="1"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BasicRuntimeChecks="3"
-								BrowseInformation="1"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="source\gamex\stuff\space_body.h">
-					</File>
-				</Filter>
-				<Filter
-					Name="general"
-					Filter="">
-					<File
-						RelativePath="source\gamex\ai_race.cpp">
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								Optimization="1"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BasicRuntimeChecks="3"
-								BrowseInformation="1"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="source\gamex\general\sprites.cpp">
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								Optimization="1"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BrowseInformation="1"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								BasicRuntimeChecks="3"
-								BrowseInformation="1"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="source\gamex\general\sprites.h">
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
-				Name="twgui"
-				Filter="">
-				<File
-					RelativePath="source\twgui\gamebuttonevent.h">
-				</File>
 				<File
 					RelativePath="source\twgui\gametest2.cpp">
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5667,9 +5352,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\gametest2.h">
 				</File>
 				<File
 					RelativePath="source\twgui\twbutton.cpp">
@@ -5677,10 +5359,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5691,9 +5372,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\twbutton.h">
 				</File>
 				<File
 					RelativePath="source\twgui\twbuttontypes.cpp">
@@ -5701,10 +5379,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5715,9 +5392,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\twbuttontypes.h">
 				</File>
 				<File
 					RelativePath="source\twgui\twgui.cpp">
@@ -5725,10 +5399,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5739,9 +5412,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\twgui.h">
 				</File>
 				<File
 					RelativePath="source\twgui\twhelpers.cpp">
@@ -5749,10 +5419,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5763,9 +5432,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\twhelpers.h">
 				</File>
 				<File
 					RelativePath="source\twgui\twmenuexamples.cpp">
@@ -5773,10 +5439,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5787,9 +5452,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\twmenuexamples.h">
 				</File>
 				<File
 					RelativePath="source\twgui\twpopup.cpp">
@@ -5797,10 +5459,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5811,9 +5472,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\twpopup.h">
 				</File>
 				<File
 					RelativePath="source\twgui\twwindow.cpp">
@@ -5821,10 +5479,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5835,9 +5492,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\twwindow.h">
 				</File>
 				<File
 					RelativePath="source\twgui\utils.cpp">
@@ -5845,10 +5499,9 @@
 						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="1"
+							Optimization="3"
 							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
+							PreprocessorDefinitions=""/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -5859,9 +5512,6 @@
 							BasicRuntimeChecks="3"
 							BrowseInformation="1"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="source\twgui\utils.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -5876,6 +5526,9 @@
 			</File>
 			<File
 				RelativePath="source\gui.h">
+			</File>
+			<File
+				RelativePath="source\gup.h">
 			</File>
 			<File
 				RelativePath="source\id.h">
@@ -5944,6 +5597,9 @@
 					RelativePath="source\melee\mshppan.h">
 				</File>
 				<File
+					RelativePath="source\melee\mtarget.h">
+				</File>
+				<File
 					RelativePath="source\melee\mview.h">
 				</File>
 			</Filter>
@@ -5984,6 +5640,9 @@
 					RelativePath="source\util\round.h">
 				</File>
 				<File
+					RelativePath="source\util\sintable.h">
+				</File>
+				<File
 					RelativePath="source\util\sounds.h">
 				</File>
 				<File
@@ -5994,25 +5653,6 @@
 				</File>
 				<File
 					RelativePath="source\util\vector2.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="Games_h"
-				Filter="">
-				<File
-					RelativePath="source\games\gamehierarchy.h">
-				</File>
-				<File
-					RelativePath="source\games\gflmelee.h">
-				</File>
-				<File
-					RelativePath="source\games\ggob.h">
-				</File>
-				<File
-					RelativePath="source\games\gplexplr.h">
-				</File>
-				<File
-					RelativePath="source\games\gtrug.h">
 				</File>
 			</Filter>
 			<Filter
@@ -6040,13 +5680,44 @@
 					RelativePath="source\other\orbit.h">
 				</File>
 				<File
+					RelativePath="source\other\planet3d.h">
+				</File>
+				<File
 					RelativePath="source\other\radar.h">
+				</File>
+				<File
+					RelativePath="source\other\shippart.h">
 				</File>
 				<File
 					RelativePath="source\other\vbodies.h">
 				</File>
 				<File
 					RelativePath="source\other\vtarget.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Games_h"
+				Filter="">
+				<File
+					RelativePath="source\games\dialog.h">
+				</File>
+				<File
+					RelativePath="source\games\gamehierarchy.h">
+				</File>
+				<File
+					RelativePath="source\games\gflmelee.h">
+				</File>
+				<File
+					RelativePath="source\games\ggob.h">
+				</File>
+				<File
+					RelativePath="source\games\gmissions_objects.h">
+				</File>
+				<File
+					RelativePath="source\games\gplexplr.h">
+				</File>
+				<File
+					RelativePath="source\games\gtrug.h">
 				</File>
 			</Filter>
 			<Filter
@@ -6062,49 +5733,13 @@
 					RelativePath="include\allegro\inline\3dmaths.inl">
 				</File>
 				<File
-					RelativePath="include\allegro\platform\aintbeos.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\aintdos.h">
-				</File>
-				<File
 					RelativePath="include\allegro\internal\aintern.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\aintlnx.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\aintmac.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\aintqnx.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\aintunix.h">
-				</File>
-				<File
-					RelativePath="include\allegro\internal\aintvga.h">
 				</File>
 				<File
 					RelativePath="include\allegro\platform\aintwin.h">
 				</File>
 				<File
-					RelativePath="include\allegro\platform\al386gcc.h">
-				</File>
-				<File
 					RelativePath="include\allegro\platform\al386vc.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\al386wat.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\albcc32.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\albecfg.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\albeos.h">
 				</File>
 				<File
 					RelativePath="include\allegro\alcompat.h">
@@ -6113,46 +5748,13 @@
 					RelativePath="include\allegro\internal\alconfig.h">
 				</File>
 				<File
-					RelativePath="include\allegro\platform\aldjgpp.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\aldos.h">
-				</File>
-				<File
-					RelativePath="include\allegro\alinline.h">
-				</File>
-				<File
 					RelativePath="include\allegro.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\almac.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\almaccfg.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\almngw32.h">
 				</File>
 				<File
 					RelativePath="include\allegro\platform\almsvc.h">
 				</File>
 				<File
 					RelativePath="include\allegro\platform\alplatf.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\alqnx.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\alqnxcfg.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\alucfg.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\alunix.h">
-				</File>
-				<File
-					RelativePath="include\allegro\platform\alwatcom.h">
 				</File>
 				<File
 					RelativePath="include\allegro\platform\alwin.h">
@@ -6162,6 +5764,9 @@
 				</File>
 				<File
 					RelativePath="include\allegro\base.h">
+				</File>
+				<File
+					RelativePath="..\MSVS\VC98\Include\BASETSD.H">
 				</File>
 				<File
 					RelativePath="include\allegro\color.h">
@@ -6233,7 +5838,7 @@
 					RelativePath="include\allegro\keyboard.h">
 				</File>
 				<File
-					RelativePath="include\allegro\platform\macdef.h">
+					RelativePath="include\lauxlib.h">
 				</File>
 				<File
 					RelativePath="include\allegro\matrix.h">
@@ -6290,17 +5895,17 @@
 				<File
 					RelativePath="include\jgmod.h">
 				</File>
+				<File
+					RelativePath="include\lua.h">
+				</File>
+				<File
+					RelativePath="include\lualib.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
-			<File
-				RelativePath="scpwin.ico">
-			</File>
-			<File
-				RelativePath="scpwin.rc">
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -14,6 +14,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <allegro.h>
 
@@ -481,12 +482,13 @@ void init_fleet() {STACKTRACE
 
     int Fleet::getNextFleetEntryByCharacter(int currentShip, char c) {
         
-        ASSERT(ships.at(currentShip) != null);
+        ASSERT(ships.at(currentShip) != NULL);
         ASSERT(currentShip < ships.size());
         ASSERT(currentShip >=0);
         c = toupper(c);
-
-        for (int i=currentShip+1; i<ships.size(); i++) {
+	
+	int i;
+        for (i=currentShip+1; i<ships.size(); i++) {
             MyFleetShipType temp = ships.at(i);
             ASSERT(temp!=NULL);
             ASSERT(temp->name != NULL);

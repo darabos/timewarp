@@ -79,11 +79,10 @@ endif
 
 ##############################################################################
 
-all: $(OBJDIR) $(OBJS) PRELINK $(NAME)
+all: $(OBJDIR) $(OBJS) $(NAME)
 
 
-PRELINK:
-	$(RM) $(NAME)
+$(NAME): $(OBJDIR) $(OBJS)
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
