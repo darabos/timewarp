@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "round.h"
 #include "pmask.h"
 
 #ifdef USE_ALLEGRO
@@ -97,7 +98,7 @@ void deinit_pmask(struct PMASK *mask) {
 
 int serialize_pmask(void *destination, int maxsize, CONST PMASK *source) {
 	unsigned char *dest = (unsigned char *) destination;
-	int i, j, k;
+	unsigned int i, j, k;
 	int bytes = 1 + ((source->w-1) >> 3);
 	int words = 1 + ((source->w-1) >> MASK_WORD_BITBITS);
 	int size = sizeof(source->w) + sizeof(source->h) + bytes * source->h;
@@ -110,9 +111,9 @@ int serialize_pmask(void *destination, int maxsize, CONST PMASK *source) {
 		*dest = BYTE_N(source->h, i);
 		dest += 1;
 	}
-	for (j = 0; j < words; j += 1) {
+	for (j = 0; (int)j < words; j += 1) {
 		int base = j * sizeof(MASK_WORD_TYPE);
-		for (k = 0; k < source->h; k += 1) {
+		for (k = 0; (int)k < source->h; k += 1) {
 			MASK_WORD_TYPE tmp = source->mask[j * source->h + k];
 			base += bytes;
 			for (i = 0; i < sizeof(MASK_WORD_TYPE); i += 1) {
@@ -621,7 +622,7 @@ int check_pmask_collision_list_float ( PMASKDATA_FLOAT *input, int num, CONST vo
 		for (j = i+1; (j < num) && (input[j].y < h); j += 1) {
 			if (check_pmask_collision(
 				input[i].pmask, input[j].pmask, 
-				input[i].x - input[j].x, input[i].y - input[j].y, 
+				iround(input[i].x - input[j].x), iround(input[i].y - input[j].y), 
 				0, 0)) 
 			{
 				output[ret * 2] = input[i].data;
@@ -706,7 +707,7 @@ int check_pmask_collision_list_float_wrap ( float maxx, float maxy, PMASKDATA_FL
 			}
 			cr = check_pmask_collision(
 				input[i].pmask, input[j].pmask, 
-				dx, input[i].y-input[j].y, 
+				iround(dx), iround(input[i].y-input[j].y), 
 				0, 0);
 			if ( cr ) 
 			{
@@ -719,14 +720,14 @@ int check_pmask_collision_list_float_wrap ( float maxx, float maxy, PMASKDATA_FL
 		if (h > maxy) {
 			h -= maxy;
 			for (j = 0; (j < i) && (input[j].y < h); j += 1) {
-				int dx = input[i].x - input[j].x;
+				int dx = iround(input[i].x - input[j].x);
 				if ( abs( dx ) >= maxxh ) {
-					while (dx >=  maxxh) dx -= maxx;
-					while (dx <= -maxxh) dx += maxx;
+					while (dx >=  maxxh) dx -= iround(maxx);
+					while (dx <= -maxxh) dx += iround(maxx);
 				}
 				if (check_pmask_collision(
 					input[i].pmask, input[j].pmask, 
-					dx, input[i].y-maxy-input[j].y, 
+					dx, iround(input[i].y-maxy-input[j].y), 
 					0, 0)) 
 				{
 					output[ret * 2] = input[i].data;

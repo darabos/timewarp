@@ -82,7 +82,10 @@ const char *NetTCP::network_type() {
 
 #ifndef NETWORK_NONE
 
+#ifdef NETWORK_WINSOCK
 static int network_status = 0;
+#endif
+
 #define NETWORK_STATUS_WINSOCK_STARTED 0x01
 
 //msg and message exists for debug purposes.  currently it does nothing.  

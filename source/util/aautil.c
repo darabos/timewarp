@@ -113,12 +113,13 @@ static void _aa_prepare_for_24bpp (void)
 
 #define MAKE_PUTFUNC(name,bpp,bpp2,alpha,dither,no_trans,put)  void name (unsigned long _addr, int _x) {BEGIN(bpp,bpp2);alpha(bpp,bpp2);dither(bpp,bpp2);no_trans(bpp,bpp2);put(bpp,bpp2);}
 
-//#define MAKE_PUTFUNCS_ALPHA_NOTRANS(name1,name2,bpp,dither,put)  \
-//MAKE_PUTFUNCS(name1##name2,bpp,bpp,NONE,dither,NONE,put) \
-//MAKE_PUTFUNCS(name1##_alpha##name2,bpp,bpp2,ALPHA,dither,NONE,put) \
-//MAKE_PUTFUNCS(name1##_notrans##name2,bpp,bpp2,NONE,dither,NO_TRANS,put) \
-//MAKE_PUTFUNCS(name1##_alpha_notrans##name2,bpp,bpp2,ALPHA,dither,NO_TRANS,put)
-
+/*
+#define MAKE_PUTFUNCS_ALPHA_NOTRANS(name1,name2,bpp,dither,put)  \
+MAKE_PUTFUNCS(name1##name2,bpp,bpp,NONE,dither,NONE,put) \
+MAKE_PUTFUNCS(name1##_alpha##name2,bpp,bpp2,ALPHA,dither,NONE,put) \
+MAKE_PUTFUNCS(name1##_notrans##name2,bpp,bpp2,NONE,dither,NO_TRANS,put) \
+MAKE_PUTFUNCS(name1##_alpha_notrans##name2,bpp,bpp2,ALPHA,dither,NO_TRANS,put)
+*/
 
 
 /*

@@ -137,17 +137,17 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 	idx = dx >> aa_BITS;
 	mw = sx+sw;
 	mh = sy+sh;
-	if (cw < aa_SIZE) cw = aa_SIZE;
-	if (ch < aa_SIZE) ch = aa_SIZE;
+	if ((unsigned int)cw < aa_SIZE) cw = aa_SIZE;
+	if ((unsigned int)ch < aa_SIZE) ch = aa_SIZE;
 	_aa.total = cw * ch;
 	if (!(mode & (AA_NO_ALIGN | AA_NO_FILTER))) {
 		if (_aa.total > aa_MAX_NUM) {
-			if (cw > aa_MAX_SIZE) {
+			if ((unsigned int)cw > aa_MAX_SIZE) {
 //				xbase -= (cw - aa_MAX_SIZE) >> 1;
 //				xbase = 0;
 				cw = aa_MAX_SIZE;
 			}
-			if (ch > aa_MAX_SIZE) {
+			if ((unsigned int)ch > aa_MAX_SIZE) {
 //				ybase -= (ch - aa_MAX_SIZE) >> 1;
 //				ybase = 0;
 				ch = aa_MAX_SIZE;
@@ -191,7 +191,7 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 		if (cy + th > mh) { //bottom edge of image
 			th = mh - cy;
 		}
-		if (th < aa_SIZE) { //either edge
+		if ((unsigned int)th < aa_SIZE) { //either edge
 			cy -= (aa_SIZE - th) / 2;
 			th = aa_SIZE;
 			if (cy < 0) cy = 0;
@@ -208,7 +208,7 @@ void _aa_stretch_blit (BITMAP *src, BITMAP *dest,
 			if (cx + tw > mw) {//right edge of image
 				tw = mw - cx;
 			}
-			if (tw < aa_SIZE) {//either edge of image
+			if ((unsigned int)tw < aa_SIZE) {//either edge of image
 				cx -= (aa_SIZE - tw) / 2;
 				tw = aa_SIZE;
 				if (cx < 0) cx = 0;

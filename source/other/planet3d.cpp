@@ -458,7 +458,6 @@ Planet( opos, ObjectSprite, 0 )
 //	double xf, yf, zf;//final;
 	double xs,ys,zs;//sun
 	double lon, lat;
-	double spec = 0;
 
 	double min_light = 0.2;
 	double max_light = 1.0;
@@ -783,7 +782,7 @@ void Planet3D::animate( Frame* space )
 
 			unsigned char *col;
 			unsigned char *speccol;
-			unsigned short int specshade, colorshade;
+			unsigned short int specshade;
 
 
 		#if (defined (_MSC_VER))// && defined (__ia32__))

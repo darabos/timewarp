@@ -159,14 +159,14 @@ void init_fleet() {STACKTRACE
     }
 
     ShipType * Fleet::getShipType(int slot) {STACKTRACE
-        if ( (slot<0) || (slot>=ships.size()))
+        if ( (slot<0) || (slot>=(int)ships.size()))
             return NULL;
 
         return ships.at(slot);
     }
 
     void Fleet::save(const char *filename, const char *section) {STACKTRACE
-        int i=0, count = 0;
+        int count = 0;
         char slot_str[8];
     
         sort(ships.begin(), ships.end());

@@ -417,7 +417,7 @@ void game_create_errorlog()
 		// set "enable run-type information" for this feature
 		// (rebuild all after changing that option)
 		fprintf(f, "%30s %9.1e %9.1e %9.1e %9.1e 0x%08X 0x%08X 0x%08X\n",
-			typeid(*s).name(), p.x, p.y, v.x, v.y, s, s->ship, s->target );
+			typeid(*s).name(), p.x, p.y, v.x, v.y, (unsigned int)s, (unsigned int)s->ship, (unsigned int)s->target );
 	}
 
 	#ifdef DO_STACKTRACE

@@ -211,7 +211,6 @@ void HomingMissile::calculate() {
 
 void HomingMissile::animate_predict(Frame *space, int time) {
 	int old_sprite_index = sprite_index;
-	double old_angle = angle;
 	Vector2 old_vel = vel;
 
 	double ta = 0;

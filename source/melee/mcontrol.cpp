@@ -61,9 +61,7 @@ void SimpleLagHandler::init ( Game *game, int channel, int size, void *default_v
 	data = malloc ( item_size * lag_frames );
 	return;
 }
-
-
-
+*/
 /*
 	int lag = game->lag_frames;
 	if (sent & 1) {
@@ -409,10 +407,9 @@ int Control::think() {STACKTRACE
 char *Control::getDescription() {STACKTRACE
 	return iname;
 	}
-Control::Control(const char *name, int _channel) : ship(NULL), 
-	target(NULL), index(-1), _prediction_keys(NULL), 
-	always_random(0), channel(_channel), 
-	already(0), temporary(false), target_sign_color(255)
+Control::Control(const char *name, int _channel) : temporary(false), target_sign_color(255), 
+	already(0), channel(_channel), ship(NULL), 
+	target(NULL), index(-1), always_random(0), _prediction_keys(NULL) 
 	{STACKTRACE
 	id |= ID_CONTROL;
 	attributes |= ATTRIB_SYNCHED;

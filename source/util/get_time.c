@@ -338,8 +338,8 @@ void init_time() {
 
 //not tested, not even a little bit...
 void deinit_time() {
-	if (~(timer_attributes & 1)) return;
-	timer_attributes &=~ 1;
+	if (!(timer_attributes & 1)) return;
+	timer_attributes &=~1;
 #	if defined PLATFORM_IS_SDL
 		deinit_sdl_time();
 #	endif

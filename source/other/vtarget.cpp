@@ -336,3 +336,4 @@ int AimSys::shouldTurnRight(void) {
 		return(TRUE);
 
 }
+
