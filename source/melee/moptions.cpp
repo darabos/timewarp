@@ -183,7 +183,7 @@ DIALOG video_dialog[] = {
   { d_button_proc,      32,  70,  100,   35,   255,  0,   0,D_EXIT,  0,    0,    (void *)"Ok", NULL, NULL },//DIALOG_VIDEO_SET_DEFAULT
 
   { d_text_proc,       170,  310,  160,  20,   255,  0,   0,     0,       0,    0,    (void *)"Gamma Correction", NULL, NULL },//DIALOG_VIDEO_GAMMA_TEXT
-  { d_slider_proc,     170,  330,  160,  15,   255,  0,   0,     0,       255,  0,    NULL, handleGammaSliderChange, NULL  },//DIALOG_VIDEO_GAMMA_SLIDER
+  { d_slider_proc,     170,  330,  160,  15,   255,  0,   0,     0,       255,  0,    NULL, (void *)handleGammaSliderChange, NULL  },//DIALOG_VIDEO_GAMMA_SLIDER
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       3,    0,    NULL, NULL, NULL }
 	};
@@ -336,9 +336,9 @@ DIALOG audio_dialog[] = {
   { d_button_proc,     100,  60,  80,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"OK", NULL, NULL },
   { d_button_proc,     200,  60,  80,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Cancel", NULL, NULL },
   { d_check_proc,      40,  110,  160,  20,   255,  0,    0,    0,       0,    0,    (void *)"Sound Volume ", NULL, NULL },  
-  { d_slider_proc,     205, 110,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, handleSoundSliderChange, NULL },
+  { d_slider_proc,     205, 110,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, (void *)handleSoundSliderChange, NULL },
   { d_check_proc,      40,  140,  160,  20,   255,  0,    0,    0,       0,    0,    (void *)"Music Volume ", NULL, NULL },  
-  { d_slider_proc,     205, 140,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, handleMusicSliderChange, NULL },
+  { d_slider_proc,     205, 140,  180,  15,   255,  0,    0,    0,       255,  0,    NULL, (void *)handleMusicSliderChange, NULL },
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 	};
