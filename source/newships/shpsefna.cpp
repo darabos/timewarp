@@ -150,7 +150,7 @@ int SefyNautilus::activate_special()
 		return FALSE;
 	}
 
-	hook = new Hook(this, 100*unit_vector(angle), this->ship->data->spriteSpecial);
+	hook = new Hook(this, 100*unit_vector(angle), data->spriteSpecial);
 	game->add( hook );
 
 	return TRUE;

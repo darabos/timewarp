@@ -219,6 +219,11 @@ void ShipPartManager::calculate_manager()
 	{
 		mother = 0;
 		state = 0;
+
+		int i;
+		for ( i = 0; i < Nparts; ++i )
+			partlist[i]->calculate_manager(oldpos, oldvel);
+
 		return;
 	}
 
@@ -300,7 +305,7 @@ mother(creator)
 	calc_pos(mother->pos);
 
 	collide_flag_anyone = mother->collide_flag_anyone;
-	collide_flag_sameteam = 0;
+	collide_flag_sameteam = mother->collide_flag_sameteam;
 	collide_flag_sameship = 0;
 
 	hascollided = 0;
@@ -311,6 +316,14 @@ mother(creator)
 
 void ShipPart::calculate()
 {
+	// this should be checked here, too, cause the manager can die as well; if the
+	// parts aren't dead by then, the check will never be made otherwise !!
+	if (!(mother && mother->exists()))
+	{
+		mother = 0;
+		state = 0;
+		return;
+	}
 }
 
 void ShipPart::calculate_manager(Vector2 refpos, Vector2 refvel)
@@ -349,7 +362,11 @@ int ShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 		return mother->handle_damage(source, normal, direct);
 	}
 	else
+	{
+		mother = 0;
+		state = 0;
 		return 0;
+	}
 }
 
 void ShipPart::animate(Frame *space)

@@ -39,12 +39,14 @@ class trapShip : public SpaceObject
   int soundDelay;
 
  public:
-  trapShip(Ship *creator, Ship *oship, int drainDelayRate, int drainAmountof,
+//  trapShip(Ship *creator, Ship *oship, int drainDelayRate, int drainAmountof,
+ //                SpaceSprite *osprite, int ofcount, int ofsize);
+  trapShip(SpaceLocation *creator, Ship *oship, int drainDelayRate, int drainAmountof,
                  SpaceSprite *osprite, int ofcount, int ofsize);
   virtual void calculate();
 };
 
-trapShip::trapShip(Ship *creator, Ship *oship, int drainDelayRate, int drainAmountof, SpaceSprite *osprite, int ofcount, int ofsize) :
+trapShip::trapShip(SpaceLocation *creator, Ship *oship, int drainDelayRate, int drainAmountof, SpaceSprite *osprite, int ofcount, int ofsize) :
                 SpaceObject(creator, oship->normal_pos(), 0.0, osprite), ship(oship)
   {
     play_sound2(data->sampleExtra[1]);
@@ -133,7 +135,10 @@ void quasiTrap::calculate()
 void quasiTrap::inflict_damage(SpaceObject *other)
   {
     if (other->isShip())
-      add(new trapShip( ship, (Ship *)(other), drainDelay, drainAmount, data->spriteWeaponExplosion, 20, 50));
+      //add(new trapShip( ship, (Ship *)(other), drainDelay, drainAmount, data->spriteWeaponExplosion, 20, 50));
+	  add(new trapShip( this, (Ship *)(other), drainDelay, drainAmount, data->spriteWeaponExplosion, 20, 50));
+	// the creator should be "this", otherwise "converted weapons" whose ship pointer is
+	// perturbed can crash the game; the data points wrongly then...
     state = 0;
     return;
   }

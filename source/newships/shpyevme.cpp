@@ -385,7 +385,8 @@ void YevSaber::inflict_damage(SpaceObject *other) {
 			} else 
 				{
 				damage(other, 1);
-				sound.play(ship->data->sampleExtra[0]);
+				//sound.play(ship->data->sampleExtra[0]);
+				sound.play(data->sampleExtra[0]);
 			}
 			
 		}

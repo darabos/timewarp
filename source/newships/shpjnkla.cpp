@@ -193,7 +193,8 @@ void JnkdwoLazelCrystal::calculate() {
 //                        game->addItem(new PointLaser(c, ship->specialDamage, ship->specialRange, ship->specialFrames, this, t, 0, 0));
                         add(new JnkdwoLazelLaser (this, trajectory_angle(t), ship->specialAngle, c, ship->specialRange, ship->specialDamage,
                                           ship->specialFrames, this, t, ship->specialAim * r, ship->specialSpread));
-                        play_sound(ship->data->sampleSpecial[0]);
+                        //play_sound(ship->data->sampleSpecial[0]);
+						play_sound(data->sampleSpecial[0]);
                         recharge += ship->special_rate;
                         ship->batt -= ship->special_drain; }
         }
