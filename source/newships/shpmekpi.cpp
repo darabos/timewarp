@@ -15,11 +15,13 @@ class MeknikPincer : public Ship
 	double	weaponColor, weaponRange, weaponFrames, weaponDamage;
 	double specialTurnperiod, specialDamage, specialDamageperiod;
 
-	MeknikChainsaw* saw[2];
-	double sawangle[2];
+	int Nsaws;
+	MeknikChainsaw **saw;
+	double sawangle, *sawrefangle;
 	
 public:
 	MeknikPincer(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
+	virtual ~MeknikPincer();
 
 	void getinformed(int itype, SpaceLocation *other);
 	int special_state();
@@ -40,13 +42,13 @@ protected:
 
 class MeknikChainsaw : public SpaceObject
 {
-	double	turnperiod, damage, damageperiod, dist;
+	double	damage, damageperiod, dist, maxdist;
 	double	lifetime, sawtime, inflict_time;
 	MeknikPincer *refship;
 	
 public:
 	MeknikChainsaw(MeknikPincer *oship, double odist, double a,
-		double turnperiod, double damage, double damageperiod,
+		double damage, double damageperiod,
 		SpaceSprite *ospr);
 	
 protected:
@@ -92,13 +94,24 @@ Ship(opos,  shipAngle, shipData, code)
 	specialDamage = get_config_float("Special", "Damage", 1.0);
 	specialDamageperiod = get_config_float("Special", "Damageperiod", 1.0);
 
-	saw[0] = 0;
-	saw[1] = 0;
+	Nsaws = 3;
+	saw = new MeknikChainsaw* [Nsaws];
+	sawrefangle = new double [Nsaws];
 
-	sawangle[0] = 0;
-	sawangle[1] = 0;
+	int i;
+	for ( i = 0; i < Nsaws; ++i )
+	{
+		saw[i] = 0;
+		sawrefangle[i] = i * PI2 / Nsaws;
+	}
+	sawangle = 0.0;
 }
 
+MeknikPincer::~MeknikPincer()
+{
+	delete saw;
+	delete sawrefangle;
+}
 
 
 void MeknikPincer::getinformed(int itype, SpaceLocation *other)
@@ -112,7 +125,8 @@ void MeknikPincer::getinformed(int itype, SpaceLocation *other)
 			angle+PI, rockVelocity, rockDamage, rockRange, rockArmour,
 			this, data->spriteWeapon));
 
-		vel += rockVelocity * unit_vector(angle);
+		if (vel.length() < speed_max)
+			vel += rockVelocity * unit_vector(angle);
 	}
 }
 
@@ -154,24 +168,25 @@ int MeknikPincer::activate_special()
 {
 	STACKTRACE
 	// for re-activation, require minimum batt.
-	if (!saw[0] || !saw[1])
+	if (!saw[0])
 		if (batt < 4)
 			return FALSE;
 
 	int i;
-	for ( i = 0; i < 2; ++i )
+	for ( i = 0; i < Nsaws; ++i )
 	{
 		int d;
 
-		if ( i == 0 )
-			d = 1;
-		else
-			d = -1;
+		//if ( i == 0 )
+		//	d = 1;
+		//else
+		//	d = -1;
+		d = 1;	// same direction.
 
 		if (!saw[i])
 		{
-			saw[i] = new MeknikChainsaw(this, 60.0, sawangle[i],
-				specialTurnperiod * d, specialDamage, specialDamageperiod,
+			saw[i] = new MeknikChainsaw(this, 60.0, sawangle + sawrefangle[i],
+				specialDamage, specialDamageperiod,
 				data->spriteSpecial);
 			add(saw[i]);
 		}
@@ -183,15 +198,28 @@ int MeknikPincer::activate_special()
 
 void MeknikPincer::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	int i;
-	for ( i = 0; i < 2; ++i )
+	for ( i = 0; i < Nsaws; ++i )
 	{
 		if ( !(saw[i] && saw[i]->exists()) )
 			saw[i] = 0;
 		else
-			sawangle[i] = saw[i]->angle;
+			saw[i]->angle = sawangle + sawrefangle[i];
+	}
+
+	for ( i = 0; i < Nsaws; ++i )
+		if (saw[i])
+			break;
+
+	if (i < Nsaws)	// if there's a saw alive, increase angle.
+	{
+		sawangle += PI2 * frame_time*1E-3 / specialTurnperiod;
+		if (angle > PI)
+			angle -= PI2;
+		if (angle < -PI)
+			angle += PI2;
 	}
 
 	Ship::calculate();
@@ -200,7 +228,7 @@ void MeknikPincer::calculate()
 
 int MeknikPincer::handle_damage(SpaceLocation* source, double normal, double direct)
 {
-	STACKTRACE
+	STACKTRACE;
 	/*
 	if (source->isAsteroid())
 	{
@@ -218,16 +246,19 @@ int MeknikPincer::handle_damage(SpaceLocation* source, double normal, double dir
 
 
 MeknikChainsaw::MeknikChainsaw(MeknikPincer *oship, double odist, double a,
-		double oturnperiod, double odamage, double odamageperiod,
+		double odamage, double odamageperiod,
 		SpaceSprite *ospr)
 :
 SpaceObject(oship, oship->pos+odist*unit_vector(a), a, ospr)
 {
 	refship = oship;
-	turnperiod = oturnperiod;
+	//turnperiod = oturnperiod;
 	damage = odamage;
 	damageperiod = odamageperiod;
-	dist = odist;
+	
+	maxdist = odist;
+	dist = 0.5 * maxdist;
+
 	angle = a;
 
 	lifetime = 0;
@@ -236,6 +267,8 @@ SpaceObject(oship, oship->pos+odist*unit_vector(a), a, ospr)
 
 	mass = 0;	// so that it can slice through without pushing it away
 	layer = LAYER_SPECIAL;
+
+	set_depth(DEPTH_SHIPS - 0.1);
 
 	isblockingweapons = true;
 }
@@ -279,15 +312,22 @@ void MeknikChainsaw::calculate()
 		sawtime = 0;
 	}
 
+	/*
 	angle += PI2 * dt / turnperiod;
 	if (angle > PI)
 		angle -= PI2;
 	if (angle < -PI)
 		angle += PI2;
+		*/
 
 	sprite_index = get_index(angle) + i*64;
 	//sprite_index = i * 64;
 	i = sprite->frames();
+
+	if (dist < maxdist)
+		dist += 0.5 * maxdist * dt;	// it takes 1 second to appear fully.
+	else
+		dist = maxdist;
 
 	pos = refship->pos + dist * unit_vector(angle+PI/2);
 	vel = refship->vel;	// not really needed ?

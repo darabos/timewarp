@@ -20,6 +20,9 @@ protected:
 	
 	virtual int activate_weapon();
 	virtual int activate_special();
+
+	void engage_forward(double dweight);
+	void engage_backward(double dweight);
 	
 };
 
@@ -45,11 +48,8 @@ Ship(opos,  shipAngle, shipData, code)
 }
 
 
-int LeiMule::activate_weapon()
-{	
-	STACKTRACE
-	
-
+void LeiMule::engage_forward(double dweight)
+{
 	Vector2 P0;
 	double A0, R0, Aweapon;
 
@@ -79,20 +79,18 @@ int LeiMule::activate_weapon()
 		double aoffs;
 		aoffs = -i * Aweapon;
 
-		add(new Shot(this, rpos, angle + aoffs,
-			weaponVelocity, weaponDamage, weaponRange, weaponArmour,
-			this, data->spriteWeapon, 0.0));
+		Shot *s;
+		s = new Shot(this, rpos, angle + aoffs,
+			weaponVelocity, weaponDamage * dweight, weaponRange, weaponArmour,
+			this, data->spriteWeapon, 0.0);
+		s->isblockingweapons = true;
+		add(s);
 	}
-	
-	return TRUE;
 }
 
 
-int LeiMule::activate_special()
+void LeiMule::engage_backward(double dweight)
 {
-	STACKTRACE
-
-	
 	Vector2 P0;
 	double A0, R0, Aweapon;
 
@@ -122,10 +120,38 @@ int LeiMule::activate_special()
 		double aoffs;
 		aoffs = -i * Aweapon + PI;
 
-		add(new Shot(this, rpos, angle + aoffs,
-			specialVelocity, specialDamage, specialRange, specialArmour,
-			this, data->spriteSpecial, 0.0));
+		Shot *s;
+		s = new Shot(this, rpos, angle + aoffs,
+			specialVelocity, specialDamage * dweight, specialRange, specialArmour,
+			this, data->spriteSpecial, 0.0);
+		s->isblockingweapons = true;
+		add(s);
 	}
+}
+
+int LeiMule::activate_weapon()
+{	
+	STACKTRACE;
+	
+	engage_forward(1);
+
+	engage_backward(1);
+	
+	return TRUE;
+}
+
+
+int LeiMule::activate_special()
+{
+	STACKTRACE;
+
+	// do something else, but what
+	// fire a dummy shot to confuse/irritate the enemy; this costs no energy.
+	
+	engage_forward(0);
+
+	engage_backward(0);
+	
 
 	return TRUE;
 }
