@@ -83,7 +83,7 @@ double normalize(double value, double max)
 	__asm fstp d;
 	__asm fstp b;
 */
-	if (max < 0) {
+	if (max <= 0) {
 		tw_error ("normalize - bad \n%f\n %% %f", value, max);
 		return normalize2(value, max);
 	}
