@@ -163,7 +163,7 @@ int DyzunHarbringer::activate_weapon()
 
 int DyzunHarbringer::activate_special() {
   DyzunMissile* NM;
-  NM = new DyzunMissile(this, size.y*(0.25), (size.y * 0.6),
+  NM = new DyzunMissile(this, size.y*(0.5), (size.y * 0.6),
     angle+specialReleaseAngle, specialVelocityCoast, specialDamage, -1, specialArmour, specialTurnRate,
     this, data->spriteSpecial, this->target);
   NM->facingAngle = angle+specialReleaseFacingAngle;
@@ -177,7 +177,7 @@ int DyzunHarbringer::activate_special() {
   NM->burnVelocity2 = specialVelocityBurn2;
   game->add(NM);
 
-  NM = new DyzunMissile(this, size.y*(-0.25), (size.y * 0.6),
+  NM = new DyzunMissile(this, size.y*(-0.5), (size.y * 0.6),
     angle-specialReleaseAngle, specialVelocityCoast, specialDamage, -1, specialArmour, specialTurnRate,
     this, data->spriteSpecial, this->target);
   NM->facingAngle = angle-specialReleaseFacingAngle;
@@ -206,46 +206,50 @@ void DyzunHarbringer::calculate(void) {
 
 
 DyzunMissile::DyzunMissile(DyzunHarbringer* ocreator, double ox, double oy, double oangle, double ov,
-	int odamage, double orange, int oarmour, double oturnrate, SpaceLocation* opos, SpaceSprite* osprite, SpaceObject* otarget) 
-	:
-	HomingMissile(ocreator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oturnrate, opos, osprite, otarget) 
+						   int odamage, double orange, int oarmour, double oturnrate, SpaceLocation* opos, SpaceSprite* osprite, SpaceObject* otarget) 
+						   :
+HomingMissile(ocreator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, oturnrate, opos, osprite, otarget) 
 
-	{
+{
 	explosionSprite     = data->spriteWeaponExplosion;
 	facingAngle=oangle;
-  isActivated=0;
-  this->relativity = 1.0;
-  thrustOn = FALSE;
-  lifetimeTimer = 0;
-	}
+	isActivated=0;
+	this->relativity = 1.0;
+	thrustOn = FALSE;
+	lifetimeTimer = 0;
+	
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = ALL_LAYERS;
+}
 
 void DyzunMissile::calculate(void) {
-  lifetimeTimer += frame_time;
-  if(lifetimeTimer<coastFrames) {
-    wasCoasting = TRUE;
-    Shot::calculate();
-  }
-  else if(lifetimeTimer<(coastFrames+burnFrames1)) {
-  	this->sprite_index = get_index(this->angle) + 64;
-    HomingMissile::calculate();
-  	this->sprite_index = get_index(this->angle) + 64;
-    this->v = burnVelocity1;
-    this->relativity = 0.0;
-  	this->sprite_index = get_index(this->angle) + 64;
-  }
-  else if(lifetimeTimer<(coastFrames+burnFrames1+burnFrames2)) {
-  	sprite_index = get_index(this->angle) + 128;
-    HomingMissile::calculate();
-  	this->sprite_index = get_index(this->angle) + 128;
-    this->v =  burnVelocity2;
-    this->relativity = 0.0;
-  	this->sprite_index = get_index(this->angle) + 128;
-  }
-  else {
-    state = 0;
-  	this->sprite_index = get_index(this->angle) + 128;
-    HomingMissile::calculate();
-  }
+	lifetimeTimer += frame_time;
+	if(lifetimeTimer<coastFrames) {
+		wasCoasting = TRUE;
+		Shot::calculate();
+	}
+	else if(lifetimeTimer<(coastFrames+burnFrames1)) {
+		this->sprite_index = get_index(this->angle) + 64;
+		HomingMissile::calculate();
+		this->sprite_index = get_index(this->angle) + 64;
+		this->v = burnVelocity1;
+		this->relativity = 0.0;
+		this->sprite_index = get_index(this->angle) + 64;
+	}
+	else if(lifetimeTimer<(coastFrames+burnFrames1+burnFrames2)) {
+		sprite_index = get_index(this->angle) + 128;
+		HomingMissile::calculate();
+		this->sprite_index = get_index(this->angle) + 128;
+		this->v =  burnVelocity2;
+		this->relativity = 0.0;
+		this->sprite_index = get_index(this->angle) + 128;
+	}
+	else {
+		state = 0;
+		this->sprite_index = get_index(this->angle) + 128;
+		HomingMissile::calculate();
+	}
 }
 
 void DyzunMissile::inflict_damage(SpaceObject *other) {
@@ -267,6 +271,10 @@ SpaceObject(creator, opos, oangle, osprite)
 
 	layer = LAYER_SPECIAL;
 	vel = 0;
+
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = ALL_LAYERS;
 }
 
 int SlownessMine::handle_damage(SpaceLocation* source, double normal, double direct)
@@ -303,7 +311,15 @@ void SlownessMine::calculate()
 		double v;
 		v = o->vel.length();
 		if (v > maxvel)
+		{
 			o->vel *= maxvel / v;
+			v = maxvel;
+		}
+
+		if (o->isShot())
+			((Shot*)o)->v = v;
+			
+
 	}
 }
 
