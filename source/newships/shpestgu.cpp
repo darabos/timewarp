@@ -194,10 +194,12 @@ EstionShot::EstionShot(Vector2 opos, double angle, double velocity,
 	}
 
 void EstionShot::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	STACKTRACE;
 	if (other == last_shooter) return;
 	if (!sameShip(other) || other == mother_ship) {
 		// don't explode on contact, just damage [cyhawk]
+		Shot::inflict_damage(other);
+		/*Removed on request of MRT - makes the ship too powerful as a camper
 		SpaceObject::inflict_damage(other);
 		// and get bumped back
 		last_shooter = other;
@@ -227,6 +229,7 @@ void EstionShot::inflict_damage(SpaceObject *other) {
 			double delta = trajectory_angle (mother_ship->platform[k]);
 			vel = v * unit_vector(delta);
 			}
+			*/
 		return;
 		}
 	if (!target || target->isInvisible()) return;
