@@ -70,7 +70,7 @@ void BubalosExecutioner::calculate() {
       reverse_count += 160;
 
       if (reverse_frame > 0)
-        add(new PositionedAnimation(this, this, Vector2(0,(reverse_frame-3)*6.0),
+        add(new PositionedAnimation(this, this, Vector2((reverse_frame-3)*6.0, 0),
                           data->spriteExtra, 0, 1, 160, LAYER_EXPLOSIONS));
       else
         angle = normalize(angle + PI, PI2);
@@ -103,11 +103,14 @@ int BubalosExecutioner::activate_special()
 
 int BubalosExecutioner::handle_damage(SpaceLocation *source, double normal, double direct) {
 
-	STACKTRACE
+	STACKTRACE;
+	
    if (normal > 0) {
-      normal -= shield;
-      if (normal  <= 0)
-         normal = 1;
+
+	   // removed the armor
+//      normal -= shield;
+//      if (normal  <= 0)
+//         normal = 1;
 
       batt += normal;
       if (batt > batt_max) batt = batt_max;
