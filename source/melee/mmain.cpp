@@ -344,15 +344,11 @@ void NormalGame::calculate() {STACKTRACE
 			{
 				SpaceLocation *o;
 				o = physics->item[i];
-				
 				if (!(o && o->exists()))
 					continue;
-				
 				if (o->isPlanet() || o->isAsteroid())
 					continue;
-				
 				o->die();
-
 			}
 		}
 	}
@@ -449,14 +445,14 @@ bool NormalGame::handle_key(int k)
 			return true;
 			}
 		break;
+		//don't use hardwired normal keys
 		case KEY_H:
-			indhealthtoggle = ~indhealthtoggle;
+			if ((k & 255) == 'H'-'A'+1) indhealthtoggle = ~indhealthtoggle;
 			break;
 		case KEY_T:
-			indteamtoggle = ~indteamtoggle;
+			if ((k & 255) == 'T'-'A'+1) indteamtoggle = ~indteamtoggle;
 			break;
 		}
-
 	return false;
 	}
 
@@ -472,6 +468,7 @@ public:
 
 	virtual void calculate();
 	virtual void animate(Frame *space);
+	virtual void animate_predict(Frame *frame, int time);
 };
 
 
@@ -546,18 +543,15 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		add(new HealthBar(s, &indhealthtoggle));
 		add(new TeamIndicator(s, &indteamtoggle));
 
-
-
 		
 		// CHECK FILE SIZES !! to intercept desynch before they happen.
-
 		int myfsize, otherfsize;
 
 		myfsize = file_size(s->type->data->file);
 		otherfsize = myfsize;
-		log_int(player_control[i]->channel, otherfsize);
-
-
+		if (player_control[i]->channel != channel_none) {
+			log_int(player_control[i]->channel, otherfsize);
+		}
 
 		if (otherfsize != myfsize)
 		{
@@ -590,10 +584,12 @@ void TeamIndicator::calculate()
 		state = 0;
 		return;
 	}
-
 }
 
-void TeamIndicator::animate(Frame *space)
+void TeamIndicator::animate(Frame *space) {
+	animate_predict(space, 0);
+}
+void TeamIndicator::animate_predict(Frame *space, int time)
 {
 	if (!*indtoggle)
 		return;
@@ -601,13 +597,11 @@ void TeamIndicator::animate(Frame *space)
 	if (mother->isInvisible())
 		return;
 
-	Vector2 co1, co2, D;
+	Vector2i co1, co2, D;
 
-	co1 = corner(mother->pos - 0.5 * mother->size);
+	co1 = corner(mother->pos - 0.5 * mother->size).round();
+	co2 = corner(mother->pos + 0.5 * mother->size).round();
 	//co2 = corner(mother->pos + Vector2(d2, -mother->size.y * 0.6));
-
-	D = mother->size * space_zoom;
-	co2 = co1 + D;
 
 	if (co2.x < 0) return;
 	if (co2.y < 0) return;
@@ -617,7 +611,7 @@ void TeamIndicator::animate(Frame *space)
 	int col;
 	col = palette_color[mother->get_team() + 1];	// team 0 is black ...
 
-	rect(space->surface, (int)co1.x, (int)co1.y, (int)co2.x, (int)co2.y, col);
+	rect(space->surface, co1.x, co1.y, co2.x, co2.y, col);
 	space->add_box(co1.x, co1.y, co2.x, co2.y);
 }
 
