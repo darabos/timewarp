@@ -1,3 +1,6 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 #ifndef __TWBUTTONTYPES_H__
 #define __TWBUTTONTYPES_H__

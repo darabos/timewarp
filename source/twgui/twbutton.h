@@ -1,3 +1,6 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 #ifndef __TWBUTTON_H__
 #define __TWBUTTON_H__
@@ -33,7 +36,7 @@ class EmptyButton
 
 public:
 	EmptyButton *prev, *next;
-	Vector2 pos, size;	// these are used to define the box area (top left corner and dimensions)
+	twguiVector pos, size;	// these are used to define the box area (top left corner and dimensions)
 
 	ButtonEvent	*button_event;
 	void bind(ButtonEvent *be) {button_event = be;};

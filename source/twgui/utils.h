@@ -1,5 +1,26 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
+
 #ifndef __TWGUI_UTILS_H__
 #define __TWGUI_UTILS_H__
+
+
+// INTERFACE NECESSARY TO SET UP !!
+
+// point to a routine that displays error messages
+typedef volatile int (twgui_time_handler_type());
+typedef void (twgui_err_handler_type(const char *txt, ...));
+
+extern twgui_time_handler_type *twgui_time;
+extern twgui_err_handler_type *twgui_error;
+
+
+
+void twgui_init(twgui_time_handler_type t, twgui_err_handler_type f);
+
+int round(double x);
+
 
 
 int mapkey(int scancode_key, int scancode_ctrl = 0);
@@ -13,6 +34,32 @@ BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif);
 BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem);
 
 
+
+
+
+
+// copied from timewarp code (Orz).
+struct twguiVector
+{
+	double x, y;
+	twguiVector () {}
+	twguiVector (double a, double b) : x(a), y(b) {}
+	twguiVector (void *nothing) : x(0), y(0) {}
+	twguiVector &operator= (void *nothing) {x = y = 0; return *this;}
+	twguiVector &operator+=(twguiVector a) { x+=a.x;y+=a.y; return *this;}
+	twguiVector &operator-=(twguiVector a) { x-=a.x;y-=a.y; return *this;}
+	twguiVector &operator*=(double a) { x*=a; y*=a; return *this;}
+	twguiVector &operator/=(double a) { double b = 1/a; x*=b; y*=b; return *this;}
+	twguiVector operator-() const { return twguiVector(-x,-y); }
+	bool operator==(twguiVector a) const { return ((x==a.x) && (y==a.y)); }
+	bool operator!=(twguiVector a) const { return ((x!=a.x) || (y!=a.y)); }
+};
+
+inline twguiVector operator+ (twguiVector a, twguiVector b) { return twguiVector(a.x+b.x,a.y+b.y); }
+inline twguiVector operator- (twguiVector a, twguiVector b) { return twguiVector(a.x-b.x,a.y-b.y); }
+inline twguiVector operator* (twguiVector a, double b) { return twguiVector(a.x*b,a.y*b); }
+inline twguiVector operator* (double b, twguiVector a) { return twguiVector(a.x*b,a.y*b); }
+inline twguiVector operator/ (twguiVector a, double b) { double c = 1/b; return twguiVector(a.x*c,a.y*c); }
 
 
 class normalmouse

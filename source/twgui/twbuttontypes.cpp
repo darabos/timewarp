@@ -1,11 +1,11 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "../melee.h"
-#include "../melee/mview.h"
-REGISTER_FILE
 
 #include "twwindow.h"
 #include "twbuttontypes.h"
@@ -373,7 +373,7 @@ void ScrollBar::setrelpos(double arelpos)
 	relpos = arelpos;
 
 	// also update the button position to reflect this change
-	pbutton = pmin + iround(relpos * (pmax - pmin));
+	pbutton = pmin + round(relpos * (pmax - pmin));
 }
 
 

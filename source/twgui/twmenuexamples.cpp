@@ -1,14 +1,15 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
 
+#include <math.h>
 
-#include "../melee.h"
-//#include "melee/mview.h"
 
-REGISTER_FILE
 
 #include "twbutton.h"
 #include "twwindow.h"

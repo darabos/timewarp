@@ -1,14 +1,12 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
 
-
-#include "../melee.h"
-//#include "melee/mview.h"
-
-REGISTER_FILE
-
+#include "utils.h"
 
 #include "twwindow.h"
 
@@ -46,7 +44,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 	screen = outputscreen;
 	if (!screen)
 	{
-		tw_error("Something is wrong with the screen!!");
+		twgui_error("Something is wrong with the screen!!");
 	}
 
 	strcpy(ident, identbase);
@@ -66,7 +64,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 //	datafile = load_datafile(datafilename);
 //	if (!datafile)
 //	{
-//		tw_error("TWindow: Could not load datafile");
+//		twgui_error("TWindow: Could not load datafile");
 //	}
 
 	// read the default resolution from the info.txt file :
@@ -109,12 +107,12 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 	if (backgr)
 	{
-		x = iround(dx * scale);
-		y = iround(dy * scale);
+		x = round(dx * scale);
+		y = round(dy * scale);
 		W = backgr->w;	// background is already scaled !!
 		H = backgr->h;
 	} else {
-		tw_error("TWindow: No background defined !!");
+		twgui_error("TWindow: No background defined !!");
 	}
 
 
@@ -133,7 +131,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 	if (is_same_bitmap(backgr, drawarea) || !backgr || !drawarea || !screen)
 	{
-		tw_error("oh my!");
+		twgui_error("oh my!");
 	}
 
 	//Nareas = 0;
@@ -145,7 +143,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 //	clear_keys();
 
-	menu_starttime = get_time();
+	menu_starttime = twgui_time();
 	menu_time = menu_starttime;
 
 	exclusive = false;
@@ -382,7 +380,7 @@ BITMAP* TWindow::bmp(char *bmpname, bool vidmem)
 
 	if (strlen(ident) > 120)
 	{
-		tw_error("string exceeds max length");
+		twgui_error("string exceeds max length");
 	}
 
 	strcpy(objname, bmpname);
@@ -418,8 +416,8 @@ void TWindow::center(int xcenter, int ycenter)
 	//blit(originalscreen, screen, 0, 0, x, y, W, H);
 
 	// move
-	x = iround(xcenter*scale) - W / 2;
-	y = iround(ycenter*scale) - H / 2;
+	x = round(xcenter*scale) - W / 2;
+	y = round(ycenter*scale) - H / 2;
 
 	// read the new background
 	//blit(screen, originalscreen, x, y, 0, 0, W, H);
@@ -767,14 +765,14 @@ void TWindow::handle_focus_loss()
 
 void TWindow::scalepos(int *ax, int *ay)
 {
-	(*ax) = iround( (*ax) * scale );
-	(*ay) = iround( (*ay) * scale );
+	(*ax) = round( (*ax) * scale );
+	(*ay) = round( (*ay) * scale );
 }
 
-void TWindow::scalepos(Vector2 *apos)
+void TWindow::scalepos(twguiVector *apos)
 {
-	(apos->x) = iround( (apos->x) * scale );
-	(apos->y) = iround( (apos->y) * scale );
+	(apos->x) = round( (apos->x) * scale );
+	(apos->y) = round( (apos->y) * scale );
 }
 
 
@@ -820,7 +818,7 @@ bool matchimage(BITMAP *backgr, BITMAP *foregr, int i, int j)
 }
 
 
-bool TWindow::search_bmp_location(BITMAP *bmp_default, Vector2 *apos)
+bool TWindow::search_bmp_location(BITMAP *bmp_default, twguiVector *apos)
 {
 	ASSERT(bmp_default);
 	ASSERT(apos);
@@ -908,7 +906,7 @@ void TWindow::back2other()
 
 void TWindow::update_time()
 {
-	menu_time = get_time() - menu_starttime;
+	menu_time = twgui_time() - menu_starttime;
 }
 
 /*

@@ -1,5 +1,4 @@
 
-
 #include <allegro.h>
 //#include <winalleg.h>
 //#include <windows.h>
@@ -37,6 +36,8 @@ REGISTER_FILE
 #include "../frame.h"
 
 #include "gamebuttonevent.h"
+
+#include "../other/configrw.h"
 
 
 /*
@@ -110,11 +111,12 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 	DATAFILE	*data;//, *data_cached;
 
 	// create the cache/ directory (if needed ?)
-	#ifdef LINUX
+	/*#ifdef LINUX
 	mkdir("cache", 0755); 
 	#else
 	mkdir("cache");
-	#endif
+	#endif*/
+	makedir("cache");
 
 	
 	

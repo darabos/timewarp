@@ -1,14 +1,12 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
 
-
-#include "../melee.h"
-//#include "melee/mview.h"
-
-REGISTER_FILE
 
 
 #include "twbutton.h"
@@ -183,8 +181,8 @@ Popup(identbranch, axshift, ayshift, outputscreen)
 
 	init_components(identbranch);
 
-	xshift = iround(axshift * scale);
-	yshift = iround(ayshift * scale);
+	xshift = round(axshift * scale);
+	yshift = round(ayshift * scale);
 }
 
 PopupT::PopupT(EmptyButton *atrigger, char *identbranch, int axshift, int ayshift)
@@ -197,8 +195,8 @@ Popup(identbranch,
 
 	init_components(identbranch);
 
-	xshift = iround(axshift * scale);
-	yshift = iround(ayshift * scale);
+	xshift = round(axshift * scale);
+	yshift = round(ayshift * scale);
 }
 
 

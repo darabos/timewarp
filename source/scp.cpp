@@ -874,6 +874,8 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		set_view(v);
         
 
+		twgui_init(get_time, tw_error);
+
 
 		init_ships();
 		init_fleet();

@@ -1,9 +1,10 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "../melee.h"
 
 #include "utils.h"
 //#include "area.h"
@@ -14,6 +15,39 @@
 normalmouse Tmouse;
 
 TKeyHandler keyhandler;
+
+// dummy to prevent possible crash
+static void error_handler_dummy(const char *txt, ...)
+{
+}
+
+// dummy to prevent possible crash
+static volatile int twgui_timer_dummy()
+{
+	return 0;
+}
+
+
+twgui_err_handler_type *twgui_error = error_handler_dummy;
+
+twgui_time_handler_type *twgui_time = twgui_timer_dummy;
+
+
+void twgui_init(twgui_time_handler_type t, twgui_err_handler_type f)
+{
+	twgui_time = t;
+	twgui_error = f;
+}
+
+
+
+int round(double x)
+{
+	if (x > 0)
+		return int(x + 0.5);
+	else
+		return int(x - 0.5);
+}
 
 
 
@@ -55,7 +89,7 @@ BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif)
 
 	if (strlen(identif) > 120)
 	{
-		tw_error("string exceeds max length");
+		twgui_error("string exceeds max length");
 	}
 
 	strcpy(objname, identif);
@@ -67,7 +101,7 @@ BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif)
 	{
 		//char txt[512];
 		//sprintf(txt, "Could not find %s", objname);
-		//tw_error(txt);
+		//twgui_error(txt);
 		return 0;
 	}
 
@@ -87,8 +121,8 @@ BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem)
 
 	int W, H;
 
-	W = iround( src->w * scale );
-	H = iround( src->h * scale );
+	W = round( src->w * scale );
+	H = round( src->h * scale );
 
 	dest = create_bitmap_ex(bpp, W, H);
 
@@ -195,9 +229,9 @@ void normalmouse::update()
 
 	int b = mouse_b;
 
-	left.update(bool(b & 1));		// make distinction here; individual buttons shouldn't know of each other
-	mid.update(bool(b & 4));
-	right.update(bool(b & 2));
+	left.update((b & 1) != 0);		// make distinction here; individual buttons shouldn't know of each other
+	mid.update((b & 4) != 0);
+	right.update((b & 2) != 0);
 }
 
 
@@ -211,7 +245,7 @@ void normalmouse::mousebutton::update(bool newstatus)
 		button.status = newstatus;	// on or of ;)
 
 		if (button.status != oldbutton.status)
-			button.time = get_time2() * 1E-3;				// detect timing of a change in button status
+			button.time = twgui_time() * 1E-3;				// detect timing of a change in button status
 
 		button.change = true;
 

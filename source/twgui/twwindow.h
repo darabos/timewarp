@@ -1,3 +1,6 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 #ifndef __TWWINDOW_H__
 #define __TWWINDOW_H__
@@ -89,7 +92,7 @@ public:
 
 	bool checkmouse();
 	bool grabbedmouse;
-	Vector2 mpos;
+	twguiVector mpos;
 
 
 	char			ident[128];
@@ -140,10 +143,10 @@ public:
 	void handle_focus_loss();
 
 	void scalepos(int *ax, int *ay);
-	void scalepos(Vector2 *apos);
+	void scalepos(twguiVector *apos);
 	
 	char configfilename[256];
-	bool search_bmp_location(BITMAP *bmp_default, Vector2 *apos);
+	bool search_bmp_location(BITMAP *bmp_default, twguiVector *apos);
 
 	bool exclusive;
 	int layer;		// you can only switch focus within a layer...

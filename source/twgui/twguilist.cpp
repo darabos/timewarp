@@ -1,3 +1,6 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 #include <allegro.h>
 #ifndef LINUX
@@ -5,10 +8,6 @@
 #endif
 #include <stdio.h>
 #include <string.h>
-
-#include "../melee.h"
-#include "../melee/mview.h"
-REGISTER_FILE
 
 #include "twgui.h"
 #include "twwindow.h"
@@ -528,7 +527,7 @@ TextInfoArea(menu, identbranch, afont, atext, amaxtext)
 
 	int i;
 	for ( i = 0; i < KEY_MAX; ++i )
-		keypr[i] = key[i];
+		keypr[i] = (key[i] != 0);
 
 	repeattime = 250;
 
@@ -627,7 +626,7 @@ void TextEditBox::text_reset()
 // this is, where text is detected and entered ... I think ....
 void TextEditBox::calculate()
 {
-	if (textinfo->textinfo != text) {tw_error("text mismatch");}
+	if (textinfo->textinfo != text) {twgui_error("text mismatch");}
 
 	TextInfoArea::calculate();
 
@@ -898,7 +897,7 @@ AreaTabletScrolled(menu, identbranch, akey)
 	overlay = getbmp("overlay");
 	if (!overlay)
 	{
-		tw_error("MatrixIcons : overlay is missing");
+		twgui_error("MatrixIcons : overlay is missing");
 	}
 
 	tmp = create_bitmap(overlay->w, overlay->h);
@@ -910,8 +909,8 @@ AreaTabletScrolled(menu, identbranch, akey)
 	Wicon = overlay->w;
 	Hicon = overlay->h;
 
-	Nxshow = iround( size.x / double(Wicon) );
-	Nyshow = iround( size.y / double(Hicon) );
+	Nxshow = round( size.x / double(Wicon) );
+	Nyshow = round( size.y / double(Hicon) );
 
 	itemproperty = 0;
 }
@@ -941,7 +940,7 @@ void MatrixIcons::set_iconinfo(BITMAP **alistIcon, double ascale)
 		++maxitems;
 	
 	// create the most "optimal" square map (minimum x,y positions means least search trouble (I think)).
-	Nx = iround( sqrt((double)maxitems) );
+	Nx = round( sqrt((double)maxitems) );
 	Ny = maxitems/Nx + 1;
 
 	if (Nx*Ny >= maxitems + Nx)
@@ -949,7 +948,7 @@ void MatrixIcons::set_iconinfo(BITMAP **alistIcon, double ascale)
 
 	if ( Nx == 0 || Ny == 0 )
 	{
-		tw_error("PopupFleetSelection : no bitmap data");
+		twgui_error("PopupFleetSelection : no bitmap data");
 	}
 
 	scroll.set(0, 0, Nx, Ny, Nxshow, Nyshow);
@@ -1011,8 +1010,8 @@ void MatrixIcons::subanimate()
 			yoverlay = (iy - scroll.y) * Hicon;
 
 			int w0, h0;
-			w0 = iround(listIcon[k]->w * mainwindow->scale * extrascale);
-			h0 = iround(listIcon[k]->h * mainwindow->scale * extrascale);
+			w0 = round(listIcon[k]->w * mainwindow->scale * extrascale);
+			h0 = round(listIcon[k]->h * mainwindow->scale * extrascale);
 
 			// create a intermediate icon
 			xicon =  (Wicon - w0) / 2;

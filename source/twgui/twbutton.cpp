@@ -1,14 +1,12 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
-
-
-#include "../melee.h"
-//#include "melee/mview.h"
-
-REGISTER_FILE
+#include <math.h>
 
 #include "twbutton.h"
 #include "twwindow.h"
@@ -416,7 +414,7 @@ void GraphicButton::draw_rect()
 	// draw something simple:
 
 	int D = 4;	// width of the rectangle
-	D *= iround(mainwindow->scale - 1);
+	D *= round(mainwindow->scale - 1);
 	if (D < 0)
 		D = 0;
 
@@ -433,9 +431,9 @@ int rect_fancy_getcolor2(double phase, double L, double Ltot)
 {
 	unsigned char r, g, b;
 	
-	r = (unsigned char)(128 + 127 * sin(phase + PI2 * L/Ltot));
-	g = (unsigned char)(128 + 127 * sin(phase + 0.3*PI + PI2 * L/Ltot));
-	b = (unsigned char)(128 + 127 * sin(phase + 0.7*PI + PI2 * L/Ltot));
+	r = (unsigned char)(128 + 127 * sin(phase + 2*AL_PI * L/Ltot));
+	g = (unsigned char)(128 + 127 * sin(phase + 0.3*AL_PI + 2*AL_PI * L/Ltot));
+	b = (unsigned char)(128 + 127 * sin(phase + 0.7*AL_PI + 2*AL_PI * L/Ltot));
 
 	return makecol(r, g, b);
 }
@@ -453,14 +451,14 @@ void GraphicButton::draw_rect_fancy()
 
 
 	int D = 2;	// width of the rectangle
-	D = iround(D * mainwindow->scale) - 1;		// cause 0 also counts as 1...
+	D = round(D * mainwindow->scale) - 1;		// cause 0 also counts as 1...
 	if (D < 0)
 		D = 0;
 
 	int ix, iy;
 
 
-	double phase = mainwindow->menu_time * 1E-3 * PI;	//offset angle
+	double phase = mainwindow->menu_time * 1E-3 * AL_PI;	//offset angle
 
 	int L;
 
@@ -517,11 +515,11 @@ void GraphicButton::draw_boundaries(BITMAP *bmpref)
 
 	int i, j;
 	int W = 2;
-	W = iround(W * mainwindow->scale) - 1;
+	W = round(W * mainwindow->scale) - 1;
 
 	int L = 0;
 	int Ltotal = 5 * sqrt( (double)bmpref->w * bmpref->h );
-	double phase = mainwindow->menu_time * 1E-3 * PI;	//offset angle
+	double phase = mainwindow->menu_time * 1E-3 * AL_PI;	//offset angle
 
 	for ( j = -W; j < bmpref->h + W; ++j )
 	{
@@ -574,7 +572,7 @@ void GraphicButton::locate_by_backgr(char *strid)
 	tmp = load_bitmap(check_char, 0);
 	if (!tmp)
 	{
-		tw_error("Could not find the comparison bmp in the datafile");
+		twgui_error("Could not find the comparison bmp in the datafile");
 	}
 	
 	// first, load the last known position from the ini file
@@ -589,7 +587,7 @@ void GraphicButton::locate_by_backgr(char *strid)
 
 	pos.x = get_config_int(0, strx, 0);
 	pos.y = get_config_int(0, stry, 0);
-	Vector2 oldpos = pos;
+	twguiVector oldpos = pos;
 
 	k = mainwindow->search_bmp_location(tmp, &pos);
 
@@ -605,7 +603,7 @@ void GraphicButton::locate_by_backgr(char *strid)
 
 	if (!k && mainwindow->autoplace)
 	{
-		tw_error("Could not find the bmp on the background image");
+		twgui_error("Could not find the bmp on the background image");
 	}
 }
 

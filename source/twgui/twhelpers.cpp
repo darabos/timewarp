@@ -1,3 +1,6 @@
+/*
+Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+*/
 
 
 #include <allegro.h>
@@ -5,10 +8,6 @@
 #include <string.h>
 
 
-#include "../melee.h"
-//#include "melee/mview.h"
-
-REGISTER_FILE
 
 #include "twbutton.h"
 #include "twwindow.h"
@@ -131,13 +130,13 @@ void ScrollControl::set_sel(int xsel, int ysel)
 // alpha is a value between 0 and 1
 void ScrollControl::set_percent_pos_x(double alpha)
 {
-	x = iround( (Nx-1) * alpha );
+	x = round( (Nx-1) * alpha );
 	check_pos();
 }
 
 void ScrollControl::set_percent_pos_y(double alpha)
 {
-	y = iround( (Ny-1) * alpha );
+	y = round( (Ny-1) * alpha );
 	check_pos();
 }
 
@@ -517,7 +516,7 @@ int TextInfo::getcharpos(int x, int y)
 
 	if (iline < 0)
 	{
-		tw_error("getcharpos : Nlines < 0 should not happen");
+		twgui_error("getcharpos : Nlines < 0 should not happen");
 	}
 
 	// the last line should be handled with care ... (you don't know it's length, only that it stops)
