@@ -808,6 +808,8 @@ void gmissions::init(Log *_log)
 
 	missionselectmenu->tree_doneinit();
 
+	popupinfo->exclusive = false;
+
 	popupinfo->focus();
 
 	set_info_buttons();
@@ -869,10 +871,16 @@ void gmissions::calculate()
 		} else {
 			// otherwise, make sure the other i/o possibility is activated
 			if (missionselectmenu->disabled)
+			{
 				missionselectmenu->show();
+				missionselectmenu->focus();
+			}
 
 			if (popupinfo->disabled)
+			{
 				popupinfo->show();
+				popupinfo->focus();
+			}
 		}
 		
 
