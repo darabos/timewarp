@@ -11,12 +11,12 @@ public:
 	double       weaponVelocity;
 	int          weaponDamage;
 	int          weaponArmour;
-	double       weaponTurnRate;
 
 	double       specialRange;
 	double       specialVelocity;
 	int          specialDamage;
 	int          specialArmour;
+	double       specialTurnRate;
 
 	public:
 	FreinSchizm(Vector2 opos, double angle, ShipData *data, unsigned int code);
@@ -25,12 +25,12 @@ public:
 	virtual int activate_special();
 };
 
-class SchizmHealingbolt : public Missile
+class SchizmHealingbolt : public HomingMissile
 {
 public:
 	SchizmHealingbolt(SpaceLocation *creator, Vector2 rpos, double oangle, 
-		double ov, double odamage, double orange, double oarmour, 
-		SpaceLocation *opos, SpaceSprite *osprite, double relativity=0);
+		double ov, double odamage, double orange, double oarmour, double oturnrate,
+		SpaceLocation *opos, SpaceSprite *osprite, SpaceObject *otarget);
 
 	virtual void inflict_damage(SpaceObject *other);
 };
@@ -46,36 +46,36 @@ Ship(opos, angle, data, code)
 	weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
 	weaponDamage   = get_config_int("Weapon", "Damage", 0);
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
-	weaponTurnRate = scale_turning(get_config_float("Weapon", "TurnRate", 0));
 
 	specialRange    = scale_range(get_config_float("Special", "Range", 0));
 	specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
 	specialDamage   = get_config_int("Special", "Damage", 0);
 	specialArmour   = get_config_int("Special", "Armour", 0);
+	specialTurnRate = scale_turning(get_config_float("Special", "TurnRate", 0));
 }
 
 
 int FreinSchizm::activate_weapon()
 {
-	Shot *tmp = new HomingMissile( this, 
+	Shot *tmp = new Missile( this, 
 		Vector2(0.0, size.y / 1.5), angle, weaponVelocity, weaponDamage, weaponRange, 
-		weaponArmour, weaponTurnRate, this, data->spriteWeapon, target);
+		weaponArmour, this, data->spriteSpecial);
 	add(tmp);
 
 	tmp->explosionSprite = data->spriteWeaponExplosion;
 	tmp->explosionSample = 0;
 	tmp->explosionFrameCount = data->spriteWeaponExplosion->frames();
 	tmp->explosionFrameSize = 100;
-
 	return(TRUE);
 }
 
 
 int FreinSchizm::activate_special()
 {
+
 	Shot *tmp = new SchizmHealingbolt( this, Vector2(0.0, size.y / 2.0),
-		angle, specialVelocity, specialDamage, specialRange, specialArmour,
-		this, data->spriteSpecial);
+		angle, specialVelocity, specialDamage, specialRange, specialArmour, specialTurnRate,
+		this, data->spriteWeapon, target);
 	add(tmp);
 
 	tmp->explosionSprite = data->spriteSpecialExplosion;
@@ -88,12 +88,15 @@ int FreinSchizm::activate_special()
 
 
 
+//HomingMissile::HomingMissile(SpaceLocation *creator, Vector2 rpos, 
+//	double oangle, double ov, double odamage, double orange, double oarmour, 
+//	double otrate, SpaceLocation *opos, SpaceSprite *osprite, SpaceObject *otarget) 
 
 SchizmHealingbolt::SchizmHealingbolt(SpaceLocation *creator, Vector2 rpos, double oangle, 
-	double ov, double odamage, double orange, double oarmour, 
-	SpaceLocation *opos, SpaceSprite *osprite, double relativity) 
+	double ov, double odamage, double orange, double oarmour, double oturnrate,
+	SpaceLocation *opos, SpaceSprite *osprite, SpaceObject *otarget) 
 :
-Missile(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite, relativity)
+HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, oturnrate, opos, osprite, otarget)
 {
 }
 
@@ -104,9 +107,9 @@ void SchizmHealingbolt::inflict_damage(SpaceObject *other)
 	// your own ship
 	if (other->isShip() && ((Ship*)other)->crew == ((Ship*)other)->crew_max
 					&& ship && ship->exists())
-		Missile::inflict_damage(ship);
+		HomingMissile::inflict_damage(ship);
 	else
-		Missile::inflict_damage(other);
+		HomingMissile::inflict_damage(other);
 
 //	add(new Animation(this, pos, data->spriteSpecial, 
 //						0, data->spriteSpecial->frames(), 100, DEPTH_EXPLOSIONS, specialScale));

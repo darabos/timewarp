@@ -321,6 +321,7 @@ YevSaber::YevSaber(YevMech *oship,SpaceSprite *osprite) :
   ship(oship)
 {
 
+	  layer = LAYER_SPECIAL;
   calculate();
 }
 
