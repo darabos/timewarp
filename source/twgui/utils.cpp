@@ -19,6 +19,9 @@ TKeyHandler keyhandler;
 // dummy to prevent possible crash
 static void error_handler_dummy(const char *txt, ...)
 {
+	textout(screen, font, txt, 0, 0, makecol(250,250,250));
+	while (key[KEY_ENTER] != 0)
+		rest(5);
 }
 
 // dummy to prevent possible crash
