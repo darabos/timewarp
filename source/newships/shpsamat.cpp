@@ -5,7 +5,7 @@ REGISTER_FILE
 Sa-Matra:
 indestructable.
 Main = green blobs that deal 1 damage and push the target away.
-Special = comet that does time-damage (and a lot of it!)
+Special = comet that does time-damage
 */
 
 
@@ -20,7 +20,8 @@ public:
 	double armour, Armour;
 
 	double weaponVelocity, weaponDamage, weaponArmour, weaponTurnPerSec;
-	double specialVelocity, specialDamage, specialArmour, specialTrailTimeLen, specialTurnPerSec;
+	double specialVelocity, specialDamage, specialArmour, specialTrailTimeLen,
+				specialTurnPerSec, specialDamageDelay;
 
 	SaMatra(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
@@ -97,6 +98,7 @@ Ship(opos, angle, data, code)
 	specialTrailTimeLen	= get_config_float("Special", "TrailTimeLen", 1.0);
 	specialNumber		= get_config_int("Special", "Number", 1);
 	specialTurnPerSec	= get_config_float("Special", "TurnPerSec", 0);
+	specialDamageDelay	= get_config_float("Special", "DamageDelay", 0.1);
 
 	Nweapons = 0;
 	Nspecials = 0;
@@ -251,6 +253,8 @@ void home_in(SpaceLocation *yours, SpaceLocation *target, double *angle, double 
 		double a, da;
 
 		a = yours->trajectory_angle(target);
+//		//trajectory_angle(pos, l->normal_pos());
+//		a = ::trajectory_angle(pos, target->normal_pos());
 		
 		// required change in direction
 		da = a - *angle;
@@ -322,18 +326,20 @@ void SaMatraBoxer::inflict_damage(SpaceObject *other)
 	
 	damage(other, samatra->weaponDamage);
 
-
-	int weaponExplosionFrameCount, weaponExplosionFrameSize;
-
-	weaponExplosionFrameCount = 6;
-	weaponExplosionFrameSize = 100;
-
-	game->add(new Animation(this, normal_pos(),
+	if (other->mass >= 1)
+	{
+		int weaponExplosionFrameCount, weaponExplosionFrameSize;
+		
+		weaponExplosionFrameCount = 6;
+		weaponExplosionFrameSize = 100;
+		
+		game->add(new Animation(this, normal_pos(),
 			samatra->data->spriteWeaponExplosion, 0, weaponExplosionFrameCount,
 			weaponExplosionFrameSize, DEPTH_EXPLOSIONS));
-
-	play_sound2(samatra->data->sampleWeapon[0]);
-	// sampleSpecial also exists.
+		
+		play_sound2(samatra->data->sampleWeapon[0]);
+		// sampleSpecial also exists.
+	}
 }
 
 
@@ -441,7 +447,7 @@ SpaceObject(ocreator, opos, oangle, osprite)
 	armour = samatra->specialArmour;
 
 	damage_delay = 0;
-	damage_delay_max = 0.1;	// this many times per second
+	damage_delay_max = samatra->specialDamageDelay;	// this many times per second
 
 
 	trailTime = samatra->specialTrailTimeLen;	// in seconds

@@ -167,7 +167,7 @@ int MeknikPincer::activate_special()
 
 		if (!saw[i])
 		{
-			saw[i] = new MeknikChainsaw(this, 100.0, sawangle[i],
+			saw[i] = new MeknikChainsaw(this, 60.0, sawangle[i],
 				specialTurnperiod * d, specialDamage, specialDamageperiod,
 				data->spriteSpecial);
 			add(saw[i]);
