@@ -1,0 +1,87 @@
+#include <string.h>
+#include <stdio.h>
+#include <allegro.h>
+
+#include "errors.h"
+
+int __error_flag = 0;
+
+static void default_error_handler ( const char * file, int line, const char * message ) {
+	log_debug("!!!\nDefault error handler is terminating the program");
+	tw_exit(1);
+}
+
+void (*_error_handler) ( const char *file, int line, const char *message) = &default_error_handler;
+
+
+// A helper function used by tw_error()
+static const char *_error_file = NULL;
+static int         _error_line = -1;
+void _prep_error(const char *file, int line) {
+	_error_file = file;
+	_error_line = line;
+}
+
+void _error(const char *format, ...) {
+	char error_string[2048];
+	int line;
+	const char * file;
+	if (_error_line == -1) return;
+	line = _error_line;
+	file = _error_file;
+	_error_line = -1;
+	_error_file = NULL;
+
+	if (format) {
+		va_list those_dots;
+		va_start(those_dots, format);
+		vsprintf(error_string, format, those_dots);
+		va_end(those_dots);
+	}
+	else error_string[0] = 0;
+	_error_handler(file, line, error_string);
+}
+
+void error(const char *format, ...) {
+	char error_string[2048];
+
+	if (format) {
+		va_list those_dots;
+		va_start(those_dots, format);
+		vsprintf(error_string, format, those_dots);
+		va_end(those_dots);
+	}
+	else error_string[0] = 0;
+
+	_error_handler(NULL, -1, error_string);
+}
+
+
+static FILE *debug_log_file = NULL;
+
+void tw_exit(int errorcode) {
+	allegro_exit();
+	log_debug("Shutting Down (%d)\n", errorcode);
+	if (debug_log_file)
+		fclose(debug_log_file);
+	exit(1);
+}
+
+void log_debug(const char *format, ...) {
+	char buffy[4096];
+
+	if (debug_log_file && format) {
+		va_list those_dots;
+		va_start(those_dots, format);
+		vsprintf(buffy, format, those_dots);
+		fprintf(debug_log_file, "%s", buffy);
+		//fprintf(debug_log_file, format, those_dots);
+		va_end(those_dots);
+	}
+
+	if (!debug_log_file && !format)
+		debug_log_file = fopen("tw_sys.log", "wt");
+
+	return;
+}
+

@@ -1,0 +1,9 @@
+Kabo Weakener,
+
+This ship has the shape of some wild flower,
+
+The main is a short-range shooter, doing 1 d,
+
+The special is formed by long-range homing mines. When a ship hits them, they
+disintegrate and the powdery remains form a green haze around the ship.
+These cause additional damage to any damage taken.

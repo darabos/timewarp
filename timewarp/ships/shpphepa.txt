@@ -1,0 +1,5 @@
+This tiny vessel is quick to die in combat.  However, the single torpedo
+launcher can leave a mark upon the enemy before the ship goes down.
+
+fire = torpedo, 4 point warhead cost 3 power.
+special = forward firing offensive laser (tracks enemies up to 45 degrees).
