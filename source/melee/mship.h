@@ -6,34 +6,43 @@
 
 typedef short KeyCode;
 
-#define KEYFLAG_LEFT       1
-#define KEYFLAG_RIGHT      2
-#define KEYFLAG_THRUST     4
-#define KEYFLAG_BACK       8
-#define KEYFLAG_FIRE      16
-#define KEYFLAG_SPECIAL   32
-#define KEYFLAG_ALTFIRE   64
-#define KEYFLAG_NEXT     128
-#define KEYFLAG_PREV     256
-#define KEYFLAG_CLOSEST  512
+enum {
+	KEYFLAG_LEFT    = (1),
+	KEYFLAG_RIGHT   = (1<<1),
+	KEYFLAG_THRUST  = (1<<2),
+	KEYFLAG_BACK    = (1<<3),
+	KEYFLAG_FIRE    = (1<<4),
+	KEYFLAG_SPECIAL = (1<<5),
+	KEYFLAG_ALTFIRE = (1<<6),
+	KEYFLAG_NEXT    = (1<<7),
+	KEYFLAG_PREV    = (1<<8),
+	KEYFLAG_CLOSEST = (1<<9),
+	KEYFLAG_EXTRA1  = (1<<10),
+	KEYFLAG_EXTRA2  = (1<<11),
+	KEYFLAG_EXTRA3  = (1<<12),
+	KEYFLAG_EXTRA4  = (1<<13),
+	KEYFLAG_EXTRA5  = (1<<14),
+	KEYFLAG_SUICIDE = (1<<15),
+};
+
 struct keyflag {
 	enum { 
-		left =		0x0001,
-		right =		0x0002,
-		thrust =	0x0004,
-		back =		0x0008,
-		fire =		0x0010,
-		special =	0x0020,
-		altfire =	0x0040,
-		next =		0x0080,
-		prev =		0x0100,
-		closest =	0x0200,
-		extra1 =	0x0400,
-		extra2 =	0x0800,
-		extra3 =	0x01000,
-		extra4 =	0x02000,
-		extra5 =	0x04000,
-		suicide =	0x08000
+		left =		KEYFLAG_LEFT,
+		right =		KEYFLAG_RIGHT,
+		thrust =	KEYFLAG_THRUST,
+		back =		KEYFLAG_BACK,
+		fire =		KEYFLAG_FIRE,
+		special =	KEYFLAG_SPECIAL,
+		altfire =	KEYFLAG_ALTFIRE,
+		next =		KEYFLAG_NEXT,
+		prev =		KEYFLAG_PREV,
+		closest =	KEYFLAG_CLOSEST,
+		extra1 =	KEYFLAG_EXTRA1,
+		extra2 =	KEYFLAG_EXTRA2,
+		extra3 =	KEYFLAG_EXTRA3,
+		extra4 =	KEYFLAG_EXTRA4,
+		extra5 =	KEYFLAG_EXTRA5,
+		suicide =	KEYFLAG_SUICIDE
 		};
 	};
 

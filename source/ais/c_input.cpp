@@ -125,7 +125,7 @@ void ControlHuman::load (const char *inifile, const char *inisection) {
 	extra3  = get_config_int(inisection, "Extra3", 0);
 	extra4  = get_config_int(inisection, "Extra4", 0);
 	extra5  = get_config_int(inisection, "Extra5", 0);
-	suicide  = get_config_int(inisection, "Extra6", 0);
+	suicide = get_config_int(inisection, "Extra6", 0);
 	return;
 }
 /*! \brief Save players key
