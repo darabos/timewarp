@@ -220,6 +220,8 @@ public:
 	void animate_onscreen_shiplist( Frame* frame );
 
 	virtual void quit(const char *message);
+
+	void start_menu(int *select);
 };
 
 
@@ -361,7 +363,7 @@ int numSprites, int attribs)
 
 void FlMelee::init(Log *_log)
 {
-	STACKTRACE
+	STACKTRACE;
 
 
 	Game::init(_log);
@@ -483,13 +485,12 @@ void FlMelee::init(Log *_log)
 
 	// initialize the teams and the fleets :)
 
-	log_file("gflmelee.ini");
-
-	int Nfleets;
+//	int Nfleets;
 	int allyfleet[2], iplayer;		// there are 2 players
 
-	Nfleets = get_config_int("FleetInit", "Nalliances", 0);
+//	Nfleets = get_config_int("FleetInit", "Nalliances", 0);
 
+	/*
 	allyfleet[0]  = get_config_int("FleetInit", "PlayerAlliance", 0);
 	if ( allyfleet[0] == -1 )
 		allyfleet[0] = tw_random()%Nfleets + 1;
@@ -501,7 +502,12 @@ void FlMelee::init(Log *_log)
 		if ( allyfleet[1] > Nfleets )
 			allyfleet[1] -= Nfleets;
 	}
+	*/
 
+	start_menu(allyfleet);
+
+
+	log_file("gflmelee.ini");
 
 	statsmanager = new StatsManager;
 
@@ -520,7 +526,7 @@ void FlMelee::init(Log *_log)
 		char ident[512];
 		int Nships;
 
-		sprintf(&ident[0], "Alliance%02i", allyfleet[iplayer]);	// >= 1
+		sprintf(&ident[0], "Alliance%02i", allyfleet[iplayer]+1);	// >= 1
 		message.out(ident);
 
 		Nships = get_config_int(ident, "Nships", 0);
@@ -1938,6 +1944,140 @@ void ImIndicator::animate(Frame *frame)
 						(int)S.x, (int)S.y, iw, ih);
 	frame->add_box(S.x, S.y, iw, ih);
 }
+
+
+#include "../twgui/twgui.h"
+
+void FlMelee::start_menu(int *select)
+{
+	STACKTRACE;
+///*
+
+	unscare_mouse();
+	show_mouse(window->surface);
+
+	int i;
+
+	// which font to use ... that depends on the screen resolution:
+	i = 1;
+	if (screen->w == 640)
+		i = 1;
+	if (screen->w == 800)
+		i = 2;
+	if (screen->w == 1024)
+		i = 3;					// more pixels available for the same "real-life" size.
+
+	FONT *usefont = videosystem.get_font(i);
+
+//	view->frame->prepare();
+
+
+
+	AreaReserve *A;
+
+
+	// this uses a log_file as well ... to determine the ref screen size.
+	A = new AreaReserve("interfaces/gflmelee", 0, 0, screen);
+
+	// other stuff resets the log file, so make sure you got the correct one.
+	set_config_file("gflmelee.ini");
+	// don't use log_file, cause that's in memory, while we'd like to save settings on disk.
+
+	int Nfleets;
+	Nfleets = get_config_int("FleetInit", "Nalliances", 0);
+
+	if ( Nfleets == 0 )
+	{
+		tw_error("No fleets defined");
+	}
+
+	// check all the fleet names
+
+	// at most 32 fleets ... seems safe enough
+	char flname[32][64];
+	for ( i = 0; i < Nfleets; ++i )
+	{
+		char allyid[64];
+		sprintf(allyid, "Alliance%02i", i+1);
+		strncpy(flname[i], get_config_string(allyid, "Name", "<undefined>"), 60);
+	}
+
+
+	int col[2];
+	Button *up[2], *down[2], *ok;
+	TextButton *fl[2];
+
+	col[0] = makecol(0,0,0);
+	col[1] = makecol(200,200,200);
+
+	up[0] = new Button(A, "up1", -1, -1, 0);
+	down[0] = new Button(A, "down1", -1, -1, 0);
+
+	up[1] = new Button(A, "up2", -1, -1, 0);
+	down[1] = new Button(A, "down2", -1, -1, 0);
+
+	ok = new Button(A, "ok", -1, -1, 0);
+
+	fl[0] = new TextButton(A, "text1", -1, -1, usefont);		
+	fl[0]->set_text("", col[0]);
+
+	fl[1] = new TextButton(A, "text2", -1, -1, usefont);		
+	fl[1]->set_text("", col[1]);
+
+	// the window manager.
+
+	WindowManager *winman;
+	winman = new WindowManager;
+	winman->add(A);
+
+	//int select[2];
+	select[0] = get_config_int("FleetInit", "PlayerAlliance", 0);
+	select[1] = get_config_int("FleetInit", "EnemyAlliance", 0);
+
+	for ( i = 0; i < 2; ++i )
+	{
+		if (select[i] < 0)
+			select[i] = 0;
+		if (select[i] > Nfleets-1)
+			select[i] = Nfleets-1;
+	}
+
+	winman->setscreen(screen);
+	for (;;)
+	{
+		idle(20);
+		winman->calculate();
+		winman->animate();
+
+		int k;
+		for ( k = 0; k < 2; ++k )
+		{
+			if (up[k]->flag.left_mouse_press)
+			{
+				++select[k];
+				if ( select[k] > Nfleets-1 )
+					select[k] = 0;
+			}
+
+			if (down[k]->flag.left_mouse_press)
+			{
+				--select[k];
+				if ( select[k] < 0 )
+					select[k] = Nfleets-1;
+			}
+
+			fl[k]->set_text(flname[select[k]], col[k]);
+		}
+
+		if (ok->flag.left_mouse_press)
+			break;
+	}
+
+	set_config_int("FleetInit", "PlayerAlliance", select[0]);
+	set_config_int("FleetInit", "EnemyAlliance", select[1]);
+
+}
+
 
 
 REGISTER_GAME (FlMelee, "Melee with Fleets");
