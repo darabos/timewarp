@@ -494,7 +494,12 @@ void NormalGame::choose_new_ships() {STACKTRACE
 			Fleet *fleet = player_fleet[i];
 			if (fleet->getSize() == 0) continue;
 			char buffy[512];
-			sprintf(buffy, "%s\n%s\n%d of ??? points", player_name[i], fleet->getTitle(), fleet->getCost());
+
+            if (strlen(fleet->getTitle()) != 0) 
+                sprintf(buffy, "%s\n%s\n", player_name[i], fleet->getTitle());
+            else
+                sprintf(buffy, "%s\n", player_name[i]);
+
 			slot[i] = player_control[i]->choose_ship(window, buffy, fleet);
 			if (player_control[i]->channel != channel_none) {
 				slot[i] = intel_ordering(slot[i]);

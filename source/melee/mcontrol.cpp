@@ -207,8 +207,9 @@ enum {
 	SELECT_DIALOG_INFO,
 	SELECT_DIALOG_PIC
 };
-char selectPlayer[18];
-char selectTitleString[100];
+char selectPlayer[18] = "";
+char selectTitleString[100] = "";
+char selectShipPrompt[100] = "";
 
 int my_list_proc( int msg, DIALOG* d, int c );
 int my_bitmap_proc( int msg, DIALOG* d, int c ){
@@ -240,6 +241,15 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 	int ret = d_list_proc2( msg, d, c );
 	if( d->d1 != old_d1 || msg == MSG_START ){
 		ShipType* type = fleet->getShipType(d->d1);
+        ASSERT(type != NULL);
+        
+        selectDialog[SELECT_DIALOG_TITLE].flags |= D_DIRTY;
+        sprintf(selectTitleString, "%s\n%s\n%d of %d points", 
+            selectShipPrompt,
+            (type != NULL) ? type->name : 0,
+            (type != NULL) ? type->cost : 0,
+            fleet->getCost());
+
 
 		BITMAP* panel = NULL;
 		DATAFILE* data = load_datafile_object( type->data->file, "SHIP_P00_PCX" );
@@ -268,10 +278,12 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {STAC
 	int ret = -1, slot = 0;
 	if (fleet->getSize() == 0) tw_error ("Empty fleet! (prompt:%s)", prompt);
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
-	sprintf(selectTitleString, "%s", prompt);
+    strcpy(selectShipPrompt,prompt);
+
 	slot = -1;
 	while (!always_random) {
 		while (key[KEY_ENTER] || key[KEY_SPACE]) poll_keyboard();
+
 		ret = tw_do_dialog(window, selectDialog, SELECT_DIALOG_LIST);
 		if (ret == SELECT_DIALOG_INFO) {
 			ship_view_dialog(
