@@ -940,7 +940,7 @@ void Game::init_lag() {STACKTRACE
 			increase_latency();
 	}
 	else {
-//		int lag_frames = 10;//0;
+		int lag_frames = 0;//10;//0;
 		for (int i = 0; i < lag_frames; i += 1)
 			increase_latency();//*/
 	}

@@ -15,42 +15,45 @@ static double cross_product( Vector2 a, Vector2 b )
 	return a.x*b.y - a.y*b.x;	// this is the z-value of a vector (0,0,z). I assume z-value of a and b = 0
 }
 
-class WissumTripod : public Ship {
-
+class WissumTripod : public Ship
+{
+	Vector2 oldvel, old_dvel;
+	
 public:
-  double	default_accel_rate, default_speed_max;
-
-  double	weaponRange, specialRange;
-  double	weaponVelocity, specialVelocity;
-  double	weaponDamage, specialDamage;
-  double	weaponArmour, specialArmour;
-  double	specialDrainFuelDump;
-
-//  double	bombHotspotRate, bombVelocity, bombAccelRate,
-//			bombDamage, bombLifeTime, bombArmour, bombAngleCorrLimit;
-
-  double	moveangles[3];
-  int		engineactive[3];
-  int		Nactive, ifiregun;
-
-
-  WissumTripod(Vector2 opos, double shipAngle,
-    ShipData *shipData, unsigned int code);
-
-  protected:
-  virtual int activate_weapon();
-  virtual int activate_special();
-
-  virtual void calculate_thrust();
-  virtual void calculate_turn_left();
-  virtual void calculate_turn_right();
-
-  virtual void calculate_hotspots();
-//  virtual void animate(Frame *space);
-
-  virtual void calculate();
-
-  int fire_guns(int fire_type);
+	double	default_accel_rate, default_speed_max;
+	
+	double	weaponRange, specialRange;
+	double	weaponVelocity, specialVelocity;
+	double	weaponDamage, specialDamage;
+	double	weaponArmour, specialArmour;
+	double	specialDrainFuelDump;
+	
+	//  double	bombHotspotRate, bombVelocity, bombAccelRate,
+	//			bombDamage, bombLifeTime, bombArmour, bombAngleCorrLimit;
+	
+	double	moveangles[3];
+	int		engineactive[3];
+	int		Nactive, ifiregun;
+	
+	
+	WissumTripod(Vector2 opos, double shipAngle,
+		ShipData *shipData, unsigned int code);
+	
+protected:
+	virtual int activate_weapon();
+	virtual int activate_special();
+	
+	virtual void calculate_thrust();
+	virtual void calculate_turn_left();
+	virtual void calculate_turn_right();
+	
+	virtual void calculate_hotspots();
+	//  virtual void animate(Frame *space);
+	
+	virtual void calculate();
+	virtual void animate_predict(Frame *frame, int time);
+	
+	int fire_guns(int fire_type);
 };
 
 
@@ -142,6 +145,10 @@ Ship(opos,  shipAngle, shipData, code)
 	default_speed_max = speed_max;
 
 	sprite_index = 0;
+
+	// for pred.
+	oldvel = vel;
+	old_dvel = 0;
 }
 
 
@@ -406,6 +413,11 @@ void WissumTripod::calculate_hotspots()
 }
 
 
+void WissumTripod::animate_predict(Frame *frame, int time)
+{
+	// just do the linear prediction (is most stable)
+	SpaceObject::animate_predict(frame, time);
+}
 
 
 
