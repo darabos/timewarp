@@ -1143,7 +1143,7 @@ checksync();
 			num_presences -= 1;
 			memmove(&presence[i], &presence[i+1], sizeof(Presence*) * (num_presences-i));
 			//presence[i] = presence[num_presences-1];
-			//i -= 1;
+			i -= 1;
 			//deleted += 1;
 			delete tmp;
 		}
@@ -1172,6 +1172,13 @@ checksync();
 			i -= 1;
 			delete tmp;
 		}
+
+		// checking if this can happen? (curious ; GEO)
+		if (item[i]->state < -DEATH_FRAMES)
+		{
+			tw_error("too many death-frames - should not happen !!");
+		}
+
 	}
 	for(i = 0; i < num_items; i ++) {
 		if (!item[i]->exists()) {
