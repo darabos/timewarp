@@ -41,6 +41,8 @@
 *.ico -k 'b'
 *.dsp -k 'b'
 *.dsw -k 'b'
+*.ncb -k 'b'
+*.opt -k 'b'
 
 #sound stuff
 *.wav -k 'b'
