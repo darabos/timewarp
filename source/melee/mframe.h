@@ -18,6 +18,7 @@ class Planet;
 class Presence;
 class ExternalAI;
 
+/*
 enum {
 	ATTRIB_SYNCHED =            0x00000001, 
 	ATTRIB_LOGGED =             0x00000002, 
@@ -52,6 +53,42 @@ enum {
 	ATTRIB_UNDETECTABLE =       0x20000000
 
 };
+*/
+
+enum {
+	ATTRIB_SYNCHED         =    (1<<0), 
+	ATTRIB_LOGGED =             (1<<1), 
+	ATTRIB_INGAME =             (1<<2), 
+
+	ATTRIB_TARGET =             (1<<3),
+	ATTRIB_FOCUS  =             (1<<4),
+	ATTRIB_ACTIVE_FOCUS =       (1<<5),
+
+	ATTRIB_NOTIFY_ON_DEATH =    (1<<6),
+
+	ATTRIB_STANDARD_INDEX =     (1<<7),
+	ATTRIB_STRICT_RECT =        (1<<8),
+
+	ATTRIB_COLLIDE_STATIC =     (1<<9),
+
+	//ATTRIB_BOUNCY         //currently, anything that has mass
+	//ATTRIB_MASSFULL       //anything that has mass
+	//ATTRIB_CREWED         //currently, only ships with green crew
+	//ATTRIB_ORGANIC        //currently, only ships with green crew
+	//ATTRIB_SENTIENT       //currently, only ships
+	//ATTRIB_NEUTRAL        //asteroids & planets
+	//ATTRIB_CONTACT_DANGER //things to avoid
+
+	ATTRIB_LOCATION =           (1<<10), 
+	ATTRIB_OBJECT =             (1<<11), 
+	ATTRIB_LINE =               (1<<12),
+	ATTRIB_SHOT =               (1<<13), 
+	ATTRIB_SHIP =               (1<<14),
+
+	// this hides objects from queries = important in case there are many objects (hide hotspots!!)!
+	ATTRIB_UNDETECTABLE =       (1<<15)
+};
+
 
 /*struct Listed {
 	int serial;

@@ -680,12 +680,7 @@ void SpaceObject::animate(Frame *space) {STACKTRACE
 	}
 
 void SpaceObject::collide(SpaceObject *other) {STACKTRACE
-//	double dx, dy;
-//	double dvx, dvy;
 	double tmp;
-
-//	int x1, y1;
-//	int x2, y2;
 
 	if (this == other) {tw_error("SpaceObject::collide - self!");}
 	if((!canCollide(other)) || (!other->canCollide(this))) return;
@@ -700,13 +695,6 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	dp.y = min_delta(p1.y, p2.y, map_size.y);
 	p2 = p1 - dp - other->size / 2;
 	p1 = p1 - size / 2;
-
-/*	x1 = (int)(normal_x() - (w / 2.0));
-	y1 = (int)(normal_y() - (h / 2.0));
-	dx = min_delta(normal_x(), other->normal_x(), map_size.x);
-	dy = min_delta(normal_y(), other->normal_y(), Y_MAX);
-	x2 = (int)(normal_x() - dx - ((other->w) / 2.0));
-	y2 = (int)(normal_y() - dy - ((other->h) / 2.0));*/
 
 	if (!sprite->collide((int)p1.x, (int)p1.y, sprite_index, (int)p2.x, (int)p2.y, 
 			other->sprite_index, other->sprite)) 
@@ -726,13 +714,6 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	dp.y = min_delta(p1.y, p2.y, map_size.y);
 	p2 = p1 - dp - other->size / 2;
 	p1 = p1 - size / 2;
-
-	/*x1 = (int)(normal_x() - (w / 2.0));
-	y1 = (int)(normal_y() - (h / 2.0));
-	dx = min_delta(normal_x(), other->normal_x(), map_size.x);
-	dy = min_delta(normal_y(), other->normal_y(), Y_MAX);
-	x2 = (int)(normal_x() - dx - ((other->w) / 2.0));
-	y2 = (int)(normal_y() - dy - ((other->h) / 2.0));*/
 
 	while ((dp.x == 0) && (dp.y == 0)) {
 		dp.x = (tw_random(5) - 2) / 99.0;
@@ -926,36 +907,6 @@ void SpaceLine::collide(SpaceObject *o)
 	return;
 }
 
-/*void Listed::init(Presence *p) {STACKTRACE
-	pointer = p;
-	serial = p->get_serial();
-	if (serial == 0) tw_error("bad serial #");
-	}
-
-void Listed::clear() {STACKTRACE
-	pointer = NULL;
-	serial = 0;
-	}
-
-Presence *Physics::find_serial(int serial) {STACKTRACE
-	int i;
-	for (i = 0; i < num_presences; i += 1) {
-		if (presence[i]->_serial == serial) return presence[i];
-		}
-	for (i = 0; i < num_presences; i += 1) {
-		if (item[i]->_serial == serial) return item[i];
-		}
-	return NULL;
-	}
-
-int Physics::_find_serial(int serial) {STACKTRACE
-	int i;
-	for (i = 0; i < num_listed; i += 1) {
-		if (listed[i].serial == serial) return i;
-		}
-	return -1;
-	}*/
-
 void Physics::destroy_all() {
 	STACKTRACE
 	int i;
@@ -993,10 +944,6 @@ void Physics::preinit() {STACKTRACE
 	presence = NULL;
 	last_ship = 0;
 	last_team = 0;
-	//last_serial = 0;
-	//last_unsynched_serial = -1;
-	//listed = NULL;
-	//num_listed = max_listed = 0;
 	return;
 	}
 
@@ -1004,14 +951,6 @@ unsigned int Physics::get_code(unsigned int ship, TeamCode team) {STACKTRACE
 	return (ship << SpaceLocation::ship_shift) | (team << SpaceLocation::team_shift);
 	}
 
-/*int Physics::new_serial() {
-	last_serial += 1;
-	return last_serial;
-	}
-int Physics::new_unsynched_serial() {
-	last_unsynched_serial -= 1;
-	return last_unsynched_serial;
-	};*/
 unsigned int Physics::new_ship() {
 	last_ship += 1;
 	return last_ship;
@@ -1053,25 +992,6 @@ void Physics::init() {STACKTRACE
 	presence = (Presence**) realloc(presence, sizeof(Presence*) * max_presences);
 	return;
 	}
-
-/*void Physics::_list(Presence *p) {STACKTRACE
-	if (!p->exists()) return;
-	if (num_listed == max_listed) {
-		max_listed += 256;
-		listed = (Listed*) realloc(listed, sizeof(Listed) * max_listed);
-		}
-	if (p->attributes & ATTRIB_SYNCHED) {
-		p->_serial = new_serial();
-		listed[num_listed].init(p);
-		}
-	else {
-		p->_serial = new_unsynched_serial();
-		memmove(&listed[1], listed, sizeof(Listed) * num_listed);
-		listed[0].init(p);
-		}
-	num_listed += 1;
-	return;
-	}*/
 
 void Physics::add(SpaceLocation *o) {
 	STACKTRACE;

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
  * Star Control - TimeWarp
  *
