@@ -106,10 +106,7 @@ void MapEverything::init(char *filename)
 	moontypelist = new IndexTypeList(maxplanettypes, "moontypes.txt");
 	
 	FILE *f = fopen(filename, "rt");
-	if (!f)
-	{
-		tw_error("failed to initialize map info");
-	}
+	if (!f) { tw_error("failed to initialize map info");}
 
 	fscanf(f, "%i", &Nregions);
 
@@ -132,10 +129,7 @@ void MapEverything::save(char *filename)
 {
 	
 	FILE *f = fopen(filename, "wt");
-	if (!f)
-	{
-		tw_error("failed to save map info");
-	}
+	if (!f)	{tw_error("failed to save map info");}
 
 	fprintf(f, "%i\n\n", Nregions);
 
@@ -317,10 +311,7 @@ IndexTypeList::IndexTypeList(int omax, char *fname)
 
 		++N;
 
-		if (N > max)
-		{
-			tw_error("init: too many types");
-		}
+		if (N > max){tw_error("init: too many types");}
 	}
 
 	fclose(f);

@@ -132,6 +132,7 @@ REGISTER_FILE
 
 
 #if defined DO_STACKTRACE
+	bool usestacktrace = 0;
 	struct StackTraceData {
 		const char *file;
 		int line;

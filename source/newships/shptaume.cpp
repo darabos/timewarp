@@ -178,6 +178,13 @@ void TauMercury::calculate()
 
 	sprite_index += ic*64;
 
+	if (sprite_index < 0 || sprite_index >= sprite->frames())
+	{
+		tw_error("wrong number of frames!!");
+		//1740
+		//ic==12
+	}
+
 	if (locked_rail) {
 		tt = unit_vector(angle);
 		vel = vl * tt; }
@@ -341,7 +348,7 @@ void TauMercuryShot::animateExplosion()
 
 TauMercurySpark::TauMercurySpark (SpaceLocation *creator, double ox, double oy, double oangle, double ov, int olifetime,
 			int blah_or, int og, int ob, double od, double relativity, double odamage) :
-	SpaceLine(creator, Vector2(ox,oy), oangle, 0, 0),
+	SpaceLine(creator, Vector2(ox,oy), oangle, 1, 0),
 	lifetime(olifetime), lifetime_max(olifetime),
 	r(blah_or), g(og), b(ob)
 {

@@ -696,6 +696,10 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		set_window_title("Star Control : TimeWarp");
 		set_config_file("client.ini");
 
+		#ifdef DO_STACKTRACE
+			usestacktrace = get_config_int("System", "UseStack", 0);
+		#endif
+
 		int screen_width = 640, screen_height = 480, screen_bpp = 32;
 		int fullscreen = 0;
 

@@ -26,8 +26,9 @@ void Log::init() {STACKTRACE
 	return;
 }
 
-void Log::set_direction ( int channel, char direction ) {STACKTRACE
-	if (channel < 0) tw_error("set_direction - channel < 0");
+void Log::set_direction ( int channel, char direction ) {
+	STACKTRACE;
+	if (channel < 0) { tw_error("set_direction - channel < 0"); }
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
@@ -35,8 +36,9 @@ void Log::set_direction ( int channel, char direction ) {STACKTRACE
 	return;
 }
 
-char Log::get_direction ( int channel ) {STACKTRACE
-	if (channel < 0) tw_error("get_direction - channel < 0");
+char Log::get_direction ( int channel ) {
+	STACKTRACE;
+	if (channel < 0) {tw_error("get_direction - channel < 0");}
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
@@ -84,8 +86,9 @@ void Log::_log(int channel, const void *data, int size) {STACKTRACE
 	memcpy(log_data[channel]+(log_len[channel]-size), data, size);
 	return;
 }
-void Log::_unlog(int channel, void *data, int size) {STACKTRACE
-	if (log_len[channel] < log_pos[channel] + size) tw_error ("Game::_unlog - went past end (%d+%d/%d on %d)", log_pos[channel], size, log_len[channel], channel);
+void Log::_unlog(int channel, void *data, int size) {
+	STACKTRACE;
+	if (log_len[channel] < log_pos[channel] + size) {tw_error ("Game::_unlog - went past end (%d+%d/%d on %d)", log_pos[channel], size, log_len[channel], channel);}
 	memcpy(data, log_data[channel]+log_pos[channel], size);
 	log_pos[channel] += size;
 	return;
@@ -121,14 +124,14 @@ void Log::load (const char *fname) {STACKTRACE
 	for (j = 0; j < mj; j += 1) {
 		f = pack_fopen_chunk(f, 0);
 		i = pack_igetl ( f);
-		if (i <= oi) tw_error("invalid log file");
+		if (i <= oi) { tw_error("invalid log file"); }
 		if (i >= log_num) expand_logs(i+1);
 		int l = pack_igetl ( f);
 		while ( l > 0) {
 			int tl = 1024;
 			if (tl > l) tl = l;
 			int k = pack_fread(buffy, tl, f);
-			if (k == 0) tw_error("invalid log file");
+			if (k == 0) { tw_error("invalid log file"); }
 			l -= k;
 			_log(i, buffy, tl);
 		}
@@ -137,9 +140,10 @@ void Log::load (const char *fname) {STACKTRACE
 	pack_fclose (f);
 	return;
 }
-void Log::expand_logs(int num_channels) {STACKTRACE
+void Log::expand_logs(int num_channels) {
+	STACKTRACE;
 	int old_log_num = log_num;
-	if (num_channels <= log_num) tw_error ("Log::expand_logs - shrinking logs?");
+	if (num_channels <= log_num) { tw_error ("Log::expand_logs - shrinking logs?"); }
 	log_num = num_channels;
 	log_data = (unsigned char**) realloc(log_data, sizeof(char*) * log_num);
 	log_size    = (int*) realloc(log_size, sizeof(int) * log_num);
@@ -156,11 +160,12 @@ void Log::expand_logs(int num_channels) {STACKTRACE
 	return;
 }
 int Log::ready(int channel) {
-	if (channel < 0) tw_error ("log_ready - negative channel!");
+	if (channel < 0) { tw_error ("log_ready - negative channel!"); }
 	if (channel >= log_num) return 0;
 	return log_len[channel] - log_pos[channel];
 }
-int Log::file_ready(const char *fname, void **location) {STACKTRACE
+int Log::file_ready(const char *fname, void **location) {
+	STACKTRACE;
 	if (log_num <= channel_file_data) return -1;
 	int i = 0, j = 0;
 	while (i < log_len[channel_file_names]) {
@@ -177,7 +182,7 @@ int Log::file_ready(const char *fname, void **location) {STACKTRACE
 			int k;
 			memcpy(&k, (log_data[channel_file_names] + i), sizeof(int));
 
-			if (j+k > log_len[channel_file_data]) tw_error ("Log::file_ready - uh, that's bad");
+			if (j+k > log_len[channel_file_data]) { tw_error ("Log::file_ready - uh, that's bad"); }
 			if (location) *location = log_data[channel_file_data] + j;
 			return k;
 		}
@@ -205,7 +210,7 @@ void Log::log_file(const char *fname) {STACKTRACE
 	PACKFILE *f;
 	int i, j = 0;
 	f = pack_fopen(fname, F_READ);
-	if (!f) tw_error("tw_log_file - bad file name %s", fname);
+	if (!f) { tw_error("tw_log_file - bad file name %s", fname); }
 	while (1) {
 		i = pack_fread(buffy, 1024, f);
 		if (i > 0) {
@@ -230,13 +235,13 @@ void Log::deinit() {STACKTRACE
 bool Log::buffer ( int channel, void *data, int size ) {STACKTRACE
 	char zeros[128];
 	if (!size) return false;//return true?  error?  
-	if (channel < 0) tw_error ("Log::log - negative channel!");
+	if (channel < 0) { tw_error ("Log::log - negative channel!"); }
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
 	if (data == NULL) {
 		data = zeros;
-		if (size > 128) tw_error("Log::buffer - overflow");
+		if (size > 128) { tw_error("Log::buffer - overflow"); }
 		memset(zeros, 0, size);
 	}
 	if (log_dir[channel] & direction_write) {
@@ -251,13 +256,13 @@ bool Log::buffer ( int channel, void *data, int size ) {STACKTRACE
 bool Log::unbuffer ( int channel, void *data, int size ) {STACKTRACE
 	char zeros[128];
 	if (!size) return false;//return true?  error?  
-	if (channel < 0) tw_error ("Log::unbuffer - negative channel!");
+	if (channel < 0) { tw_error ("Log::unbuffer - negative channel!"); }
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
 	if (data == NULL) {
 		data = zeros;
-		if (size > 128) tw_error("Log::buffer - overflow");
+		if (size > 128) { tw_error("Log::buffer - overflow"); }
 	}
 
 //	if (log_dir[channel] & direction_write) _log ( channel, data, size);
@@ -295,12 +300,14 @@ void PlaybackLog::init() {STACKTRACE
 	return;
 }
 
-void PlaybackLog::set_direction (int channel, char direction) {STACKTRACE
+void PlaybackLog::set_direction (int channel, char direction) {
+	STACKTRACE;
 	tw_error("set_direction - your not supposed to do that in a demo playback!");
 	return;
 }
 
-void PlaybackLog::set_all_directions( char direction ) {STACKTRACE
+void PlaybackLog::set_all_directions( char direction ) {
+	STACKTRACE;
 	tw_error("set_all_directions - your not supposed to do that in a demo playback!");
 	return;
 }

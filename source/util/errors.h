@@ -31,12 +31,15 @@ bool get_stacktrace_info(int N, const char **filename, int **linenum, int **leve
 void tw_error_exit(const char* message) ;
 
 #ifdef DO_STACKTRACE
+	extern bool usestacktrace;
 	class UserStackTraceHelper { public:
 		UserStackTraceHelper(const char *file, int line);
 		~UserStackTraceHelper();
 	};
-#	define STACKTRACE UserStackTraceHelper _stacktrace_ ## __LINE__ (__FILE__,__LINE__);
+#	define STACKTRACE if (usestacktrace != 0) { UserStackTraceHelper _stacktrace_ ## __LINE__ (__FILE__,__LINE__); }
+//#	define STACKTRACE UserStackTraceHelper _stacktrace_ ## __LINE__ (__FILE__,__LINE__);
 	// this is defined locally in subroutines, so it's de-allocated on exit of the subroutine.
+//#	define STACKTRACE
 #else
 #	define STACKTRACE
 #endif

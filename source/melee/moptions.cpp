@@ -211,14 +211,13 @@ void video_menu (Game *game) {STACKTRACE
             y = strtol(strchr(resolution[i], 'x') + 1, NULL, 10);
             if ((x == x2) && (y == y2)) break;
         }
-        if(!resolution[0])
-        	tw_error("Resolution error");
+        if(!resolution[0]) { tw_error("Resolution error"); }
         	
         video_dialog[DIALOG_VIDEO_RESLIST].d1 = i;
         //set index for bpp
         bpp = videosystem.bpp;
         for (i = 0; true; i += 1) {
-            if (!color_depth[i]) tw_error("video_menu - current bpp invalid?");
+            if (!color_depth[i]) { tw_error("video_menu - current bpp invalid?"); }
             if (strtol(color_depth[i], NULL, 10) == bpp) break;
         }
         video_dialog[DIALOG_VIDEO_BPPLIST].d1 = i;

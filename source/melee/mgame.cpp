@@ -270,7 +270,7 @@ void Game::redraw() {STACKTRACE
 Ship *Game::create_ship(const char *id, Control *c, Vector2 pos, double angle, int team) {STACKTRACE
 	ShipType *type = shiptype(id);
 	if (!type)
-		tw_error("Game::create_ship - bad ship id (%s)", id);
+	{tw_error("Game::create_ship - bad ship id (%s)", id);}
 	/*if(!ini) {
 		sprintf(buffer, "ships/shp%s.ini", id);
 		ini = buffer;
@@ -289,7 +289,7 @@ Ship *Game::create_ship(const char *id, Control *c, Vector2 pos, double angle, i
 Ship *Game::create_ship(int channel, const char *id, const char *control, Vector2 pos, double angle, int team) {STACKTRACE
 	Control *c = create_control(channel, control);
 	if (!c)
-		tw_error("bad Control type!");
+	{tw_error("bad Control type!");}
 	c->temporary = true;
 	Ship *s = create_ship(id, c, pos, angle, team);
 	return s;
@@ -306,8 +306,9 @@ void Game::increase_latency() {STACKTRACE
 	lag_frames += 1;
 }
 
-void Game::decrease_latency() {STACKTRACE
-	if (lag_frames <= 1) tw_error("latency decreased too far");
+void Game::decrease_latency() {
+	STACKTRACE;
+	if (lag_frames <= 1) {tw_error("latency decreased too far");}
 	if (CHECKSUM_CHANNEL) {
 		log->unbuffer(channel_server + Game::_channel_buffered, NULL, 2);
 		log->unbuffer(channel_client + Game::_channel_buffered, NULL, 2);
@@ -329,13 +330,11 @@ void Game::log_fleet(int channel, Fleet *fleet) {STACKTRACE
 	void *tmpdata = fleet->serialize(&fl);
 	char buffer[16384];
 
-	if (fl > 16000)
-		tw_error("blah");
+	if (fl > 16000)	{tw_error("blah");}
 	memcpy(buffer, tmpdata, fl);
 	free(tmpdata);
 	log_int(channel, fl);
-	if (fl > 16000)
-		tw_error("blah");
+	if (fl > 16000)	{tw_error("blah");}
 	log_data(channel, buffer, fl);
 	fleet->deserialize(buffer, fl);
 }
@@ -929,12 +928,12 @@ offset	size	format		data
 	char buffy[128];
 	i = strlen(type->name);
 	memcpy(buffy, type->name, i);
-	if (i > 127) tw_error("long gamename1");
+	if (i > 127) {tw_error("long gamename1");}
 	log_int (channel_init, i);
-	if (i > 127) tw_error("long gamename2");
+	if (i > 127) {tw_error("long gamename2");}
 	log_data(channel_init, buffy, i);
 	buffy[i] = 0;
-	if (strcmp(buffy, type->name)) tw_error("wrong game type");
+	if (strcmp(buffy, type->name)) {tw_error("wrong game type");}
 
 	i = rand();
 //	i = 9223;
@@ -983,7 +982,7 @@ offset	size	format		data
 	msecs_per_fps = get_config_int("View", "FPS_Time", 200);
 	msecs_per_render = (int)(1000. / get_config_float("View", "MinimumFrameRate", 10) + 0.5);
 	prediction = get_config_int("Network", "Prediction", 50);
-	if ((prediction < 0) || (prediction > 100)) tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);
+	if ((prediction < 0) || (prediction > 100)) {tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);}
 
 	log_file("server.ini");
 	camera_hides_cloakers = get_config_int("View", "CameraHidesCloakers", 1);
@@ -1065,8 +1064,7 @@ void Game::change_view(View *new_view) {STACKTRACE//this function looks wrong to
 
 void Game::change_view(const char * name) {STACKTRACE
 	View *v = get_view(name, view);
-	if (!v)
-		tw_error("Game::change_view - invalid view name");
+	if (!v)	{tw_error("Game::change_view - invalid view name");}
 	if (view)
 		v->replace(view);
 	else 

@@ -309,7 +309,7 @@ offset	size	format		data
 	msecs_per_fps = get_config_int("View", "FPS_Time", 200);
 	msecs_per_render = (int)(1000. / get_config_float("View", "MinimumFrameRate", 10) + 0.5);
 	prediction = get_config_int("Network", "Prediction", 50);
-	if ((prediction < 0) || (prediction > 100)) tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);
+	if ((prediction < 0) || (prediction > 100)) {tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);}
 
 	log_file("server.ini");
 	camera_hides_cloakers = get_config_int("View", "CameraHidesCloakers", 1);
@@ -490,10 +490,7 @@ SpaceObject *addsolarobject(Vector2 opos, DATAFILE *dat, char *basename, int num
 	strcat(tempstr, "_BMP");
 
 	DATAFILE *tmpdat = find_datafile_object(dat, tempstr);
-	if (!tmpdat)
-	{
-		tw_error("no data file object moon");
-	}
+	if (!tmpdat){tw_error("no data file object moon");}
 
 	sprite = new SpaceSprite(tmpdat, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 1);
 	

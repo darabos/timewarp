@@ -979,11 +979,12 @@ void SpaceSprite::draw_character(int x, int y, int w, int h, int index, int colo
 
 int SpaceSprite::collide(int x, int y, int i, int ox, int oy, int oi,
 		SpaceSprite *other)
-{STACKTRACE
-	if (i >= count) tw_error("SpaceSprite::collide - index1 %d >= count1 %d", i, count);
-	if (oi >= other->count) tw_error("SpaceSprite::collide - index2 %d >= count2 %d", oi, other->count);
-	if (i < 0) tw_error("SpaceSprite::collide - index1 %d < count1 %d", i, count);
-	if (oi < 0) tw_error("SpaceSprite::collide - index2 %d < count2 %d", oi, other->count);
+{
+	STACKTRACE;
+	if (i >= count) { tw_error("SpaceSprite::collide - index1 %d >= count1 %d", i, count); }
+	if (oi >= other->count) { tw_error("SpaceSprite::collide - index2 %d >= count2 %d", oi, other->count); }
+	if (i < 0) { tw_error("SpaceSprite::collide - index1 %d < count1 %d", i, count); }
+	if (oi < 0) { tw_error("SpaceSprite::collide - index2 %d < count2 %d", oi, other->count); }
 	return (check_pmask_collision(m[i], other->m[oi], x, y, ox, oy));
 }
 

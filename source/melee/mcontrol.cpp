@@ -184,7 +184,7 @@ void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE
 	if (ship) {
 		ship->control = this;
 		if (temporary && (channel != Game::channel_none) && (already != 0) && (already != game->lag_frames)) 
-			tw_error ("Control::select_ship - bad operation (incompatible with networking)");
+			{tw_error ("Control::select_ship - bad operation (incompatible with networking)");}
 		}
 	target_stuff() ;
 	return;
@@ -278,9 +278,10 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 	}
 	return ret;
 }
-int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {STACKTRACE
+int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
+	STACKTRACE;
 	int ret = -1, slot = 0;
-	if (fleet->getSize() == 0) tw_error ("Empty fleet! (prompt:%s)", prompt);
+	if (fleet->getSize() == 0) {tw_error ("Empty fleet! (prompt:%s)", prompt);}
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
 
     strcpy(selectShipPrompt,prompt);
@@ -306,14 +307,15 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {STAC
 	if ((ret == SELECT_DIALOG_ARANDOM) || (ret == -1)) always_random = 1;
 	return(slot);
 }
-void Control::set_target(int i) {STACKTRACE
-	if (i >= game->num_targets) tw_error("oscar hamburger!!!!!!!!!");
+void Control::set_target(int i) {
+	STACKTRACE;
+	if (i >= game->num_targets) {tw_error("oscar hamburger!!!!!!!!!");}
 	if (i == -1) {
 		index = i;
 		target = NULL;
 		return;
 		}
-	if (!valid_target(game->target[i])) tw_error("oscer hambuger");
+	if (!valid_target(game->target[i])) {tw_error("oscer hambuger");}
 	index = i;
 	target = game->target[index];
 	return;
@@ -481,7 +483,7 @@ bool Control::valid_target(SpaceObject *t) {
 	// and since it shared control, and didn't check for a dead mother before the
 	// ship::calculate function, it may've crashed.
 	// This kinda thing may occur more often in case control is shared among objects
-	if (!ship) tw_error("Control::valid_target - !ship");
+	if (!ship) {tw_error("Control::valid_target - !ship");}
 	if (t->sameTeam(ship)) return false;
 	if (!t->exists()) return false;
 	return true;

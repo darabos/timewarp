@@ -54,7 +54,7 @@ double MAX_SPEED = 0;
 
 
 void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange) {STACKTRACE
-	if (qrange < 0) tw_error("Query::begin - negative range");
+	if (qrange < 0) {tw_error("Query::begin - negative range");}
 	layers = qlayers;
 	range_sqr = qrange * qrange;
 	target = qtarget;
@@ -135,8 +135,8 @@ tail_recurse4:
 		qx = qx_min;
 		}
 	int tmp = qy * QUADS_X + qx;
-	if (tmp < 0) tw_error ("tmp was less than 0");
-	if (tmp > QUADS_TOTAL) tw_error ("tmp was too large");
+	if (tmp < 0) {tw_error ("tmp was less than 0");}
+	if (tmp > QUADS_TOTAL) {tw_error ("tmp was too large");}
 	current = physics->quadrant[tmp];
 	if (!current) goto tail_recurse4;
 	return;
@@ -144,9 +144,7 @@ tail_recurse4:
 
 void Query::next () {STACKTRACE
 tail_recurse3:
-	if (current == current->qnext) {
-		tw_error ("Query::next - current = next");
-	}
+	if (current == current->qnext) {tw_error ("Query::next - current = next");}
 	current = current->qnext;
 	if (!current) {
 		next_quadrant();
@@ -167,8 +165,9 @@ void Query::end() {STACKTRACE
 
 
 
-void Query2::begin (SpaceLocation *qtarget, Uint64 attribute_filter, double qrange) {STACKTRACE
-	if (qrange < 0) tw_error("Query::begin - negative range");
+void Query2::begin (SpaceLocation *qtarget, Uint64 attribute_filter, double qrange) {
+	STACKTRACE;
+	if (qrange < 0) {tw_error("Query::begin - negative range");}
 	if (Uint32(attribute_filter) & ~Uint32(attribute_filter >> 32)) {
 		tw_error("incorrect Query attributes");
 	}
@@ -255,16 +254,17 @@ tail_recurse4:
 		qx = qx_min;
 		}
 	int tmp = qy * QUADS_X + qx;
-	if (tmp < 0) tw_error ("tmp was less than 0");
-	if (tmp > QUADS_TOTAL) tw_error ("tmp was too large");
+	if (tmp < 0) {tw_error ("tmp was less than 0");}
+	if (tmp > QUADS_TOTAL) {tw_error ("tmp was too large");}
 	current = physics->quadrant[tmp];
 	if (!current) goto tail_recurse4;
 	return;
 	}
 
-void Query2::next () {STACKTRACE
+void Query2::next () {
+	STACKTRACE;
 tail_recurse3:
-	if (current == current->qnext) tw_error ("Query::next - current = next");
+	if (current == current->qnext) {tw_error ("Query::next - current = next");}
 	current = current->qnext;
 	if (!current) {
 		next_quadrant();
@@ -992,9 +992,10 @@ void Physics::init() {STACKTRACE
 	return;
 	}*/
 
-void Physics::add(SpaceLocation *o) {STACKTRACE
-	if (o->attributes & ATTRIB_INGAME) tw_error("addItem - already added");
-	if (!o->isLocation()) tw_error("addItem - catastrophic");
+void Physics::add(SpaceLocation *o) {
+	STACKTRACE;
+	if (o->attributes & ATTRIB_INGAME) {tw_error("addItem - already added");}
+	if (!o->isLocation()) {tw_error("addItem - catastrophic");}
 	//if (!o->_serial) _list(o);
 
 	o->attributes |= ATTRIB_INGAME;
@@ -1019,11 +1020,12 @@ void Physics::add(SpaceLocation *o) {STACKTRACE
 	return;
 	}
 
-bool Physics::remove(SpaceLocation *o) {STACKTRACE
+bool Physics::remove(SpaceLocation *o) {
+	STACKTRACE;
 	int i;
-	if (!(o->attributes & ATTRIB_INGAME)) tw_error("removeItem - not added");
+	if (!(o->attributes & ATTRIB_INGAME)) {tw_error("removeItem - not added");}
 	o->attributes &= ~ATTRIB_INGAME;
-	if (!o->isLocation()) tw_error("removeItem - catastrophic");
+	if (!o->isLocation()) {tw_error("removeItem - catastrophic");}
 	for (i = 0; i < num_items; i += 1) {
 		if (item[i] == o) {
 			num_items -= 1;
@@ -1036,8 +1038,9 @@ bool Physics::remove(SpaceLocation *o) {STACKTRACE
 	return false;
 	}
 
-void Physics::add(Presence *p) {STACKTRACE
-	if (p->attributes & ATTRIB_INGAME) tw_error("addPresence - already added");
+void Physics::add(Presence *p) {
+	STACKTRACE;
+	if (p->attributes & ATTRIB_INGAME) {tw_error("addPresence - already added");}
 	if (p->isLocation()) {
 		add((SpaceLocation*)p);
 		return;
@@ -1052,9 +1055,10 @@ void Physics::add(Presence *p) {STACKTRACE
 	return;
 	}
 
-bool Physics::remove(Presence *o) {STACKTRACE
+bool Physics::remove(Presence *o) {
+	STACKTRACE;
 	int i;
-	if (!(o->attributes & ATTRIB_INGAME)) tw_error("removePresence - not added");
+	if (!(o->attributes & ATTRIB_INGAME)) {tw_error("removePresence - not added");}
 	if (o->isLocation()) return remove((SpaceLocation*)o);
 	o->attributes &= ~ATTRIB_INGAME;
 	for (i = 0; i < num_presences; i += 1) {
@@ -1178,9 +1182,7 @@ checksync();
 	{
 		// checking if this can happen? (curious ; GEO)
 		if (item[i]->state < -DEATH_FRAMES)
-		{
-			tw_error("too many death-frames - should not happen !!");
-		}
+		{tw_error("too many death-frames - should not happen !!");}
 	}
 
 	for(i = 0; i < num_items; i ++) {

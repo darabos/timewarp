@@ -614,7 +614,7 @@ void *action_vars_str::getptr(char vartype, int i)
 		break;
 		
 	default:
-		tw_error("Unknow action var type");
+		{tw_error("Unknow action var type");}
 		break;
 	}
 

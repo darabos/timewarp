@@ -22,7 +22,7 @@ void GameEventMessage::execute( int source ) {STACKTRACE
 	char buffy[64+max_message_length];
 	char *tmp = buffy;
 	int c = 15;
-	if ((unsigned short int)size > max_message_length + sizeof(GameEvent)) tw_error("GameEventMessage - message overflow");
+	if ((unsigned short int)size > max_message_length + sizeof(GameEvent)) { tw_error("GameEventMessage - message overflow"); }
 	//if (source == Game::channel_server) tmp += sprintf(tmp, "Server says: ");
 	//else if (source == Game::channel_client) tmp += sprintf(tmp, "Client says: ");
 	if (source == Game::channel_server) c = 13; else c = 9;
@@ -64,8 +64,9 @@ int read_length_code (int max, int *clen, int *len, unsigned char *where) {STACK
 	*len = where[3] + (where[4] << 8) + (where[5] << 16) + (where[6] << 24);
 	return 0;
 	}
-int write_length_code (int max, int *clen, int len, unsigned char *where) {STACKTRACE
-	if (len <= 0) tw_error( "write_length_code -- bad length");
+int write_length_code (int max, int *clen, int len, unsigned char *where) {
+	STACKTRACE;
+	if (len <= 0) { tw_error( "write_length_code -- bad length"); }
 	if (max < 1) return -1;
 	if (len < 255) {
 		where[0] = len;
@@ -110,14 +111,15 @@ NetLog::~NetLog() {STACKTRACE
 	free (log_transmitted);
 	}
 
-void NetLog::send_packet() {STACKTRACE
+void NetLog::send_packet() {
+	STACKTRACE;
 	int i, j, k, pos = 8;
-	if (!net.isConnected()) tw_error("NetLog::send_packet() - no connection!");
+	if (!net.isConnected()) { tw_error("NetLog::send_packet() - no connection!"); }
 	for (i = 0; i < log_num; i += 1) if (log_dir[i] & direction_write) {
 		j = log_len[i] - log_transmitted[i];
 		if (j > 0) {
 			buffy[pos] = i & 255;
-			if (i > 255) tw_error ("NetLog::send_packet - channel # exceeds 8 bits");
+			if (i > 255) { tw_error ("NetLog::send_packet - channel # exceeds 8 bits"); }
 			pos += 1;
 			write_length_code(12, &k, j, &buffy[pos]);
 			pos += k;
@@ -143,11 +145,12 @@ void NetLog::send_packet() {STACKTRACE
 	need_to_transmit = false;
 	return;
 	}
-void NetLog::recv_packet() {STACKTRACE
+void NetLog::recv_packet() {
+	STACKTRACE;
 	int pos, len;
 	int i, j, k, l;
 	len = net.recv(4, 4, &buffy);
-	if (len != 4) tw_error ("NetLog::recv_packet -- net.recv error (1)");
+	if (len != 4) { tw_error ("NetLog::recv_packet -- net.recv error (1)"); }
 	len = buffy[0] + (buffy[1] << 8) + (buffy[2] << 16) + (buffy[3] << 24);
 	if (len & 0x80000000) {
 		handle_code(len);
@@ -158,35 +161,36 @@ void NetLog::recv_packet() {STACKTRACE
 	int actual_time = get_time();
 	ping = (actual_time - (buffy[6] + (buffy[7] << 8))) & 65535 ;
 	len -= 8;
-	if (len != net.recv(len, len, &buffy)) tw_error( "NetLog::recv_packet -- net.recv error (2)");
+	if (len != net.recv(len, len, &buffy)) { tw_error( "NetLog::recv_packet -- net.recv error (2)"); }
 	pos = 0;
 	while (pos < len) {
 		i = buffy[pos];
-		if (i < 0) tw_error("NegLog::recv_packet - data came in on a negative channel %d", i);
+		if (i < 0) { tw_error("NegLog::recv_packet - data came in on a negative channel %d", i); }
 		if (i >= log_num) expand_logs(i+1);
-		if (!(log_dir[i] & direction_read)) tw_error("NetLog::recv_packet -- data on wrong channel %d", i);
+		if (!(log_dir[i] & direction_read)) { tw_error("NetLog::recv_packet -- data on wrong channel %d", i); }
 		pos += 1;
 		l = read_length_code(len-pos, &j, &k, &buffy[pos]);
-		if (l < 0) tw_error ("NetLog::recv_packet -- read_length_code failed");
+		if (l < 0) { tw_error ("NetLog::recv_packet -- read_length_code failed"); }
 		pos += j;
 		if (i >= log_num) expand_logs(i+1);
-		if (!(log_dir[i] & direction_read)) tw_error( "recieved data on wrong channel");
+		if (!(log_dir[i] & direction_read)) { tw_error( "recieved data on wrong channel"); }
 		Log::_log(i, &buffy[pos], k);
 		pos += k;
 		}
-	if (pos != len) tw_error ("NetLog::recv_packet -- missaligned packet!!!");
+	if (pos != len) { tw_error ("NetLog::recv_packet -- missaligned packet!!!"); }
 	return;
 	}
 
-void NetLog::send_code(unsigned int code) {STACKTRACE
-	if (!(code & 0x80000000)) tw_error ("NetLog::send_special -- bade code!");
+void NetLog::send_code(unsigned int code) {
+	STACKTRACE;
+	if (!(code & 0x80000000)) { tw_error ("NetLog::send_special -- bade code!"); }
 	net.send(sizeof(unsigned int), &code);
 	return;
 	}
-void NetLog::send_message(char *string) {STACKTRACE
+void NetLog::send_message(char *string) {STACKTRACE;
 	int i;
 	i = sprintf((char*)&buffy[4], "remote: %s", string);
-	if (i > 1000) tw_error ("net1_send_message -- message length exceeds maximum");
+	if (i > 1000) { tw_error ("net1_send_message -- message length exceeds maximum"); }
 	buffy[0] = i & 255;
 	buffy[1] = (i >> 8) & 255;
 	buffy[2] = (NET1_CODE_MESSAGE >> 16) & 255;
@@ -209,7 +213,7 @@ void NetLog::handle_code(unsigned int code) {STACKTRACE
 		break;
 		case NET1_CODE_MESSAGE: {
 			int len = code - NET1_CODE_MESSAGE;
-			if (len > 1000) tw_error ("net1_handle_code -- message length exceeds maximum");
+			if (len > 1000) { tw_error ("net1_handle_code -- message length exceeds maximum"); }
 			net.recv(len, len, &buffy);
 			buffy[len] = 0;
 			message.out((char*)buffy, 5000, 10);

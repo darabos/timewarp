@@ -11,6 +11,8 @@ REGISTER_FILE
 
 #include "../twgui/twgui.h"
 
+#include "../melee/mlog.h"
+
 #ifndef _V_BODIES_H
 #include "../other/vbodies.h"
 #endif
@@ -52,13 +54,19 @@ public:
 
   SpaceLocation* mapCenter;
   void setupSprites(void);
+
   void setupBinary(SpaceObject* S1, SpaceObject* S2, double radius1, double radius2, double speed1);
 	virtual void init_objects();
-  bool GetSpriteTo64Rot(SpaceSprite *Pics, char *fileName, char *cmdStr, 
+
+  bool GetSpriteTo64Rot(SpaceSprite *&Pics, char *fileName, char *cmdStr, 
     int numSprites = 1, int attribs = -1);
+
   SpaceSprite* GetSprite(char *fileName, char *spriteName, int attribs, int rotations=1, int numSprites = 1);
+
   bool GetSpriteGroup(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites, int attribs=-1, int firstSpriteNumber=1);
+
   SpaceSprite* GetMultiframeSprite(char *fileName, char *spriteName, int attribs, int numberOfFrames);
+
   virtual ~VGenSystem();
 
 
@@ -562,7 +570,7 @@ void VGenSystem::setupSprites(void) {
 }
 
 
-bool VGenSystem::GetSpriteTo64Rot(SpaceSprite *Pics, char *fileName, char *cmdStr, 
+bool VGenSystem::GetSpriteTo64Rot(SpaceSprite *&Pics, char *fileName, char *cmdStr, 
 int numSprites, int attribs)
 {
 
@@ -572,12 +580,12 @@ int numSprites, int attribs)
 	for(int num=0; num<numSprites; num++)
 	{
 		sprintf(dataStr,cmdStr,num);
-		spr=GetSprite(fileName, dataStr, attribs, 64);
+		spr = GetSprite(fileName, dataStr, attribs, 64);
 		if(!spr)
 		{
 			return FALSE;
 		}
-		Pics=spr;
+		Pics = spr;
 	}
 	return TRUE;
 }
@@ -775,34 +783,44 @@ void VGenSystem::init_objects() {
 
 	//int i = random(Ninit);
 
-
-	PopupList *popupl;
-	popupl = new PopupList(screen, "interfaces/gametest/popuplist", 0, 0, videosystem.get_font(2), 0);
-	popupl->tbl->set_optionlist(functitle, Ninit, makecol(255,255,128));
-	popupl->show();
-	popupl->xshift = 0;
-	popupl->yshift = 0;
-	popupl->close_on_defocus = false;
-	
-
-	WindowManager *winman;
-	winman = new WindowManager;
-	winman->add(popupl);
-
-	popupl->setscreen(screen);
-	show_mouse(screen);
-	unscare_mouse();
-
-	while (!popupl->returnvalueready)
-	{
-		idle(10);
-		
-		winman->calculate();
-		winman->animate();
-	}
-
 	int i;
-	i = popupl->returnstatus;
+
+	// initialization is for non-clients only ...
+	if (log->type == Log::log_net1server || log->type == Log::log_normal)
+	{
+		
+		PopupList *popupl;
+		popupl = new PopupList(screen, "interfaces/gametest/popuplist", 0, 0, videosystem.get_font(2), 0);
+		popupl->tbl->set_optionlist(functitle, Ninit, makecol(255,255,128));
+		popupl->show();
+		popupl->xshift = 0;
+		popupl->yshift = 0;
+		popupl->close_on_defocus = false;
+		
+		
+		WindowManager *winman;
+		winman = new WindowManager;
+		winman->add(popupl);
+		
+		popupl->setscreen(screen);
+		show_mouse(screen);
+		unscare_mouse();
+		
+		while (!popupl->returnvalueready)
+		{
+			idle(10);
+			
+			winman->calculate();
+			winman->animate();
+		}
+		
+		i = popupl->returnstatus;
+
+	}
+	
+	// share the result of the initialization.
+	// send (or receive) ... channel_server is locally either the server, or the client.
+	log_int(channel_server, i);
 
 
 	VGenSystem::setupSprites();

@@ -96,7 +96,7 @@ void init_fleet() {STACKTRACE
         for (iter = ships.begin(); iter != ships.end(); iter++) {
             char k = strlen((*iter)->id);
             if (k > 64)
-                tw_error("serialize_fleet - that's a hell of a long ship id");
+				{tw_error("serialize_fleet - that's a hell of a long ship id");}
             memcpy(&buffy[s], &k, sizeof(k)); s += sizeof(k);
         }
 
@@ -144,8 +144,7 @@ void init_fleet() {STACKTRACE
             }
             else addShipType(t);
         }
-        if (s != psize)
-            tw_error("deserialize_fleet - didn't use all the data...");
+        if (s != psize)	{tw_error("deserialize_fleet - didn't use all the data...");}
         if (k)
             delete k;
         return;

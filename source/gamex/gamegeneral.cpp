@@ -453,17 +453,12 @@ Periodics::Periodics(double aperiod)
 	t = 0;
 	period = aperiod;
 	if (physics && period < physics->frame_time * 1E-3)
-	{
-		tw_error("period is too small");
-	}
+	{tw_error("period is too small");}
 }
 
 bool Periodics::update()
 {
-	if (!physics)
-	{
-		tw_error("Periodics doesn't work without a physics");
-	}
+	if (!physics){tw_error("Periodics doesn't work without a physics");}
 
 	t += physics->frame_time * 1E-3;
 	if (t > period)
