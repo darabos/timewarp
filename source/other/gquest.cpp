@@ -6,17 +6,17 @@ REGISTER_FILE
 #include "melee/mship.h"
 
 static GobPlayer * g_player = NULL;
-static GobGame * g_game = NULL;
+#define gobgame ((GobGame*)game)
 
-Quest::Quest( const char * szLuaFile, GobPlayer * player, GobGame * game )
+
+Quest::Quest( const char * szLuaFile, GobPlayer * player )
 {
   gob_player = player;
-  gob_game = game;
   
   bExist = true;
 
   L = lua_open();
-  InitConversationModule( L, game );
+  InitConversationModule( L );
 
   // Register C function
   lua_register(L, "Dialog", l_Dialog);
@@ -38,8 +38,13 @@ bool Quest::exist()
 
 void Quest::Process()
 {
+	// just to speed up game
+	if( random()%50 )
+		return;
+
+  // dirty hack, only for experiment
   g_player = gob_player;
-  g_game = gob_game;
+  
 
   int top = lua_gettop(L);
   lua_pushstring(L, "Process");
@@ -51,8 +56,8 @@ void Quest::Process()
     };
 
   // gather information
-  int time = gob_game->game_time;
-  int enemy = gob_game->gobenemies;
+  int time = gobgame->game_time;
+  int enemy = gobgame->gobenemies;
   int kills = gob_player->kills;
   int x = iround(gob_player->ship->normal_pos().x);
   int y = iround(gob_player->ship->normal_pos().y);
@@ -90,7 +95,7 @@ int Quest::l_Dialog(lua_State* ls)
 
 int Quest::l_AddObject(lua_State* ls)
 {
-  g_game->add_new_enemy();
+  gobgame->add_new_enemy();
   return 0;
 }
 

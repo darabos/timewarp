@@ -12,30 +12,31 @@
 #include "util/aautil.h"
 #include "util/aastr.h"
 
-static GobGame * g_game = NULL;
+#define gobgame ((GobGame*)game)
 
 /*! \brief Alien Picture */
 static BITMAP * g_btmAlien = NULL;
 static BITMAP * g_btmOld = NULL;
+bool g_bPause = false;
 
+static int alien_image_x = 0;
+static int alien_image_y = 0;
 
-static int alien_image_x = SCREEN_W;
-static int alien_image_y = SCREEN_H/2;
-
-void InitConversationModule ( lua_State* L, GobGame * game )
+void InitConversationModule ( lua_State* L )
 {
-  ASSERT ( game == NULL);
-  g_game = game;
+	ASSERT ( L != NULL );
+  alien_image_x = SCREEN_W;
+  alien_image_y = SCREEN_H/2;
 
   /////////////////////////////////////////////////////////
   // Register C function for using in lua
   ////////////////////////////////////////////////////////
-  lua_register(L, "DialogStart", l_DialogStart);
+  lua_register(L, "DialogStart",         l_DialogStart);
   lua_register(L, "DialogSetAlienImage", l_DialogSetAlienImage);
-  lua_register(L, "DialogWrite", l_DialogWrite);
-  lua_register(L, "DialogAnswer", l_DialogAnswer);
-  lua_register(L, "DialogEnd", l_DialogEnd );
-  /////////////////////////////////////////////////////////  
+  lua_register(L, "DialogWrite",         l_DialogWrite);
+  lua_register(L, "DialogAnswer",        l_DialogAnswer);
+  lua_register(L, "DialogEnd",           l_DialogEnd );
+  
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -43,19 +44,24 @@ void InitConversationModule ( lua_State* L, GobGame * game )
 ///////////////////////////////////////////////////////////////////////////
 int l_DialogStart(lua_State* ls)
 {
-  ASSERT ( g_game == NULL );
-  ASSERT ( g_btmAlien != NULL && "New StartDialog was called before DialogEnd"); 
-  ASSERT ( g_btmOld != NULL && "New StartDialog was called before DialogEnd"); 
+  ASSERT ( g_btmAlien == NULL && "New StartDialog was called before DialogEnd"); 
+  ASSERT ( g_btmOld   == NULL && "New StartDialog was called before DialogEnd"); 
 
-  //g_game->pause();
+   if ( !game->is_paused() )
+   {
+	    g_bPause = false;
+		game->pause();
+   }
+   else 
+	   g_bPause = true;
   
-  g_game->window->lock();
-  g_btmOld = create_bitmap( g_game->window->surface->w, 
-			    g_game->window->surface->h );
-  blit( g_game->window->surface, g_btmOld, 0, 0, 0, 0, 
-	g_game->window->surface->w,
-	g_game->window->surface->h );
-  g_game->window->unlock();
+  g_btmOld = create_bitmap( game->window->surface->w, 
+			    game->window->surface->h );
+  game->window->lock();
+  blit( game->window->surface, g_btmOld, 0, 0, 0, 0, 
+	game->window->surface->w,
+	game->window->surface->h );
+  game->window->unlock();
 
   return l_DialogSetAlienImage(ls);
 }
@@ -74,25 +80,27 @@ int l_DialogSetAlienImage(lua_State* ls)
       g_btmAlien = NULL;
     }
 
-   BITMAP *temp = load_bitmap( text, NULL);
    aa_set_mode(AA_DITHER);
+   clear_bitmap ( game->window->surface );
+   BITMAP *temp = load_bitmap( text, NULL);
+   
    ASSERT(temp);
    g_btmAlien = create_bitmap(alien_image_x, alien_image_y);
    aa_stretch_blit(temp, g_btmAlien, 0, 0, temp->w, temp->h, 0, 0, 
 		   alien_image_x, alien_image_y);
    destroy_bitmap(temp);
 
-   g_game->window->lock();
-   blit(g_btmAlien, g_game->window->surface, 0, 0, 0, 0, 
+   game->window->lock();
+   blit(g_btmAlien, game->window->surface, 0, 0, 0, 0, 
 	alien_image_x, 	alien_image_y);
-   g_game->window->unlock();
+   game->window->unlock();
    return 0;
 }
 
 int l_DialogWrite(lua_State* ls)
 {
-  g_game->window->lock();
-  blit(g_btmAlien, screen, 0, 0, 0, 0, alien_image_x, alien_image_y);
+  game->window->lock();
+  blit(g_btmAlien, game->window->surface, 0, 0, 0, 0, alien_image_x, alien_image_y);
     
   if ( !lua_isstring(ls, 1) )
     {
@@ -100,8 +108,8 @@ int l_DialogWrite(lua_State* ls)
     }
   const char* text = lua_tostring(ls, 1);
 
-  textout(g_game->window->surface, font, text, 10, 10, -1);
-  g_game->window->unlock();
+  textout(game->window->surface, font, text, 10, 10, -1);
+  game->window->unlock();
   return 0;
 }
 
@@ -127,10 +135,13 @@ int l_DialogAnswer(lua_State* ls)
   pMenuAnswers[num].flags  = 0;
   pMenuAnswers[num].dp     = NULL;
   
+  show_mouse(game->window->surface);
   int ret = -1;
   while( ret == -1 )
     ret = do_menu(pMenuAnswers, 0, screen->h/2);
   ret++;
+  show_mouse(NULL);
+
   ///////////////////////////////////////////////
   //Free memory
   for(i=0;i<num;i++)
@@ -143,17 +154,19 @@ int l_DialogAnswer(lua_State* ls)
 int l_DialogEnd ( lua_State* ls )
 {
   // restore pre-dialog image
-  g_game->window->lock();
-  blit( g_btmOld, g_game->window->surface, 0, 0, 0, 0, g_btmOld->w, g_btmOld->h );
+  game->window->lock();
+  blit( g_btmOld, game->window->surface, 0, 0, 0, 0, g_btmOld->w, g_btmOld->h );
   destroy_bitmap( g_btmOld );
-  g_game->window->unlock();
+  game->window->unlock();
   g_btmOld = NULL;
   
-  // destroy alien picture
-  //destroy_bitmap( g_btmAlien );
-  //g_btmAlien = NULL;
   
-//  g_game->unpause();
+  // destroy alien picture
+  destroy_bitmap( g_btmAlien );
+  g_btmAlien = NULL;
+
+  if( !g_bPause )
+	  game->unpause();
 
   return 0;
 }

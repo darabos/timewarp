@@ -20,7 +20,6 @@ class GobGame;
 class GobPlayer {
 	public:
   std::list<Quest*> quest;
-  GobGame * ggame;
 
 	int channel;
 	~GobPlayer();

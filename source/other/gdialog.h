@@ -7,9 +7,8 @@ extern "C" {
 #	include "lauxlib.h"
 }
 
-class GobGame;
 
-void InitConversationModule ( lua_State* L, GobGame * game );
+void InitConversationModule ( lua_State* L  );
 
 int l_DialogStart(lua_State* ls);
 int l_DialogSetAlienImage(lua_State* ls);

@@ -550,8 +550,7 @@ GobPlayer::~GobPlayer() {
 void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 	STACKTRACE
 
-	  ggame = g;
-	  quest.clear();
+	quest.clear();
 	
 	channel = c->channel;
 	starbucks = 0;
@@ -852,7 +851,8 @@ void GobStation::station_screen(GobPlayer *s) {
 				}
 			break;
     case STATION_DIALOG_QUEST:
-      Quest * q = new Quest ( "TestQuest.lua", s, s->ggame );
+		// experiment code
+      Quest * q = new Quest ( "gamedata/TestQuest.lua", s  );
       s->quest.push_back(q);
       break;
 			}

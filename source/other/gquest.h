@@ -8,17 +8,16 @@ extern "C" {
 }
 
 class GobPlayer;
-class GobGame;
+
 
 class Quest
 {
   bool bExist;
   lua_State * L;
   GobPlayer * gob_player;
-  GobGame * gob_game;
  
  public:
-  Quest( const char * szLuaFile, GobPlayer * player, GobGame * game );
+  Quest( const char * szLuaFile, GobPlayer * player );
   virtual ~Quest();
     /*! \brief Summon default quest handler
       This function summon in every player think()
