@@ -120,9 +120,8 @@ void GameAliendialog::init()
 	//racepic = load_bitmap(racefile, 0);
 
 
-	AreaReserve *R;
 
-	R = new AreaReserve("gamex/interface/aliendialog", 10, 10, view->frame->surface);
+	R = new TWindow("gamex/interface/aliendialog", 10, 10, view->frame->surface);
 
 
 	
@@ -134,18 +133,19 @@ void GameAliendialog::init()
 	showline_num = 0;
 	showline_Nlines = Nlines(dialo->T);
 	//A = new TextEditBox(R, "A", -1, -1, usefont, showline(dialo.A, showline_num), 0);
-	A = new TextInfoArea(R, "A/", -1, -1, usefont);	// all text should fit on 1 window - no scroll needed !!
+	A = new TextInfoArea(R, "A/", usefont, 0, 0);	// all text should fit on 1 window - no scroll needed !!
 	//A->set_textcolor(tcol);
 
 	// ????
 	//A->changebackgr(racefile);
 
 
-	B = new TextList(R, "B/", -1, -1, usefont);
+	B = new TextList(R, "B/", usefont);
 
 	
-	winman = new WindowManager;
-	winman->add(R);
+	//winman = new WindowManager;
+	//winman->add(R);
+	R->tree_doneinit();
 
 	initBlist(dialo);
 
@@ -235,7 +235,7 @@ void GameAliendialog::calculate()
 
 
 	FULL_REDRAW = true;
-	winman->calculate();
+	R->tree_calculate();
 
 
 
@@ -290,7 +290,7 @@ void GameAliendialog::calculate()
 		if (dialo->Nbranches > 0)
 		{
 			int i;
-			i = B->scroll.yselect;
+			i = B->gety();//scroll.yselect;
 			if (i >= 0 && i < Nactivebranches)	// shouldn't be necessary ?!
 			{
 				//int k = branchindex[i];
@@ -326,8 +326,8 @@ void GameAliendialog::animate(Frame *frame)
 
 
 	//show_mouse(frame->surface);
-	winman->setscreen(view->frame->surface);
-	winman->animate();
+	R->tree_setscreen(view->frame->surface);
+	R->tree_animate();
 	show_mouse(view->frame->surface);
 	scare_mouse();
 }

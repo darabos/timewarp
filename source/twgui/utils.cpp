@@ -6,8 +6,16 @@
 #include "../melee.h"
 
 #include "utils.h"
-#include "area.h"
-#include "twgui.h"
+//#include "area.h"
+//#include "twgui.h"
+
+
+normalmouse Tmouse;
+
+TKeyHandler keyhandler;
+
+
+
 
 // ----------------- SOME GENERALLY USEFUL STRUCTURES / FUNCTIONS ------------------
 
@@ -25,6 +33,18 @@ int mapkey(int scancode_key, int scancode_ctrl)
 	
 	// thus we have 2 scan codes, no more needed.
 	return k;
+}
+
+int unmapkey1(int k)
+{
+	// return the 1st scancode
+	return k & 0x0FF;
+}
+
+int unmapkey2(int k)
+{
+	// return the 1st scancode
+	return (k >> 8) & 0x0FF;
 }
 
 
@@ -262,216 +282,127 @@ void normalmouse::posstr::move(int dx, int dy)
 
 
 
+/*
+extern int (*keyboard_callback)(int key);
+If set, this function is called by the keyboard handler in response
+to every keypress. It is passed a copy of the value that is about to
+be added into the input buffer, and can either return this value
+unchanged, return zero to cause the key to be ignored, or return
+a modified value to change what readkey() will later return.
+This routine executes in an interrupt context, so it must be
+in locked memory.
+*/
 
-scrollpos_str::scrollpos_str()
+
+
+
+// just make a copy of the input.
+static int my_callback(int key)
 {
-	x = 0;
-	y = 0;
-
-	left = 0;
-	right = 0;
-	up = 0;
-	down = 0;
-	scrollhor = 0;
-	scrollvert = 0;
-}
-
-
-void scrollpos_str::set(int xscroll, int yscroll, int Nxscroll, int Nyscroll,
-						int Nx_show, int Ny_show)
-{
-	x = xscroll;	// this is top-left corner item of the visible screen
-	y = yscroll;
-
-	xselect = x;	// this has some extra movement capacility within the visible screen
-	yselect = y;
-
-	Nxshow = Nx_show;	// the size (in items) of the visible screen
-	Nyshow = Ny_show;
-
-	Nx = Nxscroll - Nxshow + 1;	// the scrollable freedom
-	Ny = Nyscroll - Nyshow + 1;
-
-	// note: Nx = 1 indicates the "base" position; values >1 indicate out-of-sight positions.
-	// or: Nx-Nxshow indicates the out-of-sight positions, +1 indicates the base value position.
-	
-	// check ranges.
-	if (Nx < 1)
-		Nx = 1;
-	if (Ny < 1)
-		Ny = 1;
-
-	check_pos();
-}
-
-
-void scrollpos_str::check_pos()
-{
-	// check the scroll position
-	if (x > Nx-1)
-		x = Nx-1;
-
-	if (y > Ny-1)
-		y = Ny-1;
-
-	if (x < 0)
-		x = 0;
-
-	if (y < 0)
-		y = 0;
-
-	// check the select position
-	// note, the selected item _must_ always lie within the visible area:
-
-	if (xselect < x)
-		xselect = x;
-
-	if (xselect > x + Nxshow - 1)
-		xselect = x + Nxshow - 1;
-
-	if (yselect < y)
-		yselect = y;
-
-	if (yselect > y + Nyshow - 1)
-		yselect = y + Nyshow - 1;
-}
-
-
-void scrollpos_str::add(int dx, int dy)
-{
-	x += dx;
-	y += dy;
-
-	check_pos();
+	keyhandler.add(key);
+	return key;
 }
 
 
 
-void scrollpos_str::check_sel()
+TKeyHandler::TKeyHandler()
 {
-	if (xselect < x)
-		x = xselect;
+	keyboard_callback = my_callback;
 
-	if (xselect > x + Nxshow - 1)
-		x = xselect-Nxshow+1;
-
-	if (yselect < y)
-		y = yselect;
-
-	if (yselect > y + Nyshow - 1)
-		y = yselect-Nyshow+1;
+	clear();
 }
 
 
-
-void scrollpos_str::set_sel(int xsel, int ysel)
+void TKeyHandler::clear()
 {
-	xselect = xsel;
-	yselect = ysel;
+	Nbuf = 0;
+	Nbackbuf = 0;
 
-	check_sel();
-	check_pos();
-}
-
-
-
-// alpha is a value between 0 and 1
-void scrollpos_str::set_percent_pos_x(double alpha)
-{
-	x = iround( (Nx-1) * alpha );
-	check_pos();
-}
-
-void scrollpos_str::set_percent_pos_y(double alpha)
-{
-	y = iround( (Ny-1) * alpha );
-	check_pos();
-}
-
-void scrollpos_str::set_pos(int xnew, int ynew)
-{
-	if ( xnew >= 0 && xnew < Nx && ynew >= 0 && ynew < Ny )
+	int i;
+	for ( i = 0; i < KEY_MAX; ++i )
 	{
-		x = xnew;
-		y = ynew;
-
-		if (scrollhor)
-			scrollhor->setrelpos(double(x)/Nx);
-		if (scrollvert)
-			scrollvert->setrelpos(double(y)/Ny);
+		keynew[i] = key[i];
+		keyold[i] = key[i];
 	}
-
-	check_pos();
 }
 
 
-
-void scrollpos_str::bind(AreaGeneral *aleft, AreaGeneral *aright,
-								AreaGeneral *aup, AreaGeneral *adown,
-								ScrollBar *ascrollhor, ScrollBar *ascrollvert)
+void TKeyHandler::add(int key)
 {
-	left = aleft;
-	right = aright;
-	up = aup;
-	down = adown;
-	scrollvert = ascrollvert;
-	scrollhor = ascrollhor;
+	if (Nbackbuf >= buffmax)
+		return;
+
+	keybackbuf[Nbackbuf] = key;
+
+	++Nbackbuf;
+}
+
+void TKeyHandler::clearbuf()
+{
+	Nbuf = 0;
 }
 
 
-void scrollpos_str::calculate()
+void TKeyHandler::update()
 {
-	int xold, yold;
+	if (keyboard_needs_poll())
+		poll_keyboard();
 
-	xold = x;
-	yold = y;
-
-
-	if (left && left->flag.left_mouse_press)
+	// detect key changes ...
+	// (note that changes in-between updates are not seen by this so it's not 100% accurate)
+	int i;
+	for ( i = 0; i < KEY_MAX; ++i )
 	{
-		--xselect;
-		if (xselect < x)
-			x = xselect;
+		// keep record of prev and new states
+		keyold[i] = keynew[i];
+		keynew[i] = key[i];
+
+		// detect changes
+		keyhit[i] = 0;
+		keyreleased[i] = 0;
+
+		if (keynew[i] != keyold[i])
+		{
+			if (keynew[i])
+				keyhit[i] = 1;
+			else
+				keyreleased[i] = 1;
+		}
 
 	}
 
-	if (right && right->flag.left_mouse_press)
+
+	Nbuf = Nbackbuf;
+	for ( i = 0; i < Nbuf; ++i )
 	{
-		++xselect;
-		if (xselect > x + Nxshow - 1)
-			x = xselect-Nxshow+1;
+		keybuf[i] = keybackbuf[i];
+	}
+	// reset the back-buffer for reading new stuf.
+	Nbackbuf = 0;
+
+}
+
+
+bool TKeyHandler::pressed(char key)
+{
+	// only compare if the key != 0, otherwise you can get matches with
+	// wierd key combos or something. So, key==0 has the meaning of, don't compare me!
+	if (key == 0)
+		return false;
+
+	//char teststring[128];
+	int i;
+	for (i = 0; i < Nbuf; ++i)
+	{
+		//teststring[i] = keybuf[i] & 0x0FF;
+
+		if ( (keybuf[i] & 0x0FF) == key )	// only compare by ascii code...
+			return true;
 	}
 
-	if (up && up->flag.left_mouse_press)
-	{
-		--yselect;
-		if (yselect < y)
-			y = yselect;
+	//teststring[i] = 0;
+	//message.out(teststring);
 
-	}
-
-	if (down && down->flag.left_mouse_press)
-	{
-		++yselect;
-		if (yselect > y + Nyshow - 1)
-			y = yselect-Nyshow+1;
-	}
-
-
-	check_pos();
-
-	if (scrollhor && xold != x)
-		scrollhor->setrelpos(double(x)/Nx);
-
-	if (scrollvert && yold != y)
-		scrollvert->setrelpos(double(y)/Ny);
-	
-
-	if (scrollhor && scrollhor->flag.left_mouse_hold)
-		set_percent_pos_x(scrollhor->relpos);
-
-	if (scrollvert && scrollvert->flag.left_mouse_hold)
-		set_percent_pos_y(scrollvert->relpos);
-
+	return false;
 }
 

@@ -10,6 +10,7 @@ REGISTER_FILE
 #include "../melee/mview.h"
 
 #include "../twgui/twgui.h"
+#include "../twgui/twmenuexamples.h"
 
 #include "../melee/mlog.h"
 
@@ -790,19 +791,20 @@ void VGenSystem::init_objects() {
 	{
 		
 		PopupList *popupl;
-		popupl = new PopupList(screen, "interfaces/gametest/popuplist", 0, 0, videosystem.get_font(2), 0);
+		popupl = new PopupList(screen, "interfaces/gametest/popuplist", "text/", 0, 0, videosystem.get_font(2), 0);
 		popupl->tbl->set_optionlist(functitle, Ninit, makecol(255,255,128));
 		popupl->show();
 		popupl->xshift = 0;
 		popupl->yshift = 0;
 		popupl->close_on_defocus = false;
 		
+		popupl->tree_doneinit();
+
+		//WindowManager *winman;
+		//winman = new WindowManager;
+		//winman->add(popupl);
 		
-		WindowManager *winman;
-		winman = new WindowManager;
-		winman->add(popupl);
-		
-		popupl->setscreen(screen);
+		popupl->tree_setscreen(screen);
 		show_mouse(screen);
 		unscare_mouse();
 		
@@ -810,8 +812,8 @@ void VGenSystem::init_objects() {
 		{
 			idle(10);
 			
-			winman->calculate();
-			winman->animate();
+			popupl->tree_calculate();
+			popupl->tree_animate();
 		}
 		
 		i = popupl->returnstatus;

@@ -8,6 +8,7 @@
 #include "disk_stuff.h"
 
 #include "../../twgui/twgui.h"
+#include "../../twgui/twmenuexamples.h"
 
 const int Ntext = 2048;
 const int maxbranches = 16;
@@ -79,7 +80,8 @@ class GameDialogue : public GameBare
 	char *racepiclist[maxracepiclist];
 	
 
-	WindowManager *winman;
+//	WindowManager *winman;
+	TWindow *R;
 
 	TextEditBox *T;
 	TextList	*B;

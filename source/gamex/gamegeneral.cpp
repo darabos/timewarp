@@ -320,16 +320,18 @@ void WindowInfo::init(Vector2 omaparea, double orefscreenw, Frame *frame)
 	zoomlevel = 1;
 	minzoom = 0.5;
 
-	// this is 1:1 pixels in the reference screen.
-	maxzoom = framesize.x / refscreenw;
-
 	// the drawing area (needed to calculate zoom)
-	// shouldn't this be, frame->surface !!??
-	framesize = Vector2(frame->window->w, frame->window->h);
+	if (frame->surface)
+		framesize = Vector2(frame->surface->w, frame->surface->h);
+	else
+		framesize = Vector2(frame->window->w, frame->window->h);
 
 	zoomlevel = framesize.x / maparea.x;
 	// in this way, a single maparea fits exactly into a single window (at least
 	// in the x-direction).
+
+	// this is 1:1 pixels in the reference screen.
+	maxzoom = framesize.x / refscreenw;
 
 	// correction applied to the y-size of the maparea:
 	maparea.y = framesize.y / zoomlevel;

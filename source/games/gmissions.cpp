@@ -21,6 +21,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include "gamehierarchy.h"
 
 #include "../twgui/twgui.h"
+#include "../twgui/twmenuexamples.h"
 
 #include "gflmelee.h"
 #include "gmissions_objects.h"
@@ -204,8 +205,8 @@ class gmissions : public MainGame
 {
 public:
 	PopupTextInfo_toggle	*popupinfo;
-	AreaReserve		*missionselectmenu;
-	WindowManager	*winman;
+	TWindow			*missionselectmenu;
+	//WindowManager	*winman;
 	Button			*b_accept, *b_quit, *b_left, *b_right;
 	TextButton		*b_title, *b_info;
 	GhostButton		*b_ghost;
@@ -777,35 +778,37 @@ void gmissions::init(Log *_log)
 	this->view->frame->prepare();
 
 //	missionselectmenu = new AreaReserve("SELECTMISSION", 50, 400, "gmissiongui.dat", this->view->frame->surface);
-	missionselectmenu = new AreaReserve("interfaces/selectmission/briefing", 50, 400, this->view->frame->surface);
+	missionselectmenu = new TWindow("interfaces/selectmission/briefing", 50, 400, this->view->frame->surface);
 
-	b_info = new TextButton(missionselectmenu, "info/", -1, -1, usefont);
+	b_info = new TextButton(missionselectmenu, "info_", usefont);
 
-	b_accept = new Button(missionselectmenu, "accept/", -1, -1, KEY_ENTER);
-	b_quit = new Button(missionselectmenu, "quit/", -1, -1, KEY_ESC);
+	b_accept = new Button(missionselectmenu, "accept_", KEY_ENTER);
+	b_quit = new Button(missionselectmenu, "quit_", KEY_ESC);
 
-	b_title = new TextButton(missionselectmenu, "title/", -1, -1, usefont);
+	b_title = new TextButton(missionselectmenu, "title_", usefont);
 
-	b_left = new Button(missionselectmenu, "left/", -1, -1, KEY_LEFT);
-	b_right = new Button(missionselectmenu, "right/", -1, -1, KEY_RIGHT);
+	b_left = new Button(missionselectmenu, "left_", KEY_LEFT);
+	b_right = new Button(missionselectmenu, "right_", KEY_RIGHT);
 
 	b_ghost = new GhostButton(missionselectmenu);
 
-	popupinfo = new PopupTextInfo_toggle(b_ghost, "interfaces/selectmission/popupinfo", -50, -200, usefont, "", 0);
+	popupinfo = new PopupTextInfo_toggle(b_ghost, "interfaces/selectmission/popupinfo", "text/", 200, 200, usefont, "", 0);
 	popupinfo->option.disable_othermenu = false;
-	popupinfo->option.place_relative2mouse = false;	// hmm, a bit late, after it's already been placed... oh well, never mind ...
+	popupinfo->option.place_relative2mouse = false; // doesn't matter in this case.
 	popupinfo->show();	// by default it's inactive, but I'd prefer it's active right away.
 //	delete infotext;
 
 	alertlose = new PopupYN("interfaces/selectmission/alertlose", 400, 300, this->view->frame->surface);
 	alertwin  = new PopupOk("interfaces/selectmission/alertwin",  400, 300, this->view->frame->surface);
 
-	winman = new WindowManager;
-	winman->add(missionselectmenu);
-	winman->add(popupinfo);
-	winman->add(alertlose);
-	winman->add(alertwin);
+//	winman = new WindowManager;
+	missionselectmenu->add(popupinfo);
+	missionselectmenu->add(alertlose);
+	missionselectmenu->add(alertwin);
 
+	missionselectmenu->tree_doneinit();
+
+	popupinfo->focus();
 
 	set_info_buttons();
 }
@@ -835,7 +838,7 @@ void gmissions::calculate()
 	{
 		
 		FULL_REDRAW = true;
-		winman->calculate();
+		missionselectmenu->tree_calculate();
 
 
 
@@ -926,8 +929,8 @@ void gmissions::animate(Frame *frame)
 		
 		//show_mouse(frame->surface);
 		scare_mouse();
-		winman->setscreen(view->frame->surface);
-		winman->animate();
+		missionselectmenu->tree_setscreen(view->frame->surface);
+		missionselectmenu->tree_animate();
 
 		unscare_mouse();
 		show_mouse(view->frame->surface);

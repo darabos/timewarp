@@ -26,6 +26,42 @@ REGISTER_FILE
 #include "stuff/backgr_stars.h"
 
 
+Frame2::Frame2(int max_items)
+:
+Frame(max_items)
+{
+}
+
+Frame2::~Frame2()
+{
+}
+
+
+void Frame2::setsurface(Surface *newsurface)
+{
+	surface = newsurface;
+}
+
+void Frame2::erase()
+{
+	Frame::erase();
+}
+
+void Frame2::draw()
+{
+	Frame::draw();
+}
+
+void Frame2::prepare()
+{
+	return;	// do nothing, the real "prepare" comes from the setsurface.
+}
+
+
+
+
+
+
 
 void GamePlanetview::init()
 {
@@ -35,18 +71,37 @@ void GamePlanetview::init()
 	view->window->locate(
 		0, 0,
 		0, 0,
-		0, 0.75,
-		0, 1.0
+		0.0, 1.0,
+		0.0, 1.0
 		);
 
+
+	T = new TWindow("gamex/interface/planetview", 0, 0, screen);
+	T->tree_doneinit();
+
+	tmpbmp = create_sub_bitmap(T->backgr, 30, 30, 700, 400);
+
+	// use this for game-drawing to part of the menu
+	tempframe = new Frame2(1024);
+	tempframe->setsurface(tmpbmp);
+	// needed to fool the frame routine about the mother window (otherwise it'll create
+	// new bitmaps with the mother window size??!!)
+	tempframe->window->w = tempframe->surface->w;
+	tempframe->window->h = tempframe->surface->h;
+	tempframe->window->x = 0;
+	tempframe->window->y = 0;
+//	tempframe->window->surface = tempframe->surface;
+
+
+	double ratio = tmpbmp->h / double(tmpbmp->w);
 	double H = 2000;
-	size = Vector2(H, H);
+	size = Vector2(H, H*ratio);
 	prepare();
 
 //	mapwrap = false;
-	wininfo.init( Vector2(200,200), 800.0, view->frame );
+	wininfo.init( Vector2(200,200), 800.0, tempframe);//view->frame );
 	wininfo.zoomlimit(size.x);
-	wininfo.scaletowidth(size.x);	// zoom out to this width.
+	wininfo.scaletowidth(2*size.x);	// zoom out to this width.
 
 
 	// create star objects ?!
@@ -171,7 +226,9 @@ void GamePlanetview::init()
 	playerspr = create_sprite( "gamex/planetview/player_01.bmp", SpaceSprite::MASKED, 64 );
 	player = new ThePlaya(playerspr, &playerinfo);
 	add(player);
-//	player->pos = Vector2(200,200);
+
+	player->pos = Vector2(0,0);
+	player->angle = 0.25 * PI;
 //	switch_team(player->ally_flag, team_player);
 
 	locate_onedge_aligned_to_center(player, 0.5*size, 0.45*size);
@@ -189,6 +246,7 @@ void GamePlanetview::init()
 	sb = new StarBackgr();
 	sb->init(100, view->frame);
 	add(sb);
+
 }
 
 
@@ -210,6 +268,9 @@ void GamePlanetview::quit()
 	else
 		playerinfo.sync(player);
 
+	if (tmpbmp)
+		destroy_bitmap(tmpbmp);
+
 	GameBare::quit();
 }
 
@@ -227,6 +288,8 @@ void GamePlanetview::calculate()
 {
 	if (next)
 		return;
+
+	T->tree_calculate();
 
 	GameBare::calculate();
 
@@ -318,7 +381,22 @@ void GamePlanetview::animate(Frame *frame)
 
 	FULL_REDRAW = 1;
 
-	GameBare::animate(frame);
+	// draws to the raw screen (?)
+	FULL_REDRAW = true;
+
+	tempframe->full_redraw = true;
+	tempframe->erase();
+	tempframe->prepare();
+
+	// this draws to the menu (frame2)
+	GameBare::animate(tempframe);
+	
+	// the menu draws to the game frame
+	T->tree_setscreen(frame->surface);
+	T->tree_animate();
+
+	// (and the game frame then draws to video memory?)
+
 }
 
 

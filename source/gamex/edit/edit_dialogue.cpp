@@ -212,9 +212,8 @@ void GameDialogue::init()
 
 
 
-	AreaReserve *R;
 
-	R = new AreaReserve("gamex/interface/dialogeditor", 10, 10, view->frame->surface);
+	R = new TWindow("gamex/interface/dialogeditor", 10, 10, view->frame->surface);
 
 
 	
@@ -223,36 +222,40 @@ void GameDialogue::init()
 	int tcol = makecol(255,255,128);
 
 	//strcpy(Qtext, "a\n b\n c\n d\n e\n f\n g\n h\n i");
-	T = new TextEditBox(R, "text/", -1, -1, usefont, dialo->T, 256);
+	T = new TextEditBox(R, "text/", usefont, dialo->T, 256);
 	T->set_textcolor(tcol);
 
 
-	B = new TextList(R, "branches/", -1, -1, usefont);
+	B = new TextList(R, "branches/", usefont);
 
 	
-	refresh = new Button(R, "refresh/", -1, -1, 0);
+	refresh = new Button(R, "refresh_", 0);
 
-	Bplus = new Button(R, "addbranch", -1, -1, 0);
-//	Bmin = new Button(R, "Bmin", -1, -1, 0);
+	Bplus = new Button(R, "addbranch_", 0);
+//	Bmin = new Button(R, "Bmin", 0);
 
-	bprev = new Button(R, "prevbranch/", -1, -1, 0);
-//	bnext = new Button(R, "next", -1, -1, 0);
+	bprev = new Button(R, "prevbranch_", 0);
+//	bnext = new Button(R, "next", 0);
 
-	dialostatus = new SwitchButton(R, "state/", -1, -1, 0);
+	dialostatus = new SwitchButton(R, "state_", 0);
 
 	// add a text-button for the race pic, and a popup for the race list selection ?!
 
-	raceselect = new TextButton(R, "race/", -1, -1, usefont);
+	raceselect = new TextButton(R, "race_", usefont);
 	raceselect->set_text(dialo->racepic, makecol(255,255,0));
+	raceselect->passive = false;
 
-	popupraceselect = new PopupList(raceselect, "gamex/interface/dialogeditor/raceselect", -20, -20, usefont, 0);
+	popupraceselect = new PopupList(raceselect, "gamex/interface/dialogeditor/raceselect",
+		"text/", -20, -20, usefont, 0);
 	popupraceselect->tbl->set_optionlist(racepiclist, Nracepiclist, makecol(255,255,128));
 	popupraceselect->hide();
 
 
-	winman = new WindowManager;
-	winman->add(R);
-	winman->add(popupraceselect);
+//	winman = new WindowManager;
+//	winman->add(R);
+	R->add(popupraceselect);
+
+	R->tree_doneinit();
 
 	initeditor(dialo);
 
@@ -326,7 +329,7 @@ void GameDialogue::calculate()
 
 
 	FULL_REDRAW = true;
-	winman->calculate();
+	R->tree_calculate();
 
 
 	/*
@@ -398,7 +401,7 @@ void GameDialogue::calculate()
 		if (dialo->Nbranches > 0)
 		{
 			int i;
-			i = B->scroll.yselect;
+			i = B->gety();//scroll.yselect;
 			if (i >= 0 && i < dialo->Nbranches)	// shouldn't be necessary ?!
 			{
 				// write the current data.
@@ -445,8 +448,8 @@ void GameDialogue::animate(Frame *frame)
 
 
 	//show_mouse(frame->surface);
-	winman->setscreen(view->frame->surface);
-	winman->animate();
+	R->tree_setscreen(view->frame->surface);
+	R->tree_animate();
 	show_mouse(view->frame->surface);
 	scare_mouse();
 }

@@ -6,6 +6,8 @@
 #include "gamedata.h"
 #include "gamegeneral.h"
 
+#include "../twgui/twwindow.h"
+
 
 const int ID_FLEETICON = 0x08235497;
 
@@ -17,8 +19,25 @@ public:
 };
 
 
+
+class Frame2 : public Frame {
+	public:
+	Frame2(int max_items);
+	virtual ~Frame2();
+
+	virtual void erase();
+	virtual void draw();
+	virtual void prepare();
+	void setsurface(Surface *newsurface);
+};
+
+
 class GamePlanetview : public GameBare
 {
+	TWindow *T;
+	Frame2 *tempframe;	// this sets the drawing surface to a subarea of T ...
+	BITMAP *tmpbmp;
+
 	WindowInfo wininfo;
 
 	class ThePlaya : public LocalPlayerInfo

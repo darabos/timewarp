@@ -30,14 +30,10 @@ class GameAliendialog : public GameBare
 	void initBlist(Dialo *dialo);
 
 
-	WindowManager *winman;
+	TWindow *R;
 
-	//TextEditBox *A;
 	TextInfoArea *A;
 	TextList	*B;
-
-//	char Qtext[Nqtext];
-//	char Atext[Natext];
 
 	char racefile[128];
 	

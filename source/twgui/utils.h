@@ -4,6 +4,9 @@
 
 
 int mapkey(int scancode_key, int scancode_ctrl = 0);
+int unmapkey1(int k);
+int unmapkey2(int k);
+
 
 
 BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif);
@@ -81,35 +84,34 @@ public:
 
 
 
-class AreaGeneral;
-class ScrollBar;
 
-// discrete position (x,y = item number, not pixels)
-struct scrollpos_str
+
+
+static const int buffmax = 128;
+
+class TKeyHandler
 {
-	AreaGeneral *left, *right, *up, *down;
-	ScrollBar *scrollhor, *scrollvert;
+private:
+	int Nbackbuf;
+	int keybackbuf[buffmax];
 
-	scrollpos_str();
+public:
+	int keynew[KEY_MAX];
+	int keyold[KEY_MAX];
+	int keyhit[KEY_MAX];
+	int keyreleased[KEY_MAX];
 
-	int	x, y;	// which Icon is visible top left.
-	int Nx, Ny;				// number of Icons that are present.
-	int xselect, yselect;
-	int Nxshow, Nyshow;
-	void set(int xscroll, int yscroll, int Nxscroll, int Nyscroll, int Nx_show, int Ny_show);
-	void set_pos(int xnew, int ynew);
-	void set_percent_pos_x(double alpha);
-	void set_percent_pos_y(double alpha);
-	void add(int dx, int dy);
-	void check_pos();
-	void bind(AreaGeneral *left, AreaGeneral *right, AreaGeneral *up, AreaGeneral *down,
-				ScrollBar *scrollhor, ScrollBar *scrollvert);
-	void calculate();
+	int Nbuf;
+	int keybuf[buffmax];
 
-	void set_sel(int xsel, int ysel);
-	void check_sel();
+	TKeyHandler();
+	void update();
+	void add(int key);
+	void clear();
+	void clearbuf();
+
+	bool pressed(char key);
 };
-
 
 
 

@@ -1975,14 +1975,16 @@ void FlMelee::start_menu(int *select)
 
 
 
-	AreaReserve *A;
+//	AreaReserve *A;
+	TWindow *A;
 
 
 	// this uses a log_file as well ... to determine the ref screen size.
-	A = new AreaReserve("interfaces/gflmelee", 0, 0, screen);
+	A = new TWindow("interfaces/gflmelee", 0, 0, screen);
 
 	// other stuff resets the log file, so make sure you got the correct one.
 	set_config_file("gflmelee.ini");
+	//log_file("gflmelee.ini");
 	// don't use log_file, cause that's in memory, while we'd like to save settings on disk.
 
 	int Nfleets;
@@ -2012,25 +2014,25 @@ void FlMelee::start_menu(int *select)
 	col[0] = makecol(0,0,0);
 	col[1] = makecol(200,200,200);
 
-	up[0] = new Button(A, "up1/", -1, -1, 0);
-	down[0] = new Button(A, "down1/", -1, -1, 0);
+	up[0] = new Button(A, "up1_");
+	down[0] = new Button(A, "down1_");
 
-	up[1] = new Button(A, "up2/", -1, -1, 0);
-	down[1] = new Button(A, "down2/", -1, -1, 0);
+	up[1] = new Button(A, "up2_");
+	down[1] = new Button(A, "down2_");
 
-	ok = new Button(A, "ok/", -1, -1, 0);
+	ok = new Button(A, "ok_");
 
-	fl[0] = new TextButton(A, "text1/", -1, -1, usefont);		
+	fl[0] = new TextButton(A, "text1_", usefont);		
 	fl[0]->set_text("", col[0]);
 
-	fl[1] = new TextButton(A, "text2/", -1, -1, usefont);		
+	fl[1] = new TextButton(A, "text2_", usefont);		
 	fl[1]->set_text("", col[1]);
 
 	// the window manager.
 
-	WindowManager *winman;
-	winman = new WindowManager;
-	winman->add(A);
+//	WindowManager *winman;
+//	winman = new WindowManager;
+//	winman->add(A);
 
 	//int select[2];
 	select[0] = get_config_int("FleetInit", "PlayerAlliance", 0);
@@ -2044,12 +2046,14 @@ void FlMelee::start_menu(int *select)
 			select[i] = Nfleets-1;
 	}
 
-	winman->setscreen(screen);
-	for (;;)
+	A->tree_doneinit();
+	A->tree_setscreen(screen);
+
+	while ( !ok->flag.left_mouse_press )
 	{
-		idle(20);
-		winman->calculate();
-		winman->animate();
+		idle(5);
+		A->tree_calculate();
+		A->tree_animate();
 
 		int k;
 		for ( k = 0; k < 2; ++k )
@@ -2071,8 +2075,6 @@ void FlMelee::start_menu(int *select)
 			fl[k]->set_text(flname[select[k]], col[k]);
 		}
 
-		if (ok->flag.left_mouse_press)
-			break;
 	}
 
 	set_config_int("FleetInit", "PlayerAlliance", select[0]);
