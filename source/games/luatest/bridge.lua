@@ -3,15 +3,32 @@
 --
 
 
-require "StarClasses"
-require "SampleUniverse"
+--require "StarClasses"
+--require "SampleUniverse"
 
-local player1 = Player:new()
+addAsteroid();
+addAsteroid();
+addAsteroid();
+
+addAsteroid("Wakko");
+addAsteroid("Yakko");
+addAsteroid("Dot");
 
 
-local abc = "abc"
 
-print ("ASDFASDF")
+addPlanet(100,100);
+--addPlanet(150,150);
+--addPlanet(200,200);
+--addPlanet(250,250);
+
+
+
+
+
+
+
+
+
 
 
 
