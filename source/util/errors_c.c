@@ -3,6 +3,7 @@
 #include <allegro.h>
 #include <stdarg.h>
 
+#include "base.h"
 #include "errors.h"
 
 int __error_flag = 0;
