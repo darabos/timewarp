@@ -23,7 +23,11 @@ FONT_COLOR_DATA* font_upgrade_to_color_data(FONT_MONO_DATA* mf)
         FONT_GLYPH* g = mf->glyphs[i - mf->begin];
         BITMAP* b = create_bitmap_ex(8, g->w, g->h);
         clear_to_color(b, 0);
-        b->vtable->draw_glyph(b, g, 0, 0, 1);
+#if	(ALLEGRO_VERSION == 4 && ALLEGRO_SUB_VERSION == 0)
+        	b->vtable->draw_glyph(b, g, 0, 0, 1);
+#else
+        	b->vtable->draw_glyph(b, g, 0, 0, 1, 0);
+#endif
 
         bits[i - mf->begin] = b;
         free(g);
