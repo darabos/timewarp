@@ -48,6 +48,17 @@ void Star::calculate()
 
 
 
+
+void GameStarmap::init_menu()
+{
+	// place the menu into video-memory, cause we're using this as basis for
+	// drawing; the game draws onto part of the menu.
+	T = new TWindow("gamex/interface/starmap", 0, 0, game_screen, true);
+
+	maparea = new AreaTablet(T, "map_");
+}
+
+
 void GameStarmap::init()
 {
 
@@ -63,7 +74,7 @@ void GameStarmap::init()
 	prepare();
 
 //	mapwrap = false;
-	wininfo.init( Vector2(400,400), 800.0, view->frame );
+	//wininfo.init( Vector2(400,400), 800.0, tempframe );
 	wininfo.zoomlimit(size.x);
 	wininfo.center(Vector2(0,0));
 	//wininfo.scaletowidth(size.x);	// zoom out to this width.

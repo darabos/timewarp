@@ -99,6 +99,19 @@ Ship *createship(char *id, Vector2 opos, double oangle, int allyflag)
 
 
 
+
+void GameMelee::init_menu()
+{
+	// place the menu into video-memory, cause we're using this as basis for
+	// drawing; the game draws onto part of the menu.
+	T = new TWindow("gamex/interface/melee", 0, 0, game_screen, true);
+
+	maparea = new AreaTablet(T, "map_");
+}
+
+
+
+
 void GameMelee::init()
 {
 
@@ -106,13 +119,6 @@ void GameMelee::init()
 
 	double H = 2000;
 	size = Vector2(H, H);
-
-	view->window->locate(
-		0, 0,
-		0, 0,
-		0, 0.75,
-		0, 1.0
-		);
 	
 	prepare();
 
@@ -125,13 +131,8 @@ void GameMelee::init()
 		// this gives a memory leak, but only in stand-alone testing so I don't care.
 	}
 
-	//space_center_nowrap = 0;
-	cg.reset();	// resets all global/cached values to 0.
 
-	
-//	mapwrap = true;
-
-	wininfo.init( Vector2(200,200), 800.0, view->frame );
+//	wininfo.init( Vector2(200,200), 800.0, tempframe );
 	wininfo.zoomlimit(size.x);
 	wininfo.scaletowidth(size.x);	// zoom out to this width.
 
@@ -165,14 +166,6 @@ void GameMelee::init()
 	// take control of one of those ships...
 	player = s;
 
-
-
-	cg.space_center = wininfo.mapcenter;
-	cg.space_zoom = wininfo.zoomlevel;
-	cg.space_view_size = Vector2(view->window->w, view->window->h);
-	cg.space_center_nowrap = cg.space_center;
-
-	cg.setglobals();
 }
 
 
@@ -198,24 +191,6 @@ void GameMelee::quit()
 
 
 
-
-void CacheGlobals::setglobals()
-{
-	::space_center = this->space_center;
-	::space_view_size = this->space_view_size;
-	::space_zoom = this->space_zoom;
-	::space_center_nowrap = this->space_center_nowrap;
-}
-
-void CacheGlobals::reset()
-{
-	this->space_center = 0;
-	this->space_view_size = 0;
-	this->space_zoom = 0;
-	this->space_center_nowrap = 0;
-}
-
-
 void GameMelee::calculate()
 {
 	if (next)
@@ -224,13 +199,6 @@ void GameMelee::calculate()
 
 	wininfo.center(player->pos);
 
-	cg.space_center = player->pos;
-	cg.space_center_nowrap += player->vel * frame_time;
-	cg.space_zoom = wininfo.zoomlevel;
-	cg.space_view_size = Vector2(view->window->w, view->window->h);
-
-	cg.setglobals();
-	
 	
 	GameBare::calculate();
 
@@ -285,8 +253,6 @@ void GameMelee::animate(Frame *frame)
 {
 	if (next)
 		return;
-
-	cg.setglobals();
 
 	//message.print(1500, 15, "%i %i", int(cg.space_center.x), int(cg.space_center_nowrap.x));
 

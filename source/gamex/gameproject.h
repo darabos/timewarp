@@ -6,6 +6,12 @@
 #include "../frame.h"
 #include "../util/history.h"
 
+#include "../twgui/twwindow.h"
+#include "../twgui/twbuttontypes.h"
+
+#include "gamegeneral.h"
+
+extern BITMAP *game_screen;
 
 
 class GameProject;
@@ -17,6 +23,23 @@ class GameProject;
 // for a game definition, there should be no constructor, and no destructor specific code defined,
 // cause that's inflexible and thus, "bad" - better use some extra overhead (eg init/destroy) which
 // can be tweaked easier.
+
+
+class Frame2 : public Frame {
+	public:
+
+	double ratio;
+
+	Frame2(int max_items);
+	virtual ~Frame2();
+
+	virtual void erase();
+	virtual void draw();
+	virtual void prepare();
+	void setsurface(Surface *newsurface);
+};
+
+
 
 class GameBare : public Physics
 {
@@ -30,6 +53,12 @@ protected:
 
 	virtual void idle(int time = 5);
 public:
+
+	Frame2	*tempframe;
+	TWindow *T;
+	AreaTablet *maparea;	// for game drawing
+
+	WindowInfo wininfo;
 
 	GameBare *prev, *next, *gamerequest;
 	bool state;
@@ -93,7 +122,13 @@ public:
 	virtual void handle_edge(SpaceLocation *s);
 
 
+	virtual void init_menu();
+
+	// performance check
+	Histograph *tic_history;
+	Histograph *render_history;
 	void GameBare::show_ticinfo(Frame *f, Histograph *tic_history, Histograph *render_history, double hist_power);
+
 };
 
 

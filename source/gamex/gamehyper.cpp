@@ -296,6 +296,21 @@ int semirandom(int n)
 
 
 
+void GameHyperspace::init_menu()
+{
+	// place the menu into video-memory, cause we're using this as basis for
+	// drawing; the game draws onto part of the menu.
+	T = new TWindow("gamex/interface/hyperspace", 0, 0, game_screen, true);
+
+	maparea = new AreaTablet(T, "map_");
+
+
+	bradar = new AreaTablet(T, "radar_");
+}
+
+
+
+
 void GameHyperspace::init()
 {
 	int i;
@@ -304,12 +319,7 @@ void GameHyperspace::init()
 	GameBare::init();
 //	mapwrap = false;
 
-//	view->window->locate(
-//		0, 0,
-//		0, 0,
-//		0, 1.0,		//0.75
-//		0, 0.8
-//		);
+
 
 	escapetime = 0;
 	
@@ -330,12 +340,12 @@ void GameHyperspace::init()
 	// this is a very large map !! 100,000 x 100,000
 
 
-	view->frame->set_background ( 82, 0, 0 );
+	tempframe->set_background ( 82, 0, 0 );
 
 	prepare();
 
 
-	wininfo.init( Vector2(800,800), 800.0, view->frame );
+//	wininfo.init( Vector2(800,800), 800.0, tempframe );
 	// but ... do you see the edge of the map, or not ??
 	// you can make the map a bit bigger to prevent that ...
 
@@ -346,7 +356,7 @@ void GameHyperspace::init()
 	// initialization of sprites
 	int bpp;
 	bpp = 32;//bitmap_color_depth(f->surface);
-	submap = create_bitmap_ex(bpp, 100, 100);
+//	submap = create_bitmap_ex(bpp, 100, 100);
 	
 	// also, init certain sprites ?
 	// well, all the different stars big/med/small /color...
@@ -499,7 +509,7 @@ void GameHyperspace::quit()
 		delete star_radarspr[i];
 	}
 
-	destroy_bitmap(submap);
+//	destroy_bitmap(submap);
 
 	GameBare::quit();
 }
@@ -626,70 +636,26 @@ void GameHyperspace::animate(Frame *frame)
 	if (next)
 		return;
 
-	double t = get_time2();
-	
-	::space_zoom = wininfo.zoomlevel;
-	::space_center = wininfo.mapcenter;
 
-
-
-
-
-/* (it's fine - only the tw rendered part is a bit sluggish).
-	// show the render time ...
-	int dur = 1;
-
-	double tt = pow(tic_history->get_average(0, 1000/frame_time), 1/HIST_POWER);
-	double rt = pow(render_history->get_average(0, 1000/frame_time), 1/HIST_POWER);
-	char *tmp;
-	
-	if (tt*8 < frame_time)
-		tmp = "good";
-	else if (tt*2 < frame_time)
-		tmp = "ok";
-	else if (tt < frame_time)
-		tmp = "bad";
-	else
-		tmp = "BAD!";
-	message.print(dur, 12, "tic time: %.3fms (that's %s)", tt, tmp);
-	
-	if (rt < 2)
-		tmp = "good";
-	else if (rt < 20)
-		tmp = "ok";
-	else if (rt < 50)
-		tmp = "bad";
-	else
-		tmp = "BAD!";
-	message.print(dur, 12, "render time: %.3fms (that's %s)", rt, tmp);
-	message.print(dur, 12, "debug: %d", debug_value);
-	message.print(dur, 12, "shipdatas loaded: %d", shipdatas_loaded);
-*/
+	plot_submap(bradar->backgr);
 
 	GameBare::animate(frame);
 
 
-
-	t = get_time2() - t;// - paused_time;
-	render_history->add_element(pow(t, HIST_POWER));
-
-	
-
-	plot_submap(frame);
 
 	
 }
 
 
 
-void GameHyperspace::plot_submap(Frame *f)
+void GameHyperspace::plot_submap(BITMAP *submap)
 {
 
 	int i;
 
-	BITMAP *t;
-	t = f->surface;
-	rectfill(t, 0, t->h*0.8, t->w, t->h, 0);
+//	BITMAP *t;
+//	t = f->surface;
+//	rectfill(t, 0, t->h*0.8, t->w, t->h, 0);
 
 	// drawing - check all the stars ...
 
@@ -774,8 +740,8 @@ void GameHyperspace::plot_submap(Frame *f)
 	masked_blit(bmp, submap, 0, 0, P.x, P.y, bmp->w, bmp->h);
 
 	// plot the radar submap onto the (temp) screen surface.
-	P = bitmap_size(t) - bitmap_size(submap);
-	blit(submap, f->surface, 0, 0, P.x, P.y, submap->w, submap->h);
+//	P = bitmap_size(t) - bitmap_size(submap);
+//	blit(submap, surface, 0, 0, P.x, P.y, submap->w, submap->h);
 }
 
 

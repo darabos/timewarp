@@ -7,6 +7,7 @@
 #include "gamegeneral.h"
 
 #include "../twgui/twwindow.h"
+#include "../twgui/twbuttontypes.h"
 
 
 const int ID_FLEETICON = 0x08235497;
@@ -20,25 +21,14 @@ public:
 
 
 
-class Frame2 : public Frame {
-	public:
-	Frame2(int max_items);
-	virtual ~Frame2();
-
-	virtual void erase();
-	virtual void draw();
-	virtual void prepare();
-	void setsurface(Surface *newsurface);
-};
-
-
 class GamePlanetview : public GameBare
 {
-	TWindow *T;
-	Frame2 *tempframe;	// this sets the drawing surface to a subarea of T ...
-	BITMAP *tmpbmp, *newscreen;
+	TWindow *Tedit;
 
-	WindowInfo wininfo;
+	// contents of Tedit
+	Button *bdec, *binc, *bselect, *bcancel, *bplot;
+
+	//WindowInfo wininfo;
 
 	virtual ~GamePlanetview();
 
@@ -67,9 +57,8 @@ class GamePlanetview : public GameBare
 
 	SpaceSprite *planetspr, *playerspr, *fleetspr, *moonspr[32];
 
-	// performance check
-	Histograph *tic_history;
-	Histograph *render_history;
+	virtual void init_menu();
+
 };
 
 

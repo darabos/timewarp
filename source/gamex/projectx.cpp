@@ -75,8 +75,8 @@ void ProjectX::init()
 		
 		
 
-//	add( new GameStarmap() );
-	add( new GamePlanetview() );
+	add( new GameStarmap() );
+//	add( new GamePlanetview() );
 //	add( new GamePlanetscan() );
 //	add( new GameMelee() );
 //	add( new GameDialogue() );		// the editor

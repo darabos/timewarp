@@ -10,7 +10,7 @@
 class GameSolarview : public GameBare
 {
 
-	WindowInfo wininfo;
+	//WindowInfo wininfo;
 
 	class ThePlaya : public LocalPlayerInfo
 	{
@@ -31,6 +31,8 @@ class GameSolarview : public GameBare
 	virtual void checknewgame();
 
 	SpaceSprite *starspr, *playerspr, *planetspr[32];
+
+	virtual void init_menu();
 };
 
 

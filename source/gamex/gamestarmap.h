@@ -35,7 +35,7 @@ public:
 
 	MousePtr *ptr;
 
-	WindowInfo wininfo;
+	//WindowInfo wininfo;
 
 	MapSpacebody *starmap;
 
@@ -50,6 +50,7 @@ public:
 	virtual void init();
 	virtual void quit();
 	//virtual bool handle_key(int k);
+	virtual void init_menu();
 
 	virtual void calculate();
 	virtual void animate(Frame *frame);

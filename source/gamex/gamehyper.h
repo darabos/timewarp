@@ -35,11 +35,12 @@ class GameHyperspace : public GameBare
 {
 public:
 
+	AreaTablet	*bradar;
+
 	MousePtr *ptr;
 //	MapEverything *map;
-	WindowInfo wininfo;
 	MapSpacebody *starmap;
-
+	
 	int Nlayers;
 	SpaceSprite *spr[16];	//*sprA, *sprB, *sprC;
 	HyperspaceExplosions	*hyperexpl;
@@ -78,11 +79,13 @@ public:
 	SpaceSprite *star_hyperspr[32], *star_radarspr[32],
 				*radarplayerspr;
 
-	BITMAP *submap;
-	void plot_submap(Frame *f);
+	//BITMAP *submap;
+	void plot_submap(BITMAP *submap);
 
 	virtual void calc_kinetic(SpaceLocation *s);
 	virtual void handle_edge(SpaceLocation *s);
+
+	virtual void init_menu();
 };
 
 

@@ -13,6 +13,8 @@ REGISTER_FILE
 #include "gamedialogue.h"
 
 
+BITMAP *game_screen;
+
 
 GameBare::GameBare()
 {
@@ -92,6 +94,15 @@ void GameBare::change_view(const char * name)
 }
 
 
+
+void GameBare::init_menu()
+{
+	T = 0;
+	maparea = 0;
+}
+
+
+
 void GameBare::init()
 {
 	Physics::preinit();		// default stuff that should be done in the constructor.
@@ -144,6 +155,25 @@ void GameBare::init()
 	prepare();
 
 	hardexit = 0;	// is set to 1 if the player exits the game.
+
+
+	tempframe = new Frame2(1024);
+
+	init_menu();
+
+	if (!T || !maparea)
+	{
+		tw_error("Game menu is not defined !!");
+	}
+
+	// use this for game-drawing to part of the menu
+	tempframe->setsurface(maparea->backgr);
+
+	wininfo.init( Vector2(800,800), 800.0, tempframe );
+
+	// performance check
+	tic_history = new Histograph(128);
+	render_history = new Histograph(128);
 }
 
 
@@ -186,13 +216,29 @@ void GameBare::redraw()
 
 void GameBare::animate(Frame *frame)
 {
+
 	Physics::animate(frame);
+
+	if (T && !prev)
+	{
+		T->tree_animate();
+	}
+
+	// (and the game frame then draws to video memory?)
+	show_ticinfo(frame, tic_history, render_history, 4.0);
+
+
 }
 
 
 // copied (and simplified - no prediction) from Game class
 void GameBare::animate()
 {
+	if (next)
+		return;
+
+	/*
+
 	int predtime = 0;
 
 	Frame *f = view->frame;
@@ -215,6 +261,27 @@ void GameBare::animate()
 	f->draw();
 	unscare_mouse();
 	return;
+	*/
+
+	double t = get_time2();
+
+	::space_zoom = wininfo.zoomlevel;
+	::space_center = wininfo.mapcenter;
+	::space_view_size = wininfo.framesize;
+
+	tempframe->full_redraw = true;
+	FULL_REDRAW = true;
+	tempframe->erase();
+	tempframe->prepare();
+
+	animate(tempframe);
+
+	T->tree_animate();
+
+	show_mouse(game_screen);
+
+	t = get_time2() - t;// - paused_time;
+	render_history->add_element(pow(t, 4.0));
 }
 
 
@@ -314,11 +381,28 @@ void GameProject::init()
 
 
 	text_mode(-1);
+
+	// first, allocate the (old) screen from memory ... this should match
+	// exactly the "global" screen ...
+	game_screen = create_video_bitmap(screen->w, screen->h);
+	if (!game_screen)
+	{
+		tw_error("Failed to initialize game_screen!");
+	}
+	show_video_bitmap(game_screen);
+	clear_to_color(game_screen, 0);
+	// ok ... so we've safely allocated the drawable area; this is needed, cause
+	// any "new" video_bitmap is *first* allocated from the global screen area
+	// cause the global screen area isn't allocated as a bitmap yet!! So you
+	// can't use this global area normally while you're using other video-bitmaps.
 }
 
 
 void GameProject::quit()
 {
+	if (game_screen)
+		destroy_bitmap(game_screen);
+	show_video_bitmap(screen);
 	// result of an empty project: nothing to do, also on exiting it
 }
 
@@ -510,6 +594,10 @@ void GameBare::calculate()
 
 	Physics::calculate();
 
+	if (T && !next)
+		T->tree_calculate();
+
+
 	// check if the player is close to a star; if so, enter the associated solar system.
 	if (escapetime > 0)
 		escapetime -= frame_time * 1E-3;
@@ -568,3 +656,56 @@ void GameBare::show_ticinfo(Frame *f, Histograph *tic_history, Histograph *rende
 	message.animate(f);
 	message.flush();
 }
+
+
+
+
+
+
+
+
+
+
+
+Frame2::Frame2(int max_items)
+:
+Frame(max_items)
+{
+}
+
+Frame2::~Frame2()
+{
+}
+
+
+void Frame2::setsurface(Surface *newsurface)
+{
+	surface = newsurface;
+
+	// needed to fool the frame routine about the mother window (otherwise it'll create
+	// new bitmaps with the mother window size??!!)
+	window->w = surface->w;
+	window->h = surface->h;
+	window->x = 0;
+	window->y = 0;
+
+	ratio = double(surface->h) / double(surface->w);
+}
+
+void Frame2::erase()
+{
+	Frame::erase();
+}
+
+void Frame2::draw()
+{
+	Frame::draw();
+}
+
+void Frame2::prepare()
+{
+	return;	// do nothing, the real "prepare" comes from the setsurface.
+}
+
+
+

@@ -20,26 +20,30 @@ REGISTER_FILE
 
 
 
+void GameSolarview::init_menu()
+{
+	// place the menu into video-memory, cause we're using this as basis for
+	// drawing; the game draws onto part of the menu.
+	T = new TWindow("gamex/interface/planetview", 0, 0, game_screen, true);
+
+	maparea = new AreaTablet(T, "map_");
+}
+
+
+
+
 void GameSolarview::init()
 {
 
 	GameBare::init();
 
 	double H = 4000;
-	size = Vector2(H, H);
-
-	view->window->locate(
-		0, 0,
-		0, 0,
-		0, 0.75,
-		0, 1.0
-		);
-		
+	size = Vector2(H, H*tempframe->ratio);
 
 	prepare();
 
 //	mapwrap = false;
-	wininfo.init( Vector2(200,200), 1024.0, view->frame );
+	//wininfo.init( Vector2(200,200), 1024.0, tempframe );
 	wininfo.zoomlimit(size.x);
 	wininfo.scaletowidth(size.x);	// zoom out to this width.
 

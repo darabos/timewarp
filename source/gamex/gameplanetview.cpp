@@ -26,43 +26,19 @@ REGISTER_FILE
 #include "stuff/backgr_stars.h"
 
 #include "../twgui/twgui.h"
+#include "../twgui/twpopup.h"
 
 
 
-Frame2::Frame2(int max_items)
-:
-Frame(max_items)
+
+void GamePlanetview::init_menu()
 {
+	// place the menu into video-memory, cause we're using this as basis for
+	// drawing; the game draws onto part of the menu.
+	T = new TWindow("gamex/interface/planetview", 0, 0, game_screen, true);
+
+	maparea = new AreaTablet(T, "map_");
 }
-
-Frame2::~Frame2()
-{
-}
-
-
-void Frame2::setsurface(Surface *newsurface)
-{
-	surface = newsurface;
-}
-
-void Frame2::erase()
-{
-	Frame::erase();
-}
-
-void Frame2::draw()
-{
-	Frame::draw();
-}
-
-void Frame2::prepare()
-{
-	return;	// do nothing, the real "prepare" comes from the setsurface.
-}
-
-
-
-
 
 
 
@@ -71,65 +47,21 @@ void GamePlanetview::init()
 
 	GameBare::init();
 
-	view->window->locate(
-		0, 0,
-		0, 0,
-		0.0, 1.0,
-		0.0, 1.0
-		);
-
-	// first, allocate the (old) screen from memory ... this should match
-	// exactly the "global" screen ...
-	newscreen = create_video_bitmap(screen->w, screen->h);
-	if (!newscreen)
-	{
-		tw_error("Oh my !");
-	}
-	show_video_bitmap(newscreen);
-	clear_to_color(newscreen, 0);
-
-	// ok ... so we've safely allocated the drawable area I guess ...
-	// this is needed, cause
-	// this global one gets deleted for some reason, perhaps a view callback?
-	// and any "new" video_bitmap is *first* allocated from this global area !! So you
-	// can't use this global area normally while you're using other video-bitmaps.
-
-	// place the menu into video-memory, cause we're using this as basis for
-	// drawing; the game draws onto part of the menu.
-	T = new TWindow("gamex/interface/planetview", 0, 0, newscreen, true);
-
-	AreaTablet *maparea;
-	maparea = new AreaTablet(T, "map_");
-
-	FONT *usefont;
-	usefont = videosystem.get_font(3);
 
 
 
-	tmpbmp = maparea->backgr;//create_sub_bitmap(T->backgr, 30, 30, 700, 400);
-
-	// use this for game-drawing to part of the menu
-	tempframe = new Frame2(1024);
-	tempframe->setsurface(tmpbmp);
-	// needed to fool the frame routine about the mother window (otherwise it'll create
-	// new bitmaps with the mother window size??!!)
-	tempframe->window->w = tempframe->surface->w;
-	tempframe->window->h = tempframe->surface->h;
-	tempframe->window->x = 0;
-	tempframe->window->y = 0;
-//	tempframe->window->surface = tempframe->surface;
-
-
-	double ratio = tmpbmp->h / double(tmpbmp->w);
 	double H = 2000;
-	size = Vector2(H, H*ratio);
+	size = Vector2(H, H*tempframe->ratio);
 	prepare();
 
-//	mapwrap = false;
-	wininfo.init( Vector2(200,200), 800.0, tempframe);//view->frame );
+
+	//wininfo.init( Vector2(200,200), 800.0, tempframe);//view->frame );
 	wininfo.zoomlimit(size.x);
 	wininfo.scaletowidth(size.x);	// zoom out to this width.
 
+
+	FONT *usefont;
+	usefont = videosystem.get_font(3);
 
 	// create star objects ?!
 	int istar, iplanet;
@@ -283,12 +215,26 @@ void GamePlanetview::init()
 	sb->init(100, tempframe);
 	add(sb);
 
+
+
+	// define another (sub)menu
+
+	Tedit = new Popup("gamex/interface/planetview/edit", 400, 200, game_screen);
+
+	bdec = new Button(Tedit, "dec_");
+	binc = new Button(Tedit, "inc_");
+	bselect = new Button(Tedit, "select_");
+	bcancel = new Button(Tedit, "cancel_");
+	bplot = new Button(Tedit, "plot_");
+
+
+	T->add(Tedit);
 	T->tree_doneinit();
 
+	Tedit->hide();
 
-	// performance check
-	tic_history = new Histograph(128);
-	render_history = new Histograph(128);
+	unscare_mouse();
+	show_mouse(game_screen);
 }
 
 
@@ -310,12 +256,6 @@ void GamePlanetview::quit()
 	else
 		playerinfo.sync(player);
 
-	if (tmpbmp)
-		destroy_bitmap(tmpbmp);
-
-	if (newscreen)
-		delete (newscreen);
-
 	GameBare::quit();
 }
 
@@ -335,8 +275,6 @@ void GamePlanetview::calculate()
 		return;
 
 	double t = get_time2();
-
-	T->tree_calculate();
 
 	GameBare::calculate();
 
@@ -420,10 +358,10 @@ void GamePlanetview::checknewgame()
 
 void GamePlanetview::animate()
 {
-	double t = get_time2();
 
 	//idle(20);
 	
+	/*
 	::space_zoom = wininfo.zoomlevel;
 	::space_center = wininfo.mapcenter;
 	::space_view_size = wininfo.framesize;
@@ -443,15 +381,15 @@ void GamePlanetview::animate()
 	
 
 
-	// the menu draws to the game frame
-	//T->tree_setscreen(frame->surface);
-
-	T->tree_setscreen(newscreen);
+	//T->tree_setscreen(game_screen);
 	T->tree_animate();
+	*/
+
+	GameBare::animate();
 
 
-	t = get_time2() - t;// - paused_time;
-	render_history->add_element(pow(t, 4.0));
+
+	//show_mouse(game_screen);
 }
 
 
@@ -463,8 +401,6 @@ void GamePlanetview::animate(Frame *frame)
 	// this draws to the menu (frame2)
 	GameBare::animate(frame);
 	
-	// (and the game frame then draws to video memory?)
-	show_ticinfo(frame, tic_history, render_history, 4.0);
 }
 
 
