@@ -486,6 +486,8 @@ ArkanoidPincer::ArkanoidPincer(ArkanoidPincerShip *ocreator, Vector2 opos,
 {
   //message.print(1500,13,"ArkanoidPincerCreate1");
 
+	  layer = LAYER_SHIPS;
+
   creator=NULL; damage_factor=0;
   angleShift=0; mass=0; armour=0;
   creator = ocreator;
