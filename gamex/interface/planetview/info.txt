@@ -1,5 +1,0 @@
-gamex/interface/planetview/starname_backgr_y = 4
-gamex/interface/planetview/starname_backgr_x = 233
-gamex/interface/planetview/map_backgr_y = 33
-gamex/interface/planetview/map_backgr_x = 15
-res = 800
