@@ -54,6 +54,10 @@ class NormalGame : public Game {
 
 	int indhealthtoggle, indteamtoggle;
 
+	bool check_end();
+	void handle_end();
+	bool player_isalive(int i);
+
 	};
 
 

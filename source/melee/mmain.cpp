@@ -325,9 +325,14 @@ NormalGame::~NormalGame() {STACKTRACE
 static int kill_all_delay_counter = 0;
 void NormalGame::calculate() {STACKTRACE
 	Game::calculate();
-	if (next_choose_new_ships_time <= game_time) {
+	if (next_choose_new_ships_time <= game_time)
+	{
 		choose_new_ships();
 		next_choose_new_ships_time = game_time + 24*60*60*1000;
+		
+		if (check_end())
+			handle_end();
+		
 	}
 
 	// specially for play-testers:
@@ -354,7 +359,6 @@ void NormalGame::calculate() {STACKTRACE
 			}
 		}
 	}
-
 
 	return;
 	}
@@ -616,6 +620,81 @@ void TeamIndicator::animate_predict(Frame *space, int time)
 
 	rect(space->surface, co1.x, co1.y, co2.x, co2.y, col);
 	space->add_box(co1.x, co1.y, co2.x, co2.y);
+}
+
+
+
+bool NormalGame::player_isalive(int i)
+{
+	return (player_control[i]->ship || player_fleet[i]->getSize() > 0);
+}
+
+bool NormalGame::check_end()
+{
+	int i;
+	int numalive = 0;
+
+	for ( i = 0; i < num_players; ++i )
+	{
+		if (player_isalive(i))
+			++ numalive;
+	}
+
+	if (numalive <= 1)
+		return true;	// game should end, if at most 1 player is left (be it human or AI).
+	else
+		return false;
+}
+
+
+void NormalGame::handle_end()
+{
+	// dunno if this is ok in a networked game.
+
+	// find the local player
+	int i;
+	for ( i = 0; i < num_players; ++i )
+	{
+		if (player_control[i]->channel == channel_server &&
+			strcmp(player_control[i]->getTypeName(), "Keyboard/Joystick") == 0)
+			break;
+	}
+
+	if (i == num_players)	// error?
+		i = 0;
+
+	char *endmessage = 0;
+	if (player_isalive(i))
+		endmessage = "Victory";
+	else
+		endmessage = "Game Over";
+
+	// in a networked game, I suppose just the host should have this option. How to do that ??
+	int ichoice = tw_alert(endmessage, "&QUIT", "&RESTART");
+
+	if (ichoice == 1)
+	{
+		quit(endmessage);
+	}
+	else
+	{
+		int i;
+		char buffy[512];
+		for ( i = 0; i < num_players; ++i )
+		{
+			// first, kill remaining ship(s)
+			if (player_control[i]->ship)
+				player_control[i]->ship->die();
+
+			// then, load the fleet
+			log_file("tmp.ini");
+			sprintf(buffy, "Player%d", i + 1);
+			player_fleet[i]->reset();
+			player_fleet[i]->load(NULL, buffy);
+			player_fleet[i]->save("fleets.tmp", buffy);
+		}
+	}
+
 }
 
 
