@@ -684,12 +684,12 @@ void gmissions::removesubgame(int k)
 		if ( i == 1 )
 		{
 			alertlose->show();
-			alertlose->focus();
+			//alertlose->focus();
 		}
 		if ( i == 2 )
 		{
 			alertwin->show();
-			alertwin->focus();
+			//alertwin->focus();
 		}
 
 		if ( chosenmission < Nmissions-1 && i == 2 )		// only advance if you win.
@@ -879,13 +879,13 @@ void gmissions::calculate()
 			if (missionselectmenu->disabled)
 			{
 				missionselectmenu->show();
-				missionselectmenu->focus();
+				//missionselectmenu->focus();
 			}
 
 			if (popupinfo->disabled)
 			{
 				popupinfo->show();
-				popupinfo->focus();
+				//popupinfo->focus();
 			}
 		}
 		
