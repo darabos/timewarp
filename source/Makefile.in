@@ -1,9 +1,0 @@
-CXXFLAGS= @CXXFLAGS@ 
-
-all:
-	echo -e "\nCXXFLAGS = @CXXFLAGS@\ntimewarp:\t\\" > Makefile
-	echo "`ls -R -w 10000 -C */*.cpp *.cpp | sed s/cpp/o/g` `ls -R -w 10000 -C */*.c *.c | sed s/\\\\.c/\\\\.o/g`" >> Makefile
-	#ls -R -w 10000 -C */*.cpp *.cpp | sed s/cpp/o/g >> Makefile
-	#ls -R -w 10000 -C */*.c | sed s/\\.c/\\.o/g >> Makefile
-	echo -e "\t\t$(CXX) -o ../timewarp *.o */*.o $(shell allegro-config --libs) @LIBS@\n" >> Makefile
-	make
