@@ -10,7 +10,7 @@ REGISTER_FILE
 class Crash : public Ship
 {
 public:
-	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, weaponNdebris, weaponActionRange;
+	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, weaponNdebris, weaponActionRange, weaponSpreadAngle;
 	double	specialVelocity, specialDamage, specialArmour, specialAngVel, specialActionRange;
 	double	turn_rate_right;
 	
@@ -54,6 +54,7 @@ Ship(opos,  shipAngle, shipData, code)
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
 	weaponNdebris  = get_config_int("Weapon", "Ndebris", 0);
 	weaponActionRange   = get_config_float("Weapon", "ActionRange", 0);
+	weaponSpreadAngle = get_config_float("Weapon", "SpreadAngle", 0) * PI / 180;
 
 	specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
 	specialDamage   = get_config_int("Special", "Damage", 0);
@@ -117,7 +118,7 @@ int Crash::activate_weapon()
 	for ( i = 0; i < weaponNdebris; ++i )
 	{
 		double a;
-		double da = 0.33 * PI / weaponNdebris;
+		double da = weaponSpreadAngle / weaponNdebris;
 
 		a = a0 + (i - 0.5*weaponNdebris) * da;
 
@@ -128,6 +129,9 @@ int Crash::activate_weapon()
 
 		add(s);
 	}
+
+	// well, you blow it up after all, don't you.
+	ast->die();
 
 	return TRUE;
 }
