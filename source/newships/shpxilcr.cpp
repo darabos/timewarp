@@ -214,6 +214,7 @@ SpaceObject(creator, opos, oangle, osprite)
 	vel = velocity * unit_vector(oangle);
 
 	collide_flag_anyone = ALL_LAYERS;
+	layer = LAYER_SPECIAL;
 
 	passiveRange = orange;
 

@@ -46,3 +46,17 @@ Changed primary weapon
 Special+thrust (use thrusters at opposite side)
 Special+Weapon (fire large missile)
 Used old dat file (64 sprite ship)
+
+Version 5.
+**********
+GeomanNL:
+The EMP is improved: accelerates enemy ships only to some max. velocity, so
+that they don't outrun your own missiles ! Reduced damage reduction (set
+by "EAS") to none and increased crew capacity instead. Removed "batt. inc. due
+to damage", since the ship has adequate dynamos of its own.
+Varith:
+Mirv fix
+Last explosion improvement
+---
+Strengths and weaknesses mentioned above still apply, even with better
+balanced and implemented main/special weapons.
