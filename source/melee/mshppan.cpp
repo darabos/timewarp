@@ -205,7 +205,69 @@ void ShipPanel::animate(Frame *space) {STACKTRACE
 	}
 
 
-void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int display_type, int bcolor) {STACKTRACE
+void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int display_type, int bcolor)
+{STACKTRACE
+
+	// erase the background...
+	
+	int x1, x2, y1, y2, xl, xr, ymid, erasecolor;
+
+
+	if (display_type == 1)
+	{
+		// crew offset
+		xl = 3;
+		xr = 11;
+	} else {
+		// batt offset
+		xl = 51;
+		xr = 59;
+	}
+	
+	ymid = y + dy * (max / m);
+	
+	erasecolor = tw_color(100,100,100);
+	x1 = xl;
+	y1 = 14;
+	x2 = xr;
+	y2 = ymid-1;
+	rectfill(panel, x1, y1, x2, y2, erasecolor);
+	
+	erasecolor = bcolor;
+	x1 = xl+1;
+	y1 = ymid;
+	x2 = xr-1;
+	y2 = 55;
+	rectfill(panel, x1, y1, x2, y2, erasecolor);
+	
+	
+	erasecolor = makecol(140,140,140);
+	x1 = xl;
+	y1 = ymid-1;
+	x2 = xl;
+	y2 = 55;
+	rectfill(panel, x1, y1, x2, y2, erasecolor);
+	
+	x1 = xl;
+	y1 = ymid-1;
+	x2 = xr;
+	y2 = ymid-1;
+	rectfill(panel, x1, y1, x2, y2, erasecolor);
+	
+	erasecolor = makecol(60,60,60);
+	x1 = xr;
+	y1 = ymid-1;
+	x2 = xr;
+	y2 = 56;
+	rectfill(panel, x1, y1, x2, y2, erasecolor);
+	
+	x1 = xl;
+	y1 = 55;
+	x2 = xr;
+	y2 = 56;
+	rectfill(panel, x1, y1, x2, y2, erasecolor);
+
+
 	int i, color;
 	w -= 1;
 	h -= 1;
@@ -217,17 +279,16 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 
 
 		if (display_type == 1)
-
 			color = tw_color(ship->crewPanelColor(i));
-
 		else
-
 			color = tw_color(ship->battPanelColor(i));
 
 
 
 		rectfill(panel, _x, _y, _x+w, _y+h, color);
 		}
+
+	/* already erased
 	for (i = value; i < max; i += 1) {
 		int _x = x + dx * (i % m);
 		int _y = y + dy * (i / m);
@@ -246,6 +307,7 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 
 		rectfill(panel, _x, _y, _x+w, _y+h, bcolor);
 		}
+	*/
 	return;
-	}
+}
 
