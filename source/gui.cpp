@@ -1097,9 +1097,20 @@ int my_d_button_proc(int msg, DIALOG * d, int c) {
     case MSG_GOTFOCUS:
         if (menuFocus != NULL)
             sound.play(menuFocus, 128);
+        d->bg = makecol(196,196,255);
         break;
 
+    case MSG_LOSTFOCUS:
+        d->bg = makecol(255,255,255);
+        break;
+
+    /*case MSG_DRAW:
+        if (d->flags & D_GOTFOCUS)
+
+
+        break;/**/
     };
+
     return ret;
 }
 

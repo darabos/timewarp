@@ -125,7 +125,7 @@ void ControlHuman::load (const char *inifile, const char *inisection) {
 	extra3  = get_config_int(inisection, "Extra3", 0);
 	extra4  = get_config_int(inisection, "Extra4", 0);
 	extra5  = get_config_int(inisection, "Extra5", 0);
-	extra6  = get_config_int(inisection, "Extra6", 0);
+	suicide  = get_config_int(inisection, "Extra6", 0);
 	return;
 }
 /*! \brief Save players key
@@ -149,7 +149,7 @@ void ControlHuman::save (const char *inifile, const char *inisection) {
 	set_config_int(inisection, "Extra3", extra3);
 	set_config_int(inisection, "Extra4", extra4);
 	set_config_int(inisection, "Extra5", extra5);
-	set_config_int(inisection, "Extra6", extra6);
+	set_config_int(inisection, "Extra6", suicide);
 	return;
 }
 
@@ -177,7 +177,7 @@ int ControlHuman::think() {
 	if (key_pressed(extra3)) r |= keyflag::extra3;
 	if (key_pressed(extra4)) r |= keyflag::extra4;
 	if (key_pressed(extra5)) r |= keyflag::extra5;
-	if (key_pressed(extra6)) r |= keyflag::extra6;
+	if (key_pressed(suicide)) r |= keyflag::suicide;
 	return r;
 }
 
@@ -274,8 +274,8 @@ void ControlHuman::setup() {
 		s += sprintf ( s, "Extra5: ");
 		key_to_description ( extra5, s );
 		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Extra6: ");
-		key_to_description ( extra6, s );
+		s += sprintf ( s, "Suicide: ");
+		key_to_description ( suicide, s );
 
 		s = dialog_string[index]; index += 1;
 
@@ -314,7 +314,7 @@ void ControlHuman::setup() {
 			case 13: extra3 = t; break;
 			case 14: extra4 = t; break;
 			case 15: extra5 = t; break;
-			case 16: extra6 = t; break;
+			case 16: suicide = t; break;
 			case KEY_DIALOG_OK:  save("scp.ini", getDescription()); return;
 			case KEY_DIALOG_CANCEL: load("scp.ini", getDescription()); return;
 			case KEY_DIALOG_CALIBRATE: calibrate_joysticks(); break;

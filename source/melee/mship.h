@@ -33,7 +33,7 @@ struct keyflag {
 		extra3 =	0x01000,
 		extra4 =	0x02000,
 		extra5 =	0x04000,
-		extra6 =	0x08000
+		suicide =	0x08000
 		};
 	};
 

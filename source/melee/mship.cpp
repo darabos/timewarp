@@ -560,7 +560,29 @@ void Ship::calculate()
 		this->target_next      = 1&&(nextkeys & keyflag::next);
 		this->target_prev      = 1&&(nextkeys & keyflag::prev);
 		this->target_closest   = 1&&(nextkeys & keyflag::closest);
+        if (nextkeys & keyflag::suicide) {
+            crew  = 0;
+            play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
+
+            if (meleedata.xpl1Sprite) {
+                death_counter = 0;
+                death_explosion_counter = 0;
+                collide_flag_anyone = collide_flag_sameship = collide_flag_sameteam = 0;
+            }
+            else {
+                state = 0;
+                game->add(new Animation(this, pos, meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
+            }
+            if (attributes & ATTRIB_NOTIFY_ON_DEATH) {
+                game->ship_died(this, NULL);
+                attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
+            }
+        }
 		this->nextkeys = control->keys;
+
+
+        
+
 		if (!control->exists()) control = NULL;
 	}
 
