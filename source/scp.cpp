@@ -38,6 +38,7 @@
 	#include <crtdbg.h>
 #endif 
 
+
 DATAFILE *scppal = NULL;
 
 const char *tw_version() {
@@ -237,9 +238,43 @@ void prepareTitleScreenAssets() {
 /** clears the screen, and displays a loading message to the user.
 */
 void showLoadingScreen() {
+    static BITMAP * logo = NULL;
+    static int depth = bitmap_color_depth(screen);
+
     acquire_screen();
     clear_to_color(screen, palette_color[0]);
-    
+
+    if (NULL == logo || bitmap_color_depth(screen) != depth) 
+    {
+        depth = bitmap_color_depth(screen);
+        
+        DATAFILE * data = load_datafile_object("TitleScreen.dat","LOGO");
+        if (data != NULL && data->type==DAT_BITMAP) {            
+            BITMAP * temp = (BITMAP*) data->dat;
+            logo = create_bitmap(temp->w, temp->h);
+            blit(temp, logo, 0,0, 0,0, temp->w, temp->h);
+            unload_datafile_object(data);
+        }
+    }
+
+    if (logo!=null) {
+        if (screen->w/2 >= logo->w) {
+            draw_sprite(screen, logo, screen->w/2 - logo->w/2, screen->h/2 - logo->h/2);
+        }
+        else {
+            float ratio = logo->w / logo->h;
+            
+            int h = screen->h/4;
+            int w = ratio * h;                
+
+            stretch_blit(logo, screen, 
+                0,0, 
+                logo->w, logo->h,
+                screen->w/2 - w/2, screen->h/2 - h/2,
+                w, h);
+        }
+    }
+
     const char * loadString = "Loading...";
     textout_right(screen, font, loadString, 
         screen->w - 1*text_length(font, loadString), screen->h - 4*text_height(font), 
@@ -333,6 +368,16 @@ int is_escape_pressed() {
 	poll_keyboard();
 	return key[KEY_ESC];
 }
+
+static DIALOG clientWaiting[] = 
+{
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
+  { d_box_proc,        120,  100,  300,  140,  255,  0,    0,    0,          0,    0,    NULL, NULL, NULL },
+  { d_text_proc,       140,  110,  240,  25,   255,  0,    0,    0,          0,    0,    (void*)"Connecting to                                                    ", NULL, NULL },
+  { d_button_proc,     280,  200,  120,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void*) "Cancel", NULL, NULL },
+  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL },
+  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
+};
 
 
 void play_net1client ( const char *_address, int _port ) {STACKTRACE
@@ -493,15 +538,6 @@ void play_game(const char *_gametype_name, Log *_log) {STACKTRACE
 
 	if (gui_stuff) {
         prepareTitleScreenAssets();
-		/*scp = load_datafile("scpgui.dat");
-        
-        Music * mymusic = load_mod("test.dat#MYMUSIC");
-        //Music * mymusic = load_mod("scpgui.dat#SCPMUSIC");
-        if (!mymusic)
-            tw_error("Couldnt load title music");*/
-        
-        
-		//sound.play_music((Music *)(scp[SCPGUI_MUSIC].dat), TRUE);
 		showTitle();
 	}
 	return;
@@ -617,21 +653,7 @@ void MainMenu::doit() {STACKTRACE
 		player_team[i] = get_config_int (tmp, "Team", 0);
 	}
 
-	
     prepareTitleScreenAssets();
-    
-    /*scp = load_datafile("scpgui.dat");
-	if (!scp)
-		tw_error("Couldn't load scpgui.dat");
-	//sound.play_music((Music *)(scp[SCPGUI_MUSIC].dat), TRUE);
-
-        Music * mymusic = load_mod("TitleScreen.dat#MYMUSIC");
-        //Music * mymusic = load_mod("scpgui.dat#MYMUSIC");
-        if (!mymusic)
-            tw_error("Couldnt load title music");
-        sound.play_music( mymusic, TRUE);*/
-
-
 	showTitle();
 	enable();
 
