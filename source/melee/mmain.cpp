@@ -505,6 +505,18 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		// add a healthbar for the ship, and also a team indicator.
 		add(new HealthBar(s, &indhealthtoggle));
 		add(new TeamIndicator(s, &indteamtoggle));
+
+		// CHECK FILE SIZES !! to intercept desynch before they happen.
+		int myfsize, otherfsize;
+		myfsize = file_size(s->type->data->file);
+		otherfsize = myfsize;
+		log_int(player_control[i]->channel, otherfsize);
+
+		if (otherfsize != myfsize)
+		{
+			// the player who loads the ship doesn't get this message, cause his own file is identical by default
+			tw_error("DAT files have different size! This may cause a desynch. Press Retry to continue");
+		}
 		}
 	delete slot;
 	message.out("Finished selecting ships...", 1500);
