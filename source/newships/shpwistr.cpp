@@ -2,6 +2,7 @@
 /*
 Ok ... well, there's the monotron already, but nevertheless, this ship may
 also be fun.
+Re: imo the monotron sucks.
 */
 
 #include "../ship.h"
@@ -55,6 +56,8 @@ protected:
 	virtual void animate_predict(Frame *frame, int time);
 	
 	int fire_guns(int fire_type);
+
+	virtual double handle_speed_loss(SpaceLocation *source, double normal);
 };
 
 
@@ -156,7 +159,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 void WissumTripod::calculate_thrust()
 {
-	STACKTRACE
+	STACKTRACE;
 	if ( thrust )
 		engineactive[1] = 1;
 	else
@@ -165,7 +168,7 @@ void WissumTripod::calculate_thrust()
 
 void WissumTripod::calculate_turn_right()
 {
-	STACKTRACE
+	STACKTRACE;
 	turn_step = 0;
 	if ( turn_right )
 		engineactive[0] = 1;
@@ -176,7 +179,7 @@ void WissumTripod::calculate_turn_right()
 
 void WissumTripod::calculate_turn_left()
 {
-	STACKTRACE
+	STACKTRACE;
 	turn_step = 0;
 	if ( turn_left )
 		engineactive[2] = 1;
@@ -189,7 +192,7 @@ void WissumTripod::calculate_turn_left()
 
 int WissumTripod::fire_guns(int fire_type)
 {
-	STACKTRACE
+	STACKTRACE;
 	int testfired;
 
 	int ilast = ifiregun;
@@ -238,14 +241,14 @@ int WissumTripod::fire_guns(int fire_type)
 
 int WissumTripod::activate_weapon()
 {
-	STACKTRACE
+	STACKTRACE;
 	return fire_guns(1);
 }
 
 
 int WissumTripod::activate_special()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	// this is handled implicitly in activate_weapon, this must return true
 	// so that fire_special is set; this must consume very little fuel,
@@ -341,9 +344,25 @@ int WissumTripod::activate_special()
 }
 
 
+double WissumTripod::handle_speed_loss(SpaceLocation *source, double normal)
+{
+	STACKTRACE;
+
+	accel_rate = default_accel_rate;
+	speed_max = default_speed_max;
+
+	Ship::handle_speed_loss(source, normal);
+
+	default_accel_rate = accel_rate;
+	default_speed_max = speed_max;
+	
+	return 1;
+}
+
+
 void WissumTripod::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	int k;
 
 	Ship::calculate();
@@ -400,7 +419,7 @@ void WissumTripod::calculate()
 
 void WissumTripod::calculate_hotspots()
 {
-	STACKTRACE
+	STACKTRACE;
 	// add hotspots to all active engines
 	int i;
 	
@@ -424,7 +443,7 @@ void WissumTripod::calculate_hotspots()
 
 void WissumTripod::animate_predict(Frame *frame, int time)
 {
-	STACKTRACE
+	STACKTRACE;
 	// just do the linear prediction (is most stable)
 	SpaceObject::animate_predict(frame, time);
 }
@@ -449,7 +468,7 @@ Shot(creator, rpos, oangle, ov,
 
 void FuelDump::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	Shot::calculate();
 
 	if (!state && num_mirvs < sprite->frames()-1)
