@@ -199,10 +199,6 @@ SOURCE=.\source\util\aautil.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\util\awconfig.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\util\base.cpp
 # End Source File
 # Begin Source File
@@ -1104,10 +1100,6 @@ SOURCE=.\source\util\aastr.h
 # Begin Source File
 
 SOURCE=.\source\util\aautil.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\util\awconfig.h
 # End Source File
 # Begin Source File
 
