@@ -391,6 +391,7 @@ void game_create_errorlog()
 	if (!f) return;
 
 	fprintf(f, "\n\n--------error report, showing in-game objects posx/y velx/y--------\n");
+	fprintf(f, "timewarp version = %s", tw_version());
 
 	time_t t;
 	tm *td;

@@ -1,6 +1,7 @@
 #ifndef _SCP_H
 #define _SCP_H
 
+const char *tw_version();
 
 void change_teams();
 void edit_fleet(int player) ;

@@ -226,37 +226,39 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 	
 	ymid = y + dy * (max / m);
 	
+	// erase to default greyish panel color
 	erasecolor = tw_color(100,100,100);
 	x1 = xl;
-	y1 = 14;
+	y1 = 12;
 	x2 = xr;
-	y2 = ymid-1;
+	y2 = ymid;
 	rectfill(panel, x1, y1, x2, y2, erasecolor);
 	
+	// erase the black background part
 	erasecolor = bcolor;
 	x1 = xl+1;
-	y1 = ymid;
+	y1 = ymid+1;
 	x2 = xr-1;
 	y2 = 55;
 	rectfill(panel, x1, y1, x2, y2, erasecolor);
 	
-	
+	// the borders of the crew/batt panel
 	erasecolor = makecol(140,140,140);
 	x1 = xl;
-	y1 = ymid-1;
+	y1 = ymid;
 	x2 = xl;
 	y2 = 55;
 	rectfill(panel, x1, y1, x2, y2, erasecolor);
 	
 	x1 = xl;
-	y1 = ymid-1;
+	y1 = ymid;
 	x2 = xr;
-	y2 = ymid-1;
+	y2 = ymid;
 	rectfill(panel, x1, y1, x2, y2, erasecolor);
 	
 	erasecolor = makecol(60,60,60);
 	x1 = xr;
-	y1 = ymid-1;
+	y1 = ymid;
 	x2 = xr;
 	y2 = 56;
 	rectfill(panel, x1, y1, x2, y2, erasecolor);

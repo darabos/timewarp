@@ -11,6 +11,16 @@ REGISTER_FILE
 
 class DyzunHarbringer;
 
+class SlownessMine : public SpaceObject
+{
+	double range, maxvel, armour;
+public:
+	SlownessMine(Ship *creator, Vector2 opos, double oangle, SpaceSprite *osprite,
+		double orange, double omaxvel, double oarmour);
+  virtual int handle_damage(SpaceLocation* source, double normal, double direct = 0);
+  virtual void calculate();
+};
+
 class DyzunMissile : public HomingMissile {
 	public:
   DyzunMissile(DyzunHarbringer* ocreator, double ox, double oy, double oangle, double ov,
@@ -59,6 +69,12 @@ public:
 
   int          gunToFire;
 
+  int			maxmines, currentmine;
+  SlownessMine	**slmine;
+
+  double		weaponMaxvel;
+
+
   public:
   DyzunHarbringer(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
@@ -70,16 +86,20 @@ public:
 };
 
 
+
+
 DyzunHarbringer::DyzunHarbringer(Vector2 opos, double angle, ShipData *data, unsigned int code) 
 	:
 	Ship(opos, angle, data, code)
 	{
 
   weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
-  weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
-  weaponDamage   = get_config_int("Weapon", "Damage", 0);
+  weaponMaxvel   = scale_velocity(get_config_float("Weapon", "Velocity", 0));
+//  weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
-  weaponTandemFire = get_config_int("Weapon", "TandemFire", 0);
+//  weaponTandemFire = get_config_int("Weapon", "TandemFire", 0);
+  maxmines       = get_config_int("Weapon", "Nmines", 3);
+
 
   specialVelocityCoast = scale_velocity(get_config_float("Special", "VelocityCoast", 5));
   specialVelocityBurn1 = scale_velocity(get_config_float("Special", "VelocityBurn1", 10));
@@ -95,13 +115,21 @@ DyzunHarbringer::DyzunHarbringer(Vector2 opos, double angle, ShipData *data, uns
   specialBurnFrames1 = get_config_int("Special", "BurnFrames1", 0);
   specialBurnFrames2 = get_config_int("Special", "BurnFrames2", 0);
   gunToFire = 1;
+
+  currentmine = 0;
+  slmine = new SlownessMine* [maxmines];
+  int i;
+  for ( i = 0; i < maxmines; ++i)
+	  slmine[i] = 0;
  }
 
 void DyzunHarbringer::death(void) {
   Ship::death();
 }
 
-int DyzunHarbringer::activate_weapon() {
+int DyzunHarbringer::activate_weapon()
+{
+	/*
   if(gunToFire==1 || weaponTandemFire) {
   game->add(new Missile(this, Vector2(size.y*(0.24), (size.y * +0.25)),
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
@@ -115,6 +143,22 @@ int DyzunHarbringer::activate_weapon() {
   if(gunToFire==1)gunToFire=2;
   else gunToFire=1;
   return(TRUE);
+  */
+
+	// if this mine already exists, clear it first
+	if (slmine[currentmine])
+		slmine[currentmine]->state = 0;
+
+	slmine[currentmine] = new SlownessMine(this, pos, angle, data->spriteWeapon,
+		weaponRange, weaponMaxvel, weaponArmour);
+
+	game->add(slmine[currentmine]);
+
+	++currentmine;
+	if (currentmine >= maxmines)
+		currentmine = 0;
+
+	return 1;
 }
 
 int DyzunHarbringer::activate_special() {
@@ -151,6 +195,13 @@ int DyzunHarbringer::activate_special() {
 
 void DyzunHarbringer::calculate(void) {
   Ship::calculate();
+
+  // check if your precious mines were destroyed; update pointers.
+  int i;
+  for ( i = 0; i < maxmines; ++i)
+	  if (!(slmine[i] && slmine[i]->exists()))
+		  slmine[i] = 0;
+
 }
 
 
@@ -203,5 +254,58 @@ void DyzunMissile::inflict_damage(SpaceObject *other) {
 
 void DyzunMissile::thrust_on(void) {
 ;}
+
+
+SlownessMine::SlownessMine(Ship *creator, Vector2 opos, double oangle, SpaceSprite *osprite,
+		double orange, double omaxvel, double oarmour)
+:
+SpaceObject(creator, opos, oangle, osprite)
+{
+	range = orange;
+	maxvel = omaxvel;
+	armour = oarmour;
+
+	layer = LAYER_SPECIAL;
+	vel = 0;
+}
+
+int SlownessMine::handle_damage(SpaceLocation* source, double normal, double direct)
+{
+	armour -= (normal + direct);
+
+	if (armour <= 0)
+		state = 0;
+
+	return 1;
+}
+
+void SlownessMine::calculate()
+{
+	SpaceObject::calculate();
+
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
+		state = 0;
+		return;
+	}
+
+	// check if anything is in range ... which should be maxed speeded ...
+	Query a;
+	for (a.begin(this, OBJECT_LAYERS, range); a.currento; a.next())
+	{
+		SpaceObject *o = a.currento;
+
+		// skip same team objects
+		if (sameTeam(o))
+			continue;
+
+		double v;
+		v = o->vel.length();
+		if (v > maxvel)
+			o->vel *= maxvel / v;
+	}
+}
+
 
 REGISTER_SHIP ( DyzunHarbringer )

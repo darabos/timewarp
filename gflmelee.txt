@@ -16,3 +16,9 @@ L	choose different radar layouts (you can add new data files till gflmelee99.dat
 Use the target keys to select prev/ next/ closest target.
 
 Stats about victims are only kept to a maximum of 32 kills per ship, and for a maximum of 128 different ships.
+
+
+FAQ.
+
+This game requires lots of memory, around 100 MB, because it loads so many ships. Naturally, the game will crash if you don't have this amount of memory.
+
