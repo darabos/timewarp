@@ -579,11 +579,15 @@ void ConfedCargotran::calculate()
 
 void ConfedCargotran::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	STACKTRACE;
+	if (!(other && other->exists()))
+		return;
+
 	Ship::inflict_damage(other);
 
 	// check if the other thing is a crate (doesn't matter which ship it belongs to)
-	if ( other->id == CARGOCRATE_ID )
+	// ... but, only add it, if it's owned by that particular ship.
+	if ( (other->id == CARGOCRATE_ID) && (other->ship == this) )
 	{
 		// add that crate as a new link at the end of the cargotrain:
 		if ( Head )
