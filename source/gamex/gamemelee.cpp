@@ -34,99 +34,40 @@ REGISTER_FILE
 
 
 
-class InitShipGeneral
-{
-public:
-	//InitShipGeneral(char *id, char *base);
-	void set(char *id, char *base);
-	char idname[128];
-	std::string filebase;
-	virtual Ship *spawnship(Vector2 opos, double oangle, int allyflag) {return 0;};
-	ShipData *getdata();
-};
-
-void InitShipGeneral::set(char *id, char *base)
-{
-	strcpy(idname, id);
-	filebase = base;
-}
-
-ShipData *InitShipGeneral::getdata()
-{
-	ShipData *sd;
-	sd = shipdata( (filebase + ".dat").c_str() );	// check the list
-	sd->load();		// load the sprites into the data (is only done if that's still needed).
-	return sd;
-}
-
-
-class InitShipOrzne : public InitShipGeneral
-{
-public:
-	InitShipOrzne() {set("orzne", "ships/sc2/shporzne");};
-	virtual Ship *spawnship(Vector2 opos, double oangle, int allyflag)
-		{return new OrzNemesis(opos, oangle, getdata(), allyflag);};
-};
-
-
-
-int Nships = 0;
-InitShipGeneral *shiplist[64];
-
-void add2shipslist(InitShipGeneral *s)
-{
-	shiplist[Nships] = s;
-	++Nships;
-}
-
-void initshipslist()
-{
-	add2shipslist( new InitShipOrzne() );
-}
-
-
-Ship *createship(char *id, Vector2 opos, double oangle, int allyflag)
-{
-	int i;
-	for ( i = 0; i < Nships; ++i )
-	{
-		if (strcmp(id, shiplist[i]->idname) == 0)
-			return shiplist[i]->spawnship(opos, oangle, allyflag);
-	}
-	return 0;
-}
-
 #include "../melee.h"
 #include "../melee/mframe.h"
 
-Ship *GameMelee::create_ship(const char *id, Vector2 pos, double angle, int team)
+#include "ai_fleet.h"
+
+Ship *GameMelee::create_ship(const char *id, bool human, Vector2 pos, double angle, int team)
 {
 	Control *c = 0;
 	int channel = 0;
 
-	c = getController("WussieBot", "whatever", channel);
-	if (!c) {
-		tw_error("Game::create_control - bad control type");
+	if (human)
+	{
+		c = new ControlHumanFG("whatever");
+	} else {
+		c = new ControlWussieFG("whatever");
 	}
-//	c->load(file, config);
+	if (!c) { tw_error("Game::create_control - bad control type"); }
+
+	c->load("scp.ini", "Config0");	// only does something for "humans"
 	add(c);
 
 
 	ShipType *type = shiptype(id);
-	if (!type)
-	{tw_error("Game::create_ship - bad ship id (%s)", id);}
-	/*if(!ini) {
-		sprintf(buffer, "ships/shp%s.ini", id);
-		ini = buffer;
-	}	
-	log_file(buffer);*/
-//	log_file(type->file);
-	set_config_file(type->file);
-//	if (team == 0) team = new_team();
+	if (!type) {tw_error("Game::create_ship - bad ship id (%s)", id);}
+
+	log_file(type->file);
+
 	Ship *s = type->get_ship(pos, angle, get_code(new_ship(), team));
+	add(s);
+
 	if (c)
 		c->select_ship(s, id);
-//	add_target(s);
+
+	targets->add(s);
 	s->attributes |= ATTRIB_NOTIFY_ON_DEATH;
 	return s;
 }
@@ -167,40 +108,37 @@ void GameMelee::init()
 	}
 
 
-//	wininfo.init( Vector2(200,200), 800.0, tempframe );
 	wininfo.zoomlimit(size.x);
 	wininfo.scaletowidth(size.x);	// zoom out to this width.
 
-	initshipslist();
 
 
-	// Stars requires game->log, which I can't, nor need (imo), to support for a (single player) full-game 
-	//physics = 0;
-	//add(new Stars());
-	//physics = this;
+	add(new Stars());
 
 	int i;
 	for ( i = 0; i < 10; ++i )
 		add(new Asteroid());
 
 	team_player = new_team();
+	team_enemy = new_team();
 
 
 	Ship *s;
 
-	for ( i = 0; i < enemyfleet->Nships; ++i )
-	{
-		//s = createship(enemyfleet->info->name, Vector2(0,0), 0, team_player);
-		s = create_ship(enemyfleet->info->name, Vector2(0,0), 0, team_player);
-		s->layer = LAYER_SHIPS;
-		s->collide_flag_anyone = ALL_LAYERS;
-		add(s);
-//		s->hashotspots = false;
-	}
-
+	// human ship:
+	s = create_ship("kzedr", true, Vector2(0,0), 0, team_player);
 
 	// take control of one of those ships...
 	player = s;
+	
+
+	// computer ships:
+	for ( i = 0; i < enemyfleet->Nships; ++i )
+	{
+		s = create_ship(enemyfleet->info->name, false, Vector2(0,0), 0, team_enemy);
+	}
+
+
 
 }
 
@@ -233,7 +171,12 @@ void GameMelee::calculate()
 		return;
 
 
-	wininfo.center(player->pos);
+	// center the screen on the player ship
+	if (player && player->exists())
+		wininfo.center(player->pos);
+
+	else
+		player = 0;
 
 	
 	GameBare::calculate();
@@ -247,6 +190,7 @@ void GameMelee::calculate()
 //			((Ship*)item[i])->AI();
 //	}
 
+	/*
 	// the human controlled ship: override any AI orders
 
 	player->thrust = false;
@@ -269,6 +213,7 @@ void GameMelee::calculate()
 
 	if (key[KEY_RSHIFT])
 		player->fire_special = true;
+	*/
 
 
 

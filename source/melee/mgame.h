@@ -115,6 +115,7 @@ public:
 	virtual void animate();
 //	using Physics::animate;
 
+	virtual void object_died(SpaceObject *who, SpaceLocation *source);
 	virtual void ship_died(Ship *who, SpaceLocation *source);
 
 	virtual void compare_checksums() ;
@@ -196,6 +197,7 @@ public:
 	virtual void save_screenshot();
 	int show_fps;
 	unsigned char local_checksum, client_checksum, server_checksum;
+
 };
 
 

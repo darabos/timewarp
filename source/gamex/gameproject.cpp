@@ -376,6 +376,7 @@ void GameBare::prepare()
 {
 	Physics::prepare();
 	::physics = this;			// same as the game pointer ...
+	::targets = &gametargets;
 	return;
 }
 
@@ -613,6 +614,7 @@ void GameBare::calculate()
 {
 	::space_zoom = wininfo.zoomlevel;
 	::space_center = wininfo.mapcenter;
+	::space_center_nowrap += min_delta(wininfo.mapcenter, space_center_nowrap, map_size);
 	::space_view_size = wininfo.framesize;
 
 	int i;
@@ -629,6 +631,9 @@ void GameBare::calculate()
 		item[i]->pos -= item[i]->vel * frame_time;
 
 	Physics::calculate();
+
+	// maintain/update target list (remove dead objects)
+	gametargets.calculate();
 
 	if (T && !next)
 		T->tree_calculate();

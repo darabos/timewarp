@@ -16,7 +16,7 @@ public:
 	Ship	*player;
 	XFleet	*enemyfleet;
 
-	TeamCode	team_player, team_aliens;
+	TeamCode	team_player, team_enemy;
 
 	virtual void init();
 	virtual void quit();
@@ -35,7 +35,7 @@ public:
 	virtual void handle_edge(SpaceLocation *s);
 
 
-	virtual Ship *create_ship(const char *id, Vector2 pos, double angle, int team);
+	virtual Ship *create_ship(const char *id, bool human, Vector2 pos, double angle, int team);
 };
 
 

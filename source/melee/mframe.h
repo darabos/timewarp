@@ -131,6 +131,10 @@ class Physics : public BaseClass {
 
 	// to init parameters of space-objects...
 	virtual void log_file (const char *fname);
+
+	// to handle the death of objects in the game ...
+	virtual void object_died(SpaceObject *who, SpaceLocation *source);
+	virtual void ship_died(Ship *who, SpaceLocation *source);
 };
 
 

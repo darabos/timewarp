@@ -1380,4 +1380,16 @@ void Physics::log_file (const char *fname)
 };
 
 
+void Physics::ship_died(Ship *who, SpaceLocation *source)
+{
+	// nothing ...
+}
 
+
+void Physics::object_died(SpaceObject *who, SpaceLocation *source)
+{
+	if (who && who->isShip())
+	{
+		ship_died((Ship*)who, source);
+	}
+}

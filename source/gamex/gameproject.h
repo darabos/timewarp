@@ -11,6 +11,8 @@
 
 #include "gamegeneral.h"
 
+#include "../melee/mtarget.h"
+
 extern BITMAP *game_screen;
 
 
@@ -131,6 +133,7 @@ public:
 	Histograph *render_history;
 	void show_ticinfo(Frame *f, Histograph *tic_history, Histograph *render_history, double hist_power);
 
+	Targets gametargets;
 };
 
 

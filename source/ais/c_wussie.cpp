@@ -600,7 +600,7 @@ ControlWussie::ControlWussie (const char *name, int channel):Control (name,
 
 void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	char tmp[20];
 	int i, j, k;

@@ -33,10 +33,10 @@ double space_mip;      // ?
 
 Vector2 space_size;         // game-pixels
 
-Vector2 space_corner;       // game-pixels : uppper left corner
-Vector2 space_center_nowrap;// game-pixels : center, non-wrapped
-Vector2 space_vel;          // game-pixels / millisecond : center
-Vector2 space_center;       // game-pixels : center
+Vector2 space_corner = 0;       // game-pixels : uppper left corner
+Vector2 space_center_nowrap = 0;// game-pixels : center, non-wrapped
+Vector2 space_vel = 0;          // game-pixels / millisecond : center
+Vector2 space_center = 0;       // game-pixels : center
 
 
 

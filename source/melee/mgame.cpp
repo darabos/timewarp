@@ -668,11 +668,11 @@ void Game::calculate() {STACKTRACE
 	if (active_focus_destroyed && (focus_index >= 0))
 		focus[focus_index]->attributes |= ATTRIB_ACTIVE_FOCUS;
 
-	gametargets.calculate();
 
 
 	Physics::calculate();
 
+	gametargets.calculate();
 
 	view->calculate(this);
 
@@ -746,7 +746,11 @@ void Game::play() {STACKTRACE
 	return;
 }
 
-void Game::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
+
+void Game::ship_died(Ship *who, SpaceLocation *source)
+{
+	STACKTRACE;
+
 	if (source && source->data) {
 		Music *tmp = NULL;
 		//if (source && source->ship && source->ship->data) tmp = source->ship->data->moduleVictory;
@@ -755,6 +759,15 @@ void Game::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
 		if (tmp) sound.play_music(tmp);
 	}
 	return;
+}
+
+
+void Game::object_died(SpaceObject *who, SpaceLocation *source)
+{
+	if (who && who->isShip())
+	{
+		ship_died((Ship*)who, source);
+	}
 }
 
 //#include "mcbodies.h"
