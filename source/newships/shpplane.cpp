@@ -11,14 +11,14 @@ REGISTER_FILE
 
 Adapted by GeomanNL:
 special = super-gravwhip (can be used to frustrate enemy attack plans)
-weapon = change moon properties (distance, velocity)
+weapon = change moon properties (distance)
 */
 
 class PlanetShip : public Ship
 {
 	int		planet_index;
 	double	Rmin, Rmax, R, dRplus, dRmin, v;
-	double	whipboost;
+	double	accboost_max;
 	
 	Planet	*planet, *moon;
 	OrbitHandler	*orbit;
@@ -26,7 +26,7 @@ class PlanetShip : public Ship
 	Planet	*nearest_other_planet();
 	
   public:
-	double	gravwhipscale;
+	double	accboost;
 	  
 	  PlanetShip(Vector2 opos, double shipAngle,
 		  ShipData *shipData, unsigned int code);
@@ -59,6 +59,15 @@ public:
 };
 
 
+class Moon : public Planet
+{
+public:
+	PlanetShip *mother;
+	Moon( PlanetShip* creator, Vector2 opos, SpaceSprite *sprite, int index );
+	virtual void calculate();
+};
+
+
 
 
 PlanetShip::PlanetShip( Vector2 opos, double shipAngle,
@@ -79,20 +88,23 @@ Ship( opos, shipAngle, shipData, code )
 	dRplus = scale_range(get_config_float("Weapon", "DRplus", 0));
 	dRmin = scale_range(get_config_float("Weapon", "DRmin", 0));
 
-	whipboost = get_config_float("Special", "GravwhipBoost", 0);
+	accboost_max = get_config_float("Special", "GravwhipBoost", 0);
+	accboost = 0;
 
 	R = Rmin;
 
-	moon = new Planet (pos+Vector2(500,0), data->spriteWeapon, 0);
+	moon = new Moon (this, pos+Vector2(500,0), data->spriteWeapon, 0);
 
 	orbit = new OrbitHandler(this, pos, 0.0,
 							this, moon, R, v, 0);
 
-	game->add(moon);
-	game->add(orbit);
+	//game->add(moon);   in materialize
+	//game->add(orbit);
 
 	planet = new InvisiblePlanet( this, pos, sprite, sprite_index );
 
+	//data->sampleSpecial = 0;	// I don't like the sound of this.
+	special_sample = -1;
 }
 
 
@@ -117,9 +129,9 @@ void PlanetShip::calculate()
 
 	// super gravwhip
 	if (special_recharge > 0)	// if special is active
-		gravwhipscale = whipboost;
+		accboost = accboost_max;
 	else
-		gravwhipscale = 1.0;
+		accboost = 0;
 
 
 	// affect moon orbit:
@@ -147,7 +159,10 @@ void PlanetShip::calculate()
 void PlanetShip::materialize(){
 	STACKTRACE;
 	planet->translate( pos );
+	
 	game->add( planet );
+	game->add(moon);
+	game->add(orbit);
 }
 
 void PlanetShip::death(){
@@ -239,7 +254,8 @@ InvisiblePlanet::InvisiblePlanet( PlanetShip *creator, Vector2 opos,
   change_owner( creator );
   mother = creator;
 
-  gravity_whip_default = gravity_whip;
+  // less than the normal grav-whip, otherwise you're too helpful by default already ;)
+  gravity_whip_default = 0.5 * gravity_whip;
 }
 
 
@@ -262,7 +278,6 @@ void InvisiblePlanet::calculate()
 
 	// super-gravwhip, its special is active
 	//if ( mother->special_recharge > 0 )
-	gravity_whip = gravity_whip_default * mother->gravwhipscale;
 	//else
 	//	gravity_whip = gravity_whip_default;
 	
@@ -288,6 +303,9 @@ void InvisiblePlanet::calculate()
 				r /= 40 * 4;
 				for (int i = 0; i < gravity_power; i += 1) sr *= r;
 				
+				if (o->isShip() && ((Ship*)o)->thrust)
+					o->accelerate(this, o->angle, mother->accboost * ((Ship*) o)->accel_rate, mother->accboost * MAX_SPEED);
+
 				o->accelerate(this, trajectory_angle(o) + PI, frame_time * gravity_force / sr, MAX_SPEED);
 
 			} else {
@@ -298,5 +316,28 @@ void InvisiblePlanet::calculate()
 		}
 	}
 }
+
+
+Moon::Moon( PlanetShip* creator, Vector2 opos, SpaceSprite *sprite, int index )
+:
+Planet(opos, sprite, index)
+{
+	mother = creator;
+	id = 0;	// so that isPlanet() doesn't return a id_planet.
+}
+
+void Moon::calculate()
+{
+	if (!(mother && mother->exists()))
+	{
+		mother = 0;
+		state = 0;
+		return;
+	}
+
+	// velocity and position are handled by the orbiter
+	return;
+}
+
 
 REGISTER_SHIP(PlanetShip)
