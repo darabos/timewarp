@@ -29,7 +29,7 @@ round in a subtly different way than the others.
 
 
 #if 0
-#elif (defined USE_ASM_FLOAT_CONVERSION) && (defined _MSC_VER)
+#elif (defined USE_ASM_FLOAT_CONVERSION) && (defined _MSC_VER) && defined(__i386__)
 	int iround(double a) {
 		int r; 
 		__asm fld a   ;

@@ -151,12 +151,16 @@ void _draw_starfield_raw (
 	double mx, double my, 
 	//size of stars
 	double zoom,
+	//64-bit seed for RNG
+	Uint64 s64,
 	//anti-aliasing mode to use
 	int aa_mode
 ) 
 {STACKTRACE
 	int i;
 	double wx, wy;
+	RNG_FS rng;
+	rng.set_state64(s64);
 	wx = sprite->width() * zoom;
 	wy = sprite->height() * zoom;
 	if (!wx || !wy) return;
@@ -171,8 +175,8 @@ void _draw_starfield_raw (
 	set_tw_aa_mode((old_aa &~(aa_mode>>12)) | (aa_mode&0x0fff));
 	for (i = 0; i < n; i += 1) {
 		double tx, ty;
-		tx = int((fs_random() & 65535)-32768) * (w / 65536.0) + x;
-		ty = int((fs_random() & 65535)-32768) * (h / 65536.0) + y;
+		tx = (rng.randf(w) - w / 2) + x;
+		ty = (rng.randf(h) - h / 2) + y;
 		if (tx > mx/2) tx -= mx;
 		if (ty > my/2) ty -= my;
 		sprite->draw(Vector2(cx+tx, cy+ty), Vector2(wx, wy), index + (i % num_indeces), frame);
@@ -200,12 +204,16 @@ void _draw_starfield_cached (
 	double mx, double my, 
 	//size of stars
 	double zoom,
+	//64-bit seed for RNG
+	Uint64 s64,
 	//anti-aliasing mode to use
 	int aa_mode
 ) 
 {STACKTRACE
 	int i;
 	double wx, wy;
+	RNG_FS rng;
+	rng.set_state64(s64);
 	int iwx, iwy;
 	wx = sprite->width() * zoom;
 	wy = sprite->height() * zoom;
@@ -244,8 +252,10 @@ void _draw_starfield_cached (
 	cy = (cy - wy/2);
 	for (i = 0; i < n; i += 1) {
 		double tx, ty;
-		tx = (fs_random() & 65535) * (w / 65536.0) + x;
-		ty = (fs_random() & 65535) * (h / 65536.0) + y;
+		tx = (rng.randf(w) - 0) + x;
+		ty = (rng.randf(h) - 0) + y;
+//		tx = (fs_random() & 65535) * (w / 65536.0) + x;
+//		ty = (fs_random() & 65535) * (h / 65536.0) + y;
 		if (tx > mx) tx -= mx;
 		if (ty > my) ty -= my;
 		int ix = iround(cx+tx);
@@ -354,7 +364,6 @@ void Stars2::animate ( Frame * space )
 		double d = space_zoom * l->minz; //pow(1.0 - depth / 260.0, (num_layers-layer)/(double)num_layers);
 		for (y = 0; y * h < space->surface->h; y+=1) {
 			for (x = 0; x * w < space->surface->w; x+=1) {
-				fs_random_seed32(l->seed);
 				_draw_starfield_raw ( 
 					space, 
 					starpics, 
@@ -366,6 +375,7 @@ void Stars2::animate ( Frame * space )
 					space_zoom * l->sx, space_zoom * l->sy, 
 					space_zoom * l->wx, space_zoom * l->wy, 
 					d,
+					l->seed,
 					l->aa_mode
 				);
 			}
@@ -418,9 +428,7 @@ Stars::Stars() {STACKTRACE
 	for (i = 0; (stardat[i].type == DAT_RLE_SPRITE) || (stardat[i].type == DAT_BITMAP); i += 1) ;
 	num_pics = i;
 	pic = new SpaceSprite*[num_pics];
-	seed = tw_random();
-	seed = (seed * (Uint64)tw_random()) >> 16;
-	seed += tw_random();
+	seed = rng.raw64();
 	for(i = 0; i < num_pics; i++) {
 		pic[i] = new SpaceSprite(&stardat[i], 1, 
 			SpaceSprite::ALPHA | 
@@ -480,7 +488,6 @@ void Stars::animate(Frame *space) {STACKTRACE
 		d = space_zoom * pow(1.0 - field_depth / 260.0, (num_layers-layer)/(double)num_layers);
 		for (y = 0; y * h < space->surface->h; y+=1) {
 			for (x = 0; x * w < space->surface->w; x+=1) {
-				fs_random_seed32(seed + layer);
 				if (aa_mode & 0x80000000) {
 					_draw_starfield_cached ( 
 						space, 
@@ -493,6 +500,7 @@ void Stars::animate(Frame *space) {STACKTRACE
 						w, h, 
 						w, h, 
 						d + d*fabs(50-(((game->game_time / 10 + layer * 70)) % 100)) / 100.0,
+						seed + layer,
 						aa_mode
 					);
 				}
@@ -507,6 +515,7 @@ void Stars::animate(Frame *space) {STACKTRACE
 						w, h, 
 						w, h, 
 						d + d*fabs(50-(((game->game_time / 10 + layer * 70)) % 100)) / 100.0,
+						seed + layer,
 						aa_mode & 0x7fffFFFF
 					);
 				}

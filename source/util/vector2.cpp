@@ -41,17 +41,11 @@ Vector2 tw_random ( Vector2 max ) {
 
 Vector2 unit_vector ( double angle ) {
 	Vector2 r;
-//stupid hack that assumes that VisualC always compiles for i386
-//because I can't figure out how to detect this
-
-#	if (defined _MSC_VER) && !(defined __ia32__)
-#		define __ia32__
-#	endif
 
 //now the normal processor detection
 //and various platform specific vesions
 
-#	if (defined i386) || (defined __ia32__) || (defined __i386__)
+#	if defined (__i386__) && !defined (NO_ASM)
 #		if defined __GNUC__
 #			define ASM_SINCOS
 			asm ("fsincos" : "=t" (r.x), "=u" (r.y) : "0" (angle));

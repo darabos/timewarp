@@ -5,61 +5,66 @@
 #ifndef __RANDOM_H
 #define __RANDOM_H
 
-/*
-random.h & random.cpp contain 2 random number generators
-tw_random and fs_random
-
-tw_random is a standard random number generator
-
-Speed:       ~20 cycles per number? (peak ~50 cycles?)
-Output:      32 random bits
-State:       configurable, generally about 600 bits
-Worst Bits:  none (almost bit symmetric)
-Seed Size:   Any multiple of 32 bits
-Seed Speed:  ~1000 cycles per 32 bits of seed
-
-*/
-
-double tw_random(double a);
-inline double tw_random(double min, double max) {return tw_random(max-min) + min;}
-int tw_random( int a );
-Uint32 _tw_random();
-int tw_random();
-int tw_random_state_checksum();
-void tw_random_seed(Uint32 seed);
-void tw_random_seed_more(Uint32 seed);
-
-int tw_random_save_state ( void *buffer, int *size );
-int tw_random_load_state ( const void *buffer, int *size );
-
-/*
-fs_random() is a special random number generator
 
 
-Speed:       ~10 cycles per number? (no variation)
-Output:      32 random bits
-State:       64 bits
-Worst Bits:  highest 4 (28-31) and lowest 8 (0-7)
-Seed Size:   *** see below
-Seed Speed:  *** see below
 
-It splits it's seeding stage into two parts, the slow part and the fast part.  
+union split_int_64 {
+	Uint64 whole;
+//this assumes little endian ordering but 
+//since it's (so far) only used in x86 asm
+//code, that's not relevant
+	struct blah {
+		Uint32 low;
+		Uint32 high;
+	} s;
+};
 
-Name:     Init            Seed
-Function: fs_random_init  fs_random_seed
-Input:    192 bits        32 or 64 bits
-State:    512 bits        64 bits
-Speed:    1000 cycles?    10 cycles?
 
-This is done so that extremely fast reseeding can be done.  
-*/
-Uint32 fs_random() ;
-//int fs_random_save_state ( void *buffer, int *size );
-//int fs_random_load_state ( const void *buffer, int *size );
+class RNG_lcg64a {
+protected:
+	split_int_64 s64;
+public:
+	Uint8  raw8 () {return (Uint8) raw32();}
+	Uint16 raw16() {return (Uint16)raw32();}
+	Uint32 raw32();//does the actual work
+	Uint64 raw64();
 
-void fs_random_seed64( Uint64 seed);
-Uint64 fs_random_get_seed64();
-void fs_random_seed32 (Uint32 s);
-//fs_random_init() shoulbe be called before fs_random_seed()
-void fs_random_init ( const unsigned int *seed = 0 );//array of 6 integers to seed from
+	Uint32 randi(Uint32 max);
+	int    randi(int min, int max) {return min+randi (max-min);}
+	double randf (double max) {return max * raw32() / 4294967296.0;}
+	double randf (double min, double max) {return min+randf (max-min);}
+
+	Uint64 get_state64() const {return s64.whole;}
+	void set_state64 (Uint64 s) {s64.whole = s;}
+
+	void fast_forward ( Uint64 how_far );
+	void rewind ( Uint64 how_far ) {fast_forward(1 + ~how_far);}
+
+	void seed(int s);
+	void seed_more(int s);
+
+	int serialize_state   (int max, unsigned char *destination) const; 
+	int	deserialize_state (int max, const unsigned char *source) ;
+};
+
+typedef RNG_lcg64a RNG;
+typedef RNG_lcg64a RNG_FS;
+typedef RNG_lcg64a RNG_HQ;
+
+extern RNG rng;
+
+inline double tw_random(double a) 
+	{return rng.randf(a);}
+inline double tw_random(double min, double max) 
+	{return rng.randf(min,max);}
+inline int tw_random( int a )
+	{return rng.randi(a);}
+inline Uint32 _tw_random()
+	{return rng.raw32();}
+inline int tw_random()
+	{return rng.raw32()&0x7fffffff;}
+
+
+
+
 #endif

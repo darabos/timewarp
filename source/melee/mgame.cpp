@@ -918,12 +918,12 @@ offset	size	format		data
 //	i = 9223;
 	log_int(channel_server, i);
 	random_seed[0] = i;
-	tw_random_seed(i);
+	rng.seed(i);
 	i = rand();
 //	i = 7386;
 	log_int(channel_server, i);
 	random_seed[1] = i;
-	tw_random_seed_more(i);
+	rng.seed_more(i);
 
 	if (!is_paused()) pause();
 

@@ -45,7 +45,7 @@ struct StarLayer {
 	float minz, maxz;
 	float scale;
 	float twinkle_amp, twinkle_freq;
-	int seed;
+	Uint64 seed;
 	short n;
 	char aa_mode;
 	char type;
@@ -77,7 +77,7 @@ class Stars : public Presence {
 	int aa_mode;     //0 to 5, 1, 2, or 5 recommended
 	int field_depth;       //0 to 255
 
-	Uint32 seed;
+	Uint64 seed;
 	void animate(Frame *space);
 	void select_view( View **view);
 	View **v;

@@ -7,7 +7,7 @@
 int __error_flag = 0;
 
 static void default_error_handler ( const char * file, int line, const char * message ) {
-	log_debug("!!!\nDefault error handler is terminating the program");
+	log_debug("!!!\nDefault error handler is terminating the program\n");
 	tw_exit(1);
 }
 
