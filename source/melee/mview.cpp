@@ -567,9 +567,15 @@ void View_Enemy_Discrete::calculate (Game *game) {STACKTRACE
 		focus(&n, c, c->target);
 		n.z *= 1.4;
 		}
-	else focus(&n, c);
+	else
+	{
+		focus(&n, c);
+		// but, if the target is invisible, you usually want more zoom to plan where to go, right...
+		n.z = 900;
+	}
 
 	if (n.z < 480) n.z = 480;
+
 
 	double ref_size = 480;
 	n.z = ref_size * pow(2, ceil(log(n.z/ref_size) / log(2)));
