@@ -1,0 +1,63 @@
+Ok, so there's a couple of approaches to take with this Lua stuff.  To discuss: what do we want the game to do?  
+
+Needed (from the game, not necessarily done in Lua): ---
+
+N1. the ability to place planets and stars, and to define their positions, orbits, picture(s), techtonics, weather, bio, energy items, etc
+
+N2. Speedy data structures for things like collision detection and gameplay.  (TW already does this).  This should not be lost if and when a full game is added!
+
+N3. 
+
+N4. There are distinct "Spaces" when the full game is being played. (ie the Sol system is different from the Alpha Centari, even though they are both in Truespace.  The point (100,100) in Sol is distinct from the point (100,100) in the Alpha Centari system.)  A player should be able to visit one "space," leave to go somewhere else, and the first space should be pretty much the same, but adjusted to show what's changed in the time the player was away.  (Do we want a space to 
+
+N. Minimize the number of libraries used (and their sizes), to maximize the number of platforms TW works on (in terms of file size, memory needed and how difficult it is to get a build working).
+
+
+Assumptions: ---
+
+A1. C/C++ is much faster than Lua when doing computational stuff.
+
+A2. C++ functions can be called from Lua.  Lua functions can be called from C++.  
+
+A3. Data structures from C++ and Lua can be used in the other language, but it's more of a pain.  Both processes involve tricky code that at present, I have a difficult time with.  In particular, debugging is difficult, I'll have to find a way to deal with debugging both Lua and C++ simultaneously.  
+
+
+Plans: ---
+
+P1. 
+
+
+Lua Code to have a custom event happen when a ship dies (making up the symbols here):
+
+addShip { 
+   species = "Ur-quan Kzer-za",
+   shipType = "Dreadnaught",
+   x = 100, 
+   y = 100,
+   onDeath = function(killer) {
+       printMessage("I shall be avenged... by these guys!");
+       
+       addShip{ species="Ur-quan Kzer-za",
+                shipType="Dreadnaught",
+                x = this.x + 100,
+                y = this.y + 100,
+                targetID = killer:getID() }
+
+       addShip{ species="Ur-quan Kzer-za",shipType="Dreadnaught" }
+       addShip( {} )
+   } 
+}
+
+
+
+
+http://java.sun.com/docs/books/tutorial/uiswing/events/
+
+
+
+
+
+
+
+
+
