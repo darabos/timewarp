@@ -794,6 +794,10 @@ SOURCE=.\source\newships\shpostdi.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shppanav.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpphepa.cpp
 # End Source File
 # Begin Source File
