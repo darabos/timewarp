@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include "../ship.h"
 #include "../melee/mship.h"
 #include "../other/orbit.h"

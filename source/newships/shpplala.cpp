@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* todo: (in order) 
 	modify ship panel.  
 	Prevent main program from modifying ship panel (batt/crew)

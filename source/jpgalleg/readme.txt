@@ -1,3 +1,4 @@
+/* $Id$ */ 
 This directory contains source files taken from JPGAlleg 2.2 library
 and patched to properly support loading jpg files in video modes with
 8 bit color depth.

@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #include "../ship.h"
 
 #include "../frame.h"

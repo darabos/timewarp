@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __SCP_H__
 #define __SCP_H__
 

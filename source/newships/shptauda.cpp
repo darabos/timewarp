@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include "../ship.h"
 #include "../util/aastr.h"
 #include "../melee/mview.h"

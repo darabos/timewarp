@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include <allegro.h> //allegro library header
 #include <stdio.h>
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MCONTROL_H__
 #define __MCONTROL_H__
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 class ChmmrAvatar : public Ship {
 public:
   double weaponRange;

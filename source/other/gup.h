@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GUP_H__
 #define __GUP_H__
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __EXT_AI_H__
 #define __EXT_AI_H__
 

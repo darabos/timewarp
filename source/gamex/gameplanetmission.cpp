@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifdef NOTDEFINED
 
 #include <allegro.h>

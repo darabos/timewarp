@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MANIM_H__
 #define __MANIM_H__
 

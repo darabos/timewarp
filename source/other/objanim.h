@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __OBJANIM_H__
 #define __OBJANIM_H__
 

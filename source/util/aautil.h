@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
  * aautil.h --- helpers for anti-aliasing routines for Allegro
  *

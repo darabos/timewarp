@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include <assert.h>
 #include "../ship.h"
 REGISTER_FILE

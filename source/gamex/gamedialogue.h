@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_DIALOGUE__
 #define __GAMEX_DIALOGUE__
 

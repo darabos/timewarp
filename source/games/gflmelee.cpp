@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
 Fight between a player fleet (set in the ini file) and a random adversary fleet (never
 equal to the player's fleet).

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __SHIPPART__
 #define __SHIPPART__
 

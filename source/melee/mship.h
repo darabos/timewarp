@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MSHIP_H__
 #define __MSHIP_H__
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
  * aastr.h --- anti-aliased stretching and rotation for Allegro
  *

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GQUEST_H__
 #define __GQUEST_H__
 

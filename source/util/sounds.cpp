@@ -1,3 +1,4 @@
+/* $Id$ */ 
 
 //#define NO_JGMOD
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifdef NOTDEFINED
 
 #ifndef __GAME_PLANET_VIEW__

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MFRAME_H__
 #define __MFRAME_H__
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_PLANET_VIEW__
 #define __GAMEX_PLANET_VIEW__
 

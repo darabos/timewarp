@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAME_PROJECT__
 #define __GAME_PROJECT__
 

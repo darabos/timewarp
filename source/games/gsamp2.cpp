@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* 
 
 The Second Set Of Sample Games For STAR CONTROL: TIMEWARP

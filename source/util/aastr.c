@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* modified by orz for Star Control: TimeWarp 
 AA stretching engine was re-written to support new features 
 and to be understandable (for me, anyway).  

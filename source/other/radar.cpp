@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include <allegro.h>
 #include "../melee.h"
 REGISTER_FILE

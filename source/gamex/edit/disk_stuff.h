@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #ifndef __GAMEX_DISK_STUFF__
 #define __GAMEX_DISK_STUFF__
 

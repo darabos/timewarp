@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_BACKGR_STARS__
 #define __GAMEX_BACKGR_STARS__
 

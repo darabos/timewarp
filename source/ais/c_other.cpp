@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include "../ais.h"
 REGISTER_FILE
 

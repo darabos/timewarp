@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* modified by orz for Star Control: TimeWarp 
 Lots of features added, large code re-organization, etc.
 */

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include <allegro.h>		//allegro library header
 #include <string.h>		//Used for my DAT file searchers
 

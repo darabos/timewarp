@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* sorry for the tons of tests... dunno where to insert checks/validations */
 
 #include "../ship.h"

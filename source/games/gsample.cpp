@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
 
 This file contains sample games 1, 2, & 3, otherwise known as 

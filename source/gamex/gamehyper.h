@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_HYPER__
 #define __GAMEX_HYPER__
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MSHPPAN_H__
 #define __MSHPPAN_H__
 

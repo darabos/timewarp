@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 class HealthBar : public Presence
 {
 public:

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GGOB_H__
 #define __GGOB_H__
 

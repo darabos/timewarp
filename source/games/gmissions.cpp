@@ -1,3 +1,4 @@
+/* $Id$ */ 
 // missionorder
 
 #include <allegro.h> //allegro library header

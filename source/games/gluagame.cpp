@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /**
   gametype to test out how Lua and C++ and Timewarp get along.
   Very experimental.

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MSHOT_H__
 #define __MSHOT_H__
 

@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #ifndef __GAMEX_EDIT_DIALOGUE__
 #define __GAMEX_EDIT_DIALOGUE__
 

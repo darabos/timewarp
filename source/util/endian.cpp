@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #define PLATFORM_IS_ALLEGRO
 
 /*------------------------------

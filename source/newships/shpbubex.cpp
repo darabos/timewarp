@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* Modified from Xchagger */
 
 #include "../ship.h"

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include <allegro.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_STARMAP__
 #define __GAMEX_STARMAP__
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_SPRITES__
 #define __GAMEX_SPRITES__
 

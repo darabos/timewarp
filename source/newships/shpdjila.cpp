@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
 Yet another cobbled-together ship from spare parts of other ships:
 Cruiser, Avatar, Xform, Hornet

@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 class AndrosynthGuardian : public Ship {
 public:
 	double       weaponRange;

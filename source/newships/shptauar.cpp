@@ -1,3 +1,4 @@
+/* $Id$ */ 
 // Modifed by Jad: Changed at *Jumping Peppers*'s request to make this a Behemoth
 // so non-standard things were removed (IE: non-standard batt regen, and crew colors)
 #include <stdio.h>

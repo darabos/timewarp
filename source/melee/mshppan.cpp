@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #include <allegro.h>
 
 #include "../melee.h"

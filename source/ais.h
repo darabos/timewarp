@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #ifndef __AIS_H__
 #define __AIS_H__
 

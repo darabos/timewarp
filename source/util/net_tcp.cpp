@@ -1,3 +1,4 @@
+/* $Id$ */ 
 //#define NETWORK_NONE
 //uncoment previous line to disable networking
 

@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 /*
 
   The following ini settings are required in server.ini, under [Planet]

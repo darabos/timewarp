@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MGAME_H__
 #define __MGAME_H__
 

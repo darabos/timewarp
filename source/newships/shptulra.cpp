@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include "../ship.h"
 REGISTER_FILE
 #include "../melee/mview.h"

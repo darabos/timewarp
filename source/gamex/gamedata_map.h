@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_DATA_MAP__
 #define __GAMEX_DATA_MAP__
 

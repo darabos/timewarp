@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __LUA_PORT__
 #define __LUA_PORT__
 

@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #include <allegro.h>
 
 #ifdef ALLEGRO_MSVC

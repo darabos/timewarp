@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 /*
 Ducly Lanternjaws
 Ducly LJ for friends ;)

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 //this file belongs in the \other directory
 
 #ifndef __VBODIES_H__

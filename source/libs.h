@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
 	This file contains information about 2 things:
 

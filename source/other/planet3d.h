@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __PLANET_3D__
 #define __PLANET_3D__
 

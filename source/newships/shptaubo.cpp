@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #include <assert.h>
 #include "../ship.h"
 #include "../melee/mview.h"

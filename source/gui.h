@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 /*
 Modifications to the Allegro GUI
 */

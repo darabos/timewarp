@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GET_TIME_H__
 #define __GET_TIME_H__
 

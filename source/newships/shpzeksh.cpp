@@ -1,3 +1,4 @@
+/* $Id$ */ 
 //ZekfahanShocker lousy code by Richardyzo@ig.com.br
 
 #include "../ship.h"

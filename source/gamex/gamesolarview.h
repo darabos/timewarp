@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_SOLAR_VIEW__
 #define __GAMEX_SOLAR_VIEW__
 

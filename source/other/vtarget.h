@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __VTARGET__
 #define __VTARGET__
 

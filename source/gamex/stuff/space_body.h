@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEX_SPACE_BODY__
 #define __GAMEX_SPACE_BODY__
 

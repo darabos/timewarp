@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #ifndef __GMISSION_OBJECTS_H__
 #define __GMISSION_OBJECTS_H__
 

@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #include <allegro.h> //allegro library header
 
 #include "../melee.h"          //used by all TW source files.  well, mostly.  

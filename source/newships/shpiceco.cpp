@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 /*
 This is a variation on the Xchagger exclave, to see if the confusion
 concept can be used in a different version of gameplay.

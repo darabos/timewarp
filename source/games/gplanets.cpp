@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*hacked version of the solar system melee by UAF and Corona688. This one is
 done by rump and geoman.*/
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __NULLPHAS_H__
 #define __NULLPHAS_H__
 

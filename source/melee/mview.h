@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MVIEW_H__
 #define __MVIEW_H__
 

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAME_MAIN__
 #define __GAME_MAIN__
 

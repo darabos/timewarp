@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MMAIN_H__
 #define __MMAIN_H__
 

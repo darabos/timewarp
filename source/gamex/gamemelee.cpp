@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 
 // basic melee type, less complicated than "normal" melee is needed I think...
 // initing ships is complicated ... should use the normal game stuff perhaps ?

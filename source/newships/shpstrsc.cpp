@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /************************************************/
 /*	Modified from Earthling Cruiser		*/
 /*	Mines lifted from Vux			*/

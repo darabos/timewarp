@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*
   This file is part of "Star Control: TimeWarp" 
   http://timewarp.sourceforge.net/

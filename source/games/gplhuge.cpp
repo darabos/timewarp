@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /*hacked version of the solar system melee by UAF and Corona688.
 I can't really code, so I probably made many a coding faux pas.  And its ugly.
 Unused code from solar melee was either removed or commented or still

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* modified by orz for Star Control: TimeWarp 
 aa_rotate_sprite rotated around a different point than rotate_sprite
 and screwed up when the angle was a multiple of 90 degrees.  

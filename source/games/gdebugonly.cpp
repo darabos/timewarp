@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 #ifdef _DEBUG
 
 #include <allegro.h>

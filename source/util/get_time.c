@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 //#define NO_WINMM
 //#define NO_WINMM_TGT
 //#define NO_WINMM_QPC

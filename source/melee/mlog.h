@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __MLOG_H__
 #define __MLOG_H__
 

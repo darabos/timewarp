@@ -1,3 +1,4 @@
+/* $Id$ */ 
 /* Modified from Vivisector */
 
 #include "../ship.h"

@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GTRUG_H__
 #define __GTRUG_H__
 

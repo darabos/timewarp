@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __TWGUI_GAMETEST2_H__
 #define __TWGUI_GAMETEST2_H__
 

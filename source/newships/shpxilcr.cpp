@@ -1,4 +1,4 @@
-
+/* $Id$ */ 
 /*
 I used some code from the Orz Nemesis for this ship: for the turret
 Rest is "original" - as far as I can be original anyway ;)

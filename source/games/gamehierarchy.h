@@ -1,3 +1,4 @@
+/* $Id$ */ 
 #ifndef __GAMEHIERARCHY_H__
 #define __GAMEHIERARCHY_H__
 
