@@ -8,7 +8,7 @@
  *
  * - key jamming tester revised to accomodate joystick.
  * - re-added d_tw_yeildslice stuff
- * - improved "debug" button
+ * - improved "debug" ::Button
  * - SHIPVIEW dialog object positions and size modified.
  * - SHIPVIEW dialog function modified to load text and ini files according to shp*.*
  *   file naming convention.
@@ -76,6 +76,18 @@ REGISTER_FILE
 
 #include "util/sounds.h"
 
+//////////////////////////////////////////////////////////////////
+
+#include "MASkinG.h"
+using namespace MAS;
+
+#include "interface/MainMenu.h"
+
+#include <vector>
+using namespace std;
+
+
+////////////////////////////////////////////////////////////
 
 //deprecated.  This mode of using dat files is terrible, I can't believe
 //this technique was ever created.
@@ -143,6 +155,9 @@ enum {
 	MAIN_DIALOG_MELEE,
 	MAIN_DIALOG_NET_JOIN,
 	MAIN_DIALOG_NET_HOST,
+
+    MAIN_DIALOG_NEW_GAME_MENU,//////////////
+
 	MAIN_DIALOG_MELEE_EXTENDED,
 	MAIN_DIALOG_TEAMS,
 	MAIN_DIALOG_OPTIONS,
@@ -155,17 +170,20 @@ enum {
 
 DIALOG mainDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_shadow_box_proc, 40,   40,   180,  285,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_shadow_box_proc, 40,   40,   180,  285+35,255, 0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { my_d_button_proc,  45,   45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Melee" , NULL, NULL },
   { my_d_button_proc,  45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Join" , NULL, NULL }, //MAIN_DIALOG_NET_JOIN
   { my_d_button_proc,  45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Host" , NULL, NULL }, //MAIN_DIALOG_NET_HOST
-  { my_d_button_proc,  45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
-  { my_d_button_proc,  45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
-  { my_d_button_proc,  45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
-  { my_d_button_proc,  45,   255,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
-  { my_d_button_proc,  45,   290,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
+
+  { my_d_button_proc,  45,   115+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"New Game Menu" , NULL, NULL },/////
+
+  { my_d_button_proc,  45,   150+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
+  { my_d_button_proc,  45,   185+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
+  { my_d_button_proc,  45,   220+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
+  { my_d_button_proc,  45,   255+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
+  { my_d_button_proc,  45,   290+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
 #ifdef INCLUDE_GAMEX
-  { my_d_button_proc, 550,   440,   50,  30,   255,  0,    0,    D_EXIT | D_SPECIAL_BUTTON,
+  { my_d_button_proc, 550,   440+35,   50,  30,   255,  0,    0,    D_EXIT | D_SPECIAL_BUTTON,
                                                                              0,    0,    (void *)"FG" , NULL, NULL },
 #endif
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
@@ -567,7 +585,7 @@ void play_address_server()
 
 #include "twgui/twgui.h"
 
-// a textbutton displaying a integer value, which also takes 2 other buttons to tweak it's value
+// a textbutton displaying a integer value, which also takes 2 other ::Buttons to tweak it's value
 class ButtonValue : public TextButton
 {
 public:
@@ -576,7 +594,7 @@ public:
 
 	int value, vmin, vmax;
 
-	Button *left, *right;
+	::Button *left, *right;
 
 	virtual void calculate();
 
@@ -593,11 +611,11 @@ TextButton(menu, identbranch, usefont)
 	
 	strcpy(tmp, identbranch);
 	strcat(tmp, "dec_");
-	left = new Button(menu, tmp);
+	left = new ::Button(menu, tmp);
 
 	strcpy(tmp, identbranch);
 	strcat(tmp, "inc_");
-	right = new Button(menu, tmp);
+	right = new ::Button(menu, tmp);
 
 	value = 0;
 	vmin = 0;
@@ -607,7 +625,7 @@ TextButton(menu, identbranch, usefont)
 }
 
 
-void ButtonValue::set_value(int v1, int v, int v2)
+void ::ButtonValue::set_value(int v1, int v, int v2)
 {
 	vmin = v1;
 	vmax = v2;
@@ -618,7 +636,7 @@ void ButtonValue::set_value(int v1, int v, int v2)
 	set_text(tmp, makecol(200,100,100));
 }
 
-void ButtonValue::calculate()
+void ::ButtonValue::calculate()
 {
 	TextButton::calculate();
 
@@ -671,15 +689,15 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 //	FONT *usefont = load_font_test (40);
 //	destroy_font(usefont);
 	
-	Button *b_accept, *b_cancel;
-	b_accept = new Button(T, "accept_");
-	b_cancel = new Button(T, "cancel_");
+	::Button *b_accept, *b_cancel;
+	b_accept = new ::Button(T, "accept_");
+	b_cancel = new ::Button(T, "cancel_");
 
 	ButtonValue *b_human, *b_bot;
 
-	b_human = new ButtonValue(T, "humans_", usefont1);
+	b_human = new ::ButtonValue(T, "humans_", usefont1);
 	b_human->set_value(1, Nhumans, 8);
-	b_bot   = new ButtonValue(T, "bots_", usefont1);
+	b_bot   = new ::ButtonValue(T, "bots_", usefont1);
 	b_bot->set_value(0, Nbots, 99);
 
 	TextButton *game_choice;
@@ -1521,6 +1539,17 @@ void MainMenu::doit() {STACKTRACE
 				play_net(mainRet == MAIN_DIALOG_NET_HOST);
 				enable();
 				break;
+            
+				
+			////////////////////////////////
+			case MAIN_DIALOG_NEW_GAME_MENU:
+				doMainMenu();
+				break;
+
+
+    		////////////////////////////////
+
+
 			case MAIN_DIALOG_MELEE_EXTENDED:
 				disable();
 				extended_menu();
@@ -2961,6 +2990,15 @@ int get_diagnostics_string ( char *dest ) {//returns length of string
 #	endif
 	return tmp - dest;
 }
+
+
+/****************************/
+#include "MASkinG.h"
+
+#include <vector>
+using namespace MAS;
+using namespace std;
+////////////////////////////////////////////
 
 // DIAGNOSTICS - dialog function
 void show_diagnostics() {STACKTRACE

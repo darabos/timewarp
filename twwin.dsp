@@ -1592,6 +1592,58 @@ SOURCE=.\source\masking\window.cpp
 SOURCE=.\source\alfont\alfont.c
 # End Source File
 # End Group
+# Begin Group "Interface"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\interface\HostGameMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\HostGameMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\Interface.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\Interface.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\MainMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\MainMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\OptionsMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\OptionsMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\PlayLocalMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\PlayLocalMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\PlayOnlineMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\interface\PlayOnlineMenu.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\source\frame.cpp
