@@ -1,3 +1,5 @@
+#ifndef __GTRUG_H__
+#define __GTRUG_H__
 
 #include "../util/t_rarray.h"
 
@@ -125,3 +127,5 @@ class TrugGame : public Game {
 
 	TrugGUI *gui;
 };
+
+#endif // __GTRUG_H__

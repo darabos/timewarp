@@ -1,5 +1,6 @@
-#ifndef _V_TARGET
-#define _V_TARGET
+#ifndef __VTARGET__
+#define __VTARGET__
+
 //this file should be placed in the /other directory
 class AimSys {
   public:
@@ -70,5 +71,5 @@ class AimSys {
 };
 
 
-#endif
+#endif // __VTARGET__
 

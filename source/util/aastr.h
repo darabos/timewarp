@@ -15,12 +15,10 @@
  * Improved & modified by orz for Star Control: TimeWarp
  */
 
-
-#include <allegro.h>
-
 #ifndef __bma_aastr_h
 #define __bma_aastr_h
 
+#include <allegro.h>
 
 
 /*

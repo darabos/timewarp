@@ -1,5 +1,5 @@
-#ifndef _ID_H
-#define _ID_H
+#ifndef __ID_H__
+#define __ID_H__
 
 #define SPACE_LOCATION 0x00000000
 
@@ -86,4 +86,5 @@
 
 
 
-#endif
+#endif  // __ID_H__
+

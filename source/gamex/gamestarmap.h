@@ -89,6 +89,6 @@ public:
 
 
 
-#endif
+#endif // __GAMEX_STARMAP__
 
 

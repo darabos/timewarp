@@ -1,10 +1,7 @@
-#ifndef _MFRAME_H
+#ifndef __MGAME_H__
+#define __MGAME_H__
+
 #include "mframe.h"
-#endif
-
-#ifndef _MGAME_H
-#define _MGAME_H
-
 #include "mtarget.h"
 
 extern int random_seed[2];
@@ -201,5 +198,5 @@ public:
 };
 
 
-#endif
+#endif // __MGAME_H__
 

@@ -1326,5 +1326,3 @@ SpaceObject *Plsurface::findobject(char *idname, int nskip)
 // ok, this is for testing only.
 // the game thingy should be removed, eventually.
 REGISTER_GAME(gplexplr, "Planet Explorer")
-
-

@@ -18,11 +18,6 @@ REGISTER_FILE
 // ------------ AND NOW THE GRAPHICAL PART ---------------
 
 
-
-
-
-
-
 AreaTabletScrolled::AreaTabletScrolled(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
 :
 AreaTablet(menu, identbranch, asciicode, akeepkey)

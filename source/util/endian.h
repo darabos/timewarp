@@ -1,5 +1,5 @@
-#ifndef _TW_ENDIAN_H
-#define _TW_ENDIAN_H
+#ifndef __TW_ENDIAN_H__
+#define __TW_ENDIAN_H__
 
 int invert_ordering(int in) ;
 int intel_ordering(int in) ;
@@ -14,4 +14,4 @@ short motorola_ordering_short(short in) ;
 #define big_endian_ordering           motorola_ordering
 #define big_endian_ordering_short     motorola_ordering_short
 
-#endif
+#endif // __TW_ENDIAN_H__

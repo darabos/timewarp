@@ -68,4 +68,4 @@ bool GdebugOnly::handle_key(int k)
 REGISTER_GAME ( GdebugOnly, "Debug!");
 
 
-#endif
+#endif // _DEBUG

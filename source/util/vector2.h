@@ -1,5 +1,5 @@
-#ifndef _VECTOR2_H
-#define _VECTOR2_H
+#ifndef __VECTOR2_H__
+#define __VECTOR2_H__
 
 class Vector2;
 class Vector2i;
@@ -172,7 +172,4 @@ inline Vector3D operator* (double b, Vector3D a)
 	return Vector3D(a.x*b, a.y*b, a.z*b);
 };
 
-
-
-
-#endif
+#endif // __VECTOR2_H__

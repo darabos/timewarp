@@ -1,5 +1,5 @@
-#ifndef _TYPES_H
-#define _TYPES_H
+#ifndef __TYPES_H__
+#define __TYPES_H__
 
 #if 0
 #elif defined __GNUC__
@@ -54,4 +54,5 @@ typedef signed short int     Sint16;
 typedef signed char          Sint8;
 
 #endif
-#endif
+
+#endif // __TYPES_H__

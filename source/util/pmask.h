@@ -1,5 +1,5 @@
-#ifndef pmask_H
-#define pmask_H
+#ifndef __PMASK_H__
+#define __PMASK_H__
 
 /*
 This is the Pixel MASK library, which does pixel-perfect collisions using
@@ -184,5 +184,5 @@ inline void _set_pmask_pixel(struct PMASK *mask, int x, int y, int value) {
 #endif
 
 
-#endif          /* ifndef PPCOL_H */
+#endif  // __PMASK_H__
 

@@ -1,16 +1,15 @@
-#ifndef __GAME_PLANET_VIEW__
-#define __GAME_PLANET_VIEW__
+#ifndef __GAMEHIERARCHY_H__
+#define __GAMEHIERARCHY_H__
 
 #include "../melee/mgame.h"
 
 /*
+  This class should allow you to start, play, end a game from within a 
+  game (while the  other games are also running in the background). Games
+  and their physics are independent.
 
-  This class should allow you to start, play, end a game from within a game (while the
-  other games are also running in the background). Games and their physics are independent.
-
-  The GameStart is special, in that it hosts default melee game data, and also manages
-  the games that are spawned.
-
+  The GameStart is special, in that it hosts default melee game data, and
+  also manages the games that are spawned.
 */
 
 
@@ -73,6 +72,6 @@ public:
 };
 
 
-#endif
+#endif // __GAMEHIERARCHY_H__
 
 

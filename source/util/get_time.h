@@ -1,5 +1,5 @@
-#ifndef _GET_TIME_H
-#define _GET_TIME_H
+#ifndef __GET_TIME_H__
+#define __GET_TIME_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,4 +21,5 @@ extern int _no_idle;   //to disable the above function
 #endif
 
 
-#endif
+#endif // __GET_TIME_H__
+

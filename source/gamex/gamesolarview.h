@@ -108,4 +108,4 @@ public:
 };
 
 
-#endif
+#endif // __GAMEX_SOLAR_VIEW__

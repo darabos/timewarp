@@ -1,12 +1,9 @@
-#ifndef _MELEE_H
-#include "../melee.h"
-#endif
-#ifndef _MFRAME_H
-#include "mframe.h"
-#endif
 
-#ifndef _MCBODIES_H
-#define _MCBODIES_H
+#ifndef __MCBODIES_H__
+#define __MCBODIES_H__
+
+#include "../melee.h"
+#include "mframe.h"
 
 
 class Asteroid : public SpaceObject {
@@ -131,4 +128,4 @@ void _draw_starfield_cached (
 	int aa_mode
 );
 
-#endif
+#endif // __MCBODIES_H__

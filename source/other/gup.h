@@ -1,3 +1,6 @@
+#ifndef __GUP_H__
+#define __GUP_H__
+
 class Upgrade;
 extern Upgrade **upgrade_list;
 
@@ -70,3 +73,5 @@ public:
 	virtual void animate_item ( SpaceLocation *item);
 	GobRadar();
 };*/
+
+#endif // __GUP_H__

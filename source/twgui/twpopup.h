@@ -1,6 +1,6 @@
 
-#ifndef __TWMENUCOMPONENT__
-#define __TWMENUCOMPONENT__
+#ifndef __TWMENUCOMPONENT_H__
+#define __TWMENUCOMPONENT_H__
 
 /*
 
@@ -90,5 +90,4 @@ public:
 };
 
 
-
-#endif
+#endif // __TWMENUCOMPONENT_H__

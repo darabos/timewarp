@@ -1,5 +1,5 @@
-#ifndef __TWGUI_GAMETEST__
-#define __TWGUI_GAMETEST__
+#ifndef __TWGUI_GAMETEST2_H__
+#define __TWGUI_GAMETEST2_H__
 
 #include "twgui.h"
 
@@ -78,7 +78,7 @@ public:
 
 
 
-#endif
+#endif // __TWGUI_GAMETEST2_H__
 
 
 

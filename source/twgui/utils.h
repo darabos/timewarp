@@ -1,6 +1,5 @@
-
-#ifndef __TWGUI_UTILS__
-#define __TWGUI_UTILS__
+#ifndef __TWGUI_UTILS_H__
+#define __TWGUI_UTILS_H__
 
 
 int mapkey(int scancode_key, int scancode_ctrl = 0);
@@ -115,7 +114,7 @@ public:
 
 
 
-#endif
+#endif // __TWGUI_UTILS_H__
 
 
 

@@ -1,20 +1,16 @@
-#ifndef _MCONTROL_H
-#include "melee/mcontrol.h"
-#endif
-#ifndef _MSHIP_H
-#include "melee/mship.h"
-#endif
-#ifndef _MGAME_H
-#include "melee/mgame.h"
-#endif
 
-#ifndef _AIS_H
-#define _AIS_H
+#ifndef __AIS_H__
+#define __AIS_H__
+
+#include "melee/mcontrol.h"
+#include "melee/mship.h"
+#include "melee/mgame.h"
 
 #define MAX_STATES 3
 #define MAX_OPTION 4
 
 //ais/c_input.cpp
+/*! \brief Human Ship Control */
 class ControlHuman : public Control {	
 	private:
 	int thrust;
@@ -39,6 +35,8 @@ class ControlHuman : public Control {
 
 //ais/c_other.cpp
 int stupid_bot(Ship *ship) ;
+
+/*! \brief AI with no brain */
 class ControlVegetable : public Control {	
 	public:
 	virtual const char *getTypeName();
@@ -46,6 +44,8 @@ class ControlVegetable : public Control {
 	virtual int choose_ship(VideoWindow *window, char *prompt, class Fleet *fleet);
 	ControlVegetable (const char *name, int channel) ;
 	};
+
+/*! \brief Simple AI */
 class ControlMoron : public Control {	
 	public:
 	virtual const char *getTypeName();
@@ -56,6 +56,7 @@ class ControlMoron : public Control {
 
 
 //ais/c_wussie.cpp
+/*! \brief Complex AI */
 class ControlWussie : public Control {
   public:
   virtual const char *getTypeName();
@@ -91,6 +92,7 @@ class ControlWussie : public Control {
  int state;
  };
 
+/*! \brief ??? */
 class KeyState {
   public:
   bool thrust;
@@ -101,4 +103,5 @@ class KeyState {
   KeyCode convert();
 };
 
-#endif
+#endif  // __AIS_H__
+

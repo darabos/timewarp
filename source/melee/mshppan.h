@@ -1,11 +1,7 @@
-#ifndef _MELEE_H
+#ifndef __MSHPPAN_H__
+#define __MSHPPAN_H__
+
 #include "../melee.h"
-#endif
-
-
-#ifndef _MSHPPAN_H
-#define _MSHPPAN_H
-
 
 extern int PANEL_WIDTH;
 extern int PANEL_HEIGHT;
@@ -66,4 +62,4 @@ class ShipPanel : public Presence {
 	//the parameter "space" is not used
 	};
 
-#endif
+#endif  // __MSHPPAN_H__

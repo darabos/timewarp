@@ -1,5 +1,5 @@
-#ifndef _FRAME_H
-#define _FRAME_H
+#ifndef __FRAME_H__
+#define __FRAME_H__
 
 typedef struct DirtyItem {
   int x, y, a, b;
@@ -17,6 +17,7 @@ void draw_box(DirtyItem *item, BITMAP *frame, BITMAP *child);
 void erase_line(DirtyItem *item, BITMAP *frame);
 void draw_line(DirtyItem *item, BITMAP *frame, BITMAP *child);
 
+/*! \brief ??? */
 class Frame {
 	public:
 	int list_size;
@@ -43,10 +44,13 @@ class Frame {
 
 	void add_to_list(int x, int y, int a, int b,
     void (*erase_item)(DirtyItem *item, BITMAP *frame),
-    void (*draw_item)(DirtyItem *item, BITMAP *frame, BITMAP *child));
+			 void (*draw_item)(DirtyItem *item, 
+					   BITMAP *frame, BITMAP *child));
 	void add_to_old_list(int x, int y, int a, int b,
-    void (*erase_item)(DirtyItem *item, BITMAP *frame),
-    void (*draw_item)(DirtyItem *item, BITMAP *frame, BITMAP *child));
+			     void (*erase_item)(DirtyItem *item, 
+						BITMAP *frame),
+			     void (*draw_item)(DirtyItem *item, 
+					       BITMAP *frame, BITMAP *child));
 
 	void add_pixel(int x, int y);
 	void add_box(double x, double y, double w, double h);
@@ -67,4 +71,4 @@ class Frame {
 	void set_background ( int red, int green, int blue );
 };
 
-#endif
+#endif  // __FRAME_H__

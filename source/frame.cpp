@@ -13,26 +13,35 @@ extern FILE* debug_file;
 
 int BACKGROUND_COLOR = 0;
 
+/*! \brief compare DirtyItems
+  \param p1 first item
+  \param p2 second item
+  \return 0 if equal, >0 if first > second, <0 if first < second
+*/
 int item_cmp(const void* p1, const void* p2)
 {
 	return( ( ((DirtyItem*) p1)->y) -  ( ((DirtyItem*) p2)->y) );
 }
 
+/*! \brief set pixel color to BACKGROUND_COLOR */
 void erase_pixel(DirtyItem *item, BITMAP *frame)
 {
 	putpixel(frame, item->x, item->y, BACKGROUND_COLOR);
 }
 
+/*! \brief Draw pixel to child from frame */
 void draw_pixel(DirtyItem *item, BITMAP *frame, BITMAP *child)
 {
 	putpixel(child, item->x, item->y, getpixel(frame, item->x, item->y));
 }
 
+/*! \brief set item color to BACKGROUND_COLOR */
 void erase_box(DirtyItem *item, BITMAP *frame)
 {
     rectfill(frame, item->x, item->y, item->x + item->a - 1, item->y + item->b - 1, BACKGROUND_COLOR);
 }
 
+/*! \brief copy item to chield */
 void draw_box(DirtyItem *item, BITMAP *frame, BITMAP *child)
 {
 	if((item->a == 1) && (item->b == 1))
@@ -48,6 +57,7 @@ void draw_box(DirtyItem *item, BITMAP *frame, BITMAP *child)
 		);
 }
 
+/*! \brief Set line color to BACKGROUND_COLOR */
 void erase_line(DirtyItem *item, BITMAP *frame)
 {
 	if((item->x == item->a) && (item->y == item->b))
@@ -58,27 +68,32 @@ void erase_line(DirtyItem *item, BITMAP *frame)
 
 static BITMAP *line_frame;
 
+/*! \brief Draw line on line_child, this function use global variable line_frame to detect color */
 void line_pixel(BITMAP *line_child, int x, int y, int d)
 {
 	putpixel(line_child, x, y, getpixel(line_frame, x, y));
 }
 
+/*! \brief Set pixel color to BACKGROUND_COLOR */
 void erase_a_pixel(BITMAP *child, int x, int y, int d)
 {
 	putpixel(child, x, y, BACKGROUND_COLOR);
 }
 
+/*! \brief Set circele color to BACKGROUND_COLOR */
 void erase_circle(DirtyItem *item, BITMAP *frame)
 {
 	do_circle(frame, item->x, item->y, item->a, 0, erase_a_pixel);
 }
 
+/*! \brief Draw circle from Item */
 void draw_circle(DirtyItem *item, BITMAP *frame, BITMAP *child)
 {
     line_frame = frame;
 	do_circle(child, item->x, item->y, item->a, 0, line_pixel);
 }
 
+/*! \brief Draw line from Item */
 void draw_line(DirtyItem *item, BITMAP *frame, BITMAP *child)
 {
 	if((item->x == item->a) && (item->y == item->b))
@@ -119,6 +134,7 @@ Frame::~Frame() {
 	old_item_count = 0;
 }
 
+/*! \brief Used for define new BACKGROUND_COLOR */
 void Frame::set_background ( int r, int g, int b) {
 	background_red = r;
 	background_green = g;
@@ -126,6 +142,7 @@ void Frame::set_background ( int r, int g, int b) {
 	return;
 }
 
+/*! \brief weild code to enlarge amount of items */
 void Frame::enlarge_list(int increment) {
 		
 	DirtyItem *temp;
@@ -144,6 +161,7 @@ void Frame::enlarge_list(int increment) {
 	return;
 	}
 
+/*! \brief add item to item list */
 void Frame::add_to_list(int x, int y, int a, int b,
   void (*erase_item)(DirtyItem *item, BITMAP *frame),
   void (*draw_item)(DirtyItem *item, BITMAP *frame, BITMAP *child))
@@ -162,6 +180,7 @@ void Frame::add_to_list(int x, int y, int a, int b,
 	item_count++;
 }
 
+/*! \brief strange function to be deleted I think */
 void Frame::add_to_old_list(int x, int y, int a, int b,
   void (*erase_item)(DirtyItem *item, BITMAP *frame),
   void (*draw_item)(DirtyItem *item, BITMAP *frame, BITMAP *child))
@@ -180,37 +199,43 @@ void Frame::add_to_old_list(int x, int y, int a, int b,
 	old_item_count++;
 }
 
+/*! \brief Add pixel item to item list */
 void Frame::add_pixel(int x, int y)
 {
 	add_to_list(x, y, 0, 0, erase_pixel, draw_pixel);
 }
 
+/*! \brief Add box item to item list */
 void Frame::add_box(double x, double y, double w, double h)
 {
 	add_to_list((int)x, (int)y, (int)w, (int)h, erase_box, draw_box);
 }
 
-
+/*! \brief Add circle item to item list */
 void Frame::add_circle(int x, int y, int a, int b)
 {
 	add_to_list(x, y, a, b, erase_circle, draw_circle);
 }
 
+/*! \brief to be deleted? */
 void Frame::add_old_circle(int x, int y, int a, int b)
 {
 	add_to_old_list(x, y, a, b, erase_circle, draw_circle);
 }
 
+/*! \brief to be deleted? */
 void Frame::add_line(int x, int y, int a, int b)
 {
 	add_to_list(x, y, a, b, erase_line, draw_line);
 }
 
+/*! \brief to be deleted? */
 void Frame::add_old_pixel(int x, int y)
 {
 	add_to_old_list(x, y, 0, 0, erase_pixel, draw_pixel);
 }
 
+/*! \brief to be deleted? */
 void Frame::add_old_box(int x, int y, int a, int b)
 {
 	add_to_old_list(
@@ -222,11 +247,13 @@ void Frame::add_old_box(int x, int y, int a, int b)
 	);
 }
 
+/*! \brief to be deleted? */
 void Frame::add_old_line(int x, int y, int a, int b)
 {
 	add_to_old_list(x, y, a, b, erase_line, draw_line);
 }
 
+/*! \brief Clear screen, copy items to old items, destroy items */
 void Frame::erase()
 {
 	STACKTRACE
@@ -272,14 +299,10 @@ void Frame::erase()
 		drawn_items = 0;
 	}
 
-/*	item_count = 0;
-	drawn_items = 0;
-	old_item_count = 0;
-	full_redraw = true;*/
-
 	return;
 }
 
+/*! \brief Clear surface and set width and heigth to window w, h */
 void Frame::prepare () {
 	STACKTRACE
 
@@ -302,6 +325,7 @@ void Frame::prepare () {
 	}
 }
 
+/*! \brief Draw frame */
 void Frame::draw()
 {
 	STACKTRACE

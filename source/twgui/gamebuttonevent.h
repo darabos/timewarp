@@ -1,6 +1,6 @@
 
-#ifndef __GAMEBUTTONEVENT__
-#define __GAMEBUTTONEVENT__
+#ifndef __GAMEBUTTONEVENT_H__
+#define __GAMEBUTTONEVENT_H__
 
 
 template <class G>
@@ -74,4 +74,4 @@ void BEvent<G>::handle_special_hold()
 
 
 
-#endif
+#endif // __GAMEBUTTONEVENT_H__

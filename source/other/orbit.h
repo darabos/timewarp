@@ -1,5 +1,5 @@
-#ifndef _ORBIT_H
-#define _ORBIT_H
+#ifndef __ORBIT_H__
+#define __ORBIT_H__
 
 //#include <allegro.h>
 //#include <stdio.h>
@@ -63,4 +63,4 @@ class Sun : public SpaceObject {
 	virtual int canCollide(SpaceLocation *other);
 };
 
-#endif
+#endif // __ORBIT_H__

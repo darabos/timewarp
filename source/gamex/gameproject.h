@@ -162,6 +162,6 @@ public:
 
 
 
-#endif
+#endif  // __GAME_PROJECT__
 
 

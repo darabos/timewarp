@@ -1,6 +1,6 @@
 
-#ifndef __TWBUTTON__
-#define __TWBUTTON__
+#ifndef __TWBUTTON_H__
+#define __TWBUTTON_H__
 
 #include "utils.h"
 
@@ -160,10 +160,4 @@ public:
 	bool draw(BITMAP *b);
 };
 
-
-
-
-
-
-
-#endif
+#endif  // __TWBUTTON_H__

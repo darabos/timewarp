@@ -1,5 +1,5 @@
-#ifndef _MELEE_H
-#define _MELEE_H
+#ifndef __MELEE_H__
+#define __MELEE_H__
 
 #include <stdlib.h>
 #include <math.h>
@@ -317,6 +317,7 @@ public:
 	virtual ~VideoWindow();
 	virtual int _get_size() const {return sizeof(*this);}
 };
+
 class VideoSystem : public BaseClass {
 	public:
 	int width, height, bpp, gamma;
@@ -339,6 +340,7 @@ class VideoSystem : public BaseClass {
 	void update_colors();
 	void redraw();
 } extern videosystem;
+
 int get_gamma();
 void set_gamma(int gamma);
 void gamma_color_effects (Color *color) ;
@@ -634,4 +636,4 @@ int tw_popup_dialog ( VideoWindow *window, DIALOG *d, int index );
 int d_tw_bitmap_proc(int msg, DIALOG *d, int c);
 int d_tw_yield_proc(int msg, DIALOG *d, int c);
 
-#endif
+#endif // __MELEE_H__

@@ -1,6 +1,6 @@
 
-#ifndef __TWHELPERS__
-#define __TWHELPERS__
+#ifndef __TWHELPERS_H__
+#define __TWHELPERS_H__
 
 #include "twbuttontypes.h"
 
@@ -84,4 +84,4 @@ public:
 
 
 
-#endif
+#endif // __TWHELPERS_H__

@@ -1,6 +1,6 @@
 
-#ifndef __TWGUI_GUI__
-#define __TWGUI_GUI__
+#ifndef __TWGUI_GUI_H__
+#define __TWGUI_GUI_H__
 
 
 #include "twwindow.h"
@@ -211,6 +211,6 @@ public:
 
 
 
-#endif
+#endif // __TWGUI_GUI_H__
 
 

@@ -252,6 +252,6 @@ extern IndexTypeList *planettypelist;
 extern IndexTypeList *surfacetypelist;
 extern IndexTypeList *starsurfacetypelist;
 
-#endif
+#endif // __GAMEX_DATA__
 
 

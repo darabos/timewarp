@@ -129,7 +129,5 @@ public:
 
 
 
-#endif
-
-
+#endif // __GMISSION_OBJECTS_H__
 

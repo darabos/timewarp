@@ -99,6 +99,6 @@ struct FileStore
 };
 
 
-#endif
+#endif // __GAMEX_DISK_STUFF__
 
 

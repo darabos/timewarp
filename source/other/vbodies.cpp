@@ -3,13 +3,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifndef _V_BODIES_H
 #include "vbodies.h"
-#endif
-
-#ifndef _VECTOR2_H
 #include "../util/vector2.h"
-#endif
+
 
 #include "../melee.h"
 REGISTER_FILE
@@ -23,10 +19,9 @@ REGISTER_FILE
 #include "../melee/manim.h"
 #include "../melee/mship.h"
 #include "../melee/mgame.h"
-#ifndef _ORBIT_H
 #include "../other/orbit.h"
 #include "../other/vtarget.h"
-#endif
+
 
 //this file belongs in the \other directory.
 

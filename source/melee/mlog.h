@@ -1,5 +1,5 @@
-#ifndef _MLOG_H
-#define _MLOG_H
+#ifndef __MLOG_H__
+#define __MLOG_H__
 
 
 class Log { //Logging system, usefull for networking & demo recording/playback
@@ -63,4 +63,4 @@ class PlaybackLog : public Log { //Logging system, usefull for networking & demo
 	virtual void set_all_directions (char direction);
 	};
 
-#endif
+#endif  // __MLOG_H__

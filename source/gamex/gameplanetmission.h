@@ -150,7 +150,7 @@ public:
 
 
 
-#endif
+#endif // __GAME_PLANET_VIEW__
 
 
-#endif
+#endif // NOTDEFINED

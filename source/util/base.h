@@ -1,5 +1,5 @@
-#ifndef _BASE_H
-#define _BASE_H
+#ifndef __BASE_H__
+#define __BASE_H__
 
 #include "types.h"
 
@@ -80,4 +80,4 @@ public:
 };
 
 #endif
-#endif
+#endif // __BASE_H__

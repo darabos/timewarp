@@ -1,9 +1,7 @@
-#ifndef _MSHIP_H_
-#include "../melee/mship.h"
-#endif
+#ifndef __NULLPHAS_H__
+#define __NULLPHAS_H__
 
-#ifndef _NULLPHAS_H_
-#define _NULLPHAS_H_
+#include "../melee/mship.h"
 
 class NullPhaser : public Phaser {
 // this phaser instantly calls the materialize function
@@ -15,4 +13,4 @@ class NullPhaser : public Phaser {
   virtual void calculate();  // it instantly dies and adds the ship
 };
 
-#endif
+#endif // __NULLPHAS_H__

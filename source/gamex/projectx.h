@@ -24,6 +24,6 @@ public:
 
 
 
-#endif
+#endif // __GAME_MAIN__
 
 

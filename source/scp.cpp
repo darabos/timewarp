@@ -76,75 +76,36 @@ DATAFILE *scp = NULL;
 
 FILE *debug_file;
 
-/*
- * void showTitle(VideoWindow *window)
- *
- * Blits GUI background bitmap on to a video window.
- */
+/*! \brief Blits GUI background bitmap on to a video window */
 void showTitle(VideoWindow *window = &videosystem.window);
 
-/*
- * extended_menu(int i);
- *
- * MELEE_EX dialog - selects alternate games as opposed to standard melee. From here you
- * can access diagnostics (DIAGNOSTICS dialog) and ship info. (SHIPVIEW dialog) You can
- * also test key jamming from this dialog.
+/*! \brief MELEE_EX dialog - selects alternate games as opposed to standard melee. 
+  From here you can access diagnostics (DIAGNOSTICS dialog) and ship info. 
+  (SHIPVIEW dialog) You can also test key jamming from this dialog.
  */
 void extended_menu(int i = -1);
 
-/*
- * void change_teams();
- *
- * TEAMS dialog - from here you can select controllers for each player, and access
- * their respective fleets. (FLEET dialog)
+/*! \brief TEAMS dialog - from here you can select controllers for each player, and access their respective fleets. (FLEET dialog)
  */
 void change_teams();
 
-/*
- * edit_fleet(int player);
- *
- * FLEET dialog - manages fleet compositions for an individual player.
- *
- *
- * PARAMETERS
- *
- * int player
- *   Player index indicating which player's fleet to edit.
+/*! \brief FLEET dialog - manages fleet compositions for an individual player.
+  \param player Player index indicating which player's fleet to edit.
  */
 void edit_fleet(int player);
 
-/*
- * ship_view_dialog(int si, Fleet *Fleet);
- *
- * SHIPVIEW dialog - displays statistics and text information (if available) about
- * the currently installed ships.
- *
- *
- * PARAMETERS
- *
- * int si
- *   Ship index. By default 0, the first ship in the fleet.
- *
- * Fleet *fleet
- *   Pointer to a fleet upon which the ship list is built. When this parameter
- *   is set to the default value NULL, the reference fleet is used to build
- *   the ship list.
- */
+/*! \brief SHIPVIEW dialog - displays statistics and text information (if available) about the currently installed ships.
+  \param si Ship index. By default 0, the first ship in the fleet.
+  \param fleet Pointer to a fleet upon which the ship list is built. When 
+  this parameter is set to the default value NULL, the reference fleet is 
+  used to build the ship list.
+*/
 //void ship_view_dialog(int si = 0, Fleet *fleet = NULL);
 
-/*
- * show_diagnostics();
- *
- * DIAGNOSTICS dialog - displays version number and platform data.
- */
+/*! \brief DIAGNOSTICS dialog - displays version number and platform data */
 void show_diagnostics();
 
-/*
- * void keyjamming_tester();
- *
- * Opens a screen showing which keys are currently pressed. Here the user may test
- * various key combinations for conflicts.
- */
+/*! \brief Opens a screen showing which keys are currently pressed. Here the user may test various key combinations for conflicts. */
 void keyjamming_tester();
 
 

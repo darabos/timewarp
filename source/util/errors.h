@@ -1,5 +1,5 @@
-#ifndef _ERRORS_H
-#define _ERRORS_H
+#ifndef __ERRORS_H__
+#define __ERRORS_H__
 
 #define DO_STACKTRACE
 #define USE_ALLEGRO
@@ -148,4 +148,5 @@ extern int __error_flag;
 }
 #endif
 
-#endif
+#endif // __ERRORS_H__
+

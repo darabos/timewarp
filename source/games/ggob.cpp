@@ -37,6 +37,12 @@ REGISTER_FILE
 //				Gob stuff
 ////////////////////////////////////////////////////////////////////////
 
+/*! \brief Player who kill asteroid get his bukazoid.
+  \param source ??????
+  \param normal normal damage 
+  \param direct direct damage
+  \return total damage to asteroid
+ */
 int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double direct) {
 	STACKTRACE
 
@@ -49,6 +55,7 @@ int GobAsteroid::handle_damage (SpaceLocation *source, double normal, double dir
 	return i;
 }
 
+/*! \brief After asteroid death show explosion and generate new asteroid */
 void GobAsteroid::death () {
 	STACKTRACE
 
@@ -62,6 +69,7 @@ void GobAsteroid::death () {
 	return;
 }
 
+/*! \brief Init various gob variables and stations sprites to NULL */ 
 void GobGame::preinit() {
 	STACKTRACE
 
@@ -83,6 +91,9 @@ void GobGame::preinit() {
 	defenderSprite = NULL;
 }
 
+/*! \brief Add player to game
+  \param control Player control
+*/
 void GobGame::add_gobplayer(Control *control) {
 	STACKTRACE
 
@@ -94,6 +105,10 @@ void GobGame::add_gobplayer(Control *control) {
 	add_focus(control, control->channel);
 	return;
 }
+/*! \brief Handle player death
+  At this point divinefavor upgrade can save player from such fate
+  \param killer ???
+*/
 void GobPlayer::died(SpaceLocation *killer) {
 	STACKTRACE
 
@@ -107,6 +122,12 @@ void GobPlayer::died(SpaceLocation *killer) {
 	return;
 }
 
+/*! \brief ???
+  \param sample ???
+  \param source ???
+  \param vol ???
+  \param freq ???
+ */
 void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {
 	STACKTRACE
 
@@ -119,6 +140,12 @@ void GobGame::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int fr
 	Game::play_sound(sample, source, iround(vol/v), freq);
 }
 
+/*! \brief Init Game Stuff
+  Alloc memory for enemies, load game settings, load various game
+  sprites, set Hero view, include some hard understandable code for network 
+  play
+  \param _log Game log I think
+*/
 void GobGame::init(Log *_log) {
 	STACKTRACE
 
@@ -241,6 +268,7 @@ void GobGame::init(Log *_log) {
 		);
 	return;
 }
+/*! \brief Free game resources */
 GobGame::~GobGame() {
 	delete stationSprite[0];
 	delete stationSprite[1];
@@ -257,6 +285,14 @@ GobGame::~GobGame() {
 	free(gobenemy);
 	return;
 }
+
+/*! \brief Add planet and station
+  \param planet_sprite ???
+  \param planet_index ???
+  \param station_sprite ???
+  \param builds ???
+  \param background ???
+*/
 void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_index, SpaceSprite *station_sprite, const char *builds, const char *background) {
 	STACKTRACE
 
@@ -280,6 +316,7 @@ void GobGame::add_planet_and_station ( SpaceSprite *planet_sprite, int planet_in
 	gobgame->num_planets += 1;
 }
 
+/*! \brief Print game information: enemies count, time, cordinates, money */
 void GobGame::fps() {
 	STACKTRACE
 
@@ -304,10 +341,11 @@ void GobGame::fps() {
 	return;
 }
 
+/*! \brief Add enemy to game 
+  This function called once per frame of physics, used to add new enemys to the game
+*/
 void GobGame::calculate() {
 	STACKTRACE
-
-	
 
 	if (next_add_new_enemy_time <= game_time) {
 		next_add_new_enemy_time = game_time;
@@ -326,6 +364,11 @@ void GobGame::calculate() {
 	Game::calculate();
 	return;
 }
+
+/*! \brief Search for requested enemy ship
+  \param what space location of enemy ship
+  \return enemy ship index, -1 if not found
+*/
 int GobGame::get_enemy_index(SpaceLocation *what) {
 	STACKTRACE
 
@@ -337,6 +380,11 @@ int GobGame::get_enemy_index(SpaceLocation *what) {
 	}
 	return -1;
 }
+
+/*! \brief ship death
+  \param who is killed
+  \param source loacation that killed?
+*/
 void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 	STACKTRACE
 
@@ -358,6 +406,11 @@ void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 	Game::ship_died(who, source);
 	return;
 }
+
+/*! \brief Get Player from location
+  \param what player location
+  \return player, NULL if no player
+*/
 GobPlayer *GobGame::get_player(SpaceLocation *what) {
 	STACKTRACE
 
@@ -367,6 +420,9 @@ GobPlayer *GobGame::get_player(SpaceLocation *what) {
 	}
 	return NULL;
 }
+/*! \brief Create enemy ship
+  Create random enemy ship if enemy limit is not riched. Also it patch some of the ships.
+*/
 void GobGame::add_new_enemy() {
 	STACKTRACE
 
@@ -379,13 +435,7 @@ void GobGame::add_new_enemy() {
 		"yehte", "herex", "virli", 
 		"chmav", "plopl", "narlu"
 		};
-/*	const int num_enemy_types = 10;
-	static char *enemy_types[num_enemy_types] = {
-		"thrto", "zfpst", "shosc", 
-		"syrpe", "druma", "mmrxf", 
-		"kzedr", "earcr", "chmav", 
-		"yehte"
-		};*/
+
 	if (gobenemies == max_enemies) return;
 	GobEnemy *ge = new GobEnemy();
 
@@ -406,8 +456,6 @@ base	time	low		high
   50	25		5.89	14.24
  100	50		8.1		17.3
  200	100		11.01	26.49
-
-
 
 */
 		e = base;
@@ -443,7 +491,11 @@ base	time	low		high
 	//add(ship);
 	return;
 	}
-
+/*! \brief Set amount starbucks and bukazoids for death
+  \param ship enemy ship
+  \param kill_starbucks amount starbucks
+  \param kill_buckazoids amount buckazoids
+*/
 void GobEnemy::init(Ship *ship, int kill_starbucks, int kill_buckazoids) {
 	STACKTRACE
 
@@ -452,6 +504,9 @@ void GobEnemy::init(Ship *ship, int kill_starbucks, int kill_buckazoids) {
 	this->buckazoids = kill_buckazoids;
 	return;
 	}
+/*! \brief Give player his bounty
+  \param what location of player
+*/
 void GobEnemy::died(SpaceLocation *what) {
 	STACKTRACE
 
@@ -464,10 +519,15 @@ void GobEnemy::died(SpaceLocation *what) {
 	return;
 }
 
-
+/*! \brief Free player resources */
 GobPlayer::~GobPlayer() {
 	free (pair_list);
 }
+
+/*! brief Init player 
+  \param c player control
+  \param team player team
+*/
 void GobPlayer::init(Control *c, TeamCode team) {
 	STACKTRACE
 
@@ -493,7 +553,9 @@ void GobPlayer::init(Control *c, TeamCode team) {
 		upgrade_list[j]->clear(NULL, NULL, this);
 		}
 	return;
-	}
+}
+
+/*! \brief Part of map<const char *, int> implementation, to be removed */
 GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
 	STACKTRACE
 
@@ -505,6 +567,8 @@ GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
 	}
 	return NULL;
 }
+
+/*! \brief Part of map<const char *, int> implementation, to be removed */
 void GobPlayer::_add_pair(const char *id, int value) {
 	STACKTRACE
 
@@ -518,6 +582,8 @@ void GobPlayer::_add_pair(const char *id, int value) {
 	num_pairs += 1;
 	return;
 }
+
+/*! \brief Part of map<const char *, int> implementation, to be removed */
 int GobPlayer::read_pair(const char *id) {
 	STACKTRACE
 
@@ -525,6 +591,8 @@ int GobPlayer::read_pair(const char *id) {
 	if (p) return p->value;
 	return -1;
 }
+
+/*! \brief Part of map<const char *, int> implementation, to be removed */
 void GobPlayer::write_pair(const char *id, int value) {
 	STACKTRACE
 
@@ -533,6 +601,12 @@ void GobPlayer::write_pair(const char *id, int value) {
 	else _add_pair(id, value);
 	return;
 }
+
+/*! \brief Conform purch, take charge for purch upgrade
+  \param name upgrade name
+  \param price_starbucks price
+  \param price_buckazoids price
+ */
 int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
 	STACKTRACE
 
@@ -553,7 +627,11 @@ int GobPlayer::charge (char *name, int price_starbucks, int price_buckazoids) {
 		return 1;
 		}
 	return 0;
-	}
+}
+
+/*! \brief Create new ship, remove upgrades
+  \param type type of new ship
+*/
 void GobPlayer::new_ship(ShipType *type) {
 	STACKTRACE
 
@@ -567,15 +645,6 @@ void GobPlayer::new_ship(ShipType *type) {
 		}
 
 	ship = game->create_ship ( type->id, control, pos, a, team);
-
-	/*load_ship_data(type);
-	char buffy[256];
-	sprintf (buffy, "./ships/%s.ini", type->id);
-	gobgame->log_file(buffy);
-	ship = type->getShip(x, y, a, random());
-	game->add_target(ship);
-
-	control->select_ship(ship, type->id);*/
 
 	if (panel) panel->die();
 	panel = NULL;
@@ -609,14 +678,12 @@ void GobPlayer::new_ship(ShipType *type) {
 		game->add(ship);
 		}
 	else game->add(ship->get_ship_phaser());
-/*	game->panel[index] = new ShipPanel(ship);
-	game->panel[index]->locate(screen_x - PANEL_WIDTH, 0);
-	game->control[index]->select_ship(ship, "Captain Kablooey");*/
-//	for (i = gobgame->first_gob_enemy; i < gobgame->first_gob_enemy + gobgame->max_gob_enemies; i += 1) {
-//		if (gobgame->control[i]) gobgame->control[i]->add_target(ship);
-//		}
 	return;
 	}
+
+/*! \brief Check money, ask questions
+  \param s player
+ */
 void GobStation::buy_new_ship_menu(GobPlayer *s) {
 	STACKTRACE
 
@@ -652,7 +719,12 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 	}
 	return;
 	}
-
+/*! \brief Create station 
+  \param pic ???
+  \param orbit_me ???
+  \param ship ???
+  \param background ???
+*/
 GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, const char *ship, const char *background) : 
 		Orbiter(pic, orbit_me, random() % 200 + 500) 
 	{
@@ -676,6 +748,10 @@ static DIALOG station_dialog[] =
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
+
+/*! \brief Process station dialog
+  \param s Player at the station
+*/
 void GobStation::station_screen(GobPlayer *s) {
 	STACKTRACE
 
@@ -756,6 +832,10 @@ void GobStation::station_screen(GobPlayer *s) {
 		}
 	return;
 	}
+
+/*! \brief  ???
+  \param other ???
+*/
 void GobStation::inflict_damage(SpaceObject *other) {
 	STACKTRACE
 
@@ -783,6 +863,11 @@ void GobStation::inflict_damage(SpaceObject *other) {
 int num_upgrade_indexes;
 int upgrade_index[999];
 GobPlayer *upgrade_list_for;
+
+/*! \brief ???
+  \param index ???
+  \param list_size ???
+*/
 char *upgradeListboxGetter(int index, int *list_size) {
 	STACKTRACE
 
@@ -795,6 +880,7 @@ char *upgradeListboxGetter(int index, int *list_size) {
 	sprintf(tmp, "%1d %3d s$ / %3d b$  :  %s", upgrade_list_for->upgrade_list[i]->num, upgrade_list_for->upgrade_list[i]->starbucks, upgrade_list_for->upgrade_list[i]->buckazoids, upgrade_list_for->upgrade_list[i]->name);
 	return tmp;
 	}
+
 #define UPGRADE_DIALOG_EXIT 0
 #define UPGRADE_DIALOG_LIST 3
 static DIALOG upgrade_dialog[] =
@@ -808,6 +894,10 @@ static DIALOG upgrade_dialog[] =
   { NULL,              0,    0,    0,    0,   255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
 
+/*! \brief show upgrade dialog
+  \param station station where player upgraded
+  \param gs Player
+*/
 void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
 	STACKTRACE
 
@@ -845,6 +935,9 @@ void GobStation::upgrade_menu(GobStation *station, GobPlayer *gs) {
 	return;
 	}
 
+/*! \brief ???
+  \param ship ???
+*/
 GobDefender::GobDefender ( Ship *ship) 
 : SpaceObject (ship, ship->normal_pos(), 0, gobgame->defenderSprite)
 {
@@ -852,6 +945,9 @@ GobDefender::GobDefender ( Ship *ship)
 	next_shoot_time = 0;
 	collide_flag_anyone = 0;
 }
+/*! \brief AI for GobDefender 
+  Called once per physics frame
+*/
 void GobDefender::calculate() {
 	STACKTRACE
 
@@ -884,7 +980,7 @@ void GobDefender::calculate() {
 	pos = normalize(ship->normal_pos() + 270 * unit_vector ( angle ));
 	return;
 }
-
+/*! \brief ??? */
 RainbowRift::RainbowRift () 
 //: SpaceLocation ( NULL, 12800, 12800, 0) 
 : SpaceLocation ( NULL, random(map_size), 0) 
@@ -902,6 +998,9 @@ RainbowRift::RainbowRift ()
 	next_time = game->game_time;
 	next_time2 = game->game_time;
 }
+/*! \brief ??? 
+  \param frame ???
+*/
 void RainbowRift::animate( Frame *frame ) {
 	STACKTRACE
 
@@ -927,6 +1026,7 @@ void RainbowRift::animate( Frame *frame ) {
 		);
 	return;
 }
+/*! \brief ??? */
 void RainbowRift::squiggle() {
 	STACKTRACE
 
@@ -952,6 +1052,8 @@ void RainbowRift::squiggle() {
 	c[n-1].b = b;
 	return;
 }
+
+/*! \brief ??? */
 void RainbowRift::calculate() {
 	STACKTRACE
 

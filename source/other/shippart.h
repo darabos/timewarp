@@ -90,5 +90,5 @@ public:
 };
 
 
-#endif
+#endif // __SHIPPART__
 

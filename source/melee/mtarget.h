@@ -1,6 +1,6 @@
 
-#ifndef _MTARGET_H_
-#define _MTARGET_H_
+#ifndef __MTARGET_H__
+#define __MTARGET_H__
 
 
 #include "../melee.h"
@@ -34,4 +34,4 @@ public:
 extern Targets *targets;
 
 
-#endif
+#endif // __MTARGET_H__

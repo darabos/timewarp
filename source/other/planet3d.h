@@ -1,5 +1,5 @@
-#ifndef _PLANET_3D_
-#define _PLANET_3D_
+#ifndef __PLANET_3D__
+#define __PLANET_3D__
 
 
 #include "../melee/mcbodies.h"
@@ -55,6 +55,4 @@ class Planet3D : public Planet {
 	~Planet3D();
 };
 
-
-
-#endif
+#endif // __PLANET_3D__

@@ -44,6 +44,9 @@
 #define TACTIC_DIRECT_INTERCEPT 3
 #define TACTIC_RANGE 4
 
+/*! \brief Check danger
+  \return Max damage ship can get from his enemies
+*/
 double ControlWussie::check_danger ()
 {
 	STACKTRACE
@@ -77,17 +80,10 @@ double ControlWussie::check_danger ()
 	return d;
 }
 
+/*! \brief Get control name */
 const char *ControlWussie::getTypeName ()
 {
 	return "WussieBot";
-}
-
-int absf (double x)
-{
-	if (x >= 0)
-		return ((int) x);
-	else
-		return ((int) (-1 * x));
 }
 
 double ControlWussie::evasion (Ship * ship)
@@ -150,12 +146,12 @@ double ControlWussie::evasion (Ship * ship)
 					shottime =
 						distance_from (normalize2(Vector2(xs, ys), map_size), shot_pos)
 						/ velshot;
-					if (absf (shottime - shiptime) < closetime)
+					if (fabs (shottime - shiptime) < closetime)
 					{
 						angle =
 							ship->get_angle () -
 							ship->trajectory_angle (shot);
-						closetime = absf (shottime - shiptime);
+						closetime = fabs (shottime - shiptime);
 						if ((angle < PI/12) || (angle > PI2-PI/12))
 							angle += PI;
 						else if (normalize (angle, PI2) >
@@ -194,7 +190,7 @@ int ControlWussie::think ()
 		{
 			pangle = ship->trajectory_angle (p);
 			va = atan (ship->get_vel ());
-			if (absf (pangle - va) < PI/3)
+			if (fabs (pangle - va) < PI/3)
 			{
 				avoid_planet = TRUE;
 				if (normalize (pangle - va, PI2) <
@@ -357,7 +353,7 @@ int ControlWussie::think ()
 					if (j == 0)
 					{
 						if ((distance < option_range[state][j])
-						    && (absf (angle) < sweep[j]))
+						    && (fabs (angle) < sweep[j]))
 							fireoption[0] = TRUE;
 					}
 					else if (ship->batt != ship->batt_max)
@@ -375,14 +371,14 @@ int ControlWussie::think ()
 				break;
 
 			case OPTION_BACK:
-				if (absf (angle) > (PI - sweep[j]))
+				if (fabs (angle) > (PI - sweep[j]))
 					fireoption[j] = TRUE;
 				field_fire = FALSE;
 				break;
 
 			case OPTION_SIDES:
-				if ((absf (angle) < PI/2 + sweep[j])
-				    && (absf (angle) > PI/2 - sweep[j]))
+				if ((fabs (angle) < PI/2 + sweep[j])
+				    && (fabs (angle) > PI/2 - sweep[j]))
 					fireoption[j] = TRUE;
 				field_fire = FALSE;
 				break;
@@ -414,7 +410,7 @@ int ControlWussie::think ()
 
 			case OPTION_MINE:
 				a = atan(ship->target->get_vel ());
-				if (absf
+				if (fabs
 				    (normalize
 					(ship->target->trajectory_angle (ship) + PI/2,
 					 PI2) - a) < sweep[j])
@@ -481,7 +477,7 @@ int ControlWussie::think ()
 				dontfireoption[j] = TRUE;
 
 		if (fire_front)
-			if (absf (angle) < sweep[j])
+			if (fabs (angle) < sweep[j])
 				fireoption[j] = TRUE;
 
 		if (field_fire)

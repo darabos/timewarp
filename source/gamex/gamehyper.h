@@ -94,6 +94,6 @@ public:
 
 
 
-#endif
+#endif  // __GAMEX_HYPER__
 
 

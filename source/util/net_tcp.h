@@ -1,6 +1,6 @@
 
-#ifndef _NET_TCP_H
-#define _NET_TCP_H
+#ifndef __NET_TCP_H__
+#define __NET_TCP_H__
 
 class NetTCP {
 	public:
@@ -38,4 +38,4 @@ class NetTCP {
 	};
 
 
-#endif
+#endif // __NET_TCP_H__

@@ -6,9 +6,9 @@
  * 25-Jun-2002, Revision 1 by The Fly
  *
  *
- * - ControlHuman::setup() function modified. setup_key_description() is now redundant
- *   due to modifications in key_to_description(). There was also a duplication of
- *   closest target setting.
+ * - ControlHuman::setup() function modified. setup_key_description() 
+ * is now redundant due to modifications in key_to_description(). There
+ * was also a duplication of closest target setting.
  * - JOY dialog structure and function modified. Should work O.K. now.
  * - Cosmetic code changes.
  */
@@ -103,6 +103,10 @@ void calibrate_joysticks() {
 	}
 }
 
+/*! \brief load players keys 
+  \param inifile with players keys
+  \param inisection with players keys 
+*/
 void ControlHuman::load (const char *inifile, const char *inisection) {
 	set_config_file (inifile);
 	thrust  = get_config_int(inisection, "Thrust",      0);
@@ -123,7 +127,10 @@ void ControlHuman::load (const char *inifile, const char *inisection) {
 	extra6  = get_config_int(inisection, "Extra6", 0);
 	return;
 }
-
+/*! \brief Save players key
+  \param inifile with players keys
+  \param inisection with players keys
+ */
 void ControlHuman::save (const char *inifile, const char *inisection) {
 	set_config_file (inifile);
 	set_config_int(inisection, "Thrust",         thrust);
@@ -145,10 +152,12 @@ void ControlHuman::save (const char *inifile, const char *inisection) {
 	return;
 }
 
+/*! \brief Get control name */
 const char *ControlHuman::getTypeName() {
 	return "Keyboard/Joystick";
 }
 
+/*! \brief Process get input from player */
 int ControlHuman::think() {
 	int r = 0;
 	if (key_pressed(thrust)) r |= keyflag::thrust;
@@ -205,6 +214,7 @@ DIALOG keyDialog[] = {
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 };
 
+/*! \brief setap players keys */
 void ControlHuman::setup() {
 	int i, t = 0;
 	int last = 0;

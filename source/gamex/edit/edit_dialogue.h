@@ -101,6 +101,6 @@ class GameDialogue : public GameBare
 };
 
 
-#endif
+#endif  // __GAMEX_EDIT_DIALOGUE__
 
 

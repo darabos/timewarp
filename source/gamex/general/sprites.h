@@ -27,4 +27,4 @@ void scale_bitmap32(BITMAP **bmp, double a);
 // all the sprite-relevant information (and nothing else).
 //SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int rotations, int _attributes);
 
-#endif
+#endif  // __GAMEX_SPRITES__

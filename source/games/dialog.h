@@ -5,8 +5,8 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef __DIALOG_MODULE__
-#define __DIALOG_MODULE__
+#ifndef __DIALOG_MODULE_H__
+#define __DIALOG_MODULE_H__
 
 extern "C" {
 #	include "lua.h"
@@ -43,4 +43,4 @@ class Dialog
 };
 
 
-#endif // __DIALOG_MODULE__
+#endif // __DIALOG_MODULE_H__

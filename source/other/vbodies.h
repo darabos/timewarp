@@ -1,29 +1,13 @@
 //this file belongs in the \other directory
 
-#ifndef _V_BODIES_H
-#define _V_BODIES_H
-#endif
+#ifndef __VBODIES_H__
+#define __VBODIES_H__
 
-
-#ifndef _MELEE_H
 #include "../melee.h"
-#endif
-
-#ifndef _MCBODIES_H
 #include "../melee/mcbodies.h"
-#endif
-
-#ifndef _ORBIT_H
 #include "../other/orbit.h"
-#endif
-
-#ifndef _MFRAME_H
 #include "../melee/mframe.h"
-#endif
-
-#ifndef _MSHOT_H
 #include "../melee/mshot.h"
-#endif
 
 #include "../other/vtarget.h"
 
@@ -677,4 +661,4 @@ public:
   void calculate(void);
 };
 
-
+#endif // __VBODIES_H__

@@ -52,6 +52,6 @@ public:
 };
 
 
-#endif
+#endif // __GAMEX_DIALOGUE__
 
 

@@ -1,3 +1,6 @@
+#ifndef __T_RARRAY_H__
+#define __T_RARRAY_H__
+
 template <class Type, int extra = 0> 
 class R_Array {
 	public:
@@ -47,3 +50,4 @@ class R_Ref_Array : public R_Array<Type,extra> {
 	~R_Ref_Array() {deinit();}
 };
 
+#endif // __T_RARRAY_H__

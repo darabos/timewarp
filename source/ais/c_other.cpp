@@ -1,21 +1,31 @@
 #include "../ais.h"
 REGISTER_FILE
 
+/*! \brief Get control name */
 const char *ControlVegetable::getTypeName() {
 	return "VegetableBot";
 	}
+/*! \brief This AI do nothing */
 int ControlVegetable::think() {
 	return 0;
 	}
+/*! \brief This function do nothing
+  \return -1
+*/
 int ControlVegetable::choose_ship(VideoWindow *window, char * prompt, class Fleet *fleet ) {
 	return -1;
 	}
+
 ControlVegetable::ControlVegetable (const char *name, int channel) : Control(name, channel) {
 	}
 
 const char *ControlMoron::getTypeName() {
 	return "MoronBot";
 	}
+
+/*! \brief Simple AI 
+  \param ship with this stupid AI
+*/
 int stupid_bot(Ship *ship) {
 	STACKTRACE
 
@@ -45,9 +55,12 @@ int stupid_bot(Ship *ship) {
     }
   return r;
 	}
+
+/*! \brief Summon stupid_bot() */
 int ControlMoron::think() {
 	return stupid_bot(ship);
 	}
+
 ControlMoron::ControlMoron(const char *name, int channel) : Control(name, channel) {}
 
 

@@ -122,6 +122,6 @@ void staywithin(Vector2 pmin, Vector2 *p, Vector2 pmax);
 void locate_onedge_aligned_to_center(SpaceLocation *s, Vector2 center, Vector2 wh);
 
 
-#endif
+#endif // __GAMEX_GENERAL__
 
 

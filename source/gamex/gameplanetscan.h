@@ -56,5 +56,5 @@ public:
 };
 
 
-#endif
+#endif // __GAMEX_PLANET_SCAN__
 

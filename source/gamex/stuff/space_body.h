@@ -146,4 +146,5 @@ public:
 
 
 
-#endif
+#endif // __GAMEX_SPACE_BODY__
+

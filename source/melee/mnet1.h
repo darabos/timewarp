@@ -1,16 +1,10 @@
-#ifndef _MMAIN_H
-#include "mmain.h"
-#endif
-#ifndef _NET_TCP_H
-#include "../util/net_tcp.h"
-#endif
-#ifndef _MLOG_H
-#include "mlog.h"
-#endif
-#ifndef _MSHIP_H
-#include "mship.h"
-#endif
+#ifndef __MNET1_H__
+#define __MNET1_H__
 
+#include "mmain.h"
+#include "../util/net_tcp.h"
+#include "mlog.h"
+#include "mship.h"
 
 
 class GameEvent {
@@ -101,3 +95,4 @@ class NetLog : public Log { //Logging system, usefull for networking & demo reco
 
 	};
 
+#endif // __MNET1_H__

@@ -1,6 +1,6 @@
 
-#ifndef __TWINDOW__
-#define __TWINDOW__
+#ifndef __TWWINDOW_H__
+#define __TWWINDOW_H__
 
 /*
 
@@ -151,6 +151,4 @@ public:
 
 
 
-
-
-#endif
+#endif // __TWWINDOW_H__

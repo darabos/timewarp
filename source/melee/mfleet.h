@@ -1,5 +1,5 @@
-#ifndef _MFLEET_H
-#define _MFLEET_H
+#ifndef __MFLEET_H__
+#define __MFLEET_H__
 
 #include "../melee.h"
 
@@ -255,9 +255,5 @@ protected:
 
 };
 
-
-
-
-
-#endif
+#endif // __MFLEET_H__
 

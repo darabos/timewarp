@@ -1,10 +1,7 @@
-#ifndef _MFRAME_H
+#ifndef __MSHIP_H__
+#define __MSHIP_H__
+
 #include "mframe.h"
-#endif
-
-#ifndef _MSHIP_H
-#define _MSHIP_H
-
 
 
 typedef short KeyCode;
@@ -180,5 +177,5 @@ class Ship : public SpaceObject {
 };
 
 
-#endif
+#endif // __MSHIP_H__
 

@@ -45,5 +45,5 @@ class ShipPanelBmp : public Presence {
 	//the parameter "space" is not used
 	};
 
-#endif
+#endif //__GFLMELEE_H__
 

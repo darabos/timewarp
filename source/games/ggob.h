@@ -1,13 +1,9 @@
+#ifndef __GGOB_H__
+#define __GGOB_H__
 
-#ifndef _MELEE_H
 #include "../melee.h"
-#endif
-#ifndef _MFRAME_H
 #include "../melee/mframe.h"
-#endif
-#ifndef _MGAME_H
 #include "../melee/mgame.h"
-#endif
 
 #include "../melee/mitems.h"
 
@@ -145,4 +141,5 @@ class RainbowRift : public SpaceLocation {
 	void squiggle();
 };
 
+#endif // __GGOB_H__
 

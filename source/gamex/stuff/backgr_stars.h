@@ -21,4 +21,4 @@ public:
 
 
 
-#endif
+#endif // __GAMEX_BACKGR_STARS__

@@ -1,12 +1,8 @@
-#ifndef _MELEE_H
-#include "../melee.h"
-#endif
-#ifndef _MGAME_H
-#include "mgame.h"
-#endif
+#ifndef __MMAIN_H__
+#define __MMAIN_H__
 
-#ifndef _MMAIN_H
-#define _MMAIN_H
+#include "../melee.h"
+#include "mgame.h"
 
 class NormalGame : public Game {
 	public:
@@ -61,4 +57,4 @@ class NormalGame : public Game {
 	};
 
 
-#endif
+#endif // __MMAIN_H__

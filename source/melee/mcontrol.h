@@ -1,15 +1,9 @@
-#ifndef _MELEE_H
-#include "../melee.h"
-#endif
-#ifndef _MMAIN_H
-#include "mframe.h"
-#endif
-#ifndef _MSHIP_H
-#include "mship.h"
-#endif
+#ifndef __MCONTROL_H__
+#define __MCONTROL_H__
 
-#ifndef _MCONTROL_H
-#define _MCONTROL_H
+#include "../melee.h"
+#include "mframe.h"
+#include "mship.h"
 
 extern const char num_controls;
 extern char **control_name;
@@ -92,4 +86,4 @@ class Control : public Presence {
 
 
 
-#endif
+#endif // __MCONTROL_H__

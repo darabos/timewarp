@@ -1,5 +1,5 @@
-#ifndef _MFRAME_H
-#define _MFRAME_H
+#ifndef __MFRAME_H__
+#define __MFRAME_H__
 
 //debuging purposes only:
 extern int total_presences;
@@ -396,4 +396,4 @@ struct Query2 {
 	}
 };
 
-#endif
+#endif // __MFRAME_H__

@@ -1,10 +1,7 @@
-#ifndef _MFRAME_H
+#ifndef __MANIM_H__
+#define __MANIM_H__
+
 #include "mframe.h"
-#endif
-
-#ifndef _MANIM_H
-#define _MANIM_H
-
 
 class Animation : public SpaceObject {
 	protected:
@@ -44,4 +41,4 @@ public:
 	virtual void calculate();
 };
 
-#endif
+#endif // __MANIM_H__

@@ -1,12 +1,8 @@
-#ifndef _MFRAME_H
-#include "mframe.h"
-#endif
-#ifndef _MGAME_H
-#include "mgame.h"
-#endif
+#ifndef __MSHOT_H__
+#define __MSHOT_H__
 
-#ifndef _MSHOT_H
-#define _MSHOT_H
+#include "mframe.h"
+#include "mgame.h"
 
 class Shot : public SpaceObject {
 	public:
@@ -109,4 +105,4 @@ class PointLaser : public Laser {
 };
 
 
-#endif
+#endif  // __MSHOT_H__

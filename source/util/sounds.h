@@ -1,5 +1,5 @@
-#ifndef _SOUNDS_H
-#define _SOUNDS_H
+#ifndef __SOUNDS_H__
+#define __SOUNDS_H__
 
 #define PLATFORM_IS_ALLEGRO
 
@@ -53,4 +53,5 @@ class SoundSystem : public BaseClass {
 }
 extern tw_soundsystem;
 #define sound tw_soundsystem
-#endif
+
+#endif // __SOUNDS_H__

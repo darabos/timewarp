@@ -1,9 +1,8 @@
-#ifndef _HISTORY_H
-#define _HISTORY_H
+#ifndef __HISTORY_H__
+#define __HISTORY_H__
 
-#ifndef _TYPES_H
 #include "types.h"
-#endif
+
 
 /*
 
@@ -61,4 +60,4 @@ class Histograph {
 		Histograph *next;
 };
 
-#endif
+#endif // __HISTORY_H__

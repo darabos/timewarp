@@ -219,7 +219,7 @@ int LyrmristuWaSphere::handle_damage(SpaceLocation *source, double normal, doubl
 
 void LyrmristuWaSphere::inflict_damage(SpaceObject *other) {
 	STACKTRACE
-  int startingTargetArmour, endingTargetArmour;
+  int startingTargetArmour=0, endingTargetArmour=0;
 	int originalCrew=-1;
 	int originalStrength;
 	originalStrength = this->damage_factor;

@@ -1,13 +1,8 @@
-#ifndef _MELEE_H
+#ifndef __MVIEW_H__
+#define __MVIEW_H__
+
 #include "../melee.h"
-#endif
-#ifndef _MFRAME_H
 #include "mframe.h"
-#endif
-
-#ifndef _MVIEW_H
-#define _MVIEW_H
-
 
 //global flags: read/write
 extern int camera_hides_cloakers;
@@ -135,4 +130,4 @@ class message_type {
 
 
 
-#endif
+#endif // __MVIEW_H__

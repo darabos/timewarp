@@ -1,6 +1,6 @@
 
-#ifndef __TW_BUTTONTYPES__
-#define __TW_BUTTONTYPES__
+#ifndef __TWBUTTONTYPES_H__
+#define __TWBUTTONTYPES_H__
 
 
 #include "twbutton.h"
@@ -139,6 +139,6 @@ public:
 };
 
 
-#endif
+#endif // __TWBUTTONTYPES_H__
 
 

@@ -1,6 +1,6 @@
 
-#ifndef __TWMENUEXAMPLES__
-#define __TWMENUEXAMPLES__
+#ifndef __TWMENUEXAMPLES_H__
+#define __TWMENUEXAMPLES_H__
 
 #include "twpopup.h"
 #include "twgui.h"
@@ -209,4 +209,5 @@ public:
 };
 
 
-#endif
+#endif // __TWMENUEXAMPLES_H__
+

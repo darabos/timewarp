@@ -1,13 +1,8 @@
-#ifndef _MFRAME_H
+#ifndef __OBJANIM_H__
+#define __OBJANIM_H__
+
 #include "../melee/mframe.h"
-#endif
-
-#ifndef _MANIM_H
 #include "../melee/manim.h"
-#endif
-
-#ifndef _OBJANIM_H
-#define _OBJANIM_H
 
 class ObjectAnimation : public Animation {
 // maintains speed and angle
@@ -22,4 +17,4 @@ class ObjectAnimation : public Animation {
   virtual void calculate();
 };
 
-#endif
+#endif // __OBJANIM_H__

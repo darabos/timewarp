@@ -1,3 +1,6 @@
+#ifndef __RADAR_H__
+#define __RADAR_H__
+
 #include <allegro.h>
 #include <stdio.h>
 
@@ -34,3 +37,5 @@ public:
 	void toggleActive();
 	~ZRadar();
 };
+
+#endif // __RADAR_H__

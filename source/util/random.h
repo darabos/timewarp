@@ -2,8 +2,8 @@
 #	include "types.h"
 #endif
 
-#ifndef __RANDOM_H
-#define __RANDOM_H
+#ifndef __RANDOM_H__
+#define __RANDOM_H__
 
 
 
@@ -65,6 +65,4 @@ inline int tw_random()
 	{return rng.raw32()&0x7fffffff;}
 
 
-
-
-#endif
+#endif // __RANDOM_H__
