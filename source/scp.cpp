@@ -1194,29 +1194,21 @@ void edit_fleet(int player) {STACKTRACE
 
 		if(fleetRet == FLEET_DIALOG_SORTBYNAME) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_NAME_DESCENDING);
-			//reference_fleet->sort_alphabetical("Name2");
-			//reference_fleet->sort_alphabetical("Name1");
-			//reference_fleet->sort(fleetsort_by_name);
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYCOST) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_COST_DESCENDING);
-			//reference_fleet->sort_numerical("TWCost");
-			//reference_fleet->sort(fleetsort_by_cost);
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYORIGIN) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_ORIGIN_DESCENDING);
-			//reference_fleet->sort_alphabetical("Origin");
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
 		if(fleetRet == FLEET_DIALOG_SORTBYCODERS) {
             reference_fleet->Sort(Fleet::SORTING_METHOD_CODERS_DESCENDING);
-            //reference_fleet->m
-			//reference_fleet->sort_alphabetical("Coders");
 			SEND_MESSAGE(&fleetDialog[FLEET_DIALOG_SHIPLIST], MSG_DRAW, 0);
 		}
 
