@@ -1,9 +1,9 @@
 #include <string.h>
-extern "C" {
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
-}
+
 #include <allegro.h>
 #include "dialog.h"
 #include "../util/aautil.h"
