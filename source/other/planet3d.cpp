@@ -782,7 +782,7 @@ void Planet3D::animate( Frame* space )
 
 			unsigned char *col;
 			unsigned char *speccol;
-			unsigned short int specshade;
+			unsigned short int specshade, colorshade;
 
 
 		#if (defined (_MSC_VER))// && defined (__ia32__))
