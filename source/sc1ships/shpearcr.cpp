@@ -27,6 +27,7 @@ EarthlingCruiser::EarthlingCruiser(Vector2 opos, double angle, ShipData *data, u
   specialFrames = get_config_int("Special", "Frames", 0);
   specialDamage = get_config_int("Special", "Damage", 0);
 
+	debug_id = 1007;
 }
 
 int EarthlingCruiser::activate_weapon() {
@@ -68,6 +69,7 @@ EarthlingMissile::EarthlingMissile(Vector2 opos, double oangle,
   explosionSprite     = data->spriteWeaponExplosion;
   explosionFrameCount = 10;
   explosionFrameSize  = 50;
+	debug_id = 1008;
 }
 
 

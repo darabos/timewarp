@@ -66,6 +66,7 @@ KohrAhMarauder::KohrAhMarauder(Vector2 opos, double shipAngle,
 	for (int i = 0; i < maxblades; i += 1) {
 		weaponObject[i] = NULL;
 		}
+	debug_id = 1031;
 	}
 
 int KohrAhMarauder::activate_weapon() {
@@ -132,6 +133,7 @@ KohrAhBlade::KohrAhBlade(Vector2 opos, double oangle, double ov,
   explosionSprite     = data->spriteWeaponExplosion;
   explosionFrameCount = 20;
   explosionFrameSize  = 40;
+	debug_id = 1032;
 }
 
 void KohrAhBlade::calculate() {
@@ -196,6 +198,7 @@ KohrAhFRIED::KohrAhFRIED(double oangle, double ov, int odamage,
 //  x += cos(angle) * 50.0;
 //  y += sin(angle) * 50.0;
   pos += 50.0 * unit_vector(angle);
+	debug_id = 1033;
 }
 
 void KohrAhFRIED::calculate() {

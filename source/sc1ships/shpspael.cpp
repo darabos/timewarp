@@ -18,6 +18,7 @@ SpathiEluder::SpathiEluder(Vector2 opos, double angle, ShipData *data, unsigned 
 	specialDamage   = get_config_int("Special", "Damage", 0);
 	specialArmour   = get_config_int("Special", "Armour", 0);
 	specialTurnRate = scale_turning(get_config_float("Special", "TurnRate", 0));
+	debug_id = 1017;
 }
 
 int SpathiEluder::activate_weapon()

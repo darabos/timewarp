@@ -17,6 +17,7 @@ YehatTerminator::YehatTerminator(Vector2 opos, double angle, ShipData *data, uns
 
   specialFrames = get_config_int("Special", "Frames", 0);
   shieldFrames  = 0;
+	debug_id = 1024;
 }
 
 int YehatTerminator::activate_weapon()

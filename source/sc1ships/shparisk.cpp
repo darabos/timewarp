@@ -17,6 +17,7 @@ ArilouSkiff::ArilouSkiff(Vector2 opos, double angle, ShipData *data, unsigned in
 	specialFrames = get_config_float("Special", "Frames", 0);
 
 	just_teleported = 0;
+	debug_id = 1003;
 	}
 
 void ArilouSkiff::inflict_damage(SpaceObject *other) {

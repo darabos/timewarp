@@ -98,7 +98,7 @@ Ship(opos, shipAngle, shipData, shipCollideFlag)
 		ComSat[i] = NULL;
 	}
 	// for debugging purpose
-	debug_id = 5;	
+	debug_id = 5;
 }
 
 int AktunGunner::activate_weapon()

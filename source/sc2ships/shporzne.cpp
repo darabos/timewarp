@@ -72,6 +72,7 @@ OrzNemesis::OrzNemesis(Vector2 opos, double shipAngle,
 
   turret_turn_step = 0;
 
+	debug_id = 1038;
 }
 
 void OrzNemesis::calculate_turn_left()
@@ -188,6 +189,7 @@ OrzMissile::OrzMissile(double oangle, double ov, int odamage, double orange,
 
   add(new Animation(this, pos,
     data->spriteExtraExplosion, 0, 10, 30, DEPTH_EXPLOSIONS));
+	debug_id = 1039;
 }
 
 OrzMarine::OrzMarine(Vector2 opos, OrzNemesis *oship, double oAccelRate,
@@ -211,6 +213,7 @@ OrzMarine::OrzMarine(Vector2 opos, OrzNemesis *oship, double oAccelRate,
 		isblockingweapons = true;
 
 		orzship = oship;
+	debug_id = 1040;
 }
 
 void OrzMarine::calculate() {

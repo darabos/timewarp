@@ -66,6 +66,7 @@ thrustForward(TRUE)
 
 	last_turn_left = turn_left;
 	last_turn_right = turn_right;
+	debug_id = 1042;
 }
 
 RGB SlylandroProbe::crewPanelColor(int k)
@@ -268,7 +269,6 @@ SlylandroLaserNew::SlylandroLaserNew(SpaceLocation *lroot, SpaceLocation *ltarge
 	defaultcolor[1] = makecol(  0,  0,255);		// blue
 
 	newlifeframe = -1;	// nothing yet: the first beam will be calculated.
-	
 }
 
 void SlylandroLaserNew::calculate()

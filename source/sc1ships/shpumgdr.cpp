@@ -35,6 +35,7 @@ UmgahDrone::UmgahDrone(Vector2 opos, double angle, ShipData *data, unsigned int 
   firing = false;
   add(new UmgahCone(81, weaponDamage, this, data->spriteWeapon));
 
+	debug_id = 1020;
 }
 
 int UmgahDrone::activate_weapon() {
@@ -91,6 +92,7 @@ UmgahCone::UmgahCone(double odist, int odamage, UmgahDrone *oship,
 	isblockingweapons = false;
 
 	umgahship = oship;
+	debug_id = 1021;
 }
 
 bool UmgahCone::change_owner(SpaceLocation *new_owner) {

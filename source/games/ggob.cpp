@@ -348,6 +348,8 @@ void GobGame::init(Log *_log) {
 			}
 		}
 
+		num_players = k;
+
 		for ( i = 0; i < k; ++i )
 		{
 			gobplayer[i]->new_ship(shiptype("supbl"));
@@ -372,6 +374,7 @@ void GobGame::init(Log *_log) {
 			sprintf(buffy, "Config%d", i);
 			add_gobplayer(create_control(channel_server, "Human", buffy));
 		}
+		num_players = 1;
 		
 		load_game();
 	} else {

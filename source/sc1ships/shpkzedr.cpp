@@ -49,6 +49,7 @@ KzerZaDreadnought::KzerZaDreadnought(Vector2 opos, double angle, ShipData *data,
 	specialVelocity        = scale_velocity(get_config_float("Special", "Velocity", 0));
 	specialRange           = scale_range(get_config_float("Special", "Range", 0));
 	specialArmour          = get_config_int("Special", "Armour", 0);
+	debug_id = 1010;
 	}
 
 int KzerZaDreadnought::activate_weapon() {
@@ -88,6 +89,7 @@ KzerZaMissile::KzerZaMissile(Vector2 opos, double oangle, double ov,
 	explosionSprite     = data->spriteWeaponExplosion;
 	explosionFrameCount = 20;
 	explosionFrameSize  = 50;
+	debug_id = 1011;
 	}
 
 KzerZaFighter::KzerZaFighter (Vector2 opos, double oangle, double ov,
@@ -107,6 +109,7 @@ KzerZaFighter::KzerZaFighter (Vector2 opos, double oangle, double ov,
 	{
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
+	debug_id = 1012;
 	}
 
 void KzerZaFighter::calculate() {

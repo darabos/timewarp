@@ -58,6 +58,7 @@ MmrnmhrmXForm::MmrnmhrmXForm(Vector2 opos, double shipAngle,
 
 	form = Y_FORM;
 	activate_special();
+	debug_id = 1013;
 	}
 
 void MmrnmhrmXForm::calculate()

@@ -46,6 +46,7 @@ ZoqFotPikStinger::ZoqFotPikStinger(Vector2 opos, double shipAngle,
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
   specialDamage = get_config_int("Special", "Damage", 0);
   if (get_config_int("Special", "Licking", 0) == 0) specialDamage *= -1;
+	debug_id = 1047;
 }
 
 int ZoqFotPikStinger::activate_weapon() {
@@ -69,6 +70,7 @@ ZoqFotPikShot::ZoqFotPikShot(Vector2 opos, double oangle,
   Shot(oship, opos, oangle, ov, odamage, orange, oarmour, oship, osprite),
   frame_count(num_frames)
 {
+	debug_id = 1048;
 }
 
 void ZoqFotPikShot::calculate()
@@ -101,6 +103,7 @@ ZoqFotPikTongue::ZoqFotPikTongue(double odist, int odamage, Ship *oship,
   sprite_index += (64 * frame);
 
   isblockingweapons = true;
+	debug_id = 1049;
 }
 
 void ZoqFotPikTongue::calculate()

@@ -37,6 +37,7 @@ SyreenPenetrator::SyreenPenetrator(Vector2 opos, double angle, ShipData *data, u
 	specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
 	specialDamage   = get_config_int("Special", "Damage", 0);
 	specialFrames   = get_config_int("Special", "Frames", 0);
+	debug_id = 1018;
 }
 
 int SyreenPenetrator::activate_weapon()
@@ -102,6 +103,7 @@ CrewPod::CrewPod(Vector2 opos, double oVelocity, int oLifeTime,
 	set_depth(DEPTH_SPECIAL);
 
 	isblockingweapons = false;
+	debug_id = 1019;
 }
 
 int CrewPod::sameTeam(SpaceLocation *other) {

@@ -16,6 +16,7 @@ UtwigJugger::UtwigJugger(Vector2 opos, double shipAngle,
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
   fortitude = 0;
+	debug_id = 1046;
 }
 
 void UtwigJugger::calculate()

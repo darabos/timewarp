@@ -384,6 +384,9 @@ int NetTCP::sendall()
 	while ( buflen() > 0 )
 	{
 		sendattempt();
+		
+		if (buflen() <= 0)
+			break;	// you could avoid an idle this way.
 
 		idle(1);
 	}

@@ -1734,10 +1734,19 @@ EventClass events;
 //static bool has_registered = false;
 void Game::register_events()
 {
+	/*
 	EVENT(Game, &Game::chat);
 	EVENT(Game, &Game::change_lag);
 	EVENT(Game, &Game::test_event1);
 	EVENT(Game, &Game::disconnect);
+	this is wrong; the combination between Game and the function is handled
+	in a template, which is hidden behind the EVENT macro. It's impossible
+	to pass class-routines directly by pointer ...
+	*/
+	EVENT(Game, chat);
+	EVENT(Game, change_lag);
+	EVENT(Game, test_event1);
+	EVENT(Game, disconnect);
 }
 
 
@@ -1923,21 +1932,8 @@ void Game::heavy_compare()
 
 
 
-// THIS NEEDS WORK,
-// cause it desynchronizes or freezes the game !!
 void Game::disconnect()
 {
-	// THIS IS (more or less) THE OLD STUFF
-	// it'll stop all connected games as well...
-	if (false && log_synched)
-	{
-		game->quit("none");
-		tw_alert("Stopped", "&Ok");
-	}
-	// that's because the stuff below isn't good enough yet, it desynches the game
-	// I need to remove a net connection, but how ?
-
-
 	// you are in channel_current, so the channel_current player disconnects...
 
 	if (log_synched)	// in receiving mode.
@@ -1988,6 +1984,9 @@ void Game::remove_player(int i)
 		for ( k = 0; k < num_network; ++k )
 			if (glog->type == Log::log_net)
 				((NetLog*)glog)->rem_conn(k);
+
+		// in principle you should also set the read/write direction on those
+		// channels to 0... but that's not so important.
 	}
 
 

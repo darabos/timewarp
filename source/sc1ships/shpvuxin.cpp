@@ -28,6 +28,7 @@ VuxIntruder::VuxIntruder(Vector2 opos, double angle, ShipData *data, unsigned in
   specialSlowdown = get_config_float("Special", "Slowdown", 0);
   specialArmour   = get_config_int("Special", "Armour", 0);
 
+	debug_id = 1022;
 }
 
 int VuxIntruder::activate_weapon()
@@ -65,6 +66,7 @@ VuxLimpet::VuxLimpet(Vector2 opos, double ov, double slowdown,
 	  ship = 0;
     state = 0;
   }
+	debug_id = 1023;
 }
 
 void VuxLimpet::calculate()

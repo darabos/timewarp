@@ -71,6 +71,7 @@ MelnormeTrader::MelnormeTrader(Vector2 opos, double shipAngle,
   specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
   specialFrames   = get_config_int("Special", "Frames", 0);
   specialArmour   = get_config_int("Special", "Armour", 0);
+	debug_id = 1034;
 }
 
 void MelnormeTrader::calculate()
@@ -117,6 +118,7 @@ MelnormeShot::MelnormeShot(Vector2 opos, double oangle, double ov,
 //  vy = ship->get_vy();
   vel = ship->get_vel();
   set_depth(DEPTH_SHIPS+0.5);
+	debug_id = 1035;
 }
 
 void MelnormeShot::calculate() {
@@ -212,6 +214,7 @@ MelnormeDisable::MelnormeDisable(Ship *creator, Ship *oship, SpaceSprite *osprit
 {
 	collide_flag_anyone = 0;
 	set_depth(DEPTH_EXPLOSIONS);
+	debug_id = 1036;
 }
 
 void MelnormeDisable::calculate() {
@@ -247,6 +250,7 @@ MelnormeSpecial::MelnormeSpecial(Vector2 opos, double oangle,
   disableSprite(data->spriteExtra)
 {
 	collide_flag_anyone = bit(LAYER_SHIPS);
+	debug_id = 1037;
 }
 
 void MelnormeSpecial::animateExplosion() {}

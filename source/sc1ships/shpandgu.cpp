@@ -37,6 +37,7 @@ AndrosynthGuardian::AndrosynthGuardian(Vector2 opos, double angle, ShipData *dat
 	shipTurnRate    = turn_rate;
 	shipRechargeAmount = recharge_amount;
 	bounce_status = 0;
+	debug_id = 1001;
 }
 
 void AndrosynthGuardian::calculate()
@@ -143,6 +144,7 @@ AndrosynthBubble::AndrosynthBubble(Vector2 opos, double oangle,
   explosionSprite     = data->spriteWeaponExplosion;
   explosionFrameCount = 6;
   explosionFrameSize  = 50;
+	debug_id = 1002;
 }
 
 void AndrosynthBubble::calculate()

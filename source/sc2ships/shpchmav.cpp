@@ -65,6 +65,7 @@ ChmmrAvatar::ChmmrAvatar(Vector2 opos, double shipAngle,
 	extraArmour       = get_config_int("Extra", "Armour", 0);
 
 	uninterrupted_fire = false;
+	debug_id = 1025;
 }
 
 
@@ -134,6 +135,7 @@ ChmmrLaser::ChmmrLaser(double langle, double lrange, int ldamage,
 	Laser(opos, langle, pallete_color[hot_color[random() % HOT_COLORS]], lrange,
 	ldamage, lfcount, opos, rel_pos, true)
 {
+	debug_id = 1026;
 }
 
 ChmmrBeam::ChmmrBeam(Ship *oship, int oframes) :
@@ -156,6 +158,7 @@ ChmmrBeam::ChmmrBeam(Ship *oship, int oframes) :
 		state = 0;
 		return;
 	}
+	debug_id = 1027;
 }
 
 void ChmmrBeam::calculate()
@@ -235,6 +238,7 @@ ChmmrZapSat::ChmmrZapSat(double oangle, double orange, int odamage,
 	}
 
 	isblockingweapons = false;
+	debug_id = 1028;
 }
 
 void ChmmrZapSat::calculate() {

@@ -603,25 +603,16 @@ void NormalGame::download_file(char *filename)
 	int count = 0;
 
 
-	// first you've to check if you're synched
-	//	int k = 0;
-
-	// this is probably enough --> the server has sent all data to you.
-	// there's nothing you've to send to the server, so it's ok.
-
-	// also, check which socket-connection you should use...
-
-
 	if (direct.isserver)	// the host
 		f = fopen(filename, "rb");
-//	else
-//		f = fopen(filename, "wb");
+	else
+		f = fopen(filename, "wb");
 	
 
 	for (;;)
 	{
 		if (direct.isserver)	// the host reads
-			L = fread(fdata, N, 1, f);
+			L = fread(fdata, 1, N, f);	//1=byte-sized record, N=count records 
 		
 
 		direct.server(L);
@@ -632,12 +623,20 @@ void NormalGame::download_file(char *filename)
 			direct.server(fdata, L);	// synch data with those on the server
 
 
-//		if (!direct.isserver)	// the client writes
-//			fwrite(fdata, L, 1, f);
+		/* test
+		int i1, i2;
+		i1 = *(int*)&fdata[0];
+		i2 = *(int*)&fdata[L-5];
+		message.print(1500, 15, "charcheck [%X][%X]", i1, i2);
+		message.animate(0);
+		*/
+
+		if (!direct.isserver)	// the client writes
+			fwrite(fdata, 1, L, f);
 		
 		count += L;
-		message.print(1500, 15, "send/received %i bytes", count);
-		message.animate(0);
+		//message.print(1500, 15, "send/received %i bytes", count);
+		//message.animate(0);
 	}
 
 	fclose(f);
@@ -651,6 +650,8 @@ void NormalGame::download_file(char *filename)
 // continue means, the server sends this signal !!
 void server_pause()
 {
+	message.print(1500, 12, "pause");
+	message.animate(0);
 	int k;
 	if (p_local != 0)
 		log_int(k, channel_server);	// wait for server data
@@ -658,6 +659,8 @@ void server_pause()
 
 void server_continue()
 {
+	message.print(1500, 12, "continue");
+	message.animate(0);
 	int k;
 	if (p_local == 0)
 		log_int(k, channel_server);	// generate server data
@@ -712,19 +715,41 @@ bool DirectConnection::set(int i)
 		isserver = true;
 	}
 
+	//message.print(1500, 12, "remote[%i] server[%i]", conn_remote, (int)isserver);
+	//message.animate(0);
+
 	return true;
 }
 
 
 void DirectConnection::send(void *data, int N)
 {
-	((NetLog*)glog)->net[conn_remote].add2buffer((char*)data, N);
-	((NetLog*)glog)->net[conn_remote].sendall();
+	NetTCP *n = &((NetLog*)glog)->net[conn_remote];
+
+	if (!n->isConnected()) { tw_error("NetLog::send_packet() - no connection!"); }
+	int remain;
+
+	n->add2buffer((char*)data, N);
+	remain = n->sendall();
+
+	//message.print(1500, 12, "send[%i] remain[%i]", N, remain);
+	//message.animate(0);
 }
 
 void DirectConnection::get(void *data, int N)
 {
-	((NetLog*)glog)->net[conn_remote].recv(N, N, data);
+	// you NEED a ready2rcv, otherwise it returns an error !!
+	NetTCP *n = &((NetLog*)glog)->net[conn_remote];
+	int len = 0;
+	while (len < N)	// important, the check for receiving len bytes - otherwise it's not waiting till all are read!!
+	{
+		if (n->ready2recv())	// important check! otherwise you'll get a "recv error"
+			len += n->recv(N-len, N-len, (char*)data);
+	}
+	if (len != N)
+		tw_error("unexpected rcv difference");
+	//message.print(1500, 12, "get[%i] len[%i]", N, len);
+	//message.animate(0);
 }
 
 void DirectConnection::exchange(void *data, int N)
@@ -759,20 +784,27 @@ void DirectConnection::exchange(int &x)
 void DirectConnection::server(int &x)
 {
 	server(&x, sizeof(int));
+	//message.print(1500, 12, "server-data[%i]", x);
+	//message.animate(0);
 }
 
 void DirectConnection::client(int &x)
 {
 	client(&x, sizeof(int));
+	//message.print(1500, 12, "client-data[%i]", x);
+	//message.animate(0);
 }
 
 
 
 void NormalGame::check_file(const char *id, int iplayer)
 {
-	// STILL NEEDS TO BE CHECKED / WRITTEN,
-	// so disabled for now.
-	return;
+
+	// FIRST, make sure that all date have been received, before you go on !!
+	// if you don't do this check first, there can still be some data in transit,
+	// which can interfere with the network-traffic below ...
+	server_pause();
+	server_continue();
 
 	ShipType *type = shiptype(id);
 
@@ -783,6 +815,9 @@ void NormalGame::check_file(const char *id, int iplayer)
 	int myfsize, otherfsize;
 	myfsize = file_size(type->data->file);
 	otherfsize = myfsize;
+	
+	//message.print(1500, 13, "myfsize[%i]", myfsize);
+	//message.animate(0);
 
 	// compare to the value on the host computer
 	// (assumption here is, that the host has the most recent version)
@@ -790,15 +825,28 @@ void NormalGame::check_file(const char *id, int iplayer)
 	if (direct.set(iplayer))
 	{
 		direct.server(otherfsize);	// receive host-filesize, overwrite local setting.
+		//message.print(1500, 13, "otherfsize[%i]", otherfsize);
+		//message.animate(0);
 		
 		// so ... if your local version differes from the host version, then ...
 		int difference = otherfsize - myfsize;
 		direct.client(difference);	// receive client difference
+		//message.print(1500, 13, "difference[%i]", difference);
+		//message.animate(0);
 		
 		if (difference != 0)
 		{
-			int i = tw_alert("File mismatch; download file from server?", "&Ok", "&Abort");
+			int i;
+			if (p_local != 0)	// the server already has the correct file, so he doesn't have to choose
+				i = tw_alert("File mismatch; download file from server?", "&Ok", "&Abort");
+			else	// but, you should show a message.
+			{
+				message.print(1500, 13, "File mismatch; waiting for decision from player [%i]", iplayer);
+				message.animate(0);
+			}
+
 			direct.client(i);	// the server should also have this value (and wait till it's chosen..)
+
 			if ( i == 2)
 			{
 				tw_error("DAT files have different size! This may cause a desynch");
@@ -807,9 +855,15 @@ void NormalGame::check_file(const char *id, int iplayer)
 			}
 			
 		}
+
+		//if (p_local == 0) readkey();
 		
 	}
 
+	// Note, that all clients (including those that haven't participated in
+	// the file-sharing), have to wait till the server is done and ready to
+	// continue. Otherwise, they may send data to the server and client, thus
+	// polluting the file data-stream
 	server_pause();
 	server_continue();
 }
@@ -900,7 +954,8 @@ void NormalGame::choose_new_ships()
 		}
 
 
-		check_file(fleet->getShipType(slot[i])->id, i);
+		const char *id = fleet->getShipType(slot[i])->id;
+		check_file(id, i);
 		
 
 		Ship *s = create_ship(fleet->getShipType(slot[i])->id, p->control, random(size), random(PI2), p->team);

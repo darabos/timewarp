@@ -18,6 +18,7 @@ ShofixtiScout::ShofixtiScout(Vector2 opos, double angle, ShipData *data, unsigne
   specialDamage = get_config_int("Special", "Damage", 0);
   flipSwitch    = FALSE;
   glory         = 0;
+	debug_id = 1016;
 }
 
 int ShofixtiScout::activate_weapon()

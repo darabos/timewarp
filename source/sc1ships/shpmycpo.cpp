@@ -30,6 +30,7 @@ MyconPodship::MyconPodship(Vector2 opos, double angle, ShipData *data, unsigned 
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponHome     = scale_turning(get_config_float("Weapon", "Homing", 0));
   specialRepair  = get_config_int("Special", "Repair", 0);
+	debug_id = 1014;
 }
 
 int MyconPodship::activate_weapon()
@@ -61,6 +62,7 @@ MyconPlasma::MyconPlasma(Vector2 opos, double oangle, double ov,
 	spriteWeaponExplosion = data->spriteWeaponExplosion;
 	collide_flag_sameship |= bit(LAYER_SHIPS);
 	collide_flag_sameteam |= bit(LAYER_SHIPS);
+	debug_id = 1015;
 }
 
 void MyconPlasma::calculate()

@@ -13,6 +13,7 @@ SupoxBlade::SupoxBlade(Vector2 opos, double shipAngle,
   weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
+	debug_id = 1043;
 }
 
 void SupoxBlade::calculate_thrust()

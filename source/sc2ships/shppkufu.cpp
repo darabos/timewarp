@@ -22,6 +22,7 @@ PkunkFury::PkunkFury(Vector2 opos, double shipAngle,
 
 	reborn = 0;
 	update_panel = true;
+	debug_id = 1041;
 }
 
 int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct) {

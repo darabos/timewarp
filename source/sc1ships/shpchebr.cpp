@@ -56,6 +56,7 @@ ChenjesuBroodhome::ChenjesuBroodhome(Vector2 opos, double angle, ShipData *data,
 	specialNumDOGIs		= 0;
 	specialAvoidanceAngle	= get_config_float("Special", "AvoidanceAngle", 0) * ANGLE_RATIO;
 	specialAvoidanceFactor	= get_config_float("Special", "AvoidanceFactor", 0);
+	debug_id = 1004;
 }
 
 int ChenjesuBroodhome::activate_weapon()
@@ -119,6 +120,7 @@ ChenjesuShot::ChenjesuShot(Vector2 opos, double oangle, double ov,
 	explosionSprite     = data->spriteWeaponExplosion;
 	explosionFrameCount = 20;
 	explosionFrameSize  = 50;
+	debug_id = 1005;
 }
 
 void ChenjesuShot::inflict_damage(SpaceObject *other)
@@ -151,6 +153,7 @@ ChenjesuDOGI::ChenjesuDOGI(Vector2 opos, double ov, double oangle,
 	mass = omass;
 	collide_flag_sameship = ALL_LAYERS;
 	(*num_dogis)++;
+	debug_id = 1006;
 }
 
 void ChenjesuDOGI::calculate()

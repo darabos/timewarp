@@ -28,6 +28,7 @@ ThraddashTorch::ThraddashTorch(Vector2 opos, double shipAngle,
   specialThrust = scale_velocity(get_config_float("Special", "Thrust", 0));
   specialDamage = get_config_int("Special", "Damage", 0);
   specialArmour = get_config_int("Special", "Armour", 0);
+	debug_id = 1044;
 }
 
 int ThraddashTorch::activate_weapon() {
@@ -69,6 +70,7 @@ ThraddashFlame::ThraddashFlame(Vector2 opos, int odamage, int oarmour,
 	  ship = 0;
     state = 0;
   }
+	debug_id = 1045;
 }
 
 void ThraddashFlame::calculate()
