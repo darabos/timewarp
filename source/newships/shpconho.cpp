@@ -41,6 +41,9 @@ class ConfederationHornet : public Ship {
   virtual int activate_special();
   virtual void calculate();
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+
+  RGB crewPanelColor(int k = 0);
+  virtual double getCrew();
 };
 
 class TorpedoMissile : public HomingMissile {
@@ -77,6 +80,7 @@ ConfederationHornet::ConfederationHornet(Vector2 opos, double shipAngle,
   shield_max      = get_config_int("Extra", "Thickness", 0);
   shield          = shield_max; 
   shield_old      = 0;
+  /*
   shield_x        = 8;
   shield_y        = 51;
 
@@ -87,6 +91,9 @@ ConfederationHornet::ConfederationHornet(Vector2 opos, double shipAngle,
       shield_y -= iround(crew_max);
     }
   }
+  */
+
+  crew_max = 1 + shield_max;
 }
 
 int ConfederationHornet::activate_weapon() {
@@ -110,9 +117,10 @@ int ConfederationHornet::activate_special()
 
 void ConfederationHornet::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
    int shield_color = 9; // Blue
-   int i, bar_x, bar_y, shield_panel;
+//   int i, bar_x, bar_y, shield_panel;
 
    if (regenrating) {
      if (shield < shield_max) {
@@ -126,6 +134,7 @@ void ConfederationHornet::calculate()
      regenrating = TRUE;
      regenrateCount = regenrateFrames;
    }
+	/*
    if(shield != shield_old) {
      bar_x = 0;
      bar_y = 0;
@@ -150,7 +159,10 @@ void ConfederationHornet::calculate()
      ship->update_panel = TRUE;
      shield_old = shield;
    }
+   */
    Ship::calculate();
+
+   crew = 1 + shield;
 }
 
 int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, double direct) {
@@ -165,6 +177,28 @@ int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, dou
    
    return Ship::handle_damage(source, normal, direct);
 }
+
+RGB ConfederationHornet::crewPanelColor(int k)
+{
+	RGB c1 = {0,255,0};
+	RGB c2 = {0,0,255};		// blue
+
+	if ( k == 0 )
+		return c1;
+	else
+		return c2;
+}
+
+// returns the "real" live crew (this can fool the Syreen).
+double ConfederationHornet::getCrew()
+{
+	if (crew)
+		return 1;
+	else
+		return 0;
+}
+
+
 
 /** Torpedo Definitions ************************************************************/
 
@@ -183,6 +217,5 @@ void TorpedoMissile::inflict_damage(SpaceObject *other) {
 }
 
 /** End Torpedo Definitions ********************************************************/
-
 
 REGISTER_SHIP(ConfederationHornet)

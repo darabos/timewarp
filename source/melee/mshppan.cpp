@@ -231,7 +231,7 @@ void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, i
 	if (max2 > 42)
 		max2 = 42;
 
-	ymid = y + dy * (max2 / m);
+	ymid = y + dy * ((max2+m-1) / m);		// the +(m-1) makes sure it rounds up
 	
 	// erase to default greyish panel color
 	erasecolor = tw_color(100,100,100);
