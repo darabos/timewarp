@@ -1,57 +1,57 @@
-What do I need to do to get Star Control: TimeWarp running on unix?
+
+	   How to compile and run TimeWarp under Linux/Unix
 
 
-Note: Running TimeWarp remotely (using X-windows, or anything else for
-that matter) is NOT recommended.  Performance will suck terribly, and
-I've seen older versions of Allegro mis-autodetect such circumstances
-and crash.
+About this file
+    
+    The insructions here were only tested under Linux, but should work on 
+    every unix without or with few modifications. You can find additional 
+    about TW under Linux info at:
+    http://www.linux-games.com/timewarp/
+    If you have any problems and/or suggestions concerning the compilation
+    process, don't hesitate to write me a mail (karlb@gmx.net). 
+    
+
+1. Installing Allegro:
+
+    If you already have Allegro installed you can proceed with part 2.
+    If not, then get the recent Allegro beta from:
+    http://alleg.sourceforge.net/allegro/wip.html
+    To compile and install, untar Allegro and cd into Allegro dir.
+    Then type the following commands:
+    $ sh fixunix.sh
+    $ ./configure
+    $ make depend
+    $ make
+    $ su -c "make install"
+
+	    
+2. Installing jgmod (optional) 
+
+    If you want music, you'll have to get jgmod from
+    http://www.geocities.com/jeffery_guan/jgmod/jgmod.zip
+    Unzip the jgmod.zip and execute:
+    $ sh fixunix.sh
+    $ make
+    $ su -c "make install"
 
 
-twmake.rar contains the autoconf / makefile / whatever stuff for TimeWarp,
-if you like that stuff.  They're placed inside of a .tar since they include
-files with names that are not valid on DOS.  I think the build process using
-those is something like "./configure ; make", but I don't use unix regularly
-and can't quite recall.  
+3. Installing TW 
+
+    It looks like you already got and extracted the TW zip. So let's set the 
+    right permissions for the executable files (they got lost because zips 
+    don't support file permissions):
+    $ chmod a+x config.status configure install-sh mkinstalldirs update.sh
+    
+    Now let's compile TW:
+    $ ./configure && make
+    
+    That's it! Run ./timewarp and have fun!
 
 
-However, I do use gcc regularly, and this is how you use gcc to build TW
-on unix manually, using g++:
-
-1.  Install a recent beta of Allegro, which you can find here:
-http://alleg.sourceforge.net/allegro/wip.html
-The instructions can be found in allegros files readme.txt and readme.uni
-
-2.  Unzip TimeWarps .zip file into a new directory where-ever you
-feel like.  I (and TimeWarp) am not familiar with the directory
-structure conventions common to unix.  TW will need write access to 
-it's own directory, and may have problems when used by multiple 
-users simultaneously.  Also, DO NOT use the -a option when unzipping, this
-seems to corrupt TWs code somehow.  
-
-3.  If you're feeling industrious, download and compile the JGMOD 
-library described in djgpp.txt.  Otherwise, edit source/libs.h and
-uncomment the line "//#define NO_JGMOD".  This will remove music.
-Note: JGMOD may not work properly on multi-processor computers.  
-
-4.  Switch to the source directory.
-If you are using JGMOD (necessary for music), type this stuff:
-(please note that those are backtics ` not single-quotes ' )
-
-g++ -c *.cpp util/*.cpp -O2 -DNO_JGMOD
-gcc -c util/*.c -O2
-g++ -c ais/*.cpp melee/*.cpp games/*.cpp other/*.cpp -O2
-g++ -c sc1ships/*.cpp sc2ships/*.cpp sc3ships/*.cpp newships/*.cpp -O2
-g++ -o ../twlinux *.o -ljgmod `allegro-config --libs`
-
-If you are not using JGMOD, type this stuff:
-
-g++ -c *.cpp util/*.cpp -O2 -DNO_JGMOD
-gcc -c util/*.c -O2
-g++ -c ais/*.cpp melee/*.cpp games/*.cpp other/*.cpp -O2
-g++ -c sc1ships/*.cpp sc2ships/*.cpp sc3ships/*.cpp newships/*.cpp -O2
-g++ -o ../twlinux *.o `allegro-config --libs`
-
-
-5.  If you compile TW for a platform other than windows, DOS, linux, or 
-BeOS, let me know about it.  So far TW has been tried on windows, DOS, 
-linux, BeOS, and a beta of OS X, but it failed on the OS X beta.  
+4. Updating TW    
+    
+    Of course you can simply download the newest TW version. But that's
+    a huge download. You could also download the newest patch. But there's
+    a much better way! If you have rsync installed, you can simply run
+    the update.sh file delivered with TW.
