@@ -139,6 +139,7 @@ void QuarKathWraith::calculate()
 
 int QuarKathWraith::canCollide(SpaceLocation *other)
 { 
+	/* GEO: removes partial damage
 	int randomNumber = random() % 100;
 	if (cloak) {
 		if (other->isShot()) {
@@ -147,7 +148,8 @@ int QuarKathWraith::canCollide(SpaceLocation *other)
 					return false;
 			} else return false;
 		}
-	else return Ship::canCollide(other);
+	else */
+	return Ship::canCollide(other);
 }
 
 
@@ -211,6 +213,11 @@ QuarKathIllusion::QuarKathIllusion(Vector2 opos, double oangle,
   cloak = FALSE;
   cloak_frame = 0;
 
+  // it can't collide, therefore set:
+  collide_flag_anyone = 0;
+  collide_flag_sameteam = 0;
+  collide_flag_sameship = 0;
+  mass = 0;
 }
 
 void QuarKathIllusion::animate(Frame *space) {
@@ -223,6 +230,12 @@ void QuarKathIllusion::animate(Frame *space) {
 
 void QuarKathIllusion::calculate()
 {
+	if ( !(target && target->exists() && ship && ship->exists()) )
+	{
+		state = 0;
+		return;
+	}
+
 	if (target && target->exists())
 	{
 		if (distance(target) < range * .05 ) cloak=false;
@@ -240,7 +253,9 @@ void QuarKathIllusion::calculate()
 }
 
 
-
+// GEO: this is not a perfect test, since sometimes other ships perform the test,
+// so you get other->cancollide(this) ; this ship has no control over that with this
+// routine.
 int QuarKathIllusion::canCollide(SpaceLocation *other)
 { 
 		return false;
