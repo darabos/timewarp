@@ -137,7 +137,8 @@ static void register_shiptype ( const char *file ) {
 		ori = SHIP_ORIGIN_SC2;
 	if (strcmp(origname, "SC3") == 0)
 		ori = SHIP_ORIGIN_SC3;
-	if (strcmp(origname, "TWa") == 0)		// alpha ships
+	if ( (strcmp(origname, "TWa") == 0) ||		// alpha ships
+         (strcmp(origname, "TW") == 0) )
 		ori = SHIP_ORIGIN_TW_ALPHA;
 	if (strcmp(origname, "TWb") == 0)		// beta ships
 		ori = SHIP_ORIGIN_TW_BETA;

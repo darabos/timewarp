@@ -1193,19 +1193,20 @@ DIALOG fleetDialog[] = {
   //{ d_clear_proc,       0,    0,    0,    0,   255,  0,    0,    0,       0,    0,    NULL },//FLEET_DIALOG_CLEAR_SCREEN
   { d_textbox_proc,     10,  10,   240,  20,   255,  0,    0,     0,       0,    0,    (void *)"Available Ships", NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_TEXT TODO specify font here in d2 I think
   { d_textbox_proc,     10,  35,   128,  17,   255,  0,    0,     0,       0,    0,    (void *)"Ship Catagories:", NULL, NULL },//FLEET_DIALOG_SHIP_CATAGORIES_TEXT
+
   { d_check_proc_fleeteditor,
-						30,  52,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
-  { d_check_proc_fleeteditor,
-						30,  66,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
-  { d_check_proc_fleeteditor,
-						30,  79,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
-  { d_check_proc_fleeteditor,
-						30,  93,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
-  { d_check_proc_fleeteditor,
-						30, 107,   128,  14,   255,  0,    0,     0,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
+                        30,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
+  { d_check_proc_fleeteditor,		
+                        30,  66,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
+  { d_check_proc_fleeteditor,		
+                        30,  79,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
+  { d_check_proc_fleeteditor,		
+                        30,  93,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
+  { d_check_proc_fleeteditor,       
+                        30, 107,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
 
   { d_textbox_proc,     10, 121,    64,  17,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT1
-  { d_button_proc,      69, 121,   128,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost TODO fix me", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON1
+  { d_button_proc,      69, 121,   128,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON1
   { d_button_proc,     197, 121,    16,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING1
 
   { d_list_proc,       10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
@@ -1240,12 +1241,14 @@ DIALOG fleetDialog[] = {
   { NULL,              0,    0,    0,    0,    255,  0,    0,     0,       0,    0,    NULL, NULL, NULL }/**/
 };
 
+
 // FLEET - dialog function
 void edit_fleet(int player) {STACKTRACE
 	char tmp[40];
 	char path[80];
     char fleetCostString[80] = "";
     char maxFleetCostString[80] = "";
+    bool availableFleetDirty = true;
     
 
     static Fleet::SortingMethod sortMethod1 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT,
@@ -1270,12 +1273,13 @@ void edit_fleet(int player) {STACKTRACE
     fleetDialog[FLEET_DIALOG_POINT_LIMIT_BUTTON].dp = maxFleetCostString;
     
 	// the reference_fleet is used in the list in a hardcoded way, so over"load" it
-	Fleet *old_reference_fleet = reference_fleet;
+    Fleet *old_reference_fleet = reference_fleet;
 
-	Fleet new_ref_fleet(*reference_fleet);	// make a copy
-	reference_fleet = &new_ref_fleet;	// overload it. Now you can mess with it as you like
+	//Fleet new_ref_fleet(*reference_fleet);	// make a copy
+	//reference_fleet = &new_ref_fleet;	// overload it. Now you can mess with it as you like
+    
 
-   fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags |= D_SELECTED;	// don't override the D_EXIT
+   //fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags |= D_SELECTED;	// don't override the D_EXIT
 
 	do {
 		sprintf(title_str, fleet->getTitle());
@@ -1301,15 +1305,61 @@ void edit_fleet(int player) {STACKTRACE
         if (sortAscending2)
             fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = (void *)"^";
         else
-            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = (void *)"v";        
+            fleetDialog[FLEET_DIALOG_SORTBY_ASCENDING2].dp = (void *)"v";
+
+        //if the user has selected a different choice of available ships, regenerate the
+        //list of available ships
+        if (availableFleetDirty) {
+            availableFleetDirty = false;
+            
+            //clear out the fleet
+            reference_fleet->reset();
+
+            for (int c=0; c<num_shiptypes; c++) {
+                switch (shiptypes[c].origin) {
+                case SHIP_ORIGIN_SC1:
+                    if (fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags & D_SELECTED)
+                        reference_fleet->addShipType(&shiptypes[c]);
+                    break;
+                
+                case SHIP_ORIGIN_SC2:
+                    if (fleetDialog[FLEET_DIALOG_SC2_TOGGLE].flags & D_SELECTED)
+                        reference_fleet->addShipType(&shiptypes[c]);
+                    break;
+                
+                case SHIP_ORIGIN_SC3:
+                    if (fleetDialog[FLEET_DIALOG_SC3_TOGGLE].flags & D_SELECTED)
+                        reference_fleet->addShipType(&shiptypes[c]);
+                    break;
+                
+                case SHIP_ORIGIN_TW_ALPHA:
+                    if (fleetDialog[FLEET_DIALOG_TW_OFFICIAL_TOGGLE].flags & D_SELECTED)
+                        reference_fleet->addShipType(&shiptypes[c]);
+                    break;
+                
+                case SHIP_ORIGIN_TW_BETA:
+                    if (fleetDialog[FLEET_DIALOG_TW_EXP_TOGGLE].flags & D_SELECTED)
+                        reference_fleet->addShipType(&shiptypes[c]);
+                    break;
+                }
+            }
+            fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].flags |= D_DIRTY;
+
+        }/**/
 
 		fleetRet = tw_do_dialog(NULL, fleetDialog, -1);
 
         switch( fleetRet ) {
            case FLEET_DIALOG_AVAILABLE_SHIPS_TEXT: break;
            case FLEET_DIALOG_SHIP_CATAGORIES_TEXT: break;
+
            case FLEET_DIALOG_SC1_TOGGLE:
-			   {
+           case FLEET_DIALOG_SC2_TOGGLE:
+           case FLEET_DIALOG_SC3_TOGGLE:
+           case FLEET_DIALOG_TW_OFFICIAL_TOGGLE:
+           case FLEET_DIALOG_TW_EXP_TOGGLE:
+               availableFleetDirty = true;
+			   /*{
 			   
 				   int i;
 				   if (fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags & D_SELECTED)
@@ -1339,12 +1389,8 @@ void edit_fleet(int player) {STACKTRACE
 					   }
 				   }
 				   
-			   }
+			   }*/
 			   break;
-           case FLEET_DIALOG_SC2_TOGGLE: break;
-           case FLEET_DIALOG_SC3_TOGGLE: break;
-           case FLEET_DIALOG_TW_OFFICIAL_TOGGLE: break;
-           case FLEET_DIALOG_TW_EXP_TOGGLE: break;
            case FLEET_DIALOG_SORTBY_TEXT1: break;
            case FLEET_DIALOG_SORTBY_BUTTON1: 
                sortMethod1 = Fleet::cycleSortingMethod(sortMethod1);
