@@ -2,6 +2,8 @@
 #ifndef __MFRAME_H__
 #define __MFRAME_H__
 
+#include "melee.h"
+
 //debuging purposes only:
 extern int total_presences;
 
