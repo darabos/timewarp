@@ -247,6 +247,13 @@ void OwaDisable::target_died() {
 	return;
 	}
 void OwaDisable::calculate() {
+
+	if (!(ship && ship->exists()))
+	{
+		state = 0;
+		return;
+	}
+
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;

@@ -115,6 +115,8 @@ void MapEverything::init(char *filename)
 	planettypelist = new IndexTypeList("gamex/solarview/planet_*.ini");
 	surfacetypelist = new IndexTypeList("gamex/planetscan/surface_*.ini");
 	starsurfacetypelist = new IndexTypeList("gamex/stars/surface_*.ini");
+	mineraltypelist = new IndexTypeList("gamex/gamedata/mineraltypes/*.ini");
+	structuretypelist = new IndexTypeList("gamex/gamedata/structuretypes/*.ini");
 	
 	FILE *f = fopen(filename, "rt");
 	if (!f) { tw_error("failed to initialize map info");}

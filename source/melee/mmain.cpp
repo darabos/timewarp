@@ -522,7 +522,9 @@ void NormalGame::choose_new_ships() {STACKTRACE
 		//fleet->load("./fleets.tmp", tmp);
 		Fleet *fleet = player_fleet[i];
 		if (slot[i] == -1) slot[i] = random() % fleet->getSize();
+		if (slot[i] < 0 || slot[i] >= fleet->getSize()) {tw_error("trying to load invalid ship");}
 		Ship *s = create_ship(fleet->getShipType(slot[i])->id, player_control[i], random(size), random(PI2), player_team[i]);
+		if (!s) {tw_error("unable to create ship");}
 		fleet->clear_slot(slot[i]);
 		fleet->Sort();
 		//fleet->save("./fleets.tmp", tmp);

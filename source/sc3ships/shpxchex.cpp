@@ -108,6 +108,13 @@ XchaggerDisable::XchaggerDisable(SpaceObject *creator, Ship *oship, SpaceSprite 
 }
 
 void XchaggerDisable::calculate() {
+
+	if (!(ship && ship->exists()))
+	{
+		state = 0;
+		return;
+	}
+
 	int keyleft,keyright;
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {

@@ -19,6 +19,11 @@ public:
 	Area *surf_area;
 //	SpaceObject *solarbody;
 
+	Popup *Pran;
+	Button *branmin, *branlif;
+
+	MapSpacebody *starmap, *solarmap, *planetmap, *moonmap, *body;
+
 	Planet3D *rotatingplanet;
 
 
@@ -52,6 +57,12 @@ public:
 	BITMAP *map_bmp;
 	SpaceSprite *playerspr;		//*planetspr;
 	//double scalesurface;
+
+	int		nmin, nmax;
+	double	avsize, frac[32];
+	Mineral *mine[64];
+
+	void handle_ranmin();
 
 };
 

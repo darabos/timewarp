@@ -18,6 +18,8 @@ IndexTypeList *startypelist;
 IndexTypeList *planettypelist;
 IndexTypeList *surfacetypelist;
 IndexTypeList *starsurfacetypelist;
+IndexTypeList *mineraltypelist;
+IndexTypeList *structuretypelist;
 
 PlayerInfo		playerinfo;
 MapEverything	mapeverything;

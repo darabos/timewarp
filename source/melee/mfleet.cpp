@@ -78,7 +78,8 @@ void init_fleet() {STACKTRACE
         memset(title, '\0', MAX_TITLE_LENGTH);
     };
 
-    void Fleet::reset() {STACKTRACE
+    void Fleet::reset() {
+		STACKTRACE;
         ships.clear();
         this->cost = 0;
         memset(title, '\0', MAX_TITLE_LENGTH);
@@ -134,12 +135,29 @@ void init_fleet() {STACKTRACE
                 tw_error ("deserialize_fleet - that's a long shipid! (%d)", k[j]);
             }
         }
+		int s1 = s;
+
         char sname[64];
         for (j = 0; j < _fleet_size; j += 1) {
             READ2(sname, k[j]);
             sname[k[j]] = '\0';
             ShipType *t = shiptype(sname);
             if (!t) {
+				// extra debug info :
+				FILE *f;
+				f = fopen("error2.log", "wt");
+				fprintf(f, "j = %i  size = %i\n", j, _fleet_size);
+
+				s = s1;
+				int n;
+		        for (n = 0; n < _fleet_size; n += 1)
+				{
+		            READ2(sname, k[n]);
+				    sname[k[n]] = '\0';
+					fprintf(f, "%s\n", sname);
+				}
+
+				fclose(f);
                 tw_error("deserialize fleet - bad shiptype (%s)", sname);
             }
             else addShipType(t);
@@ -194,6 +212,7 @@ void init_fleet() {STACKTRACE
             set_config_file(filename);
 
         for (MyFleetListType::iterator iter = ships.begin(); iter != ships.end(); iter++) {
+			if (!(*iter)) {tw_error("trying to save invalid ship type in fleet");}
             sprintf(slot_str, "Slot%d", count);
             set_config_string(section, slot_str, (*iter)->id);
             count ++;
@@ -215,7 +234,8 @@ void init_fleet() {STACKTRACE
         if (filename) set_config_file(filename);
         int _fleet_size = get_config_int(section, "Size", 0);
         _fleet_title = get_config_string(section, "Title", "");
-        sprintf(title, _fleet_title);
+        //sprintf(title, _fleet_title);	this is a bit dangerous
+		strcpy(title, _fleet_title);
         maxFleetCost = (FleetCost) get_config_int(section, "MaxFleetCost", FLEET_COST_DEFAULT);
     
         count = 0;

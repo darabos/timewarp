@@ -338,6 +338,7 @@ void play_net1client ( const char *_address, int _port ) {STACKTRACE
 			return;
 		set_config_string("Network", "Address", addressaddress);
 		message.out("...");
+		message.animate(0);
 		i = ((NetLog*)log)->net.connect(addressaddress, port, is_escape_pressed);
 		free(addressaddress);
 		if (i) {
@@ -379,6 +380,7 @@ void play_net1server(const char *_gametype_name, int _port) {STACKTRACE
 		if (port == -1) return;
 
 		message.out("...");
+		message.animate(0);
 		log->net.listen(port, is_escape_pressed);
 		
 	}
@@ -615,13 +617,6 @@ void MainMenu::doit() {STACKTRACE
 	showTitle();
 	enable();
 
-	/*
-				disable();
-				play_fg(&scp, SCPGUI_MUSIC);
-				enable();
-				showTitle();
-	//*/
-
 	int mainRet;
 	do {
 		//mainRet = popup_dialog(mainDialog, MAIN_DIALOG_MELEE);
@@ -812,6 +807,8 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 			if (!strcmp(auto_play, "demo")) play_demo(auto_param);
 			if (!strcmp(auto_play, "net1client")) play_net1client(auto_param, auto_port);
 			if (!strcmp(auto_play, "net1server")) play_net1server(auto_param, auto_port);
+			if (!strcmp(auto_play, "fg")) play_fg(&scp, SCPGUI_MUSIC);
+
 		}
 		else {
 			mainmenu.preinit();
@@ -1302,8 +1299,8 @@ void edit_fleet(int player) {STACKTRACE
     fleetDialog[FLEET_DIALOG_CURRENT_POINTS_VALUE].dp = fleetCostString;
     fleetDialog[FLEET_DIALOG_POINT_LIMIT_BUTTON].dp = maxFleetCostString;
     
-	// the reference_fleet is used in the list in a hardcoded way, so over"load" it
-    Fleet *old_reference_fleet = reference_fleet;
+//	// the reference_fleet is used in the list in a hardcoded way, so over"load" it
+//    Fleet *old_reference_fleet = reference_fleet;
 
 	do {
 		sprintf(title_str, fleet->getTitle());
@@ -1413,7 +1410,11 @@ void edit_fleet(int player) {STACKTRACE
 
            case FLEET_DIALOG_AVAILABLE_SHIPS_LIST:
            case FLEET_DIALOG_ADD_BUTTON: 
-               selectedSlot = fleet->addShipType(reference_fleet->getShipType(fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].d1));
+			   int k;
+			   k = fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].d1;
+			   if (k < 0 || k >= reference_fleet->getSize()) {tw_error("invalid ship choice - bug");}
+
+               selectedSlot = fleet->addShipType(reference_fleet->getShipType(k));
                if (selectedSlot != -1)
                    fleetDialog[FLEET_DIALOG_FLEET_SHIPS_LIST].d1 = selectedSlot;
                
@@ -1497,7 +1498,7 @@ void edit_fleet(int player) {STACKTRACE
 
 	} while((fleetRet != FLEET_DIALOG_BACK_BUTTON) && (fleetRet != -1));
 
-	reference_fleet = old_reference_fleet;
+//	reference_fleet = old_reference_fleet;
 
 	fleet->save("fleets.ini", tmp);
 	delete fleet;

@@ -75,15 +75,15 @@ void ProjectX::init()
 
 	if (playerinfo.iplanet >= 0)
 		add( new GamePlanetview() );
-		*/
+//		*/
 		
 		
 		
 
-	add( new GameStarmap() );
+//	add( new GameStarmap() );
 //	add( new GameSolarview() );
 //	add( new GamePlanetview() );
-//	add( new GamePlanetscan() );
+	add( new GamePlanetscan() );
 //	add( new GameMelee() );
 //	add( new GameDialogue() );		// the editor
 //	add( new GameAliendialog() );	// the alien interface -- need additional info, can't just load like this.

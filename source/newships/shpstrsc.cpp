@@ -163,7 +163,7 @@ void Hilight::calculate()
 	sprite_index=frame_count;
 
 	//If the mothership doesn't exist, turn the hilight off.
-	if(!ship->exists())
+	if(!(ship && ship->exists()))
 	{
 		state=0;
 		return;
@@ -258,7 +258,7 @@ Marker::Marker(Vector2 opos, double ov, double s_angle, Marked *Tag, int Duratio
 
 void Marker::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	state=1;
 
 	//If the mothership is destroyed, any loose beacons also die.
@@ -274,7 +274,7 @@ void Marker::calculate()
 
 void Marker::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	STACKTRACE;
 	//If the target isn't the right type, don't latch on.
 
 	int IsType=0;

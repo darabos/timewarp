@@ -47,6 +47,13 @@ Shot::Shot(SpaceLocation *creator, Vector2 rpos, double oangle, double ov,
 
 void Shot::calculate() {
 	SpaceObject::calculate();
+
+	if (!(ship && ship->exists()))
+	{
+		state = 0;
+		return;
+	}
+
 	d += v * frame_time;
 	if(d >= range) state = 0;
 	return;

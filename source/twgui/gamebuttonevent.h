@@ -52,7 +52,7 @@ void BEvent<G>::handle_main_press()
 template <class G>
 void BEvent<G>::handle_main_hold()
 {
-	if (mainpress)
+	if (mainhold)
 		(g->*mainhold) ();
 }
 
@@ -68,7 +68,7 @@ void BEvent<G>::handle_special_press()
 template <class G>
 void BEvent<G>::handle_special_hold()
 {
-	if (specialpress)
+	if (specialhold)
 		(g->*specialhold) ();
 }
 

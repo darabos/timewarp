@@ -251,6 +251,8 @@ extern IndexTypeList *planettypelist;
 //extern IndexTypeList *moontypelist;	// moons or small planets are not distinguishable
 extern IndexTypeList *surfacetypelist;
 extern IndexTypeList *starsurfacetypelist;
+extern IndexTypeList *mineraltypelist;
+extern IndexTypeList *structuretypelist;
 
 #endif // __GAMEX_DATA__
 

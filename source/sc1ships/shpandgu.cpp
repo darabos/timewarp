@@ -147,6 +147,12 @@ AndrosynthBubble::AndrosynthBubble(Vector2 opos, double oangle,
 
 void AndrosynthBubble::calculate()
 {
+	if (!(ship && ship->exists()))
+	{
+		state = 0;
+		return;
+	}
+
 	double newAngle;
 
 	AnimatedShot::calculate();

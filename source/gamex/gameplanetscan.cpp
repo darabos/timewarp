@@ -23,6 +23,8 @@ REGISTER_FILE
 
 #include "melee/mshot.h"
 
+#include "twgui/gamebuttonevent.h"
+
 
 static GamePlanetscan::ThePlaya *localplayer;
 
@@ -34,6 +36,70 @@ static bool useframe2 = true;		// the smaller area: the scan surface
 BITMAP *bmpframe2 = 0;;
 
 double scalesurface = 8.0;
+
+
+
+/* Structure type:
+Each structure is unique. It is decribed by these files:
+id.ini
+id.bmp
+id.dialogue
+*/
+
+class StructureType
+{
+public:
+	StructureType();
+	
+	char id[64];
+
+	SpaceSprite *sprite;
+
+	void init(char *aid);
+};
+
+
+StructureType::StructureType()
+{
+	sprite = 0;
+	id[0] = 0;
+}
+
+void StructureType::init(char *aid)
+{
+	strcpy(id, aid);
+
+	char fname[512];
+
+	sprintf(fname, "gamex/gamedata/structuretypes/%s_01.bmp", id);
+	sprite = create_sprite( fname, SpaceSprite::MASKED, 1 );
+}
+
+
+StructureType *structuretype[128];
+
+//char **mineralnamelist;
+//int Nmineraltypes;
+
+void init_structuretypes()
+{
+	
+	int i;
+	for ( i = 0; i < structuretypelist->N; ++i )
+	{
+		char *id;
+
+		id = structuretypelist->type[i].type_string;
+
+
+		StructureType *st;
+		st = new StructureType();
+		st->init(id);
+
+		structuretype[i] = st;
+	}
+}
+
 
 
 
@@ -148,20 +214,20 @@ void LifeformType::init(char *aid)
 
 MineralType *mineraltype[16];
 
-char **mineralnamelist;
-int Nmineraltypes;
+//char **mineralnamelist;
+//int Nmineraltypes;
 
 void init_mineraltypes()
 {
-	createfilelist(&mineralnamelist, &Nmineraltypes,
-									"gamex/gamedata/mineraltypes/*.ini", 0);
+//	createfilelist(&mineralnamelist, &Nmineraltypes,
+//									"gamex/gamedata/mineraltypes/*.ini", 0);
 	
 	int i;
-	for ( i = 0; i < Nmineraltypes; ++i )
+	for ( i = 0; i < mineraltypelist->N; ++i )
 	{
 		char *id;
 
-		id = mineralnamelist[i];
+		id = mineraltypelist->type[i].type_string;
 
 
 		MineralType *mt;
@@ -172,16 +238,12 @@ void init_mineraltypes()
 	}
 }
 
-MineralType *get_mineraltype(const char *id)
+MineralType *get_mineraltype(char *id)
 {
-	int i = 0;
+	int i;
+	i = mineraltypelist->get_index(id, 0);
 
-	for ( i = 0; i < Nmineraltypes; ++i )
-	{
-		if (strcmp(id, mineraltype[i]->id) == 0)
-			return mineraltype[i];
-	}
-	return 0;
+	return mineraltype[i];
 }
 
 
@@ -197,7 +259,7 @@ void init_lifeformtypes()
 									"gamex/gamedata/lifeformtypes/*.ini", 0);
 	
 	int i;
-	for ( i = 0; i < Nmineraltypes; ++i )
+	for ( i = 0; i < Nlifeformtypes; ++i )
 	{
 		char *id;
 
@@ -317,8 +379,8 @@ void Mineral::animate(Frame *f)
 
 Mineral *init_mineral(char *section, Vector2 pos)
 {
-	const char *s;
-	s = get_config_string(section, "type", "common");
+	char s[512];
+	strcpy(s, get_config_string(section, "type", "common"));
 	MineralType	*type;
 	type = get_mineraltype(s);
 
@@ -482,7 +544,12 @@ Lifeform *init_lifeform(char *section, Vector2 pos)
 
 
 
-/*
+
+
+// SPECIAL STRUCTURES ON THE PLANET SURFACES
+// like ... what ?
+// Well, anything that spawns a dialog and can result in some special actions.
+
 class Structure : public MapObj
 {
 public:
@@ -494,190 +561,6 @@ public:
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
 };
 
-*/
-
-/*
-class SurfaceInfo : public SpacebodyInfo
-{
-public:
-	//int	idcode;
-
-	SurfaceInfo();
-
-//	Mineral		**minerals;
-//	Lifeform	**lifeforms;
-//	Structure	**structures;
-
-	int	Nlife, Nenergy, Nstructure;
-
-	// environment stats
-	double orbit, atmo, temp, mass, radius, gravity, day, tilt, albedo1, albedo2;
-	int weatherclass, tectonicsclass;
-
-	virtual void init(MapSpacebody *planet);
-	virtual void write(MapSpacebody *planet);
-};
-
-
-class StarInfo : public SpacebodyInfo
-{
-public:
-
-	double star_temp;	// in degr. Kelvin (K)
-	double systemsize;	// in astr. units (ae)
-	double sunradius;	// in ae (1 ae = earth orbit)
-
-	StarInfo();
-
-	// environment stats
-
-	virtual void init(MapSpacebody *planet);
-	virtual void write(MapSpacebody *planet);
-};
-
-
-SurfaceInfo::SurfaceInfo()
-{
-}
-
-void SurfaceInfo::write(MapSpacebody *planet)
-{
-	 CHANGED: this is edited/written only in solarview/planetview mode !!
-	char tmp[16];
-	sprintf(tmp, "%X", planet->id);
-
-	char fname[512];
-	strcpy(fname, "gamex/gamedata/surface/");
-	strcat(fname, tmp);
-	strcat(fname, ".ini");
-
-	set_config_file(fname);
-
-
-
-	set_config_float("stats", "albedo1", albedo1);
-	set_config_float("stats", "albedo2", albedo2);
-
-	set_config_float("stats", "atmo", atmo);
-	set_config_float("stats", "temp", temp);
-	set_config_float("stats", "mass", mass);
-	set_config_float("stats", "radius", radius);
-	set_config_float("stats", "gravity", gravity);
-	set_config_float("stats", "day", day);
-	set_config_float("stats", "tilt", tilt);
-
-	set_config_int("stats", "weather", weatherclass);
-	set_config_int("stats", "tectonics", tectonicsclass);
-	
-}
-
-
-void SurfaceInfo::init(MapSpacebody *planet)
-{
-	char tmp[16];
-	sprintf(tmp, "%X", planet->id);
-
-	char fname[512];
-	strcpy(fname, "gamex/gamedata/surface/");
-	strcat(fname, tmp);
-	strcat(fname, ".ini");
-
-	set_config_file(fname);
-
-
-	// the plotted inner part of the solar system is zoomed-in this way...
-	double systemsize = 100.0;	// in astr. units (ae)
-	orbit = exp(planet->position.length() * systemsize / 1000.0);
-
-	double star_temp = 6000.0;	// in degr. Kelvin (K)
-	double sunradius = 0.001;	// ?? in ae ...
-	double tempref;				// if there is no atmosphere ...
-	tempref = star_temp * sqrt(0.5 * sunradius / orbit);
-	// then this is the temp, for airless moons and such, with 0 albedo,
-	// on average over the whole surface (incl. night-side, yeah otherwise it wouldn't
-	// be an average right;). This is of course completely meaningless 
-	// cause it can vary from 300K on the equator facing the sun, to 0K on the night
-	// side and the polar caps. But ... well, vehicles can perhaps operate in
-	// low temps relatively well cause they generate their own heat, but in
-	// high temps very poorly cause they can't cool themselves. So, it makes "some"
-	// sense ... that would make a moving "hotspot" for a rotating planet important
-	// perhaps ? Actual temperatures varying on the surface facing the sun would be:
-	// tempref = star_temp * sqrt(sunradius / orbit) * cos(lat) * cos(lon);
-	// where lat=latitude, lon=olngitude (not taking albedo or something into account).
-	// and 0 temperature in the night-side.
-
-	// albedo is the fraction of energy that is radiated back into space ...
-	// and since energy ~ temp-to-the-power-4, albedo is root/root
-	// high value means, lots of light (=energy) is reflected. It can be radiated
-	// back because of the surface, or atmosphere (clouds). The reflected energy
-	// never reaches the planet and doesn't contribute to temperature increase.
-	albedo1 = 0.4;	// typical for earth
-	albedo1 = get_config_float("stats", "albedo1", 0.0);
-	tempref *= sqrt(sqrt(1 - albedo1));
-
-	// green-house effect in case of atmosphere; radiated energy has different
-	// frequency (cause T is lower), and therefore a different overall albedo
-	// for the outgoing energy can be used, than what's used for incoming energy.
-	albedo2 = 0;	// nothing is reflected back to the planet, all is passed to space.
-	albedo2 = get_config_float("stats", "albedo2", 0.0);
-	tempref /= sqrt(sqrt(1 - albedo2));
-
-	atmo = get_config_float("stats", "atmo", 1.0);
-	temp = get_config_float("stats", "temp", 1.0);
-	mass = get_config_float("stats", "mass", 1.0);
-	radius = get_config_float("stats", "radius", 1.0);
-	gravity = get_config_float("stats", "gravity", 1.0);
-	day = get_config_float("stats", "day", 1.0);
-	tilt = get_config_float("stats", "tilt", 1.0);
-	weatherclass = get_config_int("stats", "weather", 1);
-	tectonicsclass = get_config_int("stats", "tectonics", 1);
-}
-
-
-
-
-StarInfo::StarInfo()
-{
-	star_temp = 6000.0;	// in degr. Kelvin (K)
-	systemsize = 100.0;	// in astr. units (ae)
-	sunradius = 0.001;	// ?? in ae ...
-}
-
-void StarInfo::write(MapSpacebody *star)
-{
-	char tmp[16];
-	sprintf(tmp, "%X", star->id);
-
-	char fname[512];
-	strcpy(fname, "gamex/gamedata/surface/");
-	strcat(fname, tmp);
-	strcat(fname, ".ini");
-
-	set_config_file(fname);
-
-	set_config_float("stats", "temp", star_temp);
-	set_config_float("stats", "systemsize", systemsize);
-	set_config_float("stats", "radius", sunradius);
-}
-
-void StarInfo::init(MapSpacebody *star)
-{
-	char tmp[16];
-	sprintf(tmp, "%X", star->id);
-
-	char fname[512];
-	strcpy(fname, "gamex/gamedata/surface/");
-	strcat(fname, tmp);
-	strcat(fname, ".ini");
-
-	set_config_file(fname);
-
-	star_temp = get_config_float("stats", "temp", 6000);
-	systemsize = get_config_float("stats", "systemsize", 100.0);
-	sunradius = get_config_float("stats", "radius", 0.001);
-}
-
-*/
 
 
 
@@ -703,6 +586,7 @@ void GamePlanetscan::init()
 
 	GameBare::init();
 
+
 	
 	//size = Vector2(H, H*tempframe->ratio);
 	size = surf_area->size;	// the planet surface has that many pixels.
@@ -715,7 +599,6 @@ void GamePlanetscan::init()
 
 	// create star objects ?!
 	int istar, iplanet, imoon;
-	MapSpacebody *starmap, *solarmap, *planetmap, *moonmap;
 	starmap = mapeverything.sub[0];	// use the starmap of the 1st region
 
 	istar = playerinfo.istar;
@@ -736,36 +619,45 @@ void GamePlanetscan::init()
 		moonmap = 0;
 	
 
+	init_mineraltypes();
+	init_lifeformtypes();
+
 	//SpaceSprite *spr;
 
-	char *typestr;
 	char txt[512];
 
-	if ( imoon == -1 )
-	{
-		// exploring a PLANET
-		// load the planet sprite
+	if ( !moonmap )
+		body = planetmap;
+	else
+		body = moonmap;
 
-		typestr = planettypelist->type[planetmap->type].type_string;
+	sprintf(txt, "gamex/gamedata/surface/%08X.ini", body->id);
+	set_config_file(txt);
+	const char *st;
+	st = get_config_string(0, "surface", "default");
+	sprintf(txt, "gamex/planetscan/surface_%s_01.bmp", st);
+	map_bmp = load_bitmap(txt, 0);
 
-		// load the surface map of this planet (or moon)
-		sprintf(txt, "gamex/planetscan/planet_%s_01.bmp",typestr);
-		map_bmp = load_bitmap(txt, 0);
-		// (at the moment, this is resolution dependent...)
-		// this should be scaled using a scaled blit...
 
-	} else {
+	// init stats ...
+	sprintf(txt, "gamex/planetscan/surface_%s.ini", st);
+	set_config_file(txt);
 
-		// exploring a MOON
-		typestr = planettypelist->type[moonmap->type].type_string;
-		
-		// load the surface map of this planet (or moon)
-		sprintf(txt, "gamex/planetscan/moon_%s_01.bmp",typestr);
-		map_bmp = load_bitmap(txt, 0);
-		// (at the moment, this is resolution dependent...)
-		// this should be scaled using a scaled blit...
+	nmin = get_config_int(0, "NumMin", 0);
+	nmax = get_config_int(0, "NumMax", 10);
+	avsize = get_config_int(0, "AvSize", 10);
 
-	}
+	int i;
+	for ( i = 0; i < mineraltypelist->N; ++i )
+		frac[i] = get_config_float("fraction", mineraltypelist->type[i].type_string, 0.0);
+
+	int totfrac = 0;
+	for ( i = 0; i < mineraltypelist->N; ++i )
+		totfrac += frac[i];
+
+	for ( i = 0; i < mineraltypelist->N; ++i )
+		frac[i] /= totfrac;
+	// so that the sum of all fractions == 1
 
 	// map_bmp should have 32 bit depth, because colors are assumed to come from
 	// a 32 bpp depth image. Loading from disk is sometimes (or often) 24 bit.
@@ -837,42 +729,60 @@ void GamePlanetscan::init()
 	// you should delete dummy yourself ?
 
 
+	// read the mineral loactions/ types from disk :
+	
+	sprintf(txt, "gamex/gamedata/surface/%08X.ini", body->id);
+	set_config_file(txt);
 
-	// test:
-	// place a number of mineral sprites on the surface, of any type.
+	int N;
+	N = get_config_int("minerals", "N", 0);
 
-	init_mineraltypes();
-	init_lifeformtypes();
-
-	int N = 5;
-	int i;
 	for ( i = 0; i < N; ++i )
 	{
-		int k;
+		char id[512];
+		char val[512];
 
-		k = random(Nmineraltypes);
+		sprintf(id, "mineral%03i", i);
+		strcpy(val, get_config_string("minerals", id, ""));
+
+		double x, y;
+		sscanf(val, "%lf %lf %s", &x, &y, id);
+
+		int k;
+		k = mineraltypelist->get_index(id, 0);
+	
 		SpaceSprite *spr;
 		spr = mineraltype[k]->sprite;
 
-		Mineral *mine;
-		mine = new Mineral(0, random(Vector2(400,200)) * scalesurface, 0, spr);
-		mine->type = mineraltype[k];
-		mine->weight = 1;
+		mine[i] = new Mineral(0, Vector2(x,y) * scalesurface, 0, spr);
+		mine[i]->type = mineraltype[k];
+		mine[i]->weight = 1;
 		//mine->init(mineralnamelist[k]);
 
-		add(mine);
-
-		
-		k = random(Nlifeformtypes);
-		spr = lifeformtype[k]->sprite;
-
-		Lifeform *life;
-		life = new Lifeform(0, random(Vector2(400,200)) * scalesurface, 0, spr);
-		//mine->init(mineralnamelist[k]);
-
-		add(life);
+		add(mine[i]);
 	}
 
+
+	// an extra window, with "random" buttons so that you can re-randomize the minerals
+	// and lifeform map (given the constraints in the surface.ini file)
+
+	Pran = new Popup("gamex/interface/planetscan/edit", 0, 0, T->screen);
+	Pran->exclusive = false;
+
+	branmin = new Button(Pran, "ranm_");
+	branlif = new Button(Pran, "ranl_");
+
+
+	Pran->layer = 1;
+	T->layer = 2;
+
+	T->add(Pran);
+	T->tree_doneinit();
+
+	Pran->show();
+	Pran->focus();
+
+	branmin->bind(new BEvent<GamePlanetscan>(this, &GamePlanetscan::handle_ranmin, 0));
 }
 
 
@@ -1064,4 +974,85 @@ void GamePlanetscan::handle_edge(SpaceLocation *s)
 
 
 
+void GamePlanetscan::handle_ranmin()
+{
+	int i;
 
+	// delete existing mineral types from the game:
+	for ( i = 0; i < num_items; ++i )
+	{
+		if (item[i]->id == ID_MINERAL)
+			item[i]->state = 0;
+	}
+
+	// place a number of mineral sprites on the surface, of any type.
+
+	int N;
+	char txt[512];
+
+	N = random(nmin, nmax);
+
+	for ( i = 0; i < N; ++i )
+	{
+		// instead of :k = random(mineraltypelist->N);
+		// choose from a probability (-density-) distribution of the available types:
+		double r;
+		int k;
+
+		r = random(1.0);
+		for ( k = 0; k < mineraltypelist->N; ++k )
+		{
+			r -= frac[k];
+			if (r <= 0)
+				break;
+		}
+		if (k == mineraltypelist->N)	// invalid value (should not occur)
+			k = mineraltypelist->N - 1;
+
+
+		SpaceSprite *spr;
+		spr = mineraltype[k]->sprite;
+
+		mine[i] = new Mineral(0, random(Vector2(400,200)) * scalesurface, 0, spr);
+		mine[i]->type = mineraltype[k];
+		mine[i]->weight = 1;
+		//mine->init(mineralnamelist[k]);
+
+		add(mine[i]);
+
+	
+		/*
+		k = random(Nlifeformtypes);
+		spr = lifeformtype[k]->sprite;
+
+		Lifeform *life;
+		life = new Lifeform(0, random(Vector2(400,200)) * scalesurface, 0, spr);
+		//mine->init(mineralnamelist[k]);
+
+		add(life);
+		*/
+	}
+
+
+	// write the mineral loactions/ types to disk :
+	
+	sprintf(txt, "gamex/gamedata/surface/%08X.ini", body->id);
+	set_config_file(txt);
+
+	for ( i = 0; i < N; ++i )
+	{
+		char id[512];
+		char val[512];
+
+		set_config_int("minerals", "N", N);
+
+		sprintf(id, "mineral%03i", i);
+		sprintf(val, "%f %f %s", mine[i]->pos.x/scalesurface, mine[i]->pos.y/scalesurface,
+		mine[i]->type->id);
+		set_config_string("minerals", id, val);
+	}
+
+	flush_config_file();
+
+
+}

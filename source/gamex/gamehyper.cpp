@@ -491,6 +491,7 @@ void GameHyperspace::init()
 
 	// create star objects
 	starmap = mapeverything.sub[0];	// use the starmap of the 1st region
+	if (mapeverything.Nsub == 0) {tw_error("something is wrong with the map - there are no stars");}
 
 
 	// initialization of sprites
@@ -662,7 +663,7 @@ void GameHyperspace::refocus()
 {
 	if (!hardexit)
 	{
-		playerinfo.sync(player);		// info equals local player
+		playerinfo.sync(player);		// local copies from global player-info
 
 		// check if the starmap hasn't changed (by editing)
 		// NOTE: deletion isn't supported (yet).
