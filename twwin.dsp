@@ -784,6 +784,10 @@ SOURCE=.\source\newships\shprogsq.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\newships\shpsamat.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\newships\shpsclfr.cpp
 # End Source File
 # Begin Source File
