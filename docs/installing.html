@@ -1,0 +1,371 @@
+<html>
+<head>
+    <title>Star Control: Timewarp - Downloading and Installing</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body>
+
+<!--MENU--><div id="main">
+	<div id="menu">
+    	<a href="../readme.html">Home</a><br>
+    	<a href="installing.html">Downloading and Installing</a><br>
+    	<a href="playing.html">Playing</a><br>
+    	<a href="GameTypes.html">Game Types</a><br>
+    	<a href="coding.html">Development</a><br>
+    	<a href="faq.html">FAQ</a><br>
+    	<a href="links.html">Links</a>
+	</div>
+
+<!--MENU-->
+
+<h1>Downloading, Installing and Configuring</h1>
+
+<h2>Downloading</h2>
+
+<p>Timewarp runs on Windows, Linux, BeOS, and DOS.  Normally, once the files are
+downloaded, it is necessary to compile the project as well.  This situation may
+be made easier in the future, please be patient.</p>
+
+You can get the latest official release from:
+<ul>
+<li><a taget=_blank href="http://sourceforge.net/project/showfiles.php?group_id=13354">
+SourceForge</a> (you'll want the full version listed under the "Full" catagory,
+
+<li><a target=_blank href="http://www.classicgaming.com/starcontrol/timewarp/progress.shtm">
+ClassicGaming.com</a>, or
+
+<li><a target=_blank href="http://dynamic.gamespy.com/~timewarp/newspro/news.shtml">
+GameSpy</a>.
+</ul>
+
+
+<p>You may instead get the latest, bleeding edge version via SourceForge CVS.
+Instructions on how to do this can be found
+<a href="http://dynamic.gamespy.com/~timewarp/ikonboard/ikonboard.cgi?s=3f3e5f176dceffff;act=ST;f=13;t=20">
+here</a>.</p>
+
+
+<h2>Installing</h2>
+
+Pick your Operating System and Compiling method of choice:
+<ul>
+    <li><a href="#windows-msvc">Windows - MSVC</a>
+    <li><a href="windows-djgpp">Windows/DOS - djgpp</a>
+    <li><a href="#linux">Linux</a>
+    <li><a href="#beos">BeOS</a>
+</ul>
+
+<a name="windows-msvc"><h3>Windows - MSVC</h3></a>
+<pre>
+TimeWarp can be built with Microsoft Visual C++.  Open up ./twwin.dsw and pick
+Build/Rebuild All
+from the menu.
+</pre>
+
+
+<a name="windows-djgpp"><h3>Windows - DJGPP</h3></a>
+<pre>
+Step-By-Step instructions for building Star Control: TimeWarp with DJGPP
+
+
+If you just want to play TimeWarp, installing it is sufficient.
+(Installation instructions are located in readme.txt)
+However, if you want to modify the source code for TimeWarp, it
+will be necessary to rebuild TimeWarp again in order for your
+changes to take effect.
+
+These instructions are intended for use from DOS or a
+Windows 95/98 DOS box.  They assume that you already have
+pkunzip.exe (preferably version 2.5 or 4.0, but 2.04g should work) in a
+path directory, and that you do not have DJGPP or TimeWarp
+installed yet.  If pkunzip is installed in a path directory then
+when you type pkunzip at the DOS prompt you will get a message other
+than "bad command or file name".
+Note: many modern users will use winzip or winrar instead, but this
+document describes pkzip usage since pkzip uses command line arguments,
+so I can be more precise in my instructions.
+
+These instructions will not work on NT 3.5 or NT 4 or NT 5 (Windows
+2000) due to design decisions in NT 3/4 and a bug in NT 5 / W2k.
+Note: actually, I've found that everything except for RHIDE can work, 
+and maybe even the latest version of RHIDE.  However, gcc will 
+occaisonally crash for no reason.  
+
+
+-----------------------------------------------------------------------------
+Step 1: Download all necessary files
+-----------------------------------------------------------------------------
+(future instructions assume that you download these to a directory called c:\tmp)
+(BTW, if you have trouble with the site listed for most of these files, try any of the alternatives listed at http://www.geocities.com/SiliconValley/Vista/6552/mirrors.html )
+
+Download all of these components of DJGPP:
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2/djdev203.zip
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2/faq230b.zip (optional)
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/gcc2952b.zip
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/gpp2952b.zip
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/lgp2952b.zip
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/bnu2951b.zip
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/gdb418b.zip (optional?)
+
+Download all of these utilities for use w/ DJGPP:
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/fil316b.zip
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/txi40b.zip (optional?)
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/pat25b.zip (optional)
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/find41b.zip (optional?)
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/txt20b.zip (optional?)
+ftp://ftp.orst.edu/pub/simtelnet/gnu/djgpp/v2gnu/sed302b.zip (optional)
+http://wildsau.idv.uni-linz.ac.at/mfx/download/upx/upx106d.zip (optional)
+
+Download ALLEGRO:
+http://prdownloads.sourceforge.net/alleg/all400.zip
+(homepage is http://sunsite.dk/allegro/index.html )
+
+Download this ALLEGRO extension:
+http://www.geocities.com/jeffery_guan/jgmod/jgmod.zip
+(optional, but necessary for some features)
+(homepage is http://www.geocities.com/jeffery_guan/ )
+
+Download this IDE:
+http://prdownloads.sourceforge.net/rhide/rhid149b.zip (optional)
+(homepage is http://www.rhide.com/ )
+
+Download the latest version of TimeWarp:
+http://dl.fileplanet.com/dl/dl.asp?classicgaming/starcontrol/timewarp/cur.zip
+(homepage is http://www.classicgaming.com/starcontrol/timewarp/ )
+
+
+-----------------------------------------------------------------------------
+Step 2: Install DJGPP and related utilities & documentation
+-----------------------------------------------------------------------------
+(assumes all files were downloaded to c:\tmp and that you want DJGPP in c:\djgpp)
+(pkunzip may ask you whether you want to overwrite some file.  Answer yes or no, it doesn't matter.  pkunzip should only ask you this for 2 or 3 files)
+
+type this:
+c:
+cd \
+md djgpp
+cd djgpp
+pkunzip \tmp\djdev203.zip -d
+pkunzip \tmp\faq230b.zip -d
+pkunzip \tmp\gcc2952b.zip -d
+pkunzip \tmp\gpp2952b.zip -d
+pkunzip \tmp\lgp2952b.zip -d
+pkunzip \tmp\bnu2951b.zip -d
+pkunzip \tmp\fil316b.zip -d
+pkunzip \tmp\gdb418b.zip -d
+pkunzip \tmp\mak3791b.zip -d
+pkunzip \tmp\txi40b.zip -d
+pkunzip \tmp\pat25b.zip -d
+pkunzip \tmp\find41b.zip -d
+pkunzip \tmp\txt20b.zip -d
+pkunzip \tmp\sed302b.zip -d
+cd bin
+pkunzip \tmp\upx106d.zip upx.exe -d
+cd ..
+pkunzip \tmp\rhid149b.zip -d
+
+-----------------------------------------------------------------------------
+Step 3: Set up DJGPP
+-----------------------------------------------------------------------------
+(assumes DJGPP was put in c:\djgpp)
+
+type this:
+c:\djgpp\bin\setdjgpp c:\djgpp c:/djgpp
+(note that if DJGPP was installed in the fopwop directory that would be "c:\fopwop\bin\setdjgpp c:\fopwop c:/fopwop")
+
+and add this line to your autoexec.bat:
+set DJGPP=c:/djgpp/djgpp.env
+(note that if DJGPP was installed in the fopwop directory that would be "set DJGPP=c:/fopwop/djgpp.env")
+
+add this line to your autoexec.bat:
+SET PATH=%PATH%;c:\djgpp\bin
+
+
+-----------------------------------------------------------------------------
+Step 4: Install ALLEGRO and extensions
+-----------------------------------------------------------------------------
+(assumes DJGPP installed in c:\djgpp and downloads are in c:\tmp)
+(this takes a LONG time)
+
+type this:
+
+c:
+cd djgpp
+pkunzip \tmp\all400.zip -d
+cd allegro
+make
+make install
+cd ..
+copy allegro\tools\grabber.exe bin
+pkunzip \tmp\jgmod.zip -d
+cd jgmod
+fixdjgpp
+cd src
+make
+cd ..\..
+
+
+-----------------------------------------------------------------------------
+Step 5: Install TimeWarp
+-----------------------------------------------------------------------------
+(assumes you want TimeWarp in c:\tw)
+
+type this:
+
+c:
+cd \
+md tw
+cd tw
+pkunzip \tmp\cur.zip -d
+
+
+-----------------------------------------------------------------------------
+Step 6: Build Timewarp
+-----------------------------------------------------------------------------
+(assumes TimeWarp was installed in c:\tw)
+(BTW, building means compiling & linking)
+
+remove old stuff by typing this:
+
+c:
+cd \tw
+del twdos.exe
+
+compile by typing this:
+
+c:
+cd \tw\source
+gcc -c *.cpp util\*.cpp util\*.c melee\*.cpp other\*.cpp
+gcc -c ais\*.cpp games\*.cpp
+gcc -c sc1ships\*.cpp sc2ships\*.cpp sc3ships\*.cpp newships\*.cpp
+
+link by typing this:
+
+c:
+cd \tw
+gcc -o twdos.exe source\*.o -lalleg -ljgmod
+
+run your newly built version by typing this:
+
+c:
+cd \tw
+twdos
+
+compress your newly built version by typing this:
+
+c:
+cd \tw
+upx twdos.exe
+</pre>
+
+
+<a name=linux><h3>Linux</h3></a>
+<pre>
+1. Installing Allegro:
+
+    If you already have Allegro installed you can proceed with part 2.
+    If not, then get the recent Allegro beta from:
+    http://alleg.sourceforge.net/allegro/wip.html
+    To compile and install, untar Allegro and cd into Allegro dir.
+    Then type the following commands:
+    $ sh fixunix.sh
+    $ ./configure
+    $ make depend
+    $ make
+    $ su -c "make install"
+
+
+2. Installing jgmod (optional)
+
+    If you want music, you'll have to get jgmod from
+    http://www.geocities.com/jeffery_guan/jgmod/jgmod.zip
+    Unzip the jgmod.zip and execute:
+    $ sh fixunix.sh
+    $ make
+    $ su -c "make install"
+
+
+3. Installing TW
+
+    It looks like you already got and extracted the TW zip. So let's set the
+    right permissions for the executable files (they got lost because zips
+    don't support file permissions):
+    $ chmod a+x config.status configure install-sh mkinstalldirs update.sh
+
+    Now let's compile TW:
+    $ ./configure && make
+
+    That's it! Run ./timewarp and have fun!
+
+
+4. Updating TW
+
+    Of course you can simply download the newest TW version. But that's
+    a huge download. You could also download the newest patch. But there's
+    a much better way! If you have rsync installed, you can simply run
+    the update.sh file delivered with TW.
+</pre>
+
+<p>
+You may also refer to <a target=blank href="http://www.linux-games.com/timewarp/">this
+document</a>.
+</p>
+
+
+
+
+<a name=beos><h3>BeOS</h3></a>
+<pre>
+Star Control: TimeWarp on BeOS
+
+Since BeOS is no longer installed on my computer,
+the latest versions of TimeWarp have not been compiled
+for BeOS.
+
+However, older versions of TimeWarp are known to work
+on BeOS, and there haven't been any significant platform
+changes, so newer versions should also work there.
+
+Furthermore, the BeOS version of Allegro (a library used
+by TimeWarp) has matured substancially with Allegro version
+4.0.0, so a new build of TimeWarp for BeOS should work much
+better than the old ones.
+
+The last time I built TimeWarp for BeOS, everything compiled
+and ran, but TimeWarp would crash after aproximately 10
+minutes, and sound & music were unreliable.
+</pre>
+
+
+
+
+<h2>Configuring</h2>
+<pre>
+Ini files used by TimeWarp:
+
+server.ini : server side game settings (physics, gravity, etc.)
+client.ini : client side game settings (video, sound, view, etc.)
+joys.ini   : joystick calibration settings
+fleets.ini : fleets for normal games
+scp.ini    : keyboard setup, player setup
+tmp.ini    : temporary game initialization data, for the most recent game
+
+
+How to tweak .ini's for slow computers:
+
+	In game (or in client.ini [Video]), change screen width & height to as low as your video card will go, and change bitsperpixel to 8 (hideously ugly) or 15/16 if in fullscreen mode, or whatever your desktop color mode is if windowed.
+	In client.ini [View]
+	change Anti-Aliasing to 0
+	change Mip_min to 1 (may help for low-ram computers)
+	In server.ini [Game]
+	change TicRate to 20 (also helps modem games)
+	In server.ini [Stars]
+	change Number to 100
+	In server.ini [Planet]
+	change GravityRange to 10
+</pre>
+
+</div>
+</body>
+</html>
