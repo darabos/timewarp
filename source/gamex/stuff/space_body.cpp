@@ -471,6 +471,7 @@ SpaceObject(creator, opos, oangle, osprite)
 {
 	id = MAPOBJ_ID;
 	layer = LAYER_SHOTS;
+	sprite_index = 0;
 }
 
 void MapObj::animate(Frame *f)
@@ -481,7 +482,7 @@ void MapObj::animate(Frame *f)
 	double scale = space_zoom;
 	if (scale < 0.25)
 		scale = 0.25;
-	sprite->draw(corner(pos, s ), s * scale, sprite_index, f);
+	sprite->draw(corner(pos)-0.5*s*scale, s * scale, sprite_index, f);
 }
 
 void MapObj::calculate()

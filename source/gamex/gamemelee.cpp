@@ -34,7 +34,6 @@ REGISTER_FILE
 
 
 
-
 class InitShipGeneral
 {
 public:
@@ -97,6 +96,42 @@ Ship *createship(char *id, Vector2 opos, double oangle, int allyflag)
 	return 0;
 }
 
+#include "../melee.h"
+#include "../melee/mframe.h"
+
+Ship *GameMelee::create_ship(const char *id, Vector2 pos, double angle, int team)
+{
+	Control *c = 0;
+	int channel = 0;
+
+	c = getController("WussieBot", "whatever", channel);
+	if (!c) {
+		tw_error("Game::create_control - bad control type");
+	}
+//	c->load(file, config);
+	add(c);
+
+
+	ShipType *type = shiptype(id);
+	if (!type)
+	{tw_error("Game::create_ship - bad ship id (%s)", id);}
+	/*if(!ini) {
+		sprintf(buffer, "ships/shp%s.ini", id);
+		ini = buffer;
+	}	
+	log_file(buffer);*/
+//	log_file(type->file);
+	set_config_file(type->file);
+//	if (team == 0) team = new_team();
+	Ship *s = type->get_ship(pos, angle, get_code(new_ship(), team));
+	if (c)
+		c->select_ship(s, id);
+//	add_target(s);
+	s->attributes |= ATTRIB_NOTIFY_ON_DEATH;
+	return s;
+}
+
+
 
 
 
@@ -155,7 +190,8 @@ void GameMelee::init()
 
 	for ( i = 0; i < enemyfleet->Nships; ++i )
 	{
-		s = createship(enemyfleet->info->name, Vector2(0,0), 0, team_player);
+		//s = createship(enemyfleet->info->name, Vector2(0,0), 0, team_player);
+		s = create_ship(enemyfleet->info->name, Vector2(0,0), 0, team_player);
 		s->layer = LAYER_SHIPS;
 		s->collide_flag_anyone = ALL_LAYERS;
 		add(s);

@@ -18,6 +18,129 @@ REGISTER_FILE
 
 #include "gamehyper.h"
 #include "gamesolarview.h"
+#include "gamemelee.h"
+
+static const int ID_FLEET_HYPER = 0x09837491;
+
+
+inline double sqr(double x)
+{
+	return x*x;
+}
+
+
+class HyperFleet : public SpaceObject
+{
+public:
+	SpaceObject	*follow;
+	double		speed;
+
+	HyperFleet(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite);
+	virtual void calculate();
+	virtual void animate(Frame *f);
+
+	RaceInfo *ri;
+};
+
+
+HyperFleet::HyperFleet(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osprite)
+:
+SpaceObject(creator, opos, oangle, osprite)
+{
+	follow = 0;
+	speed = 0;
+
+	id = ID_FLEET_HYPER;
+
+	layer = LAYER_SHIPS;
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = ALL_LAYERS;
+}
+
+
+void HyperFleet::calculate()
+{
+	if (!follow)
+	{
+		state = 0;
+		return;
+	}
+
+	angle = trajectory_angle(follow);
+	vel = speed * unit_vector(angle);
+
+	double R;
+	R = distance(follow);
+	if (R > 1000)
+		state = 0;
+}
+
+void HyperFleet::animate(Frame *f)
+{
+	Vector2 s = sprite->size(sprite_index);
+	Vector2 p = corner(pos, s );
+	sprite->draw_character(p.x, p.y, sprite_index, makecol(0,0,0), f);
+
+}
+
+
+void GameHyperspace::calc_enemies()
+{
+	// check if you're in range of one of the colonies:
+	RaceInfo *a;
+	a = racelist.first;
+
+	while (a)
+	{
+		RaceSettlement *b;
+		b = a->firstcol;
+
+		while (b)
+		{
+			Vector2 P;
+			P = mapeverything.region[0]->sub[b->istar]->position;
+
+
+			double r;
+			r -= (P - player->pos / scalepos).length();
+
+			
+			if (r < b->patrol.range)
+			{
+				double density, chance, enemyspeed;
+
+				enemyspeed = 0.1;
+
+				density = 0.01;
+				density = 1;
+
+				chance = (player->vel.length() + enemyspeed) * frame_time / scalepos;
+				chance *= density;
+				
+
+				if (random(1.0) < chance)
+				{
+					// create a "enemy" object ... but how ?
+					HyperFleet *fl;
+					fl = new HyperFleet(0, player->pos+Vector2(100,100), 0, a->fleetsprite);
+					add(fl);
+					fl->speed = enemyspeed;
+					fl->follow = player;
+					fl->ri = a;
+					
+				}
+			}
+			
+
+
+
+			b = b->next;
+		}
+
+		a = a->next;
+	}
+}
 
 
 #define HIST_POWER 4.0
@@ -249,6 +372,11 @@ LocalPlayerInfo(osprite, playinf)
 		MapSpacebody *starmap = mapeverything.region[0];
 		pos = starmap->sub[playinf->istar]->position;
 	}
+
+	layer = LAYER_SHIPS;
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameship = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
 }
 
 
@@ -606,10 +734,13 @@ void GameHyperspace::calculate()
 
 	hyperexpl->expand();
 
+	message.print(1500, 14, "speed = %f", player->vel.length() * 1E3);
+
 
 	t = get_time2() - t;// - paused_time;
 	tic_history->add_element(pow(t, HIST_POWER));
 
+	calc_enemies();
 }
 
 
@@ -631,6 +762,36 @@ void GameHyperspace::checknewgame()
 		// if you can add a game, then let "someone" know that, by allocating
 		// a game, and by setting a request pointer to that allocated game :)
 		gamerequest = new GameSolarview();
+	}
+
+	// if you're close to a hyperfleet
+	if (player->collisionwith)
+	{
+		SpaceObject *o;
+		o = player->collisionwith;
+		if ( o->id == ID_FLEET_HYPER)
+		{
+			// then enter melee ...
+			player->vel = 0;
+
+			// what's the race ?
+			XFleet *f;
+			f = new XFleet();
+
+			f->add(((HyperFleet*)o)->ri->shipid, 3);
+
+			// spawn a subgame
+			if (!gamerequest && !next)
+			{
+				GameMelee *g;
+				g = new GameMelee();
+				g->set_xfleet(f);
+
+				gamerequest = g;
+			}
+
+			o->state = 0;
+		}
 	}
 }
 

@@ -5,6 +5,9 @@
 #include "../melee.h"
 REGISTER_FILE
 
+#include "../frame.h"
+#include "../melee/mview.h"
+
 
 #include "gamedata.h"
 
@@ -15,6 +18,8 @@ IndexTypeList *moontypelist;
 
 PlayerInfo		playerinfo;
 MapEverything	mapeverything;
+RaceManager		racelist;
+
 
 
 void PlayerInfo::init(char *filename)
@@ -215,6 +220,7 @@ void MapSpacebody::init(FILE *f, int level)
 		sub[i]->init(f, level+1);
 	}
 
+	scalepos = 1;
 }
 
 
@@ -362,3 +368,345 @@ int IndexTypeList::get_index(char *typestr)
 	else
 		return i;	// a match
 }
+
+
+
+
+
+
+
+
+
+
+
+
+Patrol::Patrol()
+{
+	// default to a single system-fleet (and no hyperspace patrol fleets, and no capital (special) fleet)
+	numhyperfleets = 0;
+	numsystemfleets = 1;
+	numcapitalfleets = 0;
+
+	range = 0;
+}
+
+
+
+
+RaceSettlement::RaceSettlement(RaceInfo *arace)
+{
+	next = 0;
+
+	race = arace;
+
+	istar = 0;
+	iplanet = 0;
+	imoon = 0;
+}
+
+RaceSettlement::~RaceSettlement()
+{
+}
+
+void RaceSettlement::locate(int astar, int aplanet, int amoon)
+{
+	istar = astar;
+	iplanet = aplanet;
+	imoon = amoon;
+}
+
+void RaceSettlement::calculate()
+{
+}
+
+void RaceSettlement::animate_starmap(Frame *f)
+{
+	if (!patrol.range)
+		return;
+
+	BITMAP *bmp = f->surface;
+
+	// in case of the starmap, show the circles of influence
+
+	int R;
+	Vector2 P;
+
+	P = corner(mapeverything.region[0]->sub[istar]->position * mapeverything.region[0]->scalepos);
+
+	R = patrol.range * mapeverything.region[0]->scalepos * space_zoom;
+
+	//void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
+	circlefill(bmp, P.x, P.y, R, race->color);
+}
+
+
+
+
+
+
+RaceColony::RaceColony(RaceInfo *arace)
+:
+RaceSettlement(arace)
+{
+	// this is a default colony of 10 K individuals (1 million).
+	population = 10;
+
+	population *= race->cinfo.start_population_multiplier;
+
+	calculate();
+}
+
+
+void RaceColony::calculate()
+{
+	double dt = frame_time * 1E-3;
+
+	// growth ?
+	population *= exp(log(2.0) * dt / race->cinfo.doubling_period);
+
+	patrol.range = 20 + sqrt(population / 100);
+
+	if (patrol.range > 100)
+		patrol.range = 100;
+
+	patrol.numsystemfleets = population / 10;
+	patrol.numhyperfleets = population / 1E3;
+	patrol.numcapitalfleets = population / 1E6;
+}
+
+
+
+
+
+
+
+
+
+RaceInfo::RaceInfo(char *arace_id, int acolor)
+{
+	next = 0;
+
+	firstcol = 0;
+	lastcol = 0;
+
+	id = new char [strlen(arace_id)+1];
+	strcpy(id, arace_id);
+
+	color = acolor;
+
+	strcpy(cinfo.env_type, "gaia");
+	cinfo.doubling_period = 10.0;	// 10 years to double the population
+	cinfo.start_population_multiplier = 1.0;
+}
+
+
+RaceInfo::~RaceInfo()
+{
+	delete id;
+}
+
+
+void RaceInfo::calculate()
+{
+}
+
+
+
+void RaceInfo::add(RaceColony *rc)
+{
+	if (!firstcol)
+		firstcol = rc;
+
+	if (lastcol)
+		lastcol->next = rc;
+
+	lastcol = rc;
+
+}
+
+void RaceInfo::init_colonies(char *ininame)
+{
+	set_config_file(ininame);
+	
+	// init colonies
+	
+	int i, N;
+	N = get_config_int(0, "N", 0);
+	
+	for ( i = 0; i < N; ++i )
+	{
+		RaceColony *rc;
+		rc = new RaceColony(this);
+		add(rc);
+
+		char colid[64];
+		sprintf(colid, "colony%03i", i);
+
+		int istar, iplan, imoon;
+		istar = get_config_int(colid, "star", 0);
+		iplan = get_config_int(colid, "planet", 0);
+		imoon = get_config_int(colid, "moon", 0);
+		rc->locate(istar, iplan, imoon);
+
+		rc->population = get_config_float(colid, "population", 0);
+
+		rc->calculate();
+	}
+}
+
+
+void RaceInfo::animate_starmap(Frame *f)
+{
+	RaceSettlement *current;
+	current = firstcol;
+
+	while (current)
+	{
+		current->animate_starmap(f);
+		current = current->next;
+	}
+}
+
+
+
+
+
+
+
+RaceManager::RaceManager()
+{
+	first = 0;
+	last = 0;
+}
+
+void RaceManager::add(RaceInfo *ri)
+{
+	if (!first)
+		first = ri;
+	
+	if (last)
+		last->next = ri;
+	
+	last = ri;
+}
+
+
+
+void RaceManager::readracelist()
+{
+	al_ffblk info;
+
+	// find all the directory names - each directory indicates a different race,
+	// and has the race name as well
+	
+	int err;
+	err = al_findfirst("gamex/gamedata/races/*", &info, FA_DIREC );
+
+	while (!err)
+	{
+		char *racename;
+		racename = info.name;
+
+		if (strcmp(racename, ".") != 0 && strcmp(racename, "..") != 0)
+		{
+			
+			char fname[512];
+			strcpy(fname, "gamex/gamedata/races/");
+			strcat(fname, racename);
+			strcat(fname, "/race.ini");
+			set_config_file(fname);
+			
+
+			int r, g, b;
+			r = get_config_int("color", "r", 254);
+			g = get_config_int("color", "g", 1);
+			b = get_config_int("color", "b", 254);
+			
+			RaceInfo *ri;
+			ri = new RaceInfo(racename, makecol(r,g,b)); 
+			add(ri);
+
+			strncpy(ri->shipid, get_config_string("ship", "id", "none"), 16);
+			
+			ri->cinfo.doubling_period = get_config_float("colony", "doublingperiod", 10.0);
+			ri->cinfo.start_population_multiplier = get_config_float("colony", "startpopmultiplier", 1.0);
+			strcpy(ri->cinfo.env_type, get_config_string("colony", "envtype", "gaia"));
+			if (strlen(ri->cinfo.env_type) > 64) { tw_error("invalid env type"); }
+
+		
+			strcpy(fname, "gamex/gamedata/races/");
+			strcat(fname, racename);
+			strcat(fname, "/colonies.ini");
+			ri->init_colonies(fname);
+
+			strcpy(fname, "gamex/gamedata/races/");
+			strcat(fname, racename);
+			strcat(fname, "/fleet.bmp");
+
+			BITMAP *bmp;
+			bmp = load_bitmap(fname, 0);
+
+			SpaceSprite *fleetspr;
+			fleetspr = new SpaceSprite(bmp);
+
+			ri->fleetsprite = fleetspr;
+
+			destroy_bitmap(bmp);
+		
+		}
+
+
+
+		err = al_findnext(&info);
+	}
+
+}
+
+
+void RaceManager::writeracelist()
+{
+
+	RaceInfo *current;
+	current = first;
+
+	while (current)
+	{
+		char fname[512];
+		strcpy(fname, "gamex/gamedata/races/");
+		strcat(fname, current->id);
+		strcat(fname, "/race.ini");
+		set_config_file(fname);
+		
+		int r, g, b;
+		r = getr(current->color);
+		g = getg(current->color);
+		b = getb(current->color);
+
+		set_config_int("color", "r", r);
+		set_config_int("color", "g", g);
+		set_config_int("color", "b", b);
+
+		set_config_float("colony", "doublingperiod", current->cinfo.doubling_period);
+		set_config_float("colony", "startpopmultiplier", current->cinfo.start_population_multiplier);
+		set_config_string("colony", "envtype", current->cinfo.env_type);
+		
+
+		current = current->next;
+	}
+
+}
+
+
+
+void RaceManager::animate_starmap(Frame *f)
+{
+	RaceInfo *current;
+	current = first;
+
+	while (current)
+	{
+		current->animate_starmap(f);
+		current = current->next;
+	}
+}
+

@@ -6,16 +6,136 @@
 #include <stdio.h>
 
 
-class RaceInfo
+
+
+
+class RaceInfo;
+
+// race-specific info
+class ColonyRaceInfo
 {
-	void AI();
-
-	int Ncolonies;
-	int Nmines;
-
-	Vector2 spherecenter;
-	double spheresize;
+public:
+	char		env_type[64];
+	double	doubling_period;	// double population in "years"
+	double	start_population_multiplier;
 };
+
+
+// planet-specific info
+class ColonyPlanetInfo
+{
+public:
+	char		env_type[64];
+};
+
+
+// patrol stuff
+class Patrol
+{
+public:
+	Patrol();
+
+	double	range;
+	int		numhyperfleets;
+	int		numsystemfleets;
+	int		numcapitalfleets;
+};
+
+
+class FGPresence : public Presence
+{
+public:
+	virtual void animate_starmap(Frame *f) {};
+};
+
+
+class RaceSettlement : public FGPresence
+{
+protected:
+	RaceInfo	*race;
+
+public:
+	RaceSettlement *next;
+	int istar, iplanet, imoon;
+	
+	Patrol patrol;
+
+	RaceSettlement(RaceInfo *arace);
+	virtual ~RaceSettlement();
+
+	void locate(int astar, int aplanet, int amoon);
+
+	virtual void calculate();
+	virtual void animate_starmap(Frame *f);
+};
+
+
+class RaceColony : public RaceSettlement
+{
+protected:
+
+public:
+	RaceColony(RaceInfo *arace);
+	double	population;
+
+	virtual void calculate();
+};
+
+
+
+class RaceInfo : public Presence
+{
+public:
+	RaceInfo	*next;
+
+	RaceInfo(char *arace_id, int acolor);
+	~RaceInfo();
+
+//	Racemine *mines;
+	//int Ncolonies;
+	//int Nmines;
+
+	//Vector2 spherecenter;
+	//double spheresize;
+
+	char	*id;
+	int		color;
+
+	SpaceSprite *fleetsprite;	// is used in hyperspace, and in solar/planet view
+	// this class should clean it up...
+
+	virtual void calculate();
+	virtual void animate_starmap(Frame *f);
+
+	ColonyRaceInfo cinfo;
+
+	RaceColony *firstcol, *lastcol;
+	void init_colonies(char *ininame);
+	void add(RaceColony *rc);
+
+	char	shipid[16];
+};
+
+
+
+
+
+class RaceManager
+{
+public:
+	RaceInfo	*first, *last;
+
+	RaceManager();
+
+	void add(RaceInfo *ri);
+
+	void readracelist();
+	void writeracelist();
+
+	virtual void animate_starmap(Frame *f);
+};
+
+extern RaceManager racelist;
 
 
 class LocalPlayerInfo;
@@ -71,6 +191,7 @@ public:
 	Vector2 position;	// 0,0 = center
 	char name[64];
 	SpaceObject *o;
+	double scalepos;
 
 	int Nsub;
 	MapSpacebody **sub;	// at most 3 moons.

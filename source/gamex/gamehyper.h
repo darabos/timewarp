@@ -86,6 +86,8 @@ public:
 	virtual void handle_edge(SpaceLocation *s);
 
 	virtual void init_menu();
+
+	void calc_enemies();
 };
 
 

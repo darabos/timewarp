@@ -415,8 +415,6 @@ SpaceObject(0, opos, 0.0, osprite)
 
 
 
-
-
 GamePlanetview::~GamePlanetview()
 {
 }

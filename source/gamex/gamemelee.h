@@ -33,6 +33,9 @@ public:
 	virtual ~GameMelee();
 
 	virtual void handle_edge(SpaceLocation *s);
+
+
+	virtual Ship *create_ship(const char *id, Vector2 pos, double angle, int team);
 };
 
 

@@ -17,7 +17,7 @@ REGISTER_FILE
 #include "gamestarmap.h"
 
 
-
+//#include "gamedata.h"
 
 
 
@@ -49,7 +49,7 @@ void GameStarmap::init()
 	//wininfo.init( Vector2(400,400), 800.0, tempframe );
 	wininfo.zoomlimit(size.x);
 	wininfo.center(Vector2(0,0));
-	//wininfo.scaletowidth(size.x);	// zoom out to this width.
+	wininfo.scaletowidth(0.5 * size.x);	// zoom out to this width.
 
 
 	// load star sprites
@@ -63,6 +63,7 @@ void GameStarmap::init()
 
 	// create star objects ?!
 	starmap = mapeverything.region[0];	// use the starmap of the 1st region
+	starmap->scalepos = scalepos;
 
 	for ( i = 0; i < starmap->Nsub; ++i )
 	{
@@ -118,6 +119,23 @@ void GameStarmap::init()
 	mapeditor->set_game(this, ptr);
 	mapeditor->set_interface( Tedit, breplace, bnew );
 	mapeditor->set_mapinfo( starmap, 1, scalepos);
+
+
+
+
+	/*
+	// create a colony somewhere ?? For testing purpose only ...
+	RaceInfo *race;
+	RaceColony *colony;
+
+	race = new RaceInfo("testrace", makecol(100,20,20));
+	add(race);
+
+	colony = new RaceColony(race);
+	colony->locate(0, 0, -1);
+	colony->patrol.range = 1000;
+	add(colony);
+	*/
 }
 
 
@@ -179,6 +197,9 @@ void GameStarmap::animate(Frame *frame)
 		hideallegromouse = true;
 
 
+	// draw race territories
+	racelist.animate_starmap(frame);
+
 	// draw a grid ...
 	int ix, iy;
 	Vector2 P1, P2;
@@ -206,6 +227,7 @@ void GameStarmap::animate(Frame *frame)
 	// draw the stars
 
 	GameBare::animate(frame);
+
 
 }
 

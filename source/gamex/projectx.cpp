@@ -46,13 +46,14 @@ void play_fg(DATAFILE **scp, int scpguimusic)
 }
 
 
-
-
 void ProjectX::init()
 {
 	GameProject::init();
 
 	playerinfo.init("gamex/player/playerinfo.ini");
+
+	// initialize races info
+	racelist.readracelist();
 
 
 	// initialize the starmap ...
@@ -78,7 +79,7 @@ void ProjectX::init()
 //	add( new GameStarmap() );
 //	add( new GameSolarview() );
 //	add( new GamePlanetview() );
-	add( new GamePlanetscan() );
+//	add( new GamePlanetscan() );
 //	add( new GameMelee() );
 //	add( new GameDialogue() );		// the editor
 //	add( new GameAliendialog() );	// the alien interface

@@ -460,7 +460,6 @@ void WindowInfo::edgecorrect()
 
 
 
-
 XFleet::XFleet()
 {
 	Nships = 0;
