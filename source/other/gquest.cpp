@@ -26,7 +26,8 @@ Quest::Quest( const char * szLuaFile, GobPlayer * player )
   // Load Quest
   lua_dofile(L, szLuaFile);
   // Register Events
-  gobgame->RegisterEvent(GAME_EVENT_SHIP_DIE, this);
+
+  RegisterEvent(GAME_EVENT_SHIP_DIE, gobgame);
 }
 
 Quest::~Quest()
