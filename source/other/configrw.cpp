@@ -20,7 +20,7 @@ void conf(char *id, int &x, int def)
 	if (config_read)
 		x = get_config_int(section, id, def);
 	else
-		set_config_float(section, id, x);
+		set_config_int(section, id, x);
 }
 
 void conf(char *id, double &x, double def)

@@ -193,7 +193,7 @@ public:
 // general game data about the player
 class PlayerInfo
 {
-	char *configfilename;
+	//char *configfilename;
 public:
 	Vector2 pos, vel;
 	double angle;
@@ -208,8 +208,9 @@ public:
 	int		imoon;
 
 
-	void init(char *filename);
-	void write();
+	//void init(char *filename);
+	//void write();
+	void config(char *filename, bool option);
 
 	void sync(LocalPlayerInfo *p);
 	void sync2(LocalPlayerInfo *p);

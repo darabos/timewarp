@@ -63,44 +63,34 @@ void PlayerFleet::config(bool option)
 }
 
 
-void PlayerInfo::init(char *filename)
-{
-	configfilename = filename;
 
+
+void PlayerInfo::config(char *filename, bool option)
+{
+	//configfilename = filename;
 	set_config_file(filename);
-	pos.x = get_config_float(0, "PosX", 0.0);
-	pos.y = get_config_float(0, "PosY", 0.0);
-	angle = get_config_float(0, "Angle", 0.0);
 
-	istar = get_config_int(0, "Star", -1);
-	iplanet = get_config_int(0, "Planet", -1);
-	imoon = get_config_int(0, "Moon", -1);	// of planets and moons
+	config_read = option;
+	section = 0;
 
-	RU = get_config_float(0, "RU", 0);
+	conf("PosX", pos.x);
+	conf("PosY", pos.y);
+	conf("Angle", angle);
 
-	strncpy(playername, get_config_string("Names", "player", "nobody"),  sizeof(playername));
-	strncpy(shipname,   get_config_string("Names", "ship",   "dustbin"), sizeof(shipname));
-
-	fleet.config(CONFIG_READ);
-}
-
-
-void PlayerInfo::write()
-{
-	set_config_file(configfilename);
-	set_config_float(0, "PosX", pos.x);
-	set_config_float(0, "PosY", pos.y);
-	set_config_float(0, "Angle", angle);
-
-	set_config_int(0, "Star", istar);
-	set_config_int(0, "Planet", iplanet);
-	set_config_int(0, "Moon", imoon);
+	conf("Star", istar, -1);
+	conf("Planet", iplanet, -1);
+	conf("Moon", imoon, -1);
 	//set_config_int(0, "PlanetCode", iplanetcode);
 
-	set_config_float(0, "RU", RU);
+	conf("RU", RU);
 
-	fleet.config(CONFIG_WRITE);
+	section = "Names";
+	conf("player", playername, "nobody");
+	conf("ship", shipname, "dustbin");
+	
+	fleet.config(option);
 }
+
 
 
 void PlayerInfo::sync(LocalPlayerInfo *p)
