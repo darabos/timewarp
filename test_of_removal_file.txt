@@ -1,0 +1,2 @@
+This is a file that Culture20 used to help him commit the removal of the unused ./timewarp directory tree that was causing errors for linux/Unix users.
+Culture20 - Saturday August 9, 2003
