@@ -444,7 +444,7 @@ void Game::handle_desynch(int local_checksum, int server_checksum, int client_ch
 //static char old_checksum_buf[200][200];
 
 
-void game_create_errorlog()
+void game_create_errorlog(const char *exitmessage = 0)
 {
 	STACKTRACE;
 	FILE *f;
@@ -452,7 +452,11 @@ void game_create_errorlog()
 	f = fopen("error.log", "a");
 	if (!f) return;
 
-	fprintf(f, "\n\n--------error report, showing in-game objects--------\n");
+	if (exitmessage)
+		fprintf(f, "\n\n-------- error report, with message [%s]\n", exitmessage);
+	else
+		fprintf(f, "\n\n-------- error report, unknown error\n");
+	//fprintf(f, "-------- showing in-game objects --------\n");
 	fprintf(f, "timewarp version = %s\n", tw_version());
 
 	time_t t;
@@ -479,7 +483,7 @@ void game_create_errorlog()
 
 		// set "enable run-type information" for this feature
 		// (rebuild all after changing that option)
-		fprintf(f, "%_30s %_9.1e %_9.1e %_9.1e %_9.1e %_3i 0x%08X 0x%08X 0x%08X\n",
+		fprintf(f, "%030s %09.1e %09.1e %09.1e %09.1e %03i 0x%08X 0x%08X 0x%08X\n",
 			typeid(*s).name(), p.x, p.y, v.x, v.y, is, (unsigned int)s, (unsigned int)s->ship, (unsigned int)s->target );
 	}
 
@@ -488,7 +492,7 @@ void game_create_errorlog()
 //	fprintf(f, "%s\n", tw_error_str);
 	//free(s);	// cause s was allocated with malloc().
 
-	fprintf(f, "\nSTACKTRACE: level of call, line number in file, file name (top=most recent call)\n\n");
+	fprintf(f, "\nPROCLIST: level of call, line number in file, file name (top=most recent call)\n\n");
 
 	const char *fname = 0;
 	int *linenum = 0, *level = 0;
@@ -497,6 +501,17 @@ void game_create_errorlog()
 	while (	get_stacklist_info(i, &fname, &linenum, &level) )
 	{
 		++i;	// go on until it's a full circle
+		if (fname && linenum && level)
+			fprintf(f, "%2i   %4i  %s\n", *level, *linenum, fname);
+	}
+
+	fprintf(f, "\nPROCSTACK: level of call, line number in file, file name (top=most recent call)\n\n");
+
+	// also, read the "other" stack info ...
+	i = 0;
+	while ( get_stacktrace_info( i, &fname, &linenum, &level) )
+	{
+		++i;
 		if (fname && linenum && level)
 			fprintf(f, "%2i   %4i  %s\n", *level, *linenum, fname);
 	}

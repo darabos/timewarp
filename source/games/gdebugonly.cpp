@@ -24,6 +24,7 @@ class GdebugOnly : public NormalGame
 
 void GdebugOnly::init(Log *_log)
 {
+	STACKTRACE;
 	NormalGame::init(_log);
 
 	//turbo = 100;
@@ -35,12 +36,13 @@ void GdebugOnly::init(Log *_log)
 	prepare();
 
 	// create a list of all the active ships ?
+
 }
 
 
 void GdebugOnly::animate(Frame *frame)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	if (animtoggle)
 		NormalGame::animate(frame);
@@ -50,7 +52,7 @@ void GdebugOnly::animate(Frame *frame)
 
 bool GdebugOnly::handle_key(int k)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	switch (k >> 8)
 	{

@@ -22,6 +22,7 @@ void caught_error(const char *format, ...);
 const int tw_error_str_len = 2048;	// should be plenty of room.
 extern char tw_error_str[tw_error_str_len];
 bool get_stacklist_info(int N, const char **filename, int **linenum, int **level);
+bool get_stacktrace_info(int N, const char **filename, int **linenum, int **level);
 
 
 

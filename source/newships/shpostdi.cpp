@@ -7,6 +7,8 @@ class OstokDisplacer : public Ship {
   int          weaponDamage;
   int          weaponArmour;
 
+  double		specialRange;
+
   //This is from the Arilou code
   int just_teleported;
 
@@ -39,6 +41,8 @@ OstokDisplacer::OstokDisplacer(Vector2 opos, double shipAngle,
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
 
+  specialRange   = scale_range(get_config_float("Special", "Range", 0));
+
 }
 
 int OstokDisplacer::activate_weapon()
@@ -63,7 +67,7 @@ void OstokDisplacer::inflict_damage(SpaceObject *other) {
 
 int OstokDisplacer::activate_special()
 {
-	STACKTRACE
+	STACKTRACE;
 
 	if (target && target->exists() && (!target->isInvisible()) && (target->mass > 0)) 
 	{
@@ -73,6 +77,11 @@ int OstokDisplacer::activate_special()
 		
 		Vector2 ss = pos;
 		Vector2 tt = target->normal_pos();
+
+		double d;
+		d = distance(target);
+		if (d > specialRange)
+			return false;
 		
 		target->translate(ss - tt);
 		translate(tt-ss);
@@ -82,8 +91,6 @@ int OstokDisplacer::activate_special()
 	}
 
 	return(TRUE);
-	
-	
 }
 
 void OstokDisplacer::calculate() {
