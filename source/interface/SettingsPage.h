@@ -36,28 +36,80 @@ using namespace std;
 #include "Interface.h"
 
 
+enum { MAX_TITLE_STRING_SIZE=100 };
 
 
+
+/** Defines how a page should be laid out to configure a particular gametype. */
 class SettingsPage {
+
+public:
+	
+	/** Constructor.  Creates a new page to configure a gametype.
+	    @param gametype the name of the gametype. */
+	SettingsPage(const char * gametype)
+	{
+		strcpy(gametypeName, gametype);
+        init();
+	}
+
+	/** add any graphical components to the specified diagram. */
+	virtual void populate(Dialog * dialog);
+
+	/** remove any graphical components from the specified diagram.  */ 
+	virtual void unpopulate(Dialog * dialog);
+
+	/** prepare how any graphical components should be laid out.  */
+	virtual void init();
+
+	/** handle key presses mouse moves, etc. in this function  */
+	virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);/**/
+
+	/** Creates and returns a new configuration based on the settings contained
+	    in this class.  */
+	virtual GameSessionConfiguration * getConfigInstance();
+
 private:
 	PanelRaised rightPanel;
 
 	PanelRaised labelBackground3;
 	Label label3;
+
+protected:
+	char gametypeName[MAX_TITLE_STRING_SIZE];
 	
+};
+
+
+/** Settings for the Melee gametype.  */
+class MeleeSettingsPage : public SettingsPage { 
+
+protected:
+	Label lMaxPlayers, lNumberOfHumans, lPadSlotsWithBots;
+	
+	//TODO a known issue is that if you enter an undefined value in the text area,
+	// then hit one of the scroll buttons, a crash occurs.
+	SpinBox maxPlayers, numberOfHumans;
+	CheckBox padSlotsWithBots;
+
 public:
-	SettingsPage(char * subtitle)
+
+	MeleeSettingsPage(const char * gametype) :
+	  SettingsPage(gametype)
 	{
-        init(subtitle);
+        this->init();
 	}
 
 	virtual void populate(Dialog * dialog);
 	virtual void unpopulate(Dialog * dialog);
 
-	virtual void init(char * subtitle);
+	virtual void init();
 
-	// handle key presses mouse moves, etc. in this function 
 	virtual void HandleEvent(Widget &w, int msg, int arg1=0, int arg2=0);/**/
+
+	virtual GameSessionConfiguration * getConfigInstance();
 };
+
+
 
 #endif

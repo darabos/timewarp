@@ -24,6 +24,7 @@ $Id$
 */
 
 #include "SettingsPage.h"
+#include "GameSessionConfiguration.h"
 
 void SettingsPage::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 	switch (msg) {
@@ -33,21 +34,20 @@ void SettingsPage::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 }
 
 
-void SettingsPage::init(char * subtitle)
+void SettingsPage::init()
 {
-  enum { MAX_TITLE_STRING_SIZE=100 };
-  char title[MAX_TITLE_STRING_SIZE];
-
-  strncpy(title, subtitle, MAX_TITLE_STRING_SIZE);
-  strcat(title, " Settings");
-
   rightPanel.Shape( 44,11,55,76, true);
 
   labelBackground3.Shape(45,12,53,5,true);
-  label3.Shape(46,12,51,5,true);
-  label3.SetText(title);
+  
+  char title[MAX_TITLE_STRING_SIZE];
 
+  strcpy(title, gametypeName);
+  strcat(title, " Settings");
+  label3.SetText(title);
+  label3.Shape(46,12,51,5,true);
 }
+ 
 
 
 void SettingsPage::populate(Dialog * dialog) {
@@ -61,3 +61,86 @@ void SettingsPage::unpopulate(Dialog * dialog) {
   dialog->Remove(labelBackground3);
   dialog->Remove(label3);
 }
+
+GameSessionConfiguration * SettingsPage::getConfigInstance() {
+	return new GameSessionConfiguration(gametypeName);
+}
+
+
+void MeleeSettingsPage::init() {
+	SettingsPage::init();
+
+	lMaxPlayers.Shape(46,17,25,5,true);
+	lMaxPlayers.SetText("Max players");
+	maxPlayers.Setup(71,17,15,5,0,0,(int)1,(int)20,(int)2,(int)1);
+	maxPlayers.Shape(71,17,15,5,true);
+
+	lNumberOfHumans.Shape(46,23,25,5,true);
+	lNumberOfHumans.SetText("Human Players");
+	numberOfHumans.Setup(71,23,15,5,0,0,(int)1,(int)20,(int)2,(int)1);
+	numberOfHumans.Shape(71,23,15,5,true);
+
+	padSlotsWithBots.SetText("Pad slots with Bots?");
+	padSlotsWithBots.Shape(46,28,25,5,true);
+}
+
+
+void MeleeSettingsPage::populate(Dialog * dialog) {
+	SettingsPage::populate(dialog);
+
+	dialog->Add(lMaxPlayers);
+	dialog->Add(maxPlayers);
+	
+	dialog->Add(lNumberOfHumans);
+	dialog->Add(numberOfHumans);
+
+	dialog->Add(padSlotsWithBots);
+}
+
+void MeleeSettingsPage::unpopulate(Dialog * dialog) {
+	SettingsPage::unpopulate(dialog);
+	
+	dialog->Remove(lMaxPlayers);
+	dialog->Remove(maxPlayers);
+	
+	dialog->Remove(lNumberOfHumans);
+	dialog->Remove(numberOfHumans);
+
+	dialog->Remove(padSlotsWithBots);
+}
+
+
+void MeleeSettingsPage::HandleEvent(Widget &w, int msg, int arg1, int arg2) {
+	SettingsPage::HandleEvent(w,msg,arg1,arg2);
+
+    switch (msg) {
+		case MSG_SCROLL: 
+
+			// make sure that the number of human players doesn't exceed the
+			// total number of players.
+			if ( (w==numberOfHumans) ||
+				 (w==maxPlayers) ) 
+			{
+				
+				if (numberOfHumans.GetPosition() > maxPlayers.GetPosition()) {
+					numberOfHumans.SetPosition(maxPlayers.GetPosition());
+				}
+			}
+		break;
+	}/**/
+	
+}
+
+
+GameSessionConfiguration * MeleeSettingsPage::getConfigInstance() {
+	return new MeleeSessionConfiguration(gametypeName);
+}
+
+
+
+
+
+
+
+
+

@@ -48,6 +48,8 @@ private:
 	Label label, label2;
 	PanelRaised labelBackground, labelBackground2;
 	Button bStart;
+
+	
 	
 	TextArea descriptionText;
 	
@@ -63,21 +65,7 @@ public:
        init();
 	}
 
-    virtual ~PlayLocalMenu() {
-		/*while (gametypeList.Size() > 0) {
-			if (gametypeList.GetItem(0) != NULL)
-				delete gametypeList.GetItem(0);
-			gametypeList.DeleteItem(0);
-		}*/
-		gametypeList.DeleteAllItems();
-
-		currentPage->unpopulate(this);
-		while (pages.size() >0) {
-			delete pages.back();
-			pages.pop_back();
-		}
-		pages.clear();
-	}
+    virtual ~PlayLocalMenu();
 
 
 	/** */

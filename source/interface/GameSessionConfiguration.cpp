@@ -24,4 +24,29 @@ $Id$
 */
 
 #include "GameSessionConfiguration.h"
+#include "../scp.h"
+#include "../melee/mgame.h"
+
+void GameSessionConfiguration::startGame()
+{
+   play_single(this->gametypeName);
+}
+
+
+
+void MeleeSessionConfiguration::startGame()
+{
+	num_players = this->_maxPlayers;
+	num_bots = this->_maxPlayers - this->_numberOfHumans;
+    play_single(this->gametypeName);
+}
+
+
+
+
+
+
+
+
+
 

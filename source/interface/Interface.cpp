@@ -157,9 +157,7 @@ void doMyEngine() {
 		
 		// start a game with the requested configuration.
 		if (config != NULL) {
-
-	       play_single(config->getGameType());
-
+			config->startGame();
 		}
 	}
 	

@@ -55,6 +55,13 @@ void MAS::SpinBox::Setup(int x, int y, int w, int h, int key, int flags, int min
 }
 
 
+void MAS::SpinBox::SetupNormalized(int x, int y, int w, int h, int key, int flags, int min, int max, int pos, int inc) {
+	Setup(x, y, w, h, key, flags, (double)min, (double)max, (double)pos, (double)inc);
+	Widget::Shape(x, y, w, h, true);
+	integerMode = true;
+	editBox.SetNumber((int)pos);
+}
+
 void MAS::SpinBox::HandleEvent(Widget& obj, int msg, int arg1, int arg2) {
 	if (msg == MSG_ACTIVATE) {
 		if (obj == bUp) {

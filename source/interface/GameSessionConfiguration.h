@@ -27,9 +27,8 @@ $Id$
 #ifndef GAMESESSIONCONFIGURATION_HEADER
 #define GAMESESSIONCONFIGURATION_HEADER 1
 
-#include <map>
-using namespace std;
-
+#include "string.h"
+#include "../scp.h"
 
 /** defines when players will choose their fleet for a given game session.  
     Some gametypes will force this value.  The definitions are:
@@ -59,35 +58,14 @@ public:
 		strcpy(gametypeName, gametype);
 	}
 	
-	char * getGameType() { return gametypeName; }
+	virtual char * getGameType() { return gametypeName; }
+
+	/** starts a game with these settings.  */
+	virtual void startGame();
 	
-
-/*	void insertParameter(const char * key, char * value) { 
-		_parameters.insert( pair<const char *, char*> (key,value) );
-	}
-
-	void removeParameter(const char * key) { 
-		_parameters.erase(key);
-	}
-
-	void alterParameter(const char * key, char * value) {
-        delete _parameters[key]; // ... is this a good idea, or not? (yb)
-		_parameters[key] = value;
-	}/**/
-
 protected:
 	
     char gametypeName[MAX_GAMETYPE_NAME];
-	/*struct LessThanStr
-	{
-		bool operator()(const char* s1, const char* s2) const
-		{ return strcmp(s1, s2) < 0; }
-	};
-	
-	typedef map <const char *, char *, LessThanStr> Parameters;
-	typedef map <const char *, char *, LessThanStr>::iterator ParametersIterator;
-
-	Parameters _parameters;*/
 };
 
 
@@ -100,6 +78,7 @@ public:
 							  bool padPlayerSlotsWithBots,
 							  FleetSelectionPolicy fleetSelectionPolicy) :
 	    GameSessionConfiguration(gametype),
+
         _numberOfHumans(numberOfHumans),
         _maxPlayers(maxPlayers),
         _padPlayerSlotsWithBots(padPlayerSlotsWithBots),
@@ -117,12 +96,13 @@ public:
 	{
 	}
 
+	/** starts a game with these settings.  */
+	virtual void startGame();
+
 	enum { DEFAULT_NUMBER_OF_HUMANS = 1 };
 	enum { DEFAULT_MAX_PLAYERS = 2 };
 	enum { DEFAULT_PAD_PLAYER_SLOTS_WITH_BOTS = 1 };
 	enum { DEFAULT_FLEET_SELECTION_POLICY = ROUND_START };
-
-
 
 protected:
 	unsigned short _numberOfHumans;

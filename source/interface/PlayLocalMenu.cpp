@@ -31,6 +31,19 @@ using namespace MAS;
 #include "Interface.h"
 using namespace Interface;
 
+
+PlayLocalMenu::~PlayLocalMenu()
+{
+	gametypeList.DeleteAllItems();
+
+	currentPage->unpopulate(this);
+	while (pages.size() >0) {
+		delete pages.back();
+		pages.pop_back();
+	}
+	pages.clear();
+}
+
 void PlayLocalMenu::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 	OverlayDialog::HandleEvent(obj, msg, arg1, arg2);
 	
@@ -47,7 +60,10 @@ void PlayLocalMenu::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 				_state = FOLLOW_NEXT;
 				_next = START_GAME;
 
-				*_configuration = new MeleeSessionConfiguration(gametypeList.GetSelectedItem()->GetText());
+				*_configuration = currentPage->getConfigInstance();
+				//MeleeSettingsPage * page = (MeleeSettingsPage*)currentPage;
+
+				//*_configuration = new MeleeSessionConfiguration(gametypeList.GetSelectedItem()->GetText());
 			}
 			
 			if (obj == bQuit) {
@@ -58,6 +74,15 @@ void PlayLocalMenu::HandleEvent(Widget &obj, int msg, int arg1, int arg2) {
 
 		case MSG_REMOVEME:
 			Remove(obj);
+			break;
+
+		case MSG_SCROLL:
+			if (obj == gametypeList) {
+				if (gametypeList.GetSelectedItem() != NULL) {
+				   descriptionText.SetText(gametypeList.GetSelectedItem()->GetText());
+				   setSettingsPage(gametypeList.Selection());
+				}
+			}
 			break;
 	}
 	if (currentPage != NULL)
@@ -87,7 +112,12 @@ void PlayLocalMenu::init() {
 	// *** game_names ***.Sort(); // TODO can't sort until the game_names list can be sorted
 	for (int i=0; i<num_games; i++) {
 		gametypeList.InsertItem( new ListItemString(game_names[i]),0 );
-        pages.insert( pages.begin(), new SettingsPage(game_names[i]) );
+		if (strcmp(game_names[i],"Melee") == 0) {
+			pages.insert( pages.begin(), new MeleeSettingsPage(game_names[i]) );
+		}
+		else {
+            pages.insert( pages.begin(), new SettingsPage(game_names[i]) );
+		}
 	}
 	
 	setSettingsPage(0);

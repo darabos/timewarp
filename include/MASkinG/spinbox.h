@@ -86,6 +86,10 @@ class SpinBox : public Dialog, public ScrollObject {
 			Shortcut for Widget::Setup() and ScrollObject::Setup(). Integer version.
 		*/
 		void Setup(int x, int y, int w, int h, int key, int flags, int min, int max, int pos, int inc);
+		/** 
+		    Shortcut for Widget::SetupNormalized() and ScrollObject::Setup(). Integer version.
+		*/
+		void SetupNormalized(int x, int y, int w, int h, int key, int flags, int min, int max, int pos, int inc);
 		/**
 			Handles events such as spinner button clicks so that the box is updated whenever a button is clicked.
 		*/
