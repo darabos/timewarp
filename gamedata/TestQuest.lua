@@ -7,6 +7,14 @@ b = 2;
 c = a + b;
 end
 
+function GAME_EVENT_SHIP_DIE()
+DialogStart "gamedata/pkunk-standing.bmp"
+	DialogWrite "Somebody is dead now"
+	answer = DialogAnswer("It doesn't matter!", 
+			 "bye")
+DialogEnd()
+end
+
 DialogStart "gamedata/pkunk-standing.bmp"
 function question1()
 	DialogWrite "Hello, my spiritual child. I have no quest for you yet"

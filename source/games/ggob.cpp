@@ -401,6 +401,9 @@ int GobGame::get_enemy_index(SpaceLocation *what) {
 void GobGame::ship_died(Ship *who, SpaceLocation *source) {
 	STACKTRACE
 
+	EventShipDie esd;
+	gobgame->GenerateEvent(&esd);
+
 
 	GobPlayer *p = this->get_player(who);
 	if (p && (p->ship == who)) { //Player died

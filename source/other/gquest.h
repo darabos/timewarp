@@ -7,10 +7,12 @@ extern "C" {
 #include <lauxlib.h>
 }
 
+#include "gevent.h"
+
 class GobPlayer;
 
 
-class Quest
+class Quest: public EventListner
 {
   bool bExist;
   lua_State * L;
@@ -19,23 +21,27 @@ class Quest
  public:
   Quest( const char * szLuaFile, GobPlayer * player );
   virtual ~Quest();
-    /*! \brief Summon default quest handler
-      This function summon in every player think()
-    */
-    void Process();
-    bool exist();
-    private:
+  /*! \brief Summon default quest handler
+    This function summon in every player think()
+  */
+  void Process();
+  bool exist();
+  
+  /*! \brief Process Event */
+  virtual void  ProcessEvent( IEvent* event);
+  
+ private:
   // This is callback functions from Lua quest script
   /*! \brief On complite quest */
   static int l_Dialog(lua_State* ls);
   /*! \brief Add quest object ( ship, starbase) to the game */
   static int l_AddObject(lua_State* ls);
   /*! \brief Remove quest object ( ship, starbase ... ) */
-  static int l_RemoveObject(lua_State*ls);
+  static int l_RemoveObject(lua_State*ls);  
 };
 
 
-class QuestSource
+class QuestSource 
 {
  protected:
   virtual int LoadQuestList( const char* qlist );
@@ -54,6 +60,7 @@ class StarBaseQuestSource: public QuestSource
   virtual int QuestSuccess(Quest* q, GobPlayer* p);
   virtual int QuestFailed(Quest* q, GobPlayer* p);
   virtual int WhenMeet(GobPlayer* p);
+
 };
 
 #endif // __GQUEST_H__

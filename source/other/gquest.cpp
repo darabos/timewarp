@@ -25,6 +25,8 @@ Quest::Quest( const char * szLuaFile, GobPlayer * player )
   lua_register(L, "RemoveObject", l_RemoveObject);
   // Load Quest
   lua_dofile(L, szLuaFile);
+  // Register Events
+  gobgame->RegisterEvent(GAME_EVENT_SHIP_DIE, this);
 }
 
 Quest::~Quest()
@@ -86,7 +88,38 @@ void Quest::Process()
       tw_error("Unable to read Complited variable from lua script");
     }
   lua_settop(L, top);
+
   return;
+}
+
+void Quest::ProcessEvent ( IEvent* event )
+{
+  int type = event->GetEventType();
+  int top;
+  switch ( type )
+    {
+    case GAME_EVENT_ALL:
+      {tw_error ("Process Event failed");}
+      break;
+    case GAME_EVENT_SHIP_DIE:
+		// Test Implementation
+		top = lua_gettop(L);
+		lua_pushstring(L, "GAME_EVENT_SHIP_DIE");
+		lua_gettable(L, LUA_GLOBALSINDEX);
+
+
+		if ( !lua_isfunction(L, -1) )
+		{
+			tw_error("Quest script is not contain GAME_EVENT_SHIP_DIE function");
+		};
+		lua_call(L, 0, 0 );
+		lua_settop(L, top);
+      break;
+    case GAME_EVENT_SHIP_GET_DAMAGE:
+      break;
+    default:
+      break;
+    }
 }
 
 int Quest::l_Dialog(lua_State* ls)
@@ -138,3 +171,4 @@ int StarBaseQuestSource::WhenMeet(GobPlayer* p)
 {
   return NOT_IMPLEMENTED;
 }
+

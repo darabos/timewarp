@@ -11,6 +11,7 @@
 #include "melee/mcbodies.h"
 
 #include "other/gquest.h"
+#include "other/gevent.h"
 
 class Upgrade;
 class GobStation;
@@ -65,7 +66,7 @@ class GobAsteroid : public Asteroid {
 	virtual void death();
 };
 
-class GobGame : public Game {
+class GobGame : public Game, public EventHandler {
 
 	public:
 	virtual ~GobGame();
