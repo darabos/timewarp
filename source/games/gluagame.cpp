@@ -30,6 +30,7 @@ class LuaGame : public Game { //declaring our game type
 	virtual void init(Log *_log) ; //happens when our game is first started
     lua_State *L;
     virtual void LuaGame::quit(const char *message);
+	virtual void calculate();
 };
 
 
@@ -93,6 +94,36 @@ lua_ret
 
 
 
+// just return the whole string...
+// it also advances the string pointer ...
+
+static const char *get_lua_chunk (lua_State *L, void *data, size_t *size)
+{
+	char **s = (char**) data;
+
+	char *d = *s;
+
+	*size = strlen(*s);
+	*s += *size;
+
+	if (!*size)
+		return 0;
+	else
+		return d;
+}
+
+
+
+void lua_dochunk(lua_State *L, char **data)
+{
+	if (lua_load(L, get_lua_chunk, data, "loaded_chunk") != 0)
+		tw_error("lua: error loading memory chunk");
+
+	if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0)
+		tw_error("lua: something went wrong executing command");
+}
+
+
 
 
 void LuaGame::init(Log *_log)
@@ -114,6 +145,12 @@ void LuaGame::init(Log *_log)
 		lua_dofile(L, "./source/games/luatest/bridge.lua"));
 
     message.out(str, 3500, 15);
+
+
+	// this is used to see, if something can be initialized from a memory string - it can.
+	char *com = "addPlanet(1500,1500);";
+
+	lua_dochunk(L, &com);
 	
     
 	
@@ -145,6 +182,12 @@ void LuaGame::quit(const char *message)
 {
 	Game::quit(message);
 	lua_close(L);
+}
+
+
+void LuaGame::calculate()
+{
+	Game::calculate();
 }
 
 
