@@ -80,11 +80,11 @@ public:
     /** \brief cycles through each of the available preset maximum fleet sizes.
         \return the new fleet size */
     FleetCost cycleMaxFleetCost() {
-        ASSERT (!( (size != FLEET_COST_SMALL) &&
-                 (size != FLEET_COST_MEDIUM) &&
-                 (size != FLEET_COST_LARGE) &&
-                 (size != FLEET_COST_HUGE) &&
-                 (size != FLEET_COST_MASSIVE) ));
+        ASSERT (!( (maxFleetCost != FLEET_COST_SMALL) &&
+                 (maxFleetCost != FLEET_COST_MEDIUM) &&
+                 (maxFleetCost != FLEET_COST_LARGE) &&
+                 (maxFleetCost != FLEET_COST_HUGE) &&
+                 (maxFleetCost != FLEET_COST_MASSIVE) ));
 
         switch (maxFleetCost) {
         case FLEET_COST_SMALL:

@@ -101,7 +101,11 @@ OBJS = $(addprefix $(OBJDIR)/,$(PREP:.cpp=.o))
 DEPS = $(addprefix $(OBJDIR)/,$(PREP:.cpp=.d))
 
 ifdef win32
+ifndef debug
 SUBSYSTEM=-Wl,--subsystem=windows
+endif
+endif
+ifdef win32
 OBJS += $(OBJDIR)/winicon.o
 endif
 
