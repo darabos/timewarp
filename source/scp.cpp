@@ -1609,7 +1609,7 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
                 int height = (d->h-4) / text_height(font);
 
                 ret = D_USED_CHAR; 
-                d->flags = D_DIRTY;
+                d->flags |= D_DIRTY;
 
                 //scroll such that the selection is shown.
                 //only change the scroll if the selection is not already shown,
