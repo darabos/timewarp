@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <string.h>
 #include "base.h"
 #include "errors.h"
 
@@ -10,6 +11,13 @@ COMPILE_TIME_ASSERT(sizeof(long)==4);
 
 __call_before_main::__call_before_main ( void (*func)() ) {
 	func();
+}
+
+char *tw_strdup ( const char *str ) {
+	int l = strlen(str);
+	char *r = (char*) malloc(l+1);
+	strcpy(r, str);
+	return r;
 }
 
 #ifdef TW_MALLOC_CHECK

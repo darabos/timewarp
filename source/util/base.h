@@ -10,6 +10,9 @@
 #	endif
 #endif
 
+//char *tw_strdup(const char *str);
+//#define strdup  tw_strdup
+
 //#define TW_MALLOC_CHECK
 #ifdef TW_MALLOC_CHECK
 #	ifdef __cplusplus
