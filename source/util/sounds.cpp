@@ -20,27 +20,6 @@
 #define MAX_MUSIC_CHANNELS 22
 #define MIN_MUSIC_CHANNELS 10
 
-/*------------------------------
-		Sound (and MODs)
-------------------------------*/
-#ifdef NO_JGMOD
-	static void set_mod_volume(int a) {}
-	static void play_mod(Music *a, int b) {}
-	static void stop_mod() {}
-	static bool is_mod_playing() {return false;}
-	static void remove_mod() {}
-	static void install_mod(int a) {}
-	static void pause_mod() {}
-	static void resume_mod() {}
-	static Music *load_mod(const char *fname) {return NULL;}
-	static void destroy_mod(Music *) {}
-#	undef MIN_MUSIC_CHANNELS
-#	undef MAX_MUSIC_CHANNELS
-#	define MIN_MUSIC_CHANNELS 0
-#	define MAX_MUSIC_CHANNELS 0
-#else
-  #include <jgmod.h>
-#endif
 
 /* static int is_jgmod_compiled() {return 0;} */
 

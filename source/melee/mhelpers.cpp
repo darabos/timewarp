@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include "../util/sounds.h"
 
 
 /*
@@ -94,17 +95,17 @@ GFX_AUTODETECT_FULLSCREEN
 
 
 VideoSystem videosystem;
-/*static void tw_display_switch_out() {
-	if (game && !game->is_paused()) {
-		game->pause();
-		game->unpause();
-		}
-	}*/
+
+static void tw_display_switch_out() {
+    pause_mod();
+	}
 static void tw_display_switch_in() {
 	if (get_time() > videosystem.last_poll + 1000) {
 		videosystem.redraw();
 	}
 	else videosystem.screen_corrupted = true;
+
+    resume_mod();
 }
 static int _gamma = -1;
 static unsigned char _gamma_map[256];
@@ -311,7 +312,7 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 	if (set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
 		set_display_switch_mode(SWITCH_BACKGROUND);
 	set_display_switch_callback(SWITCH_IN, tw_display_switch_in);
-//	set_display_switch_callback(SWITCH_OUT, tw_display_switch_out);
+	set_display_switch_callback(SWITCH_OUT, tw_display_switch_out);
 
 	int owidth, oheight, obpp, ogamma, ofullscreen;
 	owidth = this->width; oheight = this->height; obpp = this->bpp; 

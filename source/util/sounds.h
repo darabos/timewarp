@@ -12,6 +12,8 @@
 	#error unknown platform (allegro?)
 #endif
 
+#include "base.h"
+
 class SoundSystem : public BaseClass {
 	public:
 	enum {
@@ -53,5 +55,28 @@ class SoundSystem : public BaseClass {
 }
 extern tw_soundsystem;
 #define sound tw_soundsystem
+
+/*------------------------------
+		Sound (and MODs)
+------------------------------*/
+#ifdef NO_JGMOD
+	static void set_mod_volume(int a) {}
+	static void play_mod(Music *a, int b) {}
+	static void stop_mod() {}
+	static bool is_mod_playing() {return false;}
+	static void remove_mod() {}
+	static void install_mod(int a) {}
+	static void pause_mod() {}
+	static void resume_mod() {}
+	static Music *load_mod(const char *fname) {return NULL;}
+	static void destroy_mod(Music *) {}
+#	undef MIN_MUSIC_CHANNELS
+#	undef MAX_MUSIC_CHANNELS
+#	define MIN_MUSIC_CHANNELS 0
+#	define MAX_MUSIC_CHANNELS 0
+#else
+  #include <jgmod.h>
+#endif
+
 
 #endif // __SOUNDS_H__
