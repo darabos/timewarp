@@ -23,6 +23,10 @@
 #include <errno.h>
 #include <allegro.h>
 
+#ifdef ALLEGRO_MSVC
+	#pragma warning (disable:4786)
+#endif
+
 #ifdef WIN32
 	#include <allegro/platform/aintwin.h>
 #endif

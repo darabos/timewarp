@@ -1,3 +1,8 @@
+#include <allegro.h>
+
+#ifdef ALLEGRO_MSVC
+	#pragma warning (disable:4786)
+#endif
 
 #include "games/ggob.h"
 #include "gdialog.h"

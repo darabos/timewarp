@@ -6,6 +6,10 @@
 
 #include <allegro.h>
 
+#ifdef ALLEGRO_MSVC
+	#pragma warning (disable:4786)
+#endif
+
 #include "gdialog.h"
 #include "games/ggob.h"
 

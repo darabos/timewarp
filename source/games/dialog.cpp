@@ -7,6 +7,11 @@ extern "C" {
 }
 
 #include <allegro.h>
+
+#ifdef ALLEGRO_MSVC
+#pragma warning (disable:4786)
+#endif
+
 #include "dialog.h"
 #include "util/aautil.h"
 #include "util/aastr.h"

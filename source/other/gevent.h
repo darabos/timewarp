@@ -12,7 +12,6 @@
 #include <algorithm>
 
 
-
 class Ship;
 
 enum EventTypes
