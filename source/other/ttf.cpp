@@ -77,7 +77,7 @@ static void cleanup (FT_Library engine, FT_Face face)
 
 
 // for debugging (copied from allegro)
-static void color_destroy_font(FONT* f)
+void color_destroy_font(FONT* f)
 {
     FONT_COLOR_DATA* cf;
 

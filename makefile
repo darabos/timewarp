@@ -26,7 +26,7 @@ VPATH = source source/ais source/games source/games/triggers source/melee \
         source/gamex/edit source/gamex/general source/gamex/stuff \
         source/gamex/dialogs source/jpgalleg
 
-FILELIST= ${shell find source -type f "(" -name "*.c" -o -name "*.cpp" ")"}
+FILELIST= ${shell find source -type f "(" -name "*.c" -o -name "*.cpp" ")"| grep -v masking[/] | grep -v alfont[/]}
 BASE_NAMES = $(basename $(notdir $(FILELIST)))
 
 POBJS = $(addsuffix .o,$(BASE_NAMES))
@@ -69,11 +69,11 @@ else
 	LIBS += ${shell allegro-config --libs} ${shell freetype-config --libs}
 endif
 
-CFLAGS += -I./source 
+CFLAGS += -I./source
 
 #CFLAGS += ${addprefix -I./, $(VPATH)}
 
-LIBS += -llualib -llua
+LIBS += -llualib -llua -lalfont -lmasking
  
 OBJS = $(addprefix $(OBJDIR)/,$(POBJS))
 DEPS = $(addprefix $(OBJDIR)/,$(PDEPS))
