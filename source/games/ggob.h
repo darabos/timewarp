@@ -1,17 +1,27 @@
 #ifndef __GGOB_H__
 #define __GGOB_H__
 
+#include <list>
+
 #include "../melee.h"
 #include "../melee/mframe.h"
 #include "../melee/mgame.h"
 
 #include "../melee/mitems.h"
+#include "../melee/mcbodies.h"
+
+#include "gquest.h"
 
 class Upgrade;
 class GobStation;
 
+class GobGame;
+
 class GobPlayer {
 	public:
+  std::list<Quest*> quest;
+  GobGame * ggame;
+
 	int channel;
 	~GobPlayer();
 	Ship *ship;
@@ -34,7 +44,7 @@ class GobPlayer {
 	int value_starbucks;
 	int value_buckazoids;
 	TeamCode team;
-	void init(Control *c, TeamCode team);
+	void init(Control *c, TeamCode team, GobGame * g);
 	void died(SpaceLocation *killer);
 	void new_ship(ShipType *type);
 	int charge (char *name, int price_starbucks, int price_buckazoids) ;

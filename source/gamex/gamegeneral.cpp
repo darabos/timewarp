@@ -591,7 +591,7 @@ void locate_onedge_aligned_to_center(SpaceLocation *s, Vector2 center, Vector2 w
 
 
 
-void createfilelist(char ***list, int *N, char *scanname, int remext)
+void createfilelist(char ***List, int *N, char *scanname, int remext)
 {
 	int err;
 	al_ffblk info;
@@ -609,7 +609,7 @@ void createfilelist(char ***list, int *N, char *scanname, int remext)
 	al_findclose(&info);
 
 	// allocate memory for the filenames
-	*list = new char* [(*N)];
+	*List = new char* [(*N)];
 
 
 	// read the filenames
@@ -624,8 +624,8 @@ void createfilelist(char ***list, int *N, char *scanname, int remext)
 		{
 			if (!remext)
 			{
-				(*list)[i] = new char [strlen(info.name)+1];
-				strcpy((*list)[i], info.name);
+				(*List)[i] = new char [strlen(info.name)+1];
+				strcpy((*List)[i], info.name);
 			} else {
 
 				// copy the "*" wildcard part of the filename, and not the rest.
@@ -652,8 +652,8 @@ void createfilelist(char ***list, int *N, char *scanname, int remext)
 				}
 				tmpstr[k-i1] = 0;
 
-				(*list)[i] = new char [strlen(tmpstr)+1];
-				strcpy((*list)[i], tmpstr);
+				(*List)[i] = new char [strlen(tmpstr)+1];
+				strcpy((*List)[i], tmpstr);
 			}
 			++i;
 		}

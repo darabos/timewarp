@@ -101,7 +101,7 @@ void GobGame::add_gobplayer(Control *control) {
 	gobplayers += 1;
 	gobplayer = (GobPlayer**) realloc(gobplayer, sizeof(GobPlayer*) * gobplayers);
 	gobplayer[i] = new GobPlayer();
-	gobplayer[i]->init(control, new_team());
+	gobplayer[i]->init(control, new_team(), this);
 	add_focus(control, control->channel);
 	return;
 }
@@ -221,8 +221,6 @@ void GobGame::init(Log *_log) {
 	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i]);
 
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
-
-
 
 	int server_players, client_players;
 	set_config_file("client.ini");
@@ -346,6 +344,20 @@ void GobGame::fps() {
 */
 void GobGame::calculate() {
 	STACKTRACE
+	  int i;
+	for ( i = 0; i< gobplayers; i++)
+	  {
+	    GobPlayer * p = gobplayer[i];
+	    if(! p->ship )
+	      continue;
+
+	    for ( std::list<Quest*>::iterator iQ = p->quest.begin();
+		  iQ != p->quest.end();
+		  iQ++ )
+	      {
+			(*iQ)->Process();
+	      }
+	  }
 
 	if (next_add_new_enemy_time <= game_time) {
 		next_add_new_enemy_time = game_time;
@@ -423,7 +435,7 @@ GobPlayer *GobGame::get_player(SpaceLocation *what) {
 /*! \brief Create enemy ship
   Create random enemy ship if enemy limit is not riched. Also it patch some of the ships.
 */
-void GobGame::add_new_enemy() {
+void GobGame::add_new_enemy () {
 	STACKTRACE
 
 	const int num_enemy_types = 19;
@@ -521,6 +533,13 @@ void GobEnemy::died(SpaceLocation *what) {
 
 /*! \brief Free player resources */
 GobPlayer::~GobPlayer() {
+  // Free quest resources
+  for( std::list<Quest*>::iterator iQ = quest.begin();
+       iQ != quest.end();
+       iQ++)
+    {
+      delete *iQ;
+    }
 	free (pair_list);
 }
 
@@ -528,9 +547,12 @@ GobPlayer::~GobPlayer() {
   \param c player control
   \param team player team
 */
-void GobPlayer::init(Control *c, TeamCode team) {
+void GobPlayer::init(Control *c, TeamCode team, GobGame * g) {
 	STACKTRACE
 
+	  ggame = g;
+	  quest.clear();
+	
 	channel = c->channel;
 	starbucks = 0;
 	buckazoids = 0;
@@ -738,12 +760,14 @@ GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, const char *
 #define STATION_DIALOG_UPGRADE 1
 #define STATION_DIALOG_NEWSHIP 2
 #define STATION_DIALOG_REPAIR  3
+#define STATION_DIALOG_QUEST   4
 static DIALOG station_dialog[] =
 {// (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)     (d1)  (d2)  (dp)
   { d_button_proc,     385,  50,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Depart Station" , NULL, NULL },
   { d_button_proc,     385,  90,   150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Upgrade Ship" , NULL, NULL },
   { d_button_proc,     385,  130,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Buy New Ship" , NULL, NULL },
   { d_button_proc,     385,  170,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Repair Ship" , NULL, NULL },
+  { d_button_proc,     385,  210,  150,  30,   255,  0,    0,    D_EXIT,     0,    0,    (void *)"Get Quest" , NULL, NULL },
   { d_text_proc,       185,  420,  270,  30,   255,  0,    0,    0,          0,    0,    dialog_string[0], NULL, NULL },
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
@@ -827,14 +851,18 @@ void GobStation::station_screen(GobPlayer *s) {
 					}
 				}
 			break;
+    case STATION_DIALOG_QUEST:
+      Quest * q = new Quest ( "TestQuest.lua", s, s->ggame );
+      s->quest.push_back(q);
+      break;
 			}
 		if (r == STATION_DIALOG_DEPART) break;
 		}
 	return;
-	}
+}
 
-/*! \brief  ???
-  \param other ???
+/*! \brief  Meet with station
+  \param other location of object that colide with station
 */
 void GobStation::inflict_damage(SpaceObject *other) {
 	STACKTRACE

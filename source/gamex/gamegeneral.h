@@ -8,7 +8,7 @@ void replace_color(BITMAP *bmp, int col1, int col2);
 
 void makevideobmp(BITMAP *&bmp);
 
-void createfilelist(char ***list, int *N, char *scanname, int remext);
+void createfilelist(char ***List, int *N, char *scanname, int remext);
 
 
 class MousePtr : public SpaceObject
