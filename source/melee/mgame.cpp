@@ -104,8 +104,8 @@ void Game::increase_latency(int n)
 	lag_frames += n;
 	next_frame += n;
 
-	message.print(1500, 13, "Increasing latency [%i]", n);
-	message.animate(0);
+	//message.print(1500, 13, "Increasing latency [%i]", n);
+	//message.animate(0);
 	//if (p_local == 0) readkey();
 }
 
