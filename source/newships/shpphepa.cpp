@@ -166,7 +166,7 @@ int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double di
 	if ( energizepersonalarmour )
 	{
 		double evac = 0;
-		while ( evac < totdam && crew > 0 )	// yeah, the last one may also leave !!
+		while ( evac < totdam && crew >= 1 )	// yeah, the last one may also leave !!
 		{
 
 			int i = int(crew+0.5);
@@ -192,7 +192,8 @@ int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double di
 		Ship::handle_damage(src, normal, direct);
 	}
 
-	if ( crew == 0 )
+	// don't use == 0, but use < 1, cause of possible partial damage ? I assume, 0.8 crew is also dead crew...
+	if ( crew < 1 )
 		Ship::handle_damage(src, 0, 0);		// use the "default" die procedure
 
 	return totdam;
