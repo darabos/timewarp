@@ -205,7 +205,9 @@ static void register_shiptype ( const char *file ) {
 	shiptypes[i].code = shipclass(code);
 
 	if (!shiptypes[i].code)
-		tw_error("A ship without code? No way!");
+	{
+		tw_error("A ship without code? No way! [%s]", code);
+	}
 	
 	if (!shiptypes[i].data || !shiptypes[i].code) {
 		if (!data) data = "none";
@@ -756,7 +758,12 @@ void Ship::calculate()
 		if(angle >= PI2) angle -= PI2;
 	}
 
-	sprite_index = get_index(angle);
+	//sprite_index = get_index(angle);
+	// should be the same as earlier in this routine:
+	if (sprite->frames() > 64)
+		sprite_index = get_index(angle);
+	else
+		sprite_index = get_index(angle, PI/2, sprite->frames());
 
 	// hotspots are too much a luxury to include in massive games (lots of objects)
 	if (hashotspots)
