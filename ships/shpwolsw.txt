@@ -1,7 +1,0 @@
-
-Woldanish Sweeper
-
-Main weapon: Plasma cloud. This slowly loses power as it travels (like a Mycon Plasmoid), but when it receives damage, it adds to its power by absorbing the energy from the blast. If the plasma absorbs too much energy, it breaks into separate clouds.
-
-Special weapon: A mine.
-
