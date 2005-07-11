@@ -3,6 +3,7 @@
 REGISTER_FILE
 
 #include "../sc1ships.h"
+#include "../scp.h"
 
 int IlwrathAvenger::cloak_color[3] = { 15, 11, 9 };
 
@@ -87,14 +88,21 @@ void IlwrathAvenger::calculate()
   Ship::calculate();
 }
 
-void IlwrathAvenger::animate(Frame *space) {
+void IlwrathAvenger::animate(Frame *space)
+{
 	if((cloak_frame > 0) && (cloak_frame < 300))
 		sprite->animate_character( pos, sprite_index, 
 				pallete_color[cloak_color[cloak_frame / 100]], space);
-	else if ((cloak_frame >= 300)) {
-		sprite->animate_character( pos, sprite_index, pallete_color[255], space);
-		}
-	else Ship::animate(space);		
+	else if ((cloak_frame >= 300))
+	{
+		if (is_bot(control->channel) || !is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
+			sprite->animate_character( pos, sprite_index, pallete_color[255], space);
+		else
+			sprite->animate_character( pos, sprite_index, pallete_color[4], space);
+	}
+	else
+		Ship::animate(space);		
+
 	return;
 	}
 

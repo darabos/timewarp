@@ -9,6 +9,8 @@ class VenKekThrust;
 
 class VenKekFrigate : public Ship {
 public:
+IDENTITY(VenKekFrigate);
+public:
 
   double shipRawHotspotRate;
 
@@ -92,6 +94,8 @@ public:
 };
 
 class VenKekShot : public Missile {
+public:
+IDENTITY(VenKekShot);
 	public:
 	VenKekShot(double ox, double oy, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship,
@@ -101,6 +105,8 @@ class VenKekShot : public Missile {
 	};
 
 class VenKekThrust : public Missile {
+public:
+IDENTITY(VenKekThrust);
 public:
   int facingNumber;
   int launched;

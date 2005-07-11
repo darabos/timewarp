@@ -1,5 +1,5 @@
-This is an beta version of Star Control: 0.05u9
+This is a alpha version of Star Control: 0.06u1
 
-10 apr 2004
+11 juli 2005
 
-(visit http://timewarp.sf.net/ for latest version)
+(visit http://timewarp.sourceforge.net for latest version)

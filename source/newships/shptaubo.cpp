@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class TauBomber : public Ship
 {
+public:
+IDENTITY(TauBomber);
 	int			bombLifetime;
 	double		bombDamage, bombArmour;
 	double		bombProximity, bombBlastRange, bombKick;
@@ -30,6 +32,8 @@ public:
 
 class TauBomberBomb : public Missile
 {
+public:
+IDENTITY(TauBomberBomb);
 	double		blast_range, proximity_range, old_range, kick;
 	int		rotation_index;
 	double		blast_damage, lifetime;
@@ -49,6 +53,8 @@ public:
 
 class TauBomberBombExplosion : public Presence
 {
+public:
+IDENTITY(TauBomberBombExplosion);
 	Vector2 *xp, *xv;
 	int		num, lifetime, life_counter, color;
 public:
@@ -62,6 +68,8 @@ public:
 
 class TauBomberDecoy : public Shot//AnimatedShot
 {
+public:
+IDENTITY(TauBomberDecoy);
 	int		lifetime, lifetime_max;
 	double	slowdown;
 
@@ -74,6 +82,8 @@ public:
 
 class TauBomberJam : public SpaceLocation
 {
+public:
+IDENTITY(TauBomberJam);
 	int lifetime;
 	SpaceObject *host, *tgt;
 

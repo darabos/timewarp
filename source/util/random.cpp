@@ -41,7 +41,9 @@ enum {
 Uint32 RNG_lcg64a::randi(Uint32 max) {
 	return _rng_dist_32_flat(max, raw32());
 }
-Uint32 RNG_lcg64a::raw32() {
+Uint32 RNG_lcg64a::raw32()
+{
+	/* this algorithm is too repetitive
 #	if defined(_MSC_VER) && defined(__i386__) && !defined(NO_ASM)
 		split_int_64 i64 = s64;
 		_asm { mov eax, [i64.s.high] } 
@@ -68,6 +70,16 @@ Uint32 RNG_lcg64a::raw32() {
 #	else
 		s64.whole = (s64.whole * MULTIPLIER) + ADDITIVE;
 #	endif
+		*/
+
+	// a little less repetitive
+	const int ran_mult[4] = {1812433253, 2094358901, 1809384569, 1740025465};
+	const int ran_add[4]  = { 123456789,  239048723,  958178125,  281010345};
+
+	int k = (s64.s.high) & 3;
+	//s64.whole = ((s64.whole + ran_add[k]) * ran_mult[k]);// + ran_add[k];
+	s64.whole = (s64.whole * ran_mult[k]) + ran_add[k];
+
 	return s64.s.high;
 }
 Uint64 RNG_lcg64a::raw64() {

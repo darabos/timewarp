@@ -38,12 +38,16 @@ class ControlHuman : public Control {
 int stupid_bot(Ship *ship) ;
 
 /*! \brief AI with no brain */
-class ControlVegetable : public Control {	
+class ControlVegetable : public Control
+{	
 	public:
+
+	// sets auto-update to false, cause this is not supposed to do anything really..
+	ControlVegetable(const char *name, int channel);
+
 	virtual const char *getTypeName();
 	virtual int think();
 	virtual int choose_ship(VideoWindow *window, char *prompt, class Fleet *fleet);
-	ControlVegetable (const char *name, int channel) ;
 	};
 
 /*! \brief Simple AI */

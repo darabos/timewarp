@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class TauDagger : public Ship
 {
+public:
+IDENTITY(TauDagger);
 	double		weaponRange, weaponDamage, weaponFrameCount;
 
 	double		specialRange;
@@ -26,6 +28,8 @@ public:
 
 class TauDaggerBeam : public SpaceLine
 {
+public:
+IDENTITY(TauDaggerBeam);
 protected:
 	int				frame, frame_count;
 	double			relative_angle;
@@ -45,6 +49,8 @@ public:
 
 class TauDaggerShot : public Missile
 {
+public:
+IDENTITY(TauDaggerShot);
 protected:
 	int			s_ind;
 public:

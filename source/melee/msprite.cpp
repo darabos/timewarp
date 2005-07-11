@@ -1513,3 +1513,64 @@ int SpaceSprite::collide_ray(int lx1, int ly1, int *lx2, int *ly2,
 
 	return(FALSE);
 }
+
+
+
+
+
+BITMAP *create_video_bmp(int w, int h)
+{
+	BITMAP *bmp;
+	bmp = create_video_bitmap(w, h);
+
+	if (!bmp)
+	{
+		bmp = create_bitmap(w, h);
+	}
+
+	return bmp;
+}
+
+void destroy_video_bmp(BITMAP *bmp)
+{
+	if (!bmp)
+		return;
+
+	// allegro function
+	destroy_bitmap(bmp);
+}
+
+void destroy_bmp(BITMAP **bmp)
+{
+	if (!*bmp)
+		return;
+
+	if (is_video_bitmap(*bmp))
+		destroy_video_bmp(*bmp);
+	else
+		// allegro function
+		destroy_bitmap(*bmp);
+	*bmp = 0;
+}
+
+
+void destroy_rle(RLE_SPRITE **bmp)
+{
+	if (!*bmp)
+		return;
+
+	// allegro function
+	destroy_rle_sprite(*bmp);
+	*bmp = 0;
+}
+
+
+void destroy_sprite(SpaceSprite **sprite)
+{
+	if (!*sprite)
+		return;
+
+	delete *sprite;
+
+	*sprite = 0;
+}

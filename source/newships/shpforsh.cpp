@@ -6,6 +6,8 @@ REGISTER_FILE
 
 class ForevianShocker : public Ship
 {	double		weaponRange, weaponVelocity;
+public:
+IDENTITY(ForevianShocker);
 	int			weaponDamage, weaponArmour;
 	int			weapon_type;
 	int			weapon_frame_size;
@@ -33,6 +35,8 @@ protected:
 
 class ForevianShockwave : public AnimatedShot
 {
+public:
+IDENTITY(ForevianShockwave);
 	SpaceObject *last_hit;	int loss;
 
 public:

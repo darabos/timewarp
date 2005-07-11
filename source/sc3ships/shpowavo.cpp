@@ -7,6 +7,8 @@ REGISTER_FILE
 #define OWADISABLE_SPEC 0x36
 
 class OwaVoyager : public Ship {
+public:
+IDENTITY(OwaVoyager);
 
   double       weaponRange;
   double       weaponVelocity;
@@ -39,6 +41,8 @@ public:
 };
 
 class OwaMissile : public HomingMissile {
+public:
+IDENTITY(OwaMissile);
 
   int          missileArming;
   int          missileActive;
@@ -64,6 +68,8 @@ class OwaMissile : public HomingMissile {
 };
 
 class OwaShrapnel : public HomingMissile {
+public:
+IDENTITY(OwaShrapnel);
 
   int    missileArming;
   int    missileActive;
@@ -78,6 +84,8 @@ OwaShrapnel(Vector2 op,double oangle, double ov,
 };
 
 class OwaSpecial : public Missile {
+public:
+IDENTITY(OwaSpecial);
   int disableFrames;
 
   public:
@@ -90,6 +98,8 @@ class OwaSpecial : public Missile {
 };
 
 class OwaDisable : public SpaceObject {
+public:
+IDENTITY(OwaDisable);
   int   disableframe;
   int   disableframe_count;
   int   frame_step;

@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __TWBUTTON_H__
@@ -28,7 +28,7 @@ class TWindow;
 
 
 
-/** \brief The bare button type. Any buttons are derived from this. Basically,
+/** The bare button type. Any buttons are derived from this. Basically,
 only the i/o is defined here.
 
 */
@@ -134,7 +134,7 @@ public:
 };
 
 
-/** \brief A more specialized button type, which provides graphical routines
+/** A more specialized button type, which provides graphical routines
 for display.
 
 */
@@ -144,10 +144,12 @@ class GraphicButton : public EmptyButton
 public:
 
 	virtual bool hasmouse(BITMAP *bmpref);
+	virtual bool hasmouse(RLE_SPRITE *bmpref);
 
 	void draw_rect();
 	void draw_rect_fancy();
-	void draw_boundaries(BITMAP *bmpref);
+	//void draw_boundaries(RLE_SPRITE *bmpref);
+	
 	// auto-locate button
 	GraphicButton(TWindow *menu, char *identbranch, int asciicode, bool akeepkey = 0);
 
@@ -157,12 +159,21 @@ public:
 //	virtual void init(TWindow *menu, char *identbranch, int ax, int ay);
 	virtual ~GraphicButton();
 
+	void init_pos_size(RLE_SPRITE **bmp_default, char *idstr);
 	void init_pos_size(BITMAP **bmp_default, char *idstr);
+	void init_pos_size(char *idstr);
 	void locate_by_backgr(char *stron);
 	// should be a function of the main window, really ...
 
+	/** obtain a bitmap, specific to this "object" */
 	BITMAP *getbmp(char *name);
+	/** adds an extra step, and changes the bitmap you load into an RLE sprite */
+	RLE_SPRITE *getrle(char *name);
+
+	/** similar, but without name completion (button directory) */
 	BITMAP *getbmp_nobutton(char *name);
+	/** similar, but without name completion (button directory) */
+	RLE_SPRITE *getrle_nobutton(char *name);
 
 	virtual void animate();
 	virtual void draw_default();
@@ -170,7 +181,9 @@ public:
 	virtual void draw_selected();
 
 	// masked_blits the specified bitmap using the button coordinates.
+	bool masked;
 	bool draw(BITMAP *b);
+	bool draw(RLE_SPRITE *b);
 };
 
 #endif  // __TWBUTTON_H__

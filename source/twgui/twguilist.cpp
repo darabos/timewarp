@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #include <allegro.h>
@@ -10,10 +10,14 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include <stdio.h>
 #include <string.h>
 
-#include "twgui/twgui.h"
+#include "twguilist.h"
 #include "twwindow.h"
 
-#include "util/round.h"
+#include "utils.h"
+
+#include "../other/ttf.h"
+
+#include "../scp.h"
 
 // ------------ AND NOW THE GRAPHICAL PART ---------------
 
@@ -86,14 +90,88 @@ void TextButton::subanimate()
 {
 	int xcentre, ycentre;
 
-	xcentre = iround(size.x / 2);
-	ycentre = iround(size.y / 2 - text_height(usefont)/2);
+	xcentre = round(size.x / 2);
+	ycentre = round(size.y / 2 - text_height(usefont)/2);
 
 	text_mode(-1);
-	if (text)
+	if (text && drawarea)
 		textout_centre(drawarea, usefont, text, xcentre, ycentre, text_color);
 }
 
+
+
+
+
+
+
+
+
+// a textbutton displaying a integer value, which also takes 2 other buttons to tweak it's value
+
+
+ButtonValue::ButtonValue(TWindow *menu, char *identbranch, FONT *usefont)
+:
+TextButton(menu, identbranch, usefont)
+{
+
+	char tmp[512];
+	
+	strcpy(tmp, identbranch);
+	strcat(tmp, "dec_");
+	left = new Button(menu, tmp);
+
+	strcpy(tmp, identbranch);
+	strcat(tmp, "inc_");
+	right = new Button(menu, tmp);
+
+	value = 0;
+	vmin = 0;
+	vmax = 0;
+
+	passive = false;	// left/right click can also change value
+}
+
+
+void ButtonValue::set_value(int v1, int v, int v2)
+{
+	vmin = v1;
+	vmax = v2;
+	value = v;
+
+	char tmp[512];
+	sprintf(tmp, "%i", value);
+	set_text(tmp, makecol(200,100,100));
+}
+
+void ButtonValue::calculate()
+{
+	TextButton::calculate();
+
+	//if (bdec->flag.left_mouse_press || binc->flag.left_mouse_press)
+	if (flag.left_mouse_press || left->flag.left_mouse_press)
+	{
+		--value;
+
+		if (value < vmin )
+			value = vmax;
+		
+		char tmp[512];
+		sprintf(tmp, "%i", value);
+		set_text(tmp, makecol(200,100,100));
+	}
+
+	if (flag.right_mouse_press || right->flag.left_mouse_press)
+	{
+		++value;
+
+		if (value >= vmax)
+			value = vmin;
+
+		char tmp[512];
+		sprintf(tmp, "%i", value);
+		set_text(tmp, makecol(200,100,100));
+	}
+}
 
 
 
@@ -152,6 +230,7 @@ void TextList::calculate()
 }
 
 
+/** Set the list index to specified value */
 void TextList::set_selected(int iy)
 {
 //	yselected = iy;
@@ -160,6 +239,24 @@ void TextList::set_selected(int iy)
 	else
 		scroll.yselect = -1;
 }
+
+
+/** Set the list index to the first entry matching the string, or to the default value */
+void TextList::set_selected(char *s, int idefault)
+{
+	int i;
+	for ( i = 0; i < N; ++i )
+	{
+		if (strcmp(optionlist[i], s) == 0)
+			break;
+	}
+
+	if (i == N)		// no match
+		scroll.yselect = idefault;
+	else
+		scroll.yselect = i;	// a match
+}
+
 
 void TextList::clear_optionlist()
 {
@@ -264,7 +361,7 @@ void TextList::handle_lpress()
 
 	int iy;
 	
-	iy = iround(mainwindow->mpos.y - pos.y);
+	iy = round(mainwindow->mpos.y - pos.y);
 
 	iy /= Htxt;		// # of item relative to the top
 
@@ -286,18 +383,27 @@ void TextList::handle_lpress()
 }
 
 
+/** Returns the index of the selected item in the list */
 int TextList::getk()
 {
 	return scroll.yselect;
 }
 
-// select and center the list on "that" item
+
+/** Returns the string of the selected item in the list */
+char *TextList::get_selected()
+{
+	return optionlist[scroll.yselect];
+}
+
+
+/** select and center the list on "that" item */
 void TextList::handle_rpress()
 {
 	
 	int iy;
 	
-	iy = iround(mainwindow->mpos.y - pos.y);
+	iy = round(mainwindow->mpos.y - pos.y);
 
 	iy /= Htxt;		// # of item relative to the top
 
@@ -385,6 +491,8 @@ AreaTabletScrolled(menu, identbranch, 255)
 	textinfo = 0;
 	localcopy = 0;
 
+	set_area_default();
+
 	set_textinfo(atext, amaxtext);
 	
 	//scroll = ascroll;
@@ -406,16 +514,44 @@ TextInfoArea::~TextInfoArea()
 		delete localcopy;
 }
 
-// the following could be used for editing text that's stored elsewhere
+/** the following could be used for editing text that's stored elsewhere. Note
+however, that you should let the clean-up of this text be handled by the menu, not
+your main program. */
 void TextInfoArea::set_textinfo_unbuffered(char *newtext, int Nchars)
 {
 	if (textinfo)
 		delete textinfo;
 
-	textinfo = new TextInfo(usefont, drawarea, newtext, Nchars);
+	textinfo = new TextInfo(usefont, drawarea->w, drawarea->h, newtext, Nchars);
+
+	// adjust the area for this text (affects line positions)
+	textinfo->set_area(tw, th);
 
 	textinfo->reset(&scroll);
 	scroll.set_sel(0, 0);
+}
+
+void TextInfoArea::set_textinfo_file(char *filename)
+{
+	FILE *f;
+	f = fopen(filename, "rt");
+
+	if (!f)
+		return;
+
+	fseek(f, 0, SEEK_END);
+	int N = ftell(f);
+	rewind(f);
+
+	char *t = new char [N+1];
+
+	fread(t, 1, N, f);
+	t[N] = 0;
+
+	fclose(f);
+
+	set_textinfo(t, N);
+	delete t;
 }
 
 
@@ -444,6 +580,38 @@ void TextInfoArea::set_textinfo(char *atextinfo)
 	set_textinfo(atextinfo, strlen(atextinfo));
 }
 
+
+
+void TextInfoArea::set_area_default()
+{
+	tx = 0;
+	ty = 0;
+	tw = W;
+	th = H;
+
+	// this takes effect after a call to set_textinfo
+}
+
+void TextInfoArea::set_area(int x, int y, int w, int h)
+{
+	tx = x;
+	ty = y;
+	tw = w;
+	th = h;
+
+	if (tx+w >= W)
+		tx = W-w-1;
+	if (ty+h > H)
+		ty = H-h;
+
+	// this takes effect after a call to set_textinfo
+}
+
+void TextInfoArea::set_font(FONT *newfont)
+{
+	usefont = newfont;
+	// this takes effect after a call to set_textinfo
+}
 
 
 void TextInfoArea::subanimate()
@@ -477,6 +645,9 @@ void TextInfoArea::subanimate()
 		if (L > 127)
 			L = 127;
 
+		if (L < 0)
+			tw_error("Negative length, should not occur.");
+
 		strncpy(txt, &(textinfo->textinfo[n]), L);
 		txt[L] = 0;
 
@@ -489,7 +660,7 @@ void TextInfoArea::subanimate()
 				txt[k] = ' ';
 		}
 
-		textout(drawarea, usefont, txt, 0, (iline - scroll.yselect)*textinfo->Htxt, text_color);
+		textout(drawarea, usefont, txt, tx, ty+(iline - scroll.yselect)*textinfo->Htxt, text_color);
 	}
 	
 }
@@ -515,6 +686,10 @@ TextInfoArea(menu, identbranch, afont, atext, amaxtext)
 	//usefont = afont;
 	text = atext;
 	maxchars = amaxtext;	// a short line?
+	
+	colorprops = 0;
+	colorprops = new char [amaxtext];
+	reset_props();
 
 	textinfo = 0;
 	//textinfo = new TextInfo(afont, drawarea, text, amaxtext);
@@ -544,6 +719,9 @@ TextInfoArea(menu, identbranch, afont, atext, amaxtext)
 	text_color = 0;
 
 	passive = false;
+
+	isel1 = -1;
+	isel2 = -1;
 }
 
 
@@ -573,8 +751,8 @@ void TextEditBox::handle_lpress()
 
 	int ix, iy;
 	
-	iy = iround(mainwindow->mpos.y - pos.y);
-	ix = iround(mainwindow->mpos.x - pos.x);
+	iy = round(mainwindow->mpos.y - pos.y);
+	ix = round(mainwindow->mpos.x - pos.x);
 
 	iy += scroll.y * textinfo->Htxt;	// scroll->y = 1st item at the top
 
@@ -604,6 +782,13 @@ void TextEditBox::text_reset(char *newtext, int N)
 	textinfo->Nchars = N;
 	maxchars = N;
 	text_reset();
+
+	isel1 = -1;
+	isel2 = -1;
+
+	if (colorprops) delete colorprops;
+	colorprops = new char [N];
+	reset_props();
 }
 
 void TextEditBox::text_reset()
@@ -619,7 +804,20 @@ void TextEditBox::text_reset()
 	ys /= textinfo->Htxt;
 
 	scroll.set_sel(0, ys);
-	
+}
+
+
+void TextEditBox::reset_props()
+{
+	int i;
+	for ( i = 0; i < maxchars; ++i )
+		colorprops[i] = 0;
+}
+
+
+void TextEditBox::set_props(int i, char val)
+{
+	colorprops[i] |= val;
 }
 
 
@@ -686,53 +884,81 @@ void TextEditBox::calculate()
 		}
 	}
 
-	// Insert text from the clipboard (?)
+	// Insert text from the clipboard
 #ifdef LINUX
 
 #else
-	if (keyhandler.keyhit[KEY_V] && keyhandler.keynew[KEY_LCONTROL])
+	if ((keyhandler.keyhit[KEY_V] && keyhandler.keynew[KEY_LCONTROL]) ||
+		(keyhandler.keyhit[KEY_INSERT] && keyhandler.keynew[KEY_LSHIFT]) ||
+		(keyhandler.keyhit[KEY_F2]))
 	{
 		//Test: this can show contents of the clipboard ...
 		
 		HWND w;
 		w = win_get_window();
 		
-		OpenClipboard(w);
-		
-		char *txt = (char*) ::GetClipboardData(CF_TEXT);
-
-		int L;
-		L = strlen(txt);
-		if (L + charpos < maxchars)
+		if (w)
 		{
-			memmove(&text[charpos+L], &text[charpos], (maxchars-1)-charpos-L);
-
-			memcpy(&text[charpos], txt, L);
-
-			// update the editor linestarts and stuff...
-			text_reset();
+			
+			if (OpenClipboard(w))
+			{
+				
+				char *txt = (char*) ::GetClipboardData(CF_TEXT);
+				if (txt)
+				{
+					
+					int L;
+					L = strlen(txt);
+					if (L + charpos < maxchars)
+					{
+						memmove(&text[charpos+L], &text[charpos], (maxchars-1)-charpos-L);
+						
+						memcpy(&text[charpos], txt, L);
+						
+						// update the editor linestarts and stuff...
+						text_reset();
+					}
+				}
+				
+				CloseClipboard();
+			}
 		}
-		
-		CloseClipboard();
 	}
 #endif
 			
 	// check the special keys ?
 	if ( keyhandler.keyhit[KEY_BACKSPACE] && charpos > 0 )
 	{
-		// delete the previous character 
-		int m;
-		m = 1;
-		
-		// if it's a return, then delete that as well
-//		if (text[charpos-1] == '\n' && charpos > 1)
-//			++m;
-		// nah, don't delete, otherwise you can't undelete a line, purely
 
-		memmove(&text[charpos-m], &text[charpos], (maxchars-m)-charpos);
-		text[maxchars-m] = 0;
-		
-		charpos -= m;
+		if (isel1 == -1)
+		{
+			// delete the previous character 
+			int m;
+			m = 1;
+			
+			// if it's a return, then delete that as well
+			//		if (text[charpos-1] == '\n' && charpos > 1)
+			//			++m;
+			// nah, don't delete, otherwise you can't undelete a line, purely
+			
+			memmove(&text[charpos-m], &text[charpos], (maxchars-m)-charpos);
+			text[maxchars-m] = 0;
+			
+			charpos -= m;
+
+		} else {
+
+			// delete the selected text !!
+			int N = isel2 - isel1;
+			memmove(&text[isel1], &text[isel2], maxchars-N+1);
+
+			// remove selection
+			isel1 = -1;
+			isel2 = -1;
+			
+		}
+
+		text_reset();
 
 	}
 	
@@ -749,6 +975,7 @@ void TextEditBox::calculate()
 		memmove(&text[charpos], &text[charpos+m], (maxchars-m)-charpos);
 		text[maxchars-m] = 0;
 
+		text_reset();
 	}
 	
 	if ( keyhandler.keyhit[KEY_LEFT] )
@@ -792,6 +1019,86 @@ void TextEditBox::calculate()
 	if (ikey > 0)
 		text_reset();
 
+
+	// ----------------- handle select text ------------
+
+	if (flag.left_mouse_press && !keyhandler.keynew[KEY_LSHIFT])
+	{
+		isel1 = textinfo->getcharpos(mainwindow->mpos.x - pos.x, mainwindow->mpos.y - pos.y);
+		isel2 = isel1;
+	}
+
+	if (flag.left_mouse_hold)
+	{
+		int k;
+		k = textinfo->getcharpos(mainwindow->mpos.x - pos.x, mainwindow->mpos.y - pos.y);
+		if (k <= isel1)
+			isel1 = k;
+		else if (k >= isel2)
+			isel2 = k;
+
+
+	//	isel1 = 0;
+	//	isel2 = maxchars-1;
+		reset_props();
+
+		int i;
+		for ( i = isel1; i < isel2; ++i )
+		{
+			set_props(i, 1);
+		}
+	}
+
+	// Copy text to the clipboard
+#ifdef LINUX
+
+#else
+	if ( (keyhandler.keyhit[KEY_C] && keyhandler.keynew[KEY_LCONTROL]) ||
+			(keyhandler.keyhit[KEY_INSERT] && keyhandler.keynew[KEY_LCONTROL]) ||
+			(keyhandler.keyhit[KEY_F1]) )
+	{
+		
+		int N = isel2 - isel1;
+		
+		HANDLE t = GlobalAlloc (GMEM_MOVEABLE, 512);
+		
+		if (N > 500)
+			N = 500;
+
+		if (isel1 >= 0 && N > 0)
+		{
+			HWND w;
+			w = win_get_window();
+
+			if (w)
+			{
+				if (OpenClipboard(w))
+				{
+				
+					char *txt = (char*) GlobalLock(t);
+					
+					strncpy( (char*)txt, &text[isel1], isel2-isel1);
+					((char*)txt)[N] = 0;
+					
+					GlobalUnlock(t);
+
+	//				CopyMemory(t, &text[isel1], N);
+	//				((char*)t)[N] = 0;
+					
+					void *res = ::SetClipboardData( CF_TEXT, t );
+
+					//DWORD k = GetLastError();
+					// err 6: The handle is invalid
+					
+					
+					CloseClipboard();
+				}
+			}
+		}
+		
+	}
+#endif
+
 }
 
 
@@ -818,8 +1125,10 @@ void TextEditBox::subanimate()
 		// number of characters till the start of the next line
 		if ( iline < textinfo->Nlines-1 )
 			L = textinfo->linestart[iline+1] - n - 1;
-		else
+		else if (textinfo->textinfo)
 			L = strlen(&(textinfo->textinfo[n]));
+		else
+			L = 0;
 
 
 		// make a copy of this line (and add a 0 ?)
@@ -840,7 +1149,9 @@ void TextEditBox::subanimate()
 				txt[k] = ' ';
 		}
 
+		set_color_props(&colorprops[n]);
 		textout(drawarea, usefont, txt, 0, (iline - scroll.y)*textinfo->Htxt, text_color);
+		reset_color_props();
 	}
 
 
@@ -894,7 +1205,7 @@ AreaTabletScrolled(menu, identbranch, akey)
 
 	// obtain the overlay ... this defines the width/height of each matrix area
 
-	overlay = getbmp("overlay");
+	overlay = getrle("overlay");
 	if (!overlay)
 	{
 		twgui_error("MatrixIcons : overlay is missing");
@@ -909,8 +1220,8 @@ AreaTabletScrolled(menu, identbranch, akey)
 	Wicon = overlay->w;
 	Hicon = overlay->h;
 
-	Nxshow = iround( size.x / double(Wicon) );
-	Nyshow = iround( size.y / double(Hicon) );
+	Nxshow = round( size.x / double(Wicon) );
+	Nyshow = round( size.y / double(Hicon) );
 
 	itemproperty = 0;
 }
@@ -918,8 +1229,8 @@ AreaTabletScrolled(menu, identbranch, akey)
 
 MatrixIcons::~MatrixIcons()
 {
-	del_bitmap(&overlay);
-	del_bitmap(&tmp);
+	destroy_rle(&overlay);
+	destroy_bmp(&tmp);
 
 	if (itemproperty)
 		delete itemproperty;
@@ -940,7 +1251,7 @@ void MatrixIcons::set_iconinfo(BITMAP **alistIcon, double ascale)
 		++maxitems;
 	
 	// create the most "optimal" square map (minimum x,y positions means least search trouble (I think)).
-	Nx = iround( sqrt((fix)maxitems) );
+	Nx = round( sqrt((fix)maxitems) );
 	Ny = maxitems/Nx + 1;
 
 	if (Nx*Ny >= maxitems + Nx)
@@ -980,8 +1291,8 @@ void MatrixIcons::subcalculate()
 	if (hasmouse() && Tmouse.vx() != 0 && Tmouse.vy() != 0)
 	{
 		// control is handled by the mouse
-		scroll.xselect = iround(scroll.x + (mainwindow->mpos.x - pos.x) / Wicon);	// mouse coordinate within the matrix area
-		scroll.yselect = iround(scroll.y + (mainwindow->mpos.y - pos.y) / Hicon);
+		scroll.xselect = round(scroll.x + (mainwindow->mpos.x - pos.x) / Wicon);	// mouse coordinate within the matrix area
+		scroll.yselect = round(scroll.y + (mainwindow->mpos.y - pos.y) / Hicon);
 	}
 
 }
@@ -1010,8 +1321,8 @@ void MatrixIcons::subanimate()
 			yoverlay = (iy - scroll.y) * Hicon;
 
 			int w0, h0;
-			w0 = iround(listIcon[k]->w * mainwindow->scale * extrascale);
-			h0 = iround(listIcon[k]->h * mainwindow->scale * extrascale);
+			w0 = round(listIcon[k]->w * mainwindow->scale * extrascale);
+			h0 = round(listIcon[k]->h * mainwindow->scale * extrascale);
 
 			// create a intermediate icon
 			xicon =  (Wicon - w0) / 2;
@@ -1027,9 +1338,11 @@ void MatrixIcons::subanimate()
 					xicon, yicon, w0, h0 );
 			}
 
-			masked_blit(overlay, tmp, 0, 0, 0, 0, overlay->w, overlay->h );
+			//masked_blit(overlay, tmp, 0, 0, 0, 0, overlay->w, overlay->h );
+			draw_rle_sprite(tmp, overlay, 0, 0);
 
 			// blit the combined image onto the panel area
+			//masked_blit(tmp, drawarea, 0, 0, xoverlay, yoverlay, overlay->w, overlay->h );
 			masked_blit(tmp, drawarea, 0, 0, xoverlay, yoverlay, overlay->w, overlay->h );
 		}
 	}
@@ -1041,7 +1354,7 @@ void MatrixIcons::subanimate()
 	double a;
 	//a = 0.5 + 0.5 * sin(areareserve->menu_time * 1E-3 * 2*PI / 10);
 	a = 0.5;
-	rect(drawarea, i*Wicon, j*Hicon, (i+1)*Wicon-1, (j+1)*Hicon-1, makecol(iround(20*a),iround(100*a),iround(200*a)));
+	rect(drawarea, i*Wicon, j*Hicon, (i+1)*Wicon-1, (j+1)*Hicon-1, makecol(round(20*a),round(100*a),round(200*a)));
 }
 
 
@@ -1051,11 +1364,11 @@ void MatrixIcons::handle_rpress()
 	int mx, my;
 	
 	// mouse position relative to the center of the item window:
-	mx = iround(mainwindow->mpos.x - pos.x - size.x / 2);
-	my = iround(mainwindow->mpos.y - pos.y - size.y / 2);
+	mx = round(mainwindow->mpos.x - pos.x - size.x / 2);
+	my = round(mainwindow->mpos.y - pos.y - size.y / 2);
 
 	// velocity depends on how far you're away from the center.
-	scroll.add(iround(mx / (size.x/8)), iround(my / (size.y/8)));
+	scroll.add(round(mx / (size.x/8)), round(my / (size.y/8)));
 }
 
 

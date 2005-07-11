@@ -7,6 +7,8 @@ REGISTER_FILE
 #define BCC 3
 
 class HarikaYornRavager : public Ship {
+public:
+IDENTITY(HarikaYornRavager);
   int          regenrateFrames;
   int          regenrateCount;
   int          regenrating;
@@ -34,12 +36,16 @@ class HarikaYornRavager : public Ship {
 };
 
 class LassoMissile : public Missile {
+public:
+IDENTITY(LassoMissile);
   public:
   LassoMissile(Vector2 opos, double oangle, double ov, int odam,
     double orange, int oarmour, Ship *oship, SpaceSprite *osprite);
 };
 
 class LassoLaser : public Laser {
+public:
+IDENTITY(LassoLaser);
   double oldnx[BCC];
   double oldny[BCC];
   double oldex[BCC];

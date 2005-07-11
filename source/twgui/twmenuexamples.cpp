@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 
@@ -97,6 +97,8 @@ PopupT(ident, axshift, ayshift, outputscreen)
 	tbl->set_optionlist(aoptionslist, makecol(0,0,0));
 
 	exclusive = true;
+
+	closebutton = 0;
 }
 
 
@@ -112,6 +114,8 @@ PopupT(atrigger, ident, axshift, ayshift)
 	tbl->set_optionlist(aoptionslist, makecol(0,0,0));
 
 	exclusive = true;
+
+	closebutton = 0;
 }
 
 
@@ -125,20 +129,41 @@ PopupList::~PopupList()
 	//	delete tbl;
 }
 
+/** If you define a close-button, then the popup list stays visible until the
+button is pressed. */
+void PopupList::set_close(Button *b)
+{
+	closebutton = b;
+	exclusive = false;
+}
+
 
 // this calls close with return value
 void PopupList::check_end()
 {
 	PopupT::check_end();		// this is also a way to end (without choosing anything)
 
-	if (tbl->selected)
+	if (!closebutton)
 	{
-		tbl->selected = false;
-		close(tbl->getk());
+		if (tbl->selected)
+		{
+			tbl->selected = false;
+			close(tbl->getk());
+		}
+	} else {
+		if (closebutton->flag.left_mouse_press)
+		{
+			tbl->selected = false;
+			close(tbl->getk());
+		}
 	}
 }
 
 
+char *PopupList::getstring()
+{
+	return tbl->get_selected();
+}
 
 
 
@@ -294,6 +319,13 @@ PopupList(creator, ident, "list_", axshift, ayshift, afont, 0)
 
 	downdir = new Button(this, "downdir_");
 
+	accept = new Button(this, "accept_");
+	cancel = new Button(this, "cancel_");
+
+	name = new TextEditBox(this, "name_", afont, 0, 0);
+	strcpy(namestr, "");
+	name->text_reset(namestr, 64);
+
 	selection = false;
 
 	reset_dirlist();
@@ -416,10 +448,35 @@ void FileBrowser::calculate()
 				// do NOT check for fa_arch here, cause a file is often not an archive
 			{
 				// select the file ...
-				selection = true;
+				//selection = true;
+
+				strcpy(namestr, tbl->optionlist[k]);
 			}
 
 		}
+	}
+
+	if (accept->flag.left_mouse_press)
+	{
+		selection = true;
+	}
+
+	if (cancel->flag.left_mouse_press)
+	{
+		selection = false;
+
+		// close this without setting the selection, so that the main program
+		// doesn't know of any change.
+		//handle_focus_loss();
+		if (trigger)
+		{
+			// give back focus/control to the window that called this window.
+			trigger->mainwindow->show();
+			trigger->mainwindow->focus();
+		}
+
+		hide();
+		returnvalueready = false;
 	}
 }
 
@@ -435,7 +492,8 @@ void FileBrowser::check_end()
 		// to save work elsewhere, construct the filename
 		strcpy(fname, dir);
 		strcat(fname, "/");
-		strcat(fname, tbl->optionlist[k]);
+		//strcat(fname, tbl->optionlist[k]);
+		strcat(fname, namestr);		// this can be edited by hand !!
 
 		// also supply the filename-index separately, could be useful sometimes?
 		close(k);
@@ -596,3 +654,101 @@ void ValueEdit::calculate()
 	}
 }
 
+
+
+
+
+
+
+
+
+TextButtonPopupList::TextButtonPopupList(TWindow *menu, char *idbutton, char *idpop,
+	char *idlist, int axshift, int ayshift, FONT *afont, char **aaoptionslist,
+	char *atargetbuffer, int atargetbufsize)
+:
+PopupList(menu->twscreen, idpop, idlist, axshift, ayshift, afont, aaoptionslist)
+{
+	tbutton = new TextButton(menu, idbutton, afont);
+	tbuttoncol = makecol(100,100,100);
+	tbutton->set_text("", tbuttoncol);
+	tbutton->passive = false;
+
+	set_buffer(atargetbuffer, targetbufsize);
+
+	// well, you initialize the trigger button and the menu together, here.
+	trigger = tbutton;
+}
+
+
+bool TextButtonPopupList::ready()
+{
+	bool res;
+
+	res = Popup::ready();
+
+	if (!tbl->optionlist)
+		res = false;
+
+	return res;
+
+}
+
+void TextButtonPopupList::calculate()
+{
+	PopupList::calculate();
+
+	if (ready())	//returnvalueready)
+	{
+		tbutton->set_text(getstring(), tbuttoncol);
+
+		// a copy is placed in the targetbuffer (if there's a targetbuffer ;))
+		if (targetbuffer)
+			strncpy(targetbuffer, getstring(), targetbufsize);
+	}
+}
+
+
+void TextButtonPopupList::set_buffer(char *atargetbuffer, int atargetbufsize)
+{
+	targetbuffer = atargetbuffer;
+	targetbufsize = atargetbufsize;
+	tbutton->set_text(atargetbuffer, tbuttoncol);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// make use of this textinfo box, in some "controlled" menu space:
+
+PopupInfo::PopupInfo(char *ident, int axshift, int ayshift,
+							 FONT *afont, BITMAP *scr)
+:
+Popup(ident, axshift, ayshift, scr)
+{
+	tia = new TextInfoArea(this, "text_", afont, 0, 0);
+
+	closebutton = new Button(this, "close_");
+
+	exclusive = true;
+}
+
+PopupInfo::~PopupInfo()
+{
+	//if (tia)
+	//	delete tia;
+}
+
+
+void PopupInfo::check_end()
+{
+	if (closebutton->flag.left_mouse_press)
+		close(-1);
+}

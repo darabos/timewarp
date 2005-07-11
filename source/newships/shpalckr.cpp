@@ -16,6 +16,8 @@ REGISTER_FILE
  * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
  */
 class AlcheroKronos : public Ship {
+public:
+IDENTITY(AlcheroKronos);
 // the ship, dial included
 
   double dial_angle;
@@ -72,6 +74,8 @@ class AlcheroKronos : public Ship {
 };
 
 class AlcheroLaser : public Laser {
+public:
+IDENTITY(AlcheroLaser);
 // a laser beam flying by itself and slowing down with time
 
   bool   released;
@@ -98,6 +102,8 @@ class AlcheroLaser : public Laser {
 };
 
 class AlcheroLaserTrace : public Laser {
+public:
+IDENTITY(AlcheroLaserTrace);
 // a non-colliding laser beam that stays in place and fades away
 
   int    step;

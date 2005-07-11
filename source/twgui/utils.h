@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __TWGUI_UTILS_H__
@@ -25,6 +25,7 @@ int unmapkey1(int k);
 int unmapkey2(int k);
 
 
+#include <allegro.h>
 
 BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif);
 
@@ -132,6 +133,7 @@ public:
 
 static const int buffmax = 128;
 
+/** the key handler (for the menu, and also the game) */
 class TKeyHandler
 {
 private:
@@ -154,9 +156,17 @@ public:
 	void clearbuf();
 
 	bool pressed(char key);
+
+	bool key_control, key_shift, key_alt;
+
+	/** true if any one key is held, or pressed */
+	bool key_hold, key_press;
 };
 
+int round(double x);
 
+
+bool check_mask(BITMAP *b);
 
 #endif // __TWGUI_UTILS_H__
 

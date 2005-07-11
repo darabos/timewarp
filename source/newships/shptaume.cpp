@@ -6,6 +6,8 @@
 REGISTER_FILE
 
 class TauMercury : public Ship {
+public:
+IDENTITY(TauMercury);
 	double	weaponRange, weaponVelocity, weaponRelativity;
 	double	weaponDamage, weaponArmour;
 	double	weaponSpread, weaponAngle;
@@ -32,6 +34,8 @@ public:
 
 class TauMercuryShot : public AnimatedShot
 {
+public:
+IDENTITY(TauMercuryShot);
 	bool	sparks, frags;
 
 public:
@@ -45,6 +49,8 @@ public:
 
 class TauMercurySpark : public SpaceLine
 {
+public:
+IDENTITY(TauMercurySpark);
 	int lifetime, lifetime_max, r, g, b;
 
 public:

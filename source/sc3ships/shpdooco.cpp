@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class DoogConstructor : public Ship {
+public:
+IDENTITY(DoogConstructor);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;

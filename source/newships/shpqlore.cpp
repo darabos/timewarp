@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class QlonRedeemer : public Ship {
+public:
+IDENTITY(QlonRedeemer);
 	int    weaponColor;
 	double weaponRange;
 	int    weaponDamage;
@@ -22,6 +24,8 @@ class QlonRedeemer : public Ship {
 };
 
 class QlonLimpet : public AnimatedShot {
+public:
+IDENTITY(QlonLimpet);
   double slowdown_factor;
 
   public:
@@ -83,16 +87,18 @@ QlonLimpet::QlonLimpet(Vector2 opos, double ov, double slowdown,
     ofcount, ofsize),
   slowdown_factor(slowdown)
 {
-  if((ship->target) && (!ship->target->isInvisible()))
-    angle = ship->get_angle() +0;
-  else
-    angle = ship->get_angle() -0;
-
-  if(!(ship && ship->exists()))
-  {
-	  ship = 0;
-    state = 0;
-  }
+	  if(ship && (ship->target) && (!ship->target->isInvisible()))
+		  angle = ship->get_angle() +0;
+	  else
+		  angle = ship->get_angle() -0;
+	  
+	  vel = v * unit_vector(angle );
+	  
+	  if(!(ship && ship->exists()))
+	  {
+		  ship = 0;
+		  state = 0;
+	  }
 }
 
 void QlonLimpet::calculate()
@@ -115,14 +121,22 @@ void QlonLimpet::calculate()
 	}
 
 
-void QlonLimpet::inflict_damage(SpaceObject *other) {
-	STACKTRACE
-	if(!other->isShip()) {
-		if (other->damage_factor || other->mass) state = 0;
+void QlonLimpet::inflict_damage(SpaceObject *other)
+{
+	STACKTRACE;
+
+	if (!other)
 		return;
-		}
+
+	if (!other->isShip())
+	{
+		if (other->damage_factor || other->mass)
+			state = 0;
+		return;
+	}
 
 	Ship *target = (Ship *) other;
+
 
 	play_sound(data->sampleSpecial[1]);
 

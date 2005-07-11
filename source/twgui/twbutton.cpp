@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 
@@ -12,7 +12,8 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include "twbutton.h"
 #include "twwindow.h"
 
-#include "util/round.h"
+#include "utils.h"
+#include "../scp.h"
 
 
 EmptyButton::EmptyButton(TWindow *menu, char *identbranch, int asciicode, bool akeepkey)
@@ -331,6 +332,8 @@ void GraphicButton::locate(int ax, int ay)
 	pos.x = ax;
 	pos.y = ay;
 	mainwindow->scalepos(&pos);
+
+	masked = true;
 }
 
 
@@ -386,14 +389,102 @@ bool check_visibility(BITMAP *bmp, int x, int y)
 }
 
 
+// check if it's a visible pixel
+// copied from rle.c of allegro:
+/* get_rle_sprite:
+ *  Creates a run length encoded sprite based on the specified bitmap.
+ *  The returned sprite is likely to be a lot smaller than the original
+ *  bitmap, and can be drawn to the screen with draw_rle_sprite().
+ *
+ *  The compression is done individually for each line of the image.
+ *  Format is a series of command bytes, 1-127 marks a run of that many
+ *  solid pixels, negative numbers mark a gap of -n pixels, and 0 marks
+ *  the end of a line (since zero can't occur anywhere else in the data,
+ *  this can be used to find the start of a specified line when clipping).
+ *  For truecolor RLE sprites, the data and command bytes are both in the
+ *  same format (16 or 32 bits, 24 bpp data is padded to 32 bit aligment), 
+ *  and the mask color (bright pink) is used as the EOL marker.
+ */
+//xxx dunno if this routine works
+bool check_visibility(RLE_SPRITE *bmp, int x, int y)
+{
+	// only support 32 bit images
+	if (bmp->color_depth != 32)
+		return false;
+
+	if (x < 0 || x >= bmp->w || y < 0 || y >= bmp->h)
+		return false;
+
+	int L = bmp->size / 4;	// size is in bytes, we only check long-ints.
+	int *color = (int*) bmp->dat;
+
+	int xrle = 0;
+	int yrle = 0;
+	int i = 0;
+	while ( i < L)
+	{
+		if (*color == 0x0FF00FF)
+		{
+			// eol:
+			++yrle;
+			xrle = 0;
+			color += 1;	// skip this command.
+
+		} else if (*color < 0)
+		{
+			// a gap:
+			int n = -(*color);
+			xrle += n;
+			color += 1;	// skip command
+
+			if (yrle >= y && xrle >= x)	// pass occurs over a gap
+				return false;
+
+		} else {
+			// a sequence of colors:
+			int n = (*color);
+			xrle += n;
+			color += 2;	// skip command + 1 color info
+			
+			if (yrle >= y && xrle >= x)	// pass occurs over a range of solid colors
+				return false;
+		}
+
+	}
+
+	// no match found?!
+	return false;
+
+}
+
+
+
 // check a square area to see if it has the mouse on it.
 bool GraphicButton::hasmouse(BITMAP *bmpref)
 {
 	// first, check the square bitmap area
 	if (EmptyButton::hasmouse())
 	{
+		return true;
 		// then, check the bmp if there's a pixel touched...
-		return check_visibility(bmpref, iround(mainwindow->mpos.x - pos.x), iround(mainwindow->mpos.y - pos.y));
+		//xxx hasmouse() funcionality should be restored
+		//return check_visibility(bmpref, round(mainwindow->mpos.x - pos.x), round(mainwindow->mpos.y - pos.y));
+	} else
+		return false;
+}
+
+
+// check a square area to see if it has the mouse on it.
+bool GraphicButton::hasmouse(RLE_SPRITE *bmpref)
+{
+	// first, check the square bitmap area
+	if (EmptyButton::hasmouse())
+	{
+		return true;
+		// check the bmp if there's a pixel touched...
+		
+		//xxx hasmouse() funcionality should be restored
+//		return check_visibility(bmpref, round(mainwindow->mpos.x - pos.x), round(mainwindow->mpos.y - pos.y));
 	} else
 		return false;
 }
@@ -407,15 +498,15 @@ void GraphicButton::draw_rect()
 	BITMAP *b = mainwindow->drawarea;
 	int x1, y1, x2, y2;
 	
-	x1 = iround(pos.x);
-	y1 = iround(pos.y);
-	x2 = iround((pos+size).x - 1);
-	y2 = iround((pos+size).y - 1);
+	x1 = round(pos.x);
+	y1 = round(pos.y);
+	x2 = round((pos+size).x - 1);
+	y2 = round((pos+size).y - 1);
 
 	// draw something simple:
 
 	int D = 4;	// width of the rectangle
-	D *= iround(mainwindow->scale - 1);
+	D *= round(mainwindow->scale - 1);
 	if (D < 0)
 		D = 0;
 
@@ -445,14 +536,14 @@ void GraphicButton::draw_rect_fancy()
 	BITMAP *b = mainwindow->drawarea;
 	int x1, y1, x2, y2;
 	
-	x1 = iround(pos.x);
-	y1 = iround(pos.y);
-	x2 = iround((pos+size).x - 1);
-	y2 = iround((pos+size).y - 1);
+	x1 = round(pos.x);
+	y1 = round(pos.y);
+	x2 = round((pos+size).x - 1);
+	y2 = round((pos+size).y - 1);
 
 
 	int D = 2;	// width of the rectangle
-	D = iround(D * mainwindow->scale) - 1;		// cause 0 also counts as 1...
+	D = round(D * mainwindow->scale) - 1;		// cause 0 also counts as 1...
 	if (D < 0)
 		D = 0;
 
@@ -509,17 +600,17 @@ void GraphicButton::draw_rect_fancy()
 
 }
 
-
+/*
 void GraphicButton::draw_boundaries(BITMAP *bmpref)
 {
 	BITMAP *b = mainwindow->drawarea;
 
 	int i, j;
 	int W = 2;
-	W = iround(W * mainwindow->scale) - 1;
+	W = round(W * mainwindow->scale) - 1;
 
 	int L = 0;
-	int Ltotal = iround(5 * sqrt( (double)bmpref->w * bmpref->h ));
+	int Ltotal = round(5 * sqrt( (double)bmpref->w * bmpref->h ));
 	double phase = mainwindow->menu_time * 1E-3 * AL_PI;	//offset angle
 
 	for ( j = -W; j < bmpref->h + W; ++j )
@@ -537,7 +628,7 @@ void GraphicButton::draw_boundaries(BITMAP *bmpref)
 						
 						if (check_visibility(bmpref, i+wx, j+wy))
 						{
-							putpixel(b, iround(i+pos.x), iround(j+pos.y), //makecol(255,255,255));
+							putpixel(b, round(i+pos.x), round(j+pos.y), //makecol(255,255,255));
 								rect_fancy_getcolor2(phase, L, Ltotal));
 						}
 					}
@@ -549,7 +640,7 @@ void GraphicButton::draw_boundaries(BITMAP *bmpref)
 		}
 	}
 }
-
+*/
 
 
 /*
@@ -595,10 +686,9 @@ void GraphicButton::locate_by_backgr(char *strid)
 	// if the position has changed, then set the new position...
 	if (pos != oldpos)
 	{
-		set_config_int(0, strx, iround(pos.x));
-		set_config_int(0, stry, iround(pos.y));
+		set_config_int(0, strx, round(pos.x));
+		set_config_int(0, stry, round(pos.y));
 	}
-
 
 	mainwindow->scalepos(&pos);		// is normally called by the other init();
 
@@ -610,7 +700,6 @@ void GraphicButton::locate_by_backgr(char *strid)
 
 
 
-// obtain a bitmap, specific to this "object" :
 BITMAP *GraphicButton::getbmp(char *name)
 {
 	char streditbox[128];
@@ -621,6 +710,23 @@ BITMAP *GraphicButton::getbmp(char *name)
 	return mainwindow->bmp(streditbox);
 }
 
+RLE_SPRITE *GraphicButton::getrle(char *name)
+{
+	char streditbox[128];
+	strcpy(streditbox,  ident);
+	strcat(streditbox,  name);
+
+	// a background image is needed of course.
+	BITMAP *bmp = mainwindow->bmp(streditbox);
+	RLE_SPRITE *rle = 0;
+	if (bmp)
+		rle = get_rle_sprite(bmp);
+	destroy_bitmap(bmp);
+
+	return rle;
+}
+
+
 
 // obtain a bitmap using "absolute" path, so that it can come from anywhere...
 BITMAP *GraphicButton::getbmp_nobutton(char *name)
@@ -629,7 +735,39 @@ BITMAP *GraphicButton::getbmp_nobutton(char *name)
 	return mainwindow->bmp(name);
 }
 
+// obtain a bitmap using "absolute" path, so that it can come from anywhere...
+RLE_SPRITE *GraphicButton::getrle_nobutton(char *name)
+{
+	BITMAP *bmp = mainwindow->bmp(name);
+	RLE_SPRITE *rle = get_rle_sprite(bmp);
+	destroy_bitmap(bmp);
+	return rle;
+}
 
+
+
+
+void GraphicButton::init_pos_size(RLE_SPRITE **bmp_default, char *idstr)
+{
+	*bmp_default = getrle(idstr);
+
+	if (*bmp_default)
+	{
+		size.x = (*bmp_default)->w;		// note: it's already scaled on initialization.
+		size.y = (*bmp_default)->h;
+	} else {
+		//tw_error("Could not initialize Button bitmap");
+		size = 0;
+	}
+
+
+	if ( *bmp_default )
+		locate_by_backgr(idstr);
+//	else
+//	{
+//		tw_error("No default Button defined!");
+//	}
+}
 
 
 void GraphicButton::init_pos_size(BITMAP **bmp_default, char *idstr)
@@ -655,11 +793,55 @@ void GraphicButton::init_pos_size(BITMAP **bmp_default, char *idstr)
 }
 
 
+void GraphicButton::init_pos_size(char *idstr)
+{
+	BITMAP *bmp = getbmp(idstr);	// load a scaled bitmap (for no real purpose but well...)
+	
+	if (bmp)
+	{
+		size.x = bmp->w;		// note: it's already scaled on initialization.
+		size.y = bmp->h;
+	} else
+		size = 0;
+
+	locate_by_backgr(idstr);
+
+	destroy_bmp(&bmp);
+}
+
+
 bool GraphicButton::draw(BITMAP *b)
+{
+
+	if (b)
+	{
+		if (masked)
+		{
+			acquire_bitmap(b);
+			masked_blit(b, mainwindow->drawarea, 0, 0,
+				round(pos.x + mainwindow->ixoffs), round(pos.y + mainwindow->iyoffs),
+				b->w, b->h);
+			release_bitmap(b);
+		} else {
+			acquire_bitmap(b);
+			blit(b, mainwindow->drawarea, 0, 0,
+				round(pos.x + mainwindow->ixoffs), round(pos.y + mainwindow->iyoffs),
+				b->w, b->h);
+			release_bitmap(b);
+		}
+		return true;
+
+	} else
+		return false;
+}
+
+
+bool GraphicButton::draw(RLE_SPRITE *b)
 {
 	if (b)
 	{
-		masked_blit(b, mainwindow->drawarea, 0, 0, iround(pos.x), iround(pos.y), b->w, b->h);
+		draw_rle_sprite(mainwindow->drawarea, b,
+			round(pos.x + mainwindow->ixoffs), round(pos.y + mainwindow->iyoffs));
 		return true;
 
 	} else

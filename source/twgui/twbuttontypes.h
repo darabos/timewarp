@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __TWBUTTONTYPES_H__
@@ -13,7 +13,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 
 // to implement a button, you add bitmaps-feedback to the box-area control
 
-/** \brief A single button.
+/** A single button.
 
 */
 
@@ -22,7 +22,7 @@ class Button : public GraphicButton
 protected:
 
 public:
-	BITMAP *bmp_default, *bmp_focus, *bmp_selected;
+	RLE_SPRITE *bmp_default, *bmp_focus, *bmp_selected;
 
 	Button(TWindow *menu, char *identbranch, int asciicode = 0, bool keepkey = 0);
 	virtual ~Button();
@@ -36,7 +36,7 @@ public:
 };
 
 
-/** \brief A general area for displaying graphics, which can be changed if needed.
+/** A general area for displaying graphics, which can be changed if needed.
 
 */
 
@@ -45,25 +45,69 @@ class Area : public GraphicButton
 protected:
 
 public:
-	BITMAP *backgr;
+	int W, H;
+	bool buffered;
+
+	RLE_SPRITE *backgr;
 	bool markfordeletion;
 
 	Area(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
 	virtual ~Area();
 
 	virtual void changebackgr(char *fname);
-	virtual void changebackgr(BITMAP *newb);
-	virtual void overwritebackgr(BITMAP *newb, double scale, int col);
+	virtual void changebackgr(RLE_SPRITE *newb);
+	//virtual void overwritebackgr(BITMAP *newb, double scale, int col);
 
 	virtual void animate();		// shouldn't be changed.
 
 	virtual bool hasmouse();
 	virtual bool isvalid();
+
+	void check_unbuffered_bmp();
 };
 
 
+/** also, but this one uses a bitmap, so that you can draw on top of the bitmap background */
+class AreaDraw : public Area
+{
+protected:
 
-/** \brief A more specialized area for displaying graphics. It allocates an extra
+public:
+	BITMAP *backgrdraw;
+
+	AreaDraw(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
+	virtual ~AreaDraw();
+
+	virtual void animate();		// shouldn't be changed.
+
+	virtual bool hasmouse();
+	virtual bool isvalid();
+
+	void check_unbuffered_bmp();
+};
+
+
+/** This is a "dummy" section of the main screen, so it is not a separate bitmap,
+and does not require an additional blit operation to put it on top of the menu - this
+is useful in case of large areas, where blitting is costly*/
+class SubArea : public Area
+{
+public:
+	BITMAP *backgr;
+	BITMAP *olddrawarea;
+	
+	SubArea(TWindow *menu, char *identbranch, int asciicode = 0, bool akeepkey = 0);
+	~SubArea();
+
+	void reset_backgr();
+	virtual void calculate();
+	virtual void animate();
+	/** is needed again, cause the backgr isnow a different variable !! */
+	virtual bool hasmouse();
+};
+
+
+/** A more specialized area for displaying graphics. It allocates an extra
 drawing bitmap (i.e. adds an extra drawing layer), so that you can draw over
 the background without changing the background itself.
 
@@ -89,7 +133,7 @@ public:
 
 
 
-/** \brief A button that toggles between two states, on or off, whenever it's pushed.
+/** A button that toggles between two states, on or off, whenever it's pushed.
 
 */
 
@@ -97,7 +141,7 @@ class SwitchButton : public GraphicButton
 {
 protected:
 public:
-	BITMAP	*bmp_on, *bmp_off;
+	RLE_SPRITE	*bmp_on, *bmp_off;
 
 	bool	state;	// true=on, false=off
 	// x, y, W, H are inside the draw area
@@ -116,7 +160,7 @@ public:
 };
 
 
-/** \brief An invisible button ; can be used to fake a trigger-button for a popup menu.
+/** An invisible button ; can be used to fake a trigger-button for a popup menu.
 
 */
 
@@ -130,7 +174,7 @@ public:
 
 
 
-/** \brief Manages a horizontal or vertical (auto-determined based on bitmap
+/** Manages a horizontal or vertical (auto-determined based on bitmap
 dimension) scrollbar. It has a background, and animates the bar-handle on top of
 that. This can be used together with a "manager" class, the ScrollControl.
 
@@ -140,7 +184,7 @@ class ScrollBar : public AreaTablet
 {
 protected:
 public:
-	BITMAP	*button;
+	RLE_SPRITE	*button;
 
 	enum {hor = 1, ver= 2}	direction ;
 
@@ -161,6 +205,12 @@ public:
 
 	virtual void calculate();
 };
+
+
+
+
+
+
 
 
 #endif // __TWBUTTONTYPES_H__

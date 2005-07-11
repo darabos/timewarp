@@ -4,6 +4,8 @@ REGISTER_FILE
 #include "../melee/mcbodies.h"
 
 class ClairconctlarPinnacle : public Ship {
+public:
+IDENTITY(ClairconctlarPinnacle);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -27,6 +29,8 @@ class ClairconctlarPinnacle : public Ship {
 };
 
 class ClairconctlarBeacon : public Shot {
+public:
+IDENTITY(ClairconctlarBeacon);
 
   ClairconctlarPinnacle *mother;
 

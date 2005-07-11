@@ -182,7 +182,12 @@ int ControlHuman::think() {
 	return r;
 }
 
-ControlHuman::ControlHuman(const char *name, int channel) : Control(name, channel) {}
+ControlHuman::ControlHuman(const char *name, int channel)
+:
+Control(name, channel)
+{
+	auto_update = false;	// networked player need think() to be called externally, so that it's synched...
+}
 
 #define KEY_DIALOG_MODIFY    0
 #define KEY_DIALOG_OK        17

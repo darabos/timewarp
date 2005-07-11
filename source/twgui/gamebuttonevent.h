@@ -1,11 +1,12 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __GAMEBUTTONEVENT_H__
 #define __GAMEBUTTONEVENT_H__
-/** \brief Referenced by pointer by a button; if the value is non-zero, it
+
+/** Referenced by pointer by a button; if the value is non-zero, it
 calls the routines in this struct, based on the mouse state. In this way you
 can define specific funtions inside your game code. It's a template, so that it allows
 you to pass pointers to game-class functions, i.e., functions which have access

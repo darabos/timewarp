@@ -8,6 +8,8 @@ REGISTER_FILE
 class PanCohAvian : public Ship
 {
 public:
+IDENTITY(PanCohAvian);
+public:
 	double       weaponTime;
 	double       weaponVelocity;
 	int          weaponDamage;
@@ -30,6 +32,8 @@ public:
 class TimedShot : public SpaceObject
 {
 public:
+IDENTITY(TimedShot);
+public:
 	double armour;
 	double existtime, maxtime;
 
@@ -46,6 +50,8 @@ public:
 class PanCohCrystal : public TimedShot
 {
 public:
+IDENTITY(PanCohCrystal);
+public:
 	PanCohCrystal(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
 		double ovel, double otime, double oarmour, double odamage);
 	
@@ -56,6 +62,8 @@ public:
 
 class PanCohFeather : public TimedShot
 {
+public:
+IDENTITY(PanCohFeather);
 	double vref, period, angle0;
 	double alpha, dalpha;
 public:

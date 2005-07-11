@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../sc2ships.h"
 
 class ThraddashFlame : public Animation {
+public:
+IDENTITY(ThraddashFlame);
   int armour;
 
   public:

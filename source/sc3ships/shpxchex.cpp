@@ -6,7 +6,16 @@ REGISTER_FILE
 
 #define XCHAGGERDISABLE_SPEC 0x37
 
+// allows other ships to affect control over a ship.
+class OverrideControlXchagger : public OverrideControl
+{
+public:
+	virtual void calculate(short *key);
+};
+
 class XchaggerExclave : public Ship {
+public:
+IDENTITY(XchaggerExclave);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -26,6 +35,10 @@ class XchaggerExclave : public Ship {
   virtual int activate_special();
 };
 class XchaggerDisable : public SpaceObject {
+public:
+IDENTITY(XchaggerDisable);
+	OverrideControlXchagger *ocx;
+	Ship *affectship;
   int   disableframe;
   int   disableframe_count;
   int   frame_step;
@@ -43,6 +56,8 @@ class XchaggerDisable : public SpaceObject {
 };
 
 class XchaggerSpecial : public Missile {
+public:
+IDENTITY(XchaggerSpecial);
   int disableFrames;
   SpaceSprite *disableSprite;
   SAMPLE *disableSound;
@@ -91,6 +106,21 @@ int XchaggerExclave::activate_special()
   return(TRUE);
 }
 
+
+void OverrideControlXchagger::calculate(short *key)
+{
+	int keyleft,keyright;
+	keyleft = *key & (keyflag::left);
+	keyright = *key & (keyflag::right);
+
+	*key &= ~(keyflag::left | keyflag::right);
+
+	if (keyleft)
+		*key |= (keyflag::right);
+	if (keyright)
+		*key |= (keyflag::left);
+}
+
 XchaggerDisable::XchaggerDisable(SpaceObject *creator, Ship *oship, SpaceSprite *osprite,
   int ofcount, int ofsize, int disableFrames,int lowerFrames) :
   SpaceObject(creator, oship->normal_pos(), 0.0, osprite),
@@ -106,9 +136,14 @@ XchaggerDisable::XchaggerDisable(SpaceObject *creator, Ship *oship, SpaceSprite 
   collide_flag_anyone = 0;
   if (!lowerindex) layer = 5;
   target = oship;
+
+  affectship = oship;
+  ocx = new OverrideControlXchagger();
+  affectship->set_override_control(ocx);
 }
 
-void XchaggerDisable::calculate() {
+void XchaggerDisable::calculate()
+{
 
 	if (!(ship && ship->exists()))
 	{
@@ -116,7 +151,6 @@ void XchaggerDisable::calculate() {
 		return;
 	}
 
-	int keyleft,keyright;
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
@@ -132,6 +166,7 @@ void XchaggerDisable::calculate() {
 	if(!(target && target->exists() && target->isShip())) {
 		target = 0;
 		state = 0;
+		  affectship->del_override_control(ocx);
 		return;
 		}
 
@@ -139,22 +174,24 @@ void XchaggerDisable::calculate() {
 
 	if (!lowerindex) {
 		pos = t->normal_pos();
-		keyleft = t->nextkeys & (keyflag::left);
-		keyright = t->nextkeys & (keyflag::right);
-		t->nextkeys &= ~(keyflag::left | keyflag::right);
-		if (keyleft)
-			t->nextkeys |= (keyflag::right);
-		if (keyright)
-			t->nextkeys |= (keyflag::left);
         } 
 	else {
         pos = t->normal_pos() + (frame_time * t->get_vel());
 		SpaceObject::calculate();
         }
 	disableframe += frame_time;
-	if (disableframe >= disableframe_count) state = 0;
-	return;
+	if (disableframe >= disableframe_count)
+	{
+		  affectship->del_override_control(ocx);
+		state = 0;
 	}
+
+	if (!exists())
+	{
+	  affectship->del_override_control(ocx);
+	}
+	return;
+}
 
 Ship *XchaggerDisable::return_disable()
 {

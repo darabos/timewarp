@@ -13,6 +13,8 @@ REGISTER_FILE
 class NechanziCruiser;
 
 class NechanziMissile : public Missile {
+public:
+IDENTITY(NechanziMissile);
 	public:
 	NechanziMissile(double ox, double oy, double oangle, double ov, int 
 odamage,
@@ -40,6 +42,8 @@ Relativity);
 	};
 
 class NechanziStun: public SpaceObject {
+public:
+IDENTITY(NechanziStun);
   Ship *ship;
   int   stunframe;
   int   stunframe_count;
@@ -55,6 +59,8 @@ class NechanziStun: public SpaceObject {
 };
 
 class NechanziCruiser : public Ship {
+public:
+IDENTITY(NechanziCruiser);
 public:
   double       weaponRange;
   double       weaponVelocity;

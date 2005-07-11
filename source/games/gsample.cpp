@@ -59,10 +59,8 @@ void SampleGame1::init(Log *_log) {
 	human = new_team();
 	enemies = new_team();
 
-	//this creates a keyboard controller, using configuration 0 by default, since we don't specify another configuration
-	Control *c = create_control(channel_server, "Human");
-	//the first parameter is channel_server, which means that this player is on the server computer
-	//the second parameter is "Human", the name of a controller type
+	// use the local (network) player, that was initialized by the Game::init function.
+	Control *c = player[p_local]->control;//create_control(channel_server, "Human");
 
 	//this creates a ship
 	Ship *s = create_ship("plopl", c, Vector2(size.x/2,size.y/2), 0, human);
@@ -157,6 +155,10 @@ public:
 
 void SampleGame2::init_players()
 {
+
+	Game::init_players();
+
+
 	// re-use the same fleet for all players.
 	//this is where we deviate from SampleGame1
 	Fleet fleet;//first we declare a fleet
@@ -165,42 +167,31 @@ void SampleGame2::init_players()
 
 	int p;
 
-	// check all the (human) players, allowing one per connected computer (not checking
-	// for hotseat players).
-	Control *c;
+	// check all the (human) players, allowing one per connected computer
 	int slot[100];
 
 	for ( p = 0; p < num_network; ++p )
 	{
-		player[p] = new_player();
-		player[p]->channel = channel_network[p];
-		
-		if (p == p_local)
-		{
-			c = create_control(channel_network[p], "Human");
 		
 		//to load a fleet from disk you say fleet.load(filename, fleetname); (fleetname is usually "Fleet", because that is the standard name used in .scf files)
 		//but that's not network enabled, so we manually load the file using the network-enabled log_file(), and pass NULL for the file name
 		//BTW, the cost of the fleet is fleet.cost and the size is fleet.size 
 		//(if fleet is a pointer, then fleet->cost, fleet->size, and fleet->load instead)
-			slot[p] = c->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
+
+		// the local player chooses (and sends to others)
+		if ( player[p]->islocal() )
+			slot[p] = player[p]->control->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
 		//note that we said &fleet instead of fleet because choose_ship expects a pointer at a fleet instead of just a fleet
-		} else {
 
-			c = create_control(channel_network[p], "VegetableBot");
-		}
 
-		player[p]->control = c;
-		player[p]->color = p + 1;
-
+		// all players have the receive (and local needs to send)
 		//now i is the number of the ship that the user selected from that list
 		// (or if it's a remote player, it's chosen remotely, and isn't know here yet - it
 		// will be after the share_update, so specify the slot here already
-		share(p, &slot[p]);//log_int(channel_server, i);
+		share(p, &slot[p]);
 	}
-	num_players = num_network;
 
-	// send/receive all choices.
+	// send/receive all choices. These are written to the correct memory locations.
 	share_update();
 
 	for ( p = 0; p < num_network; ++p )
@@ -286,7 +277,8 @@ void SampleGame2::init(Log *_log)
 
 
 
-	init_players();
+	// no need here: is already called by Game::init.
+	//init_players();
 
 
 	/*
@@ -315,20 +307,16 @@ void SampleGame2::init(Log *_log)
 	//now, we need some enemies to fight
 
 	Ship *e;
-	e = create_ship(channel_server, "kzedr", "WussieBot", size/4, random(PI2), enemies);
+	e = create_ship(channel_none, "kzedr", "WussieBot", size/4, random(PI2), enemies);
 	add(e->get_ship_phaser());
-	e = create_ship(channel_server, "kohma", "WussieBot", Vector2(size.x*3/4, size.y/4), random(PI2), enemies);
+	e = create_ship(channel_none, "kohma", "WussieBot", Vector2(size.x*3/4, size.y/4), random(PI2), enemies);
 	add(e->get_ship_phaser());
-	e = create_ship(channel_server, "druma", "WussieBot", size*3/4, random(PI2), enemies);
+	e = create_ship(channel_none, "druma", "WussieBot", size*3/4, random(PI2), enemies);
 	add(e->get_ship_phaser());
-	e = create_ship(channel_server, "yehte", "WussieBot", Vector2(size.x/4, size.y*3/4), random(PI2), enemies);
+	e = create_ship(channel_none, "yehte", "WussieBot", Vector2(size.x/4, size.y*3/4), random(PI2), enemies);
 	add(e->get_ship_phaser());
-	//note that all the enemy AIs are located on the server
-	//you can also have AIs colocated
+	//you should have AIs colocated
 	//to do that, you pass channel_none
-	//benefits: an AI that is colocated uses no network bandwidth
-	//disadvantages: colocating an AI may not work with all AI types; if it doesn't work, it will cause desynchs
-	//Of course, only AIs can be colocated; you can't colocate a Human control, or bad things will happen
 
 	change_view("Hero"); 
 	//sets it to Hero view mode
@@ -347,7 +335,8 @@ void SampleGame2::init(Log *_log)
 REGISTER_GAME(SampleGame2, "Sample 2: Double Arena")
 
 
-/* 
+/* mwoah, not much need to maintain this gametype... there's not much additional info here compared
+to games 1 and 2.
 
 TimeWarp Sample 3: Eternal Arena!
 
@@ -363,7 +352,8 @@ The differences from sample game 2:
 class SampleGame3 : public SampleGame2
 { //declaring our game type
 	virtual void init(Log *_log) ; //happens when our game is first started
-	Control *human_control[2];
+//	Control *human_control[2];
+	virtual void init_players();
 	virtual void calculate() ; 
 	//TeamCode human_team, enemy_team; //the two teams
 	int respawn_time; //the time left until the game is restarted
@@ -374,21 +364,47 @@ class SampleGame3 : public SampleGame2
 void SampleGame3::calculate()
 {
 	Game::calculate();
-	if (respawn_time == -1) {
+
+	if (respawn_time == -1)
+	{
 	  int i;
-		unsigned int humans = 0, enemies = 0;
-		for (i = 0; i < gametargets.N; i += 1) {
-			if (gametargets.item[i]->get_team() == humans) humans += 1;
-			if (gametargets.item[i]->get_team() == enemies) enemies += 1;
+		unsigned int Nhumans = 0, Nenemies = 0;
+		for (i = 0; i < targets->N; i += 1) {
+			if (targets->item[i]->get_team() == humans) Nhumans += 1;
+			if (targets->item[i]->get_team() == enemies) Nenemies += 1;
 			}
 		//if either team has no targetable items remaining (generally ships), pick new ships
-		if (!humans || !enemies) respawn_time = game_time + 5000; //5000 milliseconds is 5 seconds
+		if (!Nhumans || !Nenemies) respawn_time = game_time + 5000; //5000 milliseconds is 5 seconds
 		}
 	else if (respawn_time <= game_time) pick_new_ships();
 	return;
 }
 
-void SampleGame3::pick_new_ships() {
+void SampleGame3::init_players()
+{
+	Game::init_players();
+
+
+	// each player loads/shares his fleet.
+	int p;
+	for ( p = 0; p < num_network; ++p )
+	{
+		// adjust the team setting for the human player.
+		player[p]->team = humans;
+
+		//fleet.load("fleets/all.scf", "Fleet");
+		player[p]->fleet = new Fleet();
+
+		if (player[p]->islocal())
+			player[p]->fleet->load("fleets/all.scf", "Fleet");
+
+		share_fleet(p);	// shares the fleet of player p.
+	}
+}
+
+
+void SampleGame3::pick_new_ships()
+{
 	int i;
 	window->lock();//call before writting to window
 	clear_to_color(window->surface, pallete_color[4]);
@@ -398,25 +414,46 @@ void SampleGame3::pick_new_ships() {
 		}
 	//remove all existing items
 
-	//player 1 selects a new ship
-	i = human_control[0]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % reference_fleet->getSize();
-	Ship *s = create_ship(reference_fleet->getShipType(i)->id, human_control[0], size/2 + Vector2(100, 0), 0, humans);
-	add(s->get_ship_phaser());
-	//notice that we DON'T call add_focus on the ship here?
-	//that's because there's a focus on the ships controller already
-	//look in SampleGame3::init
-	ShipPanel *sp = new ShipPanel(s);
-	sp->window->init(window);
-	sp->window->locate(
-		0, 0.8,
-		0, 0, 
-		0, 0.2,
-		0, 100.0/240
-		);
-	add(sp);
+	int slot[100];
 
+	int p;
+	for ( p = 0; p < num_network; ++p )
+	{
+
+		if (player[p]->islocal())
+		{
+			// local player selects a new ship
+			slot[p] = player[p]->control->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
+		}
+		share(p, &slot[p]);
+	}
+	share_update();
+
+	for ( p = 0; p < num_network; ++p )
+	{
+
+		int i = slot[p];
+
+		if (i == -1)
+			i = random() % reference_fleet->getSize();
+
+		Ship *s = create_ship(reference_fleet->getShipType(i)->id, player[p]->control, size/2 + Vector2(100, 0), 0, humans);
+		add(s->get_ship_phaser());
+		//notice that we DON'T call add_focus on the ship here?
+		//that's because there's a focus on the ships controller already
+		//look in SampleGame3::init
+		ShipPanel *sp = new ShipPanel(s);
+		sp->window->init(window);
+		sp->window->locate(
+			0, 0.8,
+			0, 0, 
+			0, 0.2,
+			0, 100.0/240
+			);
+		add(sp);
+	}
+
+	/* outdated, stemming from 2-player era:
 	if (glog->type == Log::log_net) { 
 		log_file("fleets/all.scf");
 		i = human_control[1]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
@@ -434,6 +471,7 @@ void SampleGame3::pick_new_ships() {
 			);
 		add(sp);
 		}
+		*/
 
 
 	Ship *e;
@@ -460,7 +498,13 @@ void SampleGame3::pick_new_ships() {
 	return;
 	}
 
-void SampleGame3::init(Log *_log) {
+void SampleGame3::init(Log *_log)
+{
+	prepare();
+
+	humans = new_team();
+	enemies = new_team();
+
 	Game::init(_log);
 
 	size = Vector2(4200,4200);
@@ -469,22 +513,24 @@ void SampleGame3::init(Log *_log) {
 	//If for some reason you modify it later, call prepare() again
 	//but you probably shouldn't be modifying it later. 
 	//The normal size is 3840x3840
-	prepare();
 
 	add(new Stars());
 
-	humans = new_team();
-	enemies = new_team();
 
-	init_players();
+	// is already called in Game.
+	//init_players();
 
 	respawn_time = 500;
 
 	int i;
 	for (i = 0; i < 7; i += 1) add(new Asteroid());
 
-	if (p_local == 0) fleet.load("fleets/all.scf", "Fleet");
-	log_fleet(channel_server, &fleet);
+
+
+//	// share the fleet info with all the other players.
+	// outdated:
+//	share_fleet(channel_server, &fleet);
+
 	//this time, instead of transmitting the fleet file over the network and then loading 
 	//it on both sides
 	//we instead load it on the server, and then transmit the fleet data (rather than the 

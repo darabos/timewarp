@@ -6,6 +6,8 @@ REGISTER_FILE
 
 class TauTor : public Ship
 {
+public:
+IDENTITY(TauTor);
   double        weaponRange;
   double        weaponVelocity;
   int           weaponDamage;
@@ -37,6 +39,8 @@ class TauTor : public Ship
 
 class TauTorTwister : public AnimatedShot
 {
+public:
+IDENTITY(TauTorTwister);
   // SAMPLE* sample_midd;
   
   public:
@@ -49,6 +53,8 @@ class TauTorTwister : public AnimatedShot
 
 class TauTorPlasma : public AnimatedShot
 {
+public:
+IDENTITY(TauTorPlasma);
   public:
   TauTorPlasma (Vector2 opos, double oangle, double ov, int odamage,
                   double orange, int oarmour, SpaceLocation *creator, SpaceLocation *lpos,

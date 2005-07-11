@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../sc1ships.h"
 
 class MyconPlasma : public HomingMissile {
+public:
+IDENTITY(MyconPlasma);
 	//double v;
 
 	static SpaceSprite *spriteWeaponExplosion;

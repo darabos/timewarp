@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../frame.h"
 
 class LkSanctorum : public Ship {
+public:
+IDENTITY(LkSanctorum);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;

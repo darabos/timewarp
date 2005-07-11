@@ -9,7 +9,20 @@ REGISTER_FILE
 
 #include "../frame.h"
 
+// allows other ships to affect control over a ship.
+class OverrideControlIceci : public OverrideControl
+{
+	int		key_order[5];
+	int		key_flags[5];
+public:
+	OverrideControlIceci();
+	virtual void calculate(short *key);
+};
+
+
 class IceciConfusion : public Ship {
+public:
+IDENTITY(IceciConfusion);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -35,10 +48,11 @@ class IceciConfusion : public Ship {
 
 class Confusionator : public Presence
 {
+public:
+IDENTITY(Confusionator);
+	OverrideControlIceci *oci;
 	Ship	*t;
 	double	lifetime;
-	int		key_order[5];
-	int		key_flags[5];
 
 public:
 	Confusionator(Ship *target, double olifetime);
@@ -48,6 +62,8 @@ public:
 
 
 class ConfusionDart : public HomingMissile {
+public:
+IDENTITY(ConfusionDart);
 
 	double confusionLifeTime;
 
@@ -153,11 +169,8 @@ void ConfusionDart::inflict_damage(SpaceObject *other)
 }
 
 
-Confusionator::Confusionator(Ship *target, double olifetime)
+OverrideControlIceci::OverrideControlIceci()
 {
-	t = target;
-	lifetime = olifetime;
-
 	// new key ordering:
 
 	int key_available[5];
@@ -180,6 +193,37 @@ Confusionator::Confusionator(Ship *target, double olifetime)
 	}
 }
 
+void OverrideControlIceci::calculate(short *key)
+{
+	// randomize the (most) important keys ... i.e., randomize the bits in the KeyCode
+
+	short newkeys;
+
+	newkeys = 0;
+
+	int i;
+	for ( i = 0; i < 5; ++i )
+	{
+		if (  ((*key) & key_flags[i]) != 0 )
+		{
+			newkeys |= key_flags[ key_order[i] ];
+		}
+	}
+
+	*key = newkeys;
+}
+
+
+
+Confusionator::Confusionator(Ship *target, double olifetime)
+{
+	t = target;
+	lifetime = olifetime;
+
+	oci = new OverrideControlIceci();
+	t->set_override_control(oci);
+}
+
 
 void Confusionator::calculate()
 {
@@ -196,24 +240,14 @@ void Confusionator::calculate()
 	if ( lifetime < 0 )
 	{
 		state = 0;
+		t->del_override_control(oci);
 		return;
 	}
 
-	// randomize the (most) important keys ... i.e., randomize the bits in the KeyCode ?!
-
-	// how ?
-	KeyCode newkeys;
-
-	newkeys = 0;
-
-	int i;
-	for ( i = 0; i < 5; ++i )
-		newkeys |= t->nextkeys & key_flags[ key_order[i] ];
-
-	t->nextkeys = newkeys;
-	if (t->control)
-		t->control->keys = newkeys;
-
+	if (!exists())
+	{
+		t->del_override_control(oci);
+	}
 }
 
 

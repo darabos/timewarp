@@ -47,6 +47,8 @@ class GerlMorons;
 
 class GerlVirtualship: public Ship {
 public:
+IDENTITY(GerlVirtualship);
+public:
 	double weaponRange;
 	double weaponVelocity;
 	int    weaponDamage;
@@ -70,6 +72,8 @@ public:
 
 class GerlHero : public Ship
 {
+public:
+IDENTITY(GerlHero);
 public:
 	Vector2			dvel, Vboarding;
 	double			dangle;
@@ -98,6 +102,8 @@ public:
 class GerlMorons : public Ship
 {
 public:
+IDENTITY(GerlMorons);
+public:
 	double			dangle, da_max;
 	GerlVirtualship	*mother;
 	SpaceLocation	*herobrother;
@@ -113,6 +119,8 @@ public:
 /*
 class GerlHeroStun : public Presence
 {
+public:
+IDENTITY(GerlHeroStun);
 	Vector2	freeze_pos;
 	double	duration, existtime;
 	SpaceObject	*target;

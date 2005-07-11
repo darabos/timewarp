@@ -7,6 +7,8 @@ REGISTER_FILE
  * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
  */
 class JyglarStarfarer : public Ship {
+public:
+IDENTITY(JyglarStarfarer);
 // the ship
 
   double        weaponRange;          // maximum range
@@ -34,6 +36,8 @@ class JyglarStarfarer : public Ship {
 };
 
 class JyglarShot : public Shot {
+public:
+IDENTITY(JyglarShot);
 // shot that pulls the object hit towards a point before the ship
 
   double pull;
@@ -50,6 +54,8 @@ class JyglarShot : public Shot {
 };
 
 class JyglarStrayShot : public JyglarShot {
+public:
+IDENTITY(JyglarStrayShot);
 // shot going astray
 
   int minturn;
@@ -64,6 +70,8 @@ class JyglarStrayShot : public JyglarShot {
 };
 
 class JyglarBubble : public SpaceObject {
+public:
+IDENTITY(JyglarBubble);
 // bubbles surrounding the ship
 
   double dangle;

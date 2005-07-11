@@ -32,6 +32,7 @@ bool log_writable();
 bool log_readable();
 
 extern int channel_current;
+extern int event_player_current;
 
 int log_size_ch(int channel);
 
@@ -95,6 +96,8 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 	virtual bool listen();
 	virtual void reset();
 
+	virtual void clear();
+
 	virtual void use_idle(int time);	// is called in the games idle() function
 
 	bool writeable(int ch = channel_current);
@@ -122,7 +125,13 @@ void share(int netnum, int *value, int num = 1);
 void share(int netnum, short *value, int num = 1);
 void share(int netnum, char *value, int num = 1);
 void share(int player, double *value, int num = 1);
+void share_string(char *str);
+void share_string(int netnum, char *str);
 void share_update();
+void share_array(int netnum, char *buffer, int *N);
+
+void reset_share();
+int get_share_num();
 
 /** \brief Helper to synch random numbers between networked computers - this is
 useful in case that the host initialization requires random numbers, which aren't

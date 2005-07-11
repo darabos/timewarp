@@ -61,9 +61,26 @@ enum ShipOrigin {
     SHIP_ORIGIN_TW_SPECIAL/**< Timewarp "Special"*/
 };
 
+// allow other ships to affect control over your ship ?!
+class OverrideControl
+{
+public:
+	static void add(Ship *s, OverrideControl *newcontrol);
+	static void del(Ship *s, OverrideControl *oldcontrol);
 
-class Ship : public SpaceObject {
-	protected:
+	OverrideControl *next;
+
+	virtual void calculate(short *key) = 0;
+};
+
+/** ship class */
+class Ship : public SpaceObject
+{
+
+public:
+	OverrideControl *first_override_control, *last_override_control;
+
+protected:
 
 	int hotspot_frame;
 	int recharge_step;
@@ -166,6 +183,13 @@ class Ship : public SpaceObject {
 
 	virtual void animate(Frame *frame);
 	virtual void animate_predict(Frame *frame, int time);
+
+	virtual void set_target(SpaceObject *o);
+
+	/** set new external control option */
+	virtual void set_override_control(OverrideControl *newcontrol);
+	/** remove external control option */
+	virtual void del_override_control(OverrideControl *delthiscontrol);
 };
 
 

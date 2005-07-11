@@ -84,9 +84,10 @@ mixed up. Make sure that you can also handle the null-case, where fake data are 
 that there's an initial networking buffer (yeah that's needed, otherwise each has to
 wait for the other).
 */
+/*
 void BaseClass::gen_buffered_data()
 {
 	// do nothing by default
 }
-
+*/
 

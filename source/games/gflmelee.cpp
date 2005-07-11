@@ -173,12 +173,20 @@ class StatsManager
 class FlPlayer : public NPI
 {
 public:
+	FlPlayer();
+
 	Control *oldcontrol;
 	// remember the original control when you take possession of a ship
 	
 	ShipPanelBmp *panel;
 	int lastkey_playership;
 };
+
+FlPlayer::FlPlayer()
+{
+	lastkey_playership = 0;
+	panel = 0;
+}
 
 
 static const int Nradarmodes = 3;	// off, all, and medium
@@ -243,7 +251,7 @@ public:
 	void take_control(int i, Ship *s);
 	bool underplayercontrol(SpaceObject *o);
 
-	virtual PlayerInformation *new_player();	// should return a pointer to a new player-class
+	virtual NPI *new_player();	// should return a pointer to a new player-class
 };
 
 
@@ -327,6 +335,9 @@ bool FlMelee::underplayercontrol(SpaceObject *o)
 	int i;
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		if (player[i]->channel != channel_none &&
 			player[i]->control->ship == o)
 			break;
@@ -339,11 +350,9 @@ bool FlMelee::underplayercontrol(SpaceObject *o)
 }
 
 
-PlayerInformation *FlMelee::new_player()	// should return a pointer to a new player-class
+NPI *FlMelee::new_player()	// should return a pointer to a new player-class
 {
 	FlPlayer *p = new FlPlayer();
-	p->lastkey_playership = 0;
-	p->panel = 0;
 	return p;
 }
 
@@ -359,7 +368,7 @@ void FlMelee::init(Log *_log)
 	// this also initializes the players
 	NormalGame::init(_log);
 
-	//prepare needs to be called before you add items, or do physics or graphics or anything like that.  Don't ask why.  
+	//prepare needs to be called before you add items, or do physics or graphics or anything like that.
 	prepare(); 
 
 
@@ -497,29 +506,39 @@ void FlMelee::init(Log *_log)
 	}
 	*/
 
-	log_file("gflmelee.ini");
+	set_config_file("gflmelee.ini");
 
-	if (p_local == 0)
+	if (hostcomputer())
 	{
 		start_menu(allyfleet);
 	}
 
-	log_file("gflmelee.ini");
-	// send (or receive) ... channel_server is locally either the server, or the client.
+	set_config_file("gflmelee.ini");
+	// both are chosen by the server:
 	// fleet numbers are fixed: fleet 0 vs fleet 1
-	channel_current = channel_server;
-	log_int(allyfleet[0]);
-	log_int(allyfleet[1]);
+
+	//channel_current = channel_server;
+
+	// use the init channels to share this
+	share(-1, &allyfleet[0]);
+	share(-1, &allyfleet[1]);
+	share_update();
 
 
 	// team-numbers are fixed : fleet 0 vs fleet 1.
 	alliance[0] = new_team();
 	alliance[1] = new_team();
 
-	// players are distributed over the fleets
+	// (human) players are distributed over the fleets. You don't have to concern about bots, those
+	// are irrelevant here...
 	int i;
-	for ( i = 0; i < num_players; ++i )
+	for ( i = 0; i < num_network; ++i )
+	{
+		if (!player[i])
+			continue;
+
 		player[i]->team = alliance[i % 2];
+	}
 
 
 	
@@ -616,7 +635,7 @@ void FlMelee::init(Log *_log)
 
 			// have to do this, since the ship-init loads different ini files.
 			// and it's best placed here, right after the last call to a different ini.
-			log_file("gflmelee.ini");
+			set_config_file("gflmelee.ini");
 		}
 
 
@@ -627,6 +646,9 @@ void FlMelee::init(Log *_log)
 	iship[1] = 0;
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		// the players should take over a ship
 		int ifleet;
 		if (player[i]->team == alliance[0])
@@ -711,6 +733,9 @@ void FlMelee::init(Log *_log)
 	message.print(1500, 15, "local[%i]", p_local);
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		if (player[i]->control->ship)
 			message.print(1500, 15, "player[%i] team[%i] ship[%s]", i, player[i]->team, player[i]->control->ship->get_shiptype()->name);
 	}
@@ -956,6 +981,8 @@ void FlMelee::calculate()
 	
 	for ( iplayer = 0; iplayer < num_players; ++iplayer )
 	{
+		if (!player[iplayer])
+			continue;
 		
 		if (player[iplayer]->channel == channel_none)
 			continue;	// a bot.
@@ -1083,6 +1110,9 @@ void FlMelee::calculate()
 
 	for ( iplayer = 0; iplayer < num_players; ++iplayer )
 	{
+		if (!player[iplayer])
+			continue;
+
 		FlPlayer *p = (FlPlayer*) player[iplayer];
 
 		if (p->channel == channel_none)
@@ -1277,6 +1307,9 @@ void FlMelee::calculate()
 	int i;
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		FlPlayer *p = (FlPlayer*) player[i];
 
 		if ( !(p->panel && p->panel->exists()) )

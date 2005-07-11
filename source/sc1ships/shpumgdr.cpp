@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../sc1ships.h"
 
 class UmgahCone : public SpaceObject {
+public:
+IDENTITY(UmgahCone);
   double dist;
 
   double damage;

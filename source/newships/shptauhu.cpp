@@ -6,6 +6,8 @@ class TauHunterPortal;
 
 class TauHunter  :  public Ship
 {
+public:
+IDENTITY(TauHunter);
 	double		weaponRange, weaponVelocity, weaponRelativity, weaponSpread;
 	double		weaponLength, weaponDamage;
 	int			weaponNumber;
@@ -59,6 +61,8 @@ public:
 
 class TauHunterLaser : public SpaceLine
 {
+public:
+IDENTITY(TauHunterLaser);
 	double        range, d, v;
 
 public:
@@ -71,6 +75,8 @@ public:
 
 class TauHunterPortal : public Animation
 {
+public:
+IDENTITY(TauHunterPortal);
 	TauHunter    *ship;
   
 public:
@@ -81,6 +87,8 @@ public:
 
 class TauHunterShot : public Shot
 {
+public:
+IDENTITY(TauHunterShot);
 	int				 extraFrameTime;
 	SpaceSprite		*expl_sprite, *portal_sprite;
 	TauHunter		*ship;

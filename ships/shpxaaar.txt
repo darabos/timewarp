@@ -1,8 +1,9 @@
 Xaaxees Arrowhead
 
-quirk: grows 2 mines on the sides; during recharge time.
 
-main: release mines. Travel relative to the ship (with same velocity, and slowly sideways). Not such a very long lifetime.
+main: release mines. The mines are released with a velocity close to that of the ship.
 
-special: active shield on the mines. This makes them invulnerable, but takes a lot of energy. A mine does a lot of damage: 8. Slow recharge rate.
+special: actives a shield on the mines. This makes them invulnerable, but takes a lot of energy.
+
+Tactics: launch the mines, activate their shield, and hide behind them. Or, head for the enemy, release the mines so that they'll move at a decent speed towards the enemy, and run away.
 

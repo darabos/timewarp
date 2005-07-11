@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __TWHELPERS_H__
@@ -8,7 +8,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 
 #include "twbuttontypes.h"
 
-/** \brief Manages 2 scrollbars and 4 buttons to determine a position in 2D. This
+/** Manages 2 scrollbars and 4 buttons to determine a position in 2D. This
 is used to determine item number, rather than pixels; the number of items is entered
 in initialization.
 
@@ -55,7 +55,7 @@ public:
 
 
 
-/** \brief Manage a string with enter-characters, generating info about the lines
+/** Manage a string with enter-characters, generating info about the lines
 of text that are present in there.
 
 */
@@ -72,13 +72,14 @@ public:
 	int		Nlines, Nchars, maxchars;
 
 	FONT	*usefont;
-	int		W, Htxt, Nshow;
+	int		Htxt, Nshow;
+	int		tw, th;
 
 	int		text_color;
 
-	BITMAP	*bmp;
+	//RLE_SPRITE	*bmp;
 
-	TextInfo(FONT *afont, BITMAP *abmp, char *atextinfo, int Nchars);
+	TextInfo(FONT *afont, int w, int h, char *atextinfo, int Nchars);
 	~TextInfo();
 
 	//void set_textinfo(char *atextinfo, int Nchars);
@@ -90,6 +91,8 @@ public:
 	void changeline(int *charpos, int line1, int line2);
 
 	void reset(ScrollControl *scroll);
+
+	void set_area(int w, int h);
 };
 
 

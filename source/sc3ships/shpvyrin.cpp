@@ -44,6 +44,8 @@ bool hitlist_hit(hitlist **list, SpaceObject *item, int duration) {
 class VyroIngoSheild;
 
 class VyroIngoInvader : public Ship {
+public:
+IDENTITY(VyroIngoInvader);
 
   public:
 
@@ -63,6 +65,8 @@ class VyroIngoInvader : public Ship {
 };
 
 class VyroIngoSheild : public SpaceObject {
+public:
+IDENTITY(VyroIngoSheild);
 
   int frames_left;
   int frames_total;
@@ -82,6 +86,8 @@ virtual void death();
 };
 
 class VyroIngoWake : public AnimatedShot {
+public:
+IDENTITY(VyroIngoWake);
 
   int frames_total;
   int frames_left;

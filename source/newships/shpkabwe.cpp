@@ -29,6 +29,8 @@ REGISTER_FILE
 class KaboHaze : public SpaceLocation
 {
 public:
+IDENTITY(KaboHaze);
+public:
 	KaboHaze	*next, *prev;
 	Ship		*host;		//*mother, 
 	double		power, basepower;
@@ -58,6 +60,8 @@ class KaboPod;
 
 class KaboWeakener : public Ship {
 public:
+IDENTITY(KaboWeakener);
+public:
 	double weaponRange;
 	double weaponVelocity;
 	int    weaponDamage;
@@ -86,6 +90,8 @@ public:
 
 // an intermediate - flies a while, then releases the mines
 class KaboPod : public Missile {
+public:
+IDENTITY(KaboPod);
 
 	KaboWeakener *mother;
 	int	ididdamage;
@@ -104,6 +110,8 @@ class KaboPod : public Missile {
 
 
 class KaboMine : public SpaceObject {
+public:
+IDENTITY(KaboMine);
 	double lifetime, existtime, hostiletime;
 	double spriteindextime;
 	double Haze_basepower;//, Haze_decaytime;
@@ -163,10 +171,14 @@ KaboWeakener::KaboWeakener(Vector2 opos, double angle, ShipData *data, unsigned 
 
 int KaboWeakener::activate_weapon()
 {
-	STACKTRACE
-	add(new Missile(this, Vector2(0.0, 0.5*get_size().y),
+	STACKTRACE;
+	
+	Missile *m;
+	m = new Missile(this, Vector2(0.0, 0.5*get_size().y),
 		angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
-		this, data->spriteWeapon));
+		this, data->spriteWeapon);
+	m->isblockingweapons = false;
+	add(m);
 	return(TRUE);
 }
 
@@ -256,9 +268,16 @@ void KaboMine::inflict_damage(SpaceObject *other)
 {
 	STACKTRACE
 
-	if ( !other->isShip() )	// only attack ships !
+	if ( !(other && other->isShip()) )	// only attack ships !
 	{
-		state = 0;
+		die();
+		return;
+	}
+
+	if (other == ship)
+	{
+		// if the object is the mother-ship, then don't inflict damage.
+		die();
 		return;
 	}
 	

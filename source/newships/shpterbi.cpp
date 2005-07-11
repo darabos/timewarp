@@ -4,6 +4,7 @@ REGISTER_FILE
 #include <stdio.h>
 #include "../melee/mview.h"
 #include "../ais.h"
+#include "../scp.h"
 
 //#define TERON_COLLISION_FORWARDING
 #define TERON_TURRET_CONTROLLABLE
@@ -57,6 +58,8 @@ typedef struct {
 class TeronDrone;
 
 class TeronBuilder : public Ship {
+public:
+IDENTITY(TeronBuilder);
   SpaceObject* collecting;
   int          collect_step;
   double       collectRange;
@@ -169,6 +172,8 @@ class TeronBuilder : public Ship {
 };
 
 class TeronBuildPlatform : public SpaceObject {
+public:
+IDENTITY(TeronBuildPlatform);
   int index_zero;
   Ship* new_ship;
 
@@ -181,6 +186,8 @@ class TeronBuildPlatform : public SpaceObject {
 };
 
 class TeronDrone : public Ship {
+public:
+IDENTITY(TeronDrone);
 #ifdef TERON_COLLISION_FORWARDING
   double cvx, cvy, cx, cy;     // for forwarding collisions
 #endif
@@ -224,9 +231,13 @@ class TeronDrone : public Ship {
   private:
   void roger();
   void leave_dock();
+
+
 };
 
 class TeronDroneLaser : public Laser {
+public:
+IDENTITY(TeronDroneLaser);
   SpaceObject* collecting;  
   TeronDrone*  drone;
   
@@ -240,6 +251,8 @@ class TeronDroneLaser : public Laser {
 };
 
 class TeronShipController : public ControlWussie {
+public:
+IDENTITY(TeronShipController);
   public:
   TeronShipController( const char *name, int channel );
 
@@ -247,6 +260,8 @@ class TeronShipController : public ControlWussie {
 };
 
 class TeronDroneController : public TeronShipController {
+public:
+IDENTITY(TeronDroneController);
   public:
   TeronDroneController( const char *name, int channel );
 
@@ -254,6 +269,8 @@ class TeronDroneController : public TeronShipController {
 };
 
 class TeronFighter : public Ship {
+public:
+IDENTITY(TeronFighter);
   double weaponRange;
   double weaponVelocity;
   int    weaponDamage;
@@ -262,7 +279,7 @@ class TeronFighter : public Ship {
   public:
   TeronFighter( TeronBuilder *creator, Vector2 opos,
     double shipAngle, SpaceSprite *osprite );
-
+	virtual void calculate();
   virtual int  activate_weapon();
   virtual void calculate_thrust();
   virtual void calculate_hotspots();
@@ -271,6 +288,8 @@ class TeronFighter : public Ship {
 };
 
 class TeronTurret : public Ship {
+public:
+IDENTITY(TeronTurret);
 #ifdef TERON_TURRET_CONTROLLABLE
   TeronBuilder* docked;
   double dock_dir;
@@ -305,6 +324,8 @@ class TeronTurret : public Ship {
 };
 
 class TeronTurretBase : public SpaceObject {
+public:
+IDENTITY(TeronTurretBase);
 #ifdef TERON_COLLISION_FORWARDING
   double cvx, cvy, cx, cy;     // for forwarding collisions
 #endif
@@ -463,11 +484,12 @@ int TeronBuilder::activate_special()
 		TeronBuildPlatform* platform = drone->get_build_platform();
 		game->add( platform );
 #ifdef TERON_SHIPS_TARGETABLE
-		target->add( platform );
+		targets->add( platform );
 #endif
 
 
-	}else if( current_option == option_build_turret ){
+	}else if( current_option == option_build_turret )
+	{
 		if( batt < turret_cost ){
 			special_low = true;
 			return false;
@@ -479,7 +501,7 @@ int TeronBuilder::activate_special()
 		TeronBuildPlatform* platform = turret->get_build_platform();
 		game->add( platform );
 #ifdef TERON_SHIPS_TARGETABLE
-		target->add( platform );
+		targets->add( platform );
 #endif
 
 
@@ -495,7 +517,7 @@ int TeronBuilder::activate_special()
 		TeronBuildPlatform* platform = fighter->get_build_platform();
 		game->add( platform );
 #ifdef TERON_SHIPS_TARGETABLE
-		target->add( platform );
+		targets->add( platform );
 #endif
 
 
@@ -591,7 +613,15 @@ void TeronBuilder::calculate_turn_right(){
   if( !fire_weapon && !fire_special ) Ship::calculate_turn_right();
 }
 
-void TeronBuilder::calculate_fire_weapon(){
+void TeronBuilder::calculate_fire_weapon()
+{
+	static bool helped_yet = false;
+	if (!helped_yet && fire_weapon && !fire_special && !(thrust || turn_left || turn_right) )
+	{
+		if (is_local(control->channel))
+			message.out("Use fire + left/right/thrust to select drone");
+		helped_yet = true;
+	}
 	if( fire_weapon && !fire_special && (thrust || turn_left || turn_right) ){
 		if( weapon_recharge > 0 )
 			return;
@@ -601,10 +631,12 @@ void TeronBuilder::calculate_fire_weapon(){
 			{
 				select_all = false;
 				current_drone = NULL;
-				message.out( "All drones deselected" );
+				if (is_local(control->channel))
+					message.out( "All drones deselected" );
 			} else {
 				select_all = true;
-				message.out( "All drones selected" );
+				if (is_local(control->channel))
+					message.out( "All drones selected" );
 			}
 			
 		}else if( turn_right ){
@@ -624,7 +656,8 @@ void TeronBuilder::calculate_fire_weapon(){
 			q.end();
 			if( next_drone ) current_drone = next_drone;
 			else current_drone = first_drone;
-			message.out( "Next drone selected" );
+			if (is_local(control->channel))
+				message.out( "Next drone selected" );
 		}else if( turn_left ){
 			select_all = false;
 			TeronDrone* prev_drone = NULL;
@@ -639,7 +672,8 @@ void TeronBuilder::calculate_fire_weapon(){
 			}
 			q.end();
 			current_drone = prev_drone;
-			message.out( "Prev drone selected" );
+			if (is_local(control->channel))
+				message.out( "Prev drone selected" );
 		}
 		weapon_recharge += weapon_rate;
 		
@@ -650,14 +684,25 @@ void TeronBuilder::calculate_fire_weapon(){
 void TeronBuilder::calculate_fire_special(){
 	special_low = FALSE;
 	
+	static bool helped_yet = false;
+	if (fire_special && !turn_left && !turn_right && !fire_weapon && !helped_yet)
+	{
+		if (is_local(control->channel))
+			message.out( "> use left/right to switch command, and fire to activate command:" );
+		helped_yet = true;
+	}
+
 	if( fire_special && (fire_weapon || turn_left || turn_right) ){
 		if( special_recharge > 0 )
 			return;
 		
-		if( fire_weapon ){
+
+		if( fire_weapon )
+		{
 			if( !activate_special() )
 				return;
-			message.out( "> Activated Command:" );
+			if (is_local(control->channel))
+				message.out( "> Activated Command:" );
 		}else if( turn_right ){
 			if( current_option < TERON_BUILDER_OPTIONS-1 )
 				current_option++;
@@ -669,7 +714,8 @@ void TeronBuilder::calculate_fire_special(){
 			else
 				current_option = TERON_BUILDER_OPTIONS-1;
 		}
-		message.out( option[current_option].phrase );
+		if (is_local(control->channel))
+			message.out( option[current_option].phrase );
 		
 		special_recharge += special_rate;
 		
@@ -683,7 +729,7 @@ void TeronBuilder::materialize(){
     drone = new TeronDrone( this, pos, angle, data->TERON_DRONE_SPRITE );
     game->add( drone );
 #ifdef TERON_SHIPS_TARGETABLE
-   target->add( drone );
+   targets->add( drone );
 #endif
     drone->materialize();
     drone->dock_clearance_to( i );
@@ -738,7 +784,7 @@ just_docked( false ), resource( 0 ), docked( NULL ), goal( dock )
   weaponRange      = creator->droneWeaponRange;
 
   control = new TeronDroneController( "Teron Drone", channel_none );
-  control->load( "scp.ini", "Config0" );
+  //control->load( "scp.ini", "Config0" );
   game->add( control );
   control->temporary = true;
   control->select_ship( this, "terbi" );
@@ -770,8 +816,8 @@ void TeronDrone::assist_building(){
   for( q.begin( this, bit(LAYER_SPECIAL), TERON_DRONE_SIGHT_RANGE ); q.currento; q.next() ){
     if( sameShip( q.currento )){
       TeronBuildPlatform* platform = ((TeronBuildPlatform*)q.currento);
-      control->target = platform;
-      target = platform;
+      
+	  set_target(platform);
 
       goal = build;
       if( docked ) leave_dock();
@@ -800,8 +846,7 @@ void TeronDrone::collect_resources(){
   }
   q.end();
   if( ast ){
-    control->target = ast;
-    target = ast;
+	  set_target(ast);
 
     if( goal != collect ) roger();
     goal = collect;
@@ -811,13 +856,13 @@ void TeronDrone::collect_resources(){
 void TeronDrone::return_to_dock(){
   if( ship ){
     goal = dock;
-    control->target = ship;
-    target = ship;
+	  set_target(ship);
     roger();
   }else{
     collect_resources();
   }
 }
+
 void TeronDrone::dock_clearance_to( int number ){
   docked      = (TeronBuilder*)ship;
   dock_number = number;
@@ -860,7 +905,35 @@ int TeronDrone::activate_weapon(){
   return false;
 }
 
-void TeronDrone::calculate(){
+
+void TeronDrone::calculate()
+{
+	if (death_counter != -1)	// check used by control.
+	{
+		// the special ship-die routine...
+		Ship::calculate();
+		return;
+	}
+
+	if (control && !control->exists())
+	{
+		// the control detects if the ship is on fire...
+		// therefore, this can happen:
+		// (but not anymore, because of the above)
+
+		tw_error("TeronDrone: lost control. Should not happen");
+		control = 0;
+		die();
+		return;
+	}
+
+
+	// execute the cpu ai.
+//	control->keys = control->think();
+
+	// do not allow the AI to pick a target, only the Drones subroutines can do that
+	control->keys &= ~(keyflag::next | keyflag::prev | keyflag::closest);
+
   nextkeys &= ~keyflag::next;
   nextkeys &= ~keyflag::prev;
   nextkeys &= ~keyflag::closest;
@@ -885,7 +958,9 @@ void TeronDrone::calculate(){
 #endif
     if( !ship ) leave_dock();
   }else{
-    Ship::calculate();
+	
+	 Ship::calculate();
+	
     if( !target || goal == collect ){
       if( goal == build ) assist_building();
       else if( goal == collect ) collect_resources();
@@ -989,7 +1064,7 @@ Ship( creator, opos, shipAngle, osprite ){
   weaponArmour     = creator->fighterWeaponArmour;
 
   control = new TeronShipController( "Teron Fighter", channel_none );
-  control->load( "scp.ini", "Config0" );
+  //control->load( "scp.ini", "Config0" );
   game->add( control );
   control->temporary = true;
   control->select_ship( this, "terbi" );
@@ -1006,6 +1081,12 @@ int TeronFighter::activate_weapon(){
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->TERON_FIGHTER_SHOT_SPRITE ));
   return true;
+}
+
+void TeronFighter::calculate()
+{
+//	control->keys = control->think();
+	Ship::calculate();
 }
 
 void TeronFighter::calculate_thrust(){
@@ -1103,8 +1184,14 @@ int TeronTurret::activate_special(){
   return false;
 }
 
-void TeronTurret::calculate(){
-  Ship::calculate();
+void TeronTurret::calculate()
+{
+	if (target && !target->exists())
+		target = 0;
+
+// 	control->keys = control->think();
+
+ Ship::calculate();
   //vx = vy = 0;
   vel = 0;
   //base->vx = base->vy = 0;
@@ -1244,7 +1331,8 @@ void TeronTurretBase::collide( SpaceObject* other ){
 
 TeronBuildPlatform::TeronBuildPlatform( Ship* creator, Vector2 opos, SpaceSprite* osprite, int osprite_index ):
 SpaceObject( creator, opos, 0, osprite ),
-index_zero( osprite_index ){
+index_zero( osprite_index )
+{
   new_ship = creator;
   sprite_index = osprite_index;
   collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;

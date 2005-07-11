@@ -4,6 +4,7 @@
 
 #include "melee.h"
 
+
 //debuging purposes only:
 extern int total_presences;
 
@@ -19,7 +20,7 @@ typedef unsigned int TeamCode;
 struct Query;
 class Planet;
 class Presence;
-class ExternalAI;
+//class ExternalAI;
 
 /*
 enum {
@@ -167,7 +168,7 @@ class Physics : public BaseClass {
 	virtual void dump_state ( const char *file_name );
 
 	// moved ROB - from mgame to here.
-	bool friendly_fire;
+	int friendly_fire;
 	double shot_relativity;
 
 	// to init parameters of space-objects...
@@ -223,10 +224,14 @@ class Presence : public BaseClass {
 
 };
 
+#define IDENTITY(x) virtual const char *get_identity(){return #x;};
+
 class SpaceLocation : public Presence { // base class for all items in game
 	friend class Physics;
 	friend struct Query;
 
+public:
+	IDENTITY(SpaceLocation);
 protected: public: //aught to be protected, but we're lazy
 	Vector2 pos;
 	union {
@@ -252,6 +257,9 @@ protected: public://aught to be protected, but we're lazy
 	public:
 
 	Ship *ship;          // the ship it's associated with
+	SpaceLocation *parent;		// hmm, this is better: you should not reference a Ship inside a SpaceLocation... but well, too much work to change?
+	// usually, parent==ship, at least, if it's spawned by a ship...
+
 	ShipData *data;      // the data module it depends upon
 	SpaceObject *target; // it's target, if it has one
 
@@ -341,7 +349,7 @@ class SpaceObject : public SpaceLocation {
 	Vector2 size;      //size of sprite
 	double  mass; //mass of object
 	bool isblockingweapons;	// this object blocks weaponry (shots)
-	ExternalAI * ext_ai; // AI of the object
+//	ExternalAI * ext_ai; // AI of the object
 	protected:
 	SpaceSprite *sprite; //the pictures that this object looks like
 	int          sprite_index; //which one of those pictures is active at the moment
@@ -367,8 +375,8 @@ class SpaceObject : public SpaceLocation {
 
 	virtual void set_sprite ( SpaceSprite *sprite );
 
-	virtual void install_external_ai(const char* script);
-	virtual void destroy_external_ai();
+//	virtual void install_external_ai(const char* script);
+//	virtual void destroy_external_ai();
 };
 
 

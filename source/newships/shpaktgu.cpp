@@ -4,9 +4,14 @@
 REGISTER_FILE
 #include <string.h>
 
-class AktunComSat : public SpaceObject {
+class AktunGunner;
+
+class AktunComSat : public SpaceObject
+{
+public:
+IDENTITY(AktunComSat);
 	int frame;
-	Ship *ship;
+	AktunGunner *owner;
 	
 	double lRange;
 	int    lDamage;
@@ -18,7 +23,7 @@ class AktunComSat : public SpaceObject {
 	
   public:
 	  AktunComSat(double oangle, double orange, int odamage, int oframes,
-		  int orechargerate, int ocolor, int oarmour, Ship *oship,
+		  int orechargerate, int ocolor, int oarmour, AktunGunner *oship,
 		  SpaceSprite *osprite);
 	  
 	  virtual void calculate();
@@ -29,6 +34,8 @@ class AktunComSat : public SpaceObject {
 };
 
 class AktunGunner : public Ship {
+public:
+IDENTITY(AktunGunner);
 	int    weaponColor;
 	double weaponRange1, weaponRange2, weaponDrain2;
 	int    weaponDamage;
@@ -59,6 +66,8 @@ public:
 };
 
 class AktunLaser : public Laser {
+public:
+IDENTITY(AktunLaser);
 	Ship *owner;
 	
 public:
@@ -167,15 +176,14 @@ void AktunLaser::inflict_damage(SpaceObject *other)
 {
 	sound.stop(owner->data->sampleWeapon[0]);
 	Laser::inflict_damage(other);
-	sound.stop((SAMPLE *)(melee[1].dat));
+	//sound.stop((SAMPLE *)(melee[1].dat));
 	sound.play(owner->data->sampleWeapon[1]);
 }
 
 AktunComSat::AktunComSat(double oangle, double orange, int odamage,
-						 int oframes, int orechargerate, int ocolor, int oarmour, Ship *oship,
+						 int oframes, int orechargerate, int ocolor, int oarmour, AktunGunner *oship,
 						 SpaceSprite *osprite) :
 SpaceObject(oship, 0, 0, osprite),
-ship(oship),
 lRange(orange),
 lDamage(odamage),
 lFrames(oframes),
@@ -184,6 +192,7 @@ lRecharge(0),
 lColor(ocolor),
 armour(oarmour)
 {
+	owner = oship;
 	layer = LAYER_SPECIAL;
 	collide_flag_anyone = ALL_LAYERS - bit(LAYER_CBODIES);
 	angle = oangle;
@@ -193,9 +202,13 @@ armour(oarmour)
 	debug_id = 7;
 }
 
-void AktunComSat::calculate() {
+void AktunComSat::calculate()
+{
+	if (owner && !owner->exists())
+		owner = 0;
 	
-	if(!(ship && ship->exists())) {
+	if(!(ship && ship->exists()))	// this is not necessarily the same as owner.
+	{
 		state = 0;
 		return;
 	}
@@ -258,14 +271,18 @@ int AktunComSat::handle_damage(SpaceLocation* source, double normal, double dire
 	return 1;
 }
 
-void AktunComSat::death() {
-	for (int i = 0; i < ((AktunGunner*)ship)->num_ComSats; i++ ) {
-		if (((AktunGunner*)ship)->ComSat[i] == this) {
-			((AktunGunner*)ship)->ComSat[i] = NULL;
-			((AktunGunner*)ship)->num_ComSats -= 1;
-			memmove(&((AktunGunner*)ship)->ComSat[i], &((AktunGunner*)ship)->ComSat[i+1], 
-				(((AktunGunner*)ship)->num_ComSats-i) * sizeof(AktunComSat*));
-			return;
+void AktunComSat::death()
+{
+	if (owner)
+	{
+		for (int i = 0; i < owner->num_ComSats; i++ ) {
+			if (owner->ComSat[i] == this)
+			{
+				owner->ComSat[i] = NULL;
+				owner->num_ComSats -= 1;
+				memmove(&owner->ComSat[i], &owner->ComSat[i+1], (owner->num_ComSats-i) * sizeof(AktunComSat*));
+				return;
+			}
 		}
 	}
 }

@@ -7,6 +7,8 @@ class EarthlingCruiserMk3Beam;
 
 class EarthlingCruiserMk3 : public Ship
 {
+public:
+IDENTITY(EarthlingCruiserMk3);
 	double		weaponRange;
 	double		weaponVelocity;
 	double		weaponDamage;
@@ -34,6 +36,8 @@ public:
 class EarthlingCruiserMk3Shot : public Shot
 {
 public:
+IDENTITY(EarthlingCruiserMk3Shot);
+public:
 	EarthlingCruiserMk3Shot(SpaceLocation *creator, Vector2 opos, double oangle,
 		double ov, double odamage, double orange, double oarmour, SpaceSprite *osprite);
 	virtual void animate(Frame *space);
@@ -43,6 +47,8 @@ public:
 
 class EarthlingCruiserMk3Beam : public SpaceLine
 {
+public:
+IDENTITY(EarthlingCruiserMk3Beam);
 protected:
 	double			frame, frame_count;
 	SpaceLocation	*lpos;

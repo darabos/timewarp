@@ -17,6 +17,8 @@ weapon = change moon properties (distance)
 
 class PlanetShip : public Ship
 {
+public:
+IDENTITY(PlanetShip);
 	int		planet_index;
 	double	Rmin, Rmax, R, dRplus, dRmin, v;
 	double	accboost_max;
@@ -50,6 +52,8 @@ class PlanetShip : public Ship
 class InvisiblePlanet : public Planet
 {
 public:
+IDENTITY(InvisiblePlanet);
+public:
 	PlanetShip *mother;
 	double gravity_whip_default;
 	InvisiblePlanet( PlanetShip* creator, Vector2 opos,
@@ -62,6 +66,8 @@ public:
 
 class Moon : public Planet
 {
+public:
+IDENTITY(Moon);
 public:
 	PlanetShip *mother;
 	Moon( PlanetShip* creator, Vector2 opos, SpaceSprite *sprite, int index );
@@ -274,6 +280,7 @@ void InvisiblePlanet::calculate()
 	{
 		mother = 0;
 		state = 0;
+		return;
 	}
 		
 

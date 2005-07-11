@@ -5,6 +5,8 @@ REGISTER_FILE
 
 class TauStorm : public Ship
 {
+public:
+IDENTITY(TauStorm);
 	double		weaponVelocity, weaponAccel, weaponTurnRate, weaponThrust, weaponFuel, weaponStart;
 	double		specialVelocity, specialAccel, specialTurnRate, specialThrust, specialFuel, specialStart;
 	double		weaponBoosterSpeed, weaponRotation, weaponKick, weaponKickMaxspeed;
@@ -26,6 +28,8 @@ public:
 
 class TauStormMissile : public HomingMissile
 {
+public:
+IDENTITY(TauStormMissile);
 	int	fuel;
 
 	double ra, pa, rr, rt;

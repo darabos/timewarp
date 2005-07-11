@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class StarBase : public Ship {
+public:
+IDENTITY(StarBase);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;

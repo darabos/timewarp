@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class MoianSpeeder : public Ship
 {
+public:
+IDENTITY(MoianSpeeder);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange, specialVelocity, specialDamage, specialArmour, specialTurnRate;
 	double	specialN, speedFraction;
@@ -31,6 +33,8 @@ protected:
 
 class SpeedMissile : public HomingMissile
 {
+public:
+IDENTITY(SpeedMissile);
 	SpaceObject *blobreleaser;
 	SpaceSprite *blobsprite;
 	double	Trelease, Tnextreleasetime, releaseinterval;
@@ -55,6 +59,8 @@ public:
 
 class SpeedBlob : public SpaceObject
 {
+public:
+IDENTITY(SpeedBlob);
 	Vector2 accelvel;
 	double	blobtime, blobrange;
 public:

@@ -13,7 +13,7 @@ REGISTER_FILE
 
 
 static int log_show_num = 0;
-
+/*
 GameEventMessage::GameEventMessage (const char *text)
 {STACKTRACE
 	int l = strlen(text);
@@ -49,21 +49,8 @@ void GameEventChangeLag::execute( int source )
 		game->increase_latency(new_lag - old_lag);
 	if (new_lag < old_lag)
 		game->decrease_latency(old_lag - new_lag);
-	/*
-	int i;
-	for (i = old_lag; i != new_lag; ) {
-		if (i < new_lag) {
-			game->increase_latency();
-			i += 1;
-		}
-		else if (i > new_lag) {
-			game->decrease_latency();
-			i -= 1;
-		}
-	}
-	*/
 }
-
+*/
 
 
 int read_length_code (int max, int *clen, int *len, unsigned char *where) {STACKTRACE
@@ -199,13 +186,18 @@ void NetLog::prepare_packet()
 	int pos = 8;
 
 	int totsize = 0;
-	for (i = 0; i < log_num; i += 1) if (log_dir[i] & direction_write)
+	for (i = 0; i < log_num; i += 1)
 	{
+
+
+		if (!(log_dir[i] & direction_write))
+			continue;
+	
 		j = log_len[i] - log_transmitted[i];
-		totsize += j;
 
 		if (j > 0)
 		{
+			totsize += j;
 
 			check_bufsize(pos+1);
 			if (i > 255) { tw_error ("NetLog::send_packet - channel # exceeds 8 bits"); }
@@ -220,6 +212,19 @@ void NetLog::prepare_packet()
 			memcpy(&buffy[pos], log_data[i] + log_transmitted[i], j);
 			log_transmitted[i] += j;
 			pos += j;
+
+			if (log_transmitted[i] > log_len[i])
+			{
+				tw_error("Should not happen");
+			}
+		}
+	}
+	for (i = 0; i < log_num; i += 1)
+	{
+		// check for error
+		if (log_transmitted[i] > log_len[i])
+		{
+			tw_error("Should not happen");
 		}
 	}
 //	if (pos <= 8) {
@@ -322,8 +327,17 @@ void NetLog::recv_packet(int conn)
 	
 	//len = net[conn].recv(4, 4, &buffy);
 	len = net[conn].recv(4, 4, buffy);
+
+	if (len == 0)
+		return;	//xxx netlog: there is nothing to receive...
 	
-	if (len != 4) { tw_error ("NetLog::recv_packet -- net.recv error (1)"); }
+	if (len != 4)
+	{
+		message.print(1500, 15, "netlog error: conn[%i] recv-len[%i]", conn, len);
+		message.animate(0);
+		tw_error ("NetLog::recv_packet -- net.recv error (1)");
+	}
+
 	len = buffy[0] + (buffy[1] << 8) + (buffy[2] << 16) + (buffy[3] << 24);
 	
 	if (len & 0x80000000) {
@@ -412,6 +426,11 @@ void NetLog::_log(int channel, const void *data, int size)
 		++log_show_num;
 	}
 
+	if (log_transmitted[channel] > log_len[channel])
+	{
+		tw_error("Should not happen");
+	}
+		
 	if (channel >= log_num) expand_logs(channel+1);
 	Log::_log(channel, data, size);
 	need_to_transmit = true;
@@ -427,12 +446,20 @@ void NetLog::_unlog(int channel, void *data, int size)
 {
 	if (log_show_data)
 	{
-		message.print(1500, 15, "[%i]_unlog: ch[%i] size[%i]", log_show_num, channel, size);
+		int i;
+		char logstr[12];
+		for ( i = 0; i < 12; ++i )
+			logstr[i] = log_data[channel][log_pos[channel] + i];
+		logstr[11] = 0;
+
+		message.print(1500, 15, "[%i]_unlog: ch[%i] size[%i] logsize[%i] str[%s]", log_show_num, channel, size,
+			log_len[channel] - log_pos[channel], logstr);
 		message.animate(0);
 		++log_show_num;
 	}
 
-	while (ready(channel) < size) {
+	while (ready(channel) < size)
+	{
 		//if (game) game->idle();
 		//else idle(1);
 		idle_extra(1);
@@ -632,6 +659,8 @@ bool NetLog::add_connect(const char *address, int port)
 		idle(1);
 	}
 
+	strcpy(net[num_connections].addr, address);
+
 	++num_connections;
 	return true;
 }
@@ -654,6 +683,20 @@ void NetLog::optimize4latency()
 		if (!net_status[conn]) continue;
 
 		net[conn].optimize4latency();
+	}
+}
+
+
+void NetLog::optimize4bandwidth()
+{
+	int conn;
+	// receive packets from all connections
+	
+	for ( conn = 0; conn < num_connections; ++conn )
+	{
+		if (!net_status[conn]) continue;
+
+		net[conn].optimize4bandwidth();
 	}
 }
 
@@ -711,6 +754,7 @@ void NetLog::reset()
 		if (writeable(i) && log_transmitted[i] != log_len[i])
 			tw_error("NetLog::reset - resetting before all data could be sent in channel [%i] , pos[%i] transm[%i] len[%i]",
 			i, log_pos[i], log_transmitted[i], log_len[i]);
+
 		log_transmitted[i] = 0;	// no problem, when calling a reset, all data IS sent.
 	}
 
@@ -730,3 +774,15 @@ void NetLog::rem_conn(int conn)
 	net[conn].disconnect();
 }
 
+/** completely clear a log, also get rid of unhandled data */
+void NetLog::clear()
+{
+	Log::clear();
+
+	int i;
+	for (i = 0 ; i < log_num; i += 1)
+	{
+		log_transmitted[i] = 0;
+	}
+	
+}

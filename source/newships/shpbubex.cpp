@@ -7,6 +7,8 @@ REGISTER_FILE
 #include "../frame.h"
 
 class BubalosExecutioner : public Ship {
+public:
+IDENTITY(BubalosExecutioner);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -33,6 +35,8 @@ class BubalosExecutioner : public Ship {
 };
 
 class BubalosMissile : public Missile {
+public:
+IDENTITY(BubalosMissile);
   public:
   BubalosMissile(double ox, double oy, double oangle, double ov, int odamage,
       /*double weaponDriftVelocity, */double orange, int oarmour, Ship *oship,

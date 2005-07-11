@@ -7,6 +7,8 @@ REGISTER_FILE
 
 class FopVob : public Ship
 {
+public:
+IDENTITY(FopVob);
 	double	weaponRange;
 	int		weaponDamage;
 	int		weaponArmour;
@@ -16,9 +18,8 @@ class FopVob : public Ship
 	double	specialR;
 
 	int Nshots, maxshots;
-	double *T0;
+	double *T0;	// T-zero
 
-	
 public:
 	FopVob(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
 	~FopVob();
@@ -48,7 +49,7 @@ Ship(opos, shipAngle, shipData, code)
 	weaponVmin     = scale_velocity(get_config_float("Weapon", "Vmin", 10));
 	
 	specialPeriod  = get_config_float("Special", "Period", 1);
-	specialR		= 50.0;	// oscillation wavelength
+	specialR	   = get_config_float("Special", "specialR", 1);	// oscillation wavelength
 	
 	maxshots = get_config_int("Weapon", "MaxShots", 8);
 	T0 = new double [maxshots];
@@ -111,9 +112,9 @@ double FopVob::getV(int i)
 	double V, t;
 	t = physics->game_time * 1E-3;
 
-	// the derivative of the getP equation; with a correction of 1E-3 cause
-	// frame-time is in mseconds, while these equations measure in seconds.
-	V = specialR * PI2*cos(PI2 * (t - T0[i]) / specialPeriod) * 1E-3;
+	// the derivative of the getP equation;
+	V = specialR * (PI2/specialPeriod) * cos(PI2 * (t - T0[i]) / specialPeriod) * 1E-3;//(1.0 / frame_time);
+	
 
 	return V;
 }
@@ -130,6 +131,46 @@ void FopVob::calculate()
 	if (!fire_special || special_low)
 	{
 		// if special isn't held, release shots that are in the queue
+		// tweak: but only if they are moving forward, otherwise you're wasting over half of your shots.
+
+		int i;
+		for ( i = 0; i < Nshots; ++i )
+		{
+			double r, v;
+			r = getY(i);
+			v = getV(i);
+
+			if (r > 0 && v > 0)
+			{
+				// ok: release this one !
+				
+				Vector2	P, Vtot;
+				double	V, a;
+				
+				
+				Vtot = v * unit_vector(angle) + vel;
+				a = Vtot.angle();
+				V = Vtot.length();
+
+				if (V < weaponVmin)
+					V = weaponVmin;
+
+				//P = rotate(getP(Nshots), -PI/2);
+				P = Vector2(0, r);
+				
+				// make real shots
+				add(new Missile(this,
+					P, a, V, weaponDamage, weaponRange,
+					weaponArmour, this, data->spriteWeapon, 0));
+				// don't use relativity in here, otherwise the missiles can travel a loooong distance !!
+
+				T0[i] = T0[Nshots-1];
+				--i;
+				--Nshots;
+			}
+		}
+
+		/* old code, releases them all at once.
 		while (Nshots > 0)
 		{
 			--Nshots;
@@ -152,6 +193,7 @@ void FopVob::calculate()
 				weaponArmour, this, data->spriteWeapon, 0));
 			// don't use relativity in here, otherwise the missiles can travel a loooong distance !!
 		}
+		*/
 	}
 }
 

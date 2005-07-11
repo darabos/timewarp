@@ -5,6 +5,8 @@ REGISTER_FILE
 //#include "../sc1ships.h"
 
 class GlavriaCrTorpedo : public AnimatedShot {
+public:
+IDENTITY(GlavriaCrTorpedo);
   //int       passive;
   //double    passiveRange;
   double    Relativity;
@@ -19,6 +21,8 @@ class GlavriaCrTorpedo : public AnimatedShot {
 
 class GlavriaCruiser : public Ship {
 public:
+IDENTITY(GlavriaCruiser);
+public:
   double       weaponRange;
   double       weaponVelocity[5];
   double       weaponAngle[5];
@@ -31,9 +35,9 @@ public:
   int    specialFrames;
 
   double       specialVelocity;
-//  int          specialDamage;
-//  int          specialArmour;
-//  double       specialRelativity;
+  int          specialDamage;
+  int          specialArmour;
+  double       specialRelativity;
 
   GlavriaCrTorpedo	*torpedo[5];
 
@@ -70,10 +74,10 @@ GlavriaCruiser::GlavriaCruiser(Vector2 opos, double angle, ShipData *data, unsig
   weaponRelativity = get_config_float("Weapon", "Relativity", 0.5);
 
 //  specialFrames = get_config_int("Special", "Frames", 0);
-//  specialRange    = scale_range(get_config_float("Special", "Range", 0));
-//  specialDamage   = get_config_int("Special", "Damage", 0);
-//  specialArmour =   get_config_int("Special", "Armour", 0);
-//  specialRelativity = get_config_float("Special", "Relativity", 0.5);
+  specialRange    = scale_range(get_config_float("Special", "Range", 0));
+  specialDamage   = get_config_int("Special", "Damage", 0);
+  specialArmour =   get_config_int("Special", "Armour", 0);
+  specialRelativity = get_config_float("Special", "Relativity", 0.5);
   specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
 
   int i;
@@ -87,15 +91,20 @@ GlavriaCruiser::GlavriaCruiser(Vector2 opos, double angle, ShipData *data, unsig
 
 int GlavriaCruiser::activate_special()
 {
-	STACKTRACE
-//	game->add(new GlavriaCrTorpedo(Vector2(0.0, size.y *(-0.3)), angle+PI, specialVelocity,
-//			specialDamage, specialRange, specialArmour, this, data->spriteWeapon,
-//			100, 16, specialRelativity));
+	STACKTRACE;
+
+	SpaceSprite *spr;
+	spr = data->spriteWeapon;
+
+	game->add(new GlavriaCrTorpedo(Vector2(0.0, size.y *(-0.3)), angle+PI, specialVelocity,
+			specialDamage, specialRange, specialArmour, this, spr,
+			spr->frames(), 16, specialRelativity));
 
 
 
 
-	// special modified by GeomanNL.
+/*
+	// special modified by GeomanNL (and also removed, cause it's a bit lame as it turns out).
 
 	int k;
 	k = 0;	// the center element
@@ -133,6 +142,7 @@ int GlavriaCruiser::activate_special()
 
 		}
 	}
+*/
 
 	return true;
 }
@@ -184,7 +194,7 @@ GlavriaCrTorpedo::GlavriaCrTorpedo(Vector2 opos, double oangle, double ov,
     osprite, 16, 45, orelativity)
 {
   explosionSprite     = data->spriteWeaponExplosion;
-  explosionFrameCount = 20;
+  explosionFrameCount = explosionSprite->frames();
   explosionFrameSize  = 40;
   oorange=iround(orange);
   //vx = vx + ddx;

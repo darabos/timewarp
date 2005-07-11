@@ -29,20 +29,23 @@ REGISTER_FILE
 #include "mnet1.h"
 
 
-
+/*
 PlayerInformation *NormalGame::new_player()
 {
 	return new NPI();
 }
+*/
 
 /*void Game::player_said(int who, const char *what) {
 	if ((who < 0) || (who >= num_players)) tw_error ("Who said that?!?");
 	message.print(8000, 15, "%s: %s", name[who], what);
 	return;
 	}*/
+/*
 int NormalGame::add_player (int num, Control *c, int team_index, const char *name, const char *fleet_section,
 							const char *fleet_file)
 {
+	
 	STACKTRACE;
 
 	NPI *p = (NPI*) new_player();
@@ -70,6 +73,7 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 	strncpy(p->name, name, sizeof(p->name));
 	strdup(p->name);
 
+	
 	if (team_index >= team_table_size) {
 		int i = team_table_size;
 		team_table_size = team_index + 1;
@@ -81,7 +85,8 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 	}
 	
 	if (team_index) p->team = team_table[team_index];
-	else p->team = new_team();
+	else
+	 p->team = new_team();
 
 	char sect[40];
 	sprintf(sect, "Player%d", num+1);
@@ -121,6 +126,7 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 	p->fleet->save("fleets.tmp", sect);
 	return num;
 	}
+	*/
 
 void NormalGame::init_objects()
 {
@@ -139,11 +145,100 @@ void NormalGame::init_objects()
 
 }
 
+
+void share_fleet(int iplayer)
+{
+	STACKTRACE;
+
+	NPI *p = player[iplayer];
+
+	if (!p)
+		tw_error("Share fleet failed: player does not exist");
+
+
+	int N;
+	char buffer[16384];
+
+	// if you're the local player,
+	// or this computer has the host and needs to send bots.
+	// ( host is always player 0: there is only 1 active player who's host)
+	if ( p->islocal() || (hostcomputer() && iplayer >= num_network) )
+	{
+		void *tmpdata = p->fleet->serialize(&N);
+		
+		if (N > 16000)	{tw_error("fleet data exceed limit");}
+		memcpy(buffer, tmpdata, N);
+		free(tmpdata);
+
+	}
+
+	int k;
+	if (iplayer >= num_network)
+		k = -1;		// uses the init channel
+	else
+		k = iplayer;	// uses the player network channel
+
+	share_array(k, buffer, &N);
+
+	
+	p->fleet->reset();
+	p->fleet->deserialize(buffer, N);	
+}
+
+
 void NormalGame::init_players()
 {
 	STACKTRACE;
 
+	Game::init_players();
 
+	// for any NormalGame: initialize the fleets from file.
+	// at least, your local fleet !! And the computer fleet(s) also
+
+	int i;
+	int count_local = 0;
+
+	for ( i = 0; i < num_network; ++i )
+	{
+		// for each player, load the first defined fleet (player1).
+		char sect[40];
+
+		if (player[i]->islocal())
+		{
+			sprintf(sect, "Player%d", count_local+1);	// load the player fleet (in case of single-player)
+			++count_local;
+		} else {
+			sprintf(sect, "Player%d", 1);	// load fleet 1
+		}
+
+		if ( player[i]->islocal() )
+		{
+			player[i]->fleet->load("fleets.ini", sect);
+		}
+
+		share_fleet(i);
+
+	}
+
+	// and then the bots ..
+
+	for ( i = num_network; i < num_players; ++i )
+	{
+		char sect[40];
+		sprintf(sect, "Player%d", i-num_network + 2);	// start with the fleet of player 2
+		
+		if ( hostcomputer() )
+		{
+			player[i]->fleet->load("fleets.ini", sect);
+		}
+		
+		share_fleet(i);
+	}
+
+
+}
+
+/*
 	switch (glog->type)
 	{
 		case Log::log_normal:
@@ -256,15 +351,6 @@ void NormalGame::init_players()
 			}
 
 
-			/*
-			// give overview about the players?
-			message.print(1500, 14, "local channel = [%i]", channel_local());
-			for (j = 0; j < num_network; j += 1)
-			{
-				message.print(1500, 14, "[%s] [%s] [%i]", player_name[j], player_control[j]->getTypeName(), player_control[j]->channel);
-				message.animate(0);
-			}
-			*/
 
 			// adding bots
 			int team = new_team();
@@ -295,6 +381,7 @@ void NormalGame::init_players()
 	}
 	return;
 }
+*/
 
 void NormalGame::set_resolution(int screen_x, int screen_y) {
 	int view_x, view_y;
@@ -345,10 +432,13 @@ void NormalGame::init(Log *_log)
 	set_config_file ("tmp.ini");
 	set_config_string (NULL, "Ignorethis", "");
 
+	/* was moved to Game::init
 	log_debug("normalgame::init init players\n");
 	if (!glog->playback)
 		init_players();
+		*/
 
+	/*
 	log_debug("normalgame::init sharing tmp.ini\n");
 	log_file("tmp.ini");
 
@@ -375,6 +465,7 @@ void NormalGame::init(Log *_log)
 			p->fleet->save("fleets.tmp", buffy);
 		}
 	}
+	*/
 
 	log_debug("normalgame::init prepare\n");
 	prepare();
@@ -512,6 +603,9 @@ void NormalGame::display_stats()
 	{
 		NPI* p = (NPI*)player[i];
 
+		if (!p)
+			continue;
+
 		Fleet *fleet = p->fleet;
 		switch (glog->type) {
 			case Log::log_net: {
@@ -548,6 +642,7 @@ bool NormalGame::handle_key(int k)
 			return true;
 			}
 		break;
+		/*
 		case KEY_F9: {
 			if (glog->type != Log::log_normal) return false;
 			message.out("MUHAHAHAHAHA!!!!", 5000, 12);
@@ -555,6 +650,7 @@ bool NormalGame::handle_key(int k)
 			return true;
 			}
 		break;
+		*/
 		//don't use hardwired normal keys
 		case KEY_H:
 			if ((k & 255) == 'H'-'A'+1) indhealthtoggle = ~indhealthtoggle;
@@ -653,7 +749,7 @@ void server_pause()
 	message.print(1500, 12, "pause");
 	message.animate(0);
 	int k;
-	if (p_local != 0)
+	if (!hostcomputer())
 		log_int(k, channel_server);	// wait for server data
 }
 
@@ -662,7 +758,7 @@ void server_continue()
 	message.print(1500, 12, "continue");
 	message.animate(0);
 	int k;
-	if (p_local == 0)
+	if (hostcomputer())
 		log_int(k, channel_server);	// generate server data
 }
 
@@ -859,7 +955,7 @@ void NormalGame::check_file(const char *id, int iplayer)
 			
 		}
 
-		//if (p_local == 0) readkey();
+		//if (hostcomputer()) readkey();
 		
 	}
 
@@ -891,7 +987,10 @@ void NormalGame::choose_new_ships()
 
 	for (i = 0; i < num_players; i += 1)
 	{
-		NPI* p = (NPI*)player[i];
+		NPI* p = player[i];
+
+		if (!p)
+			continue;
 
 		slot[i] = -2;
 		if (p->control->ship) {
@@ -944,6 +1043,9 @@ void NormalGame::choose_new_ships()
 	for (i = 0; i < num_players; i += 1)
 	{
 		NPI* p = (NPI*)player[i];
+
+		if (!p)
+			continue;
 
 		if (slot[i] == -2) continue;
 		sprintf (tmp, "Player%d", i+1);
@@ -1065,6 +1167,10 @@ void TeamIndicator::animate_predict(Frame *space, int time)
 bool NormalGame::player_isalive(int i)
 {
 	NPI* p = (NPI*)player[i];
+
+	if (!p)
+		tw_error("Checking live state of a player who does not exist.");
+
 	return (p->control->ship || p->fleet->getSize() > 0);
 }
 
@@ -1075,6 +1181,9 @@ bool NormalGame::check_end()
 
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		if (player_isalive(i))
 			++ numalive;
 	}
@@ -1090,8 +1199,13 @@ int NormalGame::local_player()
 {
 	int i;
 	for ( i = 0; i < num_players; ++i )
+	{
+		if (!player[i])
+			continue;
+
 		if (is_local(player[i]->channel))
 			return i;
+	}
 	return -1;
 }
 
@@ -1115,10 +1229,12 @@ void NormalGame::handle_end()
 	int local_choice = 0;	// only 1 local player needs to make a choice; the rest can be copied for local players
 	for ( k = 0; k < num_players; ++k )
 	{
+		if (!player[k])
+			continue;
 		// zero indicates an invalid choice (note that valid choices as 1 and 2 --> see the tw_alert menu below
 		int ichoice = 0;
 
-		if (is_local(player[k]->channel))
+		if (player[k]->islocal())//is_local(player[k]->channel))
 		{
 			// note, that a "local" player can also be an AI ship, but that doesn't matter,
 			// what matters is that all players on one computer (AI or human) submit the
@@ -1159,6 +1275,9 @@ void NormalGame::handle_end()
 	// extra test, check if all choices are "valid" (ie non-zero)
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		if (!choices[i])
 			tw_error("an invalid choice was encountered at end of the game");
 	}
@@ -1190,6 +1309,9 @@ void NormalGame::handle_end()
 		for ( i = 0; i < num_players; ++i )
 		{
 			NPI* p = (NPI*)player[i];
+
+			if (!p)
+				continue;
 
 			// first, kill remaining ship(s)
 			if (p->control->ship)

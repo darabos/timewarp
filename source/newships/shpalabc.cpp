@@ -11,6 +11,8 @@ class AlaryBCTurret;
 class AlaryBC : public Ship
 {
 public:
+IDENTITY(AlaryBC);
+public:
 	int			death_frame, exp_frame;
 	bool		dying;
 	int			engine_phase;
@@ -64,6 +66,8 @@ public:
 
 class AlaryBCTorpedo : public SpaceObject
 {
+public:
+IDENTITY(AlaryBCTorpedo);
 	int			armour, lifetime, smoke_frame, inactive;
 	double		proximity, accel, maxspeed, turn_rate;
 
@@ -85,6 +89,8 @@ public:
 
 class AlaryBCWarhead : public HomingMissile
 {
+public:
+IDENTITY(AlaryBCWarhead);
 	int			smoke_frame;
 public:
 	AlaryBCWarhead(SpaceLocation *creator, double ox, double oy, double oangle, double ov, double odamage,
@@ -95,6 +101,8 @@ public:
 
 class AlaryBCTurret : public SpaceLocation
 {
+public:
+IDENTITY(AlaryBCTurret);
 public:
 	AlaryBC		*ship;
 	double		min_angle, max_angle, std_angle;
@@ -119,6 +127,8 @@ public:
 
 class AlaryBCTShot : public Missile
 {
+public:
+IDENTITY(AlaryBCTShot);
 public:
 	AlaryBCTShot(double ox, double oy, double oangle, double ov, double odamage, double orange, double oarmour,
 		SpaceLocation *creator, SpaceLocation *opos, SpaceSprite *osprite, double relativity);
@@ -882,7 +892,9 @@ void AlaryBCTurret::calculate()
 
 	if (ship->turrets_on) {
 		if (target) {
-			if (!target->exists()) {
+			if ( !target->exists() || target->isInvisible() )
+			{
+				// lose aim when the target is destroyed, or cloaks.
 				shots_fired = 0;
 				target = get_target(NULL); }
 /*			else {

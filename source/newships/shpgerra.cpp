@@ -9,6 +9,8 @@ REGISTER_FILE
 class JadRacer : public Ship
 {
 public:
+IDENTITY(JadRacer);
+public:
 	JadRacer(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
 
@@ -370,6 +372,8 @@ void JadRacer::calculate_hotspots()
 
 	
 	int ff = int(ceil(1*cur_gear_rel*20));
+	if (ff > data->spriteExtraExplosion->frames())
+		ff = data->spriteExtraExplosion->frames();
 //	int ff = 19;
 	if (ff == 0) 
 		return;

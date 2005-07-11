@@ -16,6 +16,8 @@ REGISTER_FILE
 class TauLeviathan : public Ship
 
 {
+public:
+IDENTITY(TauLeviathan);
 
 	double		weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 
@@ -82,6 +84,8 @@ public:
 class LeviathanSlimeBall : public AnimatedShot
 
 {
+public:
+IDENTITY(LeviathanSlimeBall);
 
 protected:
 
@@ -116,6 +120,8 @@ public:
 class LeviathanSlimeFood : public AnimatedShot
 
 {
+public:
+IDENTITY(LeviathanSlimeFood);
 
 protected:
 
@@ -144,6 +150,8 @@ public:
 class LeviathanJammer : public FixedAnimation
 
 {
+public:
+IDENTITY(LeviathanJammer);
 
 public:
 
@@ -166,6 +174,8 @@ public:
 class LeviathanMissile : public HomingMissile
 
 {
+public:
+IDENTITY(LeviathanMissile);
 
 	SpaceSprite *expl_sprite;
 

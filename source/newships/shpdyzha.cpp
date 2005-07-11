@@ -14,6 +14,8 @@ class DyzunHarbringer;
 
 class SlownessMine : public SpaceObject
 {
+public:
+IDENTITY(SlownessMine);
 	double range, maxvel, armour;
 public:
 	SlownessMine(Ship *creator, Vector2 opos, double oangle, SpaceSprite *osprite,
@@ -23,6 +25,8 @@ public:
 };
 
 class DyzunMissile : public HomingMissile {
+public:
+IDENTITY(DyzunMissile);
 	public:
   DyzunMissile(DyzunHarbringer* ocreator, double ox, double oy, double oangle, double ov,
 	int odamage, double orange, int oarmour, double oturnrate, SpaceLocation* opos, SpaceSprite* osprite, SpaceObject* otarget);
@@ -48,6 +52,8 @@ class DyzunMissile : public HomingMissile {
 
 
 class DyzunHarbringer : public Ship {
+public:
+IDENTITY(DyzunHarbringer);
 public:
   double       weaponRange;
   double       weaponVelocity;

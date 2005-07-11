@@ -9,13 +9,6 @@ int log_size_pl(int netnum);
 int log_totalsize();
 void log_test(char *comment);
 
-// normal player information.
-class NPI : public PlayerInformation
-{
-public:
-	Fleet *fleet;
-};
-
 
 
 class DirectConnection
@@ -58,7 +51,6 @@ class NormalGame : public Game {
 	virtual void init (Log *_log = NULL);
 	virtual void set_resolution(int screen_x, int screen_y);
 
-	virtual void init_players();
 	virtual void init_objects();
 
 	virtual void ship_died(Ship *who, SpaceLocation *source);
@@ -75,7 +67,8 @@ class NormalGame : public Game {
 		} *kills;
 	void display_stats();
 
-	virtual int add_player (int num, Control *c, int team_index, const char *name, const char *fleet, const char *fleet_file = "fleets.ini") ;
+	virtual void init_players();
+//	virtual int add_player (int num, Control *c, int team_index, const char *name, const char *fleet, const char *fleet_file = "fleets.ini") ;
 	//int num_players;		should be global, for networking (which should also be global)
 //	Control **player_control;
 //	ShipPanel **player_panel;
@@ -105,7 +98,8 @@ class NormalGame : public Game {
 	void check_file(const char *id, int iplayer);
 	void download_file(char *filename);
 
-	virtual PlayerInformation *new_player();	// should return a pointer to a new player-class
+	//virtual NPI *new_player();	// should return a pointer to a new player-class
+
 	};
 
 

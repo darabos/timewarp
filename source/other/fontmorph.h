@@ -1,4 +1,9 @@
-/* $Id$ */ 
+/*
+This file is part of project TWX, homepage http://twx.sourceforge.net/
+
+This program is distributed under the GNU General Public License as
+published by the Free Software Foundation.
+*/
 #ifndef __FONT_MORPH__
 #define __FONT_MORPH__
 

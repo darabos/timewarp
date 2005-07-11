@@ -15,7 +15,6 @@ REGISTER_FILE
 #include "mview.h" //remove this
 #include "mfleet.h"
 #include "../scp.h"
-#include "../ais/AIBusterBot.h"
 
 
 
@@ -25,19 +24,17 @@ enum {
 	ai_index_human,
 	ai_index_moron,
 	ai_index_wussie,
-	ai_index_buster,
 	ai_index_vegetable,
 	ai_index_end
 };
 
-const char num_controls = 5;
+const char num_controls = 4;
 static char *gcc_sucks_dick[num_controls + 2] = 
 		{
 	"none", 
 	"Human", 
 	"MoronBot", 
 	"WussieBot", 
-	"BusterBot",
 	"VegetableBot", 
 	NULL};
 char **control_name = gcc_sucks_dick;
@@ -90,21 +87,22 @@ Control *getController(const char *type, const char *name, int channel) {STACKTR
 		case  ai_index_human:     return new ControlHuman(name, channel);
 		case  ai_index_moron:     return new ControlMoron(name, channel);
 		case  ai_index_wussie:    return new ControlWussie(name, channel);
-		case  ai_index_buster:    return new AIBusterBot(name, channel);
 		case  ai_index_vegetable: return new ControlVegetable(name, channel);
 		}
 	return NULL;
 	}
 
-
+/*
 int Control::rand()
 {
 	// this is synched with physics
 	if (channel == channel_none)
 		return random();
-	// this is local, so uses a local unsynched rand
+
+	// this is local (and the values will be shared), so uses a local unsynched rand
 	return (::rand() ^ ((::rand() << 12) + (::rand() <<24))) & 0x7fffffff;	// local
 	}
+	*/
 void Control::setup() {}
 void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE;
 	ship = ship_pointer;
@@ -315,7 +313,7 @@ lag / already state:
 
 */
 
-
+/*
 void Control::gen_buffered_data()
 {
 	//if (ship && ship->exists())		// well ... you also need it for watch-mode.
@@ -329,12 +327,17 @@ void Control::gen_buffered_data()
 	// cause a remote player is simulated with a vegetable bot here, which does not generate
 	// meaningful data anyway (through think()).
 }
+*/
 
 
-
-void Control::calculate() {STACKTRACE;
+void Control::calculate()
+{
+	STACKTRACE;
 
 	if (!exists()) return;
+
+	if (auto_update)
+		keys = think();
 
 	target_stuff();
 
@@ -401,7 +404,7 @@ void Control::calculate() {STACKTRACE;
 		}
 
 //	message.animate(0);
-//	if (ship && p_local == 0)
+//	if (ship && hostcomputer())
 //		readkey();
 
 	return;
@@ -419,10 +422,21 @@ void Control::_event(Event *e) {STACKTRACE;
 	return;
 }
 
-Control::Control(const char *name, int _channel) : temporary(false), target_sign_color(255), already(0), channel(_channel), 
-	  ship(NULL), keys(0),
-	target(NULL), index(-1), always_random(0),  _prediction_keys(NULL) 
-	{STACKTRACE
+Control::Control(const char *name, int _channel)
+:
+temporary(false),
+target_sign_color(255),
+already(0),
+channel(_channel),
+ship(NULL),
+keys(0),
+target(NULL),
+index(-1),
+always_random(0),
+_prediction_keys(NULL)
+{
+	STACKTRACE;
+
 	id |= ID_CONTROL;
 	attributes |= ATTRIB_SYNCHED;
 	if (channel != channel_none) {
@@ -434,7 +448,11 @@ Control::Control(const char *name, int _channel) : temporary(false), target_sign
 		}
 	}
 	iname = strdup(name);
-	}
+
+	auto_update = true;	// for bots.
+}
+
+
 Control::~Control() { STACKTRACE;
 	if (_prediction_keys) delete[] _prediction_keys;
 	}

@@ -424,6 +424,9 @@ OPTIONS_DIALOG_RELATIVITY_SLIDER,
 OPTIONS_DIALOG_FRIENDLY_FIRE,
 OPTIONS_DIALOG_HIDE_CLOAKERS,
 OPTIONS_DIALOG_3DPLANET,
+OPTIONS_DIALOG_SYNCLAG,
+OPTIONS_DIALOG_DESYNCTEST,
+OPTIONS_DIALOG_OPTIMIZE4LATENCY,
 //OPTIONS_DIALOG_TURBO_TEXT
 //OPTIONS_DIALOG_TURBO_SLIDER
 //OPTIONS_DIALOG_TURBOF4_TEXT
@@ -457,9 +460,12 @@ DIALOG old_optionsDialog[] =
    { d_slider_proc,   212, 56,  160, 16,  255, 0,   0,    0,      255, 0,   NULL,                       NULL, NULL          },
    { d_text_proc,     40,  94,  160, 20,  255, 0,   0,    0,      0,   0,   (void*)"Shot Relativity",   NULL, NULL          },
    { d_slider_proc,   212, 96,  160, 16,  255, 0,   0,    0,      1000,0,   NULL,                       NULL, NULL          },
-   { d_check_proc,    40,  144, 184, 20,  255, 0,   0,    0,      1,   0,   (void*)"Friendly Fire",     NULL, NULL          },	//OPTIONS_DIALOG_FRIENDLY_FIRE,
-   { d_check_proc,    40,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Camera hides cloakers",     NULL, NULL  },	//OPTIONS_DIALOG_HIDE_CLOAKERS,
-   { d_check_proc,    40,  190, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"3D Planet",         NULL, NULL          },	//OPTIONS_DIALOG_3DPLANET,
+   { d_check_proc,    40,  140, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Friendly Fire",     NULL, NULL          },	//OPTIONS_DIALOG_FRIENDLY_FIRE,
+   { d_check_proc,    40,  155, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Camera hides cloakers",     NULL, NULL  },	//OPTIONS_DIALOG_HIDE_CLOAKERS,
+   { d_check_proc,    40,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"3D Planet",         NULL, NULL          },	//OPTIONS_DIALOG_3DPLANET,
+   { d_check_proc,    200,  140, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Synched-lag",       NULL, NULL          },	//OPTIONS_DIALOG_SYNCLAG,
+   { d_check_proc,    200,  155, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Desynch-test",      NULL, NULL          },	//OPTIONS_DIALOG_DESYNCTEST,
+   { d_check_proc,    200,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Optimize latency",  NULL, NULL          },	//OPTIONS_DIALOG_OPTIMIZE4LATENCY,
    { d_text_proc,     292, 244, 120, 20,  255, 0,   0,    0,      0,   0,   (void *)"View",             NULL, NULL          },
    { d_list_proc,     284, 264, 180, 90,  255, 0,   0,    0,      0,   0,   (void *) viewListboxGetter, NULL, NULL          },
    { my_d_button_proc,400, 60,  80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"OK",               NULL, NULL          },
@@ -516,7 +522,24 @@ void change_options() {STACKTRACE
 	else
 		old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags = 0;
 
+	if (get_config_int("Network", "SyncLag", 0) == 1) 
+		old_optionsDialog[OPTIONS_DIALOG_SYNCLAG].flags = D_SELECTED;
+	else
+		old_optionsDialog[OPTIONS_DIALOG_SYNCLAG].flags = 0;
+
+	if (get_config_int("Network", "DesyncTest", 0) == 1) 
+		old_optionsDialog[OPTIONS_DIALOG_DESYNCTEST].flags = D_SELECTED;
+	else
+		old_optionsDialog[OPTIONS_DIALOG_DESYNCTEST].flags = 0;
+	
+	
+
 	set_config_file("client.ini");
+
+	if (get_config_int("Network", "OptimizeLatency", 0) == 1) 
+		old_optionsDialog[OPTIONS_DIALOG_OPTIMIZE4LATENCY].flags = D_SELECTED;
+	else
+		old_optionsDialog[OPTIONS_DIALOG_OPTIMIZE4LATENCY].flags = 0;
 
 	i = get_view_num ( get_config_string ( "View", "View", NULL ) );
 	if (i == -1) i = 0;
@@ -578,6 +601,21 @@ void change_options() {STACKTRACE
 		i = 1;
 	else i = 0;
 	twconfig_set_int("/cfg/server.ini/view/camerahidescloakers", i);
+
+	if (old_optionsDialog[OPTIONS_DIALOG_SYNCLAG].flags & D_SELECTED) 
+		i = 1;
+	else i = 0;
+	twconfig_set_int("/cfg/server.ini/network/SyncLag", i);
+
+	if (old_optionsDialog[OPTIONS_DIALOG_DESYNCTEST].flags & D_SELECTED) 
+		i = 1;
+	else i = 0;
+	twconfig_set_int("/cfg/server.ini/network/DesyncTest", i);
+
+	if (old_optionsDialog[OPTIONS_DIALOG_OPTIMIZE4LATENCY].flags & D_SELECTED) 
+		i = 1;
+	else i = 0;
+	twconfig_set_int("/cfg/client.ini/network/OptimizeLatency", i);
 
 	return;
 	}

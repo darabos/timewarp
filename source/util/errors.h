@@ -38,6 +38,8 @@ void tw_error_exit(const char* message) ;
 
 #include "get_time.h"
 
+
+
 struct SOURCE_LINE {
 	int line;         // __LINE__
 	const char *file; // __FILE__
@@ -65,12 +67,18 @@ struct SOURCE_LINE {
 #	define _STACKTRACE(A)
 #endif
 
+
 #ifdef DO_STACKTRACE
 	int get_stacktrace_data ( SOURCE_LINE **stack, int max );
 	int get_trace_data ( TraceData *trace, int max );
 	
 	char *get_stack_trace_string(int max);
 #endif
+
+
+
+
+
 
 
 extern "C" {

@@ -10,6 +10,8 @@ class TauSliderTrace;
 
 class TauSlider  :  public Ship
 {
+public:
+IDENTITY(TauSlider);
 
   TauSliderTrace* tr[max_trace_number];
 
@@ -53,6 +55,8 @@ class TauSlider  :  public Ship
 
 class TauSliderLaser : public SpaceLine
 {
+public:
+IDENTITY(TauSliderLaser);
   double        range, d, v;
 
   public:
@@ -68,6 +72,8 @@ class TauSliderLaser : public SpaceLine
 
 class TauSliderTrace : public SpaceLocation
 {
+public:
+IDENTITY(TauSliderTrace);
   public:
   int lifetime, s_i;
   TauSliderTrace(Ship* oship);

@@ -4,6 +4,8 @@
 REGISTER_FILE
 
 class YevMech : public Ship {
+public:
+IDENTITY(YevMech);
 	public:
 
 	int          SaberOn;
@@ -46,6 +48,8 @@ class YevMech : public Ship {
 	};
 
 class YevShield : public SpaceObject {
+public:
+IDENTITY(YevShield);
   YevMech  *ship;
 
   public:
@@ -66,6 +70,8 @@ RGB YevMech::crewPanelColor(int k)
 }
 
 class YevSaber : public SpaceObject {
+public:
+IDENTITY(YevSaber);
   YevMech  *ship;
   int frame;
   int frame_size;

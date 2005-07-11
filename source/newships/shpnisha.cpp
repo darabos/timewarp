@@ -9,6 +9,8 @@ REGISTER_FILE
 //#include "../sc1ships.h"
 
 class NisskHarasser : public Ship {
+public:
+IDENTITY(NisskHarasser);
   public:
   double       shipSpeedMax;
   double       shipTurnRate;

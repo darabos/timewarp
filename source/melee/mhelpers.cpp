@@ -265,7 +265,14 @@ void VideoSystem::redraw() {
 	window._event(&ve);
 	//clear_to_color(surface, palette_color[4]);
 }
-int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen) {STACKTRACE
+
+BITMAP *video_screen = 0;
+BITMAP *allegro_screen = 0;
+
+int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
+{
+	STACKTRACE;
+
 	VideoEvent ve;
 	ve.type = Event::VIDEO;
 	ve.window = &window;
@@ -288,6 +295,20 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 	window._event(&ve);
 	surface = NULL;
 	set_color_depth(bpp);
+
+	if (allegro_screen)
+	{
+		show_video_bitmap(screen);
+	}
+
+	show_mouse(0);
+
+	if (video_screen)
+	{
+		destroy_bitmap(video_screen);
+		video_screen = 0;
+	}
+
 	if ( set_gfx_mode((fullscreen ? GFX_TIMEWARP_FULLSCREEN : GFX_TIMEWARP_WINDOW), width, height, 0, 0)) {
 		const char *part1 = "Error switching to graphics mode";
 		char part2[256];
@@ -308,6 +329,15 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 		redraw();
 		return false;
 	}
+
+	allegro_screen = screen;
+
+	video_screen = create_video_bitmap(width, height);
+	show_video_bitmap(video_screen);
+
+	screen = video_screen;
+	show_mouse(screen);
+
 	surface = screen;
 	if (set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
 		set_display_switch_mode(SWITCH_BACKGROUND);

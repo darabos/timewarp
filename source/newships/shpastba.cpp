@@ -30,6 +30,8 @@ class BasiliskAimline;
 
 class BasiliskAreaHurt : public Presence
 {
+public:
+IDENTITY(BasiliskAreaHurt);
 	Vector2 *xp, *xv;
 	int		num, lifetime, life_counter, color;
 public:
@@ -44,6 +46,8 @@ public:
 
 class AstromorphBasilisk : public Ship 
 {
+public:
+IDENTITY(AstromorphBasilisk);
 	int		weaponColor;
 	double	weaponRange;
 	int		weaponDamage;
@@ -104,6 +108,8 @@ public:
 
 class BasiliskAimline : public Laser
 {
+public:
+IDENTITY(BasiliskAimline);
 private:
 	double angle_range;
 	int oncolor, offcolor;
@@ -141,7 +147,7 @@ BasiliskAimline::BasiliskAimline(AstromorphBasilisk *creator, double langle,
 
 void BasiliskAimline::calculate() 
 {
-	if((lpos->exists() && ship->fire_weapon)) 
+	if((lpos && lpos->exists() && ship && ship->fire_weapon)) 
 	{
 		pos = lpos->normal_pos() + rotate(rel_pos, lpos->get_angle() - PI/2);
 		vel = lpos->get_vel();
@@ -181,13 +187,17 @@ void BasiliskAimline::calculate()
 
 void BasiliskAimline::collide(SpaceObject *o)
 {
-	STACKTRACE
+	STACKTRACE;
+
+	if (  *(int*)(o) < 0x01000000 )
+		tw_error("Error in pointer addresss...");
   
 	if((!canCollide(o)) || (!o->canCollide(this)))
 		return;
 
 	if(target == NULL && o->isShip())
 		target = o;
+
 	
 	return;
 }
@@ -199,6 +209,8 @@ void BasiliskAimline::collide(SpaceObject *o)
 
 class Seg : public SpaceObject
 {
+public:
+IDENTITY(Seg);
 protected:
 	double max_health;
 	double max_hurt_flash_time, hurt_damage;
@@ -232,14 +244,17 @@ Seg::Seg(SpaceLocation *creator, Vector2 opos, double oangle,
 
 class BChain : public Seg
 {
+public:
+IDENTITY(BChain);
 	void BChainPhysics(SpaceObject *first, SpaceObject *second);
 	void BChainRecur(Seg *other, int num);
 	virtual void calculate();
 	virtual void animate(Frame* space);
 	double Seg_Distance;
+	AstromorphBasilisk *basilisk;
 
 public:
-	BChain(SpaceLocation *creator, Vector2 opos, double oangle,
+	BChain(AstromorphBasilisk *creator, Vector2 opos, double oangle,
 	SpaceSprite *osprite, int oSegs, double ospacing, double omass, double ohealth,
 	double om_h_f_t, double oh_d, double of);
 	
@@ -260,12 +275,15 @@ public:
 //Needs 64 images.
 class BasiLink : public Seg
 {
+public:
+IDENTITY(BasiLink);
 protected:
 	virtual void animate(Frame* space);
 	virtual void calculate();
+	AstromorphBasilisk *basilisk;
 
 public:
-	BasiLink(SpaceLocation *creator, Vector2 opos, double oangle,
+	BasiLink(AstromorphBasilisk *creator, Vector2 opos, double oangle,
 		SpaceSprite *osprite, SpaceObject *Prev_Object,
 		SpaceObject *Next_Object, double omass, double ohealth, double omax_health, 
 		double om_h_f_t, double oh_d, double of);
@@ -279,6 +297,8 @@ public:
 
 class BasiliskGas: public AnimatedShot 
 {
+public:
+IDENTITY(BasiliskGas);
 
 	int hitShip;
 	int duration;
@@ -298,6 +318,8 @@ class BasiliskGas: public AnimatedShot
 
 class BasiliskPoison : public SpaceObject 
 {
+public:
+IDENTITY(BasiliskPoison);
 	public:
 
 	double poison;
@@ -316,7 +338,7 @@ class BasiliskPoison : public SpaceObject
 
 
 
-BasiLink::BasiLink(SpaceLocation *creator, Vector2 opos, double oangle,
+BasiLink::BasiLink(AstromorphBasilisk *creator, Vector2 opos, double oangle,
 		SpaceSprite *osprite, SpaceObject *Prev_Object,
 		SpaceObject *Next_Object,double omass, double ohealth, double omax_health, double om_h_f_t, double oh_d, double of)
 :
@@ -331,6 +353,8 @@ Seg(creator,opos,oangle,osprite,Prev_Object,Next_Object)
 	health=ohealth;
 	max_health = omax_health;
 	layer = LAYER_SPECIAL;
+
+	basilisk = creator;
 }
 
 
@@ -369,7 +393,8 @@ int BasiLink::handle_damage(SpaceLocation *source, double normal, double direct)
 			damage(Prev_Seg, 0, totalDamage - health);
 			play_sound2(data->sampleExtra[0]);
 			die();
-			((AstromorphBasilisk*)ship)->numSegs--;
+			// dangerous re-cast...
+			basilisk->numSegs--;
 		}
 		else			
 			health -= totalDamage;
@@ -390,6 +415,20 @@ void BasiLink::calculate()
 	{	//If the mothership is killed, the BChain dies.
 		state=0;
 		ship = 0;
+		return;
+	}
+
+	if (basilisk && !basilisk->exists())
+	{
+		basilisk = 0;
+		die();
+		return;
+	}
+
+	if (ship != basilisk)
+	{
+		// something awful has happened...
+		die();
 		return;
 	}
 	
@@ -455,12 +494,13 @@ void BasiLink::inflict_damage(SpaceObject *other)
 // ***************************************************************************
 
 
-BChain::BChain(SpaceLocation *creator, Vector2 opos, double oangle,
+BChain::BChain(AstromorphBasilisk *creator, Vector2 opos, double oangle,
 	SpaceSprite *osprite, int oSegs,double ospacing, double omass, 
 	double ohealth, double om_h_f_t, double oh_d, double of)
 :
 Seg(creator,opos, oangle,osprite,NULL,NULL)
 {
+	basilisk = creator;
 		
 	health = ohealth;
 	max_health = ohealth;
@@ -570,7 +610,7 @@ bool BChain::regrow(int maxSegs)
 		Vector2 ppos = dd + last->pos;
 		
 		//Create a new Seg that knows that it's attached to Cur_Seg
-		last->Next_Seg = new BasiLink(ship,ppos,last->angle, sprite,
+		last->Next_Seg = new BasiLink(basilisk, ppos, last->angle, sprite,
 			last, NULL, mass, 1, max_health, max_hurt_flash_time, hurt_damage, friction);
 		
 		//Add it to the game
@@ -647,6 +687,13 @@ void BChain::calculate()
 	{	//If the mothership is killed, the BChain dies.
 		state=0;
 		ship = 0;
+		return;
+	}
+
+	if (ship != basilisk)
+	{
+		// something awful has happened...
+		die();
 		return;
 	}
 
@@ -969,6 +1016,11 @@ void AstromorphBasilisk::calculate()
 	STACKTRACE
 
 	// firing the weapon
+
+	if (aimline && !aimline->exists())
+	{
+		aimline = 0;
+	}
 	
 //	vel*=0.99;
 	if(aimline && !fire_weapon && batt - weapon_drain >= 0 && weapon_recharge <= 0)
@@ -989,7 +1041,7 @@ void AstromorphBasilisk::calculate()
 			SpaceObject* targ = aimline->target;
 			
 			a = intercept_angle2(pos, vel * game->shot_relativity, weaponVelocity*aimBonus, 
-			targ->normal_pos(), targ->get_vel());
+			targ->normal_pos(), targ->get_vel());		//xxx error: targ =0x00001 ...
 		}
 		else 
 			a = angle;

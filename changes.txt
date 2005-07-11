@@ -1,5 +1,15 @@
+
+
 Star Control: TimeWarp
 ChangeLog
+
+version 0.06u1
+
+ * new ships added, existing ships revised
+ * ship classification into A, B (A=good, B=not so good).
+ * improved AI (?)
+ * 8 player networking
+
 
 Pre-0.05u6 new improvements:
   * Improved networking lag by a factor of 2 on Windows.  

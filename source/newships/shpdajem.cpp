@@ -10,6 +10,8 @@ class DajielkaTendril;
 class DajielkaSanctuary;
 
 class DajielkaCrTorpedo : public AnimatedShot {
+public:
+IDENTITY(DajielkaCrTorpedo);
   double    Relativity;
   //int oorange;
 
@@ -25,6 +27,8 @@ class DajielkaCrTorpedo : public AnimatedShot {
 };
 
 class DajielkaSanctuary : public SpaceObject {
+public:
+IDENTITY(DajielkaSanctuary);
   public:
   int absorbtionEnergyToAdd;
   int absorbtionEnergyIsEnabled;
@@ -66,6 +70,8 @@ class DajielkaSanctuary : public SpaceObject {
 };
 
 class DajielkaTendril : public SpaceLine {
+public:
+IDENTITY(DajielkaTendril);
 
 public:
   int recreateMe;
@@ -93,6 +99,8 @@ public:
 
 
 class DajielkaCruiser : public Ship {
+public:
+IDENTITY(DajielkaCruiser);
 public:
   int          accumulatedCharge;
   int          shipChargeThreshhold;

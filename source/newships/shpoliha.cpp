@@ -9,6 +9,8 @@ REGISTER_FILE
 
 class Olidandee : public BigShip
 {
+public:
+IDENTITY(Olidandee);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	
 	
@@ -33,6 +35,8 @@ protected:
 
 class OlidandeeArm : public BigShipPart
 {
+public:
+IDENTITY(OlidandeeArm);
 	double direction;
 	int rel_sprite_index;
 public:
@@ -45,6 +49,8 @@ public:
 
 class OlidandeeHabitat : public SpaceObject
 {
+public:
+IDENTITY(OlidandeeHabitat);
 	Olidandee *mother;
 
 	double armour, batt, battmax, t_c, t_recrew, t_l, t_laser;

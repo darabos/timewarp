@@ -1,4 +1,9 @@
-/* $Id$ */ 
+/*
+This file is part of project TWX, homepage http://twx.sourceforge.net/
+
+This program is distributed under the GNU General Public License as
+published by the Free Software Foundation.
+*/
 #include "fontmorph.h"
 
 // check plugins/datfont.c for FONT routines ...
@@ -66,7 +71,9 @@ void font_upgrade_to_color(FONT* f)
 void morph_font(FONT *f)
 {
 
- 	font_upgrade_to_color(f);
+ 	//font_upgrade_to_color(f);
+	// hmm, well ... it's best if it's left at the discretion of the
+	// user, to use this properly !!
 
 	int c;
 	BITMAP* bmp;
@@ -104,8 +111,8 @@ void morph_font(FONT *f)
 				}
 
 				int k;
-				if (totcol > 0 && totcol < (2*H+1)*(2*H+1))
-					k = 15;
+				if (totcol > 0)// && totcol < (2*H+1)*(2*H+1))
+					k = makecol8(155,155,155);//15;
 				else
 					k = 255;
 

@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 
@@ -13,7 +13,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include "twbutton.h"
 #include "twpopup.h"
 
-#include "util/round.h"
+#include "utils.h"
 
 
 
@@ -25,7 +25,8 @@ TWindow(ident, xcenter, ycenter, outputscreen)
 {
 	movingthereserve = false;
 
-	center(xcenter, ycenter);		// center around this position, in relative coordinates
+	if (!(xcenter == -1 && ycenter == -1))
+		center(xcenter, ycenter);		// center around this position, in relative coordinates
 
 	returnvalueready = false;
 }
@@ -109,6 +110,7 @@ void Popup::close(int areturnstatus)
 
 	returnstatus = areturnstatus;
 	returnvalueready = true;
+	grabbedmouse = false;
 }
 
 
@@ -140,6 +142,7 @@ void Popup::enable()
 {
 	TWindow::enable();
 	returnvalueready = false;
+	grabbedmouse = false;
 }
 
 
@@ -148,6 +151,7 @@ void Popup::newscan()
 {
 	show();	// (more general than enable)
 	ready();
+	grabbedmouse = false;
 }
 
 
@@ -182,22 +186,22 @@ Popup(identbranch, axshift, ayshift, outputscreen)
 
 	init_components(identbranch);
 
-	xshift = iround(axshift * scale);
-	yshift = iround(ayshift * scale);
+	xshift = round(axshift * scale);
+	yshift = round(ayshift * scale);
 }
 
 PopupT::PopupT(EmptyButton *atrigger, char *identbranch, int axshift, int ayshift)
 :
 Popup(identbranch,
 			axshift, ayshift,
-			atrigger->mainwindow->screen)
+			atrigger->mainwindow->twscreen)
 {
 	trigger = atrigger;
 
 	init_components(identbranch);
 
-	xshift = iround(axshift * scale);
-	yshift = iround(ayshift * scale);
+	xshift = round(axshift * scale);
+	yshift = round(ayshift * scale);
 }
 
 
@@ -247,7 +251,7 @@ void PopupT::calculate()
 	// if you press the trigger, this menu is activated
 	// (if a trigger isn't needed, but some more forcefull external control,
 	// trigger==0)
-	if ( trigger && disabled && trigger->flag.left_mouse_hold )
+	if ( trigger && disabled && trigger->flag.left_mouse_press )
 	{
 		if (option.disable_othermenu)
 		{
@@ -257,13 +261,13 @@ void PopupT::calculate()
 		this->show();		// this also resets the mouse position and old position, so that it has
 							// the most recent value (since it hasn't been updated by the
 							// calculate funtion for a while).
-		this->focus();
+		//this->focus();
 
 		// but where exactly : near the mouse !!
 		if (option.place_relative2mouse)
 		{
-			x = iround(trigger->mainwindow->x + trigger->mainwindow->mpos.x + xshift);
-			y = iround(trigger->mainwindow->y + trigger->mainwindow->mpos.y + yshift);
+			x = round(trigger->mainwindow->x + trigger->mainwindow->mpos.x + xshift);
+			y = round(trigger->mainwindow->y + trigger->mainwindow->mpos.y + yshift);
 		} else if (option.place_relative2window) {
 			x = trigger->mainwindow->x + xshift;
 			y = trigger->mainwindow->y + yshift;
@@ -272,13 +276,13 @@ void PopupT::calculate()
 
 		// don't let the menu go off-screen:
 		
-		if ( x+W > screen->w )
-			x = screen->w - W;
+		if ( x+W > twscreen->w )
+			x = twscreen->w - W;
 		if ( x < 0 )
 			x = 0;
 		
-		if ( y+H > screen->h )
-			y = screen->h - H;
+		if ( y+H > twscreen->h )
+			y = twscreen->h - H;
 		if ( y < 0 )
 			y = 0;
 		
@@ -325,7 +329,7 @@ void PopupT::close(int areturnstatus)
 	{
 		// give back focus/control to the window that called this window.
 		trigger->mainwindow->show();
-		trigger->mainwindow->focus();
+		//trigger->mainwindow->focus();
 	}
 
 	Popup::handle_focus_loss();

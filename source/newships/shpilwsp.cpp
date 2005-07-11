@@ -16,6 +16,8 @@ REGISTER_FILE
 */
 
 class IlwrathSpider : public Ship {
+public:
+IDENTITY(IlwrathSpider);
     double       weaponRange;
     double       weaponVelocity;
     int          weaponDamage;
@@ -40,6 +42,8 @@ protected:
 
 /*
 class IlwrathSpiderMine : public SpaceObject {
+public:
+IDENTITY(IlwrathSpiderMine);
     int    step;
     int    life;
     int    inc;
@@ -53,6 +57,8 @@ public:
 };
 
 class IlwrathStop : public SpaceLocation {
+public:
+IDENTITY(IlwrathStop);
     SpaceObject* victim;
     int          life;
     double       old_v;

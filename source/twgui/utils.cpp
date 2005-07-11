@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #include <allegro.h>
@@ -12,6 +12,8 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 //#include "twgui.h"
 
 #include "twwindow.h"
+
+#include "../scp.h"
 
 normalmouse Tmouse;
 
@@ -138,7 +140,7 @@ BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem)
 	else
 		blit(convert, dest, 0, 0, 0, 0, W, H);
 
-	del_bitmap(&convert);
+	destroy_bmp(&convert);
 
 
 	
@@ -146,11 +148,11 @@ BITMAP *clone_bitmap(int bpp, BITMAP *src, double scale, bool vidmem)
 	// cause the menu-bitmaps are pretty large, and take lotsa time to draw ...
 	if (vidmem)
 	{
-		convert = create_video_bitmap(W, H);
+		convert = create_video_bmp(W, H);
 		if (convert)
 		{
 			blit(dest, convert, 0, 0, 0, 0, W, H);
-			del_bitmap(&dest);
+			destroy_bmp(&dest);
 			dest = convert;
 		}
 	}
@@ -403,6 +405,9 @@ void TKeyHandler::update()
 	if (keyboard_needs_poll())
 		poll_keyboard();
 
+	key_hold = false;
+	key_press = false;
+
 	// detect key changes ...
 	// (note that changes in-between updates are not seen by this so it's not 100% accurate)
 	int i;
@@ -424,6 +429,12 @@ void TKeyHandler::update()
 				keyreleased[i] = 1;
 		}
 
+		if (keynew[i])
+			key_hold = true;
+
+		if (keyhit[i])
+			key_press = true;
+
 	}
 
 
@@ -435,6 +446,10 @@ void TKeyHandler::update()
 	// reset the back-buffer for reading new stuf.
 	Nbackbuf = 0;
 
+
+	key_control = key[KEY_LCONTROL] | key[KEY_RCONTROL];
+	key_shift   = key[KEY_LSHIFT] | key[KEY_RSHIFT];
+	key_alt     = key[KEY_ALT] | key[KEY_ALTGR];
 }
 
 
@@ -460,4 +475,28 @@ bool TKeyHandler::pressed(char key)
 
 	return false;
 }
+
+
+
+/** Find a mask color (purple) to see if this bitmap needs masked_blit or
+a normal blit */
+bool check_mask(BITMAP *b)
+{
+	int cmask = makecol(255,0,255);
+	int ix, iy;
+	for ( iy = 0; iy < b->h; ++iy )
+	{
+		for ( ix = 0; ix < b->w; ++ix )
+		{
+			int c;
+			c = getpixel(b, ix, iy);
+
+			if (c == cmask)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 

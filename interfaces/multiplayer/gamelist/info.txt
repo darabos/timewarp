@@ -1,5 +1,7 @@
-interfaces/multiplayer/gamelist/list_backgr_y = 6
-interfaces/multiplayer/gamelist/list_backgr_x = 6
+locy = -365
+locx = -215
+interfaces/multiplayer/gamelist/list_backgr_y = 19
+interfaces/multiplayer/gamelist/list_backgr_x = 20
 res = 800
 autoplace = 1
 

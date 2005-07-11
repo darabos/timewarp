@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class OstokDisplacer : public Ship {
+public:
+IDENTITY(OstokDisplacer);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;

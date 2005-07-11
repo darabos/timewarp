@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class VuvJinx : public Ship {
+public:
+IDENTITY(VuvJinx);
   public:
   double       weaponRange, weaponVelocity, weaponSpread;
   int          weaponNumber;
@@ -19,6 +21,8 @@ class VuvJinx : public Ship {
 
 class VuvJinxShot : public SpaceLine
 {
+public:
+IDENTITY(VuvJinxShot);
   double        range, d, v;
   int           spark_time;
   public:
@@ -33,6 +37,8 @@ class VuvJinxShot : public SpaceLine
 
 class VuvJinxSpark : public SpaceLine
 {
+public:
+IDENTITY(VuvJinxSpark);
   int lifetime;
   public:
   VuvJinxSpark(SpaceLocation *creator);
@@ -42,6 +48,8 @@ class VuvJinxSpark : public SpaceLine
 
 class VuvJinxExplosion : public SpaceLine
 {
+public:
+IDENTITY(VuvJinxExplosion);
   int lifetime;
 
   public:

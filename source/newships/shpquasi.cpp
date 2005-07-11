@@ -1,5 +1,6 @@
 /* $Id$ */ 
 #include "../ship.h"
+#include "../scp.h"
 REGISTER_FILE
 
 #include "../sc1ships.h"
@@ -7,6 +8,8 @@ REGISTER_FILE
 
 class Quai : public Ship
 {
+public:
+IDENTITY(Quai);
 public:
 	double       weaponRange;
 	double       weaponVelocity;
@@ -29,7 +32,7 @@ public:
 	virtual int activate_special();
 
 	virtual void calculate();
-//	virtual void animate(Frame *f);
+	virtual void animate(Frame *f);
 
 	virtual void calculate_thrust();
 	virtual double isInvisible() const;
@@ -39,6 +42,8 @@ public:
 
 class QuaiShot : public Missile
 {
+public:
+IDENTITY(QuaiShot);
 	double		timedelay, twait;
 
 public:
@@ -55,6 +60,8 @@ public:
 
 class QuaiEngine : public SpaceObject
 {
+public:
+IDENTITY(QuaiEngine);
 	Quai *mother;
 
 public:
@@ -297,6 +304,13 @@ double Quai::isInvisible() const
 	return enginereleased;
 }
 
+void Quai::animate(Frame *space)
+{
+	if (isInvisible() && !is_bot(control->channel) && is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
+		sprite->animate_character( pos, sprite_index, pallete_color[4], space);
+	else
+		Ship::animate(space);
+}
 
 
 REGISTER_SHIP ( Quai )

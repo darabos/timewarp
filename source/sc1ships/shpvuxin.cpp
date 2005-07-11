@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../sc1ships.h"
 
 class VuxLimpet : public AnimatedShot {
+public:
+IDENTITY(VuxLimpet);
   double slowdown_factor;
 
   public:
@@ -182,6 +184,8 @@ void VuxIntruder::animate(Frame *space){
 
 
 class VuxPhaser : public Phaser {
+public:
+IDENTITY(VuxPhaser);
 	public:
 	VuxPhaser(Vector2 opos, Vector2 n, VuxIntruder *ship, 
 			SpaceSprite *sprite, int osprite_index, int *ocolors, 

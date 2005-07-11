@@ -26,6 +26,8 @@ class RogueFighter;
 class RogueSquadron : public Ship
 {
 public:
+IDENTITY(RogueSquadron);
+public:
 	
 	class Formation_cl
 	{
@@ -71,6 +73,8 @@ public:
 class RogueFighter : public Ship
 {
 public:
+IDENTITY(RogueFighter);
+public:
 
 	RogueSquadron	*mother;
 	Vector2			idealpos, idealrelpos;
@@ -86,6 +90,8 @@ public:
 };
 
 class PulseLaser : public SpaceLine {
+public:
+IDENTITY(PulseLaser);
 	protected:
 	double frame;
 	double frame_count;
@@ -637,7 +643,13 @@ int RogueFighter::handle_damage(SpaceLocation* source, double normal, double dir
 	// note, you've got damage = either by collision, or some special thing
 	// handle the damage in the normal way, if there's no actual collision
 	if ( !(source->canCollide(this)) )
+	{
 		Ship::handle_damage(source, normal, direct);	// handle the special damage
+		if ( crew <= 0 )
+		{
+			die();
+		}
+	}
 	else
 	{
 		Ship::handle_damage(source, normal, direct);	// handle the damage
@@ -646,7 +658,7 @@ int RogueFighter::handle_damage(SpaceLocation* source, double normal, double dir
 			(source->isAsteroid() && mother->fighterAsteroidsKill) ||
 			source->isShip() )
 		{
-			state = 0;
+			die();
 			// it also inflicts some damage on it's target :)
 			damage(source, mother->fighterDamage, 0);
 		}

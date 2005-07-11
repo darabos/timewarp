@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class VirtaoLimb : public Ship {
+public:
+IDENTITY(VirtaoLimb);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -22,6 +24,8 @@ class VirtaoLimb : public Ship {
 };
 
 class VirtaoMissile : public HomingMissile {
+public:
+IDENTITY(VirtaoMissile);
   public:
   VirtaoMissile(Vector2 opos, double oangle, double ov,
     int odamage, double orange, int oarmour, double otrate, Ship *oship,

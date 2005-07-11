@@ -35,6 +35,8 @@ class ShipPartManager;
 
 class DuclyLanternjaws : public Ship
 {
+public:
+IDENTITY(DuclyLanternjaws);
   public:
 
   double       weaponRange;
@@ -73,6 +75,8 @@ class DuclyLanternjaws : public Ship
 
 class SpaceLineArc : public SpaceLine
 {
+public:
+IDENTITY(SpaceLineArc);
 	LaserArc	*mother;
 public:
 	SpaceLineArc(LaserArc *creator, Vector2 lpos, double langle, 
@@ -86,6 +90,8 @@ public:
 // a growing laser arc.
 class LaserArc : public SpaceLocation
 {
+public:
+IDENTITY(LaserArc);
 	DuclyLanternjaws *mother;
 
 public:
@@ -107,6 +113,8 @@ public:
 
 class ShipPart : public SpaceObject
 {
+public:
+IDENTITY(ShipPart);
 	void calc_angle();
 	void calc_pos(Vector2 refpos);	// calculates it for this angle
 
@@ -138,6 +146,8 @@ public:
 
 class Lantern : public SpaceLocation
 {
+public:
+IDENTITY(Lantern);
 	DuclyLanternjaws *mother;
 
 public:
@@ -154,6 +164,8 @@ public:
 
 // copied from RogueSquadron
 class PulseLaser2 : public SpaceLine {
+public:
+IDENTITY(PulseLaser2);
 	protected:
 	double frame;
 	double frame_count;
@@ -174,6 +186,8 @@ class PulseLaser2 : public SpaceLine {
 static const int MaxParts = 100;
 class ShipPartManager : public Presence
 {
+public:
+IDENTITY(ShipPartManager);
 	ShipPart	*partlist[MaxParts];
 	int			Nparts;
 	Ship		*mother;
@@ -596,10 +610,10 @@ int DuclyLanternjaws::activate_special()
 {
 	STACKTRACE
 
-	if ( lantern->intensity >= 0.9 )
-		return FALSE;
-
-	lantern->intensity += 0.1;
+	if ( lantern->intensity < 0.9 )
+		lantern->intensity += 0.1;
+	else
+		lantern->intensity = 1.0;
 	
 	return TRUE;
 }
@@ -945,6 +959,7 @@ void Lantern::calculate()
 	radius = intensity * maxradius;		// lifetime of the beams?
 	density = intensity * maxdensity;	// number of new beams per second
 
+	/*
 	// intensity slowly decreases, unless you hit "fire"
 
 	if ( !mother->fire_weapon )
@@ -952,8 +967,13 @@ void Lantern::calculate()
 //	else
 		intensity -= int_decrease * frame_time*1E-3;
 
-	if ( intensity < 0 )
+  if ( intensity < 0 )
 		intensity = 0;
+		*/
+	// no, it's better if the laser stops at once if the player stops firing.
+	if ( !mother->fire_special )
+		intensity = 0;
+
 
 //	int i;
 	if ( tw_random(1.0) < frame_time*1E-3 * density )	// average occurrence per second
@@ -981,7 +1001,7 @@ void Lantern::calculate()
 			a = tw_random(-laserspread, laserspread);
 			double v;
 			v = 1.0;
-			add ( new PulseLaser2(this, a, col, 5*L, dam, cnt, this, 0, v));	// dangerous thing
+			add ( new PulseLaser2(this, a, col, L, dam, cnt, this, 0, v));	// dangerous thing
 
 			// some force feedback
 			mother->accelerate(this, angle+a+PI, weaponAccel);

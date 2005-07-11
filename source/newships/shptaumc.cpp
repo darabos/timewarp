@@ -13,6 +13,8 @@ REGISTER_FILE
 
 class TauMC : public Ship
 {
+public:
+IDENTITY(TauMC);
   double        weaponRange;
   double        weaponVelocity;
   double        weaponTurnRate;
@@ -70,6 +72,8 @@ class TauMC : public Ship
 
 class TauMCMissile : public HomingMissile
 {
+public:
+IDENTITY(TauMCMissile);
   double track_angle, w_ship, w_shot;
 
   public:
@@ -82,6 +86,8 @@ class TauMCMissile : public HomingMissile
 
 class TauMCTorpedo : public HomingMissile
 {
+public:
+IDENTITY(TauMCTorpedo);
   double blast_range;
   int    blast_damage;
   double old_range;

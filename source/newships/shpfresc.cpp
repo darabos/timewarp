@@ -8,6 +8,8 @@ REGISTER_FILE
 class FreinSchizm : public Ship
 {
 public:
+IDENTITY(FreinSchizm);
+public:
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;
@@ -28,6 +30,8 @@ public:
 
 class SchizmHealingbolt : public HomingMissile
 {
+public:
+IDENTITY(SchizmHealingbolt);
 public:
 	SchizmHealingbolt(SpaceLocation *creator, Vector2 rpos, double oangle, 
 		double ov, double odamage, double orange, double oarmour, double oturnrate,
@@ -122,6 +126,9 @@ void SchizmHealingbolt::inflict_damage(SpaceObject *other)
 	{
 		HomingMissile::inflict_damage(ship);
 		HomingMissile::inflict_damage(other);
+		die();
+	} else {
+		die();
 	}
 
 //	add(new Animation(this, pos, data->spriteSpecial, 

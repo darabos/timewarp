@@ -7,22 +7,30 @@ const char *ControlVegetable::getTypeName() {
 	return "VegetableBot";
 	}
 /*! \brief This AI do nothing */
-int ControlVegetable::think() {
+int ControlVegetable::think()
+{
 	return 0;
-	}
+}
 /*! \brief This function do nothing
   \return -1
 */
+
 int ControlVegetable::choose_ship(VideoWindow *window, char * prompt, class Fleet *fleet ) {
 	return -1;
 	}
 
-ControlVegetable::ControlVegetable (const char *name, int channel) : Control(name, channel) {
-	}
+ControlVegetable::ControlVegetable (const char *name, int channel)
+:
+Control(name, channel)
+{
+	// this is "nothing".
+	auto_update = false;
+}
 
-const char *ControlMoron::getTypeName() {
+const char *ControlMoron::getTypeName()
+{
 	return "MoronBot";
-	}
+}
 
 /*! \brief Simple AI 
   \param ship with this stupid AI

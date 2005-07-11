@@ -4,6 +4,8 @@ REGISTER_FILE
 
 class TauFiend  :  public Ship
 {
+public:
+IDENTITY(TauFiend);
   double        weaponRange;
   double        weaponVelocity;
   int           weaponDamage;
@@ -41,6 +43,8 @@ class TauFiend  :  public Ship
 
 class TauFiendShot : public Shot
 {
+public:
+IDENTITY(TauFiendShot);
   public:
   TauFiendShot   (Vector2 opos, double oangle, double ov, double orange,
                int odamage, int oarmour, SpaceLocation *creator, SpaceSprite *osprite,
@@ -51,6 +55,8 @@ class TauFiendShot : public Shot
 
 class TauFiendPWave : public Missile
 {
+public:
+IDENTITY(TauFiendPWave);
   int emp_fs, delay;
   public:
   
@@ -64,6 +70,8 @@ class TauFiendPWave : public Missile
 
 class TauFiendPEffect : public Animation
 {
+public:
+IDENTITY(TauFiendPEffect);
   Ship* target;
   int fs;
   public:

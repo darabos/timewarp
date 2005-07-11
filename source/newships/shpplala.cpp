@@ -31,6 +31,8 @@ REGISTER_FILE
 #include "../frame.h"
 
 class PlanetLander : public Ship {
+public:
+IDENTITY(PlanetLander);
 	double		weaponRange;
 	double		weaponVelocity;
 	int			weaponDamage;

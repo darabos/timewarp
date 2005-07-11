@@ -20,6 +20,7 @@ REGISTER_FILE
 #include <string.h>
 
 #include "planet3d.h"
+#include "../melee/mlog.h"
 
 
 SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
@@ -127,12 +128,17 @@ Planet *create_planet( Vector2 position )
 	// add this line to server.ini, under [Planets]
 	// PlanetDimension = 3       ; 2 = standard 2d sprite, 3 = Tau's 3D planet idea.
 
-	game->log_file ("server.ini");
+	set_config_file ("server.ini");
 
 
 	int planetD, PlanetUsespec;
 	planetD = get_config_int("Planet", "PlanetDimension", 2);
 	PlanetUsespec = get_config_int("Planet", "PlanetUsespec", 1);
+
+	// this is necessary: cause the planets have different sizes.
+	share(-1, &planetD);
+	share_update();
+	
 
 	// check if the 3D data file exists
 	if (!exists("planet3d.dat"))

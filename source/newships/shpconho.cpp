@@ -10,6 +10,8 @@ REGISTER_FILE
 #define BCC 3
 
 class ConfederationHornet : public Ship {
+public:
+IDENTITY(ConfederationHornet);
   int          regenrateFrames;
   int          regenrateCount;
   int          regenrating;
@@ -48,6 +50,8 @@ class ConfederationHornet : public Ship {
 };
 
 class TorpedoMissile : public HomingMissile {
+public:
+IDENTITY(TorpedoMissile);
 	protected:
 	int Direct_Damage;
 

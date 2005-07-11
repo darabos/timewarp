@@ -19,6 +19,8 @@ class HydrovarCruiser;
 
 class HydrovarBeam : public Laser
 {
+public:
+IDENTITY(HydrovarBeam);
 protected:
 	double startingLength;
 	double float_damage_factor, current_damage_factor;
@@ -37,6 +39,8 @@ public:
 
 class HydrovarCruiser : public Ship
 {
+public:
+IDENTITY(HydrovarCruiser);
 public:
 	int		weaponColor;
 	int		weaponFrames0, weaponFrames1, weaponFrames2;
@@ -97,6 +101,8 @@ public:
 
 class HydrovarEsFighter : public HomingMissile
 {
+public:
+IDENTITY(HydrovarEsFighter);
 	int		retreat_frames;
 	int		hasEnemy;
 	int		locationNumber;

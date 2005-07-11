@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class VelronCruiser : public Ship
 {
+public:
+IDENTITY(VelronCruiser);
 protected:
 
 	double   shipSpecialDrain;
@@ -54,6 +56,8 @@ int code);
 
 class VelronCrBolt : public Shot
 {
+public:
+IDENTITY(VelronCrBolt);
 	int		maxDamage, maxArmour, referenceDamage;
 	double	relative_damage;
 
@@ -71,6 +75,8 @@ direct);
 
 class VelronCrDefShot : public Shot
 {
+public:
+IDENTITY(VelronCrDefShot);
 
 public:
 

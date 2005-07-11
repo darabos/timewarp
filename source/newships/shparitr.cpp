@@ -33,6 +33,8 @@ REGISTER_FILE
 
 class trapShip : public SpaceObject
 {
+public:
+IDENTITY(trapShip);
   Ship *ship;
   int drainRate;
   int drainDelay;
@@ -114,6 +116,8 @@ void trapShip::calculate()
 
 class quasiTrap : public HomingMissile
 {
+public:
+IDENTITY(quasiTrap);
   int vDelay;
   int drainDelay;
   int drainAmount;
@@ -178,6 +182,8 @@ int quasiTrap::handle_damage(SpaceLocation *source, double norm, double direct)
 *************************************/
 class ArilouTrapperThrust : public PositionedAnimation
 {
+public:
+IDENTITY(ArilouTrapperThrust);
   int base_frame;
   public:
   ArilouTrapperThrust(SpaceLocation *creator, double ox, double oy, SpaceSprite *osprite, double offset);
@@ -200,6 +206,8 @@ ArilouTrapperThrust::ArilouTrapperThrust(SpaceLocation *creator, double ox, doub
 
 class ArilouTrapper : public Ship
 {
+public:
+IDENTITY(ArilouTrapper);
   int    regenrateFrames;
   int    regenrateCount;
   int    regenerating;

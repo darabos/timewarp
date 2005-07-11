@@ -1,4 +1,5 @@
 /* $Id$ */ 
+
 #include <allegro.h> //allegro library header
 #include <stdio.h>
 
@@ -52,7 +53,12 @@ void SuperArena::calculate() {
 		int i, t[100];
 		int n;
 		for ( n = 0; n < num_players; ++n )
+		{
+			if (!player[n])
+				continue;
+
 			t[n] = 0;
+		}
 
 		for (i = 0; i < gametargets.N; i += 1)
 		{
@@ -75,6 +81,9 @@ void SuperArena::calculate() {
 		int nalive = 0;
 		for ( n = 0; n < num_players; ++n )
 		{
+			if (!player[n])
+				continue;
+
 			if (t[n] > 0)
 				++nalive;
 		}
@@ -85,6 +94,8 @@ void SuperArena::calculate() {
 		if ((started == 1) && (KTS == 1)) {
 			for (int num=1; num < num_players; num+=1) {
 
+				if (!player[num])
+					continue;
 				// CRASH s is invalid
 				if ( (died[num]!=1) && (!s[num]->exists()) )
 				{

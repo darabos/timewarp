@@ -66,7 +66,7 @@ public:
 	virtual int serialize (void *stream);  //returns 0 on failure
 	virtual int _get_size() const;          //returns 0 on failure
 
-	virtual void gen_buffered_data();		// to synch networking.
+//	virtual void gen_buffered_data();		// to synch networking.
 };
 
 

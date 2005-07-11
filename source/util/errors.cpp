@@ -7,7 +7,36 @@
 #include "../melee.h"
 REGISTER_FILE
 
+#include "../scp.h"
 
+void dump_physics(const char *message)
+{
+	char fname[512];
+	sprintf(fname, "tw_error.txt");
+
+	FILE *f;
+	f = fopen(fname, "at");
+	if (!f)
+		return;
+
+	fprintf(f, "timewarp error message is:\n%s\n", message);
+
+	if (!physics)
+		return;
+
+	int i;
+	for ( i = 0; i < physics->num_items; ++i )
+	{
+		SpaceLocation *o = physics->item[i];
+		// write: address, parent, target pointer, identity, pos, angle, and vel
+		fprintf(f, "0x%08p p:0x%08p t:0x%08p id:%s\n\t\tx:%9.3f y:%9.3f a:%6.3f  vx:%6.4f vy:%6.4f\n",
+			o, o->parent, o->target,
+			o->get_identity(),
+			o->pos.x, o->pos.y,
+			o->angle,
+			o->vel.x, o->vel.y);
+	}
+}
 
 #if defined DO_STACKTRACE
 
@@ -83,6 +112,9 @@ REGISTER_FILE
 		return buf;
 	}
 #endif
+
+
+
 static DIALOG tw_alert_dialog1[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { d_box_proc,        180,  170,  280,  140,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
@@ -234,6 +266,7 @@ static void tw_error_handler (
 	}
 	log_debug("begin error message:\n%s\nend error message\n", message);
 
+
 #ifdef DO_STACKTRACE
 	//there needs to be enough space for the whole trace...
 	//if it gets printed into error_string
@@ -306,6 +339,9 @@ static void tw_error_handler (
 #endif
 
 
+	// dump the physics content to a file, called... uhh... something?
+	dump_physics(error_string);
+
 	if (videosystem.width <= 0) {
 		allegro_message("Critical Error$: %s\n", error_string);
 		log_debug("\nUnable to display messge, shutting down\n");
@@ -337,6 +373,8 @@ static void tw_error_handler (
 	log_debug("Option \"%s\" selected\n", es[selection]);
 
 	videosystem.screen_corrupted = true;
+
+	//xxx TWERROR
 
 	if (selection == ES_DEBUG) {//"Debug"
 		__error_flag |= 1;

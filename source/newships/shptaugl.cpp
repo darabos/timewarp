@@ -5,6 +5,8 @@ REGISTER_FILE
 
 class TauGladius : public Ship
 {
+public:
+IDENTITY(TauGladius);
 	double		weaponVelocity, weaponRange, weaponDamage, weaponSpread;
 	bool		flashed;
 	int			flash_counter;
@@ -27,6 +29,8 @@ public:
 
 class TauGladiusMissile : public HomingMissile
 {
+public:
+IDENTITY(TauGladiusMissile);
 	double	proxy_angle;
 	int		smoke_frame;
 
@@ -42,6 +46,8 @@ public:
 
 class TauGladiusShot : public SpaceLine
 {
+public:
+IDENTITY(TauGladiusShot);
   double	d, v, range;
   int		r,g,b;
 

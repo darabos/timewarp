@@ -35,7 +35,7 @@ REGISTER_FILE
  *------------------------------*/
 
 int num_shipclasses = 0;
-ShipClass *shipclasses = NULL;
+ShipClass *shipclasses[max_shipclasses];
 
 void register_shipclass (
 	const char *name, 
@@ -44,12 +44,18 @@ void register_shipclass (
 ) 
 {
 	num_shipclasses += 1;
-	shipclasses = (ShipClass*)realloc(shipclasses, num_shipclasses * sizeof(ShipClass));
+	if (num_shipclasses >= max_shipclasses)
+		tw_error("Too many ship classes ; increase the array size...");
+
+	//shipclasses = (ShipClass*)realloc(shipclasses, num_shipclasses * sizeof(ShipClass));
+
 	int i = num_shipclasses-1;
-	shipclasses[i].link_order = i;
-	shipclasses[i].name = name;
-	shipclasses[i].source = source_name;
-	shipclasses[i]._get_ship = func;
+	shipclasses[i] = new ShipClass();
+	shipclasses[i]->link_order = i;
+	shipclasses[i]->name = name;
+	shipclasses[i]->source = source_name;
+	shipclasses[i]->_get_ship = func;
+
 	return;
 }
 
@@ -65,7 +71,7 @@ ShipClass *shipclass ( const char *name ) {
 	int i;
 	if (!name) return NULL;
 	for (i = 0; i < num_shipclasses; i += 1) {
-		if (!strcmp(shipclasses[i].name, name)) return &shipclasses[i];
+		if (!strcmp(shipclasses[i]->name, name)) return shipclasses[i];
 	}
 	return NULL;
 }
@@ -81,7 +87,7 @@ ShipType *shiptypes = NULL;
 
 
 Ship *ShipType::get_ship(Vector2 pos, double angle, unsigned int team) {
-	game->log_file(file);
+	set_config_file(file);
 	Ship *s = code->get_ship(pos, angle, data, team);
 	s->type = this;
 	return s;
@@ -104,7 +110,7 @@ const char *old_code_name( const char *file ) {
 	buffy[5] = 0;
 	int i;
 	for (i = 0; i < num_shipclasses; i += 1) {
-		if (strstr(shipclasses[i].source, buffy)) return shipclasses[i].name;
+		if (strstr(shipclasses[i]->source, buffy)) return shipclasses[i]->name;
 	}
 	return NULL;
 }
@@ -190,12 +196,17 @@ static void register_shiptype ( const char *file ) {
 	}
 	else shiptypes[i].text = strdup(text);
 	const char *code = get_config_string("Info", "Code", NULL);
+
 	int old = 0;
 	if (!code) {
 		code = old_code_name(file);
 		old = 1;
 	}
 	shiptypes[i].code = shipclass(code);
+
+	if (!shiptypes[i].code)
+		tw_error("A ship without code? No way!");
+	
 	if (!shiptypes[i].data || !shiptypes[i].code) {
 		if (!data) data = "none";
 		if (!code) code = "none";
@@ -225,14 +236,14 @@ void _register_shiptype_dir ( const char *fn, int attrib, int param ) {
 	if (strstr(fn, ".")) return;
 	if (param > 0) {
 		sprintf(buffy, "%s/*", fn);
-		for_each_file ( buffy, FA_DIREC|FA_RDONLY, _register_shiptype_dir, param-1 );
+		for_each_file ( buffy, FA_DIREC|FA_RDONLY|FA_ARCH, _register_shiptype_dir, param-1 );
 	}
 	sprintf(buffy, "%s/shp*.ini", fn);
 	for_each_file ( buffy, FA_ARCH|FA_RDONLY, _register_shiptype, 0 );
 }
 
 void init_ships() {STACKTRACE
-	_register_shiptype_dir ( "ships", FA_DIREC|FA_RDONLY, 3 );
+	_register_shiptype_dir ( "ships", FA_DIREC|FA_RDONLY|FA_ARCH, 3 );
 
 /*	shiptype_type tmp;
 	int i = _num_shiptypes;
@@ -322,7 +333,7 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	code = NULL;
 
 	// modified otherwise the kat poly crashes
-	if (creator->isShip())
+	if (creator && creator->isShip())
 		type = ((Ship*) creator)->type;
 
 	captain_name[0] = '\0';
@@ -341,7 +352,9 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	sprite_index = get_index(angle);
 
 	hashotspots = true;
-}
+	first_override_control = 0;
+	last_override_control = 0;
+	}
 
 Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally_flag) :
 	SpaceObject(NULL, opos, shipAngle, shipData->spriteShip),
@@ -354,6 +367,9 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	attributes |= ATTRIB_SHIP;
 	layer = LAYER_SHIPS;
 	set_depth(DEPTH_SHIPS);
+
+	first_override_control = 0;
+	last_override_control = 0;
 
 	type = NULL;
 	code = NULL;
@@ -448,8 +464,18 @@ void Ship::death() {STACKTRACE
 	return;
 }
 
-Ship::~Ship() {STACKTRACE
+Ship::~Ship()
+{
+	STACKTRACE;
+
 	delete spritePanel;
+
+//f (override_control)
+//delete override_control;
+	if (first_override_control)
+	{
+		tw_error("Ship deleted before all control overrides are removed...");
+	}
 }
 
 double Ship::getCrew()
@@ -553,21 +579,28 @@ void Ship::calculate()
 
 	if (control) {
 
-		// it makes most sense, to place this in FRONT of these commands here cause it'll give you 1 frame faster control
-		// however, it'll be impossible to override the control of the ship in this way...
-		//this->nextkeys = control->keys;
-		// so .. I'll just put it back for now.
+		// it makes most sense, to place this in FRONT of these commands here ...
+		nextkeys = control->keys;
 
-		this->thrust           = 1&&(nextkeys & keyflag::thrust);
-		this->thrust_backwards = 1&&(nextkeys & keyflag::back);
-		this->turn_left        = 1&&(nextkeys & keyflag::left);
-		this->turn_right       = 1&&(nextkeys & keyflag::right);
-		this->fire_weapon      = 1&&(nextkeys & keyflag::fire);
-		this->fire_special     = 1&&(nextkeys & keyflag::special);
-		this->fire_altweapon   = 1&&(nextkeys & keyflag::altfire);
-		this->target_next      = 1&&(nextkeys & keyflag::next);
-		this->target_prev      = 1&&(nextkeys & keyflag::prev);
-		this->target_closest   = 1&&(nextkeys & keyflag::closest);
+		// however, other ships may affect the controls... do it like this...
+		OverrideControl *c;
+		c = first_override_control;
+		while (c)
+		{
+			c->calculate(&nextkeys);
+			c = c->next;
+		}
+
+		thrust           = 1&&(nextkeys & keyflag::thrust);
+		thrust_backwards = 1&&(nextkeys & keyflag::back);
+		turn_left        = 1&&(nextkeys & keyflag::left);
+		turn_right       = 1&&(nextkeys & keyflag::right);
+		fire_weapon      = 1&&(nextkeys & keyflag::fire);
+		fire_special     = 1&&(nextkeys & keyflag::special);
+		fire_altweapon   = 1&&(nextkeys & keyflag::altfire);
+		target_next      = 1&&(nextkeys & keyflag::next);
+		target_prev      = 1&&(nextkeys & keyflag::prev);
+		target_closest   = 1&&(nextkeys & keyflag::closest);
 
         if (nextkeys & keyflag::suicide) {
             crew  = 0;
@@ -588,7 +621,6 @@ void Ship::calculate()
             }
         }
 
-		this->nextkeys = control->keys;
 
         
 
@@ -638,12 +670,26 @@ void Ship::calculate()
 			if (control && targets->N) {
 				i = control->index;
 				if (i < 0) i = 0;
-				while (1) {
-					i = (i + targets->N - 1) % targets->N;
+
+				int k = 0;
+				while (1)
+				{
+					++k;
+					if ( k > targets->N - 1)
+						k = targets->N - 1;
+					if (k == i)
+					{
+						control->set_target(-1);
+						break;	// no more targets..
+					}
+
+					
+					//i = (i + targets->N - 1) % targets->N;
 					if (control->valid_target(targets->item[i])) {
 						control->set_target(i);
 						break;
 					}
+					/*
 					if (control->index != -1) {
 						if (i == control->index)
 							break;
@@ -651,6 +697,7 @@ void Ship::calculate()
 					else {
 						if (i == 0) break;
 					}
+					*/
 				}
 			}				
 		}
@@ -677,6 +724,7 @@ void Ship::calculate()
 	if (control)
 		target = control->target;
 
+	/*
 	// communication code
 	if (  (nextkeys & keyflag::communicate) && (target->exists ()) && (target->isShip()))
 	{
@@ -684,6 +732,7 @@ void Ship::calculate()
 		if( s->ext_ai != NULL )
 			s->ext_ai->Dialog(this);
 	}
+	*/
 	
 
 	calculate_turn_left();
@@ -965,6 +1014,17 @@ ShipType *Ship::get_shiptype()
 	return type;
 }
 
+
+void Ship::set_target(SpaceObject *o)
+{
+	// both need to be set, cause control check the ship, and ship checks the control...
+	if (control)
+		control->target = o;
+
+	target = o;
+}
+
+
 Phaser::Phaser(
 	SpaceLocation *creator, Vector2 opos, Vector2 _rpos, 
 	Ship *ship, SpaceSprite *sprite, int osprite_index, int *ocolors, 
@@ -1042,3 +1102,87 @@ SpaceLocation *Ship::get_ship_phaser() {STACKTRACE
 		PHASE_DELAY, PHASE_MAX, PHASE_DELAY
 	);
 }
+
+
+
+// add a control override to a ship
+void OverrideControl::add(Ship *s, OverrideControl *newcontrol)
+{
+	newcontrol->next = 0;
+
+	if (!s->first_override_control)
+	{
+		s->first_override_control = newcontrol;
+		s->last_override_control = newcontrol;
+	} else {
+		s->last_override_control->next = newcontrol;
+		s->last_override_control = newcontrol;
+	}
+}
+
+// remove a control override from a ship
+void OverrideControl::del(Ship *s, OverrideControl *oldcontrol)
+{
+	OverrideControl *c, *prev = 0;
+	c = s->first_override_control;
+	
+	while (c && c != oldcontrol)
+	{
+		prev = c;
+		c = c->next;
+	}
+
+	if (!c)
+	{
+		tw_error("Error: trying to remove a control override that is not present in the list");
+	} else {
+
+		// remove the control from the list
+
+		// update the head reference
+		if (c == s->first_override_control)
+		{
+			s->first_override_control = c->next;
+		}
+
+		// update the tail reference
+		if (c == s->last_override_control)
+		{
+			s->last_override_control = prev;
+		}
+
+		// skip the link
+		if (prev)
+			prev->next = c->next;
+	}
+}
+
+
+//xxx for e.g. the TauEMP, a list of such actions would be mucho better !!
+void Ship::set_override_control(OverrideControl *newcontrol)
+{
+	/*
+	if (override_control)
+		delete override_control;
+
+	override_control = newcontrol;
+	*/
+
+	OverrideControl::add(this, newcontrol);
+
+}
+
+void Ship::del_override_control(OverrideControl *delthiscontrol)
+{
+	/*
+	if (override_control == delthiscontrol)	// check this, because the control could be overridden by another one
+	{
+		delete override_control;
+		override_control = 0;
+	}
+	*/
+
+	OverrideControl::del(this, delthiscontrol);
+	delete delthiscontrol;
+}
+

@@ -3,7 +3,7 @@
 #define __SCP_H__
 
 #include "melee/mlog.h"
-#include "melee.h"
+#include "melee/mview.h"
 
 const char *tw_version();
 
@@ -24,16 +24,19 @@ void log_int  (int &data, int channel = channel_current);              //helper 
 void log_int  (unsigned int &data, int channel = channel_current);
 void log_data (void *data, int length, int channel = channel_current); //helper for using the logging system
 bool is_local (int channel);
+bool is_bot (int channel);
 void log_file (const char *fname);
 
 void test_net();
 
-void play_game(const char *_gametype_name, Log *_log = NULL) ;
-void play_single(const char *_gametype_name, Log *_log = NULL);
 
 extern SAMPLE * menuAccept;
 extern SAMPLE * menuFocus;
 extern SAMPLE * menuDisabled;
 extern SAMPLE * menuSpecial;
+
+extern BITMAP *video_screen;
+
+extern bool game_networked;
 
 #endif // __SCP_H__

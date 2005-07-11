@@ -1,6 +1,8 @@
 /* $Id$ */ 
 class AndrosynthGuardian : public Ship {
 public:
+	IDENTITY(AndrosynthGuardian);
+public:
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;
@@ -38,6 +40,8 @@ public:
 
 class ArilouSkiff : public Ship {
 public:
+	IDENTITY(ArilouSkiff);
+public:
 	int    weaponColor;
 	double weaponRange;
 	int    weaponFrames;
@@ -67,6 +71,8 @@ public:
 class ChenjesuDOGI ;
 class ChenjesuBroodhome : public Ship
 {
+public:
+	IDENTITY(ChenjesuBroodhome);
 protected:
 	double		weaponVelocity, shardRange;
 	double		shardDamage, shardArmour;
@@ -95,6 +101,8 @@ public:
 
 class EarthlingCruiser : public Ship {
 public:
+	IDENTITY(EarthlingCruiser);
+public:
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -116,6 +124,8 @@ public:
 
 
 class IlwrathAvenger : public Ship {
+public:
+	IDENTITY(IlwrathAvenger);
 public:
 	double       weaponRange;
 	double       weaponVelocity;
@@ -139,6 +149,8 @@ public:
 
 
 class KzerZaDreadnought : public Ship {
+public:
+	IDENTITY(KzerZaDreadnought);
 public:
 	double weaponRange;
 	double weaponVelocity;
@@ -164,6 +176,8 @@ public:
 
 
 class MmrnmhrmXForm : public Ship {
+public:
+	IDENTITY(MmrnmhrmXForm);
 public:
 	struct {
 		public:
@@ -208,6 +222,8 @@ public:
 
 class MyconPodship : public Ship {
 public:
+	IDENTITY(MyconPodship);
+public:
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;
@@ -222,6 +238,8 @@ public:
 };
 
 class ShofixtiScout : public Ship {
+public:
+	IDENTITY(ShofixtiScout);
 	public:
 	double       weaponRange;
 	double       weaponVelocity;
@@ -244,6 +262,8 @@ class ShofixtiScout : public Ship {
 
 class SpathiEluder : public Ship {
 public:
+	IDENTITY(SpathiEluder);
+public:
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;
@@ -265,6 +285,8 @@ public:
 
 class SyreenPenetrator : public Ship {
 public:
+	IDENTITY(SyreenPenetrator);
+public:
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;
@@ -285,6 +307,8 @@ public:
 
 class UmgahDrone : public Ship {
 public:
+	IDENTITY(UmgahDrone);
+public:
 	int          weaponDamage;
 	int          weaponCone;
 	int          specialRate;
@@ -304,6 +328,8 @@ public:
 
 
 class VuxIntruder : public Ship {
+public:
+	IDENTITY(VuxIntruder);
 public:
 	int    weaponColor;
 	double weaponRange;
@@ -326,6 +352,8 @@ public:
 
 
 class YehatTerminator : public Ship {
+public:
+	IDENTITY(YehatTerminator);
 public:
 	double       weaponRange;
 	double       weaponVelocity;

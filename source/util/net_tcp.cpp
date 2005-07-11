@@ -420,7 +420,12 @@ int NetTCP::recv(int min, int max, void *data) {
 			throw "NetTCP::recv: Remote Disconnect";
 			}*/
 		if (tmp == SOCKET_ERROR) throw "NetTCP::recv - socket error";
-		if (tmp == 0) throw "NetTCP::recv other side disconnected";
+
+
+		//if (tmp == 0) throw "NetTCP::recv other side disconnected";//xxx is this an error ??
+		if (tmp == 0)
+			return 0;
+
 		idle(1);
 		}
 	}

@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class NeoDrain : public Ship
 {
+public:
+IDENTITY(NeoDrain);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange, specialDamage;
 	int		specialColor;
@@ -28,6 +30,8 @@ protected:
 
 class LaserDrain : public Laser
 {
+public:
+IDENTITY(LaserDrain);
 	void inflict_damage(SpaceObject *other);
 public:
 	LaserDrain(SpaceLocation *creator, double langle, int lcolor, double lrange, double ldamage,

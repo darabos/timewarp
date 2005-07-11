@@ -14,6 +14,8 @@ class TulkonDevice;
 * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
 */
 class TulkonRam : public Ship {
+public:
+IDENTITY(TulkonRam);
 	// the body of the ship
 	
 	double		weaponForce;
@@ -48,6 +50,8 @@ public:
 };
 
 class TulkonDevice : public SpaceObject {
+public:
+IDENTITY(TulkonDevice);
 	// the ramming device
 	
 	//  double px, py;
@@ -74,6 +78,8 @@ public:
 };
 
 class TulkonBomb : public AnimatedShot {
+public:
+IDENTITY(TulkonBomb);
 	// bombs
 	
 	friend class TulkonDevice;

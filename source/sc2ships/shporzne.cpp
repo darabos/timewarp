@@ -8,12 +8,16 @@ REGISTER_FILE
 #include "../sc2ships.h"
 
 class OrzMissile : public Missile {
+public:
+IDENTITY(OrzMissile);
   public:
   OrzMissile(double oangle, double ov, int odamage, double orange,
     int oarmour, Ship *oship, SpaceSprite *osprite);
 };
 
 class OrzMarine : public SpaceObject {
+public:
+IDENTITY(OrzMarine);
 	double accel_rate;
 	double speed_max;
 	int    hotspot_rate;

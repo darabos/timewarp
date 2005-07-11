@@ -12,6 +12,8 @@ REGISTER_FILE
 //class XXXManglerMine;
 
 class XXXMangler : public Ship {
+public:
+IDENTITY(XXXMangler);
 
 	int          weaponFrames;
   int          tentacleFrames;
@@ -75,6 +77,8 @@ class XXXMangler : public Ship {
 
 /*
 class XXXManglerMine : public AnimatedShot {
+public:
+IDENTITY(XXXManglerMine);
 
   double       missileVelocity;
   double       missileRange;
@@ -94,6 +98,8 @@ class XXXManglerMine : public AnimatedShot {
 };
 
 class XXXWebMissile : public AnimatedShot {
+public:
+IDENTITY(XXXWebMissile);
 
   int webFrames;
 
@@ -106,6 +112,8 @@ class XXXWebMissile : public AnimatedShot {
 };
 
 class XXXWebEffect : public SpaceObject {
+public:
+IDENTITY(XXXWebEffect);
   Ship *ship;
   int   webframe;
   int   webframe_count;

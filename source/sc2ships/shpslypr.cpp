@@ -26,6 +26,8 @@ struct lightsegstr {
 };
 
 class SlylandroLaserNew : public Presence {
+public:
+IDENTITY(SlylandroLaserNew);
 	SpaceLocation	*mother, *target;
 	double	max_length, lifetime, existtime, seglength, perturbamount;
 	int		nseg[MAXlines], lastnseg[MAXlines];
@@ -299,7 +301,7 @@ void SlylandroLaserNew::calculate()
 		directedbeam = 1;
 
 	if ( directedbeam )
-		D = min_delta(target->normal_pos(), mother->normal_pos(), map_size);
+		D = min_delta(target->pos, mother->pos, map_size);
 	else
 		D = Vector2(1,1);	// just some arbitrary value, so that the math works at least
 	

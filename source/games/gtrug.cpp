@@ -232,7 +232,7 @@ void TrugGame::init(Log *_log) {
 	add(create_ship("kzedr", sp, random(size), random(PI2)));
 	add(create_ship("chebr", cp, random(size), random(PI2)));
 
-	if (p_local != 0)
+	if (!hostcomputer())
 		add(gui = new TrugGUI( cp ));
 	else
 		add(gui = new TrugGUI( sp ));

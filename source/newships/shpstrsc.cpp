@@ -25,6 +25,8 @@ int	specialMode;	//Beacon behavior(0=old, 1=new);
 int	specialMulti;
 
 class StrivanarScrutinizer : public Ship {
+public:
+IDENTITY(StrivanarScrutinizer);
 	double	weaponRange;
 	double	weaponVelocity;
 	int	weaponDamage;
@@ -57,6 +59,8 @@ protected:
 /* This section contains ALL my code on the homing missile. */
 class TechMissile : public HomingMissile
 {
+public:
+IDENTITY(TechMissile);
 public:
 	TechMissile(Vector2 opos, double oangle, double ov,
 		int odamage, double orange, int oarmour, double otrate, Ship *oship,
@@ -112,7 +116,7 @@ TechMissile::TechMissile(Vector2 opos, double oangle,
 //	collide_flag_sameship = bit(LAYER_SHIPS) | bit(LAYER_SHOTS);
 
 	explosionSprite     = data->spriteWeaponExplosion;
-	explosionFrameCount = 10;
+	explosionFrameCount = explosionSprite->frames();
 	explosionFrameSize  = 50;
 }
 /* Missile section ends here.	*/
@@ -125,6 +129,8 @@ TechMissile::TechMissile(Vector2 opos, double oangle,
 //Modified from the Owa disable special.
 class Hilight : public SpaceObject
 {
+public:
+IDENTITY(Hilight);
 	int 	frame_min;
 	int	frame_max;
 	int	frame_count;
@@ -219,6 +225,8 @@ void Hilight::calculate()
 //These are modified from Vux limpets.
 class Marker : public AnimatedShot
 {
+public:
+IDENTITY(Marker);
 	double local_angle;
 	int D_Time;
 	Marked *To_Target;

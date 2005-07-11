@@ -6,6 +6,8 @@ REGISTER_FILE
  * created by: cyhawk@sch.bme.hu
  */
 class KatPoly : public Ship {
+public:
+IDENTITY(KatPoly);
 // the ship
 
   double weaponRange;
@@ -43,6 +45,8 @@ class KatPoly : public Ship {
 
 class KatAnimatedShot : public AnimatedShot
 {
+public:
+IDENTITY(KatAnimatedShot);
 public:
 	KatPoly *mother;
 

@@ -8,6 +8,8 @@ REGISTER_FILE
 # define HYPER_SPEED 3
 
 class KterbiSaber : public Ship {
+public:
+IDENTITY(KterbiSaber);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -34,6 +36,8 @@ class KterbiSaber : public Ship {
 };
 
 class KterbiIonBlast : public AnimatedShot {
+public:
+IDENTITY(KterbiIonBlast);
 
   int min_damage;
 
@@ -142,64 +146,72 @@ int KterbiSaber::activate_special()
 
 void KterbiSaber::calculate()
 {
-	STACKTRACE
-  if (((!fire_special) || ((crew == 1) && (batt == 0)) || (crew_max <= 2)) && (boostlevel != 0)) {
-      boostlevel = 0;
-      recharge_amount = normal_recharge;
-      recharge_rate = normal_rate;
-      speed_max = normal_speed;
-      accel_rate = normal_acc;
-      turn_rate = normal_turning;
-      weapon_rate = normal_rof;
-      recharge_step = 0;}
-
-  if (boostlevel >= 1) {
-      int chance;
-      chance = random() % 10000;
-      if (chance < (3 * frame_time)) {
-        crew_max -= 2;
-        if (crew > crew_max)
-          crew = crew_max;
-			   blit(spritePanel->get_bitmap(7), spritePanel->get_bitmap(0),0,0,3,iround(50 - (crew_max)),9,4);
-      ship->update_panel = TRUE;
-      sound.stop(data->sampleExtra[0]);
-      sound.play(data->sampleExtra[0]);
-
-      }
+	STACKTRACE;
+	if (((!fire_special) || ((crew == 1) && (batt == 0)) || (crew_max <= 2)) && (boostlevel != 0))
+	{
+		boostlevel = 0;
+		recharge_amount = normal_recharge;
+		recharge_rate = normal_rate;
+		speed_max = normal_speed;
+		accel_rate = normal_acc;
+		turn_rate = normal_turning;
+		weapon_rate = normal_rof;
+		recharge_step = 0;
+	}
+	
+	if (boostlevel >= 1)
+	{
+		int chance;
+		chance = random() % 10000;
+		
+		if (chance < (3 * frame_time))
+		{
+			crew_max -= 2;
+			if (crew > crew_max)
+				crew = crew_max;
+			if (spritePanel)
+			{
+				blit(spritePanel->get_bitmap(7), spritePanel->get_bitmap(0),0,0,3,iround(50 - (crew_max)),9,4);
+				ship->update_panel = TRUE;
+			}
+			sound.stop(data->sampleExtra[0]);
+			sound.play(data->sampleExtra[0]);
+			
+		}
     }
-
-  Ship::calculate();
-
-  if ((batt < 0) && (crew!=1)) {
-    batt += batt_max;
-    crew--;
-  } else if (batt < 0)
-    batt=0;
-
-  if ((crew!=crew_max) && (batt >= batt_max)) {
-    batt -= batt_max;
-    crew++;
-  }
+	
+	Ship::calculate();
+	
+	if ((batt < 0) && (crew!=1)) {
+		batt += batt_max;
+		crew--;
+	} else if (batt < 0)
+		batt=0;
+	
+	if ((crew!=crew_max) && (batt >= batt_max)) {
+		batt -= batt_max;
+		crew++;
+	}
 }
 
 int KterbiSaber::handle_speed_loss(SpaceLocation *source, int normal)
 {
-	STACKTRACE
+	STACKTRACE;
     speed_max = normal_speed;
     accel_rate = normal_acc;
     double r = Ship::handle_speed_loss(source, normal);
     normal_speed = speed_max;
     normal_acc = accel_rate;
     if (boostlevel == TURBO_SPEED) {
-      speed_max = normal_speed * 1.5;
-      accel_rate = normal_acc * 2; }
+		speed_max = normal_speed * 1.5;
+		accel_rate = normal_acc * 2; }
     else if (boostlevel == SUPER_SPEED) {
         speed_max = normal_speed * 2;
         accel_rate = normal_acc * 2; }
-      else if (boostlevel == HYPER_SPEED) {
-          speed_max = normal_speed * 2.5;
-          accel_rate = normal_acc * 2.5; } 
-	  return iround(r);
+	else if (boostlevel == HYPER_SPEED) {
+		speed_max = normal_speed * 2.5;
+		accel_rate = normal_acc * 2.5; } 
+	return iround(r);
 }
 
 

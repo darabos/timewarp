@@ -18,6 +18,8 @@ class	GravityShockWave;
 
 class KoloryFlamer : public Ship
 {
+public:
+IDENTITY(KoloryFlamer);
 	double weaponRange;
 	double weaponVelocity;
 	int    weaponDamage;
@@ -45,6 +47,8 @@ class KoloryFlamer : public Ship
 
 
 class Flamer : public Missile {
+public:
+IDENTITY(Flamer);
 	KoloryFlamer	*commandship;
 	int		iSide;
 	double	animate_time, nextpictime;

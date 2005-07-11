@@ -10,6 +10,8 @@ REGISTER_FILE
 #include "../frame.h"
 
 class UoiSlicer : public Ship {
+public:
+IDENTITY(UoiSlicer);
   double	weaponRange;
   double	weaponVelocity;
   int		weaponDamage;
@@ -45,6 +47,8 @@ class UoiSlicer : public Ship {
 // a laser that makes a circle around the ship, then disappears
 class RotatingLaser : public Laser
 {
+public:
+IDENTITY(RotatingLaser);
 public:
 
 	Ship	*mother;

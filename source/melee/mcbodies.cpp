@@ -80,7 +80,7 @@ Planet::Planet(Vector2 loc, SpaceSprite *sprite, int index)
 
 	push_config_state();
 	
-	game->log_file ("server.ini");
+	set_config_file ("server.ini");
 	sprite_index = index;
 	gravity_mindist = scale_range(get_config_float("Planet", "GravityMinDist", 0));
 	gravity_range = scale_range(get_config_float("Planet", "GravityRange", 0));
@@ -445,7 +445,7 @@ Stars::Stars()
 			SpaceSprite::MIPMAPED
 		);
 	}
-	game->log_file("server.ini");
+	set_config_file("server.ini");
 	width = get_config_int("Stars", "Width", 4000);
 	height = get_config_int("Stars", "Height", 4000);
 	num_stars = get_config_int("Stars", "Number", 150);

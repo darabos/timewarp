@@ -11,6 +11,8 @@ REGISTER_FILE
  * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
  */
 class ImperialKatana : public Ship {
+public:
+IDENTITY(ImperialKatana);
 // the ship
 
   double weaponRange;        // length of the blade
@@ -44,6 +46,8 @@ class ImperialKatana : public Ship {
 };
 
 class ImperialBlade : public Laser {
+public:
+IDENTITY(ImperialBlade);
   // blade. a laser that handles non-integer damage and splits victim in two after kill
 
   double res;
@@ -59,6 +63,8 @@ class ImperialBlade : public Laser {
 };
 
 class ImperialRadioactivity : public SpaceObject {
+public:
+IDENTITY(ImperialRadioactivity);
   // radioactivity -- either latched or floating free
 
   Ship* latched;
@@ -83,6 +89,8 @@ class ImperialRadioactivity : public SpaceObject {
 };
 
 class ImperialHalfObject : public SpaceObject {
+public:
+IDENTITY(ImperialHalfObject);
 // debris -- part of an object that was cut in two
 
   int life;

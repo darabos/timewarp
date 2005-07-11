@@ -2,6 +2,6 @@ Viogen Genesis
 
 Fire: two long range missiles, 1d each.
 
-Special: converts speed to energy
+Special: a plasma cloud that feeds on weapons (borrowed from the Woldanish)
 
 Quirk: very slow acceleration, and very slow recharge.

@@ -11,6 +11,8 @@
 REGISTER_FILE
 
 class BubalosBomber : public Ship {
+public:
+IDENTITY(BubalosBomber);
   int          shipCanReverseThrusters;
 
   int          explosionPercentChanceBigBoom;
@@ -73,6 +75,8 @@ class BubalosBomber : public Ship {
 
 class BubalosBomberFlame : public PositionedAnimation
 {
+public:
+IDENTITY(BubalosBomberFlame);
   int base_frame;
   public:
   BubalosBomberFlame (SpaceLocation *creator, double ox, double oy, SpaceSprite *osprite);
@@ -81,6 +85,8 @@ class BubalosBomberFlame : public PositionedAnimation
 
 
 class BubalosMIRV : public Missile {
+public:
+IDENTITY(BubalosMIRV);
 
   int          missileArming;
   int          missileActive;
@@ -107,6 +113,8 @@ class BubalosMIRV : public Missile {
 
 
 class BubalosHMissile : public HomingMissile {
+public:
+IDENTITY(BubalosHMissile);
   public:
   BubalosHMissile(double ox, double oy, double oangle, double ov,
 	int odamage, double orange, int oarmour, double otrate,
@@ -114,6 +122,8 @@ class BubalosHMissile : public HomingMissile {
 };
 
 class BubalosEMPSlug : public HomingMissile {
+public:
+IDENTITY(BubalosEMPSlug);
   public:
   BubalosEMPSlug(double ox, double oy, double oangle, double ov,
       int odamage, int oddamage, double specialDriftVelocity,
@@ -128,6 +138,8 @@ class BubalosEMPSlug : public HomingMissile {
 
 class BubalosAccelLimiter : public Presence
 {
+public:
+IDENTITY(BubalosAccelLimiter);
 public:
 	Ship *mother;
 	double accel_rate_factor, timer, duration, default_accel;
@@ -338,7 +350,8 @@ void BubalosBomber::death()
 				explosionRangeBigBoom * explosionDamageBigBoom);
 			damage( q.currento, 0, lastHurrah);
 		} //for
-		add(new Animation(this, CenterPoint, data->spriteExtra, 0, 6, 50, LAYER_EXPLOSIONS));
+		add(new Animation(this, CenterPoint, data->spriteExtra, 0, data->spriteExtra->frames(),
+			50, LAYER_EXPLOSIONS));
 	}
 	if(random()%100 < explosionPercentChanceShrapnel) {
 		radInc = PI2 / explosionShrapnelNumber1;

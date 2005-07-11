@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../sc1ships.h"
 
 class EarthlingMissile : public HomingMissile {
+public:
+IDENTITY(EarthlingMissile);
   public:
   EarthlingMissile(Vector2 opos, double oangle, double ov,
     int odamage, double orange, int oarmour, double otrate, Ship *oship,

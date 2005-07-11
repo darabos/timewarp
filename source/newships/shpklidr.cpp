@@ -16,6 +16,8 @@ class KlisruDragon;
 
 class KlisruTorpedo : public Shot {
 public:
+IDENTITY(KlisruTorpedo);
+public:
   KlisruTorpedo(KlisruDragon* ocreator, Vector2 rpos,
     double oangle, double oStartVelocity, double oEndVelocity, 
     double oStartDamage, double oEndDamage,
@@ -39,6 +41,8 @@ public:
 
 
 class KlisruMissile : public HomingMissile {
+public:
+IDENTITY(KlisruMissile);
 	public:
   KlisruMissile(KlisruDragon* ocreator, Vector2 rpos, double oangle, double ov,
 	int odamage, double orange, int oarmour, double oturnrate, SpaceLocation* opos, SpaceSprite* osprite, SpaceObject* otarget);
@@ -53,6 +57,8 @@ class KlisruMissile : public HomingMissile {
 
 
 class KlisruDragon : public Ship {
+public:
+IDENTITY(KlisruDragon);
 public:
   //double       weaponRange;
   double       weaponStartVelocity;
@@ -234,25 +240,34 @@ Shot(ocreator, rpos, oangle, oStartVelocity, oStartDamage, orange,
   this->lifetimeCounter = 0;
 }
 
-void KlisruTorpedo::calculate(void) {
-	STACKTRACE
-  double fractionDone = 0.0;
-  int spriteToUse = 0;
-  Shot::calculate();
-  lifetimeCounter += frame_time;
-  fractionDone = lifetimeCounter / lifetimeMax;
-  friction = startFriction * (1 - fractionDone) + endFriction * fractionDone;
-  if(fractionDone<0) fractionDone = 0.0;
-  if(fractionDone>=0.999) {
-    fractionDone = 0.999;
-    state = 0;
-  }
-  spriteToUse = (int)(fractionDone * 16.0);
-  sprite_index = spriteToUse;
-  damage_factor = (1 - fractionDone) * startDamage + fractionDone * endDamage;
-  armour = (1 - fractionDone) * startArmour + fractionDone * endArmour;
-  this->v *= (1 - this->friction * frame_time);
-  this->vel = unit_vector(this->angle) * this->v;
+void KlisruTorpedo::calculate(void)
+{
+	STACKTRACE;
+	
+	double fractionDone = 0.0;
+	int spriteToUse = 0;
+	
+	Shot::calculate();
+	
+	lifetimeCounter += frame_time;
+	fractionDone = lifetimeCounter / lifetimeMax;
+	friction = startFriction * (1 - fractionDone) + endFriction * fractionDone;
+	
+	if(fractionDone<0) fractionDone = 0.0;
+	
+	if(fractionDone >= 0.999)
+	{
+		fractionDone = 0.999;
+		state = 0;
+	}
+	spriteToUse = (int)(fractionDone * 16.0);
+	sprite_index = spriteToUse;
+	
+	damage_factor = (1 - fractionDone) * startDamage + fractionDone * endDamage;
+	armour = (1 - fractionDone) * startArmour + fractionDone * endArmour;
+	
+	this->v *= (1 - this->friction * frame_time);
+	this->vel = unit_vector(this->angle) * this->v;
 
 }
 

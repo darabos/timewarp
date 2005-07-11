@@ -37,7 +37,7 @@ void IterGame::play_iteration(unsigned int time)
 	{		
 		_STACKTRACE("Game::play - Game physics");
 		
-		gen_buffered_data();
+//		gen_buffered_data();
 		glog->flush_noblock();
 		glog->listen();
 		
@@ -81,6 +81,13 @@ void MainGame::addsubgame(SubGame *asubgame)
 
 	asubgame->maingame = this;
 
+	// clear the log ...
+	glog->reset();
+
+	// clear the events .. and reread this for this at least ?
+	events.clear();	// hmmm...
+	//register_events();
+
 	//videosystem.window.lock();
 	//clear_to_color(videosystem.window.surface, palette_color[8]);
 	//videosystem.window.unlock();
@@ -92,6 +99,8 @@ void MainGame::addsubgame(SubGame *asubgame)
 
 	asubgame->init(glog);	// all subgames share the same log (is this ok?)
 	// this init should reference the already-initialized melee-data of the maingame
+
+
 
 	subgame[Nsubgames] = asubgame;
 	++Nsubgames;

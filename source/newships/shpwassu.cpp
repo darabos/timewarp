@@ -9,6 +9,8 @@ REGISTER_FILE
 class WasxClone;
 
 class WasxSuperposition : public Ship {
+public:
+IDENTITY(WasxSuperposition);
 	double weaponRange;
 	double weaponVelocity;
 	int    weaponDamage;
@@ -43,6 +45,8 @@ class WasxSuperposition : public Ship {
 
 
 class WasxShot : public Shot {
+public:
+IDENTITY(WasxShot);
 	public:
 	WasxShot(Vector2 opos, double angle, double velocity, int damage, 
 			double range, int armour, Ship *ship);
@@ -50,6 +54,8 @@ class WasxShot : public Shot {
 	};
 
 class WasxClone : public Ship {
+public:
+IDENTITY(WasxClone);
 	WasxSuperposition *MotherShip;
 	Control  *cntrl;
 	ShipData *shipData;

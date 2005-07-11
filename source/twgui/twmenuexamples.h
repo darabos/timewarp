@@ -1,20 +1,34 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __TWMENUEXAMPLES_H__
 #define __TWMENUEXAMPLES_H__
 
 #include "twpopup.h"
-#include "twgui.h"
+//#include "twgui.h"
+#include "twguilist.h"
+
+
+class PopupInfo : public Popup
+{
+public:
+	TextInfoArea	*tia;
+	Button			*closebutton;
+
+	PopupInfo(char *ident, int axshift, int ayshift, FONT *afont, BITMAP *scr);
+	virtual ~PopupInfo();
+	virtual void check_end();
+};
+
 
 
 class PopupTextInfo : public PopupT
 {
 public:
 	TextInfoArea	*tia;
-	::Button			*closebutton;
+	Button			*closebutton;
 
 	PopupTextInfo(EmptyButton *creator, char *ident, char *id2, int axshift, int ayshift,
 					FONT *afont, char *atext, int aNchar);
@@ -45,12 +59,13 @@ public:
 
 // A popup-list consists of several components, which you've to initialize:
 // (most of it is automatically initialized from the shape of the menu screen-
-// the ::Button images should be present on it as well)
+// the button images should be present on it as well)
 class PopupList : public PopupT
 {
 public:
 
 	int xshift, yshift;
+	Button *closebutton;	// a (trigger) button that closes this.
 
 //	EmptyButton		*trigger;	// this controls the on/off of the menu
 
@@ -70,13 +85,40 @@ public:
 				FONT *afont, char **aaoptionslist);
 	virtual ~PopupList();
 
+	void set_close(Button *b);
 	virtual void check_end();
 	//virtual void calculate();
 	//virtual void handle_focus_loss();
 
+	char *getstring();
+
 };
 
 
+/** this should show a button with text description ; if you press the button, you can
+select a new text from a list that pops up. Note that the result is also copied
+into some targetbuffer (unless it's set at 0). Note that idbutton identifies the
+textbutton bitmap, the idpop the popup-menu layout, and idlist the
+buttons on the popup-menu */
+
+class TextButtonPopupList : public PopupList
+{
+public:
+
+	TextButton *tbutton;
+	int tbuttoncol;
+
+	char *targetbuffer;
+	int targetbufsize;
+
+	TextButtonPopupList(TWindow *menu, char *idbutton, char *idpop, char *idlist, int axshift, int ayshift,
+				FONT *afont, char **aaoptionslist,
+				char *atargetbuffer, int atargetbufsize);
+	virtual void calculate();
+	void set_buffer(char *atargetbuffer, int atargetbufsize);
+
+	virtual bool ready();
+};
 
 
 
@@ -89,7 +131,7 @@ class PopupFleetSelection : public Popup
 public:
 	MatrixIcons		*icons;
 	TextButton		*info;
-	::Button			*oncerandom, *alwaysrandom;
+	Button			*oncerandom, *alwaysrandom;
 
 	PopupFleetSelection(EmptyButton *creator, char *ident, int axshift, int ayshift, char *datafilename,
 				BITMAP **alistIcon, double ascale, FONT *afont );
@@ -118,7 +160,7 @@ public:
 
 class PopupOk : public Popup
 {
-	::Button		*ok;
+	Button		*ok;
 public:
 	PopupOk(char *ident, int xcenter, int ycenter,
 						//char *datafilename,
@@ -131,7 +173,7 @@ public:
 
 class PopupYN : public Popup
 {
-	::Button		*yes, *no;
+	Button		*yes, *no;
 public:
 	PopupYN(char *ident, int xcenter, int ycenter,
 						//char *datafilename,
@@ -150,11 +192,16 @@ class FileBrowser : public PopupList
 {
 public:
 	bool selection;
-	::Button *downdir;
+	Button *downdir;
+
+	TextEditBox *name;
+	char namestr[64];
+	Button *accept, *cancel;
 
 	char dir[512];		// max filename length
 	char fname[512];
 	int fattr[2048];	// can handle max 2048 files.
+
 
 	char required_ext[64];
 	void set_ext(char *ext);

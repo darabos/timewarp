@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../sc1ships.h"
 
 class CrewPod : public SpaceObject {
+public:
+IDENTITY(CrewPod);
 	int frame_count;
 	int frame_size;
 	int frame_step;

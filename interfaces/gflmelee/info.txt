@@ -29,6 +29,6 @@ interfaces/gflmelee/up1/default_x = 34
 res = 800
 
 [FleetInit]
-PlayerAlliance = 0
-EnemyAlliance = 1
+PlayerAlliance = 16
+EnemyAlliance = 18
 

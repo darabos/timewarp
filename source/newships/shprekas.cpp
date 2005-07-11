@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class RekojAssassin : public Ship {
+public:
+IDENTITY(RekojAssassin);
 	double weaponRange;
 	int    weaponDamage;
 	double weaponVelocity;

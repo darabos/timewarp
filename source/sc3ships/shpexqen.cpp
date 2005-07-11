@@ -9,6 +9,8 @@ REGISTER_FILE
 class ExquivanBarrier;
 
 class ExquivanEnigma : public Ship {
+public:
+IDENTITY(ExquivanEnigma);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -34,6 +36,8 @@ class ExquivanEnigma : public Ship {
 };
 
 class ExquivanBarrier : public Missile {
+public:
+IDENTITY(ExquivanBarrier);
 
   double safedist;
   double veloc;

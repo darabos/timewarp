@@ -6,6 +6,8 @@ REGISTER_FILE
 #include "../sc2ships.h"
 
 class DruugeMissile : public Missile {
+public:
+IDENTITY(DruugeMissile);
   public:
   
 	  DruugeMissile(Vector2 opos, double oangle, double ov, int odamage,

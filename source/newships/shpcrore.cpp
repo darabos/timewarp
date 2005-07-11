@@ -11,6 +11,8 @@ REGISTER_FILE
 
 class Crome  :  public Ship
 {
+public:
+IDENTITY(Crome);
 
   double        weaponRange, weaponBlastRange, weaponVelocity, weaponMaxCharge, weapon_charge;
   int           weaponDamage, weaponBlastDamage, weaponBlastDamageShots, weaponArmour;
@@ -35,6 +37,8 @@ class Crome  :  public Ship
 
 class CromeShot : public Shot
 {
+public:
+IDENTITY(CromeShot);
   bool exploded_already, auto_explode;
   int  blast_damage, blast_damage_shots;
   double blast_range;

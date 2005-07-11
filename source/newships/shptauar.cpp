@@ -29,6 +29,8 @@ STACKTRACE
 
 class TauArchon : public Ship
 {
+public:
+IDENTITY(TauArchon);
 	double		weaponRange, weaponVelocity;
 	double		weaponDamage, weaponDamageMin, weaponArmour;
 	double		weaponFuelSap;
@@ -64,6 +66,8 @@ public:
 
 class TauArchonShot : public Shot
 {
+public:
+IDENTITY(TauArchonShot);
 	bool		do_freeze;
 	int			index_base;
 	double		min_damage;//, ast_damage;
@@ -88,6 +92,8 @@ public:
 
 class TauArchonFrozen : public Shot
 {
+public:
+IDENTITY(TauArchonFrozen);
 	Vector2		old_vel;
 	bool		exploded_already;
 	int			lifetime;

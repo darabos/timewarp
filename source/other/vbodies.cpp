@@ -607,7 +607,7 @@ void VSpaceMine::animateExplosion(void) {
 //	Animation(SpaceLocation *creator, Vector2 opos, SpaceSprite *osprite, 
 //			int first_frame, int num_frames, int frame_size, double depth, double scale = 1.0) ;
 	game->add(new Animation(this, normal_pos(),
-    this->explosionSprite, 0, 6,
+    explosionSprite, 0, explosionSprite->frames(),
     20, DEPTH_EXPLOSIONS));
 	return;
 }
@@ -1213,7 +1213,7 @@ void VMetalShard::inflict_damage(SpaceObject *other) {
 
 void VMetalShard::animateExplosion(void) {
 	game->add(new Animation(this, normal_pos(),
-    explosionSprite, 0, 10,
+    explosionSprite, 0, explosionSprite->frames(),
     scale_frames(0), DEPTH_EXPLOSIONS));
 	return;
 }
@@ -1291,7 +1291,7 @@ void VMetalAsteroid::inflict_damage(SpaceObject *other) {STACKTRACE
 
 void VMetalAsteroid::animateExplosion(void) {
 	game->add(new Animation(this, normal_pos(),
-    explosionSprite, 0, 10,
+    explosionSprite, 0, explosionSprite->frames(),
     scale_frames(0), DEPTH_EXPLOSIONS));
 	return;
 
@@ -1338,7 +1338,7 @@ Asteroid()
 {
   this->set_sprite(mySprite);
   armour = VSmallAsteroid::myArmour;
-  damage_factor = VSmallAsteroid::damage_factor;
+  damage_factor = VSmallAsteroid::myDamage;
   explosionSprite = meleedata.sparkSprite;
   mass = VSmallAsteroid::mass;
   willRespawn = TRUE;
@@ -1395,7 +1395,7 @@ void VSmallAsteroid::inflict_damage(SpaceObject *other) {
 
 void VSmallAsteroid::animateExplosion(void) {
 	game->add(new Animation(this, normal_pos(),
-    explosionSprite, 0, 10,
+    explosionSprite, 0, explosionSprite->frames(),
     scale_frames(0), DEPTH_EXPLOSIONS));
 	return;
 
@@ -1466,8 +1466,8 @@ void VLargeAsteroid::inflict_damage(SpaceObject *other) {
 
 void VLargeAsteroid::animateExplosion(void) {
 	game->add(new Animation(this, normal_pos(),
-    explosionSprite, 0, 10,
-    scale_frames(0), DEPTH_EXPLOSIONS));
+			explosionSprite, 0, explosionSprite->frames(),
+			scale_frames(0), DEPTH_EXPLOSIONS));
 	return;
 
 }

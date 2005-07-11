@@ -10,7 +10,9 @@ extern const char num_controls;
 extern char **control_name;
 Control *getController(const char *type, const char *name, int channel);
 
-class Control : public Presence {	
+/** control class */
+class Control : public Presence
+{
  public:
   
   /*! \brief  controls CANNOT arbitrarily be killed off, because the deal with networking directly */
@@ -35,10 +37,14 @@ class Control : public Presence {
   bool valid_target(SpaceObject *t);
   /*! \brief always-random selection, for the always-random button on the default ship selector */
   int always_random;
+  /** auto-update: if true, the control will update each frame. If false, it won't update (namely,
+  place a call to think()), then this has to be done externally ; this allows one to synch networks.
+  This is only needed (and in fact, compulsory), for human (ie. networked), players */
+  bool auto_update;
  public:
   /*! \brief handles camera focusing on a controls ship */
   virtual SpaceLocation *get_focus();
-  int rand();
+//  int rand();
   /*! \brief loads configuration data from a ini file.
 	\example  player1.load("scp.ini", "Keyboard1"); */
   virtual void load(const char* inifile, const char* inisection);
@@ -51,7 +57,8 @@ class Control : public Presence {
   virtual void select_ship(Ship* ship_pointer, const char* ship_name);
   /*! \brief called every frame of physics */
   virtual void calculate();
-  /*! \brief called by calculate... this is where the important stuff goes */
+  /*! \brief called by calculate... this is where the important stuff goes. But only if
+  the auto_update is true*/
   virtual int think();
   /*! \brief returns the name of the control type, like "Joystick" */
   virtual const char *getTypeName() = 0;
@@ -76,7 +83,7 @@ class Control : public Presence {
   /*! \brief for future mid-game lag changes */
   virtual void _event ( Event *e );
   
-  virtual void gen_buffered_data();
+//  virtual void gen_buffered_data();
 };
 
 

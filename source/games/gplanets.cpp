@@ -1539,7 +1539,7 @@ void Planets::init_objects()
 			PlanetStarbaseEllipsAngvel[100], PlanetStarbaseEllipsOrientation[100],
 			PlanetPlGrav, PlanetPlGravRange;
 
-	if (p_local == 0)
+	if (hostcomputer())
 	{
 		// the host can choose the planet system ; the rest has to wait a short while.
 

@@ -5,6 +5,8 @@
 #define RAALRITH_POISON_ID     0x2233
 
 class RaalrithMenacer : public Ship {
+public:
+IDENTITY(RaalrithMenacer);
 
   int          weaponFrames;
   int 	       drillFrames;
@@ -51,6 +53,8 @@ class RaalrithMenacer : public Ship {
 };
 
 class RaalrithPoison : public SpaceObject {
+public:
+IDENTITY(RaalrithPoison);
   public:
 
   int duration;

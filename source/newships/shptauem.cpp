@@ -6,8 +6,19 @@
 
 REGISTER_FILE
 
+
+// allows other ships to affect control over a ship.
+class OverrideControlTauEMP : public OverrideControl
+{
+public:
+	int jamkey;
+	virtual void calculate(short *key);
+};
+
 class TauEMP : public Ship
 {
+public:
+IDENTITY(TauEMP);
 	double		weaponVelocity, weaponRange, weaponDamage, weaponArmour, weaponRelativity;
 
 	int			slot;
@@ -34,6 +45,8 @@ public:
 class TauEMPVirtualTarget : public SpaceObject
 {
 public:
+IDENTITY(TauEMPVirtualTarget);
+public:
 	TauEMPVirtualTarget(SpaceLocation *creator, SpaceSprite *osprite);
 	virtual void calculate();
 	virtual void animate(Frame *space);
@@ -42,10 +55,13 @@ public:
 
 class TauEMPJammer : public SpaceLocation
 {
+public:
+IDENTITY(TauEMPJammer);
+	OverrideControlTauEMP *ocm;
 protected:
 	Ship	*jamtarget;
 	int		jamtime;
-	int		jamkey;
+	//int		jamkey;
 public:
 	TauEMPJammer(SpaceLocation *creator, Ship *tgt, int jtime);
 	virtual void calculate();
@@ -54,6 +70,8 @@ public:
 
 class TauEMPMissile : public Missile
 {
+public:
+IDENTITY(TauEMPMissile);
 public:
 	TauEMPMissile(SpaceLocation *creator, Vector2 opos, double oangle, double ov, double odamage, double orange, double oarmour, SpaceSprite *osprite, double relativity);
 };
@@ -124,13 +142,25 @@ void TauEMP::calculate_fire_special()
 		Query q;
 		for (q.begin(this, OBJECT_LAYERS, wave_radius); q.currento; q.next()) {
 			o = q.currento;
-			if (specialJamFriendly || !o->sameTeam(this)) {
-				if (o->isShip()) {
+			if (specialJamFriendly || !o->sameTeam(this))
+			{
+				if (o->isShip())
+				{
 					if (((Ship*)o)->nextkeys!=0)
-						game->add(new TauEMPJammer(this, (Ship*)o, iround(1-pow(distance(o)/specialRange, 1/specialAttenuation) * specialJamTime)));
+					{
+						double a = 1.0 - pow(distance(o)/specialRange, 1/specialAttenuation);
+						
+						// avoid having negative values...
+						if (a < 0.1)
+							a = 0.1;
+
+						game->add(new TauEMPJammer(this, (Ship*)o, iround(a * specialJamTime)) );
+					}
 				}
 				else
-					o->target = t; } }
+					o->target = t;
+			}
+		}
 		q.end();
 	
 	
@@ -231,29 +261,49 @@ void TauEMPVirtualTarget::animate(Frame *space)
 }
 
 
+
+void OverrideControlTauEMP::calculate(short *key)
+{
+	*key &= ~jamkey;
+}
+
+
 TauEMPJammer::TauEMPJammer(SpaceLocation *creator, Ship *tgt, int jtime) :
 	SpaceLocation(creator, tgt->pos, tgt->get_angle())
 {
-	jamkey = tgt->nextkeys;
+	//jamkey = tgt->nextkeys;
 	play_sound(data->sampleSpecial[1]);
 	jamtime = jtime;
 	jamtarget = tgt;
+
+	ocm = new OverrideControlTauEMP();
+	ocm->jamkey = tgt->nextkeys;
+	jamtarget->set_override_control(ocm);
 }
 
 void TauEMPJammer::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
 	SpaceLocation::calculate();
-	if (jamtarget && jamtarget->exists()) {
+	if (jamtarget && jamtarget->exists())
+	{
 		pos = jamtarget->normal_pos();
-		jamtarget->nextkeys &= ~jamkey;
+
 		jamtime -= frame_time;
+
 		if (jamtime <= 0)
-			state = 0; }
+			state = 0;
+	}
 	else
 	{
 		state = 0;
 		jamtarget = 0;
+	}
+
+	if (!exists())
+	{
+		jamtarget->del_override_control(ocm);
 	}
 }
 

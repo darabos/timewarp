@@ -9,6 +9,8 @@ REGISTER_FILE
 class ChenjesuShot : public Missile
 {
 public:
+IDENTITY(ChenjesuShot);
+public:
 	ChenjesuShot(Vector2 opos, double oangle, double ov, int odamage,
 		int oarmour, SpaceLocation *creator, SpaceSprite *osprite);
 	virtual void inflict_damage(SpaceObject *other);
@@ -17,6 +19,8 @@ public:
 
 class ChenjesuDOGI : public AnimatedShot
 {
+public:
+IDENTITY(ChenjesuDOGI);
 	int		sap_factor;
 	double	accel_rate;
 	int		*num_dogis;
@@ -186,6 +190,7 @@ void ChenjesuDOGI::inflict_damage(SpaceObject *other)
 {
 	if(sameTeam(other)) return;
 	if ( !other->isShip()) return;
+
 	play_sound(data->sampleExtra[1]);
 
 	other->handle_fuel_sap(this, sap_factor);

@@ -6,6 +6,8 @@ REGISTER_FILE
 
 class JurgathaCutter: public Ship
 {
+public:
+IDENTITY(JurgathaCutter);
 	int batt_counter;
 
 	double weaponRange;
@@ -26,6 +28,8 @@ protected:
 
 class JurgathaPortal : public Animation
 {
+public:
+IDENTITY(JurgathaPortal);
 public:
 	JurgathaPortal(SpaceLocation *creator, Vector2 opos, int damage, SpaceSprite *osprite, int ofct, int ofsz);
 	virtual void calculate();

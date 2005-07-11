@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 
@@ -14,7 +14,7 @@ Placed in public domain by Rob Devilee, 2004. Share and enjoy!
 #include "twwindow.h"
 #include "twhelpers.h"
 
-#include "util/round.h"
+#include "utils.h"
 
 ScrollControl::ScrollControl()
 {
@@ -131,13 +131,13 @@ void ScrollControl::set_sel(int xsel, int ysel)
 // alpha is a value between 0 and 1
 void ScrollControl::set_percent_pos_x(double alpha)
 {
-	x = iround( (Nx-1) * alpha );
+	x = round( (Nx-1) * alpha );
 	check_pos();
 }
 
 void ScrollControl::set_percent_pos_y(double alpha)
 {
-	y = iround( (Ny-1) * alpha );
+	y = round( (Ny-1) * alpha );
 	check_pos();
 }
 
@@ -339,19 +339,22 @@ void ScrollControl::setup(TWindow *A, char *id)//, ScrollControl *scr)
 
 
 
-TextInfo::TextInfo(FONT *afont, BITMAP *abmp, char *atextinfo, int aNchars)
+TextInfo::TextInfo(FONT *afont, int w, int h, char *atextinfo, int aNchars)
 {
-	bmp = abmp;
+	//bmp = abmp;
+	set_area(w, h);
+
 	usefont = afont;
 	textinfo = atextinfo;
 	Nchars = aNchars;
 
 	Htxt = text_height(usefont);
 	text_color = makecol(0,0,0);
-	Nshow = int(bmp->h / Htxt);
+	Nshow = int(th / Htxt);
 
 	if (Nshow == 0)
 		Nshow = 1;	// force at least 1 line to be displayed, even if text doesn't fit entirely in the window !
+
 }
 
 TextInfo::~TextInfo()
@@ -403,12 +406,14 @@ void TextInfo::reset(ScrollControl *scroll)
 			txt[0] = textinfo[n];
 			txt[1] = 0;
 
-			len += text_length(usefont, txt);
+			len += text_length(usefont, txt)+1;		// dunno if +1 is needed.
 
 			// if the line exceeds the window width, then you've to look
 			// back for the last space
-			if (len >= bmp->w-1)
+			if (len >= tw-1  &&  textinfo[n] != ' ')
 			{
+				int nlast = n;
+
 				while (n > 0 && textinfo[n] != ' ' && textinfo[n] != '.' && textinfo[n] != ',' &&
 						textinfo[n] != '!' && textinfo[n] != '?' && textinfo[n] != ';' &&
 						textinfo[n] != ':' && textinfo[n] != '-' && textinfo[n] != '/' &&
@@ -416,6 +421,15 @@ void TextInfo::reset(ScrollControl *scroll)
 					--n;
 
 				linestart[Nlines] = n+1;
+
+				if (Nlines > 0 && linestart[Nlines] <= linestart[Nlines-1])
+				{
+					// in this case, the last space and this line are equal... in that case, just accept that
+					// stuff goes off-screen.
+					n = nlast;
+					linestart[Nlines] = n+1;
+				}
+
 				++Nlines;
 
 				len = 0;
@@ -570,5 +584,11 @@ void TextInfo::changeline(int *charpos, int line1, int line2)
 
 
 
+
+void TextInfo::set_area(int w, int h)
+{
+	tw = w;
+	th = h;
+}
 
 

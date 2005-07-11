@@ -9,6 +9,8 @@ REGISTER_FILE
 
 class EstionPlatform;
 class EstionGunner : public Ship {
+public:
+IDENTITY(EstionGunner);
 	double weaponRange;
 	double weaponVelocity;
 	int    weaponDamage;
@@ -34,6 +36,8 @@ class EstionGunner : public Ship {
 	};
 
 class EstionShot : public Shot {
+public:
+IDENTITY(EstionShot);
 	double relayAngle;
 
 	public:
@@ -45,6 +49,8 @@ class EstionShot : public Shot {
 	};
 
 class EstionPlatform : public SpaceObject {
+public:
+IDENTITY(EstionPlatform);
 	int health;
 	int rotate_time;
 	int rotate_direction;

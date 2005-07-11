@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __TWGUI_LIST_H__
@@ -55,6 +55,23 @@ public:
 
 
 
+class ButtonValue : public TextButton
+{
+public:
+	
+	ButtonValue(TWindow *menu, char *identbranch, FONT *usefont);
+
+	int value, vmin, vmax;
+
+	Button *left, *right;
+
+	virtual void calculate();
+
+	void set_value(int v1, int v, int v2);
+};
+
+
+
 // Draws a list of text strings onto a background
 // Returns the "item" (or line) number that's selected
 // This must support a scroll-bar, in case the list does not fit in the box
@@ -82,6 +99,11 @@ public:
 	void add_optionlist(char *newstr);		// add one item to an existing list.
 
 	void set_selected(int iy);
+	void set_selected(char *s, int idefault);
+
+	char *get_selected();		// returns the string pointed to
+	int getk();					// gets the index
+
 
 	int		text_color;
 
@@ -93,7 +115,6 @@ public:
 	virtual void handle_rpress();
 	virtual void calculate();
 
-	int getk();
 };
 
 
@@ -125,7 +146,16 @@ public:
 	void set_textinfo(char *atextinfo, int Nchars);
 	void set_textinfo_unbuffered(char *newtext, int Nchars);
 
+	void set_textinfo_file(char *filename);
+
+	// text limits:
+	int tx, ty, tw, th;
+	void set_area_default();
+	void set_area(int x, int y, int w, int h);
+
 	virtual void subanimate();
+
+	void set_font(FONT *newfont);
 	
 };
 
@@ -143,6 +173,12 @@ protected:
 	bool	keypr[KEY_MAX];
 	int		lastpressed;
 	int		repeattime, lasttime;
+
+	int		isel1, isel2;	// selected text
+
+	char	*colorprops;
+	void	reset_props();
+	void	set_props(int i, char val);
 	
 
 public:
@@ -182,7 +218,8 @@ class MatrixIcons : public AreaTabletScrolled
 protected:
 	int		Nx, Ny, Nxshow, Nyshow, maxitems;
 	int		Wicon, Hicon;
-	BITMAP	*overlay, *tmp;
+	RLE_SPRITE	*overlay;
+	BITMAP *tmp;
 	double	extrascale;
 public:
 

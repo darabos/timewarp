@@ -10,6 +10,8 @@ class VezlagariMissile;
 class VezlagariBulkhead;
 
 class MissileCourse {
+public:
+IDENTITY(MissileCourse);
   public:
   VezlagariMissile* Missile;
   double Turn1, Turn2, Turn3, Turn4;
@@ -24,6 +26,8 @@ class MissileCourse {
 };
 
 class VezlagariBarge : public Ship {
+public:
+IDENTITY(VezlagariBarge);
 public:
   double       shipSpecialRegen;
 
@@ -61,6 +65,8 @@ public:
 };
 
 class VezlagariMissile : public Missile {
+public:
+IDENTITY(VezlagariMissile);
 	public:
 	VezlagariMissile(VezlagariBarge* ocreator, Vector2 opos, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship, SpaceSprite *osprite,
@@ -73,6 +79,8 @@ class VezlagariMissile : public Missile {
 	};
 
 class VezlagariBulkhead : public SpaceObject {
+public:
+IDENTITY(VezlagariBulkhead);
 public:
   double damageAbsorbed, normal, direct;
   double armourEfficiency;

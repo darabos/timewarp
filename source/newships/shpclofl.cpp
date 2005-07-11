@@ -21,6 +21,8 @@ class GravShot;
 class ClowanFlurry : public Ship
 {
 public:
+IDENTITY(ClowanFlurry);
+public:
 	
 	double	weaponTime, specialRange, weaponTailTime;
 	int		weaponDamage, specialDamage, weaponTailNum;
@@ -44,6 +46,8 @@ public:
 class MissileTrace : public Presence
 {
 public:
+IDENTITY(MissileTrace);
+public:
 	SpaceObject *mother;
 	double	tail_time, add_tail_time;
 	int		Npos;
@@ -60,6 +64,8 @@ public:
 
 class MassShot : public SpaceObject
 {
+public:
+IDENTITY(MassShot);
 public:
 	Vector2	rel_startvel;
 	int		acceleration, planet_bounces;
@@ -89,6 +95,8 @@ public:
 class GravShot : public Shot
 {
 public:
+IDENTITY(GravShot);
+public:
 	double	existtime;
 
 	// it'll move to some point, and create an (invisible) gravity well there
@@ -102,6 +110,8 @@ public:
 class GravWell : public SpaceLocation
 {
 public:
+IDENTITY(GravWell);
+public:
 	double gravity_time;
 	Vector2 oldpos;
 
@@ -114,6 +124,8 @@ public:
 
 class FallingParticles : public SpaceLocation
 {
+public:
+IDENTITY(FallingParticles);
 public:
 
 	struct part_dat_str

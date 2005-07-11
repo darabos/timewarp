@@ -111,6 +111,12 @@ void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double q
 		}
 	qy = qy_min;
 	qx = qx_min;
+
+	int k;
+	k = qx + qy * QUADS_Y;
+	if (k < 0 || k >= QUADS_X*QUADS_Y)
+		tw_error("Quad error");
+
 	current = physics->quadrant[qy * QUADS_X + qx];
 	if (!current) next_quadrant();
 	if (!current) return;
@@ -299,7 +305,8 @@ void Presence::animate_predict(Frame *space, int time) {STACKTRACE
 void Presence::calculate() {STACKTRACE
 	}
 bool Presence::die() {STACKTRACE
-	if (!exists()) tw_error("Presence::die - already dead");
+	if (!exists())
+		return true;	//tw_error("Presence::die - already dead"); [note: this is not an error]
 	state = 0;
 	return true;
 	}
@@ -362,14 +369,19 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 	attributes |= ATTRIB_LOCATION;
 	if (creator) {
 		ally_flag = creator->ally_flag;
+
 		ship = creator->ship;
+		parent = creator;
+
 		data = creator->data;
+
 		if (data) data->lock();
 		target = creator->target;
 		}
 	else {
 		ally_flag = 0;
 		ship = NULL;
+		parent = NULL;
 		data = NULL;
 		target = NULL;
 		}
@@ -386,6 +398,7 @@ bool SpaceLocation::change_owner(SpaceLocation *new_owner) {STACKTRACE
 		ally_flag = new_owner->ally_flag;
 		ship = new_owner->ship;
 		target = new_owner->target;
+		// but, parent stays the same.
 		}
 	else {
 		ally_flag = 0;
@@ -635,6 +648,9 @@ void SpaceLocation::calculate() {STACKTRACE
 	if (ship && !ship->exists()) {
 		ship_died();
 	}
+	if (parent && !parent->exists()) {
+		parent = 0;
+	}
 	return;
 }
 
@@ -643,11 +659,22 @@ void SpaceObject::set_sprite(SpaceSprite *new_sprite) {STACKTRACE
 	size = new_sprite->size();
 }
 
-void SpaceObject::calculate() {STACKTRACE
+void SpaceObject::calculate()
+{
+	STACKTRACE;
+
 	SpaceLocation::calculate();
+
 	if ((attributes & ATTRIB_STANDARD_INDEX) && sprite) {
 		sprite_index = get_index(angle, PI/2, sprite->frames());
 	}
+
+	// error check:
+	if (sprite_index >= sprite->frames() || sprite_index < 0)
+	{
+		tw_error("sprite index overflow in %s", get_identity());
+	}
+
 	return;
 }
 
@@ -667,11 +694,11 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	id = SPACE_OBJECT;
 
 	isblockingweapons = true;
-	ext_ai = NULL;
+//	ext_ai = NULL;
 	}
 SpaceObject::~SpaceObject()
 {
-	destroy_external_ai();
+//	destroy_external_ai();
 }
 
 void SpaceObject::animate(Frame *space) {STACKTRACE
@@ -790,9 +817,7 @@ void SpaceObject::death() {STACKTRACE
 	}
 }
 
-/*! \brief add external ai script to ship 
-	\param script - script file
-*/
+/*
 void SpaceObject::install_external_ai(const char* script)
 {
 	if (ext_ai != NULL)
@@ -804,13 +829,13 @@ void SpaceObject::install_external_ai(const char* script)
 	ext_ai = new ExternalAI(this, script );
 }
 
-/*! \brief destroy_external ai */
 void SpaceObject::destroy_external_ai()
 {
 	if (ext_ai != NULL)
 		delete ext_ai;
 	ext_ai = NULL;
 }
+*/
 
 SpaceLine::SpaceLine(SpaceLocation *creator, Vector2 lpos, double langle, 
 	double llength, int lcolor) 
@@ -1293,7 +1318,7 @@ void Physics::check_linecollision(SpaceLine *l)
 	SpaceObject *o = 0;
 
 	Query q;
-	for (q.begin(l, l->normal_pos()+l->edge()/2, OBJECT_LAYERS, 96 + l->get_length()/2); q.current && l->exists(); q.next())
+	for (q.begin(l, normalize(l->pos+l->edge()/2, map_size), OBJECT_LAYERS, 96 + l->get_length()/2); q.current && l->exists(); q.next())
 	{
 		double d;
 		d = l->collide_testdistance(q.currento);

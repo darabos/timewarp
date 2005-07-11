@@ -5,6 +5,8 @@ REGISTER_FILE
 
 class ArchTempest : public Ship {
 public:
+IDENTITY(ArchTempest);
+public:
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;
@@ -34,6 +36,8 @@ public:
 
 class TempestWave : public Missile 
 {
+public:
+IDENTITY(TempestWave);
 
 public:
 

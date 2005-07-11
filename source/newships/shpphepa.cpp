@@ -10,6 +10,8 @@ class CrewPodPP;
 class PhedarPatrolShip : public Ship
 {
 public:
+IDENTITY(PhedarPatrolShip);
+public:
 	
 	int		weaponColor;
 	double	weaponRange;
@@ -40,6 +42,8 @@ public:
 
 class CrewPodPP : public SpaceObject
 {
+public:
+IDENTITY(CrewPodPP);
 public:
 	int frame_count;
 	int frame_size;

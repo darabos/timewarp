@@ -115,7 +115,7 @@ class gplexplr : public Game
 	public:
 		double ZoomDefault;	// is camera.z, see struct CameraPosition {
 
-	Ship *player;
+	Ship *playership;
 	Plsurface	*plsurface;
 };
 

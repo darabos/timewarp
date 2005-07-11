@@ -16,6 +16,8 @@ int makecol(RGB col)
 * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
 */
 class DeepSpaceEssence : public Ship {
+public:
+IDENTITY(DeepSpaceEssence);
 	// the ship
 	
 	double weaponVelocity;
@@ -54,6 +56,8 @@ public:
 };
 
 class DeepSpaceWarrior : public HomingMissile {
+public:
+IDENTITY(DeepSpaceWarrior);
 	// warriors that do damage on contact and pass through matter
 	
   double drain_rate;

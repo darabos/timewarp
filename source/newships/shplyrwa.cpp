@@ -5,12 +5,16 @@ REGISTER_FILE
 //#include "../sc1ships.h"
 
 class LyrmristuWaBolt1 : public Missile {
+public:
+IDENTITY(LyrmristuWaBolt1);
 	public:
 	LyrmristuWaBolt1(double ox, double oy, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double relativity);
 };
 
 class LyrmristuWaBolt2 : public Missile {
+public:
+IDENTITY(LyrmristuWaBolt2);
 	public:
 	LyrmristuWaBolt2(double ox, double oy, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double relativity);
@@ -18,6 +22,8 @@ class LyrmristuWaBolt2 : public Missile {
 
 
 class LyrmristuWaSphere : public Shot {
+public:
+IDENTITY(LyrmristuWaSphere);
 	public:
   double powerLevel;
 	LyrmristuWaSphere **PP;
@@ -35,6 +41,8 @@ class LyrmristuWaSphere : public Shot {
 };
 
 class LyrmristuWarDestroyer : public Ship {
+public:
+IDENTITY(LyrmristuWarDestroyer);
 public:
   double       weaponRange1;
   double       weaponVelocity1;

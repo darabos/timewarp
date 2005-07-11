@@ -12,6 +12,8 @@ class BipoleShip;
  * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
  */
 class BipoleKatamaran : public Ship {
+public:
+IDENTITY(BipoleKatamaran);
 // abstract class that is instanciated at start and is coordinating movement afterwards
 
   double       specialIncreaseRate;
@@ -54,6 +56,8 @@ class BipoleKatamaran : public Ship {
 };
 
 class BipoleShip : public Ship {
+public:
+IDENTITY(BipoleShip);
 // one of the two sub-ships making up the Katamaran
 
   friend class BipoleKatamaran;

@@ -464,17 +464,23 @@ bool Vanguard::GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr,
 	return TRUE;
 }
 
-void Vanguard::calculate() {
+void Vanguard::calculate()
+{
+
 	STACKTRACE;
 
 	Game::calculate();	// NOTE: skip normalgame calculate, is that ok ?
 //	if (human_panel[0] && !human_panel[0]->exists()) human_panel[0] = NULL;
 //	if (human_panel[1] && !human_panel[1]->exists()) human_panel[1] = NULL;
-	if (respawn_time == -1) {
+
+	if (respawn_time == -1)
+	{
 		int i, humans = 0, enemies = 0;
-		for (i = 0; i < gametargets.N; i += 1) {
-			if (gametargets.item[i]->get_team() == human_team) humans += 1;
-			if (gametargets.item[i]->get_team() == enemy_team) enemies += 1;
+	
+		for (i = 0; i < targets->N; i += 1)
+		{
+			if (targets->item[i]->get_team() == human_team) humans += 1;
+			if (targets->item[i]->get_team() == enemy_team) enemies += 1;
 			}
 		//if either team has no targetable items remaining (generally ships), pick new ships
 		if (!humans || !enemies) respawn_time = game_time + 5000; //5000 milliseconds is 10 seconds
@@ -490,6 +496,9 @@ void Vanguard::calculate() {
 	int i;
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		Ship *s;
 		s = player[i]->control->ship;
 		if (s && s->fire_altweapon)
@@ -560,6 +569,9 @@ void Vanguard::pick_new_ships()
 
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		player[i]->control->ship = 0;
 	}
 
@@ -591,7 +603,12 @@ void Vanguard::pick_new_ships()
 	// reset your fleets first ...
 	log_file("fleets/all.scf");
 	for ( i = 0; i < num_players; ++i )
+	{
+		if (!player[i])
+			continue;
+
 		((NPI*)player[i])->fleet->load(NULL, "Fleet");
+	}
 
 	// use the default mechanism for choosing ships.
 	NormalGame::choose_new_ships();
@@ -832,25 +849,14 @@ done:
 void Vanguard::init(Log *_log) {
 	STACKTRACE;
 
-	int minbots = 1;
+	int minbots = 4;		// bots are the enemy, so ...
 	if (num_bots < minbots)		// require a minimum number of bots
 	{
-		int k;
-		k = minbots - num_bots;
 		num_bots = minbots;
-
-		int i;
-		for ( i = 0; i < 5; ++i )
-		{
-			message.print(1500, 14, "Adding bots to your game !! You need at least 4 bots.");
-			message.animate(0);
-		}
-		idle(500);	// wait half a second.
-
 
 		// you've to adjust the num_players as well if this is the case ...
 		// otherwise the extra bots will be skipped (=safeguard).
-		num_players += k;
+		num_players = num_network + num_bots;
 	}
 
 	NormalGame::init(_log);
@@ -883,6 +889,9 @@ void Vanguard::init(Log *_log) {
 	int i;
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		jammer[i] = new HyperJammer(NULL,150);
 		game->add(jammer[i]);
 	}
@@ -923,7 +932,10 @@ void Vanguard::init(Log *_log) {
 	// reset default team settings for all players
 	for ( i = 0; i < num_players; ++i )
 	{
-		if (player[i]->channel == channel_none)
+		if (!player[i])
+			continue;
+
+		if (player[i]->channel == channel_none)	//bots...
 			player[i]->team = enemy_team;
 		else
 			player[i]->team = human_team;

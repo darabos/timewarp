@@ -9,6 +9,8 @@ class YushSpear;
  * created by: cyhawk@sch.bme.hu and forevian@freemail.hu
  */
 class YushRanger : public Ship {
+public:
+IDENTITY(YushRanger);
 // the ship
 
   double        weaponRange;
@@ -30,6 +32,8 @@ class YushRanger : public Ship {
 };
 
 class YushSpear : public Missile {
+public:
+IDENTITY(YushSpear);
   SpaceLocation* latched;
   double         rel_angle;
   double         old_angle;

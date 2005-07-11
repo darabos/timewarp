@@ -6,6 +6,8 @@ REGISTER_FILE
 
 class FierasShotSpark : public SpaceLine
 {
+public:
+IDENTITY(FierasShotSpark);
 	int lifetime, lifetime_max, r, g, b;
 
 public:
@@ -17,6 +19,8 @@ public:
 };	
 
 class FierasShot : public Missile {
+public:
+IDENTITY(FierasShot);
 	int spark_counter;
 	bool track_directly;
 
@@ -32,6 +36,8 @@ class FierasShot : public Missile {
 };
 
 class FierasArbiter : public Ship {
+public:
+IDENTITY(FierasArbiter);
 public:
 	double       weaponTurning;
 	double       weaponVelocity;

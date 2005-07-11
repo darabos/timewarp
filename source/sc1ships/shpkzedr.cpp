@@ -6,12 +6,16 @@ REGISTER_FILE
 #include "../sc1ships.h"
 
 class KzerZaMissile : public Missile {
+public:
+IDENTITY(KzerZaMissile);
 	public:
 	KzerZaMissile(Vector2 opos, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship, SpaceSprite *osprite);
 	};
 
 class KzerZaFighter : public Missile {
+public:
+IDENTITY(KzerZaFighter);
 	int    air_frames;
 	int    max_air_frames;
 	int    laser_damage;

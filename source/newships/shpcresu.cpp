@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class CrewSupplyship : public Ship
 {
+public:
+IDENTITY(CrewSupplyship);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, weaponTurnRate;
 	double	specialPeriod;
 	int		specialNlights;
@@ -31,6 +33,8 @@ protected:
 
 class SupplyShuttle : public HomingMissile
 {
+public:
+IDENTITY(SupplyShuttle);
 	SpaceSprite *sprRG;
 	bool colorstate;
 	double flashperiod, flashtime;
@@ -113,7 +117,28 @@ void CrewSupplyship::calculate()
 // delete lights (for a while), and/or create extra ships ?
 int CrewSupplyship::handle_damage(SpaceLocation* source, double normal, double direct)
 {
-	return 0;
+	Ship::handle_damage(source, normal, direct);
+
+	/* actually, never mind. They'll die with the ship anyway.
+	if (crew <= 0)
+	{
+		int n = 10 + random(15);
+
+		int i;
+		for ( i = 0; i < n; ++i )
+		{
+			double a = tw_random(PI2);
+			double r = 50 + tw_random(50.0);
+			Vector2 P = r * unit_vector(a);
+
+			add(new SupplyShuttle(this, P, a,
+						weaponVelocity,	weaponDamage, weaponRange, weaponArmour, weaponTurnRate,
+						this, data->spriteWeapon, (SpaceObject*) physics->item[i],
+						data->spriteSpecial, specialPeriod) );
+		}
+	}
+	*/
+	return 1;
 }
 
 void CrewSupplyship::animate(Frame *f)
@@ -161,14 +186,18 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate,
 
 void SupplyShuttle::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	/*
 	// if the mothership dies, you lose the sprites...
+	// well... no, cause they fly to the planet anyway.
 	if (!(ship && ship->exists()))
 	{
 		ship = 0;
 		state = 0;
 		return;
 	}
+	*/
 
 
 	flashtime += frame_time * 1E-3;
@@ -180,6 +209,7 @@ void SupplyShuttle::calculate()
 	
 
 	HomingMissile::calculate();
+
 }
 
 

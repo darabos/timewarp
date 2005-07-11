@@ -5,6 +5,8 @@ REGISTER_FILE
 class DaktaklakpakMine;
 
 class DaktaklakpakVivisector : public Ship {
+public:
+IDENTITY(DaktaklakpakVivisector);
 
   int          weaponFrames;
   int 	       drillFrames;
@@ -43,6 +45,8 @@ class DaktaklakpakVivisector : public Ship {
 };
 
 class DaktaklakpakMine : public AnimatedShot {
+public:
+IDENTITY(DaktaklakpakMine);
 
   double       missileVelocity;
   double       missileRange;

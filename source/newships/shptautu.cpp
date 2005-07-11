@@ -6,6 +6,8 @@ REGISTER_FILE
 
 class TauTurbo : public Ship
 {
+public:
+IDENTITY(TauTurbo);
 	double	weaponRange, weaponVelocity, weaponAccel, weaponTurnRate;
 	double	weaponDamage, weaponArmour;
 
@@ -34,6 +36,8 @@ public:
 
 class TauTurboMissile : public HomingMissile
 {
+public:
+IDENTITY(TauTurboMissile);
 	double accel;
 	int fire_index, fire_frame, smoke_frame, first_frame;
 

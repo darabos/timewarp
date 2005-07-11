@@ -10,6 +10,8 @@ class TelluriNovaShield;
 
 class TelluriNova : public Ship
 {
+public:
+IDENTITY(TelluriNova);
 	TelluriNovaShield *shield;
 	double	weaponRange, weaponVelocity, weaponDamage, weaponDamagePeriod;
 	double	specialWeaponCost, specialDamage, specialDamagePeriod;
@@ -33,6 +35,8 @@ protected:
 class TelluriNovaMissile : public Missile
 {
 public:
+IDENTITY(TelluriNovaMissile);
+public:
 	double damageperiod, inflicttime;
 
 	TelluriNovaMissile(SpaceLocation *creator, Vector2 rpos, double oangle, 
@@ -47,6 +51,8 @@ public:
 
 class TelluriNovaShield : public SpaceObject
 {
+public:
+IDENTITY(TelluriNovaShield);
 public:
 	TelluriNova *mother;
 	double damageperiod, inflicttime;
@@ -74,7 +80,7 @@ Ship(opos,  shipAngle, shipData, code)
 	weaponRange    = scale_range(get_config_float("Weapon", "Range", 0));
 	weaponVelocity = scale_velocity(get_config_float("Weapon", "Velocity", 0));
 	weaponDamage   = get_config_int("Weapon", "Damage", 0);
-	weaponDamagePeriod   = get_config_float("Weapon", "Damage", 0);
+	weaponDamagePeriod   = get_config_float("Weapon", "DamagePeriod", 0);
 	
 	specialWeaponCost = get_config_int("Special", "WeaponCost", 0);
 	specialDamage   = get_config_int("Special", "Damage", 0);
@@ -162,14 +168,17 @@ Missile(creator, rpos, oangle, ov, odamage, orange, 1,
 
 void TelluriNovaMissile::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	STACKTRACE;
+	/*
 	if (game->game_time - inflicttime >= damageperiod*1E3)
 	{
 		inflicttime = game->game_time;
 
 		if (other && other->exists())
 			damage(other, damage_factor);
-	}
+	}*/
+	if (other && other->exists())
+		damage(other, damage_factor*frame_time*1E-3/damageperiod);
 }
 
 
@@ -202,6 +211,8 @@ SpaceObject(creator, 0, 0, osprite)
 	collide_flag_sameteam = ALL_LAYERS;
 
 	isblockingweapons = false;
+
+	sprite->general_attributes |= SpaceSprite::ALPHA;
 }
 
 
@@ -215,6 +226,7 @@ void TelluriNovaShield::calculate()
 		return;
 	}
 
+	// this determines how big it is
 	sprite_index = power;
 
 	pos = mother->pos;
@@ -229,11 +241,13 @@ void TelluriNovaShield::inflict_damage(SpaceObject *other)
 {
 	STACKTRACE
 	// just the default behaviour.
-	if (game->game_time - inflicttime >= damageperiod*1E3)
-	{
-		inflicttime = game->game_time;
-		SpaceObject::inflict_damage(other);
-	}
+//	if (game->game_time - inflicttime >= damageperiod*1E3)
+//	{
+//		inflicttime = game->game_time;
+		//SpaceObject::inflict_damage(other);
+//	}
+	if (other && other->exists())
+		damage(other, damage_factor*frame_time*1E-3/damageperiod);
 }
 
 
@@ -263,7 +277,7 @@ int TelluriNovaShield::handle_damage(SpaceLocation *source, double normal, doubl
 bool TelluriNovaShield::power_up()
 {
 	STACKTRACE
-	if (power < maxpower)
+	if (power < maxpower-1)
 	{
 		++power;
 		return true;

@@ -15,6 +15,8 @@ class KahrMedium;
 class KahrLarge;
 
 class KahrBoomerang : public Ship {
+public:
+IDENTITY(KahrBoomerang);
 
   int          weaponChoice;
 
@@ -58,6 +60,8 @@ class KahrBoomerang : public Ship {
 };
 
 class KahrSmall : public Shot {
+public:
+IDENTITY(KahrSmall);
   public:
   KahrSmall(double ox,double oy,double oangle, double ov, double oturn,
     int odamage, double orange, int oarmour, Ship *oship,
@@ -78,6 +82,8 @@ class KahrSmall : public Shot {
 };
 
 class KahrMedium : public Shot {
+public:
+IDENTITY(KahrMedium);
   public:
   KahrMedium(double ox,double oy,double oangle, double ov, double oturn,
     int odamage, double orange, int oarmour, KahrBoomerang *oship,
@@ -101,6 +107,8 @@ class KahrMedium : public Shot {
 };
 
 class KahrLarge : public Shot {
+public:
+IDENTITY(KahrLarge);
   public:
   KahrLarge(double ox,double oy,double oangle, double ov, double oturn,
     int odamage, double orange, int oarmour, Ship *oship,

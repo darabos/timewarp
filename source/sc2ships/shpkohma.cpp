@@ -6,6 +6,8 @@ REGISTER_FILE
 #include "../sc2ships.h"
 
 class KohrAhBlade : public AnimatedShot {
+public:
+IDENTITY(KohrAhBlade);
 	bool persist;
 	int       passive;
 	double    passiveRange;
@@ -23,12 +25,16 @@ class KohrAhBlade : public AnimatedShot {
 };
 
 class KohrAhBladeDecay : public Animation {
+public:
+IDENTITY(KohrAhBladeDecay);
 	public:
 	KohrAhBladeDecay(SpaceLocation *creator, Vector2 opos, Vector2 ovel,
 		SpaceSprite *osprite, int ofcount, int ofsize);
 };
 
 class KohrAhFRIED : public Shot {
+public:
+IDENTITY(KohrAhFRIED);
   int frame_count;
 
   public:

@@ -16,6 +16,8 @@ const int  CARGOCRATE_ID = 0x082a98f17;
 class Chain;
 
 class ConfedCargotran : public Ship {
+public:
+IDENTITY(ConfedCargotran);
 	int	weaponColor;
 	double	weaponRange;
 	int	weaponDamage;
@@ -45,6 +47,8 @@ public:
 class Link : public SpaceObject
 {
 public:
+IDENTITY(Link);
+public:
 	Link(SpaceLocation *creator, Vector2 opos, double oangle,
 		SpaceSprite *osprite, SpaceObject *Prev_Object,
 		SpaceObject *Next_Object);
@@ -69,6 +73,8 @@ Link::Link(SpaceLocation *creator, Vector2 opos, double oangle,
 //Needs 64 images.
 class CargoLink : public Link
 {
+public:
+IDENTITY(CargoLink);
 protected:
 	double	explosionRange, explosionDamage;
 
@@ -84,6 +90,8 @@ public:
 
 class Chain : public Link
 {
+public:
+IDENTITY(Chain);
 	void ChainPhysics(SpaceObject *first, SpaceObject *second);
 	void ChainRecur(Link *other, int num);
 	virtual void calculate();

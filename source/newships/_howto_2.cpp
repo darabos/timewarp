@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class HowTo_2 : public Ship
 {
+public:
+IDENTITY(HowTo_2);
 	// parameters we need to define weapon behaviour
 	double	weaponRange, weaponVelocity, weaponDamage;
 	int		weaponArmour;

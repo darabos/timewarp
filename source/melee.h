@@ -7,8 +7,8 @@
 #include <allegro.h>
 
 #ifndef PI
-#	define PI 3.14159265358979323846
-//#define PI AL_PI
+//#	define PI 3.14159265358979323846
+#define PI AL_PI
 #endif
 #ifdef PI2
 #	undef PI2
@@ -325,7 +325,7 @@ class VideoSystem : public BaseClass {
 	int fullscreen;
 	DATAFILE *font_data; //fonts
 	FONT *basic_font; //font to use if no other is available
-	::Color *palette;
+	Color *palette;
 	volatile bool screen_corrupted;
 	int last_poll;
 	Surface *surface;
@@ -336,15 +336,15 @@ class VideoSystem : public BaseClass {
 	void preinit() ;
 	int poll_redraw();
 	int set_resolution (int width, int height, int bpp, int fullscreen) ; //returns 0 on failure
-	void set_palette(::Color *pal);
-	void (*color_effects)(::Color *color);
+	void set_palette(Color *pal);
+	void (*color_effects)(Color *color);
 	void update_colors();
 	void redraw();
 } extern videosystem;
 
 int get_gamma();
 void set_gamma(int gamma);
-void gamma_color_effects (::Color *color) ;
+void gamma_color_effects (Color *color) ;
 
 
 struct registered_file_type {
@@ -433,9 +433,9 @@ struct Light
 extern bool showshademaps;
 
 class SpaceSprite {
-	public:
+public:
 	static int mip_min, mip_max, mip_bias;
-	protected:
+protected:
 	enum { MAX_MIP_LEVELS = 8 };
 	int         count;
 	char bpp;
@@ -450,8 +450,8 @@ class SpaceSprite {
 	int references;
 	char *attributes;
 	enum { DEALLOCATE_IMAGE = 0x01, DEALLOCATE_MASK = 0x02 };
+public:
 	unsigned int general_attributes;
-	public:
 	enum {
 		MATCH_SCREEN_FORMAT = 0x001, 
 		IRREGULAR           = 0x002, 
@@ -548,7 +548,8 @@ struct ShipClass {
 	Ship *get_ship(Vector2 pos, double angle, ShipData *data, unsigned int code);
 	Ship *(*_get_ship)(Vector2 pos, double angle, ShipData *data, unsigned int code);
 };
-extern ShipClass *shipclasses;
+const int max_shipclasses = 512;
+extern ShipClass *shipclasses[max_shipclasses];
 extern int num_shipclasses;
 ShipClass *shipclass(const char *name);
 
@@ -651,5 +652,14 @@ int tw_do_dialog ( VideoWindow *window, DIALOG *d, int index );
 int tw_popup_dialog ( VideoWindow *window, DIALOG *d, int index );
 int d_tw_bitmap_proc(int msg, DIALOG *d, int c);
 int d_tw_yield_proc(int msg, DIALOG *d, int c);
+
+
+BITMAP *create_video_bmp(int w, int h);
+void destroy_video_bmp(BITMAP *bmp);
+void destroy_bmp(BITMAP **bmp);
+void destroy_rle(RLE_SPRITE **bmp);
+void destroy_sprite(SpaceSprite **sprite);
+
+
 
 #endif // __MELEE_H__

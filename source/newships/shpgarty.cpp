@@ -3,7 +3,11 @@
 //#include "../melee/mview.h"
 REGISTER_FILE
 
+
+
 class GarashTyrant : public Ship {
+public:
+IDENTITY(GarashTyrant);
   double       weaponVelocity;
   int          weaponDamage;
   int          weaponArmour;
@@ -43,6 +47,8 @@ class GarashTyrant : public Ship {
 };
 
 class GarashShot : public Shot {
+public:
+IDENTITY(GarashShot);
   double v;
   int  frame;
   int  frame_step;
@@ -80,20 +86,33 @@ direct);
 	virtual int  canCollide(SpaceLocation *other);
 };
 
-class GarashRepulsarStun: public SpaceObject {
-  Ship *ship;
-  int   stunframe;
-  int   stunframe_count;
-  int   frame_step;
-  int   frame_size;
-  int   frame_count;
-  int   targetIsDead;
 
-  public:
-  GarashRepulsarStun(Ship *oship, SpaceSprite *osprite, int ofcount,
-    int ofsize, int disableFrames);
+// allows other ships to affect control over a ship.
+class OverrideControlGarash : public OverrideControl
+{
+public:
+	virtual void calculate(short *key);
+};
 
-  virtual void calculate();
+
+class GarashRepulsarStun: public SpaceObject
+{
+public:
+	IDENTITY(GarashRepulsarStun);
+	OverrideControlGarash *ocg;
+	Ship *ship;
+	int   stunframe;
+	int   stunframe_count;
+	int   frame_step;
+	int   frame_size;
+	int   frame_count;
+	int   targetIsDead;
+	
+public:
+	GarashRepulsarStun(Ship *oship, SpaceSprite *osprite, int ofcount,
+		int ofsize, int disableFrames);
+	
+	virtual void calculate();
 };
 
 
@@ -273,57 +292,77 @@ int GarashTyrant::activate_special() {
   return(TRUE);
 }
 
-GarashRepulsarStun::GarashRepulsarStun(Ship *oship,
-  SpaceSprite *osprite, int ofcount, int ofsize, int stunFrames)
-	:
-  SpaceObject(oship, oship->normal_pos(), 0.0, osprite),
-  ship(oship), stunframe(0), stunframe_count(stunFrames),
-  frame_step(0), frame_size(ofsize), frame_count(ofcount)
+
+
+
+void OverrideControlGarash::calculate(short *key)
 {
-  targetIsDead = FALSE;
-	collide_flag_anyone = 0;
-	layer = LAYER_EXPLOSIONS;
-  sprite_index = 0;
+	*key &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special);
 }
 
-void GarashRepulsarStun::calculate() {
-	STACKTRACE
-  if(!ship) targetIsDead = TRUE;
-  else {
-    if(!ship->exists()) targetIsDead = TRUE;
-    else {
-      if(ship->crew<1) targetIsDead = TRUE;
-      if(ship->state==0) targetIsDead = TRUE;
-    }
-  }
-  //should prevent bad pointer crashes.
-  if(!targetIsDead) {
-    this->pos = ship->pos;
-    this->vel = ship->vel;
-  }
-  //may crash if target dies while the stun is in place.
-  //targetIsDead SHOULD prevent this from happening.
+
+
+GarashRepulsarStun::GarashRepulsarStun(Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, int stunFrames)
+:
+SpaceObject(oship, oship->normal_pos(), 0.0, osprite),
+ship(oship), stunframe(0), stunframe_count(stunFrames),
+frame_step(0), frame_size(ofsize), frame_count(ofcount)
+{
+	ocg = new OverrideControlGarash();
+	targetIsDead = FALSE;
+	collide_flag_anyone = 0;
+	layer = LAYER_EXPLOSIONS;
+	sprite_index = 0;
+
+	ship->set_override_control(ocg);
+}
+
+
+void GarashRepulsarStun::calculate()
+{
+	STACKTRACE;
+	if(!ship) targetIsDead = TRUE;
+	else {
+		if(!ship->exists()) targetIsDead = TRUE;
+		else {
+			if(ship->crew<1) targetIsDead = TRUE;
+			if(ship->state==0) targetIsDead = TRUE;
+		}
+	}
+	//should prevent bad pointer crashes.
+	if(!targetIsDead) {
+		this->pos = ship->pos;
+		this->vel = ship->vel;
+	}
+	//may crash if target dies while the stun is in place.
+	//targetIsDead SHOULD prevent this from happening.
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
 		sprite_index++;
 		if(sprite_index == frame_count)
 			sprite_index = 0;
-		}
+	}
 	if(!(ship && ship->exists()))
 	{
 		ship = 0;
 		state = 0;
+		ship->del_override_control(ocg);
 		return;
-		}
-
-  ship->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special);
-
-  stunframe += frame_time;
-  if (stunframe >= stunframe_count) state = 0;
-  if(targetIsDead) this->state=0;
-	SpaceObject::calculate();
 	}
+	
+	
+	stunframe += frame_time;
+	if (stunframe >= stunframe_count) state = 0;
+	if(targetIsDead) this->state=0;
+	SpaceObject::calculate();
+
+	if (!exists())
+	{
+		ship->del_override_control(ocg);
+		return;
+	}
+}
 
 
 

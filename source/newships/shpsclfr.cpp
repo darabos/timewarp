@@ -9,6 +9,8 @@ class ScloreSting;
 
 class ScloreFrigate : public Ship {
 public:
+IDENTITY(ScloreFrigate);
+public:
 
   double weaponRange;
   double weaponVelocity;
@@ -47,6 +49,8 @@ public:
 };
 
 class ScloreShot : public Missile {
+public:
+IDENTITY(ScloreShot);
 	public:
 	ScloreShot(double ox, double oy, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship,
@@ -56,6 +60,8 @@ class ScloreShot : public Missile {
 	};
 
 class ScloreSting : public Missile {
+public:
+IDENTITY(ScloreSting);
 public:
   int launched;
   int powerLevel;

@@ -24,6 +24,8 @@ REGISTER_FILE
 class MonoLaser;
 
 class MonoTron : public Ship {
+public:
+IDENTITY(MonoTron);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -56,6 +58,8 @@ class MonoTron : public Ship {
 };
 
 class MonoMissile : public HomingMissile {
+public:
+IDENTITY(MonoMissile);
 // this missile homes with 90 degree turns
 
   SpaceLocation* from_beacon;
@@ -76,6 +80,8 @@ class MonoMissile : public HomingMissile {
 };
 
 class MonoLaser : public Laser {
+public:
+IDENTITY(MonoLaser);
 // a segment of a laser wall
 
   friend class MonoTron;

@@ -1,6 +1,6 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #ifndef __TWWINDOW_H__
@@ -39,15 +39,33 @@ const int max_area = 128;
 extern normalmouse Tmouse;
 extern TKeyHandler keyhandler;
 
-
+/** the window interface */
 class TWindow
 {
 public:
 
+	/** (default=true): caches the background bitmap into an rle sprite, which is a compressed version of the bitmap.
+	This can be very useful for simple backgrounds with large areas of the same color, but disadvantageous
+	for complex bitmaps. If set to true, this creates a cached .rledat file next to the .bmp file, so you
+	can check how much you save. Even if you don't save much, the rle operation is usually faster than the
+	normal bitmap blitting. Set the "userle" option to "0" if you don't want to use it. You've to delete
+	it manually if the .bmp is changed.*/
+	bool use_rle;
+
+	// in buffered mode, the window has an extra memory bitmap, on which all
+	// blit operations are done, before this whole bitmap is written to the
+	// twscreen memory.
+	bool bufferedmode;
+
+	// use blit or masked_blit...
+	bool backgr_masked;
+
+	/** The "autoplace" option in the info.txt file:
+	true: then the auto-search is used to place a bitmap somewhere, and also
+	there's always a check to see if this is needed;
+	false: then the ini positions are used without further questions.
+	*/
 	int autoplace;
-	// true: then the auto-search is used to place a bitmap somewhere, and also
-	// there's always a check to see if this is needed;
-	// false: then the ini positions are used and neither checked nor updated.
 
 	// managing a list of (related) windows
 	TWindow	*prev, *next;
@@ -92,7 +110,7 @@ public:
 	int				x, y, W, H;
 
 	bool checkmouse();
-	bool grabbedmouse;
+	bool grabbedmouse, mousealreadygrabbed;
 	twguiVector mpos;
 
 
@@ -101,11 +119,17 @@ public:
 	int		default_W;
 	double	scale;
 	//BITMAP *originalscreen;	// to backup the original screen content
-	BITMAP *screen;	// pointer to (modifiable) original screen
+	bool screen;	// to prevent abuse of the global screen pointer ;)
+	BITMAP *twscreen;	// pointer to (modifiable) original screen
+	
 	BITMAP *drawarea;		// intermediately used for drawing ... so that menu items won't draw off this area
+	int ixoffs;		// extra coordinate to determine the true origin, if the drawarea is incomplete
+	int iyoffs;
+
 	BITMAP *backgr_forsearch;	// waste of memory perhaps ?!
 
 	BITMAP *backgr;
+	RLE_SPRITE *backgr_rle;
 
 //	DATAFILE *datafile;		// this file should contain info for all related areas
 							// (used for initialization).
@@ -130,10 +154,16 @@ public:
 
 	// can be changed
 	virtual void calculate();	// calls all menu items
+
 	virtual void animate();
+
+	int prevx, prevy;
+	void handle_unbufferedarea();	// reinits the sub-drawarea each time the menu changes position
 
 	// return a bmp from the data file
 	BITMAP* bmp(char *bmpname, bool vidmem = false);
+	RLE_SPRITE* load_rle_data(char *filename);
+	void save_rle_data(RLE_SPRITE* data, char *filename);
 
 	// this centers the bitmap on this position.
 	void center_abs(int xcenter, int ycenter);

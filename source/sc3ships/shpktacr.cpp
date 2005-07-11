@@ -5,6 +5,8 @@ REGISTER_FILE
 class KtangMine;
 
 class KtangCrippler : public Ship {
+public:
+IDENTITY(KtangCrippler);
 
   double       weaponRange;
   double       weaponVelocity;
@@ -32,6 +34,8 @@ class KtangCrippler : public Ship {
 };
 
 class KtangMine : public Shot {
+public:
+IDENTITY(KtangMine);
 
   double       missileVelocity;
   double       missileRange;

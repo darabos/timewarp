@@ -13,7 +13,9 @@ Melee:  Starts a battle.  In battle the following keys do stuff:
         F9 creates planets (silly "feature")
         F10 quits (so does ESCAPE)
         F11 saves screenshots
-        F12 displays framerates / performance data
+        F12 displays framerates / ping / performance data.
+	[ (or {) reduces lag
+	] (or }) increases lag
         - zooms out on some viewing modes.
         + (or =) zooms in on some viewing modes.
         0 and 9 also effect the camera in some viewing modes.
@@ -39,6 +41,8 @@ Melee:  Starts a battle.  In battle the following keys do stuff:
                 next:   F
                 prev:   G
                 near:   H
+
+GOB:	D changes difficulty.
 
 Teams:
         Select Controller:

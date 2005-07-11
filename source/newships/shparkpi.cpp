@@ -7,6 +7,8 @@ REGISTER_FILE
 class ArkanoidPincerShip;
 
 class ArkanoidPincer : public SpaceObject {
+public:
+IDENTITY(ArkanoidPincer);
   public:
   SpaceObject* shipStruck;
   int damageFactor;
@@ -37,6 +39,8 @@ class ArkanoidPincer : public SpaceObject {
 };
 
 class ArkanoidPincerShip : public Ship {
+public:
+IDENTITY(ArkanoidPincerShip);
 public:
   int          shipHotspotRate;
   double       shipSpeedMax;
@@ -461,7 +465,8 @@ void ArkanoidPincerShip::Regrow(void) {
       return;
     }
   }
-  else { tw_error("pincerL does not exist!"); }	// this is an evil macro
+  else { tw_error("pincerL does not exist!"); }
+
   if(pincerR) {
     if(pincerR->isAlive==FALSE) {
       pincerR->isAlive=TRUE; 
@@ -474,7 +479,8 @@ void ArkanoidPincerShip::Regrow(void) {
       return;
     }
   }
-  else { tw_error("pincerR does not exist!"); }	// this is an evil macro
+  else { tw_error("pincerR does not exist!"); }
+
   //message.print(1500,11,"Regrow2");
 }
 
@@ -547,13 +553,15 @@ void ArkanoidPincer::death(void) {
 
 bool ArkanoidPincer::die(void) {
 	STACKTRACE
-  bool x;
   //message.print(1500,14,"ArkanoidPincerDie1");
-  //state = 1;
-  //isAlive = 0;
-  x = SpaceObject::die();
+    isAlive=FALSE; 
+    state=1;
+    collide_flag_anyone = 0;			// ok, it becomes passive, as if it's not there.
+	  collide_flag_sameship = 0;
+    collide_flag_sameteam = 0;
+//  x = SpaceObject::die();
   //message.print(1500,14,"ArkanoidPincerDie2");
-  return(x);
+  return true;
 }
 
 void ArkanoidPincer::animate(Frame* space) {

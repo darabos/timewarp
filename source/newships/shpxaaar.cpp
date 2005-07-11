@@ -9,6 +9,8 @@ class XaaarShot;
 
 class Xaaar : public Ship
 {
+public:
+IDENTITY(Xaaar);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, weaponOffs;
 	XaaarShot *xs1, *xs2;
 	
@@ -27,6 +29,8 @@ public:
 
 class XaaarShot : public SpaceObject
 {
+public:
+IDENTITY(XaaarShot);
 	Xaaar *mother;
 public:
 	XaaarShot(Xaaar *mother, Vector2 rpos, double rangle, double v, double odamage,
@@ -91,6 +95,9 @@ int Xaaar::activate_weapon()
 			weaponVelocity, weaponDamage,
 			data->spriteWeapon);
 	add(xs2);
+
+	// slow down the ship a little...
+	vel -= weaponVelocity * unit_vector(angle);
 
 
 	return TRUE;

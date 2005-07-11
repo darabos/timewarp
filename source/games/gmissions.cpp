@@ -998,6 +998,7 @@ void Play::init(Log *_log)
 	team_goodguys = new_team();
 	team_badguys = new_team();
 
+	// this is a purely single-player game ... control structure is different...
 	playercontrol = create_control(channel_server, "Human");
 	playercontrol->target_sign_color = 4;
 	//This makes that controller draw a target sign in red
@@ -1045,6 +1046,11 @@ void Play::init(Log *_log)
 
 void Play::calculate()
 {
+	if (playercontrol)
+	{
+		playercontrol->keys = playercontrol->think();
+	}
+
 	SubGame::calculate();
 
 	
@@ -1214,7 +1220,7 @@ void Play::order_move(Ship *shp, Vector2 loc, double pspeed)
 		return;
 
 	// reset the keys for this ship
-	shp->nextkeys = 0;
+	shp->control->keys = 0;
 
 	// re-define the keys
 	double a, da, db, dc;
@@ -1248,20 +1254,20 @@ void Play::order_move(Ship *shp, Vector2 loc, double pspeed)
 		
 	if (da > 0.01*PI)
 	{
-		shp->nextkeys |= keyflag::right;
-		shp->nextkeys |= keyflag::thrust;	// you _must_ thrust, otherwise you can't steer.
+		shp->control->keys |= keyflag::right;
+		shp->control->keys |= keyflag::thrust;	// you _must_ thrust, otherwise you can't steer.
 	}
 	if (da < -0.01*PI)
 	{
-		shp->nextkeys |= keyflag::left;
-		shp->nextkeys |= keyflag::thrust;
+		shp->control->keys |= keyflag::left;
+		shp->control->keys |= keyflag::thrust;
 	}
 	
 
 	double d = 1.0;
 
 	if (shp->vel.length() < 0.01*pspeed * d * shp->speed_max)	// move at some percentage of max speed
-		shp->nextkeys |= keyflag::thrust;
+		shp->control->keys |= keyflag::thrust;
 	else
 		shp->vel *= (1 - 0.1*frame_time*1E-3);		// ok, very artificial, but, what the heck ;)
 	/*
@@ -1367,13 +1373,13 @@ void turnto(Ship *shp, Vector2 loc)
 		
 	if (da > 0.01*PI)
 	{
-		shp->nextkeys |= keyflag::right;
-		shp->nextkeys |= keyflag::thrust;	// you _must_ thrust, otherwise you can't steer.
+		shp->control->keys |= keyflag::right;
+		shp->control->keys |= keyflag::thrust;	// you _must_ thrust, otherwise you can't steer.
 	}
 	if (da < -0.01*PI)
 	{
-		shp->nextkeys |= keyflag::left;
-		shp->nextkeys |= keyflag::thrust;
+		shp->control->keys |= keyflag::left;
+		shp->control->keys |= keyflag::thrust;
 	}
 }
 
@@ -1410,8 +1416,12 @@ void Play::order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, Shi
 	// (if the enemy stays in reach, you got a hot pursuit :)
 	if (!(enemy && enemy->exists()) || Rt > Rattack)
 	{
-		// reset the keys for this ship
-		shp->nextkeys = 0;
+		// take external control over the control->keys
+		shp->control->auto_update = false;
+
+		// reset the keys for this ship-ai
+		shp->control->keys = 0;
+		//shp->nextkeys = 0;
 
 		if (Rs > Rmove)	// move back
 			turnto(shp, loc);
@@ -1420,23 +1430,24 @@ void Play::order_guard(Ship *shp, Vector2 loc, double Rmove, double Rattack, Shi
 			switch (random(3))
 			{
 			case 0:
-				shp->nextkeys |= keyflag::right;
+				shp->control->keys |= keyflag::right;
 				break;
 			case 1:
-				shp->nextkeys |= keyflag::left;
+				shp->control->keys |= keyflag::left;
 				break;
 			}
 		}
-		shp->nextkeys |= keyflag::thrust;
+		shp->control->keys |= keyflag::thrust;
 
-		return;
+		//return;
+	} else {
+		// give back control over the control->keys
+		shp->control->auto_update = true;
 	}
 
 
 	// otherwise ... there's a ship within range...
 	// ... do nothing then : let the normal AI handle it !!
-
-//	shp->AI();
 }
 
 
@@ -1957,6 +1968,8 @@ void mission_protect_official::P::init(Log *_log)
 	player = create_human_ship(0.6, 0.5, "yehte");
 	
 	ambassador = create_allied_ship(0.6, 0.52, "yehte");
+	ambassador->control->auto_update = false;	// first, place under external control
+
 	ambassador->crew = 1;
 	missionpointer->target(ambassador);
 
@@ -2053,6 +2066,7 @@ void mission_protect_official::P::calculate()
 
 		switch_team(terrorist->ally_flag, team_goodguys);
 		missionpointer->target(centralplanet);
+		terrorist->control->auto_update = false;	// place under external control (disabling ai)
 
 		ship_change_speed(terrorist, 90, 100, 100);		// make them slightly slower than before
 		++event_counter;
@@ -2345,7 +2359,10 @@ void mission_protect_official04::P::init(Log *_log)
 		double a;
 		a = i * PI2 / Nphedar;
 		guardloc[i] = Vector2(0.5 + 0.25 * cos(a), 0.5 + 0.25 * sin(a));
-		phedar[i] = create_enemy_ship(guardloc[i].x, guardloc[i].y, "phepa", "VegetableBot");
+		
+		phedar[i] = create_enemy_ship(guardloc[i].x, guardloc[i].y, "phepa", "MoronBot");
+		phedar[i]->control->auto_update = false;
+
 		guardloc[i] = guardloc[i] * map_size;
 		phedar[i]->hashotspots = false;			// disable their hotspot trail -- too many objects.
 		phedar[i]->assigntarget(playercontrol->ship);

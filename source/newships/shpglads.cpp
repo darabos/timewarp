@@ -6,6 +6,8 @@ REGISTER_FILE
 
 class GlathrielDestroyer : public Ship
 {
+public:
+IDENTITY(GlathrielDestroyer);
 	double		weaponRange, weaponVelocity, weaponInactive;
 	int			weaponDamage, weaponArmour;
 	int			laserDamage;
@@ -26,6 +28,8 @@ protected:
 
 class GlathrielMissile : public Missile
 {
+public:
+IDENTITY(GlathrielMissile);
     double	inactive_range;
     int		laser_num;
     int		laser_damage;
@@ -43,6 +47,8 @@ public:
 
 class GlathrielSpot : public SpaceLocation
 {
+public:
+IDENTITY(GlathrielSpot);
 	int		life_counter, lifetime;
 
 public:
@@ -56,6 +62,8 @@ public:
 
 class GlathrielMiniMissile : public Missile
 {
+public:
+IDENTITY(GlathrielMiniMissile);
 public:
 	GlathrielMiniMissile(double ox, double oy, double oangle, double ov,
 		int odamage, double orange, int oarmour, Ship *oship,

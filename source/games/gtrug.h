@@ -92,7 +92,7 @@ class ViewTrug : public View {
 	virtual void calculate(Game *game);
 	virtual void init(View *old);
 };
-
+/*
 class TrugOrderEvent : public GameEvent
 {
 	int player;
@@ -104,7 +104,7 @@ class TrugEvent : public GameEvent
 {
 	int serial;
 };
-
+*/
 class TrugGame : public Game {
 	public:
 	//over-riding functions from Physics

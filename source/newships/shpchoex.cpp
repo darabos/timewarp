@@ -21,6 +21,8 @@ The sources of my inspiration:
 
 class AsteroidDebris : virtual public Asteroid
 {
+public:
+IDENTITY(AsteroidDebris);
   Ship *creator;
   int frame_born;
   bool collide_flag;
@@ -79,6 +81,8 @@ int AsteroidDebris::canCollide(SpaceLocation *other)
 
 class AsteroidCenter : virtual public AsteroidDebris
 {
+public:
+IDENTITY(AsteroidCenter);
   Ship *creator;
 public:
   AsteroidCenter(Ship *creator, Vector2 new_pos);
@@ -129,6 +133,8 @@ int AsteroidCenter::isAsteroid()
 
 class ChoraliTractorBeam : public Laser 
 {
+public:
+IDENTITY(ChoraliTractorBeam);
   int tractorForce;
   int tractorPushForce;
   SpaceLocation *creator;
@@ -208,6 +214,8 @@ void ChoraliTractorBeam::inflict_damage(SpaceObject *other)
 
 class AsteroidMissile : public HomingMissile
 {
+public:
+IDENTITY(AsteroidMissile);
 protected:
   Ship *creator;
   SpaceSprite *explosion;
@@ -318,6 +326,8 @@ void AsteroidMissile::death()
 
 
 class ChoraliExtractor : public Ship {
+public:
+IDENTITY(ChoraliExtractor);
 
   int          weaponFrames;
   int 	       drillFrames;
@@ -565,8 +575,13 @@ void ChoraliExtractor::calculate()
 
    if (grabbed != NULL)
      {
-       if (!(grabbed->exists()))
+       if (!(grabbed->exists()) || grabbed->damage_factor > 0)
 	 {
+		   // if it does not exist, or the target deals damage, then, release it again.
+		   // This is because of the following report:
+		   // "When a Chorhli grabs a guardian, it still hangs on if it goes into blazer form,
+		   // killing it almost instantly. A bit unfair, no. "
+
 	   latched = FALSE;
 	   grabbed = NULL;
 	 }

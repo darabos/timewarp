@@ -87,6 +87,7 @@ Mountain(surf, opos, oangle, obodysprite, txt, otangible, ohealth)
 
 	weaponrange = 300.0;	// short range?
 	viewrange = 500.0;		// detecting ships at this range?
+
 }
 
 
@@ -160,7 +161,8 @@ void GunBody::calculate()
 			turnperiod.reset();
 		}
 
-		if (min_delta(pos, o->pos).length() < weaponrange  &&  weaponperiod.ready())
+		double d = min_delta(pos, o->pos).length();
+		if (d < weaponrange  &&  weaponperiod.ready())
 		{
 			game->add( new Missile(this, Vector2(0,50), angle, weaponvel, weapondamage, weaponrange, 1,
 				this, weaponsprite, 0) );
@@ -545,7 +547,7 @@ void gplexplr::init(Log *_log)
 	human = new_team();
 	enemies = new_team();
 
-	Control *c = create_control(channel_server, "Human");
+	Control *c = player[p_local]->control;//create_control(channel_server, "Human");
 
 	Ship *s = create_ship("plopl", c, 0.5*map_size, 0, human);
 	//add(s->get_ship_phaser());

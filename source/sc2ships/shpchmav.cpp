@@ -7,12 +7,16 @@ REGISTER_FILE
 
 
 class ChmmrLaser : public Laser {
+public:
+IDENTITY(ChmmrLaser);
   public:
   ChmmrLaser(double langle, double lrange, int ldamage, int lfcount,
     SpaceLocation *opos, Vector2 rel_pos);
 };
 
 class ChmmrBeam : public SpaceObject {
+public:
+IDENTITY(ChmmrBeam);
   int frame;
   int frame_count;
   Ship *ship;
@@ -26,6 +30,8 @@ class ChmmrBeam : public SpaceObject {
 };
 
 class ChmmrZapSat : public SpaceObject {
+public:
+IDENTITY(ChmmrZapSat);
 	int frame;
 
 	double lRange;

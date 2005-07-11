@@ -15,6 +15,8 @@ REGISTER_FILE
 class SaMatra : public Ship
 {
 public:
+IDENTITY(SaMatra);
+public:
 
 	Vector2 startpos;
 
@@ -53,6 +55,8 @@ public:
 
 class SaMatraFlame : public SpaceObject
 {
+public:
+IDENTITY(SaMatraFlame);
 	double armour;
 	SaMatra *samatra;
 
@@ -83,6 +87,8 @@ public:
 
 class SaMatraBoxer : public SpaceObject
 {
+public:
+IDENTITY(SaMatraBoxer);
 	double armour;
 	SaMatra *samatra;
 	double	timer, ftime;
@@ -463,6 +469,8 @@ void SaMatraBoxer::inflict_damage(SpaceObject *other)
 
 class SaMatraPhaser : public Phaser
 {
+public:
+IDENTITY(SaMatraPhaser);
 public:
 
 	SaMatraPhaser(Vector2 opos, Vector2 n, SaMatra *ship, 

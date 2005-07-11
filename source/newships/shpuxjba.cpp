@@ -9,6 +9,8 @@ REGISTER_FILE
 
 class Uxjoz : public Ship
 {
+public:
+IDENTITY(Uxjoz);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, weaponMass;
 	double	specialRange, specialVelocity, specialDamage, specialArmour, specialTurnRate;
 	

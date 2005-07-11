@@ -13,6 +13,8 @@ REGISTER_FILE
 class XillzCrescentOrbiter;
 
 class XillzCrescent : public Ship {
+public:
+IDENTITY(XillzCrescent);
   double	weaponRange;
   double	weaponVelocity;
   int		weaponDamage;
@@ -38,6 +40,8 @@ class XillzCrescent : public Ship {
 
 class XillzCrescentOrbiter : public SpaceObject
 {
+public:
+IDENTITY(XillzCrescentOrbiter);
 public:
 
 	SpaceObject	*centre;
@@ -242,7 +246,7 @@ void XillzCrescentOrbiter::calculate()
 	}
 	
 
-	// enter orbit around the closest spacelocation
+	// enter orbit around the closest spacelocation (but only if it's a ship)
 
 	if ( !(centre && centre->exists()) )
 	{
@@ -256,7 +260,7 @@ void XillzCrescentOrbiter::calculate()
 		for (a.begin(this, layers, passiveRange); a.current; a.next())
 		{
 			SpaceObject *o = a.currento;
-			if (!(o->isPlanet()) && o->mass != 0 && o != ship && (!sameTeam(o)) )
+			if (o->isShip() && o->mass != 0 && o != ship && (!sameTeam(o)) )
 			{
 				if (centre == 0 || distance(centre) < R)
 				{
@@ -267,7 +271,9 @@ void XillzCrescentOrbiter::calculate()
 
 			}
 		}
+
 	}
+
 
 	if ( centre )
 	{

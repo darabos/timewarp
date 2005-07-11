@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GR /GX /Zi /O1 /Op /Ob2 /I "./include" /I "./source" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /c
+# ADD CPP /nologo /MT /W3 /GX /Zi /O1 /Op /Ob2 /I "./include" /I "./source" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /Zi /Op /Ob1 /I "./include" /I "./source" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Op /Ob1 /I "./include" /I "./source" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -265,26 +265,6 @@ SOURCE=.\source\other\fontmorph.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\gconfig.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\other\gconfig.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\other\gdialog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\other\gevent.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\other\gquest.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\other\gup.cpp
 # End Source File
 # Begin Source File
@@ -337,22 +317,6 @@ SOURCE=.\source\other\vtarget.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\source\ais\AIAction.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\ais\AIBusterBot.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\ais\AIBusterBot.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\ais\AIDefaultActions.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\ais\c_input.cpp
 # End Source File
 # Begin Source File
@@ -362,14 +326,6 @@ SOURCE=.\source\ais\c_other.cpp
 # Begin Source File
 
 SOURCE=.\source\ais\c_wussie.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\ais\ext_ai.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\ais\ext_ai.h
 # End Source File
 # End Group
 # Begin Group "Games"
@@ -441,6 +397,14 @@ SOURCE=.\source\games\gsarena.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\games\gsc1arena.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\games\gsidescroll.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\games\gsolar.cpp
 # End Source File
 # Begin Source File
@@ -462,102 +426,6 @@ SOURCE=.\source\games\vanguard.cpp
 # Begin Source File
 
 SOURCE=.\source\games\vgGenSys.cpp
-# End Source File
-# End Group
-# Begin Group "GameX"
-
-# PROP Default_Filter ""
-# Begin Group "edit"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\gamex\edit\disk_stuff.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\edit\edit_dialogue.cpp
-# End Source File
-# End Group
-# Begin Group "stuff"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\gamex\stuff\backgr_stars.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\stuff\space_body.cpp
-# End Source File
-# End Group
-# Begin Group "general"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\gamex\general\sprites.cpp
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=.\source\gamex\ai_fleet.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\ai_race.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedata.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedata_map.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamedialogue.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamegeneral.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamehyper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamemelee.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetmission.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetscan.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameplanetview.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gameproject.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamesolarview.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\gamestarmap.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\gamex\projectx.cpp
 # End Source File
 # End Group
 # Begin Group "Ships"
@@ -749,10 +617,6 @@ SOURCE=.\source\newships\shpalckr.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpalhdr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpalhha.cpp
 # End Source File
 # Begin Source File
 
@@ -956,10 +820,6 @@ SOURCE=.\source\newships\shpkahbo.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpkatas.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpkatpo.cpp
 # End Source File
 # Begin Source File
@@ -977,6 +837,14 @@ SOURCE=.\source\newships\shpkoapa.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpkolfl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpkorsi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpkorsn.cpp
 # End Source File
 # Begin Source File
 
@@ -1081,10 +949,6 @@ SOURCE=.\source\newships\shpsclfr.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpsefn2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpsefna.cpp
 # End Source File
 # Begin Source File
 
@@ -1216,10 +1080,6 @@ SOURCE=.\source\newships\shpwistr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpwolmi.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpxaaar.cpp
 # End Source File
 # Begin Source File
@@ -1246,26 +1106,14 @@ SOURCE=.\source\newships\shpyurpa.cpp
 
 SOURCE=.\source\newships\shpyusra.cpp
 # End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpzeksh.cpp
-# End Source File
 # End Group
 # End Group
-# Begin Group "TW_GUI"
+# Begin Group "twgui"
 
 # PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=.\source\twgui\gamebuttonevent.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\twgui\gametest2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\twgui\gametest2.h
 # End Source File
 # Begin Source File
 
@@ -1358,322 +1206,6 @@ SOURCE=.\source\jpgalleg\jpgalleg.c
 # Begin Source File
 
 SOURCE=.\source\jpgalleg\jpgalleg.h
-# End Source File
-# End Group
-# Begin Group "MASkinG"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\masking\accelerator.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\animator.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\bitmap.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\button.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\checkbox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\clearscreen.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\color.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\colorsel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\combobox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\cursor.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\dialog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\doublebuffer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\drs.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\editbox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\error.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\fileselect.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\font.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\fps.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\gldialog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\gldriver.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\glviewport.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\groupbox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\hypertext.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\image.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\label.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\listbox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\masking.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\menu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\messagebox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\mouse.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\pageflipping.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\panel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\point.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\progress.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\radiobutton.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\rect.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\sample.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\screenupdate.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\scrollbox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\scroller.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\scrollobj.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\separator.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\settings.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\shortcut.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\size.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\skin.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\slider.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\spinbox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\splitter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\tabpanel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\textarea.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\timer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\tooltip.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\triplebuffer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\wallpaper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\widget.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\masking\window.cpp
-# End Source File
-# End Group
-# Begin Group "AlFont"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\alfont\alfont.c
-# End Source File
-# End Group
-# Begin Group "Interface"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\source\interface\GameSessionConfiguration.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\GameSessionConfiguration.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\HostGameMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\HostGameMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\Interface.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\Interface.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\MainMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\MainMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\OptionsMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\OptionsMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\OverlayMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\OverlayMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\PlayLocalMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\PlayLocalMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\PlayOnlineMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\PlayOnlineMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\SettingsPage.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\interface\SettingsPage.h
 # End Source File
 # End Group
 # Begin Source File
@@ -2151,250 +1683,6 @@ SOURCE=.\include\winalleg.h
 # Begin Group "Library_headers"
 
 # PROP Default_Filter ""
-# Begin Group "MASkinG No. 1"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\include\MASkinG\accelerator.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\animator.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\bitmap.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\button.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\checkbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\clearscreen.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\color.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\colorsel.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\combobox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\cursor.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\defines.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\dialog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\doublebuffer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\drs.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\editbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\error.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\fileselect.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\font.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\fps.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\gldialog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\gldriver.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\glviewport.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\groupbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\hypertext.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\image.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\label.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\listbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\menu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\messagebox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\mouse.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\pageflipping.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\panel.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\point.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\progress.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\radiobutton.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\rect.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\sample.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\screenupdate.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\scrollbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\scroller.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\scrollobj.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\separator.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\settings.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\shortcut.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\size.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\skin.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\slider.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\spinbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\splitter.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\tabpanel.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\textarea.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\timer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\tooltip.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\triplebuffer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\wallpaper.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\widget.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG\window.h
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=.\include\alfont.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\alfontdll.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\include\jgmod.h
@@ -2406,10 +1694,6 @@ SOURCE=.\include\lua.h
 # Begin Source File
 
 SOURCE=.\include\lualib.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\MASkinG.h
 # End Source File
 # End Group
 # Begin Source File

@@ -7,6 +7,8 @@ REGISTER_FILE
 class JnkdwoLazelCrystal;
 
 class JnkdwoLazel : public Ship {
+public:
+IDENTITY(JnkdwoLazel);
 
   friend class JnkdwoLazelCrystal;
 
@@ -41,6 +43,8 @@ class JnkdwoLazel : public Ship {
 
 
 class JnkdwoLazelCrystal : public SpaceLocation {
+public:
+IDENTITY(JnkdwoLazelCrystal);
   JnkdwoLazel *ship;
   double rx, ry, ra;
   int recharge;
@@ -51,6 +55,8 @@ class JnkdwoLazelCrystal : public SpaceLocation {
 };
 
 class JnkdwoLazelMarker : public SpaceLocation {
+public:
+IDENTITY(JnkdwoLazelMarker);
   public:
   SpaceObject *o;
   JnkdwoLazelMarker (SpaceLocation *creator, SpaceObject *oo);
@@ -58,6 +64,8 @@ class JnkdwoLazelMarker : public SpaceLocation {
 };
 
 class JnkdwoLazelMissile : public Missile {
+public:
+IDENTITY(JnkdwoLazelMissile);
   public:
   JnkdwoLazelMissile(SpaceLocation *creator, double ox, double oy, double oangle, double ov, int odamage, double orange,
               int oarmour, SpaceSprite *osprite);
@@ -65,6 +73,8 @@ class JnkdwoLazelMissile : public Missile {
 };
 
 class JnkdwoLazelLaser : public Laser {
+public:
+IDENTITY(JnkdwoLazelLaser);
   int    power_left;
   double base_length;
   double aim, max_angle, lng, d_a;

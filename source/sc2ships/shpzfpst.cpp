@@ -7,6 +7,8 @@ REGISTER_FILE
 #include "../sc2ships.h"
 
 class ZoqFotPikShot : public Shot {
+public:
+IDENTITY(ZoqFotPikShot);
   int frame_count;
 
   public:
@@ -18,6 +20,8 @@ class ZoqFotPikShot : public Shot {
 };
 
 class ZoqFotPikTongue : public SpaceObject {
+public:
+IDENTITY(ZoqFotPikTongue);
   double dist;
   Ship  *ship;
   int    lick_factor;
@@ -81,62 +85,66 @@ void ZoqFotPikShot::calculate()
 }
 
 ZoqFotPikTongue::ZoqFotPikTongue(double odist, int odamage, Ship *oship,
-  SpaceSprite *osprite, int ofcount, int ofsize) :
-  SpaceObject(oship, oship->normal_pos()/*, oship->normal_y()*/, 0.0,
-    osprite),
-  dist(odist),
-  ship(oship),
-  lick_factor(odamage),
-  frame(0),
-  frame_size(ofsize),
-  frame_count(ofcount),
-  frame_step(0)
+		SpaceSprite *osprite, int ofcount, int ofsize)
+:
+SpaceObject(oship, oship->normal_pos()/*, oship->normal_y()*/, 0.0, osprite),
+dist(odist),
+ship(oship),
+lick_factor(odamage),
+frame(0),
+frame_size(ofsize),
+frame_count(ofcount),
+frame_step(0)
 {
-  layer = LAYER_SHOTS;
-  set_depth(DEPTH_SHOTS);
-  damage_factor = abs(lick_factor);
-//  x = ship->normal_x() + (cos(ship->get_angle()) * dist);
-//  y = ship->normal_y() + (sin(ship->get_angle()) * dist);
-  pos = ship->normal_pos() + dist * unit_vector(ship->get_angle());
-//  vx = ship->get_vx(); vy = ship->get_vy();
-  vel = ship->get_vel();
-  sprite_index = get_index(ship->get_angle());
-  sprite_index += (64 * frame);
-
-  isblockingweapons = true;
+	layer = LAYER_SHOTS;
+	set_depth(DEPTH_SHOTS);
+	damage_factor = abs(lick_factor);
+	//  x = ship->normal_x() + (cos(ship->get_angle()) * dist);
+	//  y = ship->normal_y() + (sin(ship->get_angle()) * dist);
+	pos = ship->normal_pos() + dist * unit_vector(ship->get_angle());
+	//  vx = ship->get_vx(); vy = ship->get_vy();
+	vel = ship->get_vel();
+	sprite_index = get_index(ship->get_angle());
+	sprite_index += (64 * frame);
+	
+	isblockingweapons = true;
 	debug_id = 1049;
 }
-
+  
 void ZoqFotPikTongue::calculate()
 {
-  int current_frame = frame;
-
-  if (!(ship && ship->exists()))
-    {
-	  ship = 0;
-	  state = 0;
-	  return;
-  }
-
-  frame_step+= frame_time;
-  while(frame_step >= frame_size) {
-    frame_step -= frame_size;
-    frame++;
-    if(frame == frame_count)
-      state = 0;
-  }
-  if((current_frame != frame) && (lick_factor > 0))
-    damage_factor = lick_factor;
-
-//  x = ship->normal_x() + cos(ship->get_angle()) * dist;
-//  y = ship->normal_y() + sin(ship->get_angle()) * dist;
-  pos = ship->normal_pos() + dist * unit_vector(ship->get_angle());
-//  vx = ship->get_vx(); vy = ship->get_vy();
-  vel = ship->get_vel();
-  sprite_index = get_index(ship->get_angle());
-  sprite_index += (64 * frame);
-
-  SpaceObject::calculate();
+	int current_frame = frame;
+	
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
+		state = 0;
+		return;
+	}
+	
+	frame_step+= frame_time;
+	while(frame_step >= frame_size)
+	{
+		frame_step -= frame_size;
+		frame++;
+		if(frame == frame_count)
+		{
+			state = 0;
+			return;		// you must return here, otherwise sprite-index will overflow.
+		}
+	}
+	if((current_frame != frame) && (lick_factor > 0))
+		damage_factor = lick_factor;
+	
+	//  x = ship->normal_x() + cos(ship->get_angle()) * dist;
+	//  y = ship->normal_y() + sin(ship->get_angle()) * dist;
+	pos = ship->normal_pos() + dist * unit_vector(ship->get_angle());
+	//  vx = ship->get_vx(); vy = ship->get_vy();
+	vel = ship->get_vel();
+	sprite_index = get_index(ship->get_angle());
+	sprite_index += (64 * frame);
+	
+	SpaceObject::calculate();
 }
 
 void ZoqFotPikTongue::inflict_damage(SpaceObject *other)

@@ -12,17 +12,26 @@ REGISTER_FILE
 Animation::Animation(SpaceLocation *creator, Vector2 opos, 
 	SpaceSprite *osprite, int first_frame, int num_frames, int frame_length, 
 	double depth, double _scale) 
-	:
-	SpaceObject(creator, opos, 0.0, osprite),
-	frame_count(num_frames),
-	frame_size(frame_length),
-	frame_step(frame_length),
-	scale(_scale),
-	transparency(0)
-	{STACKTRACE
+:
+SpaceObject(creator, opos, 0.0, osprite),
+frame_count(num_frames),
+frame_size(frame_length),
+frame_step(frame_length),
+scale(_scale),
+transparency(0)
+{
+	STACKTRACE;
 	if (frame_size <= 0) {
-		tw_error("Animation::Animation - frame_size == %d", frame_size);
+		tw_error("Animation::Animation - frame_size == %d in %s", frame_size, get_identity());
 		frame_size = 1;
+	}
+
+	if (first_frame < 0 || first_frame >= sprite->frames() || first_frame + num_frames > sprite->frames())
+	{
+		// debug info...
+		SpaceLocation *l = ship;
+		int N = sprite->frames();
+		tw_error("Animation: frame count error in %s.", get_identity());
 	}
 	sprite_index = first_frame;
 	layer = LAYER_HOTSPOTS;

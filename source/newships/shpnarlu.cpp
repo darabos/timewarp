@@ -1,5 +1,6 @@
 /* $Id$ */ 
 #include "../ship.h"
+#include "../scp.h"
 REGISTER_FILE
 
 #define NAROOL_POISON_ID     0x1122
@@ -14,6 +15,8 @@ REGISTER_FILE
 class NaroolPoison;
 
 class NaroolLurker : public Ship {
+public:
+IDENTITY(NaroolLurker);
 	double weaponRange;
 	double weaponVelocity;
 	double poison;
@@ -49,6 +52,8 @@ class NaroolLurker : public Ship {
 
 };
 class NaroolGas: public AnimatedShot {
+public:
+IDENTITY(NaroolGas);
 
 	int hitShip;
 	int duration;
@@ -65,6 +70,8 @@ class NaroolGas: public AnimatedShot {
 };
 
 class NaroolPoison : public SpaceObject {
+public:
+IDENTITY(NaroolPoison);
 public:
   Ship *oship;
   double poison;
@@ -191,48 +198,54 @@ void NaroolLurker::calculate()
 
 void NaroolLurker::animate(Frame *space)
 {
-	STACKTRACE
+	STACKTRACE;
 	if((cloak_frame > 0) && (cloak_frame < 300))
-		sprite->animate_character( pos,
-			sprite_index, pallete_color[cloak_color[(int)(cloak_frame / 100)]], space);
-	else
-	if((cloak_frame >= 300))
-		sprite->animate_character( pos,
-			sprite_index, pallete_color[0], space);
-	else
+	{
+		sprite->animate_character( pos, sprite_index, pallete_color[cloak_color[(int)(cloak_frame / 100)]], space);
+	} else if((cloak_frame >= 300))
+	{
+		if (is_bot(control->channel) || !is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
+		{
+			sprite->animate_character( pos, sprite_index, pallete_color[0], space);
+
+			//Vector2 lightningrelpos = 0.5 * Vector2(lightningbmp->w,lightningbmp->h);
+			calc_lightning();
+			
+			//	aa_set_mode(find_aa_mode(general_attributes));
+			
+			Vector2 P, S;
+			S = sprite->size(0) * ::space_zoom;
+			P = corner(pos, sprite->size(0));
+			
+			int ix, iy, iw, ih;
+			// target position
+			ix = iround(P.x);
+			iy = iround(P.y);
+			// target size
+			iw = iround(S.x);
+			ih = iround(S.y);
+			
+			//int a;
+			//a = aa_get_trans();
+			//aa_set_trans(128);
+			
+			int a;
+			a = aa_get_mode();
+			aa_set_mode(a | AA_ALPHA);
+			aa_stretch_blit(lightningbmp, space->surface,
+				0, 0,lightningbmp->w,lightningbmp->h,
+				ix, iy, iw, ih);
+			aa_set_mode(a);
+			
+			space->add_box(ix, iy, iw, ih);
+		
+		} else
+			sprite->animate_character( pos, sprite_index, pallete_color[4], space);
+	} else
 		Ship::animate(space);
 
 
-	//Vector2 lightningrelpos = 0.5 * Vector2(lightningbmp->w,lightningbmp->h);
-	calc_lightning();
 
-//	aa_set_mode(find_aa_mode(general_attributes));
-
-	Vector2 P, S;
-	S = sprite->size(0) * ::space_zoom;
-	P = corner(pos, sprite->size(0));
-	
-	int ix, iy, iw, ih;
-	// target position
-	ix = iround(P.x);
-	iy = iround(P.y);
-	// target size
-	iw = iround(S.x);
-	ih = iround(S.y);
-
-	//int a;
-	//a = aa_get_trans();
-	//aa_set_trans(128);
-
-	int a;
-	a = aa_get_mode();
-	aa_set_mode(a | AA_ALPHA);
-	aa_stretch_blit(lightningbmp, space->surface,
-		0, 0,lightningbmp->w,lightningbmp->h,
-		ix, iy, iw, ih);
-	aa_set_mode(a);
-
-	space->add_box(ix, iy, iw, ih);
 }
 
 NaroolGas::NaroolGas(double ox, double oy,double oangle,double ov,int odamage, int oduration, 

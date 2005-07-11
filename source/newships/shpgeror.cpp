@@ -8,6 +8,8 @@ class JadWarhead;
 
 class JadOrion : public Ship
 {
+public:
+IDENTITY(JadOrion);
 	double		weaponRange;
 	double		weaponVelocity1;
 	double		weaponMaxSpeed;
@@ -49,6 +51,8 @@ public:
 /* The Koanua Missle */
 class OrionMissile : public Missile 
 {
+public:
+IDENTITY(OrionMissile);
 	private: 	
 		bool isBurning;
 		bool isCoasting;
@@ -81,6 +85,8 @@ class OrionMissile : public Missile
 
 class JadWarheadExplosion : public Presence
 {
+public:
+IDENTITY(JadWarheadExplosion);
 protected:
 	Vector2 *xp, *xv;
 	int		num, lifetime, life_counter, color;
@@ -96,6 +102,8 @@ public:
 
 class JadWarheadExplosion2 : public JadWarheadExplosion
 {
+public:
+IDENTITY(JadWarheadExplosion2);
 	public:
 	JadWarheadExplosion2(Vector2 opos, double ov, int onum, int olife, int ocolor, SpaceObject* otarg);
 };
@@ -104,6 +112,8 @@ class JadWarheadExplosion2 : public JadWarheadExplosion
 
 class JadWarhead : public Missile
 {
+public:
+IDENTITY(JadWarhead);
 	double		blast_range, old_range;
 	double		blast_damage, kick, lifetime, boost_max;
 	double		safe_range;

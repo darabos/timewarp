@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../frame.h"
 
 class PloxisPlunderer : public Ship {
+public:
+IDENTITY(PloxisPlunderer);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;

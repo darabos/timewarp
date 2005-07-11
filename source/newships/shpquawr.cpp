@@ -1,8 +1,11 @@
 /* $Id$ */ 
 #include "../ship.h"
+#include "../scp.h"
 //#include "../melee/mview.h"
 
 class QuarKathWraith : public Ship {
+public:
+IDENTITY(QuarKathWraith);
   int frame;
   int thrustActive;
   int thrustForward;
@@ -47,6 +50,8 @@ class QuarKathWraith : public Ship {
 };
 
 class QuarKathIllusion  : public HomingMissile {
+public:
+IDENTITY(QuarKathIllusion);
   int cloak;
   int cloak_frame;
 
@@ -67,6 +72,8 @@ int QuarKathIllusion ::cloak_color[3] = { 15, 10, 2 };
 
 
 class QuarKathLightning : public Laser {
+public:
+IDENTITY(QuarKathLightning);
 	int level;
 	SpaceLocation *target;
 	Ship *ship;
@@ -163,8 +170,12 @@ void QuarKathWraith::animate(Frame *space) {
 				sprite_index, pallete_color[cloak_color[(int)(cloak_frame / 100)]], space);
 	else
 	if((cloak_frame >= 300))
-		sprite->animate_character( pos,
-				sprite_index, pallete_color[0], space);
+	{
+		if (is_bot(control->channel) || !is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
+			sprite->animate_character( pos, sprite_index, pallete_color[0], space);
+		else
+			sprite->animate_character( pos, sprite_index, pallete_color[4], space);
+	}
 	else
 		Ship::animate(space);
 	}

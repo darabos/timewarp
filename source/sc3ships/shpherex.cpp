@@ -1,8 +1,11 @@
 /* $Id$ */ 
 #include "../ship.h"
+#include "../scp.h"
 REGISTER_FILE
 
 class HeraldExterminator : public Ship {
+public:
+IDENTITY(HeraldExterminator);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -97,13 +100,20 @@ void HeraldExterminator::calculate()
   Ship::calculate();
 }
 
-void HeraldExterminator::animate(Frame *space) {
+void HeraldExterminator::animate(Frame *space)
+{
 	if((cloak_frame > 0) && (cloak_frame < 300))
+	{
 		sprite->animate_character( pos, sprite_index, 
 				pallete_color[cloak_color[cloak_frame / 100]], space);
-	else if ((cloak_frame >= 300)) sprite->animate_character( pos,
-			sprite_index, pallete_color[0], space);
-  else Ship::animate(space);		
+	} else if ((cloak_frame >= 300))
+	{
+		if (is_bot(control->channel) || !is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
+			sprite->animate_character( pos, sprite_index, pallete_color[0], space);
+		else
+			sprite->animate_character( pos, sprite_index, pallete_color[4], space);
+	}
+  else Ship::animate(space);
 	return;
 	}
 

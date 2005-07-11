@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class KoanuaJavelinMissile : public Missile {
+public:
+IDENTITY(KoanuaJavelinMissile);
 	public:
 	KoanuaJavelinMissile(Vector2 opos, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double 
@@ -25,6 +27,8 @@ Relativity);
 
 
 class KoanuaJavelin : public Ship {
+public:
+IDENTITY(KoanuaJavelin);
 public:
 
   int          weaponGroupOneActive;

@@ -7,6 +7,8 @@ REGISTER_FILE
 
 class BoggCenturion  :  public Ship
 {
+public:
+IDENTITY(BoggCenturion);
   double        weaponRange, weaponSpread;
   int           weaponDamage;
 
@@ -52,6 +54,8 @@ class BoggCenturion  :  public Ship
 
 class BoggCenturionMissile : public Missile
 {
+public:
+IDENTITY(BoggCenturionMissile);
   int lifetime, fuel;
   double accel, maxspeed, blast_accel, blast_maxspeed;
   int hotspot_rate, hotspot_frame_size, hotspot_frame;
@@ -71,6 +75,8 @@ class BoggCenturionMissile : public Missile
 
 class BoggCenturionExhaust : public Animation
 {
+public:
+IDENTITY(BoggCenturionExhaust);
   double slowdown;
   public:
   BoggCenturionExhaust (SpaceLocation *creator, double oangle, double dx, double dy, SpaceSprite *osprite,
@@ -82,6 +88,8 @@ class BoggCenturionExhaust : public Animation
 
 class BoggCenturionExhaustShot : public Shot
 {
+public:
+IDENTITY(BoggCenturionExhaustShot);
   SpaceLocation *amt;
   SAMPLE *s;
   public:
@@ -94,6 +102,8 @@ class BoggCenturionExhaustShot : public Shot
 
 class BoggCenturionShot : public Laser
 {
+public:
+IDENTITY(BoggCenturionShot);
   SpaceSprite *ex_sprite;
   SAMPLE *ex_sample;
   
@@ -114,6 +124,7 @@ BoggCenturion::BoggCenturion (Vector2 opos, double shipAngle, ShipData *shipData
         exhaust_on              = (get_config_int("Engines", "ExhaustOn", 0) != 0);
         exhaust_rate            = get_config_int("Engines", "ExhaustRate", 0);
         exhaust_frame           = 0;
+		exhaust_count			= 0;
         exhaust_slowdown        = get_config_float("Engines", "ExhaustSlowdown", 0) / 1000.0;
         exhaust_framesize       = get_config_int("Engines", "ExhaustFrameSize", 0);
         exhaust_thrust          = scale_velocity(get_config_float("Engines", "ExhaustThrust", 0));

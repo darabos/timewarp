@@ -11,6 +11,8 @@ class LaserInform;
 
 class MeknikPincer : public Ship
 {
+public:
+IDENTITY(MeknikPincer);
 	double	rockRange, rockVelocity, rockDamage, rockArmour;
 	double	weaponColor, weaponRange, weaponFrames, weaponDamage;
 	double specialTurnperiod, specialDamage, specialDamageperiod;
@@ -42,6 +44,8 @@ protected:
 
 class MeknikChainsaw : public SpaceObject
 {
+public:
+IDENTITY(MeknikChainsaw);
 	double	damage, damageperiod, dist, maxdist;
 	double	lifetime, sawtime, inflict_time;
 	MeknikPincer *refship;
@@ -65,6 +69,8 @@ protected:
 
 class LaserInform : public Laser
 {
+public:
+IDENTITY(LaserInform);
 	MeknikPincer *mother;
 public:
 	LaserInform(MeknikPincer *creator, double langle, int lcolor, double lrange, double ldamage,

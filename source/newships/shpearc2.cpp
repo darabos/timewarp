@@ -3,6 +3,8 @@
 REGISTER_FILE
 
 class EarthlingCruiser2 : public Ship {
+public:
+IDENTITY(EarthlingCruiser2);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -26,6 +28,8 @@ class EarthlingCruiser2 : public Ship {
 };
 
 class EarthlingFusionBlast : public AnimatedShot {
+public:
+IDENTITY(EarthlingFusionBlast);
 public:
   EarthlingFusionBlast(double ox, double oy, double oangle, double ov,
         int odamage, double orange, int oarmour, double otrate, SpaceLocation *ocreator,

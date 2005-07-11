@@ -11,6 +11,8 @@ animation, and such.
 class HowTo_1 : public Ship
 {
 public:
+IDENTITY(HowTo_1);
+public:
 	/*  constructor of a new ship.
 	
 	opos = a Vector2, (x,y) coordinate where the ship is located --> copied into "pos"

@@ -5,6 +5,8 @@ REGISTER_FILE
 #include "../sc1ships.h"
 
 class AndrosynthBubble : public AnimatedShot {
+public:
+IDENTITY(AndrosynthBubble);
   int courseFrames;
 
   public:

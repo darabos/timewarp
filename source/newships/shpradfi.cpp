@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class RadeanFirestorm : public Ship
 {
+public:
+IDENTITY(RadeanFirestorm);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, battmultiplier;
 	
 	bool shipmode;

@@ -20,6 +20,8 @@ class Hook2;
 class SefyNautilus2 : public Ship
 {
 public:
+IDENTITY(SefyNautilus2);
+public:
 	
 	bool	arm_movement, specialHitRoids;
 	double	arm_angle, arm_time, arm_time_last, arm_period, arm_period2, arm_maxangle;
@@ -54,6 +56,8 @@ static const int maxnodes = 50;
 class Hook2 : public SpaceObject
 {
 public:
+IDENTITY(Hook2);
+public:
 	double	armour;
 	bool bHitAsteroids;
 
@@ -86,6 +90,8 @@ public:
 
 class ShipPart2 : public SpaceObject
 {
+public:
+IDENTITY(ShipPart2);
 	void calc_angle();
 	void calc_pos(Vector2 refpos);	// calculates it for this angle
 
@@ -121,6 +127,8 @@ public:
 static const int MaxParts = 100;
 class ShipPart2Manager : public Presence
 {
+public:
+IDENTITY(ShipPart2Manager);
 	ShipPart2	*partlist[MaxParts];
 	int			Nparts;
 	Ship		*mother;

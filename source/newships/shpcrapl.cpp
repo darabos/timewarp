@@ -10,6 +10,8 @@ REGISTER_FILE
 class Crash : public Ship
 {
 public:
+IDENTITY(Crash);
+public:
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour, weaponNdebris, weaponActionRange, weaponSpreadAngle;
 	double	specialVelocity, specialDamage, specialArmour, specialAngVel, specialActionRange;
 	double	turn_rate_right;
@@ -29,6 +31,8 @@ protected:
 
 class CrashAsteroid : public Asteroid
 {
+public:
+IDENTITY(CrashAsteroid);
 public:
 	Crash *master;
 

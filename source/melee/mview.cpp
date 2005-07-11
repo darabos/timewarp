@@ -27,7 +27,7 @@ int camera_hides_cloakers = 0;
 // GeomanNL : there was a complaint about too large zoom values, so adding constraint here
 static const double max_zoom_value = 6000.0;
 static const double min_zoom_value = 700.0;
-static const double relaxed_zoom_value = 2000.0;
+static double relaxed_zoom_value = 2000.0;
 
 void constrain(double x1, double *x, double x2)
 {
@@ -570,11 +570,27 @@ void View_Enemy::calculate (Game *game) {STACKTRACE
 		}
 		else
 		{
+
 			focus(&n, c);
 			n.z = relaxed_zoom_value;
 		}
 	}
-	else focus(&n, c);
+	else
+	{
+		// keyboard control
+		focus(&n, c);
+		//if (key_pressed(key_zoom_in))  n.z /= 1 + 0.002 * frame_time;
+		//if (key_pressed(key_zoom_out)) n.z *= 1 + 0.002 * frame_time;
+		n.z = relaxed_zoom_value;
+
+	}
+
+	if (n.z < relaxed_zoom_value)
+		n.z = relaxed_zoom_value;
+
+	// allow to adapt the reference zoom level.
+	if (key_pressed(key_zoom_in))  relaxed_zoom_value /= 1 + 0.002 * frame_time;
+	if (key_pressed(key_zoom_out)) relaxed_zoom_value *= 1 + 0.002 * frame_time;
 
 	constrain(min_zoom_value, &n.z, max_zoom_value);
 
@@ -603,8 +619,11 @@ void View_Enemy_Discrete::calculate (Game *game) {STACKTRACE
 	{
 		focus(&n, c);
 		// but, if the target is invisible, you usually want more zoom to plan where to go, right...
-		//n.z = 900;
 		n.z = relaxed_zoom_value;
+
+		// allow to adapt the reference zoom level.
+		if (key_pressed(key_zoom_in))  relaxed_zoom_value /= 1 + 0.002 * frame_time;
+		if (key_pressed(key_zoom_out)) relaxed_zoom_value *= 1 + 0.002 * frame_time;
 	}
 
 	constrain(min_zoom_value, &n.z, max_zoom_value);

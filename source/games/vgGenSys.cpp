@@ -281,19 +281,19 @@ void VGenSystem::init_objectsVSysYellowThreePlanets(void) {
         0, YS, RP, scale_range(10), scale_velocity(5), 1);
   game->add(OH);
   OH = new OrbitHandler(mapCenter, Vector2(0, 0),
-        0, YS, HP, scale_range(15), scale_velocity(3.75), 1);
+        0, YS, HP, scale_range(18), scale_velocity(3.75), 1);
   game->add(OH);
   OH = new OrbitHandler(mapCenter, Vector2(0, 0),
-        0, YS, GG, scale_range(22.5), scale_velocity(2.5), 1);
+        0, YS, GG, scale_range(29.5), scale_velocity(2.5), 1);
   game->add(OH);
   OH = new OrbitHandler(GG, GG->pos,
-        0, GG, M1, scale_range(2), scale_velocity(4), 0);
+        0, GG, M1, scale_range(3), scale_velocity(4), 0);
   game->add(OH);
   OH = new OrbitHandler(GG, GG->pos,
-        PI/2, GG, M2, scale_range(3), scale_velocity(3), 0);
+        PI/2, GG, M2, scale_range(4.5), scale_velocity(3), 0);
   game->add(OH);
   OH = new OrbitHandler(GG, GG->pos,
-        PI, GG, M3, scale_range(4), scale_velocity(2), 0);
+        PI, GG, M3, scale_range(6), scale_velocity(2), 0);
   game->add(OH);
   for(i=0; i<4; i++)
     game->add(new VSmallAsteroid());
@@ -579,16 +579,22 @@ int numSprites, int attribs)
 	SpaceSprite *spr;
 	char dataStr[100];
 
-	for(int num=0; num<numSprites; num++)
+//	for(int num=0; num<numSprites; num++)
+//	{
+//		sprintf(dataStr,cmdStr,num);
+	if (numSprites != 1)
 	{
-		sprintf(dataStr,cmdStr,num);
+		tw_error("Vgensystem: trying to initialize >1 sprites, only 1 allowed");
+	}
+
+		strcpy(dataStr, cmdStr);
 		spr = GetSprite(fileName, dataStr, attribs, 64);
 		if(!spr)
 		{
 			return FALSE;
 		}
 		Pics = spr;
-	}
+//	}
 	return TRUE;
 }
 
@@ -753,7 +759,8 @@ void VGenSystem::register_init(type_func f, char *description)
 }
 
 
-void VGenSystem::init_objects() {
+void VGenSystem::init_objects()
+{
 	size *= 1;
 	prepare();
 
@@ -785,10 +792,10 @@ void VGenSystem::init_objects() {
 
 	//int i = random(Ninit);
 
-	int i;
+	int i = -1;
 
 	// initialization is for non-clients only ...
-	if (p_local == 0)	// if you're the server
+	if (hostcomputer())	// if you're the server
 	{
 		
 		PopupList *popupl;
@@ -827,7 +834,24 @@ void VGenSystem::init_objects() {
 	
 	// share the result of the initialization.
 	// send (or receive) ... channel_server is locally either the server, or the client.
-	log_int(i, channel_server);
+	share(-1, &i);
+	share_update();
+
+	int ichoice = i;
+
+	if (i == -1)
+		tw_error("Vgensys: map type choice (-1) error");
+
+	/*
+	int k1 = random(1000);
+	int k2 = k1;
+	share(-1, &k2);
+
+	message.print(1500, 15, "k1 = %i  k2 = %i", k1, k2);
+	message.animate(0);
+	readkey();
+	*/
+
 
 
 	VGenSystem::setupSprites();
@@ -838,9 +862,8 @@ void VGenSystem::init_objects() {
 	VLargeAsteroid::InitStatics();
 	VMetalAsteroid::InitStatics();
 
-
 	// call the selected init routine :
-	(this->*funclist[i])();
+	(this->*funclist[ichoice])();
 
 }
 

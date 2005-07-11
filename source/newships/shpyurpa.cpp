@@ -14,6 +14,8 @@ class YuryulPatriot;
 
 class YuryulMissile : public HomingMissile {
 public:
+IDENTITY(YuryulMissile);
+public:
 	YuryulMissile(YuryulPatriot* ocreator, double ox, double oy, double oangle, double ov,
 		int odamage, double orange, int oarmour, double oturnrate, SpaceLocation* opos, SpaceSprite* osprite, SpaceObject* otarget);
 	Ship* creator;
@@ -38,6 +40,8 @@ public:
 
 class YuryulRam : public Missile {
 public:
+IDENTITY(YuryulRam);
+public:
 	YuryulPatriot* creator;
 	Vector2 relativePosition;
 	double angleOffset;
@@ -54,6 +58,8 @@ public:
 
 
 class YuryulPatriot : public Ship {
+public:
+IDENTITY(YuryulPatriot);
 public:
 	double       shipTurnAccelRate;
 	double       shipTurnSpeedMax;

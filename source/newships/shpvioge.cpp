@@ -2,14 +2,20 @@
 #include "../ship.h"
 REGISTER_FILE
 
-
+const int ID_VIOGENPLASMA	 = 0x0F84D19C;
 
 class Viogen : public Ship
 {
+public:
+IDENTITY(Viogen);
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;
 	int          weaponArmour;
+	double       specialRange;
+	double       specialVelocity;
+	int          specialDamage;
+	int          specialArmour;
 	
 public:
 	Viogen(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
@@ -24,6 +30,8 @@ protected:
 class ViogenMissile : public Missile
 {
 public:
+IDENTITY(ViogenMissile);
+public:
 
 	double	period, rotatetime, accel, aoffs;
 
@@ -36,6 +44,25 @@ public:
 
 
 
+class ViogenPlasma : public Shot
+{
+public:
+IDENTITY(ViogenPlasma);
+public:
+
+	double default_range;
+
+	ViogenPlasma(SpaceLocation *creator, Vector2 rpos, double oangle, double ov, 
+			double odamage, double orange, double oarmour, SpaceLocation *opos, 
+			SpaceSprite *osprite, double relativity);
+
+	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+	virtual void calculate();
+
+	virtual int canCollide(SpaceLocation *other);
+};
+
+
 Viogen::Viogen(Vector2 opos, double shipAngle,
 			   ShipData *shipData, unsigned int code) 
 			   :
@@ -46,6 +73,10 @@ Ship(opos, shipAngle, shipData, code) {
 	weaponDamage   = get_config_int("Weapon", "Damage", 0);
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
 	
+	specialRange    = scale_range(get_config_float("Special", "Range", 0));
+	specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
+	specialDamage   = get_config_int("Special", "Damage", 0);
+	specialArmour   = get_config_int("Special", "Armour", 0);
 }
 
 
@@ -70,7 +101,10 @@ int Viogen::activate_special()
 {
 	STACKTRACE
 
-	if (batt - special_drain > batt_max)
+	/*
+	old special: addition of fuel at the cost of speed... that's a bit lame.
+	
+	 if (batt - special_drain > batt_max)
 		return false;
 
 	double a, v, dv;
@@ -86,6 +120,16 @@ int Viogen::activate_special()
 	
 	v -= dv;
 	vel = v * unit_vector(a);
+	*/
+
+	// add a defensive shot or so ...
+	Vector2 rpos;
+
+	rpos = Vector2(0, 100);
+
+	add ( new ViogenPlasma( this, rpos, angle, specialVelocity,
+		specialDamage, specialRange, specialArmour, this,
+		data->spriteSpecial, 0));
 	
 	
 	return true;
@@ -134,13 +178,79 @@ void ViogenMissile::calculate()
 	relpos = Vector2( random(10.0)-5.0, -40.0 + random(10.0) );
 	Animation *anim;
 	anim = new Animation(this, pos + rotate(relpos, angle-0.5*PI),
-					data->spriteSpecial, 0, data->spriteSpecial->frames(),
+					data->spriteExtra, 0, data->spriteExtra->frames(),
 					100, LAYER_HOTSPOTS);
 	add(anim);
 
 //Animation::Animation(SpaceLocation *creator, Vector2 opos, 
 //	SpaceSprite *osprite, int first_frame, int num_frames, int frame_length, 
 //	double depth, double _scale) 
+}
+
+
+
+
+ViogenPlasma::ViogenPlasma(SpaceLocation *creator, Vector2 rpos, double oangle, double ov, 
+			double odamage, double orange, double oarmour, SpaceLocation *opos, 
+			SpaceSprite *osprite, double relativity)
+:
+Shot(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite, relativity)
+{
+	default_range = orange;
+
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = ALL_LAYERS;
+
+	id = ID_VIOGENPLASMA;
+}
+
+int ViogenPlasma::handle_damage(SpaceLocation *source, double normal, double direct)
+{
+	STACKTRACE;
+
+	armour += normal + direct;
+
+	return 0;
+}
+
+void ViogenPlasma::calculate()
+{
+	STACKTRACE;
+	
+	Shot::calculate();
+
+	if (d > default_range)
+	{
+		state = 1;
+
+		d = 0;
+		range = default_range;
+		--armour;
+
+		if (armour <= 0)
+		{
+			state = 0;
+			return;
+		}
+
+	}
+
+	sprite_index = iround(armour-1);
+	if (sprite_index >= sprite->frames())
+		sprite_index = sprite->frames()-1;
+
+	damage_factor = armour;
+}
+
+
+int ViogenPlasma::canCollide(SpaceLocation *other)
+{
+	if (other->id == ID_VIOGENPLASMA)
+		return FALSE;
+		
+	
+	return SpaceObject::canCollide(other);	
 }
 
 

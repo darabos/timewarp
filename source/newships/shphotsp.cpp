@@ -22,6 +22,8 @@ class TheHotSpot;
 class ShpHotSpot : public Ship
 {
 public:
+IDENTITY(ShpHotSpot);
+public:
 	double weaponRange, weaponVelocity, specialRange, specialVelocity, weaponVelocityStep;
 	int    weaponDamage, weaponArmour, specialDamage, specialArmour;
 
@@ -56,6 +58,8 @@ public:
 
 class TheHotSpot : public Missile
 {
+public:
+IDENTITY(TheHotSpot);
 	public:
 
 	ShpHotSpot	*mother;
@@ -76,6 +80,8 @@ class TheHotSpot : public Missile
 
 class CoreDump : public Shot
 {
+public:
+IDENTITY(CoreDump);
 public:
 
 	int num_mirvs;

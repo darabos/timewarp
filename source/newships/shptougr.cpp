@@ -9,6 +9,8 @@ REGISTER_FILE
 
 class ToUl : public Ship
 {
+public:
+IDENTITY(ToUl);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange, specialDamage;
 	int		specialColor;
@@ -56,15 +58,18 @@ int ToUl::activate_weapon()
 	STACKTRACE
 
 	int i;
-	double v, x, y;
 
 	for ( i = -3; i < 4; ++i )
 	{
+		double v, x, y, da;
+
 		v = weaponVelocity * (0.8 + 0.2 * abs(i) / 3.0);
 		x = i * 10;
 		y = 50 + abs(i) * 10;
+		da = i * PI / 100.0;
 
-		add(new Missile(this, Vector2(x, y), angle,
+
+		add(new Missile(this, Vector2(x, y), angle + da,
 			v, weaponDamage, weaponRange, weaponArmour,
 			this, data->spriteWeapon, 0.0));
 	}

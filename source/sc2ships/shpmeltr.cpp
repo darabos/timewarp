@@ -5,7 +5,16 @@ REGISTER_FILE
 
 #include "../sc2ships.h"
 
+// allows other ships to affect control over a ship.
+class OverrideControlMelnorme : public OverrideControl
+{
+public:
+	virtual void calculate(short *key);
+};
+
 class MelnormeShot : public Shot {
+public:
+IDENTITY(MelnormeShot);
   double v;
   int frame;
   int frame_step;
@@ -28,6 +37,9 @@ class MelnormeShot : public Shot {
 };
 
 class MelnormeDisable : public SpaceObject {
+public:
+IDENTITY(MelnormeDisable);
+	OverrideControlMelnorme *ocm;
   Ship *ship;
   int   disableframe;
   int   disableframe_count;
@@ -43,6 +55,8 @@ class MelnormeDisable : public SpaceObject {
 };
 
 class MelnormeSpecial : public AnimatedShot {
+public:
+IDENTITY(MelnormeSpecial);
   int disableFrames;
   SpaceSprite *disableSprite;
 
@@ -181,6 +195,11 @@ void MelnormeShot::animateExplosion()
 
 int MelnormeShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
+	if (source->isShip())
+	{
+		die();
+		return 1;
+	}
   int old = iround(armour);
   Shot::handle_damage(source, normal, direct);
   if (!released && (armour > 0)) armour = old;
@@ -203,6 +222,16 @@ void MelnormeShot::inflict_damage(SpaceObject *other)
 	return;
 }
 
+
+
+void OverrideControlMelnorme::calculate(short *key)
+{
+	*key &= ~(keyflag::left | keyflag::right | keyflag::special);
+	*key |= keyflag::right;
+}
+
+
+
 MelnormeDisable::MelnormeDisable(Ship *creator, Ship *oship, SpaceSprite *osprite,
   int ofcount, int ofsize, int disableFrames) :
   SpaceObject(creator, oship->normal_pos(), 0.0, osprite),
@@ -216,9 +245,13 @@ MelnormeDisable::MelnormeDisable(Ship *creator, Ship *oship, SpaceSprite *osprit
 	collide_flag_anyone = 0;
 	set_depth(DEPTH_EXPLOSIONS);
 	debug_id = 1036;
+
+	ocm = new OverrideControlMelnorme();
+	ship->set_override_control(ocm);
 }
 
-void MelnormeDisable::calculate() {
+void MelnormeDisable::calculate()
+{
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
@@ -235,12 +268,21 @@ void MelnormeDisable::calculate() {
 //	x = ship->normal_x();
 //	y = ship->normal_y();
 	pos = ship->normal_pos();
-	ship->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::special);
-	ship->nextkeys |= keyflag::right;
 	disableframe += frame_time;
-	if (disableframe >= disableframe_count) state = 0;
-	SpaceObject::calculate();
+	if (disableframe >= disableframe_count)
+	{
+		state = 0;
+		ship->del_override_control(ocm);
 	}
+
+	SpaceObject::calculate();
+
+	if (!exists())
+	{
+		ship->del_override_control(ocm);
+	}
+
+}
 
 MelnormeSpecial::MelnormeSpecial(Vector2 opos, double oangle,
   double ov, int oframes, double orange, int oarmour, Ship *oship,
@@ -256,12 +298,13 @@ MelnormeSpecial::MelnormeSpecial(Vector2 opos, double oangle,
 
 void MelnormeSpecial::animateExplosion() {}
 
-void MelnormeSpecial::inflict_damage(SpaceObject *other) {
+void MelnormeSpecial::inflict_damage(SpaceObject *other)
+{
 	if (other->isShip()) add(new MelnormeDisable( ship, 
 			(Ship *)(other), disableSprite, 20, 50, disableFrames));
 	state = 0;
 	return;
-	}
+}
 
 
 

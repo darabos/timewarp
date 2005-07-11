@@ -20,6 +20,8 @@ static double cross_product( Vector2 a, Vector2 b )
 
 class WissumTripod : public Ship
 {
+public:
+IDENTITY(WissumTripod);
 	Vector2 oldvel, old_dvel;
 	
 public:
@@ -65,6 +67,8 @@ protected:
 class FuelDump : public Shot
 {
 public:
+IDENTITY(FuelDump);
+public:
 
 	int		num_mirvs;
 	double	orig_damage_factor;
@@ -80,6 +84,8 @@ public:
 /* removed cause they sucked :)
 class TripodBomb : public SpaceObject
 {
+public:
+IDENTITY(TripodBomb);
 public:
 	WissumTripod *mother;
 	SpaceObject *findme;

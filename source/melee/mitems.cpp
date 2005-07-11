@@ -56,8 +56,8 @@ void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fracti
 
 	H -= 1;		// for plotting, pixel 0 also counts
 
-	if (ix > space->surface->w) return;
-	if (iy > space->surface->h) return;
+	if (ix >= space->surface->w) return;
+	if (iy >= space->surface->h) return;
 	if (ix+len < 0) return;
 	if (iy+H < 0) return;
 
@@ -65,7 +65,20 @@ void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fracti
 		rectfill(space->surface, ix, iy, ix+d-1, iy+(int)H, col1);
 	rectfill(space->surface, ix+d, iy, ix+len, iy+(int)H, col2);
 
-	space->add_box(ix, iy, ix+len, iy+H);
+	//space->add_box(ix, iy, ix+len, iy+H);
+
+	if(H<5) 
+	{ 
+		for(int i = 0; i<=H;i++) 
+		{ 
+			space->add_line(ix, iy+i, ix+len, iy+i); 
+		} 
+	} 
+	else 
+	{ 
+		space->add_box(ix, iy, ix+len, iy+H); 
+	} 
+
 }
 
 

@@ -8,7 +8,7 @@
  *
  * - key jamming tester revised to accomodate joystick.
  * - re-added d_tw_yeildslice stuff
- * - improved "debug" ::Button
+ * - improved "debug" button
  * - SHIPVIEW dialog object positions and size modified.
  * - SHIPVIEW dialog function modified to load text and ini files according to shp*.*
  *   file naming convention.
@@ -25,6 +25,9 @@
 #include <string.h>
 #include <errno.h>
 #include <allegro.h>
+
+#include "other/ttf.h"
+//#include "other/fontmorph.h"
 
 #include "jpgalleg/jpgalleg.h"
 
@@ -71,22 +74,11 @@ REGISTER_FILE
 #include "games/ggob.h"
 #include "util/net_tcp.h"
 #include "util/aastr.h"
+#include "melee/mship.h" //remove
 #include "melee/mfleet.h"
 
 #include "util/sounds.h"
 
-//////////////////////////////////////////////////////////////////
-
-#include "MASkinG.h"
-using namespace MAS;
-
-#include "interface/MainMenu.h"
-
-#include <vector>
-using namespace std;
-
-
-////////////////////////////////////////////////////////////
 
 //deprecated.  This mode of using dat files is terrible, I can't believe
 //this technique was ever created.
@@ -137,9 +129,9 @@ void show_diagnostics();
 void keyjamming_tester();
 
 
-//void play_game(const char *_gametype_name, Log *_log = NULL) ;
+void play_game(const char *_gametype_name, Log *_log = NULL) ;
 
-//void play_single(const char *_gametype_name, Log *_log = NULL);
+void play_single(const char *_gametype_name, Log *_log = NULL);
 void play_net (bool ishost);
 void play_demo(const char *file_name = "demo.dmo") ;
 
@@ -149,14 +141,16 @@ void play_net1server ( const char *_gametype_name, int port = -1 ) ;
 
 int getKey();
 
+bool game_networked;
+
+bool optimize4latency = true;
+
 enum {
 	MAIN_DIALOG_BOX = 0,
-	MAIN_DIALOG_MELEE,
 	MAIN_DIALOG_NET_JOIN,
 	MAIN_DIALOG_NET_HOST,
-
-    MAIN_DIALOG_NEW_GAME_MENU,//////////////
-
+	MAIN_DIALOG_MELEE,
+	MAIN_DIALOG_SC1ARENA,
 	MAIN_DIALOG_MELEE_EXTENDED,
 	MAIN_DIALOG_TEAMS,
 	MAIN_DIALOG_OPTIONS,
@@ -169,20 +163,18 @@ enum {
 
 DIALOG mainDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_shadow_box_proc, 40,   40,   180,  285+35,255, 0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { my_d_button_proc,  45,   45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Melee" , NULL, NULL },
-  { my_d_button_proc,  45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Join" , NULL, NULL }, //MAIN_DIALOG_NET_JOIN
-  { my_d_button_proc,  45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Host" , NULL, NULL }, //MAIN_DIALOG_NET_HOST
-
-  { my_d_button_proc,  45,   115+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"New Game Menu" , NULL, NULL },/////
-
-  { my_d_button_proc,  45,   150+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
-  { my_d_button_proc,  45,   185+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
-  { my_d_button_proc,  45,   220+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
-  { my_d_button_proc,  45,   255+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
-  { my_d_button_proc,  45,   290+35,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
+  { d_shadow_box_proc, 40,   40,   180,  320,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { my_d_button_proc,  45,   45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Join" , NULL, NULL }, //MAIN_DIALOG_NET_JOIN
+  { my_d_button_proc,  45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Host" , NULL, NULL }, //MAIN_DIALOG_NET_HOST
+  { my_d_button_proc,  45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Melee" , NULL, NULL }, //MAIN_DIALOG_MELEE
+  { my_d_button_proc,  45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"SC1 Arena" , NULL, NULL }, //MAIN_DIALOG_SC1ARENA
+  { my_d_button_proc,  45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Extended Menu" , NULL, NULL },
+  { my_d_button_proc,  45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Teams" , NULL, NULL },
+  { my_d_button_proc,  45,   255,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
+  { my_d_button_proc,  45,   290,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
+  { my_d_button_proc,  45,   325,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
 #ifdef INCLUDE_GAMEX
-  { my_d_button_proc, 550,   440+35,   50,  30,   255,  0,    0,    D_EXIT | D_SPECIAL_BUTTON,
+  { my_d_button_proc, 550,   440,   50,  30,   255,  0,    0,    D_EXIT | D_SPECIAL_BUTTON,
                                                                              0,    0,    (void *)"FG" , NULL, NULL },
 #endif
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
@@ -253,6 +245,16 @@ char *detect_gametype( Log *_log ) { STACKTRACE
 	return strdup(buffy);
 }
 
+// the buffer must already exist!!
+void share_array(int netnum, char *buffer, int *N)
+{
+	share(netnum, N);
+	share_update();
+	share(netnum, buffer, *N);
+	share_update();
+
+}
+
 void share_string(char *str)
 {
 	STACKTRACE;
@@ -268,6 +270,21 @@ void share_string(char *str)
 	message.animate(0);
 }
 
+
+void share_string(int netnum, char *str)
+{
+	STACKTRACE;
+
+	int Lstr;
+	Lstr = strlen(str) + 1;
+	share(netnum, &Lstr);
+	share_update();
+	share(netnum, str, Lstr);	
+	share_update();
+
+	message.print(1500, 14, "SHARED [%i] [%s]", Lstr, str);
+	message.animate(0);
+}
 
 
 SAMPLE * menuAccept = NULL;
@@ -518,6 +535,11 @@ bool is_local (int channel) {
 	return (glog->get_direction (channel) & Log::direction_write);
 }
 
+bool is_bot( int channel )
+{
+	return channel == channel_none;		// bots are placed on "none" channel
+}
+
 void log_file (const char *fname)
 {
 	glog->log_file(fname);
@@ -584,7 +606,8 @@ void play_address_server()
 
 #include "twgui/twgui.h"
 
-// a textbutton displaying a integer value, which also takes 2 other ::Buttons to tweak it's value
+/*
+// a textbutton displaying a integer value, which also takes 2 other buttons to tweak it's value
 class ButtonValue : public TextButton
 {
 public:
@@ -593,7 +616,7 @@ public:
 
 	int value, vmin, vmax;
 
-	::Button *left, *right;
+	Button *left, *right;
 
 	virtual void calculate();
 
@@ -610,11 +633,11 @@ TextButton(menu, identbranch, usefont)
 	
 	strcpy(tmp, identbranch);
 	strcat(tmp, "dec_");
-	left = new ::Button(menu, tmp);
+	left = new Button(menu, tmp);
 
 	strcpy(tmp, identbranch);
 	strcat(tmp, "inc_");
-	right = new ::Button(menu, tmp);
+	right = new Button(menu, tmp);
 
 	value = 0;
 	vmin = 0;
@@ -624,7 +647,7 @@ TextButton(menu, identbranch, usefont)
 }
 
 
-void ::ButtonValue::set_value(int v1, int v, int v2)
+void ButtonValue::set_value(int v1, int v, int v2)
 {
 	vmin = v1;
 	vmax = v2;
@@ -635,7 +658,7 @@ void ::ButtonValue::set_value(int v1, int v, int v2)
 	set_text(tmp, makecol(200,100,100));
 }
 
-void ::ButtonValue::calculate()
+void ButtonValue::calculate()
 {
 	TextButton::calculate();
 
@@ -664,39 +687,48 @@ void ::ButtonValue::calculate()
 		set_text(tmp, makecol(200,100,100));
 	}
 }
+*/
 
 
-
-#include "other/ttf.h"
 
 // CCstatus = Cancel or Continue.
 void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 {
 	// init
 
+	BITMAP *temp_screen = 0;
+	temp_screen = create_video_bitmap(screen->w, screen->h);
+	if (!temp_screen)
+		temp_screen = create_bitmap(screen->w, screen->h);
+
 
 	TWindow *T;
-	T = new TWindow("interfaces/multiplayer", 50,50, screen);
+	T = new TWindow("interfaces/multiplayer", 50,50, temp_screen);
 
 	int psize;
 	psize = iround(40 * T->scale);
-	FONT *usefont1 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0);
+	FONT *usefont1 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0, 1.5);
+	//morph_font(usefont1);
+	psize = iround(24 * T->scale);
+	FONT *usefont2 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0, 1.5);
+	//morph_font(usefont2);
 	psize = iround(20 * T->scale);
-	FONT *usefont2 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0);
+	FONT *usefont3 = load_ttf_font ("fonts/Jobbernole.ttf", psize, 0, 1.2);
+	//morph_font(usefont3);
 
 	// test:
 //	FONT *usefont = load_font_test (40);
 //	destroy_font(usefont);
 	
-	::Button *b_accept, *b_cancel;
-	b_accept = new ::Button(T, "accept_");
-	b_cancel = new ::Button(T, "cancel_");
+	Button *b_accept, *b_cancel;
+	b_accept = new Button(T, "accept_");
+	b_cancel = new Button(T, "cancel_");
 
 	ButtonValue *b_human, *b_bot;
 
-	b_human = new ::ButtonValue(T, "humans_", usefont1);
-	b_human->set_value(1, Nhumans, 8);
-	b_bot   = new ::ButtonValue(T, "bots_", usefont1);
+	b_human = new ButtonValue(T, "humans_", usefont1);
+	b_human->set_value(1, Nhumans, max_network);
+	b_bot   = new ButtonValue(T, "bots_", usefont1);
 	b_bot->set_value(0, Nbots, 99);
 
 	TextButton *game_choice;
@@ -705,7 +737,7 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 	game_choice->passive = false;	// normally it just show info, but now you need it for interaction.
 
 	PopupList *rpopup;
-	rpopup = new PopupList(game_choice, "interfaces/multiplayer/gamelist", "list_", 10, 10, usefont2, 0);
+	rpopup = new PopupList(game_choice, "interfaces/multiplayer/gamelist", "list_", 10, 10, usefont3, 0);
 	rpopup->tbl->set_optionlist(game_names, num_games, makecol(200,200,200));
 	rpopup->hide();
 
@@ -722,11 +754,14 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 	// I/O
 	for(;;)
 	{
-		poll_input();
-		poll_mouse();
-		show_mouse(screen);
+//		poll_input();
+//		poll_mouse();
+//		show_mouse(screen);
 
 		T->tree_calculate();
+		clear_to_color(temp_screen, 0);
+		T->tree_animate();
+		blit(temp_screen, screen, 0, 0,  0, 0, temp_screen->w, temp_screen->h);
 
 
 		if (b_cancel->flag.left_mouse_press)
@@ -741,10 +776,8 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 			int k = rpopup->getvalue();
 			if (k >= 0 && k < num_games)
 				game_choice->set_text(game_names[k], makecol(200,200,200));
-			clear_to_color(screen, 0);	// erase the screen
+//			clear_to_color(screen, 0);	// erase the screen
 		}
-
-		T->tree_animate();
 
 		idle(5);
 	}
@@ -756,11 +789,18 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 	// exit
 	delete T;
 
+	show_mouse(0);
+
+	destroy_bitmap(temp_screen);
+	
+	show_mouse(screen);
+
 	// for some reason, this crashes if I don't take special precaution (override the kill subroutine
 	// with an identical copy as that in allegro... 
 	// NEED TO CHECK, WHY !!
-//	destroy_font(usefont1);
-//	destroy_font(usefont2);
+	destroy_font(usefont1);
+	destroy_font(usefont2);
+	destroy_font(usefont3);
 //	color_destroy_font(usefont1);
 //	color_destroy_font(usefont2);
 }
@@ -773,6 +813,11 @@ void play_net( bool ishost )
 {
 	STACKTRACE;
 
+	game_networked = true;
+
+	reset_share();
+
+	reset_color_props();
 
 	// STEP ONE, SETTING / RETRIEVING DATA
 
@@ -808,6 +853,7 @@ void play_net( bool ishost )
 	int Nbots = get_config_int("Network", "Nbots", 0);
 	char temp_gamename[512];
 	strcpy(temp_gamename, get_config_string("Network", "GameName", "Melee"));
+
 
 	if (ishost)
 	{
@@ -868,6 +914,15 @@ void play_net( bool ishost )
 		char *addr = 0;
 //		int Lstr;
 
+		int w = 99;
+		log_int(w, channel_server);
+		if (w != 99)
+		{
+			tw_error("unexpected value");
+		}
+
+		net_conn[0] = -1;	// local
+
 		for ( n = 1; n < Nplayers; ++n )	// exclude the local player from this.
 		{
 	
@@ -876,8 +931,17 @@ void play_net( bool ishost )
 			message.out(tmp);
 			message.animate(0);
 			
+			// listening for another client.
 			if (!log->add_listen(port))
 				tw_error("listener failed");
+
+			// the index of the connection that was just added :
+			net_conn[n] = log->num_connections - 1;
+			
+			if (net_conn[n] != n-1)
+			{
+				tw_error("Adding connection with wrong index");
+			}
 
 			// you should share data about the new player with all existing players ; include
 			// also the player number, so that this new player also gets something useful
@@ -885,8 +949,8 @@ void play_net( bool ishost )
 
 			val = 99;
 
-			message.print(1500, 14, "SHARING(sending) [%i]", val);
-			message.animate(0);
+//			message.print(1500, 14, "SHARING(sending) [%i]", val);
+//			message.animate(0);
 
 			addr = log->get_address(log->num_connections-1);
 
@@ -903,8 +967,8 @@ void play_net( bool ishost )
 			
 			share_update();
 
-			message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, n, addr);
-			message.animate(0);
+//			message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, n, addr);
+//			message.animate(0);
 
 		}
 
@@ -921,10 +985,12 @@ void play_net( bool ishost )
 		share(-1, addr, Lstr);	
 		share_update();
 		*/
+
+
 		share_string(addr);
 
-		message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, kstart, addr);
-		message.animate(0);
+//		message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, kstart, addr);
+//		message.animate(0);
 
 
 		// you're the host, so you determine the gametype !
@@ -965,14 +1031,24 @@ void play_net( bool ishost )
 
 		// connect to the server (whom is player 0 by default, cause nobody else is connected yet.)
 		log->add_connect(tmp, port);
+
+		// the index of the connection that was just added :
+		// this is to the host, who is player 0 by default, hence net_conn[0]
+		// you MUST set this here.
+		net_conn[0] = log->num_connections - 1;
+		if (net_conn[0] != 0)
+		{
+			tw_error("First connection should have index 0");
+		}
+
 //		free(tmp);
 		
 		// receive some data on channel_init
 		
 //		int Lstr;
 		int val = -1;
-		message.print(1500, 14, "SHARING(receiving)");
-		message.animate(0);
+//		message.print(1500, 14, "SHARING(receiving)");
+//		message.animate(0);
 
 		char addr[512];
 		
@@ -981,7 +1057,8 @@ void play_net( bool ishost )
 		for (;;)
 		{
 			share(-1, &val);
-			share(-1, &p);	// you receive your own (local) player number
+			share(-1, &p);	// you receive your own (local) player number (in the first iteration)
+			// or, you send it, in later iterations.
 			
 			/*
 			share(-1, &Lstr);
@@ -991,8 +1068,8 @@ void play_net( bool ishost )
 			*/
 			share_string(addr);
 
-			message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, p, addr);
-			message.animate(0);
+//			message.print(1500, 14, "SHARED [%i] [%i] [%s]", val, p, addr);
+//			message.animate(0);
 
 
 			if (!p_local)
@@ -1001,10 +1078,12 @@ void play_net( bool ishost )
 
 				// also, the new client should listen to all existing clients (if any)
 				int idone;
-				for ( idone = 1; idone < p_local; ++ idone )
+				for ( idone = 1; idone < p_local; ++ idone )	// exclude one, because that's yourself...
 				{
 					if (!log->add_listen(port))
 						tw_error("listener failed");
+
+					net_conn[idone] = log->num_connections - 1;
 				}
 
 			} else {
@@ -1012,8 +1091,12 @@ void play_net( bool ishost )
 				if ( p == 0 )
 					break;		// this signals the start of the game
 
-				// otherwise, listen to the other newly connected client
+				// otherwise, connect to any newly connected client
 				log->add_connect(addr, port);
+
+				// the index of the connection that was just added :
+				// temporary assignment...
+				net_conn[p] = log->num_connections - 1;
 			}
 			
 		}
@@ -1036,6 +1119,7 @@ void play_net( bool ishost )
 		//gname = detect_gametype(log);
 	}
 
+
 	// note that the server has "local" settings which overwrite other players' setting
 	num_network = Nplayers;
 	num_bots = Nbots;
@@ -1047,6 +1131,128 @@ void play_net( bool ishost )
 	share_update();
 	// you've to share num_network this as early as possible, cause it's also
 	// important for the debugging part (log_test).
+
+
+	// now, each player should share its assigned player number with all other players...
+	// so that the player indices are synchronized between the different games.
+
+	int remap_player_index[max_network];
+	int i;
+
+	for ( i = 0; i < num_network; ++i )
+	{
+		
+		remap_player_index[i] = p_local;
+		log_int(remap_player_index[i], channel_network[i]);
+		// note that channel_network are fixed channel indexes.
+		//xx or not??? and that net_conn[k] is used as channel_network[net_conn[k]]...
+
+	}
+
+	/*
+	for ( i = 0; i < num_network; ++i )
+	{
+		if (i != p_local)
+		{
+			message.print(1500, 15, "player [%i]: net_conn = [%i], addr = [%s], remap = [%i]",
+				i, net_conn[i], log->net[net_conn[i]].addr, remap_player_index[i]);
+		}
+	}
+	*/
+
+	// next, apply the remapping
+
+	int new_net_conn[max_network];
+	for ( i = 0; i < num_network; ++i )
+	{
+		int k;
+		k = remap_player_index[i];
+		new_net_conn[k] = net_conn[i];	// the synched index k, maps from local index i
+
+	}
+
+	for ( i = 0; i < num_network; ++i )
+	{
+		net_conn[i] = new_net_conn[i];
+	}
+	// the remapping is complete.
+
+	/*
+	// now, the server should let everyone know which player number is associated with which connection
+	// (it's easiest to initialize it this way, I think)
+	// this is only used to initialize the clients, the host just needs to inform them.
+	int i;
+	for ( i = 1; i < num_network; ++i )
+	{
+		char addr[512];
+		strncpy(addr, log->net[i].addr, 500);
+		share_string(-1, addr);
+
+		if (p_local > 0)	// if you're not host, cause the host already knows
+		{
+			if (i == p_local)
+			{
+				net_conn[i] = -1;	// default value, if it's your own address
+			}
+			else
+			{
+
+				// check all connections, and see which one fits...
+				int k;
+				for ( k = 0; k < log->num_connections; ++k )
+				{
+					message.print(1500, 13, "comparing [%s] to [%s]", log->net[k].addr, addr);
+
+					if ((strcmp(log->net[k].addr, addr) == 0) && (strlen(log->net[k].addr) == strlen(addr)) )
+					{
+						break;
+					}
+				}
+				message.animate(0);
+
+
+[22:43] Megagun: Can't remember.. Been a while ago.
+[22:44] Megagun: Hmm.. Damn "The address of one of the players wasn't found" bug...
+[22:44] Megagun: When networking in TW.
+[22:44] Megagun: regular TW, 3player.
+[22:45] GeomanNL: you play the game, and suddenly there's that error ?
+[22:45] Megagun: When we try to connect
+[22:45] Megagun: First player can connect allright, second player cant
+[22:45] Megagun: ah
+[22:45] Megagun: clicking "ignore" on that bug fixes it
+[22:46] GeomanNL: ??
+[22:46] Megagun: Odd.
+[22:46] Megagun: That bug shows up, both players click "ignore", and it seems to fix itself.
+[22:46] Halleck: maybe the bug is the dialogue window itself
+[22:46] GeomanNL: might be a mistake I made one day
+[22:46] Megagun: heh
+[22:47] Megagun: It works on 1v1 though
+
+				if (k == 0)
+					tw_error("Finding the host another time... should not happen");
+
+				if (k < 0 || k >= log->num_connections)
+					tw_error("The address of one of the players was not found");
+				
+				net_conn[i] = k;	// player i uses connection k.
+				
+			}
+		}
+	}
+	*/
+	
+	
+
+	for ( i = 0; i < num_network; ++i )
+	{
+		if (i != p_local)
+		{
+			message.print(1500, 15, "player [%i]: net_conn = [%i], addr = [%s]",
+				i, net_conn[i], log->net[net_conn[i]].addr);
+		}
+	}
+	message.animate(0);
+	//readkey();
 
 	// for log_test, also (re-)initialize the rng
 	rand_resync();
@@ -1064,8 +1270,10 @@ void play_net( bool ishost )
 	// this is done by checking the local player-settings.
 	// these are stored in scp.ini
 	// (that's the way it used to be done - ideally you've an interface option for this).
-	num_hotseats[p_local] = 0;
+	num_hotseats[p_local] = 1;
 
+	//xxx disable the hotseats stuff...
+	/*
 	set_config_file("scp.ini");
 	int i;
 	for ( i = 0; true; ++i)
@@ -1080,6 +1288,7 @@ void play_net( bool ishost )
 		if (strcmp(type, "Human") == 0)		// a human player found.
 			++num_hotseats[p_local];
 	}
+		*/
 	if (num_hotseats[p_local] == 0)		// there should be at least 1 local player.
 		++num_hotseats[p_local];
 
@@ -1124,6 +1333,7 @@ void play_net( bool ishost )
 	num_players = 0;
 	for ( p = 0; p < num_network; ++p )
 	{
+
 		int i;
 		for ( i = 0; i < num_hotseats[p]; ++i )
 		{
@@ -1146,7 +1356,13 @@ void play_net( bool ishost )
 	//log_test();
 	//readkey();
 
-	log->optimize4latency();
+	set_config_file("client.ini");
+	optimize4latency = (get_config_int("Network", "OptimizeLatency", 1) != 0);
+	if (optimize4latency)
+		log->optimize4latency();
+	else
+		log->optimize4bandwidth();
+
 	//message.out("connection established");
 	
 	log_test("b2");
@@ -1165,6 +1381,11 @@ void play_net( bool ishost )
 	log->reset();
 
 	log_test("c");
+
+	if (get_share_num() != 0)
+	{
+		tw_error("Share error??");
+	}
 
 	play_game(gname, log);
 
@@ -1278,8 +1499,13 @@ void play_single(const char *_gametype_name, Log *_log)
 		set_global(_log);
 	}
 
+	game_networked = false;
+
+
+	reset_share();
 
 	p_local = 0;		// IMPORTANT TO SET THIS !!
+	// in a single-player game, your computer always is "host", to the local game...
 	
 	// channel_init and such, are all write for the one who hosts.
 	glog->type = Log::log_normal;
@@ -1290,16 +1516,19 @@ void play_single(const char *_gametype_name, Log *_log)
 
 	glog->set_rw(channel_playback);	// perhaps this is a better setting for the playback channel
 	glog->set_rw(channel_local());
+
 	
 	// the remote players are always read-only (local player is always write, of course)
+	// well.. actually, all the channels are used locally in single-player, there are no remote players,
+	// therefore:
 	int p;
 	for ( p = 0; p < max_network; ++p)
 	{
 		if (p != p_local)
-			glog->set_r(channel_network[p]);
+			glog->set_rw(channel_network[p]);
 	}
 
-	// well, you're in single-player mode.
+	// initial values:.
 	num_network = 1;
 	num_bots = 0;
 	num_players = 1;
@@ -1322,6 +1551,22 @@ void remove_players()
 	}
 }
 
+void reset_network(Log *log)
+{
+	// this is perhaps a bit useless, here...
+	log->clear();
+
+	events.clear();
+
+	int i;
+	for ( i = 0; i < max_network; ++i  )
+	{
+		if (player[i])
+		{
+			player[i]->desynch_Nitems = 0;
+		}
+	}
+}
 
 void play_game(const char *_gametype_name, Log *_log)
 {
@@ -1366,6 +1611,8 @@ void play_game(const char *_gametype_name, Log *_log)
 		else
 			tw_error("wait a sec... I can't find that game type");
 
+		reset_network(_log);
+
 		new_game->preinit();
 		new_game->window = new VideoWindow;
 		new_game->window->preinit();
@@ -1373,6 +1620,8 @@ void play_game(const char *_gametype_name, Log *_log)
 		new_game->window->locate(0,0,0,0,0,1,0,1);
 		new_game->init(_log);
 		new_game->play();
+
+		reset_network(_log);
 
 		if (glog) delete glog;
 		glog = 0;
@@ -1532,23 +1781,19 @@ void MainMenu::doit() {STACKTRACE
 				play_single("Melee");
 				enable();
 				break;
+
+			case MAIN_DIALOG_SC1ARENA:
+				disable();
+				play_single("SC1 Arena");
+				enable();
+				break;
+			
 			case MAIN_DIALOG_NET_HOST:
 			case MAIN_DIALOG_NET_JOIN:
 				disable();
 				play_net(mainRet == MAIN_DIALOG_NET_HOST);
 				enable();
 				break;
-            
-				
-			////////////////////////////////
-			case MAIN_DIALOG_NEW_GAME_MENU:
-				doMainMenu();
-				break;
-
-
-    		////////////////////////////////
-
-
 			case MAIN_DIALOG_MELEE_EXTENDED:
 				disable();
 				extended_menu();
@@ -1812,6 +2057,12 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 		sound.disable();
 		disable_input();
 		unload_datafile(scppal);
+
+		if (video_screen)
+		{
+			destroy_bitmap(video_screen);
+			video_screen = 0;
+		}
 	}
 
 	catch (int i) {
@@ -2989,15 +3240,6 @@ int get_diagnostics_string ( char *dest ) {//returns length of string
 #	endif
 	return tmp - dest;
 }
-
-
-/****************************/
-#include "MASkinG.h"
-
-#include <vector>
-using namespace MAS;
-using namespace std;
-////////////////////////////////////////////
 
 // DIAGNOSTICS - dialog function
 void show_diagnostics() {STACKTRACE

@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class LeiMule : public Ship
 {
+public:
+IDENTITY(LeiMule);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange, specialVelocity, specialDamage, specialArmour;
 	
@@ -135,7 +137,7 @@ int LeiMule::activate_weapon()
 	
 	engage_forward(1);
 
-	engage_backward(1);
+//	engage_backward(1);
 	
 	return TRUE;
 }
@@ -148,9 +150,9 @@ int LeiMule::activate_special()
 	// do something else, but what
 	// fire a dummy shot to confuse/irritate the enemy; this costs no energy.
 	
-	engage_forward(0);
+//	engage_forward(0);
 
-	engage_backward(0);
+	engage_backward(1);
 	
 
 	return TRUE;

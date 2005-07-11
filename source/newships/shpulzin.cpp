@@ -5,6 +5,8 @@
 REGISTER_FILE
 
 class UlzrakMissile : public Missile {
+public:
+IDENTITY(UlzrakMissile);
 	public:
 	UlzrakMissile(Vector2 opos, double oangle, double ov, int odamage,
 			double orange, int oarmour, Ship *oship, SpaceSprite *osprite, double orelativity);
@@ -17,6 +19,8 @@ class UlzrakMissile : public Missile {
 
 
 class UlzrakInterceptor : public Ship {
+public:
+IDENTITY(UlzrakInterceptor);
 public:
 
   double       shipMass;

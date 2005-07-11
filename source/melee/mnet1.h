@@ -7,7 +7,7 @@
 #include "mlog.h"
 #include "mship.h"
 
-
+/*
 class GameEvent {
 public:
 	short int size;
@@ -37,6 +37,7 @@ public:
 	GameEventMessage( const char *text ) ;
 	void execute ( int source );
 };
+*/
 
 /*
 class LagHandler {
@@ -52,8 +53,9 @@ const int max_connections = 100;
 // note, that I'll assume that (channel/4) equals the connection number.
 
 class NetLog : public Log { //Logging system, useful for networking & demo recording/playback
-	protected:
+protected:
 
+public:
 	int *log_transmitted;      //the number of bytes transmitted in each channel
 	void expand_logs(int num_channels) ; //intializes these extensions to the logging
 	void check_bufsize(int size);		// checks if the buffer isn't too small, and increases its size if needed
@@ -115,7 +117,10 @@ class NetLog : public Log { //Logging system, useful for networking & demo recor
 
 	char *get_address(int n);
 
+	/** optimizes all connections for latency */
 	void optimize4latency();
+	/** optimizes all connections for bandwidth */
+	void optimize4bandwidth();
 
 	virtual void use_idle(int time);
 	
@@ -129,6 +134,7 @@ class NetLog : public Log { //Logging system, useful for networking & demo recor
 
 	void rem_conn(int conn);
 
+	virtual void clear();
 	};
 
 #endif // __MNET1_H__

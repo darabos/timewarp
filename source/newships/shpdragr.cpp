@@ -8,6 +8,8 @@ REGISTER_FILE
 class DraxMine;
 
 class DraxGryphon : public Ship {
+public:
+IDENTITY(DraxGryphon);
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -39,6 +41,8 @@ protected:
 };
 
 class DraxMine : public AnimatedShot {
+public:
+IDENTITY(DraxMine);
 
   double       MineRange;
   int          MineTimer;

@@ -1,26 +1,30 @@
 /* $Id$ */ 
 /*
-Placed in public domain by Rob Devilee, 2004. Share and enjoy!
+Twgui: GPL license - Rob Devilee, 2004.
 */
 
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "../scp.h"
+
 #include "utils.h"
 
 #include "twwindow.h"
 
-#include "util/round.h"
+#include "utils.h"
 
+/*
 // this destroys the bitmap (if it exists i.e. isn't set to 0),
 // and resets the pointer to 0
-void del_bitmap(BITMAP **bmp)
+void destroy_bmp(BITMAP **bmp)
 {
 	if (*bmp)
-		destroy_bitmap(*bmp);
+		destroy_bmp(*bmp);
 	*bmp = 0;
 }
+*/
 
 
 
@@ -31,6 +35,8 @@ void del_bitmap(BITMAP **bmp)
 // this is used to scale them to other screen resolutions.
 TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vidwin)
 {
+	bufferedmode = false;
+
 	prev = 0;
 	next = 0;
 
@@ -43,8 +49,8 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 	// from the scaled thing, calculate the actual size on the current screen
 
-	screen = outputscreen;
-	if (!screen)
+	twscreen = outputscreen;
+	if (!twscreen)
 	{
 		twgui_error("Something is wrong with the screen!!");
 	}
@@ -77,15 +83,58 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 	default_W = get_config_int(0, "res", 800);
 	autoplace = get_config_int(0, "autoplace", 1);
+	backgr_masked = get_config_int(0, "masked", 0);
+	use_rle = get_config_int(0, "userle", 1);
 	//default_W = def_W;
-	scale = double(screen->w) / double(default_W);
+	scale = double(twscreen->w) / double(default_W);
+
+	int locx, locy;
+	locx = get_config_int(0, "locx", 0);
+	locy = get_config_int(0, "locy", 0);
 	
 
 	disabled = false;
 	hidden = false;
 
-	// this is the background, in scaled form
-	backgr = bmp(backgrname, vidwin);
+
+//	backgr_masked = check_mask(backgr); it's better to have this as a menu option.
+
+	backgr = 0;
+	backgr_rle = 0;
+
+	if (use_rle)
+	{
+		backgr_rle = load_rle_data(backgrname);
+
+		// check if this cached rle data has the same screen size of not (the screen size could be changed by the user).
+		if ( (backgr_rle) && (backgr_rle->w != twscreen->w) )
+		{
+			destroy_rle(&backgr_rle);
+		}
+
+		if (!backgr_rle)
+		{
+			// also, convert bitmaps to more efficient rle sprites, and store it on disk
+			backgr = bmp(backgrname);
+
+			backgr_rle = get_rle_sprite(backgr);
+			save_rle_data(backgr_rle, backgrname);
+			destroy_bmp(&backgr);
+		}
+		// and what, if the rle sprite has wrong color depth: then it must be updated, too.
+		if (backgr_rle->color_depth != bitmap_color_depth(outputscreen))
+		{
+			backgr_rle = get_rle_sprite(backgr);
+			save_rle_data(backgr_rle, backgrname);
+		}
+
+	}
+
+	if (!backgr_rle)
+	{
+		// this is the background, in scaled form
+		backgr = bmp(backgrname, vidwin);
+	}
 
 	// for "automatic placement" purposes, which can be used if the "default buttons"
 	// are an exact copy of the "background" image (you can design a menu and the buttons
@@ -95,7 +144,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 	char check_char[128];
 	strcpy(check_char, "none");
 	backgr_forsearch = 0;
-	if (backgr && autoplace != 0)
+	if (autoplace != 0)
 	{
 		//BITMAP *b;
 		strcpy(check_char, backgrname);
@@ -107,31 +156,50 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 		//blit(b, backgr_forsearch, 0, 0, 0, 0, b->w, b->h);
 	}
 
+
+	if (dx == -1 && dy == -1)
+	{
+		x = locx;
+		y = locy;
+	} else {
+		x = round(dx * scale);
+		y = round(dy * scale);
+	}
+
 	if (backgr)
 	{
-		x = iround(dx * scale);
-		y = iround(dy * scale);
 		W = backgr->w;	// background is already scaled !!
 		H = backgr->h;
+	} else if (backgr_rle) {
+
+		W = backgr_rle->w;	// background is already scaled !!
+		H = backgr_rle->h;
 	} else {
 		twgui_error("TWindow: No background defined !!");
 	}
 
 
 	// back up ... well, in case of a changing background, this is hardly useful ...
-	//originalscreen = create_bitmap_ex(bitmap_color_depth(screen), W, H);
+	//originalscreen = create_bitmap_ex(bitmap_color_depth(twscreen), W, H);
 	//blit(screen, originalscreen, x, y, 0, 0, W, H);
 
 	// used for drawing
 
-	if (vidwin)
-		drawarea = create_video_bitmap(W, H);
+	drawarea = 0;
 
-	if (!(vidwin && drawarea))
-		drawarea = create_bitmap_ex(bitmap_color_depth(screen), W, H);
+	if (bufferedmode)
+	{
+		if (vidwin)
+			drawarea = create_video_bmp(W, H);
+		
+		if (!drawarea)
+			drawarea = create_bitmap_ex(bitmap_color_depth(twscreen), W, H);
+	} else {
+		handle_unbufferedarea();
+	}
 
 
-	if (is_same_bitmap(backgr, drawarea) || !backgr || !drawarea || !screen)
+	if (is_same_bitmap(backgr, drawarea) || !(backgr || backgr_rle) || (!drawarea) || !twscreen)
 	{
 		twgui_error("oh my!");
 	}
@@ -150,6 +218,8 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 	exclusive = false;
 	layer = 0;
+
+	
 }
 // ok, this provides a working space
 
@@ -169,15 +239,21 @@ TWindow::~TWindow()
 		delete next;
 	}
 
-	//if (originalscreen)	del_bitmap(originalscreen);
-	del_bitmap(&drawarea);
-	del_bitmap(&backgr);
+	//if (originalscreen)	destroy_bmp(originalscreen);
+	destroy_bmp(&drawarea);
+	destroy_bmp(&backgr);
+
+	if (backgr_rle)
+	{
+		destroy_rle_sprite(backgr_rle);
+		backgr_rle = 0;
+	}
 
 	// of course ;) but it's worth checking again, since it's not required to call this,
 	// it's optional
-	doneinit();
+	doneinit();	// (NOT tree_doneinit, since you only want to get done with this window)
 
-	//del_bitmap(backgr_forsearch);
+	//destroy_bmp(backgr_forsearch);
 	//if (datafile)		unload_datafile(datafile);
 
 	// delete associated buttons
@@ -194,6 +270,9 @@ TWindow::~TWindow()
 		delete b;
 	}
 
+	set_config_file( configfilename );
+	set_config_int(0, "locx", x);
+	set_config_int(0, "locy", y);
 }
 
 
@@ -236,7 +315,10 @@ void TWindow::tree_calculate()
 
 	// but first, update the keys and the mouse
 
+	poll_keyboard();
 	keyhandler.update();
+
+	poll_mouse();
 	Tmouse.update();
 
 	// if this window is "exclusive", other windows cannot be accessed while this one has focus
@@ -260,9 +342,9 @@ void TWindow::tree_animate()
 	TWindow *current;
 	current = tree_last();
 
-	// the fist one should plot on top, and therefore, should be plotted last ...
+	// the first one should plot on top, and therefore, should be plotted last ...
 
-	acquire_bitmap(screen);
+	acquire_bitmap(twscreen);
 	
 	while (current)
 	{
@@ -270,7 +352,9 @@ void TWindow::tree_animate()
 		current = current->prev;
 	}
 
-	release_bitmap(screen);
+	show_mouse(twscreen);
+
+	release_bitmap(twscreen);
 }
 
 
@@ -297,11 +381,39 @@ void TWindow::focus()
 		next->prev = prev;
 	
 
-	// insert "this" at the front
-	// (note that root has no "prev" originally)
-	root->prev = this;
+	// insert "this" at the "front"
+	prev = root->prev;
 	next = root;
-	prev = 0;//root->prev;
+
+	if (prev)
+		prev->next = this;
+	if (next)
+		next->prev = this;
+
+	// defocus the thing that just lost focus...
+	if (next)
+		next->handle_focus_loss();
+
+
+	/*
+	// show this (for debugging) in a file
+	FILE *f = fopen("log.txt", "a+");
+	if (!f)
+		return;
+
+	root = tree_root();
+
+	fprintf(f, "=========\n");
+	while (root)
+	{
+		fprintf(f, "%40s layer[%i] disabled[%i] grab[%i]\n",
+			root->ident, root->layer, root->disabled, root->grabbedmouse);
+		root = root->next;
+	}
+
+	fclose(f);
+	//*/
+
 }
 
 
@@ -343,6 +455,7 @@ void TWindow::tree_doneinit()
 		current->doneinit();
 		current = current->next;
 	}
+
 }
 
 
@@ -374,7 +487,7 @@ BITMAP* TWindow::bmp(char *bmpname, bool vidmem)
 	BITMAP *bmp, *tmpbmp;
 	int bpp;
 
-	bpp = bitmap_color_depth(screen);
+	bpp = bitmap_color_depth(twscreen);
 	//bpp = 32;
 	//bmp = find_datafile_bmp(datafile, bmpname);	// this adds _BMP
 
@@ -394,35 +507,81 @@ BITMAP* TWindow::bmp(char *bmpname, bool vidmem)
 
 	tmpbmp = load_bitmap(objname, 0);
 	bmp = clone_bitmap(bpp, tmpbmp, scale, vidmem);
-	del_bitmap(&tmpbmp);
+	destroy_bmp(&tmpbmp);
 
 	return bmp;
 }
 
+
+RLE_SPRITE* TWindow::load_rle_data(char *filename)
+{
+	RLE_SPRITE *data;
+
+	char objname[128];
+	strcpy(objname, filename);
+	strcat(objname, ".rledat");
+
+	FILE *f;
+	f = fopen(objname, "rb");
+	if (!f)
+		return 0;
+
+
+	fseek(f, 0, SEEK_END);
+	int size = ftell(f);
+	rewind(f);
+
+	data = (RLE_SPRITE*) malloc(size);
+
+	fread(data, 1, size, f);				// the header info (size)
+
+	if (size != sizeof(RLE_SPRITE) + data->size)
+		tw_error("Error restoring in load_rle_data: data corrupt.");
+
+	fclose(f);
+
+	return data;
+}
+
+
+void TWindow::save_rle_data(RLE_SPRITE *data, char *filename)
+{
+	char objname[128];
+	strcpy(objname, filename);
+	strcat(objname, ".rledat");
+
+	FILE *f;
+	f = fopen(objname, "wb");
+	if (!f)
+		return;
+
+	fwrite(data, 1, sizeof(RLE_SPRITE) + data->size, f);
+	fclose(f);
+}
+
+
 void TWindow::doneinit()
 {
-	del_bitmap(&backgr_forsearch);
+	//destroy_bmp(&backgr);	// no, keep the backgr around for other types of checks (mouse)
+
+	destroy_bmp(&backgr_forsearch);
 	//if (datafile)			unload_datafile(datafile);
 }
 
+
 void TWindow::setscreen(BITMAP *scr)
 {
-	screen = scr;
+	twscreen = scr;
 }
 
 
 
 void TWindow::center(int xcenter, int ycenter)
 {
-	// put back the background
-	//blit(originalscreen, screen, 0, 0, x, y, W, H);
-
 	// move
-	x = iround(xcenter*scale) - W / 2;
-	y = iround(ycenter*scale) - H / 2;
+	x = round(xcenter*scale) - W / 2;
+	y = round(ycenter*scale) - H / 2;
 
-	// read the new background
-	//blit(screen, originalscreen, x, y, 0, 0, W, H);
 }
 
 
@@ -430,21 +589,15 @@ void TWindow::center(int xcenter, int ycenter)
 
 void TWindow::center_abs(int xcenter, int ycenter)
 {
-	// put back the background
-	//blit(originalscreen, screen, 0, 0, x, y, W, H);
-
 	// move
 	x = xcenter - W / 2;
 	y = ycenter - H / 2;
-
-	// read the new background
-	//blit(screen, originalscreen, x, y, 0, 0, W, H);
 }
 
 void TWindow::center()
 {
-	ASSERT(screen)
-	center(screen->w/2, screen->h/2);
+	ASSERT(twscreen)
+	center(twscreen->w/2, twscreen->h/2);
 }
 
 
@@ -452,6 +605,7 @@ void TWindow::center()
 void TWindow::enable()
 {
 	disabled = false;
+	grabbedmouse = false;
 //	mouse.reset();		// reset the mouse to the newest values.
 }
 
@@ -461,6 +615,7 @@ void TWindow::disable()
 	{
 		disabled = true;
 		handle_focus_loss();	// disables other flags, also of sub-menus
+		//grabbedmouse = false;
 	}
 
 }
@@ -477,7 +632,6 @@ void TWindow::hide()
 {
 	hidden = true;
 	disable();
-	//blit(originalscreen, screen, 0, 0, 0, 0, W, H);
 }
 
 
@@ -485,15 +639,17 @@ void TWindow::hide()
 void TWindow::add(EmptyButton *newbutton)
 {
 	if (!button_first)
-	{
 		button_first = newbutton;
-		button_last = newbutton;
 		
-	} else {
+	if (button_last)
 		button_last->next = newbutton;
-		newbutton->prev = button_last;
-		button_last = newbutton;
-	}
+	
+
+	newbutton->prev = button_last;
+	button_last = newbutton;
+
+	if (button_last->next != 0)
+		tw_error("unknow button list error (already added?)");
 }
 
 
@@ -526,26 +682,41 @@ void TWindow::rem(EmptyButton *newbutton)
 
 bool TWindow::checkmouse()
 {
-	if (!(prev && prev->grabbedmouse))
-	{
-		// If the mouse hasn't been "grabbed" by a window above this window
 
-		int xrel, yrel;
-		
-		// this test is performed in relative coordinates (with respect to the (0,0) corner
-		// of the reserved area).
-		xrel = iround(mpos.x);
-		yrel = iround(mpos.y);
-		
-		if (  xrel >= 0 && xrel < W &&
-			  yrel >= 0 && yrel < H
-			&& getpixel(backgr, xrel, yrel) != makecol(255,0,255) )
+
+	// If the mouse hasn't been "grabbed" by a window above this window
+	
+	int xrel, yrel;
+	
+	// this test is performed in relative coordinates (with respect to the (0,0) corner
+	// of the reserved area).
+	xrel = round(mpos.x);
+	yrel = round(mpos.y);
+	
+	
+	// if the mouse is off-window, but the button remains pressed, the mouse
+	// still belongs to the window that it was clicked on... this has to be
+	// checked first. You've to take into account layering, because of which you can't
+	// assume that the first window in the row always is the one that's last been active.
+	if (Tmouse.left.hold())
+	{
+		if (grabbedmouse)
 			return true;
 		else
 			return false;
 
-	} else
+		// next, check if the mouse still points on the area of this window
+	} else if (	xrel >= 0 && xrel < W &&
+				yrel >= 0 && yrel < H )
+		//xxx && getpixel(backgr, xrel, yrel) != makecol(255,0,255) ) {   should I restore this??
+	{
+
+		return true;
+		// previous tests failed, so this window has lost the mouse
+	} else {
 		return false;
+	}
+		
 
 }
 
@@ -566,10 +737,29 @@ void TWindow::setfocus(EmptyButton *newbutton)
 
 void TWindow::calculate()
 {
+	// mousealreadygrabbed occurs, when any window on top has grabbed the mouse - this
+	// means, that the current window can't grab it anymore. This extra parameter is
+	// needed for recursive disabling of mouses
+	if (prev && (prev->mousealreadygrabbed || prev->grabbedmouse))
+	{
+		mousealreadygrabbed = true;
+	} else
+		mousealreadygrabbed = false;
+	// you've to check that all the time, cause it's inherited along the tree.
+	
 
 	if (disabled)
 	{
 		grabbedmouse = false;	// just to be sure, that if a window is "closed", its value is reset
+
+		/* already done.
+		// inherit some important information (which is needed in comparisons)
+		if (prev && (prev->mousealreadygrabbed || prev->grabbedmouse))
+			mousealreadygrabbed = true;
+		else
+			mousealreadygrabbed = false;
+			*/
+
 		return;
 	}
 
@@ -588,7 +778,11 @@ void TWindow::calculate()
 
 
 	bool oldgrab = grabbedmouse;
-	grabbedmouse = checkmouse();
+
+	if (mousealreadygrabbed)
+		grabbedmouse = false;
+	else
+		grabbedmouse = checkmouse();
 
 	if (grabbedmouse && !oldgrab)
 		handle_focus();
@@ -694,6 +888,57 @@ void TWindow::calculate()
 
 
 
+void TWindow::handle_unbufferedarea()
+{
+	if (bufferedmode)
+		return;
+
+	if (prevx != x || prevy != y || !drawarea)
+	{
+		prevx = x;
+		prevy = y;
+
+		// allegro note: "the origin point must lie within the parent region."
+		// this poses a problem if x<0 or y<0 or so !!
+		int ix, iy, iw, ih;
+		ix = x;
+		iy = y;
+		iw = W;
+		ih = H;
+
+		// handle negative (off-screen) coordinates: this means, less of the screen bitmap
+		// needs to be used.
+		if (ix < 0)
+		{
+			iw += ix;
+			ixoffs = ix;	// remember the part that is off-bitmap
+			ix = 0;
+		}
+
+		if (iy < 0)
+		{
+			ih += iy;
+			iyoffs = iy;	// remember the part that is off-bitmap
+			iy = 0;
+		}
+
+		// off-screen
+		if (iw <= 0 || ih <= 0)
+			return;
+
+		if (drawarea)
+			destroy_bmp(&drawarea);
+
+		drawarea = create_sub_bitmap(twscreen, ix, iy, iw, ih);
+
+		if (!drawarea)
+		{
+			tw_error("Error in reassigning menu subscreen");
+		}
+	}
+}
+
+
 void TWindow::animate()
 {
 
@@ -703,43 +948,87 @@ void TWindow::animate()
 	scare_mouse();	// otherwise it'll leave artifacts when things are drawn.
 
 
+	// important, extra offset needed for drawing in unbuffered mode.
+	// reason: stuff is drawn relative to the bitmap origin (locally) and if the
+	// bitmap is only know partially, you still need to know the true origin...
+	ixoffs = 0;
+	iyoffs = 0;
+
+	// move the drawarea along with the main screen, if the main screen moves!
+	handle_unbufferedarea();
+
+	if (!drawarea)
+	{
+		tw_error("No menu drawing area");
+	}
+
+
 	// release for in-game drawing
 	acquire_bitmap(drawarea);
 	
-	if (!disabled)
-	{
+//	if (!disabled)
+//	{
 		
 		// draw the background
 		// also copy transparent color!
 
-		// this takes about 1 ms on geo's comp if it's in video mem
-		blit(backgr, drawarea, 0, 0, 0, 0, W, H);
+		// this takes about 1 ms on geo's comp if it's in video mem, but about 10 ms
+		// if the bitmaps in normal memory ... which is a lot !! It takes ... ms for
+		// a rle sprite.
+		bool redraw_backgr = true;
+		if (redraw_backgr)		// in principle only needed, if items on top move around.
+		{
+			if (backgr_rle)
+				draw_rle_sprite(drawarea, backgr_rle, ixoffs, iyoffs);
+
+			else
+			{
+				acquire_bitmap(backgr);
+				blit(backgr, drawarea, 0,0, ixoffs, iyoffs, backgr->w, backgr->h);
+				release_bitmap(backgr);
+			}
+		}
 
 		// draw the buttons
 		EmptyButton *button;
 		button = button_first;
+		int error_count = 0;
 		while (button)
 		{
 			button->animate();
 			button = button->next;
+
+			++error_count;
+			if (error_count > 50)
+				tw_error("Infinite loop?");
 		}
 
 
+		// temporary ..
+		//show_mouse(drawarea);
+		
 		// update the main screen
 		// ignore transparent color
-		if (screen)
+		if (bufferedmode && twscreen)
 		{
 			// this takes about 2 ms on geo's comp if it's in video mem
-			masked_blit(drawarea, screen, 0, 0, x, y, W, H);
+			masked_blit(drawarea, twscreen, 0, 0, x, y, W, H);
 		}
 
-	} else
-		//draw_lit_sprite(drawarea, screen, x, y, makecol(100,100,100));
-		masked_blit(drawarea, screen, 0, 0, x, y, W, H);
+//	} else {
+//		if (bufferedmode)
+//			masked_blit(drawarea, twscreen, 0, 0, x, y, W, H);
+//		// otherwise, you just might get artefacts ... oh well.
+//	}
 
 	release_bitmap(drawarea);
 
+	if (!bufferedmode)
+		destroy_bmp(&drawarea);
+
 	unscare_mouse();
+
+
 }
 
 
@@ -761,20 +1050,22 @@ void TWindow::handle_focus_loss()
 		button->handle_menu_focus_loss();
 		button = button->next;
 	}
+
+	grabbedmouse = false;
 }
 
 
 
 void TWindow::scalepos(int *ax, int *ay)
 {
-	(*ax) = iround( (*ax) * scale );
-	(*ay) = iround( (*ay) * scale );
+	(*ax) = round( (*ax) * scale );
+	(*ay) = round( (*ay) * scale );
 }
 
 void TWindow::scalepos(twguiVector *apos)
 {
-	(apos->x) = iround( (apos->x) * scale );
-	(apos->y) = iround( (apos->y) * scale );
+	(apos->x) = round( (apos->x) * scale );
+	(apos->y) = round( (apos->y) * scale );
 }
 
 
@@ -829,7 +1120,7 @@ bool TWindow::search_bmp_location(BITMAP *bmp_default, twguiVector *apos)
 		return false;
 
 	// first, test the "apos" position for a match.
-	if (matchimage(backgr_forsearch, bmp_default, iround(apos->x), iround(apos->y)))
+	if (matchimage(backgr_forsearch, bmp_default, round(apos->x), round(apos->y)))
 		return true;	// return without changing the position...
 
 	// search by comparing pixels :

@@ -23,6 +23,8 @@ REGISTER_FILE
 class SpriteDrawListItem : public Presence
 {
 public:
+IDENTITY(SpriteDrawListItem);
+public:
 	SpriteDrawListItem	*prev, *next;
 
 	Vector2				pos;
@@ -37,6 +39,8 @@ public:
 
 class SpriteDrawList : public Presence
 {
+public:
+IDENTITY(SpriteDrawList);
 public:
 	SpriteDrawListItem	*firstitem, *lastitem;
 	SpaceObject			*mother;
@@ -60,6 +64,8 @@ class	BathaCloud;
 
 class BathaDeviant : public Ship
 {
+public:
+IDENTITY(BathaDeviant);
 	double weaponRange, weaponVelocity, weaponTurnRate, weaponTailDelay, weaponMass;
 	int    weaponDamage, weaponArmour;
 
@@ -99,6 +105,8 @@ class BathaDeviant : public Ship
 
 class BathaMissile : public HomingMissile
 {
+public:
+IDENTITY(BathaMissile);
 
 	SpaceSprite *tailsprite;
 	public:
@@ -113,6 +121,8 @@ class BathaMissile : public HomingMissile
 
 class BathaCloud : public SpaceObject
 {
+public:
+IDENTITY(BathaCloud);
 public:
 
 	double existtime, lifetime, spr_changetime, spr_time;

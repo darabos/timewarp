@@ -1,6 +1,8 @@
 /* $Id$ */ 
 class ChmmrAvatar : public Ship {
 public:
+	IDENTITY(ChmmrAvatar);
+public:
   double weaponRange;
   int    weaponDamage;
 
@@ -28,6 +30,8 @@ public:
 
 class DruugeMauler : public Ship {
 public:
+	IDENTITY(DruugeMauler);
+public:
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -47,6 +51,8 @@ public:
 class KohrAhBlade;
 class KohrAhMarauder : public Ship
 {
+public:
+	IDENTITY(KohrAhMarauder);
   public:
   double       weaponRange;
   double       weaponVelocity;
@@ -75,6 +81,8 @@ class KohrAhMarauder : public Ship
 
 
 class MelnormeTrader : public Ship {
+public:
+	IDENTITY(MelnormeTrader);
 public:
   double       weaponRange;
 	double       weaponRangeUp;
@@ -108,6 +116,8 @@ class OrzMissile;
 class OrzMarine;
 
 class OrzNemesis : public Ship {
+public:
+	IDENTITY(OrzNemesis);
 	public:
 
 	double absorption; //added for gob
@@ -149,6 +159,8 @@ class OrzNemesis : public Ship {
 
 class PkunkFury : public Ship {
 public:
+	IDENTITY(PkunkFury);
+public:
   int reborn;
 
   double       weaponRange;
@@ -170,6 +182,8 @@ public:
 class	SlylandroLaserNew;
 
 class SlylandroProbe : public Ship {
+public:
+	IDENTITY(SlylandroProbe);
 public:
 	int frame;
 	int thrustActive;
@@ -206,6 +220,8 @@ public:
 
 
 class SupoxBlade : public Ship {
+public:
+	IDENTITY(SupoxBlade);
   public:
   double       weaponRange;
   double       weaponVelocity;
@@ -228,6 +244,8 @@ class SupoxBlade : public Ship {
 
 class ThraddashTorch : public Ship {
 public:
+	IDENTITY(ThraddashTorch);
+public:
   double       weaponRange;
   double       weaponVelocity;
   int          weaponDamage;
@@ -249,6 +267,8 @@ public:
 
 
 class UtwigJugger : public Ship {
+public:
+	IDENTITY(UtwigJugger);
   public:
 
 	int fortitude; //added for gob
@@ -272,6 +292,8 @@ class UtwigJugger : public Ship {
 
 
 class ZoqFotPikStinger : public Ship {
+public:
+	IDENTITY(ZoqFotPikStinger);
   public:
   double       weaponRange;
   double       weaponVelocity;

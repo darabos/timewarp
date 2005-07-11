@@ -8,6 +8,8 @@ REGISTER_FILE
 
 
 class XXXAssimilator : public Ship {
+public:
+IDENTITY(XXXAssimilator);
 	int          weaponFrames;
   int          weaponDamage;
 	int          orig_Damage;

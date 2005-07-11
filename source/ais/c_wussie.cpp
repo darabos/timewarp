@@ -91,8 +91,22 @@ double ControlWussie::evasion (Ship * ship)
 {
 	STACKTRACE;
 
-	double closetime = 500;
-	double angle, dodgeangle = -1;
+	double check_range;
+
+	double frac = ship->turn_rate*1E3 / PI2; // turning-arc-fraction in 1 second.
+	// a small value means that it turns slowly.
+	if (frac < 0.5)
+		frac = 0.5;
+	if (frac > 1.5)
+		frac = 1.5;
+
+	// minimum check-range is 500 pixels; but, for ships that turn slowly, you should anticipate
+	// further ahead...
+	check_range = 400.0 / frac;
+	
+
+	double closetime = 1000 / frac;	// 1000 ms, scaled by more if you can respond only slowly
+	double desiredangle = 0;
 	Query b;
 	SpaceObject *shot;
 	int collideshot;
@@ -101,10 +115,7 @@ double ControlWussie::evasion (Ship * ship)
 //  double shipspeed,shotspeed;
 	double xs = 0, ys = 0;
 	double velship, velshot;
-	for (b.
-		begin (ship,
-			  OBJECT_LAYERS & ~bit (LAYER_CBODIES) & ~bit (LAYER_SHIPS),
-			  500); b.current; b.next ())
+	for ( b.begin (ship, OBJECT_LAYERS & ~bit (LAYER_CBODIES) & ~bit (LAYER_SHIPS), check_range); b.current; b.next() )
 	{
 		shot = b.currento;
 		if (shot->canCollide (ship))
@@ -149,10 +160,11 @@ double ControlWussie::evasion (Ship * ship)
 						/ velshot;
 					if (fabs (shottime - shiptime) < closetime)
 					{
-						angle =
-							ship->get_angle () -
-							ship->trajectory_angle (shot);
+						double a = ship->trajectory_angle (shot);
+						double da = ship->get_angle() - a;
+
 						closetime = fabs (shottime - shiptime);
+						/*
 						if ((angle < PI/12) || (angle > PI2-PI/12))
 							angle += PI;
 						else if (normalize (angle, PI2) >
@@ -160,32 +172,55 @@ double ControlWussie::evasion (Ship * ship)
 							angle -= PI/2;
 						else
 							angle += PI/2;
-						dodgeangle = normalize (angle, PI2);
+							*/
+
+						while (da < -PI)	da += PI2;
+						while (da >  PI)	da -= PI2;
+						// angle is now between -PI and +PI
+
+						// steer away from the dangerous object.
+						if (da < 0) 
+							desiredangle = a - 0.75*PI;
+						else
+							desiredangle = a + 0.75*PI;
 					}
 				}
 			}
 		}
 	}
-	return dodgeangle;
+	return desiredangle;
 }
 
 int ControlWussie::think ()
 {
 	STACKTRACE;
 
+	if (channel != channel_none)
+	{
+		tw_error("WussieBot is not on a local channel. It should be, though.");
+	}
+
 	if (!ship)
 		return 0;
 
 	int action = 0;
 	float velocity, distance;
-	double angle = 0, va, pangle, dangle;
+
+	double angle_aim = 0, va, pangle;
+	double angle_fire = PI;
+
 	int avoid_planet = FALSE;
 	Query ap;
 	SpaceObject *p;
+	
 	if (ship->target && !ship->target->isInvisible ())
+	{
 		last_seen_time = game->game_time;
-	else if ((rand () & 32767) < frame_time)
+	} else if ((random () & 32767) < frame_time)
+	{
 		last_seen_time = game->game_time - 1000;
+	}
+
 	for (ap.begin (ship, bit (LAYER_CBODIES), planet_safe[state]);
 		ap.current; ap.next ())
 	{
@@ -199,25 +234,29 @@ int ControlWussie::think ()
 				avoid_planet = TRUE;
 				if (normalize (pangle - va, PI2) <
 				    normalize (va - pangle, PI2))
-					angle =
-						-PI/2 + ship->get_angle () -
-						ship->trajectory_angle (p);
+					angle_aim = -PI/2 + ship->get_angle ();// -
+						//ship->trajectory_angle (p);
 				else
-					angle =
-						PI/2 + ship->get_angle () -
-						ship->trajectory_angle (p);
+					angle_aim = PI/2 + ship->get_angle ();// -
+						//ship->trajectory_angle (p);
 			}
 		}
 	}
+
 	if (!avoid_planet)
 	{
 		if (!ship->target || (last_seen_time < game->game_time - 3000)) {
-			if ((rand() & 4095) < frame_time) {
-				if (rand() & 3) return keyflag::closest;
+			if ((random() & 4095) < frame_time) {
+				if (random() & 3) return keyflag::closest;
 				else return keyflag::next;
 			}
 			return 0;
 		}
+	}
+
+	if (!avoid_planet && (ship && ship->target && !ship->target->isInvisible()) )
+	{
+
 		if (!ship->target->exists ())
 		{
 			ship->target = NULL;
@@ -228,24 +267,121 @@ int ControlWussie::think ()
 		{
 		default:
 		case TACTIC_UNKNOWN:
-		case TACTIC_INDIRECT_INTERCEPT: {
-			//modified by orz
-			double rel = 0;
+		case TACTIC_INDIRECT_INTERCEPT:
+			{
+				//xxx comment:
+				// I'm afraid this approach is flawed, because it only takes the primary weapon
+				// into account, not the secondary weapon. Thus, the AI can only aim the main,
+				// not the special weapon.
+
+			double relativity = 0;
 			if (distance < option_range[state][0]) {
 				velocity = option_velocity[state][0];
 				if (velocity == 0) velocity = MAX_SPEED;
-				rel = game->shot_relativity;
+				relativity = rel[state][0];//game->shot_relativity;
 			}
 			else {
 				velocity = ship->speed_max;
 			}
-			angle = intercept_angle2(
+
+			angle_aim = intercept_angle2(
 				ship->normal_pos(),
-				ship->get_vel() * rel,
-				velocity, 
+				ship->get_vel() * relativity,	// ship velocity
+				velocity,				// weapon velocity
 				ship->target->normal_pos(),
 				ship->target->get_vel()
-				) - ship->get_angle();
+				);
+				//- ship->get_angle();
+
+
+			// do another test, namely, check if the enemy ship is not moving away from you. If
+			// it does, then you've a problem, cause hot pursuit can be deadly.
+
+			double a;
+			a = ship->target->vel.atan() - ship->vel.atan();
+			while (a < -PI)	a += PI2;
+			while (a > PI)	a -= PI2;
+
+			if (fabs(a) < 0.3 * PI)
+			{
+				// and is moving away from you...
+				// then, try engaging the enemy from another angle of attack ...
+				
+				
+				if (distance > 0.9*option_range[state][0])
+				{
+					if (ship->target->vel.length() > 0.3 * ship->speed_max)
+					{
+						// if the enemy is too fast for you...
+						// just move to some other direction
+						
+						// hmm, actually, this is good practice in almost any occasion...
+						// except if you're really much faster than the enemy
+						
+						double b;
+						b = ship->trajectory_angle(target);
+						a = ship->angle - b;
+						while (a < -PI)	a += PI2;
+						while (a > PI)	a -= PI2;
+						
+						if ( a < 0 )
+							angle_aim = b + 0.5*PI;
+						else
+							angle_aim = b - 0.5*PI;
+					}
+				}
+				
+			}
+			
+			Ship *t;
+			if (ship->target->isShip())
+			{
+				t = (Ship*) ship->target;
+			} else {
+				t = 0;
+			}
+
+			// and what, if the enemy is facing you ? You should be really scared then ... unless ...
+			if (t &&
+				(t->vel - ship->vel).length() > 0.9 * ship->speed_max &&		// be scared if enemy is moving away very fast
+				ship->speed_max > 1.1 * t->vel.length() &&		// be scared if you are able to run away from the enemy
+				(t->crew/t->crew_max > 0.3 && t->crew > 6) &&		// be scared if the enemy has much crew left
+				!ship->isInvisible() &&									// be scared if you're visible
+				(distance > option_range[state][0] ||		// be scared if you're out of firing range
+				distance < 200)					// or be scared if you're *very* close.
+				)
+			{
+				// well... only if the enemy isn't faster than you, otherwise, evading or running
+				// away doesn't help you anything.
+				// and, only if the enemy has lots of life left (say, 6 life, or only a small fraction of life).
+				// and, if you're cloaked you don't have to worry either
+				// and, if you're not within fire-range
+				
+				double d = 2.0 * option_range[state][0];
+				if (d > 1000)
+					d = 1000;
+				
+				// evade the enemy
+				// the enemy is close
+				if (distance < d)
+				{
+					double b = ship->trajectory_angle(ship->target) + PI;
+					a = ship->target->angle - b;
+					while (a < -PI)	a += PI2;
+					while (a > PI)	a -= PI2;
+					
+					// the enemy is facing you
+					if (fabs(a) < 0.2 * PI)
+					{
+						if (a > 0)
+							angle_aim = b + 0.5*PI;
+						else
+							angle_aim = b - 0.5*PI;
+					}
+				}
+			}
+
+
 			/*double rx, ry;
 			rx = -ship->normal_pos().x + ship->target->normal_pos().x +
 				(ship->target->get_vx ()) * distance / velocity;
@@ -261,50 +397,120 @@ int ControlWussie::think ()
 			}break;
 
 		case TACTIC_DIRECT_INTERCEPT:
-			angle =
-				ship->trajectory_angle (ship->target) -
-				ship->get_angle ();
+			{
+			angle_aim = ship->trajectory_angle (ship->target);
+				//-ship->get_angle ();
+			}
 			break;
 
 		case TACTIC_RANGE:
-			if (tactic_state == STATE_TOO_FAR)
 			{
-				angle =
-					ship->trajectory_angle (ship->target) -
-					ship->get_angle ();
-				if (distance < min_range[state])
-					tactic_state = STATE_TOO_CLOSE;
-			}
-			else
-			{
-				angle =
-					ship->trajectory_angle (ship->target) -
-					ship->get_angle () + PI;
-				if (distance > max_range[state])
-					tactic_state = STATE_TOO_FAR;
+				if (distance > max_range[state])//(tactic_state == STATE_TOO_FAR)
+				{
+					// you're too far...
+					angle_aim = ship->trajectory_angle (ship->target);
+						// - ship->get_angle ();
+					//if (distance < min_range[state])
+					//	tactic_state = STATE_TOO_CLOSE;
+				}
+				else if ( (tactic_state == 1 && distance < 0.5*(min_range[state]+max_range[state])) ||	// retreat to the middle distance
+					(tactic_state == 2 && distance < min_range[state])	// check for min-boundary while you're attacking
+					)//(tactic_state == STATE_TOO_CLOSE)
+				{
+					tactic_state = 1;
+
+					// you're too close, try to get away.
+					angle_aim = ship->trajectory_angle (ship->target) + PI;
+						//- ship->get_angle ();
+				}
+				else
+				{
+					// in good range:
+
+					tactic_state = 2;
+					
+					velocity = option_velocity[state][0];
+					angle_aim = intercept_angle2(
+						ship->normal_pos(),
+						ship->get_vel(),		// ship velocity
+						velocity,				// primary weapon velocity
+						ship->target->normal_pos(),
+						ship->target->get_vel()
+						);
+						//- ship->get_angle();
+
+					
+					//if (distance > max_range[state])
+					//	tactic_state = STATE_TOO_FAR;
+				}
 			}
 			break;
 
 		}
-		dangle = evasion (ship);
-		if (dangle >= 0)
-			angle = dangle;
+
+		// if aim is good, you can fire.
+		// that's checked here...
+		velocity = option_velocity[state][0];
+		double relativity = rel[state][0];
+		angle_fire = intercept_angle2(
+			ship->normal_pos(),
+			ship->get_vel() * relativity,		// ship velocity
+			velocity,				// primary weapon velocity
+			ship->target->normal_pos(),
+			ship->target->get_vel()
+			);
+		// here, angle_fire is an absolute value.
+
+
+		// if you're out of range anyway, then it makes sense to check for threats. Otherwise,
+		// you shouldn't break off an attack to evade a lousy missile.
+		if (distance > 0.5*option_range[state][0])
+		{
+			double a;
+			a = evasion (ship);
+
+			if (a != 0)
+				angle_aim = a;
+		}
 	}
 
-	while (angle < 0)
-		angle += PI2;
-	while (angle > PI2)
-		angle -= PI2;
-	if (angle > PI)
+	// and what, if the enemy is invisible
+	if (ship && ship->target && ship->target->isInvisible())
 	{
-		angle -= PI2;
+		angle_aim = random(PI2);
+		if (ship->batt > 0.5*ship->batt_max ||
+			ship->batt >= ship->batt_max - ship->weapon_drain)
+			action |= keyflag::fire;
+	}
+
+	double da;
+	da = angle_aim - ship->get_angle();	// so that it's the increment that you've to make, to achieve the desired angle
+	while (da < -PI)
+		da += PI2;
+	while (da > PI)
+		da -= PI2;
+
+
+	if (da < 0)
+	{
+		//angle_aim -= PI2;
 		action |= keyflag::left;
 	}
 	else
 	{
 		action |= keyflag::right;
 	}
+
 	action |= keyflag::thrust;
+
+	// note, that angle_fire is RELATIVE, that's assumed in the rest of the routine...
+	angle_fire -= ship->get_angle();
+	while (angle_fire < -PI)
+		angle_fire += PI2;
+	while (angle_fire > PI)
+		angle_fire -= PI2;
+
+
 	int i, j;
 	if (!ship->target)
 		return action;
@@ -337,10 +543,12 @@ int ControlWussie::think ()
 			range_fire = TRUE;
 		else
 			range_fire = FALSE;
+
 		if (j == 0)
 			fire_front = TRUE;
 		else
 			fire_front = FALSE;
+
 		if (j == 0)
 			field_fire = FALSE;
 		else
@@ -357,7 +565,7 @@ int ControlWussie::think ()
 					if (j == 0)
 					{
 						if ((distance < option_range[state][j])
-						    && (fabs (angle) < sweep[j]))
+						    && (fabs (angle_fire) < sweep[j]))
 							fireoption[0] = TRUE;
 					}
 					else if (ship->batt != ship->batt_max)
@@ -375,20 +583,20 @@ int ControlWussie::think ()
 				break;
 
 			case OPTION_BACK:
-				if (fabs (angle) > (PI - sweep[j]))
+				if (fabs (angle_fire) > (PI - sweep[j]))
 					fireoption[j] = TRUE;
 				field_fire = FALSE;
 				break;
 
 			case OPTION_SIDES:
-				if ((fabs (angle) < PI/2 + sweep[j])
-				    && (fabs (angle) > PI/2 - sweep[j]))
+				if ((fabs (angle_fire) < PI/2 + sweep[j])
+				    && (fabs (angle_fire) > PI/2 - sweep[j]))
 					fireoption[j] = TRUE;
 				field_fire = FALSE;
 				break;
 
 			case OPTION_FEILD:
-				fireoption[j] = TRUE;
+				//fireoption[j] = TRUE;	//xxx should you disable this here? I think so...
 				field_fire = TRUE;
 				break;
 
@@ -399,10 +607,16 @@ int ControlWussie::think ()
 			case OPTION_NO_PROXIMITY:
 				if (distance < option_range[state][j])
 					dontfireoption[j] = TRUE;
+				else
+					fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
 				range_fire = FALSE;
 				break;
 
 			case OPTION_PROXIMITY:
+				if (distance > option_range[state][j])
+					dontfireoption[j] = TRUE;
+				else
+					fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
 				range_fire = TRUE;
 				break;
 
@@ -438,8 +652,10 @@ int ControlWussie::think ()
 
 			case OPTION_MAX_BATT:
 				if (ship->batt != ship->batt_max)
+				{
 					if (!option_held[j])
 						dontfireoption[j] = TRUE;
+				}
 				break;
 
 			case OPTION_RESERVE_BATT:
@@ -477,17 +693,24 @@ int ControlWussie::think ()
 		}
 
 		if (range_fire)
+		{
 			if (distance > option_range[state][j])
 				dontfireoption[j] = TRUE;
+		}
 
 		if (fire_front)
-			if (fabs (angle) < sweep[j])
+		{
+			if (fabs (angle_fire) < sweep[j] && distance < option_range[state][j])
 				fireoption[j] = TRUE;
+		}
 
-		if (field_fire)
+		if (field_fire && distance < option_range[state][j])
+		{
 			fireoption[j] = TRUE;
+		}
 	}
 	for (j = 0; j < 2; j++)
+	{
 		for (i = 0; i < MAX_OPTION; i++)
 		{
 			if (option_type[state][j][i] == OPTION_LAUNCHED)
@@ -529,34 +752,58 @@ int ControlWussie::think ()
 				}
 			}
 		}
+	}
+
+
 	for (j = 0; j < 2; j++)
+	{
+		if (option_time[j] > 0)
+		{
+			option_time[j] -= frame_time;
+			dontfireoption[j] = TRUE;
+		}
+
 		for (i = 0; i < MAX_OPTION; i++)
 		{
-			if (option_time[j] > 0)
-			{
-				option_time[j] -= frame_time;
-				dontfireoption[j] = TRUE;
-			}
 			if (option_type[state][j][i] == OPTION_PRECEDENCE)
+			{
 				if (fireoption[j] && (!dontfireoption[j]))
-					dontfireoption[(!j)] = TRUE;
+				{
+					int k;
+					if ( j == 0 )
+						k = 1;
+					else
+						k = 0;
+
+					dontfireoption[k] = TRUE;
+				}
+			}
+
+
 			if (option_type[state][j][i] == OPTION_ALWAYS_WHEN_FULL)
+			{
 				if (ship->batt >= ship->batt_max)
 				{
 					fireoption[j] = TRUE;
 					dontfireoption[j] = FALSE;
 				}
+			}
+
 		}
+	}
 
 	int newstate = state;
 	for (j = 0; j < 2; j++)
+	{
 		if (fireoption[j] && (!dontfireoption[j]))
 		{
 			if (j == 0)
 				action |= keyflag::fire;
 			else
 				action |= keyflag::special;
+
 			option_time[j] = option_timer[state][j];
+
 			for (i = 0; i < MAX_OPTION; i++)
 			{
 				if (option_type[state][j][i] == OPTION_LAUNCHED)
@@ -574,12 +821,15 @@ int ControlWussie::think ()
 			}
 		}
 		else
+		{
 			option_held[j] = FALSE;
+		}
+	}
 
 	state = newstate;
 
-	if ((rand () % 4000) < frame_time) {
-		int r = rand();
+	if ((random () % 4000) < frame_time) {
+		int r = random();
 		if (r & 3) action |= keyflag::closest;
 		else if (r & 4) {
 			if (r&8) action |= keyflag::next;
@@ -693,7 +943,7 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 					max_range[k] =
 						scale_range (get_config_float
 								   (states, "Tactic_Max", 20));
-					tactic_state = 0;
+					//tactic_state = 0;
 					option_held[j] = FALSE;
 					batt_level[k][j] =
 						get_config_int (states, "BattRecharge", 0);
@@ -740,8 +990,8 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 			option_timer[k][1] =
 				scale_frames (get_config_int
 						    (states, "Special_Timer", -999));
-			rel[k][0] = get_config_float (states, "WeaponRel", .5);
-			rel[k][1] = get_config_float (states, "SpecialRel", .5);
+			rel[k][0] = get_config_float (states, "WeaponRel", game->shot_relativity);
+			rel[k][1] = get_config_float (states, "SpecialRel", game->shot_relativity);
 			option_time[0] = option_timer[0][0];
 			option_time[1] = option_timer[0][1];
 		}

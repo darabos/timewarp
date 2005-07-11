@@ -25,6 +25,8 @@ struct AyronShipPartInfo
 
 class AyronShipPart : public BigShipPart
 {
+public:
+IDENTITY(AyronShipPart);
 
 
 public:
@@ -49,6 +51,8 @@ public:
 
 class AutoGun : public BigShipPartDevice
 {
+public:
+IDENTITY(AutoGun);
 
 	double shotrange, shotvel, shotdamage, shotarmour, shotdrain;
 	double a_center, a_view, a_track;
@@ -66,6 +70,8 @@ public:
 
 class AyronBS : public BigShip
 {
+public:
+IDENTITY(AyronBS);
 	AyronShipPart **ayronparts;
 public:
 	int		Nx, Ny, Ntypes;
@@ -602,8 +608,8 @@ void AyronShipPart::animate(Frame *space)
 	BITMAP *b;
 	b = spr->get_bitmap(sprite_index);
 
-	//masked_stretch_blit(b, space->surface, 0, 0, b->w, b->h, iround(P.x), iround(P.y), iround(W.x), iround(W.y));
-	aa_stretch_sprite(b, space->surface, iround(P.x), iround(P.y), iround(W.x), iround(W.y));
+	masked_stretch_blit(b, space->surface, 0, 0, b->w, b->h, iround(P.x), iround(P.y), iround(W.x), iround(W.y));
+	//aa_stretch_sprite(b, space->surface, iround(P.x), iround(P.y), iround(W.x), iround(W.y));
 	space->add_box(P.x, P.y, W.x, W.y);
 }
 

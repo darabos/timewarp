@@ -48,7 +48,7 @@ Shot::Shot(SpaceLocation *creator, Vector2 rpos, double oangle, double ov,
 void Shot::calculate() {
 	SpaceObject::calculate();
 
-	if (!(ship && ship->exists()))
+	if (!( (parent && parent->exists()) || (ship && ship->exists()) ))
 	{
 		state = 0;
 		return;

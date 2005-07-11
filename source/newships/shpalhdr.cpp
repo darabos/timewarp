@@ -12,6 +12,8 @@ class AlhordianLaserSweep;
 
 class AlhordianDreadnought : public Ship {
 public:
+IDENTITY(AlhordianDreadnought);
+public:
 	AlhordianLaserSweep* ALS1;
 	AlhordianLaserSweep* ALS2;
 	
@@ -66,6 +68,8 @@ protected:
 
 
 class AlhordianTorpedo : public Shot {
+public:
+IDENTITY(AlhordianTorpedo);
 public:
 	AlhordianTorpedo(AlhordianDreadnought* ocreator, Vector2 rpos,
 		double oangle, double oStartVelocity, double oEndVelocity, 

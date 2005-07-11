@@ -11,6 +11,8 @@ class BahaoidBabyBuzzsaw;
 
 class BahaoidBuzzsaw : public Ship
 {
+public:
+IDENTITY(BahaoidBuzzsaw);
 	double	weaponRange;
 	double	weaponSpeed;
 	int		weaponDamage;
@@ -37,6 +39,8 @@ protected:
 
 class BahaoidBabyBuzzsaw : public AnimatedShot
 {
+public:
+IDENTITY(BahaoidBabyBuzzsaw);
 	double 	MineRange;
 
 	double	weaponRange;

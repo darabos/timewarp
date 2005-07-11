@@ -19,6 +19,8 @@ REGISTER_FILE
 class TrideminTurret : public SpaceObject
 {
 public:
+IDENTITY(TrideminTurret);
+public:
 	TrideminTurret(SpaceLocation *creator, Vector2 opos,
 		double oangle, SpaceSprite *osprite);
 
@@ -62,6 +64,8 @@ TrideminTurret::TrideminTurret(SpaceLocation *creator, Vector2 opos,
 }
 
 class TrideminGemini : public Ship {
+public:
+IDENTITY(TrideminGemini);
 	double       weaponRange;
 	double       weaponVelocity;
 	int          weaponDamage;

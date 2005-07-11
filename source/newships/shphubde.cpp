@@ -8,6 +8,8 @@ REGISTER_FILE
 
 class Hellenian : public Ship
 {
+public:
+IDENTITY(Hellenian);
 	double	weaponRange, weaponVelocity, weaponDamage, weaponArmour;
 	double	specialRange1, specialRange2, specialDuration, specialDamage;
 	
@@ -27,6 +29,8 @@ protected:
 class HellenianShot : public Missile
 {
 public:
+IDENTITY(HellenianShot);
+public:
 	SpaceSprite *ripplesprite;
 	double t, trepeat;
 
@@ -40,6 +44,8 @@ public:
 class MortarFire : public Shot
 {
 public:
+IDENTITY(MortarFire);
+public:
 	double t, t_exist;
 
 	MortarFire(SpaceLocation *creator, Vector2 rpos,
@@ -52,6 +58,8 @@ public:
 /*
 class MovingAnimation : public Animation
 {
+public:
+IDENTITY(MovingAnimation);
 	MovingAnimation(SpaceLocation *creator, Vector2 opos, 
 		SpaceSprite *osprite, int first_frame, int num_frames, int frame_length, 
 		double depth);

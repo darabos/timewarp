@@ -1,5 +1,5 @@
 ##############################################################################
-# Compiling TimeWarp: make {win32=1} {debug=1} {NO_JGMOD=1} {NO_NET=1}       #
+# Compiling TimeWarp: make {win32=1} {debug=1} {NO_JGMOD=1}                  #
 #                                                                            #
 # Define win32=1    when compiling with Mingw32 gcc compiler for windows     #
 # Define debug=1    when you want to build debug version of TimeWarp         #
@@ -9,9 +9,8 @@
 # Running just make builds the release version of TimeWarp for *nix          #
 # (Linux, FreeBSD, ...)                                                      #
 #                                                                            #
-# The game depends on Allegro (4.0.x), FreeType, alfont, MASkinG,            #
-# and Lua (5.0.x) libraries, so you need to install them before running      #
-# make                                                                       #
+# The game depends on Allegro (4.0.x) and Lua (5.0.x) libraries, so you need #
+# to install them before running make                                        #
 #                                                                            #
 ##############################################################################
 
@@ -27,7 +26,7 @@ VPATH = source source/ais source/games source/games/triggers source/melee \
         source/gamex/edit source/gamex/general source/gamex/stuff \
         source/gamex/dialogs source/jpgalleg
 
-FILELIST= ${shell find source -type f "(" -name "*.c" -o -name "*.cpp" ")"| grep -v masking[/] | grep -v alfont[/]}
+FILELIST= ${shell find source -type f "(" -name "*.c" -o -name "*.cpp" ")"}
 BASE_NAMES = $(basename $(notdir $(FILELIST)))
 
 POBJS = $(addsuffix .o,$(BASE_NAMES))
@@ -70,11 +69,11 @@ else
 	LIBS += ${shell allegro-config --libs} ${shell freetype-config --libs}
 endif
 
-CFLAGS += -I./source
+CFLAGS += -I./source 
 
 #CFLAGS += ${addprefix -I./, $(VPATH)}
 
-LIBS += -llualib -llua -lalfont -lmasking
+LIBS += -llualib -llua
  
 OBJS = $(addprefix $(OBJDIR)/,$(POBJS))
 DEPS = $(addprefix $(OBJDIR)/,$(PDEPS))

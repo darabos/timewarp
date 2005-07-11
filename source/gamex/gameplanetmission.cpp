@@ -327,7 +327,7 @@ offset	size	format		data
 		get_config_float("Game", "MapHeight", 0)
 	);
 
-	init_lag();
+//	init_lag();
 	log_int(channel_server, lag_frames);
 	log_int(channel_init, lag_frames);
 

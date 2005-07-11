@@ -19,6 +19,8 @@ REGISTER_FILE
 #define BCC 3
 
 class DjinniLancer : public Ship {
+public:
+IDENTITY(DjinniLancer);
   int          regenWaitFrames; //wait this many frames after using batt before even starting to regenerate shields
   int          regenWaitCount;
   int          regenrateFrames; //wait this many frames between shield regens

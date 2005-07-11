@@ -153,6 +153,9 @@ void LeagueGame::init( Log *_log ){
 	int team = player[0]->team;
 	for ( i = 0; i < num_players; ++i )
 	{
+		if (!player[i])
+			continue;
+
 		player[i]->team = team;
 	}
 

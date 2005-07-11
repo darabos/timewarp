@@ -9,9 +9,11 @@
 #include "mlog.h"
 #include "mgame.h"
 #include "../util/net_tcp.h"
+#include "../melee/mnet1.h"
 #include "../melee/mview.h"
 
 int channel_current = -1;
+int event_player_current = 0;
 
 int channel_file_names = 0;		// ISN'T USED ...
 int channel_file_data = 1; //direction for file channels must be the same
@@ -361,7 +363,7 @@ bool Log::buffer ( int channel, void *data, int size ) {STACKTRACE
 		if (size > 128) { tw_error("Log::buffer - overflow"); }
 		memset(zeros, 0, size);
 	}
-	if ((log_dir[channel] & direction_write) && !log_write_disable) {
+	if ((log_dir[channel] & direction_write) && (!log_write_disable) ) {
 		_log ( channel, data, size);
 //		if (!(log_dir[channel] & direction_immediate)) send_packet();
 		return true;
@@ -448,6 +450,20 @@ void Log::reset()
 }
 
 
+/** completely clear a log, also get rid of unhandled data */
+void Log::clear()
+{
+	int i;
+	for (i = 0 ; i < log_num; i += 1)
+	{
+		log_len[i] = 0;
+		log_pos[i] = 0;
+	}
+	
+}
+
+
+
 
 void PlaybackLog::init() {STACKTRACE
 	Log::init();
@@ -483,24 +499,38 @@ static int share_type[max_share];
 static int share_num[max_share];
 
 
-
-void share_intel_order(int n, int i)
+int get_share_num()
 {
-	switch(share_type[n])
-	{
-	case TYPE_SHORT:
-		{
-			short int &x = *((short int*) (share_address[n]) + i);
-			x = intel_ordering_short(x);
-		}
-		break;
+	return Nshare;
+}
 
-	case TYPE_INT:
+void reset_share()
+{
+	Nshare = 0;
+}
+
+
+void share_intel_order(int n)
+{
+	int i;
+	for ( i = 0; i < share_num[n]; ++i )
+	{
+		switch(share_type[n])
 		{
-			int &x = *((int*) (share_address[n]) + i);
-			x = intel_ordering(x);
+		case TYPE_SHORT:
+			{
+				short int &x = *((short int*) (share_address[n]) + i);
+				x = intel_ordering_short(x);
+			}
+			break;
+			
+		case TYPE_INT:
+			{
+				int &x = *((int*) (share_address[n]) + i);
+				x = intel_ordering(x);
+			}
+			break;
 		}
-		break;
 	}
 }
 
@@ -511,7 +541,11 @@ static int chann(int iplayer)
 		return channel_init;
 
 	else
+	{
+		if (!player[iplayer])
+			tw_error("Player does not exist - no channel available");
 		return player[iplayer]->channel;
+	}
 }
 
 void share_buffer(int player, void *value, int num, int size, share_types st)
@@ -520,6 +554,7 @@ void share_buffer(int player, void *value, int num, int size, share_types st)
 		return;
 	if (player > num_players)
 		tw_error("player [%i] exceeds max allowed value [%i] -- perhaps you use share(channel) instead of share(player)", player, num_players);
+
 
 	share_channel[Nshare] = chann(player);
 	share_address[Nshare] = value;
@@ -530,9 +565,15 @@ void share_buffer(int player, void *value, int num, int size, share_types st)
 	share_type[Nshare] = st;
 
 	// change bit-order of each element in an array
-	int i;
-	for ( i = 0; i < share_num[Nshare]; ++i )
-		share_intel_order(Nshare, i);
+	share_intel_order(Nshare);
+
+	/*
+	// check some stuff: (only works on network cause of the cast)
+	int ch = share_channel[Nshare];
+	int log_len1 = glog->log_len[ch];
+	int log_transm1 = ((NetLog*)glog)->log_transmitted[ch];
+	*/
+
 
 	// buffer an array
 	glog->buffer(share_channel[Nshare],
@@ -540,10 +581,23 @@ void share_buffer(int player, void *value, int num, int size, share_types st)
 							share_num[Nshare] * share_size[Nshare]);
 
 	// restore bit-order of each element in an array
-	for ( i = 0; i < share_num[Nshare]; ++i )
-		share_intel_order(Nshare, i);
+	share_intel_order(Nshare);
 
 	//game->log->flush();
+
+	/*
+	// check some stuff: (only works on network cause of the cast)
+	char dir = glog->get_direction(share_channel[Nshare]);
+	int bwrite = dir & Log::direction_write;
+	int bread = dir & Log::direction_read;
+	int bimm = dir & Log::direction_immediate;
+	int log_len = glog->log_len[ch];
+	int log_transm = ((NetLog*)glog)->log_transmitted[ch];
+
+	message.print(1500, 14, "SHAREBUFFER: ch[%i] write[%i] read[%i] imm[%i]  len[%i->%i] transm[%i->%i]",
+					ch, bwrite, bread, bimm, log_len1, log_len, log_transm1, log_transm);
+	message.animate(0);
+	*/
 
 	++Nshare;
 
@@ -591,6 +645,23 @@ to the proper memory locations.
 #include "mmain.h"
 void share_update()
 {
+	int n;
+
+	/*
+	// check some stuff...
+	for ( n = 0; n < Nshare; ++n )
+	{
+		int ch = share_channel[n];
+		char dir = glog->get_direction(share_channel[n]);
+		int bwrite = dir & Log::direction_write;
+		int bread = dir & Log::direction_read;
+		int bimm = dir & Log::direction_immediate;
+	
+		message.print(1500, 14, "SHAREUPDATE: ch[%i] write[%i] read[%i] imm[%i]", ch, bwrite, bread, bimm);
+		message.animate(0);
+	}
+	*/
+
 	// test the network, whether the log channels are still ok.
 	// by using a call to log_test();
 	// but NOT here, cause at this moment, you can have mixing of data. You've to
@@ -606,16 +677,13 @@ void share_update()
 	//game->log->listen();
 
 
-	int n;
 	for ( n = 0; n < Nshare; ++n )
 	{
 		// unbuffer an array
 		glog->unbuffer(share_channel[n], share_address[n], share_size[n] * share_num[n]);
 
 		// sort out bit-ordering for all values in the array
-		int i;
-		for ( i = 0; i < share_num[n]; ++i )
-			share_intel_order(n, i);
+		share_intel_order(n);
 	}
 
 	Nshare = 0;
@@ -745,19 +813,17 @@ int log_size_ch(int channel)
 
 void rand_resync()
 {
-	int k;
-	k = channel_current;
-	channel_current = channel_server;
 	
-	int i;
+	int i1, i2;
 
-	i = rand();
-	log_int(i);
-	rng.seed(i);
+	i1 = rand();
+	i2 = rand();
 
-	i = rand();
-	log_int(i);
-	rng.seed_more(i);
+	share(-1, &i1);
+	share(-1, &i2);
+	share_update();
 
-	channel_current = k;
+	rng.seed(i1);
+	rng.seed_more(i2);
+
 }
