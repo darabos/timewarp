@@ -1118,6 +1118,12 @@ void Hook2::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropec
 	STACKTRACE
 	int ix1, iy1, ix2, iy2;
 
+	double dx, dy;
+	dx = min_delta(pos2.x, pos1.x, map_size.x);
+	dy = min_delta(pos2.y, pos1.y, map_size.y);
+	pos2.x = pos1.x + dx;
+	pos2.y = pos1.y + dy;
+
 	Vector2 co;
 	
 	co = corner(pos1);
@@ -1127,16 +1133,14 @@ void Hook2::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropec
 	co = corner(pos2);
 	ix2 = int(co.x);
 	iy2 = int(co.y);
+
+	dx = ix2 - ix1;
+	dy = iy2 - iy1;
 	
-	int dx, dy;
-	dx = iround(min_delta(ix2, ix1, map_size.x));
-	dy = iround(min_delta(iy2, iy1, map_size.y));
-	ix2 = ix1 + dx;
-	iy2 = iy1 + dy;
 	
 	// simulate visibility of a glittering line in the sun ...
 	double a, colscale;
-	a = atan2((float)dy,(float)dx);
+	a = atan2(dy, dx);
 	colscale = fabs(sin(a));	// flat lying = less visible.
 	
 	int col, r, g, b;
