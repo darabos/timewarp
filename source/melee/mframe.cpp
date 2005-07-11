@@ -665,17 +665,29 @@ void SpaceObject::calculate()
 
 	SpaceLocation::calculate();
 
-	if ((attributes & ATTRIB_STANDARD_INDEX) && sprite) {
-		sprite_index = get_index(angle, PI/2, sprite->frames());
-	}
+	if (sprite)
+	{
+		if (attributes & ATTRIB_STANDARD_INDEX)
+		{
+			sprite_index = get_index(angle, PI/2, sprite->frames());
+		}
 
 	// error check:
-	if (sprite_index >= sprite->frames() || sprite_index < 0)
-	{
-		tw_error("sprite index overflow in %s", get_identity());
+		if (sprite_index >= sprite->frames() || sprite_index < 0)
+		{
+			tw_error("sprite index overflow in %s", get_identity());
+		}
 	}
 
 	return;
+}
+
+void SpaceObject::calculate_index()
+{
+	if (sprite->frames() > 64)
+		sprite_index = get_index(angle);
+	else
+		sprite_index = get_index(angle, PI/2, sprite->frames());
 }
 
 SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos, 

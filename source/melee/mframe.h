@@ -374,6 +374,8 @@ class SpaceObject : public SpaceLocation {
 	virtual void inflict_damage(SpaceObject *other);
 
 	virtual void set_sprite ( SpaceSprite *sprite );
+	virtual void calculate_index();
+
 
 //	virtual void install_external_ai(const char* script);
 //	virtual void destroy_external_ai();

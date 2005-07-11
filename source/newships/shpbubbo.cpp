@@ -71,6 +71,8 @@ IDENTITY(BubalosBomber);
   virtual int activate_special();
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
   virtual void death();
+
+  virtual void calculate_index();
 };
 
 class BubalosBomberFlame : public PositionedAnimation
@@ -544,8 +546,15 @@ void BubalosBomber::calculate()
 	}
 
 	Ship::calculate();
-	sprite_index = sprite_index & 31;
+	//sprite_index = sprite_index & 31;
 }
+
+void BubalosBomber::calculate_index()
+{
+	// this makes use of symmetry of the ship.
+	sprite_index = get_index(angle) & 31;
+}
+
 
 
 

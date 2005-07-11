@@ -502,6 +502,9 @@ RGB Ship::battPanelColor(int k)
 	return c;
 }
 
+
+
+
 void Ship::locate() {STACKTRACE
 	int tries = 0;
 	double mindist = 1000;
@@ -542,10 +545,13 @@ void Ship::calculate()
 		//sprite_index = get_index(angle, PI/2, sprite->frames());
 		// (geo) actually, this introduces a big bug if the ship has >64 frames in
 		// the ship sprite -- eg the tau mercury.
+		/*
 		if (sprite->frames() > 64)
 			sprite_index = get_index(angle);
 		else
 			sprite_index = get_index(angle, PI/2, sprite->frames());
+			*/
+		calculate_index();
 
 
 		SpaceObject::calculate();
@@ -758,12 +764,17 @@ void Ship::calculate()
 		if(angle >= PI2) angle -= PI2;
 	}
 
+	
 	//sprite_index = get_index(angle);
 	// should be the same as earlier in this routine:
-	if (sprite->frames() > 64)
+	/*
+	int n = sprite->frames();
+	if (n > 64)
 		sprite_index = get_index(angle);
 	else
-		sprite_index = get_index(angle, PI/2, sprite->frames());
+		sprite_index = get_index(angle, PI/2, n);
+	*/
+	calculate_index();
 
 	// hotspots are too much a luxury to include in massive games (lots of objects)
 	if (hashotspots)
