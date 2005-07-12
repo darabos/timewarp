@@ -280,6 +280,10 @@ void XXXAssimilator::collide(SpaceObject *other)
 
 		{
 
+		crew += 2;
+		if (crew >= crew_max)
+			crew = crew_max;
+
 		if (other->ship->speed_max > speed_max)
 
 			{

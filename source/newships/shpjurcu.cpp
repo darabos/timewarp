@@ -12,10 +12,10 @@ IDENTITY(JurgathaCutter);
 
 	double weaponRange;
 	double weaponSpeed;
-	int weaponDamage;
+	double weaponDamage;
 	int weaponColor;
 
-	int specialDamage;
+	double specialDamage;
 	int specialFrames;
 
 public:
@@ -31,7 +31,7 @@ class JurgathaPortal : public Animation
 public:
 IDENTITY(JurgathaPortal);
 public:
-	JurgathaPortal(SpaceLocation *creator, Vector2 opos, int damage, SpaceSprite *osprite, int ofct, int ofsz);
+	JurgathaPortal(SpaceLocation *creator, Vector2 opos, double damage, SpaceSprite *osprite, int ofct, int ofsz);
 	virtual void calculate();
 };
 
@@ -43,10 +43,10 @@ JurgathaCutter::JurgathaCutter(Vector2 opos, double shipAngle,
 
 	weaponRange		= scale_range(get_config_float("Weapon", "Range", 0));
 	weaponSpeed		= get_config_float("Weapon", "Speed", 1);
-	weaponDamage	= get_config_int("Weapon", "Damage", 0);
+	weaponDamage	= get_config_float("Weapon", "Damage", 0);
 	weaponColor		= get_config_int("Weapon", "Color", 2);
 
-	specialDamage   = get_config_int("Special", "Damage", 0);
+	specialDamage   = get_config_float("Special", "Damage", 0);
 	specialFrames   = scale_frames(get_config_int("Special", "Frames", 0));
 }
 
@@ -99,8 +99,13 @@ int JurgathaCutter::activate_special()
 	return(TRUE);
 }
 
-JurgathaPortal::JurgathaPortal(SpaceLocation *creator, Vector2 opos, int damage, SpaceSprite *osprite, int ofct, int ofsz) :
-	Animation(creator, opos, osprite, 0, ofct, ofsz, LAYER_HOTSPOTS){}
+JurgathaPortal::JurgathaPortal(SpaceLocation *creator, Vector2 opos, double fdamage, SpaceSprite *osprite, int ofct, int ofsz) :
+	Animation(creator, opos, osprite, 0, ofct, ofsz, LAYER_HOTSPOTS)
+{
+	damage_factor = fdamage;
+
+	// normally, an animation doesn't take part in collisions, so that this damage by itself won't do much
+}
 
 void JurgathaPortal::calculate()
 {
@@ -108,13 +113,15 @@ void JurgathaPortal::calculate()
 
 	Query a;
 
+	// the animation needs to check if it inflicts damage on its own.
 	for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL),
 			sprite->width()/2); a.current; a.next())
 	{
 		if (!a.currento->sameTeam(this) && !(a.currento->isAsteroid() || a.currento->isPlanet() ) )
 		{
 			//a.currento->directDamage++;
-			a.currento->handle_damage(this, 0, 1);
+			// inflict damage per second...
+			a.currento->handle_damage(this, 0, damage_factor * frame_time / 1E3);
 		}
 	}
 }

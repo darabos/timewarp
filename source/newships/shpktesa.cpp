@@ -228,10 +228,12 @@ void KterbiIonBlast::calculate()
 {
 	STACKTRACE
   AnimatedShot::calculate();
-  if (d < (range/2))
-    damage_factor = min_damage;
-  else
-    damage_factor = min_damage * 2;
+
+	// okay, originally the ship does increased damage at higher range. It's a bit of a strange extra tweak.
+  //if (d < (range/2))
+  //  damage_factor = min_damage;
+  //else
+  //  damage_factor = min_damage * 2;
 }
 
 

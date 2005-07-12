@@ -307,7 +307,10 @@ void SpeedBlob::calculate()
 	R = distance(ship);
 	if (R < blobrange)
 	{
-		ship->vel += accelvel * frame_time;		// deliver the speed boost
+		//ship->vel += accelvel * frame_time;		// deliver the speed boost
+		ship->vel += accelvel.length() * frame_time * unit_vector(ship->angle);
+		// deliver the speed boost ; to make this more useful, deliver it into the direction where
+		// the moian is heading.
 	}
 
 	SpaceObject::calculate();

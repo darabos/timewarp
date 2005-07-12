@@ -6,13 +6,15 @@ acceleration  - Poor
 Turning       - Very Good
 Top Speed     - Good
 
-Weapons
- Primary   - Variable energy shots.
- Secondary - Reset attributes to normal.
+Weapons:
+ Primary   - energy shots.
+ Secondary - Reset all attributes to normal: weapon damage, ship speed, etc.
 
 Extra 	   - "steals" opponent's weapon attribute when hit.
 	   - "steals" opponent's ship attribute after collision.
 	   - variable weapon outlet (The Spot)
+Note that this tweak occurs automatically.
+
 
 NOTE: "stealing" only works if its better than Assimilator's current attribute.
 
