@@ -40,7 +40,7 @@ Relativity);
 	virtual void calculate(void);
   virtual void inflict_damage(SpaceObject *other);
 	};
-
+/*
 class NechanziStun: public SpaceObject {
 public:
 IDENTITY(NechanziStun);
@@ -57,6 +57,7 @@ IDENTITY(NechanziStun);
 
   virtual void calculate();
 };
+*/
 
 class NechanziCruiser : public Ship {
 public:
@@ -211,8 +212,8 @@ int NechanziCruiser::activate_special() {
   NM->acceleration = specialAcceleration1;
   NM->mass = specialMass;
   NM->maxSpeed = specialMaxSpeed1;
-  NM->missileType = 2;
-  NM->stunFrames = iround(specialStunFrames);
+  NM->missileType = 2;								// this is actually obsolete (stun removed - Geo)
+  NM->stunFrames = iround(specialStunFrames);		// this is actually obsolete (stun removed - Geo)
   game->add(NM);
 
   NM = new NechanziMissile(size.y*(-0.05), (size.y * 0.4),
@@ -424,13 +425,13 @@ void NechanziMissile::calculate(void) {
 void NechanziMissile::inflict_damage(SpaceObject *other) {
 	STACKTRACE
   Shot::inflict_damage(other);
-  if(missileType==2 && other->isShip() && isActivated) {
-    game->add(new NechanziStun((Ship*)other, data->spriteExtra, 64, 50, 
-stunFrames));
-  }
+//  if(missileType==2 && other->isShip() && isActivated) {
+//    game->add(new NechanziStun((Ship*)other, data->spriteExtra, 64, 50, 
+//stunFrames));
+//  }
 }
 
-
+/*
 NechanziStun::NechanziStun(Ship *oship, SpaceSprite *osprite,
   int ofcount,
   int ofsize,
@@ -473,7 +474,7 @@ void NechanziStun::calculate() {
   if (stunframe >= stunframe_count) state = 0;
 	SpaceObject::calculate();
 	}
-
+*/
 
 
 REGISTER_SHIP ( NechanziCruiser )
