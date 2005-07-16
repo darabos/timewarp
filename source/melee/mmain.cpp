@@ -1214,6 +1214,12 @@ int NormalGame::local_player()
 
 void NormalGame::handle_end()
 {
+
+	// the following is a bit messy procedure... the idea is that all players can enter a choice at the
+	// end of a melee game. But ehm... well, it's messy as I said, it takes bots not into account.
+	// safer to leave it out.
+
+	/*
 	// pause all players, so that networking sends are only within this routine !!
 	pause();
 
@@ -1332,6 +1338,13 @@ void NormalGame::handle_end()
 	
 
 	unpause();
+
+  */
+
+
+	tw_alert("The End", "&OK");
+
+	quit("none");
 }
 
 
