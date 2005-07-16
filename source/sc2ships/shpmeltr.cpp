@@ -261,6 +261,7 @@ void MelnormeDisable::calculate()
 		}
 	if(!(ship && ship->exists()))
 	{
+		ship->del_override_control(ocm);
 		ship = 0;
 		state = 0;
 		return;

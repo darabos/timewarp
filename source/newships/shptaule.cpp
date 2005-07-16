@@ -9,72 +9,50 @@ REGISTER_FILE
 
 #define LEVIATHAN_SLIME_FOOD 0x12001457
 
-#define LEVIATHAN_JAMMER 0x2050
+//#define LEVIATHAN_JAMMER 0x2050
 
+
+// allows other ships to affect control over a ship.
+class OverrideControlLeviathan : public OverrideControl
+{
+public:
+	virtual void calculate(short *key);
+};
 
 
 class TauLeviathan : public Ship
-
 {
 public:
 IDENTITY(TauLeviathan);
-
 	double		weaponRange, weaponVelocity, weaponDamage, weaponArmour;
-
 	double		weaponSpread, weaponRelativity;
-
   
 
 	double		specialRange, specialVelocity, specialDamage, specialArmour;
-
 	double		specialTurnRate;
 
-  
-
 	int			extraTime;
-
 	double		extraSpeed;
-
 	bool		extraGreen;
 
-
-
 	double		food2batt;
-
 	double		healing_amount;
-
 	int			healing_rate;
-
 	int			healing_step;
-
 	int			missile_side;
-
-
 
 public:
 
-
-
 	TauLeviathan(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
 
-
-
 	virtual int activate_weapon();
-
 	virtual int activate_special();
-
 	virtual RGB crewPanelColor(int k = 0);
-
 //  virtual int battPanelColor();
 
-
-
 	virtual void calculate();
-
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
-
 	virtual void calculate_hotspots();
-
 };
 
 
@@ -148,23 +126,16 @@ public:
 
 
 class LeviathanJammer : public FixedAnimation
-
 {
 public:
-IDENTITY(LeviathanJammer);
-
+	IDENTITY(LeviathanJammer);
 public:
-
+	OverrideControlLeviathan *ocl;
   
-
-	SpaceLocation	*victim;
-
+	Ship	*victim;
   
-
 	LeviathanJammer (SpaceLocation *creator, SpaceLocation *opos, SpaceSprite *osprite);
-
 	virtual void calculate();
-
 };
 
 
@@ -551,31 +522,46 @@ int LeviathanSlimeFood::isAlly(SpaceLocation *other)
 }
 
 
+void OverrideControlLeviathan::calculate(short *key)
+{
+	*key &= ~(keyflag::left + keyflag::right + keyflag::thrust);
+}
+
 
 LeviathanJammer::LeviathanJammer (SpaceLocation *creator, SpaceLocation *opos, SpaceSprite *osprite) :
-
 	FixedAnimation(creator, opos, osprite, 0, 20, 50, LAYER_EXPLOSIONS)
-
 {
+	//id = LEVIATHAN_JAMMER;
 
-	id = LEVIATHAN_JAMMER;
-
-	if (opos->isShip()) {
-
+	if (opos->isShip())
+	{
 		victim = (Ship*)opos;
-
+		/* obsolete: override controls is handled by a list; resetting the victim pointer externally like
+		this will make the list management fail.
 		Query q;
-
+	
 		for (q.begin(victim, bit(LAYER_EXPLOSIONS), 1); q.current; q.next())
+		{
 
 			if (q.currento->getID() == LEVIATHAN_JAMMER)
-
+			{
 				if (((LeviathanJammer*)q.current)->victim == victim)
+					((LeviathanJammer*)q.current)->victim = 0; }
+		}
+		*/
+	}
 
-					((LeviathanJammer*)q.current)->victim = NULL; }
+	else
+	{
+		victim = 0;
+	}
 
-	else    victim = NULL;
-
+	if (victim)
+	{
+		ocl = new OverrideControlLeviathan();
+		victim->set_override_control(ocl);
+	} else
+		ocl = 0;
 };
 
 
@@ -583,26 +569,39 @@ LeviathanJammer::LeviathanJammer (SpaceLocation *creator, SpaceLocation *opos, S
 void LeviathanJammer::calculate()
 
 {
-	STACKTRACE
+	STACKTRACE;
 
 	FixedAnimation::calculate();
 
-	if (!exists()) return;
+	// perform this test here, cause there's a return later on...
+	if (!exists())
+	{
+		if (victim)
+			victim->del_override_control(ocl);
+	}
 
-	if (victim) {
+	if (victim)
+	{
 		if (!victim->exists())
 		{
-			victim = NULL; return; }
-		((Ship*)victim)->nextkeys &= ~(keyflag::left + keyflag::right + keyflag::thrust);
+			victim->del_override_control(ocl);
+			victim = 0;
+			return;
+		}
+		//((Ship*)victim)->nextkeys &= ~(keyflag::left + keyflag::right + keyflag::thrust);
 		Vector2 vv = victim->get_vel();
 		double vvv = magnitude(vv);
-		if (vvv < 1e-5) return;
+	
+		if (vvv < 1e-5)
+			return;
+
 		vvv = (vvv - ((Ship*)victim)->accel_rate * frame_time) / vvv;
 		if (vvv < 0) vvv = 0;
 		vv *= (vvv - 1);
 		vvv = magnitude(vv);
 		victim->accelerate(victim, atan(vv), vvv, MAX_SPEED);
 	}
+
 }
 
 
