@@ -476,7 +476,20 @@ Ship::~Ship()
 //delete override_control;
 	if (first_override_control)
 	{
-		tw_error("Ship deleted before all control overrides are removed...");
+		//tw_error("Ship deleted before all control overrides are removed...");
+		// if you interrupt a game while some ship is under someones control, this can happen...
+
+		OverrideControl *c, *cnext;
+		c = first_override_control;
+		while (c)
+		{
+			cnext = c->next;
+			delete c;
+			c = cnext;
+		}
+
+		first_override_control = 0;
+		last_override_control = 0;
 	}
 }
 
@@ -1152,7 +1165,9 @@ void OverrideControl::del(Ship *s, OverrideControl *oldcontrol)
 
 	if (!c)
 	{
-		tw_error("Error: trying to remove a control override that is not present in the list");
+		//tw_error("Error: trying to remove a control override that is not present in the list");
+		// this is possible, if you interrupt a game while someones ship is under control... so, don't
+		// worry about it. Enable it for debugging.
 	} else {
 
 		// remove the control from the list
