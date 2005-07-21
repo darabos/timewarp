@@ -573,36 +573,39 @@ void LeviathanJammer::calculate()
 
 	FixedAnimation::calculate();
 
+
+	if (victim)
+	{
+		if (!victim->exists())
+		{
+			//victim->del_override_control(ocl);
+			victim = 0;
+			state = 0;
+			//return;
+		}
+		else
+		{
+			//((Ship*)victim)->nextkeys &= ~(keyflag::left + keyflag::right + keyflag::thrust);
+			Vector2 vv = victim->get_vel();
+			double vvv = magnitude(vv);
+			
+			if (vvv < 1e-5)
+				return;
+			
+			vvv = (vvv - ((Ship*)victim)->accel_rate * frame_time) / vvv;
+			if (vvv < 0) vvv = 0;
+			vv *= (vvv - 1);
+			vvv = magnitude(vv);
+			victim->accelerate(victim, atan(vv), vvv, MAX_SPEED);
+		}
+	}
+
 	// perform this test here, cause there's a return later on...
 	if (!exists())
 	{
 		if (victim)
 			victim->del_override_control(ocl);
 	}
-
-	if (victim)
-	{
-		if (!victim->exists())
-		{
-			victim->del_override_control(ocl);
-			victim = 0;
-			state = 0;
-			return;
-		}
-		//((Ship*)victim)->nextkeys &= ~(keyflag::left + keyflag::right + keyflag::thrust);
-		Vector2 vv = victim->get_vel();
-		double vvv = magnitude(vv);
-	
-		if (vvv < 1e-5)
-			return;
-
-		vvv = (vvv - ((Ship*)victim)->accel_rate * frame_time) / vvv;
-		if (vvv < 0) vvv = 0;
-		vv *= (vvv - 1);
-		vvv = magnitude(vv);
-		victim->accelerate(victim, atan(vv), vvv, MAX_SPEED);
-	}
-
 }
 
 
