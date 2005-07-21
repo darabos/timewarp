@@ -100,7 +100,7 @@ class GarashRepulsarStun: public SpaceObject
 public:
 	IDENTITY(GarashRepulsarStun);
 	OverrideControlGarash *ocg;
-	Ship *ship;
+	Ship *targetship;
 	int   stunframe;
 	int   stunframe_count;
 	int   frame_step;
@@ -305,7 +305,7 @@ void OverrideControlGarash::calculate(short *key)
 GarashRepulsarStun::GarashRepulsarStun(Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, int stunFrames)
 :
 SpaceObject(oship, oship->normal_pos(), 0.0, osprite),
-ship(oship), stunframe(0), stunframe_count(stunFrames),
+targetship(oship), stunframe(0), stunframe_count(stunFrames),
 frame_step(0), frame_size(ofsize), frame_count(ofcount)
 {
 	ocg = new OverrideControlGarash();
@@ -314,52 +314,74 @@ frame_step(0), frame_size(ofsize), frame_count(ofcount)
 	layer = LAYER_EXPLOSIONS;
 	sprite_index = 0;
 
-	ship->set_override_control(ocg);
+	targetship = oship;
+	targetship->set_override_control(ocg);
 }
 
 
 void GarashRepulsarStun::calculate()
 {
 	STACKTRACE;
-	if(!ship) targetIsDead = TRUE;
-	else {
-		if(!ship->exists()) targetIsDead = TRUE;
+
+	if(!targetship)
+	{
+		targetIsDead = TRUE;
+	} else {
+		if(!targetship->exists())
+			targetIsDead = TRUE;
 		else {
-			if(ship->crew<1) targetIsDead = TRUE;
-			if(ship->state==0) targetIsDead = TRUE;
+			
+			if(targetship->crew<1)
+				targetIsDead = TRUE;
+
+			if(targetship->state==0)
+				targetIsDead = TRUE;
+
 		}
 	}
+
 	//should prevent bad pointer crashes.
-	if(!targetIsDead) {
-		this->pos = ship->pos;
-		this->vel = ship->vel;
+	if(!targetIsDead)
+	{
+		this->pos = targetship->pos;
+		this->vel = targetship->vel;
 	}
+
 	//may crash if target dies while the stun is in place.
 	//targetIsDead SHOULD prevent this from happening.
 	frame_step+= frame_time;
-	while (frame_step >= frame_size) {
+
+	while (frame_step >= frame_size)
+	{
 		frame_step -= frame_size;
 		sprite_index++;
+
 		if(sprite_index == frame_count)
 			sprite_index = 0;
 	}
-	if(!(ship && ship->exists()))
+
+	if(!(targetship && targetship->exists()))
 	{
-		ship = 0;
+		//targetship = 0; no, we need this one more time.
 		state = 0;
-		ship->del_override_control(ocg);
-		return;
+		//targetship->del_override_control(ocg);
+		//return;
 	}
 	
 	
 	stunframe += frame_time;
-	if (stunframe >= stunframe_count) state = 0;
-	if(targetIsDead) this->state=0;
+
+	if (stunframe >= stunframe_count)
+		state = 0;
+	
+	if(targetIsDead)
+		state = 0;
+
 	SpaceObject::calculate();
 
 	if (!exists())
 	{
-		ship->del_override_control(ocg);
+		targetship->del_override_control(ocg);
 		return;
 	}
 }

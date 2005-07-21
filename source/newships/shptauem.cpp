@@ -298,7 +298,7 @@ void TauEMPJammer::calculate()
 	else
 	{
 		state = 0;
-		jamtarget = 0;
+		//jamtarget = 0; no, we need this once more.
 	}
 
 	if (!exists())

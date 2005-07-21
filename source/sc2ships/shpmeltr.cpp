@@ -273,7 +273,7 @@ void MelnormeDisable::calculate()
 	if (disableframe >= disableframe_count)
 	{
 		state = 0;
-		ship->del_override_control(ocm);
+		//ship->del_override_control(ocm);	is done later on.
 	}
 
 	SpaceObject::calculate();

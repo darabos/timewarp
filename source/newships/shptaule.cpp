@@ -586,6 +586,7 @@ void LeviathanJammer::calculate()
 		{
 			victim->del_override_control(ocl);
 			victim = 0;
+			state = 0;
 			return;
 		}
 		//((Ship*)victim)->nextkeys &= ~(keyflag::left + keyflag::right + keyflag::thrust);

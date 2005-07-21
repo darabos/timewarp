@@ -232,16 +232,16 @@ void Confusionator::calculate()
 
 	if ( !(t && t->exists()) )
 	{
-		t = 0;
+		//t = 0;	no, we need this once more
 		state = 0;
-		return;
+		//return;
 	}
 
 	if ( lifetime < 0 )
 	{
 		state = 0;
-		t->del_override_control(oci);
-		return;
+		//t->del_override_control(oci);
+		//return;
 	}
 
 	if (!exists())
