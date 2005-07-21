@@ -391,10 +391,15 @@ void XXXMangler::inflict_damage(SpaceObject *other)
 	if (SeparateSpit)
 	{
 		if (other != NULL)
-			if (!sameTeam(other) && other->isShip())
+		{
+			if (!sameTeam(other) && other->isShip() && other->mass)
 				other->accelerate (other, angle, weaponDartThrust  / (other->mass / 20), MAX_SPEED);
+		}
+
+		if (mass)
 			accelerate(this,angle+PI,weaponDartThrust  / mass,MAX_SPEED);
-			SeparateSpit = false;
+
+		SeparateSpit = false;
 	}
 
 	Ship::inflict_damage(other);

@@ -402,9 +402,12 @@ void NechanziMissile::calculate(void) {
 
 		}
 		if(isBurning==TRUE && isCoasting==FALSE) {
-			if(framesOfBurn>=0) {
+			if(framesOfBurn>=0)
+			{
 				framesOfBurn -= frame_time;
-          accelerate_gravwhip (this, facingAngle, acceleration / mass, maxSpeed);
+
+				if (mass > 0)
+					accelerate_gravwhip (this, facingAngle, acceleration / mass, maxSpeed);
 			}
 			else {
 				framesOfBurn = 0;

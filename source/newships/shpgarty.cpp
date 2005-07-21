@@ -201,7 +201,7 @@ if (repulse)
 
 			if (q.currento->isObject())
 			{
-				if (q.currento->mass)
+				if (q.currento->mass > 0)
 					q.currento->accelerate (q.currento, trajectory_angle(q.currento), 
 					specialRepulse / q.currento->mass, MAX_SPEED);
 

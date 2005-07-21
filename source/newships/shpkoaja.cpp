@@ -262,6 +262,8 @@ void KoanuaJavelinMissile::calculate(void) {
 		if(isBurning==TRUE && isCoasting==FALSE) {
 			if(framesOfBurn>=0) {
 				framesOfBurn -= frame_time;
+
+			if (mass > 0)
           accelerate_gravwhip (this, facingAngle, acceleration / mass, maxSpeed);
 			}
 			else {

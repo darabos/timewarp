@@ -433,7 +433,7 @@ void BoggCenturionMissile::calculate()
 
 void  BoggCenturionMissile::inflict_damage(SpaceObject *other)
 {
-        if ((!other->isPlanet()) && (other->mass))
+        if ((!other->isPlanet()) && (other->mass > 0))
                 other->accelerate(this, normalize(trajectory_angle(other), 360), blast_accel/other->mass, blast_maxspeed);
         Missile::inflict_damage(other);
 }

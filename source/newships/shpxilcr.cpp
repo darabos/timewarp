@@ -289,7 +289,13 @@ void XillzCrescentOrbiter::calculate()
 		Vector2 dv;
 		ang = trajectory_angle(centre);
 
-		b = WellSize / sqrt(distance(centre));
+		double L;
+		L = distance(centre);
+		if (L > 0)
+			b = WellSize / sqrt(L);
+		else
+			b = 1.0;
+
 		if (b > 1)
 			b = 1;
 

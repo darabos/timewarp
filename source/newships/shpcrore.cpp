@@ -153,16 +153,25 @@ void Crome::calculate()
                         p = specialRepulse * (1 - r) * frame_time;
                         t = specialTranslate * (1 - r) * frame_time;
 
-                        if (q.currento->isPlanet()) {
+						xp = p;
+						xt = t;
+
+                        if (q.currento->isPlanet())
+						{
+							if (mass >= 1)
+							{
                                 xp = p / sqrt(mass);
-                                xt = t / sqrt(mass); }
+						        xt = t / sqrt(mass);
+							}
+						}
 
                         else {
-                                if (q.currento->mass > 1) {
+                                if (q.currento->mass > 1 && mass > 1) {
                                         xp = (p / sqrt(mass)) * (1-1/sqrt(q.currento->mass));
                                         xt = (t / sqrt(mass)) * (1-1/sqrt(q.currento->mass));
                                         p /= sqrt(q.currento->mass);
-                                        t /= sqrt(q.currento->mass); } }
+                                        t /= sqrt(q.currento->mass); }
+						}
 
 //                        ovx = q.currento->get_vx();
 //                        ovy = q.currento->get_vy();

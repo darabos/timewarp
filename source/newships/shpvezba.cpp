@@ -310,19 +310,27 @@ void VezlagariBulkhead::calculate(void) {
   return;
 }
 
-void VezlagariBulkhead::inflict_damage(SpaceObject *other) {
-	STACKTRACE
-  int x;
-  if(other->isShip() || other->isAsteroid() || other->isPlanet()) {
-    damage(other, normal, direct);
-    //SpaceObject::inflict_damage(other);
-    if(creator) {
-      x = iround(1 - (damageAbsorbed / resilience));
-      if(x<0)x=0;
-		  if(!other->isPlanet()) other->accelerate (other, creator->trajectory_angle(other), creator->specialRepulse / other->mass, MAX_SPEED);
-      creator->accelerate (creator, other->trajectory_angle(creator), creator->specialRepulse / creator->mass, MAX_SPEED);
-    }
-  }  
+void VezlagariBulkhead::inflict_damage(SpaceObject *other)
+{
+	STACKTRACE;
+	int x;
+	if(other->isShip() || other->isAsteroid() || other->isPlanet())
+	{
+		damage(other, normal, direct);
+		//SpaceObject::inflict_damage(other);
+		if(creator) {
+			x = iround(1 - (damageAbsorbed / resilience));
+			
+			if(x < 0)
+				x = 0;
+			
+			if(!other->isPlanet() && other->mass)
+				other->accelerate (other, creator->trajectory_angle(other), creator->specialRepulse / other->mass, MAX_SPEED);
+
+			if (creator->mass)
+				creator->accelerate (creator, other->trajectory_angle(creator), creator->specialRepulse / creator->mass, MAX_SPEED);
+		}
+	}  
 }
 
 int VezlagariBulkhead::handle_damage(SpaceLocation *source, double normal, double direct) {

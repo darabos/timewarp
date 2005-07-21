@@ -124,7 +124,9 @@ int KorvianSidekick::activate_weapon()
   add(new SidekickMissile(
 	SidekickAngle, weaponVelocity,
     weaponDamage, weaponRange, weaponArmour, this, data->spriteWeapon));
-  accelerate(this, SidekickAngle, -WEAPON_MASS / mass * weaponVelocity, MAX_SPEED);
+
+  if (mass > 0)
+	accelerate(this, SidekickAngle, -WEAPON_MASS / mass * weaponVelocity, MAX_SPEED);
   recoil += recoil_rate;
 
   return(TRUE);
@@ -200,8 +202,11 @@ void KorvianSidekick::calculate()
 		double x = distance(tugger)-tuggerDistance;
 		//Vector2 v = tugger->pos-pos;
 		if(x > 0) {
-			accelerate(tugger, trajectory_angle(tugger), k*x / mass, abs(tugger->get_vel()));
-			tugger->accelerate(this, tugger->trajectory_angle(this), k*x / tugger->mass, MAX_SPEED);
+			if (mass > 0)
+				accelerate(tugger, trajectory_angle(tugger), k*x / mass, abs(tugger->get_vel()));
+
+			if (tugger->mass > 0)
+				tugger->accelerate(this, tugger->trajectory_angle(this), k*x / tugger->mass, MAX_SPEED);
 		}
 	}
 	if(tugger != NULL && tugger->exists() && !tugger->isInvisible()) {
@@ -276,8 +281,8 @@ SidekickMissile::SidekickMissile(double oangle, double ov, int odamage, double o
 }
 
 void SidekickMissile::inflict_damage(SpaceObject* other) {
-	if (other->mass) 
-		other->accelerate (this, this->angle, WEAPON_MASS / other->mass * abs(this->get_vel()), MAX_SPEED);
+	if (other->mass > 0) 
+		other->accelerate (this, this->angle, (WEAPON_MASS / other->mass) * abs(this->get_vel()), MAX_SPEED);
 	Missile::inflict_damage(other);
 }
 

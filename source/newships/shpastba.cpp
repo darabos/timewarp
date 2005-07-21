@@ -840,7 +840,10 @@ void BChain::BChainPhysics(SpaceObject *first, SpaceObject *second)
 	//Conservation of Momentum,
 	// as above, but now only in the direction of the bar:
 	double vfinal;
-	vfinal = ( first->mass * v1 + second->mass * v2) / (first->mass + second->mass);
+	if (first->mass + second->mass > 0)
+		vfinal = ( first->mass * v1 + second->mass * v2) / (first->mass + second->mass);
+	else
+		vfinal = 0;
 	
 	first->vel += (vfinal - v1) * L;
 	second->vel += (vfinal - v2) * L;
@@ -854,7 +857,8 @@ void BChain::BChainPhysics(SpaceObject *first, SpaceObject *second)
 	accel = 0;
 
 	v = magnitude( first->vel - L*first->vel.dot(L) );	// the perpendicular component
-	accel += L * (first->mass / second->mass) * sqr(v) / Seg_Distance;
+	if (second->mass > 0)
+		accel += L * (first->mass / second->mass) * sqr(v) / Seg_Distance;
 
 	SpaceObject *third;
 
@@ -866,7 +870,9 @@ void BChain::BChainPhysics(SpaceObject *first, SpaceObject *second)
 		L2 = unit_vector(third->angle);
 
 		v = magnitude( third->vel - L2*third->vel.dot(L2) );	// the perpendicular component
-		accel -= L2 * (third->mass / second->mass) * sqr(v) / Seg_Distance;
+
+		if (second->mass > 0)
+			accel -= L2 * (third->mass / second->mass) * sqr(v) / Seg_Distance;
 	}
 
 	// apply these accelerations:

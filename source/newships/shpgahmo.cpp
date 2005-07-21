@@ -612,7 +612,12 @@ void GahmurMonitor::CalculateTractorEffect() {
 	if(tractorTarget->mass>0.01) {
 		//tractorTarget->pos = pos + unit_vector(tractorAngle) * tractorLength;
 		tmass = mass + tractorTarget->mass;
-		TM = (vel * mass + tractorTarget->vel * tractorTarget->mass)/tmass;
+
+		if (tmass > 0)
+			TM = (vel * mass + tractorTarget->vel * tractorTarget->mass)/tmass;
+		else
+			TM = vel;
+
 		vtransfer = (specialVelocityCouplingFactor * frame_time) / (1+(specialVelocityCouplingFactor * frame_time));
 		vel = vel * (1-vtransfer) + TM * vtransfer;
 		tractorTarget->vel = tractorTarget->vel * (1-vtransfer) + TM * vtransfer;

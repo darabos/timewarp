@@ -183,7 +183,7 @@ Shot( creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite,
 
 void JyglarShot::inflict_damage( SpaceObject* other ){
 	STACKTRACE
-  if( other->mass && !other->isPlanet() ){
+  if( other->mass > 0 && !other->isPlanet() ){
     other->accelerate( this, other->trajectory_angle( beacon ), pull / other->mass, MAX_SPEED );
   }
   Shot::inflict_damage( other );

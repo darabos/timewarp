@@ -469,15 +469,23 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 	Vector2 _dp = unit_vector(dp);
 	tmp = dot_product(dv, _dp);
 	tmp = ( -2 * tmp );
-	tmp = tmp * (mass * other->mass) / (mass + other->mass);
+
+	if (mass + other->mass > 1)
+		tmp = tmp * (mass * other->mass) / (mass + other->mass);
+
 	if (tmp >= 0) {
-		vel += _dp * tmp / mass;
-		other->vel -= _dp * tmp / other->mass;
+		if (mass > 1)
+			vel += _dp * tmp / mass;
+		if (other->mass > 1)
+			other->vel -= _dp * tmp / other->mass;
 	}
 	
 	Vector2 nd;
 	nd = unit_vector(dp);
-	nd /= (mass + other->mass);
+
+	if (mass + other->mass > 1)
+		nd /= (mass + other->mass);
+
 	while (sprite->collide(iround(p1.x), iround(p1.y), sprite_index, iround(p2.x), iround(p2.y), 
 			other->get_sprite_index(), other->get_sprite() )) {
 		pos = normalize(pos + nd * other->mass);

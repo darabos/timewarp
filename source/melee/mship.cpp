@@ -667,13 +667,23 @@ void Ship::calculate()
 	target_pressed = target_next || target_prev || target_closest;
 
 	int i;
-	if (target_pressed && (!target_pressed_prev) && control) {
-		if (target_next) {
-			if (control && targets->N) {
+	if (target_pressed && (!target_pressed_prev) && control)
+	{
+
+		if (target_next)
+		{
+			if (control && targets->N)
+			{
 				i = control->index;
-				if (i < 0) i = 0;
-				while (1) {
+				if (i < 0)
+					i = 0;
+				if (i > targets->N - 1)
+					i = targets->N - 1;
+
+				while (1)
+				{
 					i = (i + 1) % targets->N;
+				
 					if (control->valid_target(targets->item[i])) {
 						control->set_target(i);
 						break;
@@ -687,17 +697,24 @@ void Ship::calculate()
 				}
 			}				
 		}
+
 		else if (target_prev) {
 			if (control && targets->N) {
 				i = control->index;
-				if (i < 0) i = 0;
+				
+				if (i < 0)
+					i = 0;
+				if (i > targets->N - 1)
+					i = targets->N - 1;
 
-				int k = 0;
+
+				int k = i;
 				while (1)
 				{
-					++k;
-					if ( k > targets->N - 1)
+					--k;
+					if ( k < 0 )
 						k = targets->N - 1;
+
 					if (k == i)
 					{
 						control->set_target(-1);

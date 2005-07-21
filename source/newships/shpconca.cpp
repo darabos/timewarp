@@ -446,7 +446,11 @@ void Chain::ChainPhysics(SpaceObject *first, SpaceObject *second)
 	//Conservation of Momentum,
 	// as above, but now only in the direction of the bar:
 	double vfinal;
-	vfinal = ( first->mass * v1 + second->mass * v2) / (first->mass + second->mass);
+
+	if (first->mass + second->mass > 1)
+		vfinal = ( first->mass * v1 + second->mass * v2) / (first->mass + second->mass);
+	else
+		vfinal = first->mass * v1 + second->mass * v2;
 	
 	first->vel += (vfinal - v1) * L;
 	second->vel += (vfinal - v2) * L;

@@ -208,7 +208,7 @@ void FierasArbiter::calculate()
 					nv -= specialVelocity*specialBounceFactor*rc;
 				
 					if (nv < 0) {
-						if (o->mass > 0)
+						if (o->mass > 0 && mass > 0)
 							k = o->mass / (mass*specialMassFactor);
 						else
 							k = 0;

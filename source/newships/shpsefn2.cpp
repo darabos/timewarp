@@ -445,11 +445,17 @@ int ShipPart2::collide_SpaceObject(SpaceObject *other)
 	Vector2 _dp = unit_vector(dp);
 	tmp = dot_product(dv, _dp);
 	tmp = ( -2 * tmp );
-	tmp = tmp * (mass * other->mass) / (mass + other->mass);
+
+	double a = mass + other->mass;
+	if (a > 0)
+		tmp = tmp * (mass * other->mass) / (a);
+
 	if (tmp >= 0) 
 	{
 		vel += _dp * tmp / mass;
-		other->vel -= _dp * tmp / other->mass;
+
+		if (other->mass > 0)
+			other->vel -= _dp * tmp / other->mass;
 	}
 	
 	Vector2 nd;

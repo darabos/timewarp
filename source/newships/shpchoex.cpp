@@ -43,7 +43,9 @@ AsteroidDebris::AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce)
   collide_flag=FALSE;
   sprite_index = random()%64;
   tractorForce=tforce;
-  this->accelerate(creator, this->trajectory_angle(creator), tractorForce / (this->mass * 2), 6);
+
+  if (mass > 0)
+	this->accelerate(creator, this->trajectory_angle(creator), tractorForce / (this->mass * 2), 6);
 }
 void AsteroidDebris::calculate()
 {
@@ -165,6 +167,7 @@ void ChoraliTractorBeam::inflict_damage(SpaceObject *other)
   {
     if ((other->mass > 0) && ( other->isShip() || other->isAsteroid() ))
       {
+
 	other->accelerate(this, other->trajectory_angle(this), tractorForce / (other->mass * 4), 2);
 	if(other->isShip())
 	  {
@@ -199,7 +202,8 @@ void ChoraliTractorBeam::inflict_damage(SpaceObject *other)
       }
     else if (other->isShot()) 
       {//if It's a weapon Shot
-	other->accelerate(this, (other->trajectory_angle(this) + PI), (tractorPushForce / ((other->mass * 3)+20)), MAX_SPEED);
+		if (other->mass > 0)
+		other->accelerate(this, (other->trajectory_angle(this) + PI), (tractorPushForce / ((other->mass * 3)+20)), MAX_SPEED);
 	
       }   
     state = 0;
@@ -521,11 +525,17 @@ int ChoraliExtractor::activate_special()
     {
 	if ((grabbed != NULL) && (grabbed->mass > 0))
 	{
-	  grabbed->accelerate(this, grabbed->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + this->mass), MAX_SPEED);
-	  this->accelerate(this, this->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + this->mass), MAX_SPEED);
+	if (grabbed->mass + mass > 0)
+	{
+		grabbed->accelerate(this, grabbed->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + this->mass), MAX_SPEED);
+
+		this->accelerate(this, this->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + this->mass), MAX_SPEED);
+	}
+
 	}
 	else
 	{
+		if (mass > 0)
 	  this->accelerate(this, this->trajectory_angle(spacePlanet), specialForce / this->mass, MAX_SPEED);
 	}
     }
