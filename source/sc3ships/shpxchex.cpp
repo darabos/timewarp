@@ -144,53 +144,52 @@ XchaggerDisable::XchaggerDisable(SpaceObject *creator, Ship *oship, SpaceSprite 
 
 void XchaggerDisable::calculate()
 {
-
+	
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
-		return;
 	}
-
+	
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
 		sprite_index++;
 		if(sprite_index == (lowerindex + frame_count))
 			sprite_index = lowerindex;
-		}
+	}
 	if(!(ship && ship->exists())) {
 		ship = 0;		// should be here cause you return before the other call
 		state = 0;
-		return;
-		}
+	}
 	if(!(target && target->exists() && target->isShip())) {
 		target = 0;
 		state = 0;
-		  affectship->del_override_control(ocx);
-		return;
-		}
-
-	Ship *t = (Ship*)target;
-
-	if (!lowerindex) {
-		pos = t->normal_pos();
-        } 
-	else {
-        pos = t->normal_pos() + (frame_time * t->get_vel());
-		SpaceObject::calculate();
-        }
-	disableframe += frame_time;
-	if (disableframe >= disableframe_count)
-	{
-		  affectship->del_override_control(ocx);
-		state = 0;
 	}
 
+	if (target)
+	{
+		Ship *t = (Ship*)target;
+		
+		if (!lowerindex) {
+			pos = t->normal_pos();
+		} 
+		else {
+			pos = t->normal_pos() + (frame_time * t->get_vel());
+			SpaceObject::calculate();
+		}
+		disableframe += frame_time;
+		if (disableframe >= disableframe_count)
+		{
+			state = 0;
+		}
+	}
+
+	// THIS CHECK IS NEEDED BEFORE RETURNING ...
 	if (!exists())
 	{
-	  affectship->del_override_control(ocx);
+		// note that target == affectship, so that if target is reset to 0, the affectship is still a valid pointer.
+		affectship->del_override_control(ocx);
 	}
-	return;
 }
 
 Ship *XchaggerDisable::return_disable()

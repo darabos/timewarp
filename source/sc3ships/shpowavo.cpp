@@ -6,6 +6,15 @@ REGISTER_FILE
 
 #define OWADISABLE_SPEC 0x36
 
+
+// allows other ships to affect control over a ship.
+class OverrideControlOwa : public OverrideControl
+{
+public:
+	virtual void calculate(short *key);
+};
+
+
 class OwaVoyager : public Ship {
 public:
 IDENTITY(OwaVoyager);
@@ -99,7 +108,9 @@ IDENTITY(OwaSpecial);
 
 class OwaDisable : public SpaceObject {
 public:
-IDENTITY(OwaDisable);
+	IDENTITY(OwaDisable);
+	Ship *targetship;
+	OverrideControlOwa *oco;
   int   disableframe;
   int   disableframe_count;
   int   frame_step;
@@ -237,6 +248,16 @@ void OwaShrapnel::calculate()
   return;
 }
 
+
+
+void OverrideControlOwa::calculate(short *key)
+{
+	*key &= ~(keyflag::left | keyflag::right | keyflag::thrust);
+}
+
+
+
+
 OwaDisable::OwaDisable(Ship *otarget, OwaSpecial *ocreator, SpaceSprite *osprite,
   int ofcount, int ofsize, int disableFrames,int lowerFrames) :
   SpaceObject(ocreator, otarget->normal_pos(), 0.0, osprite),
@@ -248,21 +269,35 @@ OwaDisable::OwaDisable(Ship *otarget, OwaSpecial *ocreator, SpaceSprite *osprite
   lowerindex(lowerFrames)
 {
 	target = otarget;
+
+	if ( target->isShip() )
+		targetship = (Ship*) target;
+	else
+		targetship = 0;
+
 	id = OWADISABLE_SPEC;
 	sprite_index = lowerFrames;
 	collide_flag_anyone = 0;
 	layer = LAYER_SPECIAL;
+
+	if (targetship)
+	{
+		oco = new OverrideControlOwa();
+		targetship->set_override_control(oco);
+	} else
+		oco = 0;
 }
+
 void OwaDisable::target_died() {
 	state = 0;
 	return;
 	}
+
 void OwaDisable::calculate() {
 
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
-		return;
 	}
 
 	frame_step+= frame_time;
@@ -272,18 +307,33 @@ void OwaDisable::calculate() {
 		if(sprite_index == (lowerindex + frame_count))
 			sprite_index = lowerindex;
 		}
+
 	if (!lowerindex) {
 		pos = target->normal_pos();
-		((Ship*)target)->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
+		//((Ship*)target)->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
 		}
 	else {
 		pos = target->normal_pos();
 		}
+
 	disableframe += frame_time;
 	if (disableframe >= disableframe_count) state = 0;
-	SpaceObject::calculate();
-	return;
+
+	if (!target->exists())
+	{
+		state = 0;
 	}
+
+	if (!exists() || !(target && targetship->exists()) )
+	{
+		if (targetship)
+			targetship->del_override_control(oco);
+	}
+
+	// the following can set target=0, so must be done last
+	SpaceObject::calculate();
+
+}
 
 Ship *OwaDisable::return_disable()
 {
@@ -303,27 +353,42 @@ OwaSpecial::OwaSpecial(Vector2 opos, double oangle,
 
 void OwaSpecial::animateExplosion() {}
 
-void OwaSpecial::inflict_damage(SpaceObject *other) {
-          if (other->isShip()) {
-            play_sound(data->sampleExtra[0]);
-            SpaceObject *o = NULL;
-            Query a;
-            int found = FALSE;
-            for (a.begin(this, ALL_LAYERS ,distance(other)+ 10);
-              a.current; a.next()) {
-		o = a.currento;
-		if ((o->getID()) == OWADISABLE_SPEC)
-		  if ((((OwaDisable *)o)->return_disable()) == other) {
-			((OwaDisable *)o)->reset_time();
-                        found = TRUE;
-	  }
-          if (!found) {
-          add(new OwaDisable(
-            (Ship *)(other), this, data->spriteExtraExplosion, 32, 40, disableFrames, 0));
-          add(new OwaDisable(
-            (Ship *)(other), this, data->spriteExtraExplosion, 32, 40, disableFrames, 32));
-          }  }   }
-        state = 0;
+void OwaSpecial::inflict_damage(SpaceObject *other)
+{
+	if (other->isShip()) {
+		play_sound(data->sampleExtra[0]);
+		
+		/*
+		SpaceObject *o = NULL;
+		Query a;
+		int found = FALSE;
+		for (a.begin(this, ALL_LAYERS ,distance(other)+ 10);
+		a.current; a.next())
+		{
+			o = a.currento;
+			if ((o->getID()) == OWADISABLE_SPEC)
+			{
+				if ((((OwaDisable *)o)->return_disable()) == other)
+				{
+					((OwaDisable *)o)->reset_time();
+					found = TRUE;
+				}
+			}
+				
+			if (!found)
+			{
+				add(new OwaDisable(
+					(Ship *)(other), this, data->spriteExtraExplosion, 32, 40, disableFrames, 0));
+				add(new OwaDisable(
+					(Ship *)(other), this, data->spriteExtraExplosion, 32, 40, disableFrames, 32));
+			}
+		}
+		*/
+
+		add(new OwaDisable(
+			(Ship *)(other), this, data->spriteExtraExplosion, 32, 40, disableFrames, 32));
+	}
+	state = 0;
 	return;
 }
 
