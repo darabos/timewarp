@@ -209,7 +209,9 @@ void KoanuaPatrolShip::calculate() {
 
 	if(turboTimeLeft>0) {
 		turboTimeLeft -= frame_time;
-	    this->nextkeys |= keyflag::thrust;
+	    //this->nextkeys |= keyflag::thrust;
+		if (control)
+			control->keys |= keyflag::thrust;
 	}
 	if(turboTimeLeft<=0&&turboOn==TRUE)
 	{

@@ -322,11 +322,11 @@ void BipoleKatamaran::calculate_turn_left(){
 	STACKTRACE
   if( !left || !right ) return;
   if( left->turn_left ){
-    left->nextkeys &= ~keyflag::thrust;
+//    left->nextkeys &= ~keyflag::thrust;	this disabling isn't really needed, cause sibling check is done there already ?
     left->accelerate(this, left->get_angle(), -extraBackThrust * accel_rate * frame_time, speed_max);
   }
   if( right->turn_left ){
-    right->nextkeys |= keyflag::thrust;
+//    right->nextkeys |= keyflag::thrust;
     right->accelerate(this, right->get_angle(), accel_rate * frame_time, speed_max);
   }
 }
@@ -334,11 +334,11 @@ void BipoleKatamaran::calculate_turn_right(){
 	STACKTRACE
   if( !left || !right ) return;
   if( left->turn_right ){
-    left->nextkeys |= keyflag::thrust;
+//    left->nextkeys |= keyflag::thrust;
     left->accelerate(this, left->get_angle(), accel_rate * frame_time, speed_max);
   }
   if( right->turn_right ){
-    right->nextkeys &= ~keyflag::thrust;
+//    right->nextkeys &= ~keyflag::thrust;
     right->accelerate(this, right->get_angle(), -extraBackThrust * accel_rate * frame_time, speed_max);
   }
 }

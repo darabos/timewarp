@@ -4,11 +4,23 @@ REGISTER_FILE
 
 /*
  * created by: cyhawk@sch.bme.hu
- */
+*/
+
+
+// allows other ships to affect control over a ship.
+class OverrideControlMorph : public OverrideControl
+{
+public:
+	virtual void calculate(short *key);
+};
+
+
 class KatPoly : public Ship {
 public:
 IDENTITY(KatPoly);
 // the ship
+
+	OverrideControlMorph *ocm;
 
   double weaponRange;
   double weaponVelocity;
@@ -73,6 +85,8 @@ KatPoly::KatPoly( Vector2 opos, double shipAngle,
   specialDrain   = get_config_int( "Special", "Drain", 0 );
 
   morph = NULL;  // start unmorphed
+
+  ocm = 0;
 }
 
 
@@ -81,9 +95,25 @@ KatPoly::KatPoly( Vector2 opos, double shipAngle,
 double  KatPoly::isInvisible() const{
 	return morph ? 1 : 0;
 }
-int KatPoly::handle_damage( SpaceLocation* other, double normal, double direct ){
-	STACKTRACE
-  if( !morph ) return Ship::handle_damage( other, normal, direct );
+
+int KatPoly::handle_damage( SpaceLocation* other, double normal, double direct )
+{
+	STACKTRACE;
+  if( !morph )
+  {
+	  Ship::handle_damage( other, normal, direct );
+  }
+
+  if (!exists())
+  {
+	  // you have to include this here, cause a ship can die by external causes (through a handle-damage)
+	  // in which case, the control override should be removed... well, not that it really matters, cause
+	  // then the morph also dies, but well..
+
+	  if (morph)
+		  morph->del_override_control(ocm);
+  }
+
   return 0;
 }
 void KatPoly::animate( Frame* space ){
@@ -91,11 +121,28 @@ void KatPoly::animate( Frame* space ){
   if( !morph ) Ship::animate( space );
 }
 
-void KatPoly::calculate(){
-	STACKTRACE
-	if( morph ){
-		morph->nextkeys &= ~keyflag::special;  // we will handle special so disable the morph's
-		if( !morph->exists() ) {
+
+void OverrideControlMorph::calculate(short *key)
+{
+	*key &= ~keyflag::special;  // we will handle special so disable the morph's
+}
+
+
+void KatPoly::calculate()
+{
+	STACKTRACE;
+
+	if( morph )
+	{
+		//morph->nextkeys &= ~keyflag::special;  // we will handle special so disable the morph's
+		//xxx hmmm ??
+		
+
+		if( !morph->exists() )
+		{
+			// first, remove the control override:
+			morph->del_override_control(ocm);
+
 			morph = 0;
 			state = 0;      // if the morph died we died as well
 			return;
@@ -111,11 +158,14 @@ void KatPoly::calculate_turn_left(){   if( !morph ) Ship::calculate_turn_left();
 void KatPoly::calculate_turn_right(){  if( !morph ) Ship::calculate_turn_right(); }
 void KatPoly::calculate_fire_weapon(){ if( !morph ) Ship::calculate_fire_weapon(); }
 
-int KatPoly::activate_weapon(){
-	STACKTRACE
-  game->add( new KatAnimatedShot( this, Vector2(0, -size.y/2), angle, weaponVelocity, weaponDamage,
-    weaponRange, weaponArmour, this, data->spriteWeapon, 64, time_ratio ));
-  return true;
+int KatPoly::activate_weapon()
+{
+	STACKTRACE;
+
+	game->add( new KatAnimatedShot( this, Vector2(0, -size.y/2), angle+PI, weaponVelocity, weaponDamage,
+		weaponRange, weaponArmour, this, data->spriteWeapon, data->spriteWeapon->frames(), time_ratio ));
+
+	return true;
 }
 
 void KatPoly::calculate_fire_special(){
@@ -150,7 +200,7 @@ int KatPoly::activate_special()
 	if( !(target && target->exists()) ) return false;               // we need a target
 	if( !target->isShip()) return false;
 
-	ShipType* morph_target;
+	ShipType* morph_target = 0;
 	
 	if( morph )
 	{                                // if we have already morphed
@@ -174,6 +224,10 @@ int KatPoly::activate_special()
 		morph->attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
 		morph->control = 0;
 
+		// remove the special-override for the morph
+		morph->del_override_control(ocm);
+		ocm = 0;
+
 	} else {                                      // if we have never yet morphed
 
 		morph_target = ((Ship*)target)->get_shiptype();      // we will morph to it
@@ -187,7 +241,10 @@ int KatPoly::activate_special()
 		id = 0;                                   // get immaterial
 	}
 	// create the new ship
-	// error: morph_target *can* be 0x000
+	if (!morph_target)
+	{
+		tw_error("Kat Poly: morph target == 0.");
+	}
 	morph = game->create_ship( morph_target->id, control, pos, angle, get_team() );
 	game->add( morph );              // add the ship
 	morph->materialize();                // materialize it
@@ -195,6 +252,11 @@ int KatPoly::activate_special()
 	morph->batt = batt - special_drain;  // [battery has to be decreased now]
 	morph->vel = vel;
 	update_panel = true;                 // maybe the colors changed
+
+	// add control-override for the morph (disable its special key)
+	ocm = new OverrideControlMorph();
+	morph->set_override_control(ocm);
+
 	return true;                         // we did it
 }
 

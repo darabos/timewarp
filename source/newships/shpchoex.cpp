@@ -3,8 +3,18 @@
 #include "../melee/mcbodies.h"
 
 REGISTER_FILE
+
+// allows other ships to affect control over a ship.
+class OverrideControlChorali : public OverrideControl
+{
+public:
+	virtual void calculate(short *key);
+};
+
+
+
 /*
-Since this is my first ship, I obviously nabbed a lot of this code from other ship files.
+Since this is my [Culture20] first ship, I obviously nabbed a lot of this code from other ship files.
 The sources of my inspiration:
   Chmmr Avatar for the planet-charge
   Mycon Podship for the Animated Homing Missile (Asteroid; if you haven't seen this yet, grab an asteroid and press fire again)
@@ -382,8 +392,8 @@ IDENTITY(ChoraliExtractor);
   int    tractorMaxBeams;
   int    tractorSpread;
   int    amt_beams;
-  
 
+  double grabbed_old_ship_angle, grabbed_old_enemy_angle;
   double old_angle;
 
   SpaceLocation *spacePlanet;
@@ -514,144 +524,159 @@ int ChoraliExtractor::activate_weapon()
 
 int ChoraliExtractor::activate_special()
 {
-	STACKTRACE
-
-  if(this->nearest_planet() != NULL)
+	STACKTRACE;
+	
+	if(this->nearest_planet() != NULL)
     {
-      spacePlanet = (SpaceLocation *) this->nearest_planet();
+		spacePlanet = (SpaceLocation *) this->nearest_planet();
     }
-
-  if (spacePlanet != NULL)
+	
+	if (spacePlanet != NULL)
     {
-	if ((grabbed != NULL) && (grabbed->mass > 0))
-	{
-	if (grabbed->mass + mass > 0)
-	{
-		grabbed->accelerate(this, grabbed->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + this->mass), MAX_SPEED);
+		if ((grabbed != NULL) && (grabbed->mass > 0))
+		{
+			if (grabbed->mass + mass > 0)
+			{
+				// a bit lame to accelerate towards the planet. It's nicer if you move to the planet yourself.
+				//grabbed->accelerate(this, grabbed->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + mass), MAX_SPEED);
+				//accelerate(this, trajectory_angle(spacePlanet), specialForce / (grabbed->mass + mass), MAX_SPEED);
 
-		this->accelerate(this, this->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + this->mass), MAX_SPEED);
-	}
+				grabbed->vel = vel;
 
-	}
-	else
-	{
-		if (mass > 0)
-	  this->accelerate(this, this->trajectory_angle(spacePlanet), specialForce / this->mass, MAX_SPEED);
-	}
+				double a = angle;//trajectory_angle(grabbed);
+				double dv = specialForce / (grabbed->mass + mass);
+
+				grabbed->accelerate(this, a, dv * grabbed->mass, MAX_SPEED);
+				accelerate(this, a+PI, dv * mass, MAX_SPEED);
+
+				latched = FALSE;
+				grabbed = NULL;
+				drillFrames = 0;
+			}
+			
+		}
+		else
+		{
+			if (mass > 0)
+				this->accelerate(this, trajectory_angle(spacePlanet), specialForce / mass, MAX_SPEED);
+		}
     }
-
-  return (true);
+	
+	return (true);
 }
 
 void ChoraliExtractor::calculate()
 {
-	STACKTRACE
-   if(drillFrames > 0) 
-     {
-       if(grabbed == NULL)
-	 {
-	   amt_beams=(random()%tractorMaxBeams)+1;
+	STACKTRACE;
+	if(drillFrames > 0) 
+	{
+		if(grabbed == NULL)
+		{
+			amt_beams=(random()%tractorMaxBeams)+1;
+			
+			for(int i=0;i<amt_beams;i++)
+			{
+				
+				add(new ChoraliTractorBeam(this, (double)(angle+(((random() % tractorSpread) - (tractorSpread/2))*ANGLE_RATIO) ),
+					makecol((random()%(tractorR-tractorRmin+1))+tractorRmin, (random()%(tractorG-tractorGmin+1))+tractorGmin, (random()%(tractorB-tractorBmin+1))+tractorBmin), 
+					tractorRange, tractorDamage, tractorRate, this, 0.0, 0.0, true, tractorForce, tractorPushForce));
+				
+			}
+			if(count>=PI)
+			{ count=0;
+			}
+			if(count==0)
+			{
+				play_sound2(data->sampleExtra[0]);
+			}
+			count++;
+			
+		}
 
-	   for(int i=0;i<amt_beams;i++)
-	     {
-	      
-	       add(new ChoraliTractorBeam(this, (double)(angle+(((random() % tractorSpread) - (tractorSpread/2))*ANGLE_RATIO) ),
-		      makecol((random()%(tractorR-tractorRmin+1))+tractorRmin, (random()%(tractorG-tractorGmin+1))+tractorGmin, (random()%(tractorB-tractorBmin+1))+tractorBmin), 
-		      tractorRange, tractorDamage, tractorRate, this, 0.0, 0.0, true, tractorForce, tractorPushForce));
-
-	     }
-	   if(count>=PI)
-	     { count=0;
-	     }
-	   if(count==0)
-	     {
-	       play_sound2(data->sampleExtra[0]);
-	     }
-	   count++;
-
-	 }
-
-       drillFrames-= frame_time;
-       if ((drillFrames <= 0) && (!latched)) 
-	 {
-	   play_sound2(data->sampleWeapon[0]);
-	 }
-     }
-   else 
-     {
-       latched = FALSE;
-       grabbed = NULL;
-     }
-
-   if (grabbed != NULL)
-     {
-       if (!(grabbed->exists()) || grabbed->damage_factor > 0)
-	 {
-		   // if it does not exist, or the target deals damage, then, release it again.
-		   // This is because of the following report:
-		   // "When a Chorhli grabs a guardian, it still hangs on if it goes into blazer form,
-		   // killing it almost instantly. A bit unfair, no. "
-
-	   latched = FALSE;
-	   grabbed = NULL;
-	 }
-     }
-
-   if (latched) 
-     {
-       damageFrameLeft-=frame_time;
-       if (damageFrameLeft <=0) 
-	 {
-	       damageFrameLeft += damageFrameAmount;
-	       if (drillDamageLeft < drillDamagePerDamageFrame)
-		 damage(grabbed, drillDamageLeft);
-	       else 
-		 {
-		   damage(grabbed,drillDamagePerDamageFrame);
-		   drillDamageLeft -= drillDamagePerDamageFrame; 
-		 }
-
-
-	 }
-       grabangle = (grabbed->get_angle() - grabshipangle) + grabangle;
-
-       grabshipangle = grabbed->get_angle();
-       if(grabbed->isShip())
-	 {
-	   //turn enemy when ChoraliExtractor turns
-	   ((Ship*)grabbed)->turn_step -= (old_angle - angle);
-
-	   //limit enemy movement
-	   ((Ship*)grabbed)->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
-
-
-	   //twist the enemy
-	   if (grabbed->trajectory_angle(this) <= grabbed->get_angle() )
-	     {
-	       if ((grabbed->get_angle() - grabbed->trajectory_angle(this)) <= PI)
-		 {((Ship*)grabbed)->angle+=CH_TWIST_ANGLE*frame_time/25.0;
-		 }
-	       else
-		 {((Ship*)grabbed)->angle-=CH_TWIST_ANGLE*frame_time/25.0;
-		 }
-	     }
-	   else
-	     {
-	       if ((grabbed->trajectory_angle(this) - grabbed->get_angle()) <= PI)
-		 {((Ship*)grabbed)->angle-=CH_TWIST_ANGLE*frame_time/25.0;
-		 }
-	       else
-		 {((Ship*)grabbed)->angle+=CH_TWIST_ANGLE*frame_time/25.0;
-		 }	    
-	     }
-	   
-	 }
-       
-	   grabbed->pos = this->normal_pos() - unit_vector(angle+PI) * grabdistance;
-	   grabbed->vel = this->vel;
-     }
-   old_angle = angle;
-   Ship::calculate();
+		drillFrames-= frame_time;
+		if ((drillFrames <= 0) && (!latched)) 
+		{
+			play_sound2(data->sampleWeapon[0]);
+		}
+	}
+	else 
+	{
+		latched = FALSE;
+		grabbed = NULL;
+	}
+	
+	if (grabbed != NULL)
+	{
+		if (!(grabbed->exists()) || grabbed->damage_factor > 0)
+		{
+			// if it does not exist, or the target deals damage, then, release it again.
+			// This is because of the following report:
+			// "When a Chorhli grabs a guardian, it still hangs on if it goes into blazer form,
+			// killing it almost instantly. A bit unfair, no. "
+			
+			latched = FALSE;
+			grabbed = NULL;
+		}
+	}
+	
+	if (latched) 
+	{
+		damageFrameLeft-=frame_time;
+		if (damageFrameLeft <=0) 
+		{
+			damageFrameLeft += damageFrameAmount;
+			if (drillDamageLeft < drillDamagePerDamageFrame)
+				damage(grabbed, drillDamageLeft);
+			else 
+			{
+				damage(grabbed,drillDamagePerDamageFrame);
+				drillDamageLeft -= drillDamagePerDamageFrame; 
+			}
+			
+			
+		}
+		grabangle = (grabbed->get_angle() - grabshipangle) + grabangle;
+		
+		grabshipangle = grabbed->get_angle();
+		if(grabbed->isShip())
+		{
+			//turn enemy when ChoraliExtractor turns
+			//	   ((Ship*)grabbed)->turn_step -= (old_angle - angle);
+			
+			//limit enemy movement
+			//((Ship*)grabbed)->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
+			// easier: override enemy position (uhm... but that's done below) and enemy angle (here).
+			grabbed->angle = grabbed_old_enemy_angle + (angle - grabbed_old_ship_angle);
+			((Ship*)grabbed)->turn_step = 0;
+			
+			
+			//twist the enemy
+			if (grabbed->trajectory_angle(this) <= grabbed->get_angle() )
+			{
+				if ((grabbed->get_angle() - grabbed->trajectory_angle(this)) <= PI)
+				{((Ship*)grabbed)->angle+=CH_TWIST_ANGLE*frame_time/25.0;
+				}
+				else
+				{((Ship*)grabbed)->angle-=CH_TWIST_ANGLE*frame_time/25.0;
+				}
+			}
+			else
+			{
+				if ((grabbed->trajectory_angle(this) - grabbed->get_angle()) <= PI)
+				{((Ship*)grabbed)->angle-=CH_TWIST_ANGLE*frame_time/25.0;
+				}
+				else
+				{((Ship*)grabbed)->angle+=CH_TWIST_ANGLE*frame_time/25.0;
+				}	    
+			}
+			
+		}
+		
+		grabbed->pos = this->normal_pos() - unit_vector(angle+PI) * grabdistance;
+		grabbed->vel = this->vel;
+	}
+	old_angle = angle;
+	Ship::calculate();
 }
 
 int ChoraliExtractor::canCollide(SpaceObject *other)
@@ -674,45 +699,47 @@ void ChoraliExtractor::animate(Frame *space)
 
 void ChoraliExtractor::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
-  if (drillFrames > 0)
+	STACKTRACE;
+	if (drillFrames > 0)
     {
-      if (!latched)
-	{
-	  if ((!(sameTeam(other))) && (other->isShip() || other->isAsteroid())) 
-	    {
-	      if((this->trajectory_angle(other) <= angle+45) && (this->trajectory_angle(other) >= angle-45))
+		if (!latched)
 		{
-		  latched=TRUE;
-		  grabbed= (SpaceObject *) other;
-		  grabbed->vel = this->vel;
-		  grabangle= (trajectory_angle(other) );
-		  grabdistance = (distance(other) * 1.1);
-		  grabshipangle = (other->get_angle());
-		  drillDamageLeft = weaponDamage;
-		  play_sound2(data->sampleExtra[1]);
-		  if ((drillFrames / frame_time)< weaponDamage) 
-		    {
-		      drillDamagePerDamageFrame = (weaponDamage/drillFrames)
-			+ ((weaponDamage % drillFrames) > 0.00001);
-		      damageFrameLeft = 1;
-		      damageFrameAmount = 1;
-		    } 
-		  else 
-		    {
-		      damageFrameAmount = (drillFrames/weaponDamage);
-		      damageFrameLeft = damageFrameAmount;
-		      drillDamagePerDamageFrame = 0;
-		    }
+			if ((!(sameTeam(other))) && (other->isShip() || other->isAsteroid())) 
+			{
+				if((this->trajectory_angle(other) <= angle+45) && (this->trajectory_angle(other) >= angle-45))
+				{
+					latched=TRUE;
+					grabbed= (SpaceObject *) other;
+					grabbed->vel = this->vel;
+					grabangle= (trajectory_angle(other) );
+					grabdistance = (distance(other) * 1.1);
+					grabshipangle = (other->get_angle());
+					grabbed_old_enemy_angle = other->get_angle();
+					grabbed_old_ship_angle = angle;
+					drillDamageLeft = weaponDamage;
+					play_sound2(data->sampleExtra[1]);
+					if ((drillFrames / frame_time)< weaponDamage) 
+					{
+						drillDamagePerDamageFrame = (weaponDamage/drillFrames)
+							+ ((weaponDamage % drillFrames) > 0.00001);
+						damageFrameLeft = 1;
+						damageFrameAmount = 1;
+					} 
+					else 
+					{
+						damageFrameAmount = (drillFrames/weaponDamage);
+						damageFrameLeft = damageFrameAmount;
+						drillDamagePerDamageFrame = 0;
+					}
+				}
+			}
 		}
-	    }
-	}
-      else //if latched
-	{
-	  
-	}
+		else //if latched
+		{
+			
+		}
     }
-  Ship::inflict_damage(other);
+	Ship::inflict_damage(other);
 }
 
 

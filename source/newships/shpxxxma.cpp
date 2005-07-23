@@ -8,7 +8,6 @@ REGISTER_FILE
 
 #include "shpilwsp.h"
 
-
 //class XXXManglerMine;
 
 class XXXMangler : public Ship {
@@ -283,7 +282,9 @@ void XXXMangler::calculate()
 		angle=grabangle;
 		grabshipangle = normalize(grabbed->get_angle(),PI2);
 		
-		nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special | keyflag::fire);
+		//nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special | keyflag::fire);
+		if (control)
+			control->keys &= ~(keyflag::left | keyflag::right | keyflag::thrust | keyflag::special | keyflag::fire);
 		
 		//      x = grabbed->normal_x()- (cos(grabangle ) * grabdistance);
 		//      y = grabbed->normal_y()- (sin(grabangle ) * grabdistance);

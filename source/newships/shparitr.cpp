@@ -86,7 +86,10 @@ void trapShip::calculate()
     if(ship->batt > 0)
       {
         pos = ship->normal_pos();
-        ship->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::special | keyflag::thrust | keyflag::back | keyflag::fire | keyflag::altfire);
+
+
+		// the ship is probably nicer without this "trap" ability.
+        //ship->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::special | keyflag::thrust | keyflag::back | keyflag::fire | keyflag::altfire);
 
 		// must be unconditional, outside the loop (otherwise virtually 1 extra loop/waittime is added)
          ++drainRate;

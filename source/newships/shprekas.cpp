@@ -90,7 +90,7 @@ void RekojAssassin::calculate()
 				 specialMatchSpeed = false;
 
 			if (specialMatchSpeed) {
-				nextkeys &= ~(keyflag::thrust);
+				control->keys &= ~(keyflag::thrust);
 				recharge_step=0;
 				//recharge_rate=0;//Bad!
 				recharge_amount=0;

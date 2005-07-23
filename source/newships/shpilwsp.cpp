@@ -172,9 +172,10 @@ void IlwrathSpiderMine::inflict_damage(SpaceObject *other)
     play_sound2( data->sampleExtra[0], 512, freq<500?500:freq );
     game->add( new FixedAnimation( this, other, data->spriteExtra, 0, data->spriteExtra->frames(), time_ratio, LAYER_EXPLOSIONS ));
 
-    if( other->vel != 0 ){
+    if( other->vel != 0 )
+	{
 		other->vel = 0;
-        if( other->isShip() ) ((Ship*)other)->nextkeys &= ~(keyflag::thrust | keyflag::left | keyflag::right);
+        //if( other->isShip() ) ((Ship*)other)->nextkeys &= ~(keyflag::thrust | keyflag::left | keyflag::right);
 
         game->add( new IlwrathStop( this, other, stoptime ));
     }
@@ -190,45 +191,68 @@ IlwrathSpiderMine::IlwrathSpiderMine( SpaceLocation *creator, double ox, double 
 }
 
 IlwrathStop::IlwrathStop( SpaceLocation* creator, SpaceObject* ovictim, int olife ):
-  SpaceLocation( creator, 0, 0 ),
-  victim( ovictim ), life( olife )
+SpaceLocation( creator, 0, 0 ),
+victim( ovictim ), life( olife )
 {
-  if( victim ){
-    if( !victim->exists() ){
-      victim = 0;
-      state = 0;
-    }else{
-      if( victim->isShot() ){
-        old_v = ((Shot*)victim)->v;
-        ((Shot*)victim)->v = 0;
-      }else{
-        old_v = 0;
-      }
-    }
-  }
+	if( victim )
+	{
+		if( !victim->exists() )
+		{
+			victim = 0;
+			state = 0;
+		} else {
+			if( victim->isShot() )
+			{
+				old_v = ((Shot*)victim)->v;
+				((Shot*)victim)->v = 0;
+			} else {
+				old_v = 0;
+
+				// reduce turn rate
+				if (victim->isShip())
+					((Ship*)victim)->turn_rate *= 0.5;
+			}
+		}
+	}
 }
 
 void IlwrathStop::calculate()
 {
-	STACKTRACE
-  SpaceLocation::calculate();
-  if( !(victim && victim->exists()) )
-  {
-    victim = 0;
-    state = 0;
-    return;
-  }
-  if( victim->isShip() ) ((Ship*)victim)->nextkeys &= ~(keyflag::thrust | keyflag::left | keyflag::right);
-  victim->vel = 0;
+	STACKTRACE;
+	SpaceLocation::calculate();
+	
+	if( !(victim && victim->exists()) )
+	{
+		victim = 0;
+		state = 0;
+	}
+	
+	if (victim)
+	{
+		//if( victim->isShip() ) ((Ship*)victim)->nextkeys &= ~(keyflag::thrust | keyflag::left | keyflag::right);
+		// this is not necessary, cause the velocity is already being overridden. And who cares about left/right.
+		victim->vel = 0;
+		
+		life -= frame_time;
+		if( life <= 0 ){
+			state = 0;
+			if( victim->isShot() ){
+				((Shot*)victim)->v = old_v;
+				victim->vel = old_v * unit_vector(victim->get_angle());
+			}
+		}
+	}
+	
+	if (!exists())
+	{
+		if (victim)
+		{
+			// restore turn rate
+			if (victim->isShip())
+				((Ship*)victim)->turn_rate *= 2.0;
+		}
+	}
 
-  life -= frame_time;
-  if( life <= 0 ){
-    state = 0;
-    if( victim->isShot() ){
-      ((Shot*)victim)->v = old_v;
-	  victim->vel = old_v * unit_vector(victim->get_angle());
-    }
-  }
 }
 
 REGISTER_SHIP(IlwrathSpider)
