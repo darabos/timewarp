@@ -287,8 +287,7 @@ void SlylandroLaserNew::calculate()
 	
 	Presence::calculate();
 
-	double
-		relativelifetime = lifetime / existtime;	// a value increasing from 0 to 1
+	double relativelifetime = lifetime / existtime;	// a value increasing from 0 to 1
 	
 	Vector2 S, D;
 	
@@ -296,9 +295,13 @@ void SlylandroLaserNew::calculate()
 	
 	int directedbeam;
 	if (!(target && target->exists()))
+	{
 		directedbeam = 0;
-	else
+		target = 0;
+	} else {
 		directedbeam = 1;
+	}
+
 
 	if ( directedbeam )
 		D = min_delta(target->pos, mother->pos, map_size);
@@ -315,7 +318,7 @@ void SlylandroLaserNew::calculate()
 	int iline;
 	
 	SpaceSprite *tsprite;
-	if ( directedbeam )
+	if ( directedbeam && target->ship && target->ship->exists() )
 		tsprite = target->ship->get_sprite();
 	else
 		tsprite = 0;
