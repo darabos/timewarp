@@ -271,6 +271,8 @@ MonoMissile::MonoMissile( SpaceLocation* creator, double ox, double oy, double o
   from_beacon = to_beacon = NULL;
   set_up_beacons();
   last_target = target;
+
+  attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void MonoMissile::calculate() {
