@@ -200,6 +200,9 @@ int ControlWussie::think ()
 		tw_error("WussieBot is not on a local channel. It should be, though.");
 	}
 
+	if (!(ship && ship->exists()))
+		ship = 0;
+
 	if (!ship)
 		return 0;
 
