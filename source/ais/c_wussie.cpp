@@ -322,7 +322,7 @@ int ControlWussie::think ()
 						// except if you're really much faster than the enemy
 						
 						double b;
-						b = ship->trajectory_angle(target);
+						b = ship->trajectory_angle(ship->target);
 						a = ship->angle - b;
 						while (a < -PI)	a += PI2;
 						while (a > PI)	a -= PI2;
@@ -952,9 +952,20 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 						get_config_int (states, "BattRecharge", 0);
 				}
 			}
+
+			// default to 0, if there's no such override setting.
 			planet_safe[k] = get_config_int (states, "Planet_Distance", 0);
-//  if (planet_safe[k] == 0); //Launchpad, is this supposed to be here?
-			planet_safe[k] = 75 * get_config_int ("ship", "Mass", 8);
+
+			if (planet_safe[k] == 0) //Launchpad, is this supposed to be here? Geo: yes, otherwise you can't have auto/override settings
+			{
+				planet_safe[k] = 75 * get_config_int ("ship", "Mass", 8);
+				if (planet_safe[k] > 800.0)
+					planet_safe[k] = 800.0;		// let's not make it too big.
+				if (planet_safe[k] < 400.0)
+					planet_safe[k] = 400.0;		// let's not make it too small.
+				// note that a planet can be pretty big by itself ...
+			}
+
 			option_velocity[k][0] =
 				scale_velocity (get_config_float
 							 (states, "Weapon_Velocity", 0));
