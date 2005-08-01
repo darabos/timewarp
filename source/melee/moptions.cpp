@@ -423,6 +423,7 @@ OPTIONS_DIALOG_RELATIVITY_TEXT,
 OPTIONS_DIALOG_RELATIVITY_SLIDER,
 OPTIONS_DIALOG_FRIENDLY_FIRE,
 OPTIONS_DIALOG_HIDE_CLOAKERS,
+OPTIONS_DIALOG_SHOW_RED_CLOAKER,
 OPTIONS_DIALOG_3DPLANET,
 OPTIONS_DIALOG_SYNCLAG,
 OPTIONS_DIALOG_DESYNCTEST,
@@ -462,7 +463,8 @@ DIALOG old_optionsDialog[] =
    { d_slider_proc,   212, 96,  160, 16,  255, 0,   0,    0,      1000,0,   NULL,                       NULL, NULL          },
    { d_check_proc,    40,  140, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Friendly Fire",     NULL, NULL          },	//OPTIONS_DIALOG_FRIENDLY_FIRE,
    { d_check_proc,    40,  155, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Camera hides cloakers",     NULL, NULL  },	//OPTIONS_DIALOG_HIDE_CLOAKERS,
-   { d_check_proc,    40,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"3D Planet",         NULL, NULL          },	//OPTIONS_DIALOG_3DPLANET,
+   { d_check_proc,    40,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Show red cloakers",			NULL, NULL  },	//OPTIONS_DIALOG_SHOW_RED_CLOAKER,
+   { d_check_proc,    40,  185, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"3D Planet",         NULL, NULL          },	//OPTIONS_DIALOG_3DPLANET,
    { d_check_proc,    200,  140, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Synched-lag",       NULL, NULL          },	//OPTIONS_DIALOG_SYNCLAG,
    { d_check_proc,    200,  155, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Desynch-test",      NULL, NULL          },	//OPTIONS_DIALOG_DESYNCTEST,
    { d_check_proc,    200,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Optimize latency",  NULL, NULL          },	//OPTIONS_DIALOG_OPTIMIZE4LATENCY,
@@ -516,6 +518,11 @@ void change_options() {STACKTRACE
 		old_optionsDialog[OPTIONS_DIALOG_HIDE_CLOAKERS].flags = D_SELECTED;
 	else
 		old_optionsDialog[OPTIONS_DIALOG_HIDE_CLOAKERS].flags = 0;
+
+	if (get_config_int("View", "ShowRedCloaker", 1)) 
+		old_optionsDialog[OPTIONS_DIALOG_SHOW_RED_CLOAKER].flags = D_SELECTED;
+	else
+		old_optionsDialog[OPTIONS_DIALOG_SHOW_RED_CLOAKER].flags = 0;
 
 	if (get_config_int("Planet", "PlanetDimension", 2) == 3) 
 		old_optionsDialog[OPTIONS_DIALOG_3DPLANET].flags = D_SELECTED;
@@ -600,7 +607,13 @@ void change_options() {STACKTRACE
 	if (old_optionsDialog[OPTIONS_DIALOG_HIDE_CLOAKERS].flags & D_SELECTED) 
 		i = 1;
 	else i = 0;
-	twconfig_set_int("/cfg/server.ini/view/camerahidescloakers", i);
+	twconfig_set_int("/cfg/server.ini/view/CameraHidesCloakers", i);
+
+	if (old_optionsDialog[OPTIONS_DIALOG_SHOW_RED_CLOAKER].flags & D_SELECTED) 
+		i = 1;
+	else i = 0;
+	twconfig_set_int("/cfg/server.ini/view/ShowRedCloaker", i);
+	
 
 	if (old_optionsDialog[OPTIONS_DIALOG_SYNCLAG].flags & D_SELECTED) 
 		i = 1;

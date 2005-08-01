@@ -30,15 +30,20 @@ Asteroid::Asteroid()
 	vel = unit_vector(angle) * (speed * 0.05);
 
 	armour = 0.99;//*tau*
+
+	sprite_index = random(sprite->frames());
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void Asteroid::calculate()
-{STACKTRACE
+{
+	STACKTRACE;
+
 	step-= frame_time;
 	while(step <= 0) {
 		step += speed * time_ratio;
 		sprite_index++;
-		if(sprite_index == ASTEROID_FRAMES)
+		if(sprite_index == sprite->frames())
 			sprite_index = 0;
 	}
 

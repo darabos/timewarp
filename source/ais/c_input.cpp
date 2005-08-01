@@ -165,12 +165,23 @@ int ControlHuman::think() {
 	if (key_pressed(thrust)) r |= keyflag::thrust;
 	if (key_pressed(back)) r |= keyflag::back;
 	if (key_pressed(left)) r |= keyflag::left;
-	if (key_pressed(right)) r |= keyflag::right;
-	if (key_pressed(fire)) r |= keyflag::fire;
-	if (key_pressed(altfire)) r |= keyflag::altfire;
-	if (key_pressed(special)) r |= keyflag::special;
-	if (key_pressed(next)) r |= keyflag::next;
-	if (key_pressed(prev)) r |= keyflag::prev;
+	if (key_pressed(right))
+		r |= keyflag::right;
+	if (key_pressed(fire))
+		r |= keyflag::fire;
+
+	if (key_pressed(altfire))
+		r |= keyflag::altfire;
+
+	if (key_pressed(special))
+		r |= keyflag::special;
+
+	if (key_pressed(next))
+		r |= keyflag::next;
+
+	if (key_pressed(prev))
+		r |= keyflag::prev;
+
 	if (key_pressed(closest)) r |= keyflag::closest;
 	if (key_pressed(extra1)) r |= keyflag::extra1;
 	if (key_pressed(extra2))

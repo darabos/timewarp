@@ -636,7 +636,7 @@ bool NetLog::add_listen(int port)
 		if (i)
 			return false;
 
-		idle(1);
+		idle(10);
 	}
 
 	++num_connections;

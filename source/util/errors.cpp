@@ -15,7 +15,7 @@ void dump_physics(const char *message)
 	sprintf(fname, "tw_error.txt");
 
 	FILE *f;
-	f = fopen(fname, "at");
+	f = fopen(fname, "wt");
 	if (!f)
 		return;
 

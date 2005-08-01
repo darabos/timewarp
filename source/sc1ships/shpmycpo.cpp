@@ -66,6 +66,8 @@ MyconPlasma::MyconPlasma(Vector2 opos, double oangle, double ov,
 	collide_flag_sameship |= bit(LAYER_SHIPS);
 	collide_flag_sameteam |= bit(LAYER_SHIPS);
 	debug_id = 1015;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void MyconPlasma::calculate()

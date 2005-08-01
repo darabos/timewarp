@@ -531,8 +531,20 @@ void log_data(void *data, int size, int channel)
 	return;
 }
 
-bool is_local (int channel) {
-	return (glog->get_direction (channel) & Log::direction_write);
+bool log_empty(int channel)
+{
+	if (glog->log_pos[channel] == glog->log_len[channel])
+		return true;
+	else
+		return false;
+}
+
+bool is_local (int channel)
+{
+	if (is_bot(channel))
+		return true;
+	else
+		return (glog->get_direction (channel) & Log::direction_write);
 }
 
 bool is_bot( int channel )

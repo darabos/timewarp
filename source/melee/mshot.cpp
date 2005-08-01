@@ -159,6 +159,7 @@ AnimatedShot::AnimatedShot(SpaceLocation *creator, Vector2 rpos,
 	frame_size(ofsize),
 	frame_step(ofsize)
 {
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void AnimatedShot::calculate() {

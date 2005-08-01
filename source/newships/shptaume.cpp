@@ -30,6 +30,8 @@ public:
 	virtual void calculate_turn_right();
 	virtual void calculate_turn_left();
 	virtual void calculate_fire_special();
+
+	virtual void calculate_index();
 };
 
 class TauMercuryShot : public AnimatedShot
@@ -94,6 +96,8 @@ TauMercury::TauMercury(Vector2 opos, double shipAngle, ShipData *shipData, unsig
 
 	bank_position = 0;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
+
 }
 
 int TauMercury::activate_weapon()
@@ -128,6 +132,34 @@ void TauMercury::calculate_turn_left()
 		if (!turn_lag)
 			turn_step -= turn_rate * frame_time; }
 }
+
+void TauMercury::calculate_index()
+{
+
+	if (bank_position > bank_max)
+		bank_position = bank_max;
+	if (bank_position < -bank_max)
+		bank_position = -bank_max;
+
+	int ic = 0;
+	if (fabs(bank_position)>0.5) {
+		if (bank_position > 0)
+			ic = iround(6 + floor(bank_position + 0.5));
+		else
+			ic = iround(floor(-bank_position + 0.5));
+	}
+
+	sprite_index = get_index(angle) + ic*64;
+
+	if (sprite_index < 0 || sprite_index >= sprite->frames())
+	{
+		int N = sprite->frames();
+		tw_error("wrong number of frames in %s!!", get_identity());
+		//1740
+		//ic==12
+	}
+}
+
 
 void TauMercury::calculate()
 {
@@ -168,29 +200,10 @@ void TauMercury::calculate()
 		turn_step += turn_rate * frame_time * tmp1; }
 	
 	
+	//  it's assumed that the sprite_index is updated here
 	Ship::calculate();
 
-	if (bank_position > bank_max)
-		bank_position = bank_max;
-	if (bank_position < -bank_max)
-		bank_position = -bank_max;
 
-	int ic = 0;
-	if (fabs(bank_position)>0.5) {
-		if (bank_position > 0)
-			ic = iround(6 + floor(bank_position + 0.5));
-		else
-			ic = iround(floor(-bank_position + 0.5));
-	}
-
-	sprite_index += ic*64;
-
-	if (sprite_index < 0 || sprite_index >= sprite->frames())
-	{
-		tw_error("wrong number of frames!!");
-		//1740
-		//ic==12
-	}
 
 	if (locked_rail) {
 		tt = unit_vector(angle);

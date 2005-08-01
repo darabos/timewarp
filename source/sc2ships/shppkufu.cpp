@@ -34,8 +34,9 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 	game->add(new Animation(this, pos,	meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 
+
 	
-	if (random() % 2) {
+	if ( (random() & 1) == 0) {
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH){
 			game->ship_died(this, source);
 			attributes &= ~ATTRIB_NOTIFY_ON_DEATH;

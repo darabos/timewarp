@@ -217,27 +217,40 @@ int NetTCP::listen(int port, int (*cancel_callback)()) {
 #		endif
 #	endif
 	SOCKET new_socket;
-	while (true) {
-		while (!ready2recv()) if (cancel_callback && cancel_callback()) {
-			close_socket(s);
-			s = INVALID_SOCKET;
-			return -4;
+	while (true)
+	{
+		while (!ready2recv())
+		{
+			
+			if (cancel_callback && cancel_callback())
+			{
+				close_socket(s);
+				s = INVALID_SOCKET;
+				return -4;
 			}
+
+			idle(10);
+		}
+			
 		tmp = sizeof(sockaddr_in);
+		
 		if ((new_socket = accept(s, (sockaddr *) &other, &tmp)) != INVALID_SOCKET) {
 			close_socket(s);
 			s = new_socket;
-
+			
 			set_nonblocking(s);
-
+			
 			// added GEO.
 			char *str;
 			str = inet_ntoa(other.sin_addr);	// rewrites the address into string-dotted-format
 			strcpy(addr, str);
-
+			
 			return 0;
-			}
 		}
+
+		idle(10);
+	}
+
 	throw("NetTCP::listen: WTF?");
 
 	return 0;

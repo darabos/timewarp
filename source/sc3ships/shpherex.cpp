@@ -108,7 +108,7 @@ void HeraldExterminator::animate(Frame *space)
 				pallete_color[cloak_color[cloak_frame / 100]], space);
 	} else if ((cloak_frame >= 300))
 	{
-		if (is_bot(control->channel) || !is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
+		if (!show_red_cloaker || is_bot(control->channel) || !is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
 			sprite->animate_character( pos, sprite_index, pallete_color[0], space);
 		else
 			sprite->animate_character( pos, sprite_index, pallete_color[4], space);

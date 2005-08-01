@@ -178,14 +178,23 @@ TauDaggerShot::TauDaggerShot(SpaceLocation *creator, Vector2 opos, double oangle
 	explosionSample = data->sampleSpecial[1];
 	s_ind = 0;
 
-	add(new Animation(this, pos, data->spriteExtra, 0, 10, 25, DEPTH_HOTSPOTS+0.25));
+	add(new Animation(this, pos, data->spriteExtra, 0, data->spriteExtra->frames(), 25, DEPTH_HOTSPOTS+0.25));
 }
 
 
 void TauDaggerShot::animate(Frame *space)
 {
-	STACKTRACE
-	sprite->animate(pos, sprite_index + 64 * s_ind, space);
+	STACKTRACE;
+
+	int k;
+	k = sprite_index + 64 * s_ind;
+	int n = sprite->frames();
+	if ( k >= n)
+	{
+		tw_error("sprite index error in %s", get_identity() );
+	}
+
+	sprite->animate(pos, k, space);
 	s_ind = (s_ind + 1) % 2;
 }
 

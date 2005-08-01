@@ -26,8 +26,12 @@ void log_data (void *data, int length, int channel = channel_current); //helper 
 bool is_local (int channel);
 bool is_bot (int channel);
 void log_file (const char *fname);
+bool log_empty(int channel = channel_current);
 
 void test_net();
+
+
+extern bool optimize4latency;
 
 
 extern SAMPLE * menuAccept;

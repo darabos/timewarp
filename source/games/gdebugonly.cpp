@@ -32,6 +32,7 @@ void GdebugOnly::init(Log *_log)
 	turbo = normal_turbo;
 
 	msecs_per_render = 1000;	// draw 1 frame/second.
+	msecs_per_render_max = 10000;
 
 	prepare();
 

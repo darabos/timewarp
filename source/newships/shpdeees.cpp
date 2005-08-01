@@ -7,6 +7,14 @@ REGISTER_FILE
 #define DEEP_SPACE_ANIM_RATE 90
 #define DEEP_SPACE_WARRIOR_TRAIL_RATE 25
 
+
+// these value MUST match those in the .dat file !!
+// we can't use sprite->frames(), cause the sprites have both animation AND rotation.
+const int ship_frames = 8;
+const int special_frames = 10;
+const int weapon_frames = 5;
+const int extra_frames = 4;
+
 int makecol(RGB col)
 {
 	return makecol(col.r, col.g, col.b);
@@ -101,19 +109,32 @@ Ship( opos, shipAngle, shipData, code )
 void DeepSpaceEssence::calculate()
 {
 	STACKTRACE;
-	if( dying ){
-		if( sprite_step < 0 ){
-			sprite_step += extraFadeRate;
-			sprite_phase++;
-			if( sprite_phase == 10 ){
-				sprite_phase = 9;
-				state = 0;
-				game->ship_died( this, dying );
+	if( dying )
+	{
+		if (!dying->exists())
+		{
+			// a slow process of dying; but, if the other ship dies as well, this pointer will soon
+			// become invalid. In that case, this ship should die immediately...
+
+			state = 0;
+			game->ship_died( this, dying );
+			dying = 0;
+
+		} else {
+			
+			if( sprite_step < 0 ){
+				sprite_step += extraFadeRate;
+				sprite_phase++;
+				if( sprite_phase == 10 ){
+					sprite_phase = 9;
+					state = 0;
+					game->ship_died( this, dying );
+				}
+				sprite_index &= 63;
+				sprite_index += sprite_phase * 64;
+			}else{
+				sprite_step -= frame_time;
 			}
-			sprite_index &= 63;
-			sprite_index += sprite_phase * 64;
-		}else{
-			sprite_step -= frame_time;
 		}
 		return;
 	}
@@ -142,7 +163,9 @@ void DeepSpaceEssence::calculate_hotspots()
 	if((thrust) && (hotspot_frame <= 0)) {
 		
 		game->add( new ObjectAnimation( this, pos, 0, angle,
-			data->spriteSpecial, 0, 10, time_ratio / 2, LAYER_HOTSPOTS ));
+			//							10
+			data->spriteSpecial, 0, special_frames, time_ratio / 2, LAYER_HOTSPOTS ));
+		// do not use ->frames(), cause this is a "special" case...
 		
 		hotspot_frame += hotspot_rate;
 	}
@@ -196,7 +219,8 @@ int DeepSpaceEssence::activate_special()
 //			- e_speed * cos( e_angle * ANGLE_RATIO ),
 //			- e_speed * sin( e_angle * ANGLE_RATIO ),
 
-			e_angle, data->spriteExtra, 0, 4, time_ratio * 2, LAYER_HOTSPOTS ));
+			e_angle, data->spriteExtra, 0, extra_frames, time_ratio * 2, LAYER_HOTSPOTS ));
+		// do not use data->spriteExtra->frames(), cause this is a special case
 	}
 	play_sound2( data->sampleSpecial[0] );
 	return TRUE;
@@ -345,8 +369,12 @@ void DeepSpaceWarrior::calculate()
 	if( !ship ) state = 0;
 	else        state = 1;
 	
-	if( trail_step <= 0 ){
-		game->add( new ObjectAnimation( this, pos, 0, angle, sprite, 1, 4, time_ratio, LAYER_HOTSPOTS ));
+	if( trail_step <= 0 )
+	{
+		// note that the sprite of the warrior, is the WeaponSprite.
+		//->															1,    4
+		game->add( new ObjectAnimation( this, pos, 0, angle, sprite, 1, weapon_frames-1, time_ratio, LAYER_HOTSPOTS ));
+		// do not use sprite->frames(), cause this is a special case.
 		trail_step += DEEP_SPACE_WARRIOR_TRAIL_RATE;
 	}else
 		trail_step -= frame_time;

@@ -42,6 +42,8 @@ transparency(0)
 	// it's got no physical interaction with the rest of the world, so, remove it
 	// from the query list:
 	attributes |= ATTRIB_UNDETECTABLE;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void Animation::calculate() {
@@ -67,7 +69,19 @@ void Animation::animate(Frame *space) {STACKTRACE
 		aa_set_trans( old );
 
 	}
-	else sprite->animate(pos, sprite_index, space, scale);
+	else
+	{
+		if (sprite)
+		{
+			if (sprite_index >= sprite->frames())
+			{
+				tw_error("SpaceSprite::animate - index %d in %s >= count %d", sprite_index, get_identity(), sprite->frames());
+				return;
+			}
+			
+			sprite->animate(pos, sprite_index, space, scale);
+		}
+	}
 }
 
 FixedAnimation::FixedAnimation(SpaceLocation *creator, SpaceLocation *opos, 

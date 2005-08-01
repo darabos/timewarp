@@ -306,7 +306,7 @@ double Quai::isInvisible() const
 
 void Quai::animate(Frame *space)
 {
-	if (isInvisible() && !is_bot(control->channel) && is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
+	if (!show_red_cloaker || isInvisible() && !is_bot(control->channel) && is_local(control->channel) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
 		sprite->animate_character( pos, sprite_index, pallete_color[4], space);
 	else
 		Ship::animate(space);

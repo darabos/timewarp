@@ -249,9 +249,15 @@ TauEMPVirtualTarget::TauEMPVirtualTarget(SpaceLocation *creator, SpaceSprite *os
 
 void TauEMPVirtualTarget::calculate()
 {
-	STACKTRACE
-	if (exists())
-		state = 0;
+	STACKTRACE;
+
+	if (ship && !ship->exists())
+	{
+		ship = 0;
+
+		state = 0;	// it's removed
+	}
+
 	SpaceObject::calculate();
 }
 
@@ -279,6 +285,8 @@ TauEMPJammer::TauEMPJammer(SpaceLocation *creator, Ship *tgt, int jtime) :
 	ocm = new OverrideControlTauEMP();
 	ocm->jamkey = tgt->nextkeys;
 	jamtarget->set_override_control(ocm);
+
+	attributes |= ATTRIB_UNDETECTABLE;	// it doesn't need to collide.
 }
 
 void TauEMPJammer::calculate()

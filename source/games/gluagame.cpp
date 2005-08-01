@@ -2,9 +2,11 @@
 /**
   gametype to test out how Lua and C++ and Timewarp get along.
   Very experimental.
+
+  (by Yurand and youbstrd I think -- geomanl
 */
 
-
+#ifdef _DEBUG
 
 #include <allegro.h> //allegro library header
 
@@ -173,4 +175,6 @@ void LuaGame::calculate()
 
 
 REGISTER_GAME(LuaGame, "LuaTest") //registering our game type, so that it will appear in the menus
+
+#endif //debug
 

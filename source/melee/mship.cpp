@@ -957,8 +957,9 @@ void Ship::calculate_fire_special()
 {STACKTRACE
   special_low = FALSE;
 
-  if(fire_special) {
-    if(batt < special_drain) {
+  if(fire_special)
+  {
+    if (batt < special_drain) {
       special_low = TRUE;
       return;
     }
@@ -966,7 +967,7 @@ void Ship::calculate_fire_special()
     if(special_recharge > 0)
       return;
 
-    if(!activate_special())
+    if(activate_special() == 0)
       return;
 
     batt -= special_drain;

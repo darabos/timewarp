@@ -23,6 +23,7 @@ Ship(opos, shipAngle, shipData, code)
 	collide_flag_anyone = 0;
 	collide_flag_sameship = 0;
 	collide_flag_sameteam = 0;
+
 	attributes |= ATTRIB_UNDETECTABLE;
 }
 
@@ -140,6 +141,8 @@ Ship(aowner, 0, 0, spr)
 	collider = 0;
 
 	targets->add(this);
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

@@ -263,11 +263,16 @@ void BoggCenturion::calculate()
         links_num = 0;
         BoggCenturion* bro;
         for (q.begin(this, bit(LAYER_SHIPS), share_range); q.currento; q.next())
-                if (q.currento->getID() == BOGEI_CENTURION_ID) {
+		{
+                if (q.currento->getID() == BOGEI_CENTURION_ID)
+				{
                         bro = (BoggCenturion*)q.currento;
                         if (bro->exists())
                                 links_num += 1;
-                        if (links_num == 2) break; }
+
+                        if (links_num == 2) break;
+				}
+		}
 
 }
 
@@ -290,13 +295,22 @@ void BoggCenturion::animate(Frame* space)
 
 //      flame
 
-        if (flame_count >= 0) {
+		int k, n;
 
-                tx = sin((sprite_index+3) * 2 * PI / 64.0);
-                ty = cos((sprite_index+3) * 2 * PI / 64.0);
-                ix = 42 + int(35*tx) - 10;
-                iy = 42 - int(35*ty) - 10;
-                data->spriteExtraExplosion->draw(ix, iy, 40 + sprite_index + 64*flame_frame, bmp);
+        if (flame_count >= 0)
+		{
+			n = data->spriteExtraExplosion->frames();
+			k = 40 + sprite_index + 64*flame_frame;
+			if (k >= n)
+			{
+				tw_error("Sprite index overflow in %s", get_identity());
+			}
+			
+			tx = sin((sprite_index+3) * 2 * PI / 64.0);
+			ty = cos((sprite_index+3) * 2 * PI / 64.0);
+			ix = 42 + int(35*tx) - 10;
+			iy = 42 - int(35*ty) - 10;
+                data->spriteExtraExplosion->draw(ix, iy, k, bmp);
         }
 
 //      ship itself
@@ -304,7 +318,14 @@ void BoggCenturion::animate(Frame* space)
 
 //      gun
 
-        data->spriteWeaponExplosion->draw(ix1, iy1, sprite_index+64*gun_phase, bmp);
+		k = sprite_index+64*gun_phase;
+		n = data->spriteWeaponExplosion->frames();
+		if (k >= n)
+		{
+			tw_error("Sprite index overflow in %s", get_identity());
+		}
+
+        data->spriteWeaponExplosion->draw(ix1, iy1, k, bmp);
 
 
 ///     shield link indicator

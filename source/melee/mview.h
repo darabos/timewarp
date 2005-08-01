@@ -7,6 +7,7 @@
 
 //global flags: read/write
 extern int camera_hides_cloakers;
+extern int show_red_cloaker;
 extern int FULL_REDRAW;
 
 

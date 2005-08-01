@@ -9,6 +9,7 @@ class ObjectAnimation : public Animation {
 // maintains speed and angle
 
   double angle;
+  int remember_num_frames;
 
   public:
   ObjectAnimation( SpaceLocation *creator, Vector2 opos, Vector2 ovel,

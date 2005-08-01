@@ -109,6 +109,8 @@ frame_step(0)
 	
 	isblockingweapons = true;
 	debug_id = 1049;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
   
 void ZoqFotPikTongue::calculate()

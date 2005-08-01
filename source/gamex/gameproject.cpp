@@ -152,7 +152,10 @@ void GameBare::init()
 	set_config_file("client.ini");
 
 //	msecs_per_fps = get_config_int("View", "FPS_Time", 200);
-	msecs_per_render = (int)(1000. / get_config_float("View", "MinimumFrameRate", 10) + 0.5);
+	msecs_per_render = int( get_config_float("View", "MinimumFrameRate", 10) + 0.5 );
+	msecs_per_render_max = 100;
+	if (msecs_per_render > msecs_per_render_max)
+		msecs_per_render = msecs_per_render_max;
 //	prediction = get_config_int("Network", "Prediction", 50);
 //	if ((prediction < 0) || (prediction > 100)) tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);
 

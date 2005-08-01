@@ -7,7 +7,6 @@
 
 #include "mfleet.h"
 
-extern int random_seed[2];
 extern int interpolate_frames;
 
 extern bool detailed_network_check;
@@ -99,6 +98,8 @@ public:
 	int desynch_Nitems;
 	double desynch_xpos[max_synch_check], desynch_ypos[max_synch_check];
 	bool desynch_received;
+
+	int crc;
 
 	bool islocal();
 	bool ishost();
@@ -318,6 +319,7 @@ public:
 	double f4_turbo;
 	double next_tic_time;
 	double msecs_per_render;
+	double msecs_per_render_max;
 	double next_render_time;
 	Histograph *tic_history;
 	Histograph *render_history;
@@ -344,6 +346,7 @@ public:
 	void chat(int iplayer);
 	void test_event1(int iplayer);
 	void start_iteration(int iplayer);
+	void share_crc(int iplayer);
 
 	void disconnect(int iplayer);
 	int lag_increase;
@@ -374,6 +377,7 @@ public:
 	virtual int add_player (int num, Control *c, int team_index, const char *name, const char *fleet, const char *fleet_file = "fleets.ini") ;
 
 	void network_share_keys();
+	void network_crc_check();
 
 	void test_startit();	// just for testing.
 };

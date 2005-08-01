@@ -184,6 +184,8 @@ int AlcheroKronos::activate_weapon(){
 void AlcheroKronos::calculate(){
 	STACKTRACE
   Ship::calculate();
+
+
   dial_angle += turbo_change * frame_time / (1.0 + turbo_change) * PI/180;
   dial_index = get_index(angle + dial_angle);
   if( weaponObject ){
@@ -194,16 +196,31 @@ void AlcheroKronos::calculate(){
 }
 
 int AlcheroKronos::activate_special(){
-	STACKTRACE
-	double t = game->get_turbo();
-	if( t - specialSpeedDown > specialMinTime ){
-		turbo_change -= specialSpeedDown;
-		t -= specialSpeedDown;
+	STACKTRACE;
+	double t_old = game->get_turbo();
+	double t = t_old;
+	double tnew = t - specialSpeedDown;
+	if( tnew > specialMinTime )
+	{
+		turbo_change -= (t - tnew);//specialSpeedDown;
+		t = tnew;
 	}
-	else {
-		turbo_change += specialMinTime - t;
-		t = specialMinTime;
+	else
+	{
+
+		//turbo_change += specialMinTime - t;
+		//t = specialMinTime;
+		tnew = specialMinTime;
+		turbo_change -= (t - tnew);//specialSpeedDown;
+		t = tnew;
+
 	}
+
+	if (t < 0 || t > 1.0 + 1E-6)
+	{
+		tw_error("Turbo change out of bounds");
+	}
+
 	game->set_turbo( t );
 	game->set_frame_time( iround(t / fps_orig) );
 
@@ -213,26 +230,43 @@ int AlcheroKronos::activate_special(){
 		up = false;
 	}
 
+	if (fabs(1.0+turbo_change) < 1E-3)
+	{
+		tw_error("Something wrong with the turbo-change");
+	}
+
 	compensate( 1.0 + turbo_change );
 
 	return TRUE;
 }
 
-int AlcheroKronos::deactivate_special(){
-	STACKTRACE
+int AlcheroKronos::deactivate_special()
+{
+	STACKTRACE;
   double t = game->get_turbo();
-  if( turbo_change == 0 ) return TRUE;
-  if( turbo_change + specialSpeedUp < 0 ){
+
+  if( turbo_change == 0 )
+	  return TRUE;
+
+  if( turbo_change + specialSpeedUp < 0 )
+  {
     t += specialSpeedUp;
     turbo_change += specialSpeedUp;
-  }else{
+  } else {
     t -= turbo_change;
     turbo_change = 0;
   }
+
+  if (t < 0 || t > 1.0 + 1E-6)
+  {
+	  tw_error("Turbo change out of bounds");
+  }
+
   game->set_turbo( t );
   game->set_frame_time( iround(t / fps_orig) );
 
-  if( !up ){
+  if( !up )
+  {
     sound.stop( copy_of_sampleSpecial );
     play_sound2( data->sampleSpecial[1], 255, 1000 );
     up = true;
@@ -241,6 +275,7 @@ int AlcheroKronos::deactivate_special(){
   compensate( 1.0 + turbo_change );
 
   double ov = magnitude(vel);
+
   if( ov > speed_max)
     vel *= speed_max/ov;
 
@@ -330,15 +365,23 @@ void AlcheroKronos::animate( Frame* space ){
   data->spriteWeapon->animate( pos, dial_index, space );
 }
 
-void AlcheroKronos::death(){
-	STACKTRACE
-  if( turbo_change != 0 ){
-    double t = game->get_turbo();
-    t -= turbo_change;
-    turbo_change = 0;
-    game->set_turbo( t );
-    game->set_frame_time( iround(t / fps_orig) );
-  }
+void AlcheroKronos::death()
+{
+	STACKTRACE;
+	if( turbo_change != 0 )
+	{
+		double t = game->get_turbo();
+		t -= turbo_change;
+
+		if (t < 0 || t > 1.0 + 1E-6)
+		{
+			tw_error("Turbo change out of bounds");
+		}
+
+		turbo_change = 0;
+		game->set_turbo( t );
+		game->set_frame_time( iround(t / fps_orig) );
+	}
 }
 
 AlcheroKronos::~AlcheroKronos(){

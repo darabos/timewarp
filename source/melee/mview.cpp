@@ -22,6 +22,7 @@ REGISTER_FILE
 
 int FULL_REDRAW = 0;
 int camera_hides_cloakers = 0;
+int show_red_cloaker = 1;
 
 
 // GeomanNL : there was a complaint about too large zoom values, so adding constraint here

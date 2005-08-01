@@ -76,6 +76,8 @@ IDENTITY(MonoMissile);
   virtual void calculate();                                // home
   virtual void animate_predict( Frame* space, int time );  // use Missile::animate_predict
 
+  virtual void calculate_index();
+
   ~MonoMissile();                                          // frees up beacon memory
 };
 
@@ -263,11 +265,17 @@ MonoMissile::MonoMissile( SpaceLocation* creator, double ox, double oy, double o
     double ov, int odamage, double orange, int oarmour,
     SpaceLocation *opos, SpaceSprite *osprite, SpaceObject* otarget ) :
     HomingMissile( creator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour,
-    0, opos, osprite, otarget ){
+    0, opos, osprite, otarget )
+{
 
+		/*
+	while (angle < 0)
+		angle += PI2;
   int iangle = (int)((angle + PI/4) / (PI/2)) % 4;
   angle = iangle * PI/2;
   sprite_index = iangle;
+  */
+  calculate_index();
   from_beacon = to_beacon = NULL;
   set_up_beacons();
   last_target = target;
@@ -275,13 +283,19 @@ MonoMissile::MonoMissile( SpaceLocation* creator, double ox, double oy, double o
   attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
+void MonoMissile::calculate_index()
+{
+	while (angle < 0)
+		angle += PI2;
+	int iangle = (int)((angle + PI/4) / (PI/2)) % 4;
+	angle = iangle * PI/2;
+	changeDirection( angle );
+	sprite_index = iangle;
+}
+
 void MonoMissile::calculate() {
-	STACKTRACE
+	STACKTRACE;
   Missile::calculate();
-  int iangle = (int)((angle + PI/4) / (PI/2)) % 4;
-  angle = iangle * PI/2;
-  changeDirection( angle );
-  sprite_index = iangle;
 
   if( target != last_target ) set_up_beacons();
   last_target = target;

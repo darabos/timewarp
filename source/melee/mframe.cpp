@@ -667,14 +667,17 @@ void SpaceObject::calculate()
 
 	if (sprite)
 	{
-		if (attributes & ATTRIB_STANDARD_INDEX)
+		if ( (attributes & ATTRIB_STANDARD_INDEX) != 0)
 		{
-			sprite_index = get_index(angle, PI/2, sprite->frames());
+			calculate_index();
+			//sprite_index = get_index(angle, PI/2, sprite->frames());	//xxx ERROR !!
 		}
 
-	// error check:
-		if (sprite_index >= sprite->frames() || sprite_index < 0)
+		// error check:
+		if ( (sprite_index >= sprite->frames()) || (sprite_index < 0) )
 		{
+			int N = sprite->frames();
+			double a = angle;
 			tw_error("sprite index overflow in %s", get_identity());
 		}
 	}
@@ -684,7 +687,7 @@ void SpaceObject::calculate()
 
 void SpaceObject::calculate_index()
 {
-	if (sprite->frames() > 64)
+	if (sprite->frames() >= 64)
 		sprite_index = get_index(angle);
 	else
 		sprite_index = get_index(angle, PI/2, sprite->frames());
@@ -707,7 +710,11 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 
 	isblockingweapons = true;
 //	ext_ai = NULL;
+
+	// I think this should be turned on by default...
+	attributes |= ATTRIB_STANDARD_INDEX;
 	}
+
 SpaceObject::~SpaceObject()
 {
 //	destroy_external_ai();

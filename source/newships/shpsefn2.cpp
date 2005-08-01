@@ -452,7 +452,8 @@ int ShipPart2::collide_SpaceObject(SpaceObject *other)
 
 	if (tmp >= 0) 
 	{
-		vel += _dp * tmp / mass;
+		if (mass > 0)
+			vel += _dp * tmp / mass;
 
 		if (other->mass > 0)
 			other->vel -= _dp * tmp / other->mass;
@@ -460,7 +461,9 @@ int ShipPart2::collide_SpaceObject(SpaceObject *other)
 	
 	Vector2 nd;
 	nd = unit_vector(dp);
-	nd /= (mass + other->mass);
+	if ((mass + other->mass) > 0)
+		nd /= (mass + other->mass);
+
 	while (sprite->collide(iround(p1.x), iround(p1.y), sprite_index, iround(p2.x), iround(p2.y), 
 			other->get_sprite_index(), other->get_sprite() )) 
 	{
@@ -1124,21 +1127,23 @@ void Hook2::animate_ropeseg( Frame *space, Vector2 pos1, Vector2 pos2, int ropec
 	STACKTRACE
 	int ix1, iy1, ix2, iy2;
 
-	double dx, dy;
-	dx = min_delta(pos2.x, pos1.x, map_size.x);
-	dy = min_delta(pos2.y, pos1.y, map_size.y);
-	pos2.x = pos1.x + dx;
-	pos2.y = pos1.y + dy;
+	Vector2 co1, co2;
+	
+	co1 = corner(pos1);
+	co2 = corner(pos2);
 
-	Vector2 co;
+	double dx, dy;
+	dx = min_delta(co2.x, co1.x, space_view_size.x);
+	dy = min_delta(co2.y, co1.y, space_view_size.y);
+	co2.x = co1.x + dx;
+	co2.y = co1.y + dy;
+
+
+	ix1 = int(co1.x);
+	iy1 = int(co1.y);
 	
-	co = corner(pos1);
-	ix1 = int(co.x);
-	iy1 = int(co.y);
-	
-	co = corner(pos2);
-	ix2 = int(co.x);
-	iy2 = int(co.y);
+	ix2 = int(co2.x);
+	iy2 = int(co2.y);
 
 	dx = ix2 - ix1;
 	dy = iy2 - iy1;

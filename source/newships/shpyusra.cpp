@@ -3,6 +3,9 @@
 REGISTER_FILE
 #include "../other/objanim.h"
 
+// this should match the data file !!
+const int special_frames = 4;
+
 class YushSpear;
 
 /*
@@ -73,7 +76,8 @@ int YushRanger::activate_weapon(){
   return TRUE;
 }
 
-int YushRanger::activate_special(){
+int YushRanger::activate_special()
+{
 	STACKTRACE;
 	double alpha = atan3(vel.y, vel.x);
 	alpha = normalize(alpha, PI2);
@@ -89,7 +93,8 @@ int YushRanger::activate_special(){
 	//  vy = v * sin( 2 * angle - alpha );
 	vel = v * unit_vector( 2 * angle - alpha );
 	game->add( new ObjectAnimation( this, pos, Vector2(0, 0), angle, data->spriteSpecial,
-		0, 4, time_ratio, LAYER_HOTSPOTS ));
+		0, special_frames, time_ratio, LAYER_HOTSPOTS ));
+	//data->spriteSpecial->frames() don't use this for an ObjectAnimation, cause that has angle-dependency as well !!
 	special_sample = random() % 2;
 	return TRUE;
 }
