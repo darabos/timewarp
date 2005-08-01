@@ -95,6 +95,7 @@ PlayerInformation::PlayerInformation()
 	team = 0;
 	desynch_Nitems = 0;
 	desynch_received = false;
+	crc = 0;
 }
 
 NPI::NPI()
@@ -202,8 +203,6 @@ void Game::event_sharecontrols(int iplayer)
 static char chat_buf[256];
 static int chat_len = 0;
 static int chat_on = 0;
-
-int random_seed[2];
 
 MeleeData meleedata;
 
@@ -1066,6 +1065,30 @@ void Game::network_share_keys()
 }
 
 
+
+void Game::network_crc_check()
+{
+	// share (and test) desynch information
+	int p;
+	for ( p = 0 ; p < num_network; ++p )
+	{
+		// sharing
+		if (player[p] && player[p]->islocal())
+		{
+			CALL(share_crc, p);
+		}
+		
+		// checking the results of a previous share.
+		if (p > 0)
+		{
+			if (player[p]->crc != player[p-1]->crc)
+			{
+				tw_error("The game is desynched.");
+			}
+		}
+	}
+}
+
 void Game::init_lag()
 {
 	// synch all players here, to skip delays due to loading files and such.
@@ -1140,8 +1163,8 @@ void Game::init_lag()
 	if (lag_buffer <= 1)
 		lag_buffer = 1;	// well, you do need to start...
 
-	if (lag_buffer > 100)
-		lag_buffer = 100;
+	if (lag_buffer > 10)
+		lag_buffer = 10;
 
 	message.print(1500, 15, "lag set to [%i] frames", lag_buffer);
 }
@@ -1259,6 +1282,7 @@ void Game::play()
 	// this sets the lag_buffer.
 	init_lag();
 
+
 	int i;
 	for ( i = 0; i < lag_buffer; ++i )
 	{
@@ -1279,24 +1303,41 @@ void Game::play()
 	lag_increase = 0;
 	lag_decrease = 0;
 
+	int time_start = get_time();
+
 
 	try {
 		while(!game_done)
 		{
 
-			unsigned int time = get_time();
+			unsigned int time;
+			
+			time = get_time();
+			// this is used to time animation and physics
+
 			poll_input();
 			videosystem.poll_redraw();
 			if(!sound.is_music_playing()) {
 				play_music();
 			}
 
+			// physics can  catch up with graphics.
+			bool catching_up;
+			catching_up = false;
+
+			// check if something interesting happens in this iteration (false), otherwise (true)
+			// issue an idle time.
+			bool idle_iteration = true;
+
+
 			// note, you go to the next calculation either because some required time has
 			// passed, or because you need to catch up with some kind of lag...
 
-			if ((next_tic_time <= time) && (next_render_time > game_time)) /*&&
-				(game_ready() || game_time == 0)*/ {		// note that game_time==0 is also needed, cause otherwise it'll wait for data, while no data've been generated yet.
+			if ((next_tic_time <= time))//geo:physics should be independent of animation && (next_render_time > game_time)) &&
+				/*(game_ready() || game_time == 0)*/ {		// note that game_time==0 is also needed, cause otherwise it'll wait for data, while no data've been generated yet.
 				_STACKTRACE("Game::play - Game physics");
+
+				//idle_iteration = false;
 
 
 
@@ -1310,29 +1351,45 @@ void Game::play()
 					// ALL COMMUNICATION EXCEPT FOR DESYNCH TEST SHOULD GO THROUGH HERE.
 					// also see the CALL and EVENT macros
 					
-					if (events.all_ready())
-					{
-						// only reset the call-state, if previously, all calls have been handled.
-						events.set_wait();
-					}
+				if (events.all_ready())
+				{
+					// only reset the call-state, if previously, all calls have been handled.
+					events.set_wait();
+				}
+			
+				
+				int t = get_time();
+				//	for (;;)
+				//	{
+				NetLog *l = (NetLog*) glog;
+				if (l->type == Log::log_net)
+				{
+					l->flush_noblock();
+					//glog->listen();
+					l->recv_noblock();		// receive stuff, if you can
 					
+				}
+				events.handle();	// this will read events. You send events during the game.
+				// if all "start-iterations" are set, then they're all_ready.
+				
+				// Note, that the IF statement ensures, that you do not block the game by waiting
+				// for (networked) input. This means, that graphics won't be blocked: otherwise,
+				// graphics of this user can be delayed by graphics of another user, resulting in
+				// a pretty slow framerate.
+
+				if (!events.all_ready())
+				{
+					//message.print(1000, 15, "events not ready");
+					//xxx this happens, if you press a key !!
+				}
+
+				if (events.all_ready())
+				{
+					idle_iteration = false;
 					
-					int t = get_time();
-					for (;;)
-					{
-						NetLog *l = (NetLog*) glog;
-						if (l->type == Log::log_net)
-						{
-							l->flush_noblock();
-							//glog->listen();
-							l->recv_noblock();		// receive stuff, if you can
-						}
-						events.handle();	// this will read events. You send events during the game.
-						
-						if (events.all_ready())
-							break;
-						
-					}
+					// a short resting period.
+					//	idle(1);
+					//	}
 					
 					
 					// check if a player was asked to be removed here..
@@ -1365,132 +1422,225 @@ void Game::play()
 					{
 						return;
 					}
-			//	}
-				// note that, to reduce lag, you keep reading data from the buffer without
-				// adding extra stuff (through CALL), so that it becomes smaller.
-				// BUT: that skips keys, and this leads to a desynch SO THIS IS NOT A GOOD WAY TO DO IT !!
-				
-				
-				// then calculate game stuff
-				calculate();
-				
-				
-				// this can also do some game stuff ... (namely, Esc = quit)
-				while (keypressed())
-					handle_key(readkey());
-				
-				// check if the network is in synch?
-				
-				// enable this if you want to check for desynches
-				if (do_desynch_test)
-				{
-					// send desynch data for local player(s)
-					int p;
-					for ( p = 0 ; p < num_network; ++p )
+					//	}
+					// note that, to reduce lag, you keep reading data from the buffer without
+					// adding extra stuff (through CALL), so that it becomes smaller.
+					// BUT: that skips keys, and this leads to a desynch SO THIS IS NOT A GOOD WAY TO DO IT !!
+					
+					
+					int t_execute = get_time();
+
+					// calculate game stuff
+					// this increases game_time.
+					calculate();
+
+					// this measures how much time it takes to execute one physics iteration
+					t_execute = get_time() - t_execute;
+					
+					
+					// this can also do some game stuff ... (namely, Esc = quit)
+					while (keypressed())
+						handle_key(readkey());
+					
+					// check if the network is in synch?
+					
+					// enable this if you want to check for desynches
+					// but, it only makes sense (in current implementation), if the two games are synched.
+					if (global_lag_synch && do_desynch_test)
 					{
-						if (player[p] && player[p]->islocal())
+						// send desynch data for local player(s)
+						int p;
+						for ( p = 0 ; p < num_network; ++p )
 						{
-							CALL(event_share_desynch, p);
+							if (player[p] && player[p]->islocal())
+							{
+								CALL(event_share_desynch, p);
+							}
 						}
+						
+						// check desynch data of the players in the current (lagged) frame.
+						check_desynch();
 					}
+					
+					// it's best to do this only in debug mode...
+					
+					// actually ... duh ... it's best to call this AFTER the events-handle, cause then the data
+					// have some time to be sent across the network, while the game is doing its calculations.
+					// namely, then it's using the idle() time that's required or so...
+					
+					
+					network_share_keys();
+					
 
-					// check desynch data of the players in the current (lagged) frame.
-					check_desynch();
-				}
-				
-				// it's best to do this only in debug mode...
-				
-				// actually ... duh ... it's best to call this AFTER the events-handle, cause then the data
-				// have some time to be sent across the network, while the game is doing its calculations.
-				// namely, then it's using the idle() time that's required or so...
+					// crc checking is now only available, if all the games involved run synchronized,
+					if (global_lag_synch)
+						network_crc_check();
 
 
-				network_share_keys();
-				
-				// approve of the next iteration, after ALL possible event thingies are done.
-				if (lag_decrease == 0)
-				{
-					int p;
-					for ( p = 0 ; p < num_network; ++p )
+					// approve of the next iteration, after ALL possible event thingies are done.
+					if (lag_decrease == 0)
 					{
-						if (player[p] && player[p]->islocal())
+						int p;
+						for ( p = 0 ; p < num_network; ++p )
 						{
-							CALL(start_iteration, p);
+							if (player[p] && player[p]->islocal())
+							{
+								CALL(start_iteration, p);
+							}
 						}
+					} else {
+						--lag_decrease;	// skip new-iteration calls.
+						--lag_buffer;
 					}
-				} else {
-					--lag_decrease;	// skip new-iteration calls.
-					--lag_buffer;
-				}
-
-				// and increasing lag means, adding extra, empty, iterations...
-				int ilag;
-				for ( ilag = 0; ilag < lag_increase; ++ilag )
-				{
-					int p;
-					for ( p = 0 ; p < num_network; ++p )
+					
+					// and increasing lag means, adding extra, empty, iterations...
+					int ilag;
+					for ( ilag = 0; ilag < lag_increase; ++ilag )
 					{
-						if (player[p] && player[p]->islocal())
+						int p;
+						for ( p = 0 ; p < num_network; ++p )
 						{
-							CALL(start_iteration, p);
+							if (player[p] && player[p]->islocal())
+							{
+								CALL(start_iteration, p);
+							}
 						}
+						++lag_buffer;
+						--lag_increase;
 					}
-					++lag_buffer;
-					--lag_increase;
-				}
+					
+					if (auto_unload)
+						unload_unused_ship_data();
 				
-				if (auto_unload) unload_unused_ship_data();
-				
-				//if (key[KEY_F4])
-				//	turbo = f4_turbo;
-				//else
-				//	turbo = normal_turbo;
-				
-				next_tic_time += (frame_time / turbo);
-				if ((hiccup_margin >= 0) && (next_tic_time + hiccup_margin < get_time()))
-					next_tic_time = get_time();
-				
-				if (next_fps_time <= game_time)
-				{
-					next_fps_time += msecs_per_fps;
-					fps();
-				}
-				
-				// in any case, already send the data that were calculated (don't waste time on this..).
-				if (glog->type == Log::log_net)
-				{
-					// this sends, if there's something to send at least
-					NetLog *l = (NetLog*) glog;
-					l->flush_noblock();
-				}
+					
+					
+					
+					//if (key[KEY_F4])
+					//	turbo = f4_turbo;
+					//else
+					//	turbo = normal_turbo;
+
+					// ------------ GAME TIME MANAGEMENT ------------
+
+					// this hiccup-margin allows physics to "catch up" a few iterations that are
+					// skipped by graphics.
+					int time_current = get_time();
 
 
+					if (t_execute < 0.5*(frame_time / turbo))
+					{
+						// in this case, you can try to have physics in a linear fashion
 
-//				message.print(10, 15, "Idle time = %i", tot_idle_time / frame_number);
-//				message.animate(0);
+						if ((hiccup_margin >= 0) && (next_tic_time + hiccup_margin > /* < */ time_current))
+						{
+							// trying to execute frames in a linear fashion.
+							next_tic_time += (frame_time / turbo);
+							
+							if (next_tic_time < time_current)
+							{
+								//message.print(1500, 15, "Catching up");
+								catching_up = true;
+							} else {
+								catching_up = false;
+							}
+							
+						} else {
+							catching_up = false;
+							next_tic_time = time_current;	// execute as often as possible.
+						}
+					} else {
+						// otherwise, the game calculations take so long, that trying to catch up
+						// is nigh impossible.
+						catching_up = false;
+						next_tic_time = time_current;	// execute as often as possible.
+					}
+					
+					if (next_fps_time <= game_time)
+					{
+						next_fps_time += msecs_per_fps;
+						fps();
+					}
+					/*
+					// in any case, already send the data that were calculated (don't waste time on this..).
+					// if you don't have to be careful about your connection speed.
+					//if (!optimize4latency)
+					//{
+					if (glog->type == Log::log_net)
+					{
+						// this sends, if there's something to send at least
+						NetLog *l = (NetLog*) glog;
+						l->flush_noblock();
+					}
+					//}
+					*/
+					
+					
+					
+				}
+
+				
 			}
-			else if (interpolate_frames || (game_time > next_render_time - msecs_per_render)) {
-				_STACKTRACE("Game::play - Game rendering")
-
-				//message.print(1500, 15, "lag-buffer = %i", lag_buffer);
-				animate();
-				next_render_time = game_time + msecs_per_render;
-			}
-			else
+				
+				
+			
+			// ALWAYS send/recv at end.
+			// this is the best place for this, in FRONT of the animation, cause
+			// it's best to send data BEFORE an animation starts...
+			
+			// if you don't have to be careful about your connection speed.
+			if (glog->type == Log::log_net)
 			{
+				NetLog *l = (NetLog*) glog;
+				l->recv_noblock();		// receive stuff, if you can
+				
+				// this helps to reduce idle-time, cause it doesn't have to wait till
+				// data are received first (namely that's what game_ready() tests).
+				l->flush_noblock();			// this sends, if there's something to send at least
+			}
+			
+
+				
+			// geo: instead of game_time, I use time, so that physics and animation are competely
+			// independent; then, if physics has to wait for networked data, animation can continue
+			// regardless of that.
+			// well... except if physics tries to catch up a few frames of time. But in that case,
+			// in networked games, it can take a while to synch back again;
+			// so there must be an upper limit to the animation frame rate !!
+			time = get_time();
+			if (!catching_up || time >= next_render_time - msecs_per_render + msecs_per_render_max)
+			{
+				if (interpolate_frames || (/*game_*/time >= next_render_time))
+				{
+					_STACKTRACE("Game::play - Game rendering")
+						
+					idle_iteration = false;
+
+				//	message.print(1000, 15, "anim dt = %i  render = %i  t = %i",
+				//		int(time - next_render_time), int(msecs_per_render), int(time - time_start));
+
+					//message.print(1500, 15, "lag-buffer = %i", lag_buffer);
+					animate();
+
+
+					if (time - next_render_time < msecs_per_render )
+						next_render_time += msecs_per_render;
+					else
+						next_render_time = /*game_*/time + msecs_per_render;
+				}
+			}
+
+
+			if (idle_iteration)
+			{
+				// if nothing interesting happend in this iteration, then insert some idle time
 				int n = 1;
 				idle(n);
 				tot_idle_time += n;
-				if (glog->type == Log::log_net)
-				{
-					NetLog *l = (NetLog*) glog;
-					l->recv_noblock();		// receive stuff, if you can
-
-					// this helps to reduce idle-time, cause it doesn't have to wait till
-					// data are received first (namely that's what game_ready() tests).
-					l->flush_noblock();			// this sends, if there's something to send at least
-				}
 			}
+
+			
+
+				
 
 		}
 	}
@@ -1727,20 +1877,9 @@ offset	size	format		data
 	//display_channel_info("game - log_int");
 
 	rand_resync();
-	/*
+
 	channel_current = channel_server;
 
-	i = rand();
-//	i = 9223;
-	log_int(i);
-	random_seed[0] = i;
-	rng.seed(i);
-	i = rand();
-//	i = 7386;
-	log_int(i);
-	random_seed[1] = i;
-	rng.seed_more(i);
-	*/
 
 	if (!is_paused()) pause();
 
@@ -1749,7 +1888,15 @@ offset	size	format		data
 
 	set_config_file("client.ini");
 	msecs_per_fps = get_config_int("View", "FPS_Time", 200);
-	msecs_per_render = (int)(1000. / get_config_float("View", "MinimumFrameRate", 10) + 0.5);
+
+	//msecs_per_render = (int)(1000. / get_config_float("View", "MinimumFrameRate", 10) + 0.5);
+	// instead such a weird equation, it's simply defined in terms of milliseconds.
+	msecs_per_render = int( get_config_float("View", "MinimumFrameRate", 10) + 0.5 );
+	
+	msecs_per_render_max = 100;
+	if (msecs_per_render > msecs_per_render_max)
+		msecs_per_render = msecs_per_render_max;
+
 	prediction = get_config_int("Network", "Prediction", 50);
 	if ((prediction < 0) || (prediction > 100)) {tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);}
 
@@ -1763,6 +1910,9 @@ offset	size	format		data
 
 	camera_hides_cloakers = get_config_int("View", "CameraHidesCloakers", 1);
 	share(-1, &camera_hides_cloakers);
+
+	show_red_cloaker = get_config_int("View", "ShowRedCloaker", 1);
+	share(-1, &show_red_cloaker);
 
 	time_ratio = (int)(1000. / get_config_float ("Game", "SC2FrameRate", 20));
 	share(-1, &time_ratio);
@@ -2294,31 +2444,43 @@ void EventClass::handle()
 
 	int p;
 
+	bool data_left = true;
 
-	for ( p = 0; p < num_network; ++p )
+	while ( data_left )
 	{
-		if (!player[p])
-			continue;
 
-		if (!need_more[p])
-			continue;
+		// keeps track if all of the available data for this iteration are read
+		data_left = false;	// assume all is read
 
-		// note, you can send+receive on your own channel, cause it's already buffered; the
-		// receive reads from the start, and the send adds to the end of the log buffer.
-		
-		channel_current = player[p]->channel + _channel_buffered;
-		event_player_current = p;	// can also be useful.
+		for ( p = 0; p < num_network; ++p )
+		{
+			if (!player[p])
+				continue;
+			
+			if (!need_more[p])
+				continue;
+			
+			// note, you can send+receive on your own channel, cause it's already buffered; the
+			// receive reads from the start, and the send adds to the end of the log buffer.
+			
+			channel_current = player[p]->channel + _channel_buffered;
+			event_player_current = p;	// can also be useful.
+			
+			log_resetmode();	// go to default mode.
+			
+			log_nextmode();	// go to write mode
+			log_nextmode();	// and skip, go to read mode.
+			
+			// executes a call to the function in the list, with that id-number
+			int req;
+			log_int(req);
+			// player index is not stored: it's assumed that each player has its own channel
+			issue(req, p);
 
-		log_resetmode();	// go to default mode.
-
-		log_nextmode();	// go to write mode
-		log_nextmode();	// and skip, go to read mode.
-
-		// executes a call to the function in the list, with that id-number
-		int req;
-		log_int(req);
-		// player index is not stored: it's assumed that each player has its own channel
-		issue(req, p);
+			if (!log_empty() && need_more[p])
+				data_left = true;
+			
+		}
 
 	}
 	
@@ -2349,6 +2511,7 @@ void Game::register_events()
 	EVENT(Game, event_lag_increase);
 	EVENT(Game, event_lag_decrease);
 	EVENT(Game, event_share_desynch);
+	EVENT(Game, share_crc);
 }
 
 
@@ -2367,6 +2530,41 @@ void Game::do_game_events2()
 
 
 
+void Game::share_crc(int iplayer)
+{
+	int crcvalue;
+
+	if (log_synched)
+	{
+		// in receiving mode.
+		log_int(crcvalue);
+
+		// store it for later use (for when all the players are updated)
+		player[iplayer]->crc = crcvalue;
+
+	} else {
+		// in sending mode
+		// you've to define the data before sharing it with others
+
+		int i, sumpos, sumvel;
+		
+		sumpos = 0;
+		sumvel = 0;
+		
+		for ( i = 0; i < num_items; ++i )
+		{
+			SpaceLocation *o = item[i];
+			sumpos += iround(o->pos.x + o->pos.y);
+			sumvel += iround(o->vel.x + o->vel.y);
+		}
+
+		crcvalue = sumpos + sumvel;
+
+		log_int(crcvalue);
+
+	}
+
+}
 
 
 
