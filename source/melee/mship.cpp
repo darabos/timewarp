@@ -1106,15 +1106,29 @@ Phaser::Phaser(
 	return;
 }
 
-void Phaser::animate(Frame *space) {
+void Phaser::animate(Frame *space)
+{
 	sprite->animate_character(pos, 
 		sprite_index, pallete_color[colors[color_index]], space);
 	return;
 }
 
-void Phaser::calculate() {STACKTRACE
+void Phaser::calculate()
+{
+	STACKTRACE;
+
 	if (!exists())
 		return;
+
+	/* no... cause for the pkunk, you also need "empty" phasers...
+	if (!(ship && ship->exists()))
+	{
+		ship = 0;
+		state = 0;
+		return;
+	}
+	*/
+
 	frame_step -= frame_time;
 
 	while (frame_step < 0) {

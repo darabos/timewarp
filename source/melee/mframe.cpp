@@ -18,6 +18,9 @@ REGISTER_FILE
 
 #include "ais/ext_ai.h"
 
+#include "scp.h"
+#include "melee/mnet1.h"
+
 int total_presences;
 
 #define ANIMATE_BUFFER_SIZE 2048
@@ -1294,8 +1297,57 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	prepare();
 	RGB back = { frame->background_red, frame->background_green, frame->background_blue };
 	aa_set_background ( back );
-	for (i = 0; i < j; i += 1) {
-		if (animate_buffer[i]->exists()) animate_buffer[i]->animate(frame);
+
+	// timing, for networking flushes
+	int time = get_time();
+
+	for (i = 0; i < j; i += 1)
+	{
+		// test if the sprite_index doesn't change: that affects physics and can lead to a desynch
+		
+		SpaceObject *o = 0;
+		int index = 0;
+
+		if (animate_buffer[i]->exists())
+		{
+
+			if (animate_buffer[i]->isObject())
+			{
+				o = (SpaceObject*) animate_buffer[i];
+				index = o->get_sprite_index();
+			}
+
+			animate_buffer[i]->animate(frame);
+		}
+
+
+		if (o)
+		{
+			if (index != o->get_sprite_index())
+			{
+				// in this case, the physics is affected, unsynchronized.
+				tw_error("Physics (sprite_index) must not be changed outside physics routines.");
+			}
+		}
+
+
+		// every 5 milliseconds...
+		if (get_time() - time > 5)
+		{
+			// extra: insert some extra network-flush calls in here:
+			if (glog->type == Log::log_net)
+			{
+				NetLog *l = (NetLog*) glog;
+				l->recv_noblock();		// receive stuff, if you can
+				
+				// this helps to reduce idle-time, cause it doesn't have to wait till
+				// data are received first (namely that's what game_ready() tests).
+				l->flush_noblock();			// this sends, if there's something to send at least
+			}
+
+			time = get_time();
+		}
+
 	}
 	return;
 }
