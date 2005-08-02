@@ -1303,7 +1303,12 @@ void Game::play()
 	lag_increase = 0;
 	lag_decrease = 0;
 
+	// tracker about home many extra physics iterations are inserted; this shouldn't get too high
+	int num_catchups = 0;
+	const int max_catchups = 2;
+
 	int time_start = get_time();
+
 
 
 	try {
@@ -1531,8 +1536,9 @@ void Game::play()
 					{
 						// in this case, you can try to have physics in a linear fashion
 
-						if ((hiccup_margin >= 0) && (next_tic_time + hiccup_margin > /* < */ time_current))
+						if ((hiccup_margin >= 0) && (num_catchups < max_catchups) && (next_tic_time + hiccup_margin > /* < */ time_current))
 						{
+
 							// trying to execute frames in a linear fashion.
 							next_tic_time += (frame_time / turbo);
 							
@@ -1546,14 +1552,20 @@ void Game::play()
 							
 						} else {
 							catching_up = false;
-							next_tic_time = time_current;	// execute as often as possible.
+							next_tic_time = time_current + (frame_time / turbo);	// execute as often as possible.
 						}
 					} else {
 						// otherwise, the game calculations take so long, that trying to catch up
 						// is nigh impossible.
 						catching_up = false;
-						next_tic_time = time_current;	// execute as often as possible.
+						next_tic_time = time_current + (frame_time / turbo);	// execute as often as possible.
 					}
+
+					if (catching_up)
+						++num_catchups;
+					else
+						num_catchups = 0;
+
 					
 					if (next_fps_time <= game_time)
 					{
