@@ -280,7 +280,7 @@ MonoMissile::MonoMissile( SpaceLocation* creator, double ox, double oy, double o
   set_up_beacons();
   last_target = target;
 
-  attributes &= ~ATTRIB_STANDARD_INDEX;
+  //attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void MonoMissile::calculate_index()

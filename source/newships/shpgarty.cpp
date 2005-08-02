@@ -236,7 +236,7 @@ void GarashTyrant::stun_ship(SpaceObject *other){
 	if (other->isShip()) {
     if(((Ship*)other)->crew>1) {
       GRS = new GarashRepulsarStun(
-		  (Ship *) (other->ship ), data->spriteExtra,
+		  (Ship *) (other ), data->spriteExtra,
 		   64, 31, specialStunFrames);
       game->add(GRS);
       GRS->pos = other->pos;

@@ -145,7 +145,7 @@ ArkanoidPincerShip::ArkanoidPincerShip(Vector2 opos, double angle, ShipData *dat
   weaponCrushDamage       = get_config_int("Weapon", "CrushDamage", 0);
   weaponArmour       = get_config_int("Weapon", "Armour", 0);
   weaponMass         = get_config_float("Weapon", "Mass", 0);
-  message.print(3000,7,"weaponMass = %f", weaponMass);
+//  message.print(3000,7,"weaponMass = %f", weaponMass);
   weaponIsInvulnerableWhenClosing = get_config_int("Weapon", "IsInvulnerableWhenClosing", 0);
   weaponIsInvulnerableWhenOpening = get_config_int("Weapon", "IsInvulnerableWhenOpening", 0);
   weaponIsInvulnerableWhenResting = get_config_int("Weapon", "IsInvulnerableWhenResting", 0);

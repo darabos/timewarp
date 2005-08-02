@@ -123,10 +123,12 @@ double ControlWussie::evasion (Ship * ship)
 			Vector2 ship_pos, shot_pos;
 			ship_pos = ship->normal_pos();
 			shot_pos = shot->normal_pos();
+
 			if (fabs(ship->get_vel().y) < 0.0001)
 				shipslope = sign(ship->get_vel().x) * 10000;
 			else
 				shipslope = ship->get_vel().x / ship->get_vel().y;
+
 			if (fabs(shot->get_vel().y) < 0.0001)
 				shotslope = sign(shot->get_vel().x) * 10000;
 			else
@@ -237,16 +239,23 @@ int ControlWussie::think ()
 		{
 			pangle = ship->trajectory_angle (p);
 			va = atan (ship->get_vel ());
-			if (fabs (pangle - va) < PI/3)
+
+			double da;
+			da = va - pangle;
+			while (da <= -PI)
+				da += PI2;
+			while (da > PI)
+				da -= PI2;
+			// now, -PI < da < PI
+
+			if ( fabs(da) < PI/3 || ship->vel.length() < 0.1 )
 			{
 				avoid_planet = TRUE;
-				if (normalize (pangle - va, PI2) <
-				    normalize (va - pangle, PI2))
-					angle_aim = -PI/2 + ship->get_angle ();// -
-						//ship->trajectory_angle (p);
+
+				if ( da < 0 )
+					angle_aim = pangle - 0.5*PI;
 				else
-					angle_aim = PI/2 + ship->get_angle ();// -
-						//ship->trajectory_angle (p);
+					angle_aim = pangle + 0.5*PI;
 			}
 		}
 	}
@@ -542,6 +551,19 @@ int ControlWussie::think ()
 				sweep[j] = 35 * ANGLE_RATIO;
 		}
 	}
+
+	Vector2 ship_unit_vector;
+	double target_vel;//, target_vel_relative;
+
+	// ship orientation vector
+	ship_unit_vector = unit_vector(ship->get_angle());
+
+	// absolute movement of enemy relative to current ship direction
+	target_vel = dot_product(ship->target->vel, ship_unit_vector);
+
+	// relative movement of enemy to the current ship, also measured along the ship orientation
+	//target_vel_relative = target_vel - dot_product(ship->vel, ship_unit_vector);
+
 	double a;
 	int range_fire, fire_front, field_fire;
 	for (j = 0; j < 2; j++)
@@ -562,6 +584,26 @@ int ControlWussie::think ()
 		else
 			field_fire = TRUE;
 
+		// intercept time along the ship orientation (line of sight)
+		double t_intercept;
+		if (option_velocity[state][j] - target_vel != 0)
+			t_intercept = distance / (option_velocity[state][j] - target_vel);
+		else
+			t_intercept = 1E6;
+
+		// intercept distance along the line of sight
+		double d_intercept;
+		d_intercept = t_intercept * option_velocity[state][j];
+		//xxx this does not take relativity into account ?
+
+		bool weapon_in_range = (option_range[state][j] > 1.1 * d_intercept);
+
+		// check, if the (uncorrected) velocity isn't too high for your weapon:
+		if (option_velocity[state][j] < 0.9 * ship->target->vel.length() &&
+			(option_range[state][j] > 0.4 * distance ||  distance > 500))
+			dontfireoption[j] = TRUE;
+
+
 		for (i = 0; i < MAX_OPTION; i++)
 		{
 
@@ -572,8 +614,8 @@ int ControlWussie::think ()
 				if (i == 0)
 					if (j == 0)
 					{
-						if ((distance < option_range[state][j])
-						    && (fabs (angle_fire) < sweep[j]))
+						if ((fabs (angle_fire) < sweep[j]) &&
+							weapon_in_range )
 							fireoption[0] = TRUE;
 					}
 					else if (ship->batt != ship->batt_max)
@@ -708,7 +750,7 @@ int ControlWussie::think ()
 
 		if (fire_front)
 		{
-			if (fabs (angle_fire) < sweep[j] && distance < option_range[state][j])
+			if (fabs (angle_fire) < sweep[j] && weapon_in_range)
 				fireoption[j] = TRUE;
 		}
 
