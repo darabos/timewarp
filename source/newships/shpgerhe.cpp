@@ -185,7 +185,14 @@ void GerlVirtualship::calculate()
 	if ( (!hero || !hero->exists()) && (crew >= 2) )
 	{
 		Vector2 opos;
-		opos = morons->pos - 100.0 * unit_vector(trajectory_angle(target)/*morons->angle*/);
+
+		double a;
+		if (target && target->exists())
+			a = trajectory_angle(target);
+		else
+			a = random(PI2);
+
+		opos = morons->pos - 100.0 * unit_vector(a/*morons->angle*/);
 		hero = new GerlHero(this, morons, opos, angle, this->data->spriteExtra);
 		morons->herobrother = hero;
 		game->add(hero);
@@ -398,6 +405,8 @@ GerlHero::GerlHero(GerlVirtualship *creator, SpaceLocation *brother, Vector2 opo
 	crew = armour;
 
 	lastenemyvel = 0;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 
@@ -914,6 +923,7 @@ GerlMorons::GerlMorons(GerlVirtualship *creator, SpaceLocation *brother, Vector2
 	crew_max = creator->crew_max;
 	crew = creator->crew;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void GerlMorons::calculate()

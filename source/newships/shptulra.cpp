@@ -271,6 +271,7 @@ force( oforce ), dist( odist ), ramming( false )
 
   mass = ship->mass;
   damage_factor = odamage;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void TulkonDevice::calculate(){

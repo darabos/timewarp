@@ -308,6 +308,7 @@ SpaceObject(ocreator, opos, oangle, osprite)
 	sprite_index = 0;
 
 	isblockingweapons = false;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 
@@ -613,6 +614,7 @@ SpaceObject(ocreator, opos, oangle, osprite)
 		trailPos[i] = pos;
 
 	++samatra->Nspecials;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

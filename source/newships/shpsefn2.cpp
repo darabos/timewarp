@@ -329,7 +329,7 @@ void ShipPart2::calculate_manager(Vector2 refpos, Vector2 refvel)
 	calc_pos(refpos);		// update (pos) using manager settings
 	vel = refvel;
 
-	sprite_index = get_index(angle);
+	//sprite_index = get_index(angle);
 
 	SpaceObject::calculate();
 
@@ -832,7 +832,7 @@ void Hook2::calculate()
 	{
 		vel = hooktarget->vel;
 		angle = hooktarget->angle + hookfixangle;
-		sprite_index = get_index(angle);
+		//sprite_index = get_index(angle);
 		pos = hooktarget->pos + hookfixdist * unit_vector(hooktarget->angle + hookfixorientation);
 	} 
 	else if (hooklocked)

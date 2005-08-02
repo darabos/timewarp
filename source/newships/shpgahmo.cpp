@@ -716,8 +716,8 @@ int GahmurPlasma::handle_damage(SpaceLocation *source, double normal, double dir
 
 void GahmurPlasma::animate (Frame *frame) {
 	STACKTRACE;
-	sprite_index = sprite_index_override;
-	//if there is a better way, TELL ME!!!
+	//sprite_index = sprite_index_override;	//xx ooh, this is SO wrong! Leads to desynches
+	//if there is a better way, TELL ME!!!  --> it's already in the ::calculate routine, so it doesn't need to be here
 	Shot::animate(frame);
 }
 

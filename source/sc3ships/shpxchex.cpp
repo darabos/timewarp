@@ -140,6 +140,7 @@ XchaggerDisable::XchaggerDisable(SpaceObject *creator, Ship *oship, SpaceSprite 
   affectship = oship;
   ocx = new OverrideControlXchagger();
   affectship->set_override_control(ocx);
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void XchaggerDisable::calculate()

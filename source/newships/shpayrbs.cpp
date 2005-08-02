@@ -454,6 +454,7 @@ BigShipPartDevice(aowner, spr)
 	a_track = 0;
 	shotbusy = 0;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 //Shot::Shot(SpaceLocation *creator, Vector2 rpos, double oangle, double ov, 

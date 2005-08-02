@@ -428,6 +428,7 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
     tendril[i]->regenerationIsTendrilBased = this->regenerationIsTendrilBased;
     tendril[i]->pointerToMe = &tendril[i];
   }
+		attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 DajielkaSanctuary::~DajielkaSanctuary(void) {

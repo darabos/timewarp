@@ -158,6 +158,7 @@ TauStormMissile::TauStormMissile (SpaceLocation *creator, double ox, double oy, 
 	first_frame = 12;
 
 	play_sound(s);
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

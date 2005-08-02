@@ -114,6 +114,8 @@ EarthlingFusionBlast::EarthlingFusionBlast(double ox, double oy, double oangle, 
         explosionFrameCount = 11;
         explosionFrameSize  = 35;
         explosionSample = data->sampleWeapon[1];
+
+		attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void EarthlingFusionBlast::calculate() {

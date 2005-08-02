@@ -255,7 +255,9 @@ FierasShot::FierasShot(double ox, double oy, double oangle, double ov,
 //	explosionFrameCount = 31;
 //	explosionFrameSize  = 50;
 	spark_counter = 0;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
+
 void FierasShot::calculate() {
 	STACKTRACE
   sprite_index = (get_index(angle) + (0*64));

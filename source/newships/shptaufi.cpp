@@ -231,6 +231,7 @@ TauFiendShot::TauFiendShot (Vector2 opos, double oangle, double ov, double orang
         explosionSprite = data->spriteSpecial;
         explosionFrameCount = 6;
         explosionFrameSize = 50;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void TauFiendShot::calculate()

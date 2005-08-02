@@ -227,6 +227,7 @@ SpaceObject( creator,
   countdown = 1000 + random() % 2000;
 
   isblockingweapons = true;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void JyglarBubble::calculate(){

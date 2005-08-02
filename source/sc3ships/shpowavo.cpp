@@ -286,6 +286,8 @@ OwaDisable::OwaDisable(Ship *otarget, OwaSpecial *ocreator, SpaceSprite *osprite
 		targetship->set_override_control(oco);
 	} else
 		oco = 0;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void OwaDisable::target_died() {

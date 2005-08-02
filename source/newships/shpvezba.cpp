@@ -278,6 +278,7 @@ VezlagariBulkhead::VezlagariBulkhead(VezlagariBarge* ocreator):
   damageAbsorbed = 0;
   this->normal = creator->specialDamage;
   this->armourEfficiency = creator->specialArmourEfficiency;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

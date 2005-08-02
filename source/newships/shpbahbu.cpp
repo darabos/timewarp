@@ -176,6 +176,8 @@ BahaoidBabyBuzzsaw::BahaoidBabyBuzzsaw(Vector2 opos, double ov, double oangle, i
 
 	turn_step 	= 0.0;
 	fully_dropped = FALSE;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 int BahaoidBabyBuzzsaw::handle_damage(SpaceLocation* source, double normal, double direct)

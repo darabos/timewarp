@@ -168,6 +168,8 @@ public:
   int          weaponDamage;
   int          weaponArmour;
 
+  double	num_reincarnations;
+
   public:
   PkunkFury(Vector2 opos, double shipAngle,
     ShipData *shipData, unsigned int code);

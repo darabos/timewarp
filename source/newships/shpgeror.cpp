@@ -471,6 +471,7 @@ OrionMissile::OrionMissile(Vector2 opos, double oangle, double ov,
 	rotatetime = 0;
 
 	accel = scale_acceleration(7);
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 // ***********************************************
@@ -552,10 +553,10 @@ void OrionMissile::calculate()
 			state=0;
 	}
 	
-	sprite_index = (get_index(facingAngle) + (int(isBurning) * 64));
 	
 	Missile::calculate();
 
+	sprite_index = (get_index(facingAngle) + (int(isBurning) * 64));
 }
 
 REGISTER_SHIP ( JadOrion )

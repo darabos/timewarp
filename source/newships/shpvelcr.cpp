@@ -328,6 +328,7 @@ creator, osprite, relativity),
 	explosionFrameSize = 12;
 	relative_damage = 0;
 	sprite_index = (int)floor( 40 * (referenceDamage - maxDamage) / (double)referenceDamage );
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 
@@ -392,6 +393,7 @@ VelronCrDefShot::VelronCrDefShot(SpaceLocation *creator, double ox, double oy,
 		SpaceSprite *osprite, double relativity) :
 	Shot(creator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, creator, osprite, relativity)
 {
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void VelronCrDefShot::calculate()

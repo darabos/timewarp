@@ -46,7 +46,7 @@ int TrideminTurret::handle_damage(SpaceLocation *source, double normal, double d
 
 void TrideminTurret::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	if(!ship->exists())
 	{
 		state=0;

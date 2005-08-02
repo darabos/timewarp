@@ -188,6 +188,7 @@ IlwrathSpiderMine::IlwrathSpiderMine( SpaceLocation *creator, double ox, double 
 {
 	  layer = LAYER_SPECIAL;
 	vel = unit_vector(angle) * v;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 IlwrathStop::IlwrathStop( SpaceLocation* creator, SpaceObject* ovictim, int olife ):

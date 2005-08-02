@@ -97,6 +97,7 @@ maxtime(otime)
 	damage_factor = odamage;
 
 	isblockingweapons = false;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void TimedShot::calculate()

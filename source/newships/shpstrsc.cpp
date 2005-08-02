@@ -74,7 +74,6 @@ public:
 //has attached to something.
 void TechMissile::calculate() {
 	STACKTRACE;
-	Missile::calculate();
 
 	//This used to be if(target&&!invisible()), or something like that.
 	if (target) {
@@ -96,7 +95,8 @@ void TechMissile::calculate() {
 		angle = normalize(angle, PI2);
 		}
 
-	sprite_index = get_index(angle);
+	//sprite_index = get_index(angle);
+	Missile::calculate();
 
 //	vx = v * cos(angle );
 //	vy = v * sin(angle );

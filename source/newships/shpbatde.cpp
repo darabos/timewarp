@@ -581,6 +581,8 @@ SpaceObject(creator, opos, oangle, osprite)
 	spr_changetime = 0.3;
 	spr_time = 0;
 	sprite_index = 0;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

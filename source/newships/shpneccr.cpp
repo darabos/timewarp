@@ -372,6 +372,7 @@ NechanziMissile::NechanziMissile(double ox, double oy, double oangle, double ov,
   missileType=0; //just a default.  May be set to 0, 1, or 2
   isActivated=0;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 	}
 
 void NechanziMissile::calculate(void) {

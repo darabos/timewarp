@@ -239,6 +239,7 @@ FlameAccel(oaccel)
 	nextpictime = 250.0;
 	Nanimatedflame = 4;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 	

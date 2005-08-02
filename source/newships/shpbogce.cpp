@@ -431,6 +431,8 @@ BoggCenturionMissile::BoggCenturionMissile (SpaceLocation *creator, Vector2 opos
         explosionFrameCount = 10;
         explosionFrameSize = 50;
         explosionSample = data->sampleSpecial[1];
+
+		attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void BoggCenturionMissile::calculate()

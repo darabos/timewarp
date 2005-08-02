@@ -277,6 +277,7 @@ SpaceObject(oship, oship->pos+odist*unit_vector(a), a, ospr)
 	set_depth(DEPTH_SHIPS - 0.1);
 
 	isblockingweapons = true;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

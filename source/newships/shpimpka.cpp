@@ -288,6 +288,7 @@ SpaceObject( creator, opos, oangle, osprite ), latched( NULL ), v( ov ), range( 
   collide_flag_sameship = 0;
   collide_flag_sameteam = collide_flag_anyone = bit(LAYER_SHIPS);
   vel = v * unit_vector(angle);
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void ImperialRadioactivity::calculate(){

@@ -192,6 +192,7 @@ SpaceObject(omother, omother->pos+rpos, omother->angle+rangle, osprite)
 	//collide_flag_sameship = ALL_LAYERS;
 
 	isblockingweapons = false;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

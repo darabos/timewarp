@@ -316,6 +316,7 @@ frame_step(0), frame_size(ofsize), frame_count(ofcount)
 
 	targetship = oship;
 	targetship->set_override_control(ocg);
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

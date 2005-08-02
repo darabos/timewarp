@@ -289,11 +289,15 @@ TempestWave::TempestWave(Vector2 pos, double oangle, double ov,
 
 	// for debugging purpose
 	debug_id = 101;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void TempestWave::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	Missile::calculate();
+
 	double shit_angle = angle * (180 / PI); // FIXME: Goddamn radians
 
 	if ( (d / range) > (.25) )
@@ -314,7 +318,6 @@ void TempestWave::calculate()
 
 	}
 
-	Missile::calculate();
 
 }
 

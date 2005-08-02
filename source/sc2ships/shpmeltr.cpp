@@ -134,6 +134,7 @@ MelnormeShot::MelnormeShot(Vector2 opos, double oangle, double ov,
   vel = ship->get_vel();
   set_depth(DEPTH_SHIPS+0.5);
 	debug_id = 1035;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void MelnormeShot::calculate() {
@@ -248,6 +249,7 @@ MelnormeDisable::MelnormeDisable(Ship *creator, Ship *oship, SpaceSprite *osprit
 
 	ocm = new OverrideControlMelnorme();
 	ship->set_override_control(ocm);
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void MelnormeDisable::calculate()

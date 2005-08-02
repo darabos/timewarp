@@ -154,6 +154,7 @@ EstionPlatform::EstionPlatform (EstionGunner *ship, int health, int oFrameSize) 
 	if (random() & 1) rotate_direction = 1; else rotate_direction = -1;
 
 	isblockingweapons = false;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 	}
 
 EstionGunner::EstionGunner(Vector2 opos, double shipAngle,

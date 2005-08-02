@@ -206,6 +206,7 @@ BubalosBomber::BubalosBomber  (Vector2 opos, double shipAngle, ShipData *shipDat
 
   sprite_index = sprite_index % 32;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 int BubalosBomber::activate_weapon()
@@ -518,6 +519,7 @@ PositionedAnimation(creator, creator, Vector2(ox,oy), osprite, 0, 1, 100, LAYER_
 {
 	base_frame = 64*(random()%4);
 	sprite_index = base_frame + get_index(follow->get_angle());
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void BubalosBomberFlame::calculate()

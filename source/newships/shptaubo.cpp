@@ -175,6 +175,7 @@ TauBomberBomb::TauBomberBomb (SpaceLocation *creator, double ox, double oy, doub
 	rotation_angle = 0;
 //	attributes &= ~ATTRIB_SHOT;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void TauBomberBomb::calculate()
@@ -351,6 +352,7 @@ TauBomberDecoy::TauBomberDecoy (SpaceLocation *creator, double ox, double oy, do
 			add(new TauBomberJam(this, q.currento, lifetime));
 	
 	sprite_index = 0;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

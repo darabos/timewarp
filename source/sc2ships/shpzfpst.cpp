@@ -76,6 +76,7 @@ ZoqFotPikShot::ZoqFotPikShot(Vector2 opos, double oangle,
   frame_count(num_frames)
 {
 	debug_id = 1048;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void ZoqFotPikShot::calculate()

@@ -159,6 +159,7 @@ VyroIngoSheild::VyroIngoSheild (Vector2 opos, int odamage, int oframes,
 	vel = ship->get_vel();
 
 	isblockingweapons = true;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void VyroIngoSheild::calculate()
@@ -214,6 +215,7 @@ VyroIngoWake::VyroIngoWake (Vector2 opos,int odamage,int oframes,
   status(1)
 {
   mass = 1000;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void VyroIngoWake::calculate()

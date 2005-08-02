@@ -415,8 +415,6 @@ void WissumTripod::calculate()
 		Ship::calculate_thrust();
 	}
 
-	sprite_index = 0;
-
 	// determine which one to draw (1 orientation, but different engine graphics)
 	sprite_index = 0;
 	// note: Nactiveangles = 1 or 2

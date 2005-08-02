@@ -206,6 +206,8 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 
 	// for debugging purpose
 	debug_id = 40;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void AlaryBC::calculate()

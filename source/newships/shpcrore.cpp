@@ -233,6 +233,8 @@ CromeShot::CromeShot (SpaceLocation *creator, Vector2 opos, double oangle, doubl
         direct_hit = 0;
         blast_damage_shots = oblast_damage_shots;
         explosionSample = data->sampleWeapon[2];
+
+		attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

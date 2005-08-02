@@ -56,7 +56,9 @@ AsteroidDebris::AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce)
 
   if (mass > 0)
 	this->accelerate(creator, this->trajectory_angle(creator), tractorForce / (this->mass * 2), 6);
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
+
 void AsteroidDebris::calculate()
 {
 	STACKTRACE

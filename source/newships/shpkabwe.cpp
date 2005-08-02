@@ -223,6 +223,7 @@ Haze_basepower(obasepower)
 	collide_flag_sameship = 0;
 
 	isblockingweapons = false;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 
@@ -683,6 +684,7 @@ SpaceLocation(creator, Vector2(0.0, 0.0), 0.0)
 		}
 	}
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 
@@ -849,6 +851,7 @@ Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship, osprite)
 	mother = oship;
 	ididdamage = 0;
 	spriteindextime = 0;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

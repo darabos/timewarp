@@ -200,6 +200,7 @@ armour(oarmour)
 	if(!(ship && ship->exists())) state = 0;
 	// for debugging purpose
 	debug_id = 7;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void AktunComSat::calculate()

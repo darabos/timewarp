@@ -206,9 +206,11 @@ KohrAhFRIED::KohrAhFRIED(double oangle, double ov, int odamage,
 //  y += sin(angle) * 50.0;
   pos += 50.0 * unit_vector(angle);
 	debug_id = 1033;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
-void KohrAhFRIED::calculate() {
+void KohrAhFRIED::calculate()
+{
   sprite_index = (int)((d / range) * (double)(frame_count - 1));
   Shot::calculate();
 }

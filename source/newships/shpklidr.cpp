@@ -238,6 +238,7 @@ Shot(ocreator, rpos, oangle, oStartVelocity, oStartDamage, orange,
   endVelocity = oEndVelocity;
   sprite_index = 0;
   this->lifetimeCounter = 0;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void KlisruTorpedo::calculate(void)

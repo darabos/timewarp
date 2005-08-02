@@ -344,6 +344,8 @@ Shot(ocreator, rpos, oangle, oStartVelocity, oStartDamage, orange,
 
 	// for debugging purpose
 	debug_id = 61;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void AlhordianTorpedo::calculate(void)

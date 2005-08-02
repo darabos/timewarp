@@ -274,6 +274,7 @@ KoanuaMissile::KoanuaMissile(Vector2 opos, double oangle, double ov,
 	isCoasting = FALSE;
 	facingAngle=oangle;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 	}
 
 void KoanuaMissile::calculate(void) {

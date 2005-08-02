@@ -362,7 +362,7 @@ void ShipPart::calculate_manager(Vector2 refpos, Vector2 refvel)
 	calc_pos(refpos);		// update (pos) using manager settings
 	vel = refvel;
 
-	sprite_index = get_index(angle);
+	//sprite_index = get_index(angle);
 
 	SpaceObject::calculate();
 

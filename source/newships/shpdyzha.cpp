@@ -232,10 +232,12 @@ HomingMissile(ocreator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, ot
 	collide_flag_anyone = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = ALL_LAYERS;
+	
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void DyzunMissile::calculate(void) {
-	STACKTRACE
+	STACKTRACE;
 	lifetimeTimer += frame_time;
 	if(lifetimeTimer<coastFrames) {
 		wasCoasting = TRUE;

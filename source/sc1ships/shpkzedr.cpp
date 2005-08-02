@@ -101,21 +101,22 @@ KzerZaFighter::KzerZaFighter (Vector2 opos, double oangle, double ov,
 	double orange, int oarmour, int oair_frames,
 	int olaser_damage, int olaser_color, double olaser_range, int olaser_frames,
 	int odrain, Ship *oship, SpaceSprite *osprite) 
-	:
-	Missile(oship, opos, oangle, ov, 1, orange, oarmour, oship, osprite),
-	air_frames(oair_frames),
-	max_air_frames(oair_frames),
-	laser_damage(olaser_damage),
-	laser_color(olaser_color),
-	laser_range(olaser_range),
-	laser_frames(olaser_frames),
-	batt(0),
-	recharge_frames(odrain)
-	{
+:
+Missile(oship, opos, oangle, ov, 1, orange, oarmour, oship, osprite),
+air_frames(oair_frames),
+max_air_frames(oair_frames),
+laser_damage(olaser_damage),
+laser_color(olaser_color),
+laser_range(olaser_range),
+laser_frames(olaser_frames),
+batt(0),
+recharge_frames(odrain)
+{
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
 	debug_id = 1012;
-	}
+	attributes &= ~ATTRIB_STANDARD_INDEX;
+}
 
 void KzerZaFighter::calculate() {
 	Missile::calculate();

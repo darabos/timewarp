@@ -454,6 +454,7 @@ TauHunterShot::TauHunterShot(double ox, double oy, double oangle, double ov, dou
 /*	collide_flag_anyone		= 0;
 	collide_flag_sameteam	= 0;
     collide_flag_sameship	= 0;*/
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void TauHunterShot::calculate()

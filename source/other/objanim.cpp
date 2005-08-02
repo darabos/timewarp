@@ -17,6 +17,13 @@ Animation( creator, opos, osprite, first_frame, num_frames, frame_size, depth ),
 
 	//attributes &= ~ATTRIB_STANDARD_INDEX;
 	remember_num_frames = num_frames;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
+
+	int k = sprite_index >>= 6;
+	if (k >= remember_num_frames || k < 0)
+	{
+		tw_error("Object Animation error in animation frame !! Should have died.");
+	}
 }
 
 void ObjectAnimation::calculate()

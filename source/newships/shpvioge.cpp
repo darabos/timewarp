@@ -203,6 +203,7 @@ Shot(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite, relativ
 	collide_flag_sameship = ALL_LAYERS;
 
 	id = ID_VIOGENPLASMA;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 int ViogenPlasma::handle_damage(SpaceLocation *source, double normal, double direct)

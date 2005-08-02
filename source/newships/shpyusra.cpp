@@ -130,6 +130,7 @@ latched( NULL ),
 control( ocontrol ), 
 released( false )
 {
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void YushSpear::calculate()

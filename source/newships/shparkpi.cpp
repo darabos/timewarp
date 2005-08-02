@@ -530,6 +530,7 @@ ArkanoidPincer::ArkanoidPincer(ArkanoidPincerShip *ocreator, Vector2 opos,
 
 	// for debugging purpose
 	debug_id = 91;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 ArkanoidPincer::~ArkanoidPincer(void) {

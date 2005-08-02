@@ -286,6 +286,7 @@ id    = SPACE_SHOT;
 calculate();
 isblockingweapons = true;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void YevShield::calculate() {
@@ -341,6 +342,7 @@ YevSaber::YevSaber(YevMech *oship,SpaceSprite *osprite) :
 
 	  layer = LAYER_SPECIAL;
 	  isblockingweapons = true;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
   calculate();
 }
 

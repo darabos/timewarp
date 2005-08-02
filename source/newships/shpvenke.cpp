@@ -382,6 +382,7 @@ VenKekThrust::VenKekThrust(VenKekFrigate* ocreator, Vector2 relPos, double oangl
   afterburner = creator->afterburner;
   powerLevel = 1;
   thrustSequence=0;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void VenKekThrust::calculate(void) {

@@ -238,6 +238,7 @@ double relativity)
 	isCoasting = FALSE;
 	facingAngle=oangle;
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 	}
 
 void KoanuaJavelinMissile::calculate(void) {

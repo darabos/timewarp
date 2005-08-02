@@ -355,6 +355,8 @@ Seg(creator,opos,oangle,osprite,Prev_Object,Next_Object)
 	layer = LAYER_SPECIAL;
 
 	basilisk = creator;
+
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 
@@ -538,6 +540,7 @@ Seg(creator,opos, oangle,osprite,NULL,NULL)
 		Cur_Seg=Cur_Seg->Next_Seg;
 	}
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 // ***************************************************************************

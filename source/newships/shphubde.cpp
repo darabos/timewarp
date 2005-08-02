@@ -201,6 +201,7 @@ Shot(creator, rpos, 0, 0, odamage, 1E9, 0, creator, explsprite)
 	v = 0;
 	sprite_index = 0;
 	armour = 0;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void MortarFire::calculate()
@@ -211,6 +212,8 @@ void MortarFire::calculate()
 		state = 0;
 		return;
 	}
+
+	Shot::calculate();
 
 	t += frame_time * 1E-3;
 
@@ -224,7 +227,6 @@ void MortarFire::calculate()
 
 	sprite_index = i;
 
-	Shot::calculate();
 }
 
 

@@ -40,6 +40,7 @@ IDENTITY(EarthlingCruiserMk3Shot);
 public:
 	EarthlingCruiserMk3Shot(SpaceLocation *creator, Vector2 opos, double oangle,
 		double ov, double odamage, double orange, double oarmour, SpaceSprite *osprite);
+	virtual void calculate();
 	virtual void animate(Frame *space);
 	virtual void soundExplosion();
 };
@@ -191,14 +192,22 @@ EarthlingCruiserMk3Shot::EarthlingCruiserMk3Shot(SpaceLocation *creator, Vector2
 
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 	play_sound(data->sampleWeapon[0]);
-}
+	sprite_index = (int)(31.99 * d / range);
+	}
 
+void EarthlingCruiserMk3Shot::calculate()
+{
+	STACKTRACE;
+
+	Shot::calculate();
+	sprite_index = (int)(31.99 * d / range);
+}
 
 void EarthlingCruiserMk3Shot::animate(Frame *space)
 {
 	STACKTRACE;
 	if (exists())
-		sprite->animate(pos, sprite_index = (int)(31.99 * d / range), space);
+		sprite->animate(pos, sprite_index, space);
 }
 
 void EarthlingCruiserMk3Shot::soundExplosion()

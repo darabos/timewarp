@@ -96,6 +96,7 @@ UmgahCone::UmgahCone(double odist, int odamage, UmgahDrone *oship,
 
 	umgahship = oship;
 	debug_id = 1021;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 bool UmgahCone::change_owner(SpaceLocation *new_owner) {

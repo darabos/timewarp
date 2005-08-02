@@ -107,6 +107,7 @@ CrewPod::CrewPod(Vector2 opos, double oVelocity, int oLifeTime,
 
 	isblockingweapons = false;
 	debug_id = 1019;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 int CrewPod::sameTeam(SpaceLocation *other) {

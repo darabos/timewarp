@@ -224,6 +224,7 @@ ScloreSting::ScloreSting(double ox, double oy, double oangle, double ov,
 {
   launched = FALSE;
   powerLevel = 1;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void ScloreSting::calculate(void) {

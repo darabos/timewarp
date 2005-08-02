@@ -234,6 +234,7 @@ mother(oship)
 	isblockingweapons = false;
 
 	debug_id = 2;	// for debugging purpose
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 int CrewPodPP::sameTeam(SpaceLocation *other)

@@ -246,6 +246,7 @@ ChmmrZapSat::ChmmrZapSat(double oangle, double orange, int odamage,
 
 	isblockingweapons = false;
 	debug_id = 1028;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void ChmmrZapSat::calculate() {

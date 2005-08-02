@@ -213,6 +213,7 @@ SpaceObject(creator, 0, 0, osprite)
 	isblockingweapons = false;
 
 	sprite->general_attributes |= SpaceSprite::ALPHA;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

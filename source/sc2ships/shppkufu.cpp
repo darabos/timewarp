@@ -21,12 +21,19 @@ PkunkFury::PkunkFury(Vector2 opos, double shipAngle,
   weaponDamage   = get_config_int("Weapon", "Damage", 0);
   weaponArmour   = get_config_int("Weapon", "Armour", 0);
 
+  num_reincarnations = 0;
+
 	reborn = 0;
 	update_panel = true;
 	debug_id = 1041;
 }
 
-int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct) {
+int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct)
+{
+	// what if it dies 2 times in one frame... you should prevent that.
+	if (!exists())
+		return 0;
+
 	int r = iround(normal + direct);
 	crew -= r;
 	if (crew > 0) return r;
@@ -36,7 +43,14 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 
 
 	
-	if ( (random() & 1) == 0) {
+	//if ( (random() & 1) == 0)
+	if (num_reincarnations < 1)
+		++num_reincarnations;
+
+	double xra = random(1.0);
+	double ra = num_reincarnations / (num_reincarnations+1);
+	if ( xra > ra)
+	{
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH){
 			game->ship_died(this, source);
 			attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
@@ -72,7 +86,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	
 
 	
-	add(new Phaser (this, 
+	physics->add(new Phaser (this, 
 //			x - cos(angle+0) * PHASE_MAX * w, 
 //			y - sin(angle+0) * PHASE_MAX * h, 
 			pos - PHASE_MAX * product(unit_vector(angle+0), get_size()),
@@ -81,7 +95,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 			PHASE_MAX * product(unit_vector(angle+0), get_size()),
 			this, sprite, sprite_index, hot_color, HOT_COLORS, 
 			PHASE_DELAY, PHASE_MAX, PHASE_DELAY) );
-	add(new Phaser (this, 
+	physics->add(new Phaser (this, 
 //			x - cos(angle+PI/2) * PHASE_MAX * w, 
 //			y - sin(angle+PI/2) * PHASE_MAX * h, 
 			pos - PHASE_MAX * product(unit_vector(angle+PI/2), get_size()),
@@ -90,7 +104,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 			PHASE_MAX * product(unit_vector(angle+PI/2), get_size()),
 			NULL, sprite, (sprite_index+0)&63, hot_color, HOT_COLORS, 
 			PHASE_DELAY, PHASE_MAX, PHASE_DELAY) );
-	add(new Phaser (this, 
+	physics->add(new Phaser (this, 
 //			x - cos(angle-PI/2) * PHASE_MAX * w, 
 //			y - sin(angle-PI/2) * PHASE_MAX * h, 
 			pos - PHASE_MAX * product(unit_vector(angle-PI/2), get_size()),
@@ -101,8 +115,8 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 			PHASE_DELAY, PHASE_MAX, PHASE_DELAY) );
 
 	// copied from katpoly code
-	Ship *s;
-	s = game->create_ship( get_shiptype()->id, control, pos, angle, get_team() );
+	PkunkFury *s;
+	s = (PkunkFury *)game->create_ship( get_shiptype()->id, control, pos, angle, get_team() );
 
 	
 	// the following prevents that a new ship will be "selected" based on this "empty" ship
@@ -133,7 +147,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	add(panel);
 	//add(s->get_ship_phaser());
 	add(s);
-	s->materialize();                // materialize it
+	//s->materialize();                // materialize it
 	s->update_panel = true;
 	
 
@@ -155,6 +169,13 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 				break;
 			}
 		}
+	}
+
+	s->num_reincarnations = num_reincarnations;
+
+	if (s->ship != s || parent != 0)
+	{
+		tw_error("Reincarnation mistake.");
 	}
 
 	return r;

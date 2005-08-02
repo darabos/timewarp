@@ -144,6 +144,7 @@ ExquivanBarrier::ExquivanBarrier(Vector2 opos, double oangle,
   mass = omass;
   exqship = oship;
   remembernumber = 0;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void ExquivanBarrier::calculate()

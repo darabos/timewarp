@@ -190,6 +190,7 @@ Link(creator,opos,oangle,osprite,Prev_Object,Next_Object)
 	explosionDamage = 4.0;
 
 	this->id = CARGOCRATE_ID;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 
@@ -292,6 +293,7 @@ Link(creator,opos, oangle,osprite,NULL,NULL)
 		Cur_Link=Cur_Link->Next_Link;
 	}
 
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 

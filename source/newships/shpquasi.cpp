@@ -91,6 +91,7 @@ Missile(creator, orelpos, orelangle, ovel, odamage, orange, oarmour, creator, os
 	twait = 0;
 
 	vel = 0;	// wait.
+	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 	
 void QuaiShot::calculate()
@@ -282,7 +283,7 @@ void Quai::calculate()
 	STACKTRACE
 	Ship::calculate();
 
-	if (!state)
+	if (!exists())
 		return;
 
 	sprite_index = get_index(angle);
