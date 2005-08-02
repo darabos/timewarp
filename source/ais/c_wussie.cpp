@@ -215,6 +215,11 @@ int ControlWussie::think ()
 	int avoid_planet = FALSE;
 	Query ap;
 	SpaceObject *p;
+
+	if (ship->target && ship->target->state < -1 )
+	{
+		tw_error("Ship should clean up its target pointer");
+	}
 	
 	if (ship->target && !ship->target->isInvisible ())
 	{
