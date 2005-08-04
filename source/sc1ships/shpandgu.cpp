@@ -46,7 +46,9 @@ AndrosynthGuardian::AndrosynthGuardian(Vector2 opos, double angle, ShipData *dat
 void AndrosynthGuardian::calculate()
 {
 	Ship::calculate();
-	if(specialActive && (batt == -1)) {
+
+	if(specialActive && (batt == -1))
+	{
 		set_sprite(shipSprite);
 		damage_factor = 0;
 		specialActive = FALSE;

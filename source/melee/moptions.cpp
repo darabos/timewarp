@@ -467,7 +467,7 @@ DIALOG old_optionsDialog[] =
    { d_check_proc,    40,  185, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"3D Planet",         NULL, NULL          },	//OPTIONS_DIALOG_3DPLANET,
    { d_check_proc,    200,  140, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Synched-lag",       NULL, NULL          },	//OPTIONS_DIALOG_SYNCLAG,
    { d_check_proc,    200,  155, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Desynch-test",      NULL, NULL          },	//OPTIONS_DIALOG_DESYNCTEST,
-   { d_check_proc,    200,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Optimize latency",  NULL, NULL          },	//OPTIONS_DIALOG_OPTIMIZE4LATENCY,
+   { d_check_proc,    200,  170, 100, 14,  255, 0,   0,    0,      1,   0,   (void*)"Slow connection",  NULL, NULL          },	//OPTIONS_DIALOG_OPTIMIZE4LATENCY,
    { d_text_proc,     292, 244, 120, 20,  255, 0,   0,    0,      0,   0,   (void *)"View",             NULL, NULL          },
    { d_list_proc,     284, 264, 180, 90,  255, 0,   0,    0,      0,   0,   (void *) viewListboxGetter, NULL, NULL          },
    { my_d_button_proc,400, 60,  80,  40,  255, 0,   0,    D_EXIT, 0,   0,   (void *)"OK",               NULL, NULL          },

@@ -1338,7 +1338,7 @@ void Physics::animate (Frame *frame) {STACKTRACE
 			if (glog->type == Log::log_net)
 			{
 				NetLog *l = (NetLog*) glog;
-				l->recv_noblock();		// receive stuff, if you can
+			//	l->recv_noblock();		// receive stuff, if you can  [not sure if this is required]
 				
 				// this helps to reduce idle-time, cause it doesn't have to wait till
 				// data are received first (namely that's what game_ready() tests).

@@ -1072,6 +1072,9 @@ void Game::network_crc_check()
 	int p;
 	for ( p = 0 ; p < num_network; ++p )
 	{
+		if (!player[p])
+			continue;
+
 		// sharing
 		if (player[p] && player[p]->islocal())
 		{
@@ -1305,10 +1308,12 @@ void Game::play()
 
 	// tracker about home many extra physics iterations are inserted; this shouldn't get too high
 	int num_catchups = 0;
-	const int max_catchups = 2;
+	const int max_catchups = 3;
 
 	int time_start = get_time();
 
+	// only for debugging/testing purpose.
+	int debug_idle_time_animate = 50 + random(50);
 
 
 	try {
@@ -1338,23 +1343,15 @@ void Game::play()
 			// note, you go to the next calculation either because some required time has
 			// passed, or because you need to catch up with some kind of lag...
 
-			if ((next_tic_time <= time))//geo:physics should be independent of animation && (next_render_time > game_time)) &&
+			if (time >= next_tic_time)//geo:physics should be independent of animation && (next_render_time > game_time)) &&
 				/*(game_ready() || game_time == 0)*/ {		// note that game_time==0 is also needed, cause otherwise it'll wait for data, while no data've been generated yet.
 				_STACKTRACE("Game::play - Game physics");
 
-				//idle_iteration = false;
 
 
-
-			//	int ilag;
-			//	for ( ilag = 0; ilag < lag_decrease + 1; ++ilag )	//+1, cause there needs to be at least 1 iteration
-			//	{
-			//		if (ilag > 0)
-			//			--lag_buffer;
-					
-					// wait till you receive signal that you can proceed to the next iteration.
-					// ALL COMMUNICATION EXCEPT FOR DESYNCH TEST SHOULD GO THROUGH HERE.
-					// also see the CALL and EVENT macros
+				// wait till you receive signal that you can proceed to the next iteration.
+				// ALL COMMUNICATION EXCEPT FOR DESYNCH TEST SHOULD GO THROUGH HERE.
+				// also see the CALL and EVENT macros
 					
 				if (events.all_ready())
 				{
@@ -1364,13 +1361,12 @@ void Game::play()
 			
 				
 				int t = get_time();
-				//	for (;;)
-				//	{
+
 				NetLog *l = (NetLog*) glog;
 				if (l->type == Log::log_net)
 				{
 					l->flush_noblock();
-					//glog->listen();
+					
 					l->recv_noblock();		// receive stuff, if you can
 					
 				}
@@ -1382,19 +1378,9 @@ void Game::play()
 				// graphics of this user can be delayed by graphics of another user, resulting in
 				// a pretty slow framerate.
 
-				if (!events.all_ready())
-				{
-					//message.print(1000, 15, "events not ready");
-					//xxx this happens, if you press a key !!
-				}
-
 				if (events.all_ready())
 				{
 					idle_iteration = false;
-					
-					// a short resting period.
-					//	idle(1);
-					//	}
 					
 					
 					// check if a player was asked to be removed here..
@@ -1544,7 +1530,7 @@ void Game::play()
 							
 							if (next_tic_time < time_current)
 							{
-								//message.print(1500, 15, "Catching up");
+								//message.print(1500, 15, "Catching up [%i]", num_catchups);
 								catching_up = true;
 							} else {
 								catching_up = false;
@@ -1571,21 +1557,7 @@ void Game::play()
 					{
 						next_fps_time += msecs_per_fps;
 						fps();
-					}
-					/*
-					// in any case, already send the data that were calculated (don't waste time on this..).
-					// if you don't have to be careful about your connection speed.
-					//if (!optimize4latency)
-					//{
-					if (glog->type == Log::log_net)
-					{
-						// this sends, if there's something to send at least
-						NetLog *l = (NetLog*) glog;
-						l->flush_noblock();
-					}
-					//}
-					*/
-					
+					}					
 					
 					
 				}
@@ -1603,7 +1575,7 @@ void Game::play()
 			if (glog->type == Log::log_net)
 			{
 				NetLog *l = (NetLog*) glog;
-				l->recv_noblock();		// receive stuff, if you can
+			//	l->recv_noblock();		// receive stuff, if you can [not sure if this is required]
 				
 				// this helps to reduce idle-time, cause it doesn't have to wait till
 				// data are received first (namely that's what game_ready() tests).
@@ -1621,30 +1593,31 @@ void Game::play()
 			time = get_time();
 			if (!catching_up || time >= next_render_time - msecs_per_render + msecs_per_render_max)
 			{
-				if (interpolate_frames || (/*game_*/time >= next_render_time))
+				if (interpolate_frames || (time >= next_render_time))
 				{
 					_STACKTRACE("Game::play - Game rendering")
 						
 					idle_iteration = false;
 
-				//	message.print(1000, 15, "anim dt = %i  render = %i  t = %i",
-				//		int(time - next_render_time), int(msecs_per_render), int(time - time_start));
-
-					//message.print(1500, 15, "lag-buffer = %i", lag_buffer);
 					animate();
 
+					#ifdef _DEBUG
+					idle(debug_idle_time_animate);
+					#endif
 
-					if (time - next_render_time < msecs_per_render )
-						next_render_time += msecs_per_render;
-					else
-						next_render_time = /*game_*/time + msecs_per_render;
+
+					next_render_time += msecs_per_render;
+
+					time = get_time();
+					if (time >= next_render_time )
+						next_render_time = time + msecs_per_render;
 				}
 			}
 
 
 			if (idle_iteration)
 			{
-				// if nothing interesting happend in this iteration, then insert some idle time
+				// if nothing interesting happened in this iteration, then insert some idle time
 				int n = 1;
 				idle(n);
 				tot_idle_time += n;

@@ -186,16 +186,24 @@ int KzerZaFighter::handle_damage(SpaceLocation *source, double normal, double di
 	return 0;
 }
 
-void KzerZaFighter::inflict_damage(SpaceObject *other) {
+void KzerZaFighter::inflict_damage(SpaceObject *other)
+{
 	if (other == ship) {
 		play_sound2(data->sampleExtra[1]);
 		damage(ship, 0, -1);
 	} 
-	if (!other->isPlanet()) state = 0;
+	if (!other->isPlanet())
+	{
+		state = 0;
+		
+		if (other->isShip())
+			damage(other, 1, 0);
+	}
 	else {
 		double a = trajectory_angle(other);
 		translate(unit_vector(a) * -10);
 	}
+
 	return;
 }
 
