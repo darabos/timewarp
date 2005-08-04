@@ -95,6 +95,11 @@ class ControlWussie : public Control {
  double max_range[MAX_STATES];
  int tactic_state;
  int state;
+
+ // some random settings to give some individuality to a ship.
+	double evasion_base_size, evasion_ship_multiplier, evasion_angle_change,
+		intercept_abort_speed_factor, scare_crew_factor, scare_owncrew_minimum, scare_close_distance,
+		scared_enemyship_speed_factor, out_of_range_multiplier;
  };
 
 /*! \brief ??? */

@@ -45,6 +45,9 @@
 #define TACTIC_DIRECT_INTERCEPT 3
 #define TACTIC_RANGE 4
 
+// for testing (graphics):
+//#include "scp.h"
+
 /*! \brief Check danger
   \return Max damage ship can get from his enemies
 */
@@ -87,6 +90,9 @@ const char *ControlWussie::getTypeName ()
 	return "WussieBot";
 }
 
+// 1. waarom keren ze te snel terug op het pad?
+// 2. waarom keren sommige sowieso niet ?
+
 double ControlWussie::evasion (Ship * ship)
 {
 	STACKTRACE;
@@ -100,98 +106,119 @@ double ControlWussie::evasion (Ship * ship)
 	if (frac > 1.5)
 		frac = 1.5;
 
-	// minimum check-range is 500 pixels; but, for ships that turn slowly, you should anticipate
-	// further ahead...
-	check_range = 400.0 / frac;
+	// for ships that turn slowly, you should anticipate (much) further ahead
+	check_range = 750.0 / frac;
 	
 
-	double closetime = 1000 / frac;	// 1000 ms, scaled by more if you can respond only slowly
+	//double closetime = 1000 / frac;	// 1000 ms, scaled by more if you can respond only slowly
 	double desiredangle = 0;
 	Query b;
 	SpaceObject *shot;
-	int collideshot;
-	double shipslope, shotslope, shottime, shiptime;
-	double shipint, shotint;
+	//int collideshot;
+	//double shipslope, shotslope, shottime, shiptime;
+	//double shipint, shotint;
 //  double shipspeed,shotspeed;
-	double xs = 0, ys = 0;
-	double velship, velshot;
-	for ( b.begin (ship, OBJECT_LAYERS & ~bit (LAYER_CBODIES) & ~bit (LAYER_SHIPS), check_range); b.current; b.next() )
+	//double xs = 0, ys = 0;
+	//double velship, velshot;
+
+	// place the search-circle ahead of the ship, if you move forward that is
+	double r = ship->vel.length() / ship->speed_max;
+	
+	static SpaceLocation center_check(0,0,0);
+	center_check.pos = ship->pos + 0.5*r*check_range * unit_vector(ship->vel);
+
+	SpaceObject *collider_object = 0;
+	double collider_distance = 1E6;
+	double collider_t = 1E6;
+
+	for ( b.begin (&center_check, OBJECT_LAYERS & ~bit (LAYER_CBODIES) & ~bit (LAYER_SHIPS), check_range); b.current; b.next() )
 	{
 		shot = b.currento;
-		if (shot->canCollide (ship))
+		if ( shot->canCollide(ship) && shot != ship->target && !shot->isAsteroid() )
 		{
-			Vector2 ship_pos, shot_pos;
-			ship_pos = ship->normal_pos();
-			shot_pos = shot->normal_pos();
+			Vector2 dv, dp;
 
-			if (fabs(ship->get_vel().y) < 0.0001)
-				shipslope = sign(ship->get_vel().x) * 10000;
-			else
-				shipslope = ship->get_vel().x / ship->get_vel().y;
+			// find time at which the 2 objects are closest
+			dp = min_delta(shot->pos, ship->pos, map_size);
+			//dp = shot->pos - ship->pos;
+			dv = shot->vel - ship->vel;
 
-			if (fabs(shot->get_vel().y) < 0.0001)
-				shotslope = sign(shot->get_vel().x) * 10000;
-			else
-				shotslope = shot->get_vel().x / shot->get_vel().y;
-			collideshot = TRUE;
-			shipint = ship_pos.y - (shipslope * ship_pos.x);
-			shotint = shot_pos.y - (shotslope * shot_pos.x);
-			if (fabs(shotint - shipint) < 1 || fabs(shotslope - shipslope) < 0.05)
+			double a, b;
+			a = dot_product(dv, dv);
+			b = dot_product(dv, dp);
+
+			double t = 0;
+			if (a != 0)
 			{
-				collideshot = FALSE;
+				t = -b / a;
 			}
-			else
+			// that's the time.
+
+			// t is the intercept time, at which the distance between the two objects is minimal.
+
+			if (t > 0)	// if they are coming closer
 			{
-				xs = (shipint - shotint) / (shotslope - shipslope);
-				ys = (shipslope * xs) + shipint;
-				//xs = normalize(xs, X_MAX);
-				//ys = normalize(ys, Y_MAX);
-			}
-			velship =
-				distance_from (0, ship->get_vel());
-			if ((velship == 0) || (!collideshot))
-				collideshot = FALSE;
-			else
-			{
-				shiptime = distance_from (normalize2(Vector2(xs, ys), map_size), ship_pos) / velship;
-				velshot = distance_from (0, shot->get_vel ());
-				if (!((velshot == 0) || (!collideshot)))
+				double distance;
+
+				// this minimal distance is:
+				distance = (dp + t * dv).length();
+
+				if (distance < collider_distance && t < collider_t)	// consider it a danger if it is this close
 				{
-					shottime =
-						distance_from (normalize2(Vector2(xs, ys), map_size), shot_pos)
-						/ velshot;
-					if (fabs (shottime - shiptime) < closetime)
-					{
-						double a = ship->trajectory_angle (shot);
-						double da = ship->get_angle() - a;
-
-						closetime = fabs (shottime - shiptime);
-						/*
-						if ((angle < PI/12) || (angle > PI2-PI/12))
-							angle += PI;
-						else if (normalize (angle, PI2) >
-							    normalize (-angle, PI2))
-							angle -= PI/2;
-						else
-							angle += PI/2;
-							*/
-
-						while (da < -PI)	da += PI2;
-						while (da >  PI)	da -= PI2;
-						// angle is now between -PI and +PI
-
-						// steer away from the dangerous object.
-						if (da < 0) 
-							desiredangle = a - 0.75*PI;
-						else
-							desiredangle = a + 0.75*PI;
-					}
+					// you have to evade it.
+					collider_t = t;
+					collider_object = shot;
+					collider_distance = distance;
 				}
+
 			}
 		}
+
 	}
+
+	/*
+	if ( collider_object )
+	{
+		Vector2 P;
+		double R;
+		P = corner(ship->pos, collider_object->size* space_zoom);
+		R = collider_distance * space_zoom;
+		circle(video_screen, P.x, P.y, R, makecol(200,200,0));
+	}
+	*/
+
+
+	if ( collider_object && (collider_distance < evasion_base_size + evasion_ship_multiplier * (ship->size.x + shot->size.x)) )
+	{
+		// there is a dangerous object, and it will also come quite near to your ship... so fear it !!
+		
+		shot = collider_object;
+		
+		double a = ship->trajectory_angle (shot);
+		double da = ship->get_angle() - a;
+		
+		while (da < -PI)	da += PI2;
+		while (da >  PI)	da -= PI2;
+		// angle is now between -PI and +PI
+		
+		// steer away from the dangerous object.
+		if (fabs(da) <= 0.5*PI)
+		{
+			if (da < 0) 
+				desiredangle = a - evasion_angle_change;
+			else
+				desiredangle = a + evasion_angle_change;
+		} else {
+			if (da < 0) 
+				desiredangle = a - evasion_angle_change;
+			else
+				desiredangle = a + evasion_angle_change;
+		}
+	}
+
 	return desiredangle;
 }
+
 
 int ControlWussie::think ()
 {
@@ -327,7 +354,7 @@ int ControlWussie::think ()
 				
 				if (distance > 0.9*option_range[state][0])
 				{
-					if (ship->target->vel.length() > 0.3 * ship->speed_max)
+					if (ship->target->vel.length() > intercept_abort_speed_factor * ship->speed_max)
 					{
 						// if the enemy is too fast for you...
 						// just move to some other direction
@@ -360,12 +387,12 @@ int ControlWussie::think ()
 
 			// and what, if the enemy is facing you ? You should be really scared then ... unless ...
 			if (t &&
-				(t->vel - ship->vel).length() > 0.9 * ship->speed_max &&		// be scared if enemy is moving away very fast
+				(t->vel - ship->vel).length() > scared_enemyship_speed_factor * ship->speed_max &&		// be scared if enemy is moving away very fast
 				ship->speed_max > 1.1 * t->vel.length() &&		// be scared if you are able to run away from the enemy
-				(t->crew/t->crew_max > 0.3 && t->crew > 6) &&		// be scared if the enemy has much crew left
+				(t->crew/t->crew_max > scare_crew_factor && t->crew > scare_owncrew_minimum) &&		// be scared if the enemy has much crew left
 				!ship->isInvisible() &&									// be scared if you're visible
 				(distance > option_range[state][0] ||		// be scared if you're out of firing range
-				distance < 200)					// or be scared if you're *very* close.
+				distance < scare_close_distance)					// or be scared if you're *very* close.
 				)
 			{
 				// well... only if the enemy isn't faster than you, otherwise, evading or running
@@ -479,26 +506,30 @@ int ControlWussie::think ()
 		// here, angle_fire is an absolute value.
 
 
-		// if you're out of range anyway, then it makes sense to check for threats. Otherwise,
+		// and what, if the enemy is invisible
+		if (ship && ship->target && ship->target->isInvisible())
+		{
+			angle_aim = random(PI2);
+			if (ship->batt > 0.5*ship->batt_max ||
+				ship->batt >= ship->batt_max - ship->weapon_drain)
+				action |= keyflag::fire;
+		}
+		
+		// THIS WILL OVERRIDE EARLIER DECISIONS.
+		// if you're far away, then it makes sense to check for threats. Otherwise,
 		// you shouldn't break off an attack to evade a lousy missile.
-		if (distance > 0.5*option_range[state][0])
+		if (distance > 400.0)//0.5*option_range[state][0])
 		{
 			double a;
 			a = evasion (ship);
-
+			
 			if (a != 0)
 				angle_aim = a;
 		}
 	}
 
-	// and what, if the enemy is invisible
-	if (ship && ship->target && ship->target->isInvisible())
-	{
-		angle_aim = random(PI2);
-		if (ship->batt > 0.5*ship->batt_max ||
-			ship->batt >= ship->batt_max - ship->weapon_drain)
-			action |= keyflag::fire;
-	}
+
+
 
 	double da;
 	da = angle_aim - ship->get_angle();	// so that it's the increment that you've to make, to achieve the desired angle
@@ -602,6 +633,18 @@ int ControlWussie::think ()
 		if (option_velocity[state][j] < 0.9 * ship->target->vel.length() &&
 			(option_range[state][j] > 0.4 * distance ||  distance > 500))
 			dontfireoption[j] = TRUE;
+
+
+		// fast ships shouldn't be targeted at great distances...
+		double rV, rD;
+		double v;
+		v = ship->target->vel.length();
+		rV = option_velocity[state][j] / (v + option_velocity[state][j]);
+		rD = option_range[state][j] / (option_range[state][j] + distance);
+		if ( rD < rV * out_of_range_multiplier  )	// out of range condition
+			dontfireoption[j] = TRUE;
+
+
 
 
 		for (i = 0; i < MAX_OPTION; i++)
@@ -1006,10 +1049,10 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 			if (planet_safe[k] == 0) //Launchpad, is this supposed to be here? Geo: yes, otherwise you can't have auto/override settings
 			{
 				planet_safe[k] = 75 * get_config_int ("ship", "Mass", 8);
-				if (planet_safe[k] > 800.0)
-					planet_safe[k] = 800.0;		// let's not make it too big.
-				if (planet_safe[k] < 400.0)
-					planet_safe[k] = 400.0;		// let's not make it too small.
+				if (planet_safe[k] > 900.0)
+					planet_safe[k] = 900.0;		// let's not make it too big.
+				if (planet_safe[k] < 500.0)
+					planet_safe[k] = 500.0;		// let's not make it too small.
 				// note that a planet can be pretty big by itself ...
 			}
 
@@ -1058,5 +1101,27 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 		}
 		state = 0;
 	}
+
+
+	// and perhaps some unique "random" settings for this ship...
+	evasion_base_size = 50.0 + random(100.0);
+	evasion_ship_multiplier = 1.0 + random(1.0);
+	evasion_angle_change = (0.4 + random(0.2)) * PI;
+
+	// lower means, more cowardly
+	intercept_abort_speed_factor = 0.25 + random(0.1);
+
+	// scareness: when an attack is aborted..
+	scare_crew_factor = 0.25 + random(0.1);
+	scare_owncrew_minimum = 4 + random(4);
+	scare_close_distance = 150 + random(100);
+	scared_enemyship_speed_factor = 0.85 + random(0.1);
+
+	// out of range (shoot or not, the further you are, the smaller the chance).
+	out_of_range_multiplier = 0.5 + random(0.5);
+
+
+
+
 	return;
 }
