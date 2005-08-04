@@ -193,27 +193,35 @@ double ControlWussie::evasion (Ship * ship)
 		// there is a dangerous object, and it will also come quite near to your ship... so fear it !!
 		
 		shot = collider_object;
+
+		double a;
+
+		// however, if the intercept point is close anyway, then simply stay perpendicular on its path
+		// whichever is closest to your current orientation
+		if (collider_distance < 10*frame_time*ship->vel.length())
+		{
+			a = shot->vel.angle();
+		} else {
+			// you should avoid the point of closest approach.
+			Vector2 pos_closest = shot->pos + collider_t * shot->vel;
 		
-		double a = ship->trajectory_angle (shot);
+			a = min_delta(pos_closest, ship->pos, map_size).atan();
+		}
+
 		double da = ship->get_angle() - a;
 		
 		while (da < -PI)	da += PI2;
 		while (da >  PI)	da -= PI2;
 		// angle is now between -PI and +PI
+
+		double a_ev = evasion_angle_change;
+
 		
 		// steer away from the dangerous object.
-		if (fabs(da) <= 0.5*PI)
-		{
-			if (da < 0) 
-				desiredangle = a - evasion_angle_change;
-			else
-				desiredangle = a + evasion_angle_change;
-		} else {
-			if (da < 0) 
-				desiredangle = a - evasion_angle_change;
-			else
-				desiredangle = a + evasion_angle_change;
-		}
+		if (da < 0) 
+			desiredangle = a - a_ev;
+		else
+			desiredangle = a + a_ev;
 	}
 
 	return desiredangle;
