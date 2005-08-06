@@ -180,7 +180,14 @@ int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, dou
      shield = 0;
    }
    
-   return Ship::handle_damage(source, normal, direct);
+   crew = 1;
+   Ship::handle_damage(source, normal, direct);
+   if (crew <= 0)
+	   shield = 0;
+   else
+	   crew = 1 + shield;
+
+   return 0;
 }
 
 RGB ConfederationHornet::crewPanelColor(int k)
