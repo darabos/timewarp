@@ -50,16 +50,22 @@ void Animation::calculate() {
 	STACKTRACE;
 
 	frame_step -= frame_time;
-	while (frame_step < 0) {
+	
+	while (frame_step < 0)
+	{
 		frame_step += frame_size;
 		sprite_index += 1;
-		if (sprite_index == sprite->frames()) sprite_index = 0;
-		frame_count -= 1;
-		if (!frame_count) state = 0;
-		}
-	SpaceObject::calculate();
+		if (sprite_index == sprite->frames())
+			sprite_index = 0;
 
+		frame_count -= 1;
+
+		if (!frame_count)
+			state = 0;
 	}
+	
+	SpaceObject::calculate();
+}
 
 void Animation::animate(Frame *space) {STACKTRACE
 	if (transparency != 0) {
@@ -97,16 +103,21 @@ FixedAnimation::FixedAnimation(SpaceLocation *creator, SpaceLocation *opos,
 		}
 	}
 
-void FixedAnimation::calculate() {STACKTRACE
-	if (follow->exists()) {
+void FixedAnimation::calculate()
+{
+	STACKTRACE;
+
+	if (follow->exists())
+	{
 		pos = follow->normal_pos();
 		Animation::calculate();
-		} 
-	else {
+	} 
+	else
+	{
 		state = 0;
 		follow = NULL;
-		}
 	}
+}
 
 PositionedAnimation::PositionedAnimation(SpaceLocation *creator, 
 	SpaceLocation *opos, Vector2 rel_pos, SpaceSprite *osprite, int first_frame,
