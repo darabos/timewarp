@@ -1272,6 +1272,53 @@ void Game::test_startit()
 	}
 }
 
+
+
+static const int max_time_checks = 20;
+static int dt = frame_time;
+static int N_time_span[max_time_checks];
+static int last_time = 0;
+
+void Game::iteration_histogram(int time)
+{
+
+	int i = (time - last_time) / dt;
+	last_time = time;
+
+	if (i < 0)
+		i = 0;
+	if (i > max_time_checks-1)
+		i = max_time_checks-1;
+
+	N_time_span[i] += 1;
+}
+
+void Game::iteration_histogram_init(int time)
+{
+	last_time = time;
+
+	int i;
+	for ( i = 0; i < max_time_checks; ++i )
+	{
+		N_time_span[i] = 0;
+	}
+
+	dt = frame_time;
+}
+
+void Game::iteration_histogram_writelog()
+{
+	int i;
+	for ( i = 0; i < max_time_checks; ++i )
+	{
+		log_debug("delay = %5i to %5ims  N = %6i\n",
+			i * dt, (i+1)* dt, N_time_span[i]);
+	}
+}
+
+
+static int base_delay = 0;	// for debug (lag-test) purpose only
+
 void Game::play()
 {
 	_STACKTRACE("Game::play");
@@ -1312,8 +1359,11 @@ void Game::play()
 
 	int time_start = get_time();
 
+	iteration_histogram_init(time_start);
+
 	// only for debugging/testing purpose.
-	int debug_idle_time_animate = 50 + random(50);
+	int debug_idle_time_animate = 50 + rand()%50;
+	debug_idle_time_animate = 0;
 
 
 	try {
@@ -1322,8 +1372,6 @@ void Game::play()
 
 			unsigned int time;
 			
-			time = get_time();
-			// this is used to time animation and physics
 
 			poll_input();
 			videosystem.poll_redraw();
@@ -1339,6 +1387,24 @@ void Game::play()
 			// issue an idle time.
 			bool idle_iteration = true;
 
+			time = get_time();
+			// this is used to time animation and physics
+
+
+#ifdef _DEBUG
+			// if you press space, this will block a "send" on this machine; thus, you can simulate
+			// the effect of lag, even on a LAN network.
+			debug_net_block = false;
+			if (key[KEY_SPACE] != 0)
+			{
+				++base_delay;
+				if (base_delay >= 50)
+					base_delay = 0;
+
+				if (base_delay != 0)//(rand()%50) != 0)
+					debug_net_block = true;
+			}
+#endif
 
 			// note, you go to the next calculation either because some required time has
 			// passed, or because you need to catch up with some kind of lag...
@@ -1383,6 +1449,8 @@ void Game::play()
 					idle_iteration = false;
 					
 					
+					iteration_histogram(time);	//ok, another iteration; update the histogram!
+
 					// check if a player was asked to be removed here..
 					int i;
 					for ( i = 0; i < num_network; ++i )
@@ -1411,6 +1479,7 @@ void Game::play()
 					// test if there was an event that causes the game to quit.
 					if (game_done)
 					{
+						iteration_histogram_writelog();
 						return;
 					}
 					//	}
@@ -1464,6 +1533,7 @@ void Game::play()
 					
 
 					// crc checking is now only available, if all the games involved run synchronized,
+					// this is also a (much simpler) desynch test.
 					if (global_lag_synch)
 						network_crc_check();
 
@@ -1518,33 +1588,47 @@ void Game::play()
 					int time_current = get_time();
 
 
-					if (t_execute < 0.5*(frame_time / turbo))
+
+					int frame_time_length = frame_time / turbo;
+					if (t_execute < 0.25*(frame_time / turbo))
 					{
 						// in this case, you can try to have physics in a linear fashion
 
-						if ((hiccup_margin >= 0) && (num_catchups < max_catchups) && (next_tic_time + hiccup_margin > /* < */ time_current))
+						if ((hiccup_margin >= 0)
+							&& (num_catchups < max_catchups)		// prevent too many catchups (that will delay graphics update too much)
+							&& (next_tic_time + hiccup_margin > /* < */ time_current))
 						{
 
-							// trying to execute frames in a linear fashion.
-							next_tic_time += (frame_time / turbo);
 							
-							if (next_tic_time < time_current)
+							if (next_tic_time + frame_time_length < time_current)
 							{
 								//message.print(1500, 15, "Catching up [%i]", num_catchups);
+
+								// trying to make the "gaps" not too small, otherwise... it may be...
+								// too... unstable? Cause iterations might follow to quickly, and then
+								// each player will generate bursts of information (to send across the net)
+								// The follow may be a little more stable in time...
 								catching_up = true;
+								next_tic_time += frame_time_length  / (num_catchups + 2);
 							} else {
 								catching_up = false;
+								
+								// trying to execute frames in a linear fashion.
+								next_tic_time += frame_time_length;	// but if there are >1 catchups, then hurry up!!
 							}
 							
 						} else {
 							catching_up = false;
-							next_tic_time = time_current + (frame_time / turbo);	// execute as often as possible.
+							next_tic_time = time_current + frame_time_length;	// execute as often as possible.
 						}
 					} else {
 						// otherwise, the game calculations take so long, that trying to catch up
 						// is nigh impossible.
 						catching_up = false;
-						next_tic_time = time_current + (frame_time / turbo);	// execute as often as possible.
+						next_tic_time += frame_time_length;
+
+						if (next_tic_time < time_current)
+							next_tic_time = time_current + frame_time_length;	// execute as often as possible.
 					}
 
 					if (catching_up)
@@ -1575,7 +1659,7 @@ void Game::play()
 			if (glog->type == Log::log_net)
 			{
 				NetLog *l = (NetLog*) glog;
-			//	l->recv_noblock();		// receive stuff, if you can [not sure if this is required]
+				//l->recv_noblock();		// receive stuff, if you can [is not needed here ; sending has priority]
 				
 				// this helps to reduce idle-time, cause it doesn't have to wait till
 				// data are received first (namely that's what game_ready() tests).
@@ -1593,7 +1677,7 @@ void Game::play()
 			time = get_time();
 			if (!catching_up || time >= next_render_time - msecs_per_render + msecs_per_render_max)
 			{
-				if (interpolate_frames || (time >= next_render_time))
+				if (/*interpolate_frames ||*/ (time >= next_render_time))
 				{
 					_STACKTRACE("Game::play - Game rendering")
 						
@@ -1628,6 +1712,7 @@ void Game::play()
 				
 
 		}
+
 	}
 	catch (int i) {
 		if (i == -1) throw;
@@ -2451,6 +2536,12 @@ void EventClass::handle()
 			channel_current = player[p]->channel + _channel_buffered;
 			event_player_current = p;	// can also be useful.
 			
+			if (log_empty())	// only try to read the buffer, if there are data in the buffer...
+				continue;
+			// that will avoid getting caught inside this loop, while data are only being read outside
+			// of this loop.
+			// note that it uses channel_current.
+
 			log_resetmode();	// go to default mode.
 			
 			log_nextmode();	// go to write mode
@@ -2458,7 +2549,7 @@ void EventClass::handle()
 			
 			// executes a call to the function in the list, with that id-number
 			int req;
-			log_int(req);
+			log_int(req);	//xxx it stopped here, requiring a read... because of the loop ?
 			// player index is not stored: it's assumed that each player has its own channel
 			issue(req, p);
 

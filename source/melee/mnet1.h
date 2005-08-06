@@ -48,6 +48,7 @@ class LagHandler {
 //	void log ( void *data, 
 };*/
 
+extern bool debug_net_block;	// debug only: if you press space, it's set to true, then it'll add lag.
 
 const int max_connections = 100;
 // note, that I'll assume that (channel/4) equals the connection number.

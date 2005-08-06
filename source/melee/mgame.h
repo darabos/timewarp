@@ -380,6 +380,11 @@ public:
 	void network_crc_check();
 
 	void test_startit();	// just for testing.
+
+	void iteration_histogram(int time);
+	void iteration_histogram_init(int time);
+	void iteration_histogram_writelog();
+
 };
 
 

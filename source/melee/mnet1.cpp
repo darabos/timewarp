@@ -11,6 +11,7 @@ REGISTER_FILE
 //#include "mcbodies.h"
 #include "../scp.h"
 
+bool debug_net_block = false;
 
 static int log_show_num = 0;
 /*
@@ -534,6 +535,18 @@ in the buffer until the next call to this subroutine. This does not block progra
 void NetLog::flush_noblock()
 {
 	STACKTRACE;
+
+#ifdef _DEBUG
+					if (key[KEY_SPACE] != 0)
+					{
+						if ( debug_net_block )
+						{
+							//message.print(1000,15,"blocking network output");
+							//message.animate(0);
+							return;	// this introduces a sudden lag...
+						}
+					}
+#endif
 
 	if (log_show_data)
 	{
