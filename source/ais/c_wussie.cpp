@@ -121,6 +121,11 @@ double ControlWussie::evasion (Ship * ship)
 	//double xs = 0, ys = 0;
 	//double velship, velshot;
 
+	if (!ship->speed_max)
+	{
+		return desiredangle;
+	}
+
 	// place the search-circle ahead of the ship, if you move forward that is
 	double r = ship->vel.length() / ship->speed_max;
 	
