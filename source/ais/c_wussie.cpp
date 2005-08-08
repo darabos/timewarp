@@ -958,12 +958,12 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 {
 	STACKTRACE;;
 
-	char tmp[20];
+	//char tmp[20];
 	int i, j, k;
 	Control::select_ship (ship_pointer, ship_name);
 	if (ship_name)
 	{
-		replace_extension (tmp, ship_name, "ini", 19);
+		//replace_extension (tmp, ship_name, "ini", 19);
 		char states[20], sstr[20];
 		const char *w, *s;
 		for (k = 0; k < MAX_STATES; k++)

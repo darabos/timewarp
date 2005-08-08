@@ -450,6 +450,9 @@ _prediction_keys(NULL)
 	iname = strdup(name);
 
 	auto_update = true;	// for bots.
+
+	cyborg = 0;
+	cyborg_control = false;
 }
 
 

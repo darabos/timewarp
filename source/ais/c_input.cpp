@@ -23,6 +23,8 @@ REGISTER_FILE
 #include "melee/mship.h"
 #include "gui.h"
 
+bool cruise_control = false;
+
 
 #define JOY_DIALOG_BOX          0
 #define JOY_DIALOG_TITLE        1
@@ -124,11 +126,12 @@ void ControlHuman::load (const char *inifile, const char *inisection) {
 	extra1      = get_config_int(inisection, "Extra1", 0);
 	extra2      = get_config_int(inisection, "Extra2", 0);
 	communicate = get_config_int(inisection, "Communicate", 0);
-	extra4      = get_config_int(inisection, "Extra4", 0);
-	extra5      = get_config_int(inisection, "Extra5", 0);
+	dec_lag     = get_config_int(inisection, "DecLag", 0);
+	inc_lag     = get_config_int(inisection, "IncLag", 0);
 	suicide     = get_config_int(inisection, "Extra6", 0);
 	return;
 }
+
 /*! \brief Save players key
   \param inifile with players keys
   \param inisection with players keys
@@ -148,8 +151,8 @@ void ControlHuman::save (const char *inifile, const char *inisection) {
 	set_config_int(inisection, "Extra1", extra1);
 	set_config_int(inisection, "Extra2", extra2);
 	set_config_int(inisection, "Communicate", communicate);
-	set_config_int(inisection, "Extra4", extra4);
-	set_config_int(inisection, "Extra5", extra5);
+	set_config_int(inisection, "DecLag", dec_lag);
+	set_config_int(inisection, "IncLag", inc_lag);
 	set_config_int(inisection, "Extra6", suicide);
 	return;
 }
@@ -159,14 +162,100 @@ const char *ControlHuman::getTypeName() {
 	return "Keyboard/Joystick";
 }
 
+#include "../melee/mview.h"
 /*! \brief Process get input from player */
-int ControlHuman::think() {
+int ControlHuman::think()
+{
 	int r = 0;
-	if (key_pressed(thrust)) r |= keyflag::thrust;
+
+	// if you want a computer AI to do the work for you ;)
+	if (cyborg_control)
+	{
+		// BUT you have to be careful to preserve the (synchronized) randomness, because this is a local
+		// operation and not synched between computers.
+		// you must also be careful at the moment of loading, because "random" is used there, too, to
+		// initialize some settings.
+		tw_random_push_state();
+
+		if (!cyborg)
+		{
+			// load and initialize the cyborg AI
+			cyborg = getController("WussieBot", "cyborg-human-interface", channel_none);
+			cyborg->load("scp.ini", "Config0");
+
+			// needs to check pointers, through the game interface
+			physics->add(cyborg);
+
+		}
+
+		// synchronize the AIs
+		if (ship && !cyborg->ship)
+		{
+			char shipname[6];
+			int n = strlen(ship->type->file);
+			strncpy(shipname, &ship->type->file[n-9], 5);
+			shipname[5] = 0;
+			
+			push_config_state();
+			set_config_file(ship->type->file);
+			
+			cyborg->select_ship(ship, shipname);
+
+			pop_config_state();
+			//select_ship(0, 0);
+		}
+		if (cyborg->ship && !ship)
+			select_ship(cyborg->ship, cyborg->ship->data->file);
+
+		// determine the key sequence.
+
+		r = cyborg->think();
+
+		tw_random_pop_state();
+
+		return r;
+	} else {
+		// switch the ship control back to this human control...
+		if (cyborg && cyborg->ship)
+		{
+			select_ship(cyborg->ship, cyborg->ship->data->file);
+			cyborg->select_ship(0, 0);
+		}
+	}
+
+	// manual thrust or cruise change
+	if (key_pressed(thrust))
+	{
+		if (!cruise_control)
+		{
+			// direct control
+			r |= keyflag::thrust;
+		} else {
+			// toggle thrust on/off.
+			if (toggle_cruise_thrust_press)
+			{
+				cruise_control_thrust = !cruise_control_thrust;
+				toggle_cruise_thrust_press = false;
+			}
+		}
+	} else {
+		toggle_cruise_thrust_press = true;
+	}
+
+	// automatic thrust
+	if (cruise_control_thrust)
+	{
+		r |= keyflag::thrust;
+	}
+
 	if (key_pressed(back)) r |= keyflag::back;
-	if (key_pressed(left)) r |= keyflag::left;
+	
+	if (key_pressed(left))
+		r |= keyflag::left;
+	
 	if (key_pressed(right))
 		r |= keyflag::right;
+
 	if (key_pressed(fire))
 		r |= keyflag::fire;
 
@@ -187,8 +276,8 @@ int ControlHuman::think() {
 	if (key_pressed(extra2))
 		r |= keyflag::extra2;
 	if (key_pressed(communicate)) r |= keyflag::communicate;
-	if (key_pressed(extra4)) r |= keyflag::extra4;
-	if (key_pressed(extra5)) r |= keyflag::extra5;
+	if (key_pressed(dec_lag)) r |= keyflag::dec_lag;
+	if (key_pressed(inc_lag)) r |= keyflag::inc_lag;
 	if (key_pressed(suicide)) r |= keyflag::suicide;
 	return r;
 }
@@ -198,6 +287,9 @@ ControlHuman::ControlHuman(const char *name, int channel)
 Control(name, channel)
 {
 	auto_update = false;	// networked player need think() to be called externally, so that it's synched...
+
+	toggle_cruise_thrust_press = true;
+	cruise_control_thrust = false;
 }
 
 #define KEY_DIALOG_MODIFY    0
@@ -285,11 +377,11 @@ void ControlHuman::setup() {
 		s += sprintf ( s, "Communicate: ");
 		key_to_description ( communicate, s );
 		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Extra4: ");
-		key_to_description ( extra4, s );
+		s += sprintf ( s, "Decrease Lag: ");
+		key_to_description ( dec_lag, s );
 		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Extra5: ");
-		key_to_description ( extra5, s );
+		s += sprintf ( s, "Increase Lag: ");
+		key_to_description ( inc_lag, s );
 		s = dialog_string[index]; index += 1;
 		s += sprintf ( s, "Suicide: ");
 		key_to_description ( suicide, s );
@@ -329,8 +421,8 @@ void ControlHuman::setup() {
 			case 11: extra1      = t; break;
 			case 12: extra2      = t; break;
 			case 13: communicate = t; break;
-			case 14: extra4      = t; break;
-			case 15: extra5      = t; break;
+			case 14: dec_lag     = t; break;
+			case 15: inc_lag     = t; break;
 			case 16: suicide     = t; break;
 			case KEY_DIALOG_OK:  save("scp.ini", getDescription()); return;
 			case KEY_DIALOG_CANCEL: load("scp.ini", getDescription()); return;

@@ -9,11 +9,17 @@
 #define MAX_STATES 3
 #define MAX_OPTION 4
 
+
 //ais/c_input.cpp
 /*! \brief Human Ship Control */
-class ControlHuman : public Control {	
+class ControlHuman : public Control
+{	
 	private:
+	bool toggle_cruise_thrust_press;
+
 	int thrust;
+	bool cruise_control_thrust;
+
 	int left;
 	int right;
 	int back;
@@ -23,7 +29,7 @@ class ControlHuman : public Control {
 	int next;
 	int prev;
 	int closest;
-	int extra1, extra2, communicate, extra4, extra5;
+	int extra1, extra2, communicate, dec_lag, inc_lag;
 	int suicide;
 	public:
 	virtual void load(const char* inifile, const char* inisection);

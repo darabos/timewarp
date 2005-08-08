@@ -34,6 +34,7 @@ class ShipPanel : public Presence {
 	char old_turn_right;
 	char old_fire_weapon;
 	char old_fire_special;
+	char last_turn_type;
 
 	int deathframe;
 

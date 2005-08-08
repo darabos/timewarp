@@ -14,6 +14,8 @@ Control *getController(const char *type, const char *name, int channel);
 class Control : public Presence
 {
  public:
+	bool cyborg_control;
+	Control *cyborg;
   
   /*! \brief  controls CANNOT arbitrarily be killed off, because the deal with networking directly */
   virtual bool die(); 
