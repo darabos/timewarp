@@ -168,6 +168,11 @@ int ControlHuman::think()
 {
 	int r = 0;
 
+	if (ship && ship->target && !ship->target->exists ())
+	{
+		ship->target = 0;
+	}
+
 	// if you want a computer AI to do the work for you ;)
 	if (cyborg_control)
 	{
@@ -187,7 +192,7 @@ int ControlHuman::think()
 			cyborg->load("scp.ini", "Config0");
 
 			// needs to check pointers, through the game interface
-//			physics->add(cyborg);
+//			physics->add(cyborg);	//better, exclude this...
 
 		}
 
@@ -214,11 +219,6 @@ int ControlHuman::think()
 		// determine the key sequence.
 
 		r = cyborg->think();
-
-		if (cyborg->ship)
-		{
-			message.print(1500, 15, "cyborg key = %i ship = %s", r, cyborg->ship->type->name);
-		}
 
 		tw_random_pop_state();
 
