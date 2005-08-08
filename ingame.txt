@@ -5,12 +5,12 @@ Melee:  Starts a battle.  In battle the following keys do stuff:
         F1 brings up the help screen (this file, at the moment)
         F2 brings up the options menu
         F3 switches camera focus
-        F4 is fast-forward (speeds up in-game time greatly)
+        F4 toggles cruise control mode
         F5 displays fleet status
         F6 is chat (for network games)
         F7 changes game tic rate (physics quality)
         F8 changes camera mode
-        F9 creates planets (silly "feature")
+        F9 toggles cyborg mode
         F10 quits (so does ESCAPE)
         F11 saves screenshots
         F12 displays framerates / ping / performance data.
