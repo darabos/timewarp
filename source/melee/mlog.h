@@ -122,6 +122,7 @@ class PlaybackLog : public Log { //Logging system, usefull for networking & demo
 /** \brief Share memory values accross player channels.
 */
 void share(int netnum, int *value, int num = 1);
+void share(int netnum, unsigned int *value, int num = 1);
 void share(int netnum, short *value, int num = 1);
 void share(int netnum, char *value, int num = 1);
 void share(int player, double *value, int num = 1);

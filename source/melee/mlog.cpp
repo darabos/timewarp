@@ -617,6 +617,12 @@ void share(int player, int *value, int num)
 }
 
 
+void share(int player, unsigned int *value, int num)
+{
+	share_buffer(player, value, num, sizeof(unsigned int), TYPE_INT);
+}
+
+
 void share(int player, short *value, int num)
 {
 	share_buffer(player, value, num, sizeof(short), TYPE_SHORT);
@@ -814,16 +820,18 @@ int log_size_ch(int channel)
 void rand_resync()
 {
 	
-	int i1, i2;
+	//int i1, i2;
 
-	i1 = rand();
-	i2 = rand();
+	//i1 = rand();
+	//i2 = rand();
 
-	share(-1, &i1);
-	share(-1, &i2);
-	share_update();
+	//share(-1, &i1);
+	//share(-1, &i2);
+	//share_update();
 
-	rng.seed(i1);
-	rng.seed_more(i2);
+	//rng.seed(i1);
+	//rng.seed_more(i2);
+
+	seed_ohmy();
 
 }

@@ -41,6 +41,8 @@ enum {
 Uint32 RNG_lcg64a::randi(Uint32 max) {
 	return _rng_dist_32_flat(max, raw32());
 }
+
+
 Uint32 RNG_lcg64a::raw32()
 {
 	/* this algorithm is too repetitive
@@ -81,6 +83,7 @@ Uint32 RNG_lcg64a::raw32()
 	s64.whole = (s64.whole * ran_mult[k]) + ran_add[k];
 
 	return s64.s.high;
+
 }
 Uint64 RNG_lcg64a::raw64() {
 	Uint64 bob = raw32();
@@ -104,10 +107,11 @@ void RNG_lcg64a::fast_forward ( Uint64 how_far ) {
 	return;
 }
 
-void RNG_lcg64a::seed( int s ) {
+void RNG_lcg64a::seed( int s )
+{
 	s64.s.low = s;
 	s64.s.high = 0;
-	return;
+
 }
 void RNG_lcg64a::seed_more( int s ) {
 	if (s64.s.high & 0x80000000) raw32();
@@ -117,3 +121,153 @@ void RNG_lcg64a::seed_more( int s ) {
 }
 
 
+
+
+
+
+static unsigned int tw_random_value;
+static const int N = 32;
+static unsigned int ran_temp[N];
+
+
+static unsigned int tw_random_value_pushed;
+static unsigned int ran_temp_pushed[N];
+
+void tw_random_push_state()
+{
+	tw_random_value_pushed = tw_random_value;
+
+	int k;
+	for ( k = 0; k < N; ++k )
+	{
+		ran_temp_pushed[k] = ran_temp[k];
+	}
+}
+
+void tw_random_pop_state()
+{
+	tw_random_value = tw_random_value_pushed;
+
+	int k;
+	for ( k = 0; k < N; ++k )
+	{
+		ran_temp[k] = ran_temp_pushed[k];
+	}
+}
+
+unsigned int tw_random()
+{
+	// some other thingy...
+	int i;
+	int carrybit = 0;
+	for ( i = 0; i < N; ++i )
+	{
+		unsigned int bit1 = tw_random_value & 0x080000000;
+		unsigned int bit2 = ran_temp[i]     & 0x080000000;
+		if (bit1 && bit2)
+			++ carrybit;	// preserve the bit; otherwise you may lose information in the lower bit(s)
+
+		tw_random_value += ran_temp[i];
+		ran_temp[i] = tw_random_value;// << 1) | (s64.s.high & 1);
+	}
+	tw_random_value += carrybit;
+
+	return tw_random_value;
+}
+
+#ifdef _DEBUG
+#include "../melee/mview.h"
+void test_random()
+{
+	double count[N][4];
+
+	// a test of the random procedure:
+	const int Ntest = 1000000;
+	int i, k;
+
+	for ( k = 0; k < N; ++k )
+	{
+		count[k][0] = 0;
+		count[k][1] = 0;
+		count[k][2] = 0;
+		count[k][3] = 0;
+	}
+	
+	int last_ran = 0;
+	int new_ran = 0;
+	for ( i = 0; i < Ntest; ++i )
+	{
+		last_ran = new_ran;
+		new_ran = tw_random();
+
+		for ( k = 0; k < N; ++k )
+		{
+			int bit1, bit2;
+			bit1 = (last_ran >> k) & 1;
+			bit2 = (new_ran  >> k) & 1;
+
+			int b = bit1 + (bit2<<1);
+			count[k][b] += 1;
+
+			// change observed in bit k:
+			// i=0:  0 -> 0
+			// i=1:  1 -> 0
+			// i=2:  0 -> 1
+			// i=3:  1 -> 1
+		}
+
+	}
+
+	// display results
+	for ( k = 0; k < N; ++k )
+	{
+		message.print(100, 15, "%2i %4.2lf  %4.2lf  %4.2lf  %4.2lf",
+			k, count[k][0]/Ntest, count[k][1]/Ntest, count[k][2]/Ntest, count[k][3]/Ntest);
+	}
+	message.print(100, 14, "press a key");
+	message.animate(0);
+	readkey();
+
+}
+#endif
+
+#include "../melee/mlog.h"
+void seed_ohmy()
+{
+	tw_random_value = rand();
+	share(-1, &tw_random_value);
+
+	int i;
+	for ( i = 1; i < N; ++i )
+	{
+		ran_temp[i] = rand();
+		share(-1, &ran_temp[i]);
+	}
+	share_update();
+
+	// only for debugging purpose.
+	//test_random();
+
+	return;
+}
+
+
+double tw_random(double a) 
+{
+	double val;
+	//* ((int*) &val + 0)           = tw_random();
+	//* ((int*) &val + sizeof(int)) = tw_random();
+	val = a * (double(tw_random()) / double(0x0100000000));
+
+	return val;
+}
+
+double tw_random(double min, double max) 
+{
+	return min + tw_random(max - min);
+}
+
+unsigned int tw_random( int a )
+{
+	return tw_random() % a;
+}

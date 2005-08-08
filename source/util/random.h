@@ -54,6 +54,7 @@ typedef RNG_lcg64a RNG_HQ;
 
 extern RNG rng;
 
+/*
 inline double tw_random(double a) 
 	{return rng.randf(a);}
 inline double tw_random(double min, double max) 
@@ -64,6 +65,17 @@ inline Uint32 _tw_random()
 	{return rng.raw32();}
 inline int tw_random()
 	{return rng.raw32()&0x7fffffff;}
+	*/
+
+
+void seed_ohmy();
+double tw_random(double a);
+double tw_random(double min, double max);
+unsigned int tw_random( int a );
+unsigned int tw_random();
+
+void tw_random_push_state();
+void tw_random_pop_state();
 
 
 #endif // __RANDOM_H__
