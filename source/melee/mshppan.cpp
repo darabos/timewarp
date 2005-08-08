@@ -42,6 +42,7 @@ ShipPanel::ShipPanel(Ship *_ship) {STACKTRACE
 	old_turn_right   = FALSE;
 	old_fire_weapon  = FALSE;
 	old_fire_special = FALSE;
+	last_turn_type = 0;
 
 	deathframe = 0;
 	ship = _ship;
@@ -157,6 +158,13 @@ void ShipPanel::animate(Frame *space) {
 
 	if (captain_needs_update) {
 		captain_needs_update = false;
+
+		// ensure that only 1 of the steering pictures will be shown...
+		if (!old_turn_left && ship->turn_left)
+			last_turn_type = 1;
+		if (!old_turn_right && ship->turn_right)
+			last_turn_type = 2;
+
 		old_thrust       = ship->thrust;
 		old_turn_left    = ship->turn_left;
 		old_turn_right   = ship->turn_right;
@@ -164,11 +172,21 @@ void ShipPanel::animate(Frame *space) {
 		old_fire_special = ship->fire_special;
 
 		ship->spritePanel->draw(0, 0, 1, captain);
-		if(ship->thrust)       ship->spritePanel->overlay(1, 2, captain);
-		if(ship->turn_right)   ship->spritePanel->overlay(1, 3, captain);
-		if(ship->turn_left)    ship->spritePanel->overlay(1, 4, captain);
-		if(ship->fire_weapon)  ship->spritePanel->overlay(1, 5, captain);
-		if(ship->fire_special) ship->spritePanel->overlay(1, 6, captain);
+		if(ship->thrust)
+			ship->spritePanel->overlay(1, 2, captain);
+
+		if(ship->turn_right && (last_turn_type == 2))
+			ship->spritePanel->overlay(1, 3, captain);
+
+		if(ship->turn_left && (last_turn_type == 1))
+			ship->spritePanel->overlay(1, 4, captain);
+
+		if(ship->fire_weapon)
+			ship->spritePanel->overlay(1, 5, captain);
+
+		if(ship->fire_special)
+			ship->spritePanel->overlay(1, 6, captain);
+
 		blit (captain, panel, 0, 0, CAPTAIN_X, CAPTAIN_Y, captain->w, captain->h);
 		panel_needs_update = true;
 		}
