@@ -118,8 +118,12 @@ recharge_frames(odrain)
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
-void KzerZaFighter::calculate() {
+void KzerZaFighter::calculate()
+{
 	Missile::calculate();
+
+	if (!exists())
+		return;
 
 	if (!(ship && ship->exists()))
 	{
@@ -178,7 +182,8 @@ void KzerZaFighter::calculate() {
 	}
 
 
-int KzerZaFighter::handle_damage(SpaceLocation *source, double normal, double direct){
+int KzerZaFighter::handle_damage(SpaceLocation *source, double normal, double direct)
+{
 	if (source->isPlanet()) {
 		state = 1;
 	}
