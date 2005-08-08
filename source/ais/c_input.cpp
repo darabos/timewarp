@@ -177,14 +177,17 @@ int ControlHuman::think()
 		// initialize some settings.
 		tw_random_push_state();
 
+
 		if (!cyborg)
 		{
 			// load and initialize the cyborg AI
 			cyborg = getController("WussieBot", "cyborg-human-interface", channel_none);
+			cyborg->auto_update = false;	// networked players need think() to be called externally, so that it's synched...
+
 			cyborg->load("scp.ini", "Config0");
 
 			// needs to check pointers, through the game interface
-			physics->add(cyborg);
+//			physics->add(cyborg);
 
 		}
 
@@ -199,19 +202,26 @@ int ControlHuman::think()
 			push_config_state();
 			set_config_file(ship->type->file);
 			
-			cyborg->select_ship(ship, shipname);
+			// this assigns the AI to that ship, but the ship->control should still points to the human AI...
+			// so that needs to be corrected, then
+			cyborg->select_ship(ship, "cyborg-human-interface");
+			ship->control = this;	// restore the proper "control" hierarchy
 
 			pop_config_state();
 			//select_ship(0, 0);
 		}
-		if (cyborg->ship && !ship)
-			select_ship(cyborg->ship, cyborg->ship->data->file);
 
 		// determine the key sequence.
 
 		r = cyborg->think();
 
+		if (cyborg->ship)
+		{
+			message.print(1500, 15, "cyborg key = %i ship = %s", r, cyborg->ship->type->name);
+		}
+
 		tw_random_pop_state();
+
 
 		return r;
 	} else {

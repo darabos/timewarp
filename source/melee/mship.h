@@ -21,8 +21,8 @@ struct keyflag {
 		extra1          =   (1<<10),
 		extra2	        =   (1<<11),
 		communicate     =   (1<<12),
-		extra4          =   (1<<13),
-		extra5          =   (1<<14),
+		dec_lag         =   (1<<13),
+		inc_lag         =   (1<<14),
 		suicide         =   (1<<15),
 		};
 	};

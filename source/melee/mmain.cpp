@@ -642,15 +642,7 @@ bool NormalGame::handle_key(int k)
 			return true;
 			}
 		break;
-		/*
-		case KEY_F9: {
-			if (glog->type != Log::log_normal) return false;
-			message.out("MUHAHAHAHAHA!!!!", 5000, 12);
-			add(new Planet(random(size), meleedata.planetSprite, random(meleedata.planetSprite->frames())));
-			return true;
-			}
-		break;
-		*/
+
 		//don't use hardwired normal keys
 		case KEY_H:
 			if ((k & 255) == 'H'-'A'+1) indhealthtoggle = ~indhealthtoggle;
@@ -1355,12 +1347,14 @@ halts). This buffer should be empty most of the time, except in special situatio
 Note that it uses calls to random(), so be sure that the random() is synched before
 you use these routines.
 */
+int test_number = 100000;
 void log_test(char *comment)
 {
 #ifdef _DEBUG
 	// synch the 2 games, which should assure that all data are read/written in the meantime
 	int k, m;
-	k = random();
+	k = test_number;
+	++test_number;
 	m = k;
 
 	message.print(1500, 13, "log_test ran[%i]", k);

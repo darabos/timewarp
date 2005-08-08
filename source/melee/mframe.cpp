@@ -485,11 +485,13 @@ void SpaceLocation::change_pos(double scale)
 	pos *= scale;
 }
 
-void SpaceLocation::ship_died() {STACKTRACE
-	ship = NULL;
+void SpaceLocation::ship_died()
+{
+	ship = 0;
 }
-void SpaceLocation::target_died() {
-	target = NULL;
+void SpaceLocation::target_died()
+{
+	target = 0;
 }
 
 double SpaceLocation::trajectory_angle(SpaceLocation *l) {STACKTRACE

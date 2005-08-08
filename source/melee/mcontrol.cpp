@@ -334,7 +334,8 @@ void Control::calculate()
 {
 	STACKTRACE;
 
-	if (!exists()) return;
+	if (!exists())
+		return;
 
 	if (auto_update)
 		keys = think();

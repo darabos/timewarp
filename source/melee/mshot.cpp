@@ -197,12 +197,19 @@ HomingMissile::HomingMissile(SpaceLocation *creator, Vector2 rpos,
 	turn_step(0.0)
 {
 	target = otarget;
+
+	if (target && !target->exists())
+		target = 0;
+
 	id = SPACE_HOMING_MISSILE;
 }
 
-void HomingMissile::calculate() {
+void HomingMissile::calculate()
+{
 	Missile::calculate();
-	if (target && !target->isInvisible()) {
+
+	if (target && !target->isInvisible())
+	{
 		double d_a = normalize(trajectory_angle(target) - (angle + turn_step), PI2);
 		if (d_a > PI) d_a -= PI2;
 		double ta = turn_rate * frame_time;

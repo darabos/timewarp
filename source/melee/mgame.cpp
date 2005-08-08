@@ -1084,7 +1084,7 @@ void Game::network_crc_check()
 		// checking the results of a previous share.
 		if (p > 0)
 		{
-			if (player[p]->crc != player[p-1]->crc)
+			if (player[p] && player[p-1] && player[p]->crc != player[p-1]->crc)
 			{
 				tw_error("The game is desynched.");
 			}
@@ -1151,7 +1151,8 @@ void Game::init_lag()
 		}
 
 		// distribute the lag evenly between sender and receiver:
-		maxlag /= 2;
+		// uhm... no, because actually, this is the one-way lag: because the local player has zero-lag.
+		//maxlag /= 2;	so, disable this here.
 
 		share(-1, &maxlag);
 		share_update();
@@ -1161,7 +1162,8 @@ void Game::init_lag()
 
 
 	// we need to set lag ... the worst there is, perhaps ?
-	lag_buffer = maxlag / frame_time;
+	lag_buffer = (maxlag / frame_time) + 1;
+	// +1, because it is (usually) rounded down, while we would like a small margin of error.
 	
 	if (lag_buffer <= 1)
 		lag_buffer = 1;	// well, you do need to start...
@@ -1318,6 +1320,10 @@ void Game::iteration_histogram_writelog()
 
 
 static int base_delay = 0;	// for debug (lag-test) purpose only
+
+// toggle control
+static bool toggle_key_inc_lag = true;
+static bool toggle_key_dec_lag = true;
 
 void Game::play()
 {
@@ -1498,9 +1504,6 @@ void Game::play()
 					t_execute = get_time() - t_execute;
 					
 					
-					// this can also do some game stuff ... (namely, Esc = quit)
-					while (keypressed())
-						handle_key(readkey());
 					
 					// check if the network is in synch?
 					
@@ -1524,6 +1527,47 @@ void Game::play()
 					
 					// it's best to do this only in debug mode...
 					
+
+					// handle some important buttons...
+					// must be done before the keys are re-set to 0 by the share_key
+					if (player[p_local])
+					{
+
+						if ( (player[p_local]->control->keys & keyflag::inc_lag) != 0)
+						{
+
+							if (toggle_key_inc_lag)
+							{
+								CALL(event_lag_increase, p_local);
+								message.print(500, 12, "lag increase pressed");
+								toggle_key_inc_lag = false;
+							} else {
+								//message.print(500, 7, "lag increase held");
+							}
+
+						} else {
+							toggle_key_inc_lag = true;
+							//message.print(500, 15, "lag increase released");
+						}
+						
+						if ( (player[p_local]->control->keys & keyflag::dec_lag) != 0)
+						{
+
+							if (toggle_key_dec_lag && lag_buffer > 1)
+							{
+								CALL(event_lag_decrease, p_local);
+								message.print(500, 12, "lag decrease pressed");
+								toggle_key_dec_lag = false;
+							}
+						} else {
+							toggle_key_dec_lag = true;
+						}
+					}
+					
+					// this can also do some game stuff ... (namely, Esc = quit)
+					while (keypressed())
+						handle_key(readkey());
+					
 					// actually ... duh ... it's best to call this AFTER the events-handle, cause then the data
 					// have some time to be sent across the network, while the game is doing its calculations.
 					// namely, then it's using the idle() time that's required or so...
@@ -1536,6 +1580,9 @@ void Game::play()
 					// this is also a (much simpler) desynch test.
 					if (global_lag_synch)
 						network_crc_check();
+
+
+
 
 
 					// approve of the next iteration, after ALL possible event thingies are done.
@@ -2183,7 +2230,10 @@ void Game::save_screenshot() {STACKTRACE
 	return;
 }
 
-bool Game::handle_key(int k) {STACKTRACE
+bool Game::handle_key(int k)
+{
+	STACKTRACE;
+
 	switch (k >> 8) {
 		#if !defined _DEBUG
 		case KEY_F11: {
@@ -2217,20 +2267,6 @@ bool Game::handle_key(int k) {STACKTRACE
 		}
 		break;
 
-		case KEY_CLOSEBRACE:
-			{
-				CALL(event_lag_increase, p_local);
-			}
-			break;
-
-		case KEY_OPENBRACE:
-			{
-				if (lag_buffer > 1)
-				{
-					CALL(event_lag_decrease, p_local);
-				}
-			}
-			break;
 
 		case KEY_F1: {// help
 			pause();
@@ -2245,6 +2281,38 @@ bool Game::handle_key(int k) {STACKTRACE
 			return true;
 		}
 		break;
+		case KEY_F4: {// toggle cruise-control on/off
+			extern bool cruise_control;
+			cruise_control = !cruise_control;
+
+			if (cruise_control)
+			{
+				message.print(1500, 12, "cruise control enabled");
+			} else {
+				message.print(1500, 12, "cruise control disabled");
+			}
+			return true;
+		}
+		break;
+
+		case KEY_F9: {// toggle cyborg control on/off for the local player.
+			if (player[p_local] && player[p_local]->control)
+			{
+				Control *c = player[p_local]->control;
+
+				c->cyborg_control = !c->cyborg_control;
+				
+				if (c->cyborg_control)
+				{
+					message.print(1500, 12, "cyborg control enabled");
+				} else {
+					message.print(1500, 12, "cyborg control disabled");
+				}
+			}
+			return true;
+		}
+		break;
+
 		case KEY_F6: {// send message
 			chat_len = 0;
 			chat_buf[0] = '\0';
