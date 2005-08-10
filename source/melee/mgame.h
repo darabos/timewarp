@@ -346,6 +346,8 @@ public:
 	void chat(int iplayer);
 	void test_event1(int iplayer);
 	void start_iteration(int iplayer);
+	bool skip_iteration;
+	void notify_skip_iteration(int iplayer);
 	void share_crc(int iplayer);
 
 	void disconnect(int iplayer);

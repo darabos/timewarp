@@ -1181,7 +1181,8 @@ void Game::event_lag_increase(int iplayer)
 		// you only do this locally... you ignore the request from other players,
 		// unless global-synch of lag is enabled.
 		lag_increase += 1;
-		message.print(1500, 15, "lag increase to [%i] frames", lag_buffer + lag_increase);
+		message.print(1500, 15, "lag increase to [%i] frames or [%i] ms", lag_buffer + lag_increase, 
+			(lag_buffer + lag_increase) * frame_time);
 	}
 }
 
@@ -1194,7 +1195,8 @@ void Game::event_lag_decrease(int iplayer)
 			// you only do this locally... you ignore the request from other players,
 			// unless global-synch of lag is enabled.
 			lag_decrease += 1;
-			message.print(1500, 15, "lag decrease to [%i] frames", lag_buffer - lag_decrease);
+			message.print(1500, 15, "lag decrease to [%i] frames or [%i] ms", lag_buffer - lag_decrease,
+				(lag_buffer - lag_decrease) * frame_time);
 		}
 	}
 }
@@ -1372,6 +1374,9 @@ void Game::play()
 	debug_idle_time_animate = 0;
 
 
+	// if you increase lag, iterations can be skipped...
+	skip_iteration = false;
+
 	try {
 		while(!game_done)
 		{
@@ -1384,6 +1389,7 @@ void Game::play()
 			if(!sound.is_music_playing()) {
 				play_music();
 			}
+
 
 			// physics can  catch up with graphics.
 			bool catching_up;
@@ -1530,7 +1536,7 @@ void Game::play()
 
 					// handle some important buttons...
 					// must be done before the keys are re-set to 0 by the share_key
-					if (player[p_local])
+					if (player[p_local] && !skip_iteration )
 					{
 
 						if ( (player[p_local]->control->keys & keyflag::inc_lag) != 0)
@@ -1539,15 +1545,10 @@ void Game::play()
 							if (toggle_key_inc_lag)
 							{
 								CALL(event_lag_increase, p_local);
-								message.print(500, 12, "lag increase pressed");
 								toggle_key_inc_lag = false;
-							} else {
-								//message.print(500, 7, "lag increase held");
 							}
-
 						} else {
 							toggle_key_inc_lag = true;
-							//message.print(500, 15, "lag increase released");
 						}
 						
 						if ( (player[p_local]->control->keys & keyflag::dec_lag) != 0)
@@ -1556,7 +1557,6 @@ void Game::play()
 							if (toggle_key_dec_lag && lag_buffer > 1)
 							{
 								CALL(event_lag_decrease, p_local);
-								message.print(500, 12, "lag decrease pressed");
 								toggle_key_dec_lag = false;
 							}
 						} else {
@@ -1575,6 +1575,8 @@ void Game::play()
 					
 					network_share_keys();
 					
+					// after it's used, it can be re-set.
+					skip_iteration = false;
 
 					// crc checking is now only available, if all the games involved run synchronized,
 					// this is also a (much simpler) desynch test.
@@ -1610,7 +1612,12 @@ void Game::play()
 						{
 							if (player[p] && player[p]->islocal())
 							{
+								// notify within this iteration
+								// that this iteration is "empty", i.e., no control-info and such
+								CALL(notify_skip_iteration, p);
+
 								CALL(start_iteration, p);
+
 							}
 						}
 						++lag_buffer;
@@ -1636,14 +1643,15 @@ void Game::play()
 
 
 
+					double factor = 0.25;
 					int frame_time_length = frame_time / turbo;
-					if (t_execute < 0.25*(frame_time / turbo))
+					if (t_execute < factor*frame_time_length)
 					{
 						// in this case, you can try to have physics in a linear fashion
 
 						if ((hiccup_margin >= 0)
 							&& (num_catchups < max_catchups)		// prevent too many catchups (that will delay graphics update too much)
-							&& (next_tic_time + hiccup_margin > /* < */ time_current))
+							&& (next_tic_time + hiccup_margin > time_current + frame_time_length))
 						{
 
 							
@@ -1656,7 +1664,11 @@ void Game::play()
 								// each player will generate bursts of information (to send across the net)
 								// The follow may be a little more stable in time...
 								catching_up = true;
-								next_tic_time += frame_time_length  / (num_catchups + 2);
+								next_tic_time += frame_time_length;	// hmmm...
+								// perhaps this is better... cause you're below "time" anyway...
+								// so you will be catching up anyway...
+
+								//xxx this might be... conceptual mistake...
 							} else {
 								catching_up = false;
 								
@@ -1706,7 +1718,7 @@ void Game::play()
 			if (glog->type == Log::log_net)
 			{
 				NetLog *l = (NetLog*) glog;
-				//l->recv_noblock();		// receive stuff, if you can [is not needed here ; sending has priority]
+				l->recv_noblock();		// receive stuff, if you can
 				
 				// this helps to reduce idle-time, cause it doesn't have to wait till
 				// data are received first (namely that's what game_ready() tests).
@@ -1740,8 +1752,9 @@ void Game::play()
 					next_render_time += msecs_per_render;
 
 					time = get_time();
-					if (time >= next_render_time )
-						next_render_time = time + msecs_per_render;
+					// actually, just don't bother about linear timing animations... because there is
+					// a rather bad effect on game lag if too much time is allocated for animation.
+					next_render_time = time + msecs_per_render;
 				}
 			}
 
@@ -2617,7 +2630,15 @@ void EventClass::handle()
 			
 			// executes a call to the function in the list, with that id-number
 			int req;
-			log_int(req);	//xxx it stopped here, requiring a read... because of the loop ?
+			log_int(req);
+
+			if (log_empty())	// only try to read the buffer, if there are data in the buffer...
+			{
+				message.print(1500, 12, "waiting for network data (should not happen)!");
+				// if this indeed occurs, then I'll have to add a length-measure for each "event" ...
+				// so I hope it doesn't happen.
+			}
+
 			// player index is not stored: it's assumed that each player has its own channel
 			issue(req, p);
 
@@ -2651,6 +2672,7 @@ void Game::register_events()
 	EVENT(Game, test_event1);
 	EVENT(Game, disconnect);
 	EVENT(Game, start_iteration);
+	EVENT(Game, notify_skip_iteration);
 	EVENT(Game, event_sharecontrols);
 	EVENT(Game, event_lag_increase);
 	EVENT(Game, event_lag_decrease);
@@ -2905,6 +2927,14 @@ void Game::disconnect(int iplayer)
 	}
 }
 
+
+void Game::notify_skip_iteration(int iplayer)
+{
+	if (log_synched)
+	{
+		skip_iteration = true;
+	}
+}
 
 void Game::start_iteration(int iplayer)
 {
