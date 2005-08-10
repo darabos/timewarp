@@ -228,8 +228,10 @@ int ControlHuman::think()
 		// switch the ship control back to this human control...
 		if (cyborg && cyborg->ship)
 		{
+			tw_random_push_state();
 			select_ship(cyborg->ship, cyborg->ship->data->file);
 			cyborg->select_ship(0, 0);
+			tw_random_pop_state();
 		}
 	}
 

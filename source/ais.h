@@ -7,7 +7,8 @@
 #include "melee/mgame.h"
 
 #define MAX_STATES 3
-#define MAX_OPTION 4
+
+const int MAX_OPTIONS  = 1024;
 
 
 //ais/c_input.cpp
@@ -81,7 +82,9 @@ class ControlWussie : public Control {
 	double option_range[MAX_STATES][2];
 	double option_velocity[MAX_STATES][2];
 	int last_seen_time;
- int option_type[MAX_STATES][2][MAX_OPTION];
+
+ bool option_type[MAX_STATES][2][MAX_OPTIONS];
+
  int fireoption[2];
  int dontfireoption[2];
  double sweep[2];
