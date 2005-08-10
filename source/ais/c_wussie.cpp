@@ -10,6 +10,15 @@
 #include "../melee/mship.h"
 #include "../melee/mmain.h"
 
+enum {OPTION_UNKNOWN = 0, OPTION_FRONT, OPTION_NO_FRONT, OPTION_SIDES,
+	OPTION_FEILD, OPTION_NARROW, OPTION_HOMING, OPTION_NO_RANGE, OPTION_BACK,
+	OPTION_PRECEDENCE, OPTION_DEFENSE, OPTION_BATTERY, OPTION_MAX_BATT, OPTION_RESERVE_BATT,
+    OPTION_CLOAK, OPTION_PROXIMITY, OPTION_PLUS_FIRE, OPTION_PLUS_SPECIAL, OPTION_LAUNCHED, OPTION_HOLD,
+    OPTION_NO_PROXIMITY, OPTION_NEXT_STATE, OPTION_RESET_STATE, OPTION_ALWAYS_WHEN_FULL, OPTION_MINE,
+    OPTION_NONE,
+	OPTION_LAST // this must be the last in the line
+};
+/*
 #define OPTION_UNKNOWN 0
 #define OPTION_NONE 1
 #define OPTION_FRONT 2
@@ -36,6 +45,7 @@
 #define OPTION_RESET_STATE 23
 #define OPTION_ALWAYS_WHEN_FULL 24
 #define OPTION_MINE 25
+*/
 
 #define STATE_TOO_CLOSE 0
 #define STATE_TOO_FAR 1
@@ -46,7 +56,7 @@
 #define TACTIC_RANGE 4
 
 // for testing (graphics):
-//#include "scp.h"
+#include "scp.h"
 
 /*! \brief Check danger
   \return Max damage ship can get from his enemies
@@ -213,6 +223,8 @@ double ControlWussie::evasion (Ship * ship)
 			a = min_delta(pos_closest, ship->pos, map_size).atan();
 		}
 
+
+
 		double da = ship->get_angle() - a;
 		
 		while (da < -PI)	da += PI2;
@@ -221,6 +233,20 @@ double ControlWussie::evasion (Ship * ship)
 
 		double a_ev = evasion_angle_change;
 
+		// if the enemy weapon is slow, then you should "simply" run away from it... if it is faster,
+		// then you should try to move perpendicularly...
+		double v_ship, v_shot;
+		v_ship = ship->vel.length();
+		v_shot = shot->vel.length();
+
+		if (v_ship > 0.9 * v_shot)	// move straight away, if possible... and hope the shot loses damage after a while
+		{
+			a = ship->trajectory_angle(shot);
+			a_ev = PI;	// move straight away
+		} else {
+
+			a_ev = evasion_angle_change;
+		}
 		
 		// steer away from the dangerous object.
 		if (da < 0) 
@@ -572,7 +598,7 @@ int ControlWussie::think ()
 		angle_fire -= PI2;
 
 
-	int i, j;
+	int j;
 	if (!ship->target)
 		return action;
 	if (!ship->target->exists ())
@@ -582,31 +608,35 @@ int ControlWussie::think ()
 	}
 
 	distance = ship->distance (ship->target);
+
+	// reduce the distance a bit by the respective ship sizes; this is important for shorter range weapons.
+	distance -= 0.5 * (ship->size.x + ship->target->size.x);
+	if (distance < 0)
+		distance = 0;
+
 	for (j = 0; j < 2; j++)
 	{
 		fireoption[j] = FALSE;
 		dontfireoption[j] = FALSE;
 		sweep[j] = 20 * ANGLE_RATIO;
-		for (i = 0; i < MAX_OPTION; i++)
-		{
-			if (option_type[state][j][i] == OPTION_NARROW)
-				sweep[j] = 5 * ANGLE_RATIO;
-			if (option_type[state][j][i] == OPTION_HOMING)
-				sweep[j] = 35 * ANGLE_RATIO;
-		}
+
+		if (option_type[state][j][OPTION_NARROW])
+			sweep[j] = 5 * ANGLE_RATIO;
+		if (option_type[state][j][OPTION_HOMING])
+			sweep[j] = 35 * ANGLE_RATIO;
 	}
 
 	Vector2 ship_unit_vector;
-	double target_vel;//, target_vel_relative;
+	double target_vel, weapon_vel;
 
 	// ship orientation vector
 	ship_unit_vector = unit_vector(ship->get_angle());
 
 	// absolute movement of enemy relative to current ship direction
+	// (and corrected for relativity... namely, if the weapon also has some of the ship speed!
+	weapon_vel = option_velocity[state][j] + dot_product(rel[state][j] * ship->vel, ship_unit_vector);
 	target_vel = dot_product(ship->target->vel, ship_unit_vector);
 
-	// relative movement of enemy to the current ship, also measured along the ship orientation
-	//target_vel_relative = target_vel - dot_product(ship->vel, ship_unit_vector);
 
 	double a;
 	int range_fire, fire_front, field_fire;
@@ -619,9 +649,9 @@ int ControlWussie::think ()
 			range_fire = FALSE;
 
 		if (j == 0)
-			fire_front = TRUE;
+			fire_front = TRUE;	// primary = front by default.
 		else
-			fire_front = FALSE;
+			fire_front = FALSE;	// secondary = back by default.
 
 		if (j == 0)
 			field_fire = FALSE;
@@ -630,22 +660,26 @@ int ControlWussie::think ()
 
 		// intercept time along the ship orientation (line of sight)
 		double t_intercept;
-		if (option_velocity[state][j] - target_vel != 0)
-			t_intercept = distance / (option_velocity[state][j] - target_vel);
+		if (weapon_vel > target_vel)
+			t_intercept = distance / (weapon_vel - target_vel);		// weapon_vel includes correction for weapon relativity
 		else
 			t_intercept = 1E6;
 
 		// intercept distance along the line of sight
 		double d_intercept;
-		d_intercept = t_intercept * option_velocity[state][j];
+		d_intercept = t_intercept * weapon_vel;
 		//xxx this does not take relativity into account ?
 
-		bool weapon_in_range = (option_range[state][j] > 1.1 * d_intercept);
+		bool weapon_in_range = (option_range[state][j]+0.5*ship->size.x > 1.0 * d_intercept);
 
-		// check, if the (uncorrected) velocity isn't too high for your weapon:
+
+		/* hmmm... this is too detailed, and too general.
+		// check, if the (uncorrected) velocity isn't too high for your weapon, i.e., the enemy ship
+		// moves faster than you:
 		if (option_velocity[state][j] < 0.9 * ship->target->vel.length() &&
 			(option_range[state][j] > 0.4 * distance ||  distance > 500))
 			dontfireoption[j] = TRUE;
+			*/
 
 
 		// fast ships shouldn't be targeted at great distances...
@@ -654,149 +688,170 @@ int ControlWussie::think ()
 		v = ship->target->vel.length();
 		rV = option_velocity[state][j] / (v + option_velocity[state][j]);
 		rD = option_range[state][j] / (option_range[state][j] + distance);
+		
 		if ( rD < rV * out_of_range_multiplier  )	// out of range condition
 			dontfireoption[j] = TRUE;
 
+		//if (j == 0)// && weapon_in_range)
+		//{
+		//	message.print(100, 15, "in range  (weapon: %i) (rV=%4.2lf rD=%4.2lf:%i)", int(weapon_in_range), rV, rD);
+		//}
 
 
 
-		for (i = 0; i < MAX_OPTION; i++)
+
+		// ------------- CHECKING VARIOUS OPTIONS -------------
+		
+		if (option_type[state][j][OPTION_UNKNOWN])
 		{
-
-			switch (option_type[state][j][i])
+			// this is the case, if there were no options checked...
+			if (j == 0)
 			{
-			default:
-			case OPTION_UNKNOWN:
-				if (i == 0)
-					if (j == 0)
-					{
-						if ((fabs (angle_fire) < sweep[j]) &&
-							weapon_in_range )
-							fireoption[0] = TRUE;
-					}
-					else if (ship->batt != ship->batt_max)
-						dontfireoption[1] = TRUE;
-				break;
-
-			case OPTION_FRONT:
-				fire_front = TRUE;
-				field_fire = FALSE;
-				break;
-
-			case OPTION_NO_FRONT:
-				fire_front = FALSE;
-				field_fire = FALSE;
-				break;
-
-			case OPTION_BACK:
-				if (fabs (angle_fire) > (PI - sweep[j]))
-					fireoption[j] = TRUE;
-				field_fire = FALSE;
-				break;
-
-			case OPTION_SIDES:
-				if ((fabs (angle_fire) < PI/2 + sweep[j])
-				    && (fabs (angle_fire) > PI/2 - sweep[j]))
-					fireoption[j] = TRUE;
-				field_fire = FALSE;
-				break;
-
-			case OPTION_FEILD:
-				//fireoption[j] = TRUE;	//xxx should you disable this here? I think so...
-				field_fire = TRUE;
-				break;
-
-			case OPTION_NO_RANGE:
-				range_fire = FALSE;
-				break;
-
-			case OPTION_NO_PROXIMITY:
-				if (distance < option_range[state][j])
-					dontfireoption[j] = TRUE;
-				else
-					fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
-				range_fire = FALSE;
-				break;
-
-			case OPTION_PROXIMITY:
-				if (distance > option_range[state][j])
-					dontfireoption[j] = TRUE;
-				else
-					fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
-				range_fire = TRUE;
-				break;
-
-			case OPTION_BATTERY:
-				if (ship->batt <= batt_level[state][j])
-					fireoption[j] = TRUE;
-				field_fire = FALSE;
-				break;
-
-			case OPTION_MINE:
-				a = atan(ship->target->get_vel ());
-				if (fabs
-				    (normalize
-					(ship->target->trajectory_angle (ship) + PI/2,
-					 PI2) - a) < sweep[j])
-					fireoption[j] = TRUE;
-				field_fire = FALSE;
-				fire_front = FALSE;
-				break;
-
-			case OPTION_CLOAK:
-				if (!(ship->isInvisible ()))
-					fireoption[j] = TRUE;
-				else
-					dontfireoption[j] = TRUE;
-				break;
-
-			case OPTION_DEFENSE:
-				if (check_danger () > (4 / option_freq[state][j]))
-					fireoption[j] = TRUE;
-				field_fire = FALSE;
-				break;
-
-			case OPTION_MAX_BATT:
-				if (ship->batt != ship->batt_max)
-				{
-					if (!option_held[j])
-						dontfireoption[j] = TRUE;
-				}
-				break;
-
-			case OPTION_RESERVE_BATT:
-				if (ship->batt < batt_level[state][j])
-					if (!option_held[j])
-						dontfireoption[j] = TRUE;
-				break;
-
-			case OPTION_LAUNCHED:
-				if (option_held[j])
-				{
-					bombx[j] += (bombvx[j] * frame_time);
-					bomby[j] += (bombvy[j] * frame_time);
-					normalize (bombx[j], map_size.x);
-					normalize (bomby[j], map_size.y);
-					bomb =
-						new SpaceLocation (NULL, Vector2(bombx[j], bomby[j]), 0);
-					if (ship->target->distance (bomb) > bombdistance[j])
-					{
-						option_held[j] = FALSE;
-						dontfireoption[j] = TRUE;
-					}
-					else
-					{
-						bombdistance[j] = ship->target->distance (bomb);
-					}
-					delete bomb;
-				}
-				break;
-
-			case OPTION_NONE:
-				dontfireoption[j] = TRUE;
-				break;
+				if ((fabs (angle_fire) < sweep[j]) &&
+					weapon_in_range )
+					fireoption[0] = TRUE;
 			}
 		}
+
+		if (option_type[state][j][OPTION_FRONT])
+		{
+			fire_front = TRUE;
+			field_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_NO_FRONT])
+		{
+			fire_front = FALSE;
+			field_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_BACK])
+		{
+			if (fabs (angle_fire) > (PI - sweep[j]))
+				fireoption[j] = TRUE;
+			field_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_SIDES])
+		{
+			if ((fabs (angle_fire) < PI/2 + sweep[j])
+				&& (fabs (angle_fire) > PI/2 - sweep[j]))
+				fireoption[j] = TRUE;
+			field_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_FEILD])
+		{
+			//fireoption[j] = TRUE;	//xxx should you disable this here? I think so...
+			field_fire = TRUE;
+		}
+
+		if (option_type[state][j][OPTION_NO_RANGE])
+		{
+			range_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_NO_PROXIMITY])
+		{
+			if (distance < option_range[state][j])
+				dontfireoption[j] = TRUE;
+			else
+				fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
+			range_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_PROXIMITY])
+		{
+			if (distance > option_range[state][j])
+				dontfireoption[j] = TRUE;
+			else
+				fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
+			range_fire = TRUE;
+		}
+
+		if (option_type[state][j][OPTION_BATTERY])
+		{
+			if (ship->batt <= batt_level[state][j])
+				fireoption[j] = TRUE;
+			field_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_MINE])
+		{
+			a = atan(ship->target->get_vel ());
+			if (fabs
+				(normalize
+				(ship->target->trajectory_angle (ship) + PI/2,
+				PI2) - a) < sweep[j])
+				fireoption[j] = TRUE;
+			field_fire = FALSE;
+			fire_front = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_CLOAK])
+		{
+			if (!(ship->isInvisible ()))
+				fireoption[j] = TRUE;
+			else
+				dontfireoption[j] = TRUE;
+		}
+
+		if (option_type[state][j][OPTION_DEFENSE])
+		{
+			if (check_danger () > (4 / option_freq[state][j]))
+				fireoption[j] = TRUE;
+			field_fire = FALSE;
+		}
+		
+		if (option_type[state][j][OPTION_MAX_BATT])
+		{
+			if (ship->batt != ship->batt_max)
+			{
+				if (!option_held[j])
+					dontfireoption[j] = TRUE;
+			}
+		}
+		
+		if (option_type[state][j][OPTION_RESERVE_BATT])
+		{
+			if (ship->batt < batt_level[state][j])
+				if (!option_held[j])
+					dontfireoption[j] = TRUE;
+		}
+
+		if (option_type[state][j][OPTION_LAUNCHED])
+		{
+			if (option_held[j])
+			{
+				bombx[j] += (bombvx[j] * frame_time);
+				bomby[j] += (bombvy[j] * frame_time);
+				normalize (bombx[j], map_size.x);
+				normalize (bomby[j], map_size.y);
+				bomb =
+					new SpaceLocation (NULL, Vector2(bombx[j], bomby[j]), 0);
+				if (ship->target->distance (bomb) > bombdistance[j])
+				{
+					option_held[j] = FALSE;
+					dontfireoption[j] = TRUE;
+				}
+				else
+				{
+					bombdistance[j] = ship->target->distance (bomb);
+				}
+				delete bomb;
+			}
+			
+		}
+		
+		if (option_type[state][j][OPTION_NONE])
+		{
+			dontfireoption[j] = TRUE;
+		}
+
+		// ----------- DONE CHECKING THE VARIOUS OPTIONS --------
+
+
+
 
 		if (range_fire)
 		{
@@ -815,47 +870,46 @@ int ControlWussie::think ()
 			fireoption[j] = TRUE;
 		}
 	}
+
+
 	for (j = 0; j < 2; j++)
 	{
-		for (i = 0; i < MAX_OPTION; i++)
+		if (option_type[state][j][OPTION_LAUNCHED])
 		{
-			if (option_type[state][j][i] == OPTION_LAUNCHED)
+			if ((!option_held[j]) && (fireoption[j])
+				&& (!dontfireoption[j]))
 			{
-				if ((!option_held[j]) && (fireoption[j])
-				    && (!dontfireoption[j]))
-				{
-					bombx[j] = ship->normal_pos().x;
-					bomby[j] = ship->normal_pos().y;
-					bombvx[j] = (ship->get_vel().x * rel[state][j]) +
-						(option_velocity[state][j] *
-						 cos (ship->get_angle ()));
-					bombvy[j] =
-						(ship->get_vel().y * rel[state][j]) +
-						(option_velocity[state][j] *
-						 sin (ship->get_angle ()));
-					bombdistance[j] = ship->distance (ship->target);
-				}
+				bombx[j] = ship->normal_pos().x;
+				bomby[j] = ship->normal_pos().y;
+				bombvx[j] = (ship->get_vel().x * rel[state][j]) +
+					(option_velocity[state][j] *
+					cos (ship->get_angle ()));
+				bombvy[j] =
+					(ship->get_vel().y * rel[state][j]) +
+					(option_velocity[state][j] *
+					sin (ship->get_angle ()));
+				bombdistance[j] = ship->distance (ship->target);
 			}
-			if (option_type[state][j][i] == OPTION_HOLD)
+		}
+		if (option_type[state][j][OPTION_HOLD])
+		{
+			if ((option_held[j]) && (fireoption[j])
+				&& (!dontfireoption[j]))
 			{
-				if ((option_held[j]) && (fireoption[j])
-				    && (!dontfireoption[j]))
-				{
-					dontfireoption[j] = TRUE;
-					option_held[j] = FALSE;
-				}
-				else if (option_held[j])
-				{
-					option_held[j] = TRUE;
-					fireoption[j] = TRUE;
-					dontfireoption[j] = FALSE;
-				}
-				else if (!option_held[j])
-				{
-					option_held[j] = TRUE;
-					fireoption[j] = TRUE;
-					dontfireoption[j] = FALSE;
-				}
+				dontfireoption[j] = TRUE;
+				option_held[j] = FALSE;
+			}
+			else if (option_held[j])
+			{
+				option_held[j] = TRUE;
+				fireoption[j] = TRUE;
+				dontfireoption[j] = FALSE;
+			}
+			else if (!option_held[j])
+			{
+				option_held[j] = TRUE;
+				fireoption[j] = TRUE;
+				dontfireoption[j] = FALSE;
 			}
 		}
 	}
@@ -869,33 +923,30 @@ int ControlWussie::think ()
 			dontfireoption[j] = TRUE;
 		}
 
-		for (i = 0; i < MAX_OPTION; i++)
+		if (option_type[state][j][OPTION_PRECEDENCE])
 		{
-			if (option_type[state][j][i] == OPTION_PRECEDENCE)
+			if (fireoption[j] && (!dontfireoption[j]))
 			{
-				if (fireoption[j] && (!dontfireoption[j]))
-				{
-					int k;
-					if ( j == 0 )
-						k = 1;
-					else
-						k = 0;
-
-					dontfireoption[k] = TRUE;
-				}
+				int k;
+				if ( j == 0 )
+					k = 1;
+				else
+					k = 0;
+				
+				dontfireoption[k] = TRUE;
 			}
-
-
-			if (option_type[state][j][i] == OPTION_ALWAYS_WHEN_FULL)
-			{
-				if (ship->batt >= ship->batt_max)
-				{
-					fireoption[j] = TRUE;
-					dontfireoption[j] = FALSE;
-				}
-			}
-
 		}
+		
+		
+		if (option_type[state][j][OPTION_ALWAYS_WHEN_FULL])
+		{
+			if (ship->batt >= ship->batt_max)
+			{
+				fireoption[j] = TRUE;
+				dontfireoption[j] = FALSE;
+			}
+		}
+
 	}
 
 	int newstate = state;
@@ -910,21 +961,23 @@ int ControlWussie::think ()
 
 			option_time[j] = option_timer[state][j];
 
-			for (i = 0; i < MAX_OPTION; i++)
-			{
-				if (option_type[state][j][i] == OPTION_LAUNCHED)
-					option_held[state] = TRUE;
-				if (option_type[state][j][i] == OPTION_HOLD)
-					option_held[state] = TRUE;
-				if (option_type[state][j][i] == OPTION_PLUS_SPECIAL)
-					action |= keyflag::special;
-				if (option_type[state][j][i] == OPTION_PLUS_FIRE)
-					action |= keyflag::fire;
-				if (option_type[state][j][i] == OPTION_NEXT_STATE)
-					newstate++;
-				if (option_type[state][j][i] == OPTION_RESET_STATE)
-					newstate = 0;
-			}
+			if (option_type[state][j][OPTION_LAUNCHED])
+				option_held[state] = TRUE;
+			
+			if (option_type[state][j][OPTION_HOLD])
+				option_held[state] = TRUE;
+			
+			if (option_type[state][j][OPTION_PLUS_SPECIAL])
+				action |= keyflag::special;
+			
+			if (option_type[state][j][OPTION_PLUS_FIRE])
+				action |= keyflag::fire;
+			
+			if (option_type[state][j][OPTION_NEXT_STATE])
+				newstate++;
+			
+			if (option_type[state][j][OPTION_RESET_STATE])
+				newstate = 0;
 		}
 		else
 		{
@@ -954,6 +1007,7 @@ ControlWussie::ControlWussie (const char *name, int channel):Control (name,
 //      Control::set_target(i);
 //      }
 
+
 void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 {
 	STACKTRACE;;
@@ -968,71 +1022,85 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 		const char *w, *s;
 		for (k = 0; k < MAX_STATES; k++)
 		{
+
+			// check primary and secondary weapon
 			for (j = 0; j < 2; j++)
 			{
+				// reset all posibilities.
+				for ( i = 0; i < OPTION_LAST; ++i )
+					option_type[k][j][i] = false;
+
+				// initialize the AI options
 				strcpy (states, "AI3_Default");
 				if (k != 0)
 					sprintf (states + strlen (states), "%d", k + 1);
-				for (i = 0; i < MAX_OPTION; i++)
+
+				// read at most 10 possible weapon definitions...
+				for (i = 0; i < 10; i++)		// 0 to 9
 				{
 					if (j == 0)
 						strcpy (sstr, "Weapon");
 					else
 						strcpy (sstr, "Special");
+
 					if (i != 0)
 						sprintf (sstr + strlen (sstr), "%d", i + 1);
+
 					w = get_config_string (states, sstr, "");
-					option_type[k][j][i] = OPTION_UNKNOWN;
+
+
+
+
 					if (!strcmp (w, "No_Front"))
-						option_type[k][j][i] = OPTION_NO_FRONT;
+						option_type[k][j][OPTION_NO_FRONT] = true;
 					else if (!strcmp (w, "Front"))
-						option_type[k][j][i] = OPTION_FRONT;
+						option_type[k][j][OPTION_FRONT] = true;
 					else if (!strcmp (w, "Sides"))
-						option_type[k][j][i] = OPTION_SIDES;
+						option_type[k][j][OPTION_SIDES] = true;
 					else if (!strcmp (w, "Field"))
-						option_type[k][j][i] = OPTION_FEILD;
+						option_type[k][j][OPTION_FEILD] = true;
 					else if (!strcmp (w, "Narrow"))
-						option_type[k][j][i] = OPTION_NARROW;
+						option_type[k][j][OPTION_NARROW] = true;
 					else if (!strcmp (w, "Homing"))
-						option_type[k][j][i] = OPTION_HOMING;
+						option_type[k][j][OPTION_HOMING] = true;
 					else if (!strcmp (w, "No_range"))
-						option_type[k][j][i] = OPTION_NO_RANGE;
+						option_type[k][j][OPTION_NO_RANGE] = true;
 					else if (!strcmp (w, "Back"))
-						option_type[k][j][i] = OPTION_BACK;
+						option_type[k][j][OPTION_BACK] = true;
 					else if (!strcmp (w, "Precedence"))
-						option_type[k][j][i] = OPTION_PRECEDENCE;
+						option_type[k][j][OPTION_PRECEDENCE] = true;
 					else if (!strcmp (w, "Defense"))
-						option_type[k][j][i] = OPTION_DEFENSE;
+						option_type[k][j][OPTION_DEFENSE] = true;
 					else if (!strcmp (w, "Battery"))
-						option_type[k][j][i] = OPTION_BATTERY;
+					option_type[k][j][OPTION_BATTERY] = true;
 					else if (!strcmp (w, "Max_Battery"))
-						option_type[k][j][i] = OPTION_MAX_BATT;
+						option_type[k][j][OPTION_MAX_BATT] = true;
 					else if (!strcmp (w, "Reserve_Battery"))
-						option_type[k][j][i] = OPTION_RESERVE_BATT;
+						option_type[k][j][OPTION_RESERVE_BATT] = true;
 					else if (!strcmp (w, "Cloak"))
-						option_type[k][j][i] = OPTION_CLOAK;
+						option_type[k][j][OPTION_CLOAK] = true;
 					else if (!strcmp (w, "Proximity"))
-						option_type[k][j][i] = OPTION_PROXIMITY;
+						option_type[k][j][OPTION_PROXIMITY] = true;
 					else if (!strcmp (w, "Plus_Fire"))
-						option_type[k][j][i] = OPTION_PLUS_FIRE;
+						option_type[k][j][OPTION_PLUS_FIRE] = true;
 					else if (!strcmp (w, "Plus_Special"))
-						option_type[k][j][i] = OPTION_PLUS_SPECIAL;
+						option_type[k][j][OPTION_PLUS_SPECIAL] = true;
 					else if (!strcmp (w, "Launched"))
-						option_type[k][j][i] = OPTION_LAUNCHED;
+						option_type[k][j][OPTION_LAUNCHED] = true;
 					else if (!strcmp (w, "Hold"))
-						option_type[k][j][i] = OPTION_HOLD;
+						option_type[k][j][OPTION_HOLD] = true;
 					else if (!strcmp (w, "No_Proximity"))
-						option_type[k][j][i] = OPTION_NO_PROXIMITY;
+						option_type[k][j][OPTION_NO_PROXIMITY] = true;
 					else if (!strcmp (w, "Next_State"))
-						option_type[k][j][i] = OPTION_NEXT_STATE;
+						option_type[k][j][OPTION_NEXT_STATE] = true;
 					else if (!strcmp (w, "Reset_State"))
-						option_type[k][j][i] = OPTION_RESET_STATE;
+						option_type[k][j][OPTION_RESET_STATE] = true;
 					else if (!strcmp (w, "Always_When_Full"))
-						option_type[k][j][i] = OPTION_ALWAYS_WHEN_FULL;
+						option_type[k][j][OPTION_ALWAYS_WHEN_FULL] = true;
 					else if (!strcmp (w, "Mine"))
-						option_type[k][j][i] = OPTION_MINE;
+						option_type[k][j][OPTION_MINE] = true;
 					else if (!strcmp (w, "None"))
-						option_type[k][j][i] = OPTION_NONE;
+						option_type[k][j][OPTION_NONE] = true;
 
 					s = get_config_string (states, "Tactic", "");
 					tactic[k] = TACTIC_UNKNOWN;
@@ -1053,6 +1121,18 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 					option_held[j] = FALSE;
 					batt_level[k][j] =
 						get_config_int (states, "BattRecharge", 0);
+				}
+
+				// in case nothing was defined, then default behaviour should be activated:
+				bool some_option = false;
+				for ( i = 0; i < OPTION_LAST; ++i )
+				{
+					if (option_type[k][j][i])
+						some_option = true;
+				}
+				if (!some_option)
+				{
+					option_type[k][j][OPTION_UNKNOWN] = true;
 				}
 			}
 
@@ -1122,7 +1202,7 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 	evasion_angle_change = (0.4 + random(0.2)) * PI;
 
 	// lower means, more cowardly
-	intercept_abort_speed_factor = 0.25 + random(0.1);
+	intercept_abort_speed_factor = 0.3 + random(0.2);
 
 	// scareness: when an attack is aborted..
 	scare_crew_factor = 0.25 + random(0.1);
@@ -1131,7 +1211,7 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 	scared_enemyship_speed_factor = 0.85 + random(0.1);
 
 	// out of range (shoot or not, the further you are, the smaller the chance).
-	out_of_range_multiplier = 0.5 + random(0.5);
+	out_of_range_multiplier = 0.1 + random(0.1);	// smaller means, less range
 
 
 
