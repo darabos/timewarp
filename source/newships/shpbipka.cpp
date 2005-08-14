@@ -148,7 +148,7 @@ double BipoleKatamaran::isInvisible() const{
 int BipoleKatamaran::activate_weapon(){
 	STACKTRACE
   if( !left || !right ) return FALSE;
-  weapon_sample = random(11);
+  weapon_sample = tw_random(11);
   int left_w = left->activate_weapon();
   int right_w = right->activate_weapon();
   return left_w || right_w;

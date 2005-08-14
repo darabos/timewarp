@@ -128,7 +128,7 @@ void Huge::init_objects()
 //Select planet
 	Planet *Centre;
 	if (PlanetType == -1) {
-		PlanetType = random()%Num_Planet_Pics;
+		PlanetType = tw_random(Num_Planet_Pics);
 		iMessage("PlanetType= %d *RANDOM*",PlanetType);
 		}
 	else iMessage("PlanetType= %d *PRESET*",PlanetType);

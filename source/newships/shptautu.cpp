@@ -237,7 +237,7 @@ TauTurboMissile::TauTurboMissile (SpaceLocation *creator, double ox, double oy, 
 	vel += creator->get_vel();
 
 	accel = oaccel;
-	fire_index = random() % 20;
+	fire_index = tw_random(20);
 	fire_frame = 50;
 
 	explosionSprite = data->spriteWeaponExplosion;

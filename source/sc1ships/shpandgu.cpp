@@ -167,7 +167,7 @@ void AndrosynthBubble::calculate()
 	if(courseFrames >= 150) {
 		courseFrames -= 150;
 
-		newAngle = random(PI2);
+		newAngle = tw_random(PI2);
 		vel = v * unit_vector(newAngle);
 
 		int i;

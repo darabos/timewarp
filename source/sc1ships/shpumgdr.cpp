@@ -138,7 +138,7 @@ void UmgahCone::inflict_damage(SpaceObject *other)
               residual_damage -= 1;
               SpaceObject::inflict_damage(other); };
             residual_damage *= 1e4;
-            if (residual_damage > random(10000))
+            if (residual_damage > tw_random(10000))
               SpaceObject::inflict_damage(other);
             }; break;
     case 1: {

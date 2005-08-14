@@ -343,7 +343,7 @@ void BubalosBomber::death()
 	Vector2 CenterPoint;
 	CenterPoint.x = 0; CenterPoint.y = 0;
 	
-	if (random() % 100 < explosionPercentChanceBigBoom)
+	if (tw_random(100) < explosionPercentChanceBigBoom)
 	{
 		Query q;
 		//message.print(4500,9,"BOOM!");
@@ -356,7 +356,7 @@ void BubalosBomber::death()
 		add(new Animation(this, CenterPoint, data->spriteExtra, 0, data->spriteExtra->frames(),
 			50, LAYER_EXPLOSIONS));
 	}
-	if(random()%100 < explosionPercentChanceShrapnel) {
+	if(random(100) < explosionPercentChanceShrapnel) {
 		radInc = PI2 / explosionShrapnelNumber1;
 		for(i=0; i<explosionShrapnelNumber1; i++) {
 			M = new Missile(this, CenterPoint, radInc * i, explosionShrapnelSpeed1,
@@ -517,7 +517,7 @@ void BubalosBomber::calculate_hotspots()
 BubalosBomberFlame::BubalosBomberFlame (SpaceLocation *creator, double ox, double oy, SpaceSprite *osprite) :
 PositionedAnimation(creator, creator, Vector2(ox,oy), osprite, 0, 1, 100, LAYER_SHOTS)
 {
-	base_frame = 64*(random()%4);
+	base_frame = 64*(random(4));
 	sprite_index = base_frame + get_index(follow->get_angle());
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 }

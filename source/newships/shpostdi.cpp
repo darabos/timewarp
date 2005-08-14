@@ -74,9 +74,7 @@ int OstokDisplacer::activate_special()
 
 	if (target && target->exists() && (!target->isInvisible()) && (target->mass > 0)) 
 	{
-		//from Arilou code
-		//dx = (double)(random() % (int)(3000)) - 1500;
-		//dy = (double)(random() % (int)(3000)) - 1500;
+
 		
 		Vector2 ss = pos;
 		Vector2 tt = target->normal_pos();

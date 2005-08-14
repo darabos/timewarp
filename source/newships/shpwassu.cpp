@@ -206,7 +206,7 @@ int WasxSuperposition::activate_weapon() {
 
         } 
 		double rVelocity;
-		int rv = int (random() & 3); 
+		int rv = int (tw_random() & 3); 
 		switch (rv) {
 		case 1:
 			rVelocity = weaponVelocity * .75;

@@ -131,8 +131,8 @@ TauHunter::TauHunter (Vector2 opos, double shipAngle, ShipData *shipData, unsign
 	extraCriticalRange		= get_config_float("Extra", "CriticalRange", 0);
 	extraFrameTime			= get_config_int("Extra", "FrameTime", 50);
 
-	weapon_side				= random()%3;
-	weapon_angle			= random()%6;
+	weapon_side				= tw_random(3);
+	weapon_angle			= tw_random(6);
 	in_jump					= false;
 	ship_recharge_amount	= recharge_amount;
 	exit_countdown			= 0;
@@ -159,9 +159,9 @@ int TauHunter::activate_weapon()
 		for ( i=0; i<weaponNumber; i++ ) {
 			wx = R1 * cos((angle + weapon_side*PI2/3)) +
 				-R2 * sin((weapon_angle + i) * PI/3);
-			a = (1 - (random()%201)/100.0);
-			b = (1 - 0.1*(random()%201)/100.0);
-			c = (1 - 0.1*(random()%201)/100.0);
+			a = (1 - (random(2.0))/100.0);
+			b = (1 - 0.1*(random(2.0))/100.0);
+			c = (1 - 0.1*(random(2.0))/100.0);
 			SpaceLocation* s =	new TauHunterLaser(wx, wy, angle + weaponSpread * a,
 								weaponVelocity * c, weaponRange * (1 - 0.2*fabs(a)) * b,
 								weaponLength, this, weaponRelativity, weaponDamage);

@@ -98,7 +98,7 @@ void distribute_time_ran(double *x, int N, double xmax)
 	int imax = 1000;
 
 	for ( i = 0; i < N; ++i )
-		x[i] = random() % imax;
+		x[i] = tw_random(imax);
 
 	for ( i = 1; i < N; ++i )
 		x[i] += x[i-1];			// cumulative
@@ -134,7 +134,7 @@ Missile( oship,opos, oangle, ov, odamage, orange, 0, oship,
 	// animation itself in principle, but isnt.
 
 
-	total_time_existence = 1500 + random() % 500;
+	total_time_existence = 1500 + random(500);
 	distribute_time_ran(time_existence, Nframes, total_time_existence);
 
 	time_inexistence = 0;
@@ -431,7 +431,7 @@ void Solar::init_objects()
 	if(GetSprites(MoonPics,"solar.dat","Station_Moon%03d",Num_Moon_Pics)==FALSE)
 		error("File error, moon pics.  Bailing out...");
 
-	sprintf(starName,"Star%03d",random()%Num_Star_Pics);
+	sprintf(starName,"Star%03d",random(Num_Star_Pics));
 
 	StarPic=GetSprite("solar.dat",starName);
 	if(StarPic==NULL)	error("File error, star pic.  Bailing out...");
@@ -477,10 +477,10 @@ void Solar::init_objects()
 	int num;
 	for(num=0; num<NumPlanets; num++)
 	{
-		kind = random()%2;
-		moons = random()%(NumMoons+1);
+		kind = random(2);
+		moons = random(NumMoons+1);
 		if ((kind == 0) && (((num+1)*Radius)> 1600)) {      // gas giant
-			Satellite = new Planet(size/2,GiantPics[random()%Num_Giant_Pics],0);
+			Satellite = new Planet(size/2,GiantPics[random(Num_Giant_Pics)],0);
 			Satellite->gravity_force *= GasGrav;
 
 			handler = new OrbitHandler(Centre,size/2,random(PI2), (SpaceLocation *)Centre,
@@ -488,7 +488,7 @@ void Solar::init_objects()
 
 		}
 		else {               // normal planet
-			Satellite = new Planet(size/2,PlanetPics[random()%Num_Planet_Pics],0);
+			Satellite = new Planet(size/2,PlanetPics[random(Num_Planet_Pics)],0);
 
 			handler = new OrbitHandler(Centre,size/2,random(PI2), (SpaceLocation *)Centre,
 			(SpaceLocation *)Satellite, (num+1)*Radius, 10.0 * PI/180.0, 1);
@@ -501,7 +501,7 @@ void Solar::init_objects()
 		int i;
 		for (i=0; i<moons; i+=1)
 		{
-			Moon = new Planet(size/2,MoonPics[random()%Num_Moon_Pics],0);
+			Moon = new Planet(size/2,MoonPics[random(Num_Moon_Pics)],0);
 			Moon->gravity_force *= MoonGrav;
 	        Moon->gravity_range = 8;
 			Moon->id=MOON_ID;
@@ -518,23 +518,7 @@ void Solar::init_objects()
 	}
 
 
-	/*
-	//comet code
-	for (num = 0; num < Comets; num++)
-	{
-		Planet *c;
-		c = new Planet (random()%int(width), random()%int(height), kaboomSprite, 1);
-		c->id=COMET_ID;
-		c->mass = CoMass;
-		c->gravity_force *= 0;
-		c->gravity_whip = 0;
-		//double a=(random(PI2)).;
-	  //	c->vx=(ComMax/CoMass)*cos(a);
-	  //	c->vy=(ComMax/CoMass)*sin(a);
-		c->accelerate(NULL, random(PI2), get_config_int(NULL, "Comet_acc", 2), get_config_int(NULL, "Comet_max", 2));
-		add (c);
-	}
-	*/
+
 
 
 	// the new comet code - is in a different file, for clarity!

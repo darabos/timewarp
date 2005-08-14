@@ -56,7 +56,7 @@ ZoqFotPikStinger::ZoqFotPikStinger(Vector2 opos, double shipAngle,
 
 int ZoqFotPikStinger::activate_weapon() {
   add(new ZoqFotPikShot(
-    Vector2(0.0, 0.5*get_size().y), angle + ANGLE_RATIO * random(-10.0, 10.0),
+    Vector2(0.0, 0.5*get_size().y), angle + ANGLE_RATIO * tw_random(-10.0, 10.0),
     weaponVelocity, weaponDamage, weaponRange, weaponArmour, this,
     data->spriteWeapon, 6));
   return(TRUE);

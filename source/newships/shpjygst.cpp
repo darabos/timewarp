@@ -110,35 +110,35 @@ int JyglarStarfarer::activate_weapon(){
   Shot *shot;
   SpaceLocation* beacon = new SpaceLocation( this,
 	  pos + unit_vector(angle) * weaponRange / 3, angle );
-  if( random() % 100 < weaponStray ){
+  if( tw_random(100) < weaponStray ){
     game->add( shot = new JyglarStrayShot( this, 
-      Vector2(-2.0 + 0.5 * (double)(random() % 5), size.y * 0.6), angle +(- 2.0 + (double)(random() % 5))*ANGLE_RATIO,
-      weaponVelocity, random() % (weaponDamage + 1), random() % ((int)weaponRange + 1),
+      Vector2(-2.0 + 0.5 * (double)(random(5)), size.y * 0.6), angle +(- 2.0 + (double)(random(5)))*ANGLE_RATIO,
+      weaponVelocity, random(weaponDamage + 1), random((int)weaponRange + 1),
       weaponArmour, this, data->spriteSpecial, weaponPull, beacon ));
-    weapon_sample = 7 + random() % 3;
+    weapon_sample = 7 + random(3);
   }else{
-    int shot_damage = random() % (weaponDamage + 1);
+    int shot_damage = random(weaponDamage + 1);
     game->add( shot = new JyglarShot( this, 
-      Vector2(-2.0 + 0.5 * (double)(random() % 5), size.y * 0.5), angle +(- 2.0 + (double)(random() % 5))*ANGLE_RATIO,
-      weaponVelocity, shot_damage, random() % ((int)weaponRange + 1),
+      Vector2(-2.0 + 0.5 * (double)(random(5)), size.y * 0.5), angle +(- 2.0 + (double)(random(5)))*ANGLE_RATIO,
+      weaponVelocity, shot_damage, random(int(weaponRange + 1)),
       weaponArmour, this, data->spriteSpecial, weaponPull, beacon ));
     if( shot_damage == 0 ){
       weapon_sample = 10;
     }else{
-      melody += -1 + random() % 3;
+      melody += -1 + random(3);
       weapon_sample = abs( melody ) % 7;
     }
   }
   shot->explosionSprite = data->spriteSpecialExplosion;
   shot->explosionFrameCount = 6;
-  shot->explosionSample = data->sampleSpecial[1 + random() % (data->num_special_samples - 1)];
+  shot->explosionSample = data->sampleSpecial[1 + random(data->num_special_samples - 1)];
   return TRUE;
 }
 
 int JyglarStarfarer::activate_special(){
 	STACKTRACE
   if( numBubbles >= maxBubbles ) return FALSE;
-  bubbles[numBubbles] = new JyglarBubble( this, size.x / 5 + random() % (int)(size.x / 3),
+  bubbles[numBubbles] = new JyglarBubble( this, size.x / 5 + random(size.x / 3),
     random(PI2), data->spriteWeapon, specialMass);
   game->add( bubbles[numBubbles] );
   numBubbles++;
@@ -202,14 +202,16 @@ JyglarShot( creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite,
   opull, obeacon, relativity )
 {
 //  collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;
-  minturn = -(random() % 2);
-  maxturn = random() % 2;
+  minturn = -(random(2));
+  maxturn = random(2);
 }
 
-void JyglarStrayShot::calculate(){
-	STACKTRACE
-  Shot::calculate();
-  changeDirection( angle + (minturn + random() % (maxturn - minturn + 1)) * frame_time );
+void JyglarStrayShot::calculate()
+{
+	STACKTRACE;
+	Shot::calculate();
+	double r = random(minturn* ANGLE_RATIO, maxturn* ANGLE_RATIO);
+	changeDirection( angle + r * frame_time );
 }
 
 JyglarBubble::JyglarBubble( SpaceLocation *creator, double odist, double odangle,
@@ -224,7 +226,7 @@ SpaceObject( creator,
   dangle = odangle;
   vel = ship->get_vel();
   sprite_index = get_index(angle);
-  countdown = 1000 + random() % 2000;
+  countdown = 1000 + random(2000);
 
   isblockingweapons = true;
 	attributes &= ~ATTRIB_STANDARD_INDEX;
@@ -237,7 +239,7 @@ void JyglarBubble::calculate(){
     countdown -= frame_time;
     if( countdown <= 0 ){
       state = 0;
-      play_sound( data->sampleExtra[random() % data->num_extra_samples] );
+      play_sound( data->sampleExtra[random(data->num_extra_samples)] );
     }
     return;
   }
@@ -256,7 +258,7 @@ int JyglarBubble::handle_damage( SpaceLocation* source, double normal, double di
 	STACKTRACE
   if( normal + direct ){
     state = 0;
-    play_sound( data->sampleExtra[random() % data->num_extra_samples], 1000 );
+    play_sound( data->sampleExtra[random(data->num_extra_samples)], 1000 );
   }
   return iround(normal + direct);
 }

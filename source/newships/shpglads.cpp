@@ -107,7 +107,7 @@ int GlathrielDestroyer::activate_special()
 	int i;
 	for (i=0; i<specialNumber; i++)
 		add(new GlathrielMiniMissile(
-			0.0, 26, angle + specialSweep * (1-(random() % 201)/100.0), specialVelocity,
+			0.0, 26, angle + tw_random(-specialSweep, specialSweep), specialVelocity,
 			specialDamage, specialRange, specialArmour, this, data->spriteSpecial));
 	return true;
 }

@@ -738,11 +738,11 @@ void UnholyAura::calculate () {
 	if (!focus->exists()) die();
 	angle -= frame_time / 10.0;
 	if (angle < 0) angle += 360;
-	if (random(1700) < frame_time) {
+	if (tw_random(1700) < frame_time) {
 		Query q;
 		q.begin(focus, OBJECT_LAYERS, 666);
 		for (;q.current; q.next() ) {
-			if (!(focus->sameTeam(q.current))) q.current->handle_damage(focus, 0, random() % 6);
+			if (!(focus->sameTeam(q.current))) q.current->handle_damage(focus, 0, random(6));
 		}
 	}
 }

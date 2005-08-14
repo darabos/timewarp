@@ -151,7 +151,7 @@ EstionPlatform::EstionPlatform (EstionGunner *ship, int health, int oFrameSize) 
 	// blinking support initialization [cyhawk]
 	blink = 0;
 
-	if (random() & 1) rotate_direction = 1; else rotate_direction = -1;
+	if (tw_random() & 1) rotate_direction = 1; else rotate_direction = -1;
 
 	isblockingweapons = false;
 	attributes &= ~ATTRIB_STANDARD_INDEX;
@@ -246,7 +246,7 @@ void EstionShot::inflict_damage(SpaceObject *other) {
 	SpaceLocation *tmp = ship->target;
 	if (!tmp) return;
 	// we're being relayed -- play sound [cyhawk]
-        play_sound( data->sampleExtra[random() % data->num_extra_samples] );
+        play_sound( data->sampleExtra[random(data->num_extra_samples)] );
 	double mr = distance(ship->target);
 	for (int i = 0; i < mother_ship->num_platforms; i += 1) {
 		double r = mother_ship->platform[i]->distance(ship->target);
@@ -281,7 +281,7 @@ int EstionGunner::activate_weapon() {
 		this, abs(weaponGraphics), weaponAngle);
 	game->add(shot);
 	// random firing sound [cyhawk]
-	weapon_sample = random() % data->num_weapon_samples;
+	weapon_sample = random(data->num_weapon_samples);
 	return(TRUE);
 	}
 

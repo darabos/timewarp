@@ -341,7 +341,7 @@ void NaroolPoison::calculate() {
 			oship->update_panel = TRUE;
 			}
 			}
-		chance = iround(random(1000.0));
+		chance = iround(tw_random(1000.0));
 		if (chance < frame_time * poison) {
 			play_sound(data->sampleExtra[0]);
 			damage(oship, 0, 1);

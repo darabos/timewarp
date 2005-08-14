@@ -318,7 +318,7 @@ int VenKekFrigate::activate_weapon() {
   double deflection, deflectionRad;
   int i;
   for(i=0;i<weaponMultiplicity;i++) {
-    deflection = (random() % (weaponAngleVariance * 2 + 1))-weaponAngleVariance;
+    deflection = (tw_random(weaponAngleVariance * 2 + 1))-weaponAngleVariance;
     deflectionRad = (double)deflection * ANGLE_RATIO;
     launchPoint = -launchPoint;
     game->add(new VenKekShot(size.y*launchPoint*(0.19), (size.y * 0.27),
@@ -508,9 +508,9 @@ void VenKekFrigate::createSpark(int n) {
   if(!this->Thrust->exists()) return;
   for(i=0; i<n; i++) {
     if(afterburner)
-      dAngle = random()%(2 * sparksAngleVarianceAfterburner + 1) - sparksAngleVarianceAfterburner;
+      dAngle = random(2 * sparksAngleVarianceAfterburner + 1) - sparksAngleVarianceAfterburner;
     else
-      dAngle = random()%(2 * sparksAngleVarianceNormal + 1) - sparksAngleVarianceNormal;
+      dAngle = random(2 * sparksAngleVarianceNormal + 1) - sparksAngleVarianceNormal;
     dAngleRad = (double)dAngle * ANGLE_RATIO;
     if(afterburner)
       M = new Missile(this->Thrust, Vector2(0,this->size.y * -0.375), this->sparkAngleOffset+this->angle + dAngleRad,

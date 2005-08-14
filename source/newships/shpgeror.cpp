@@ -311,7 +311,7 @@ void JadWarhead::animateExplosion()
 		{
 			//stuff = q.currento->normal_pos()/* + (unit_vector(q.currento->trajectory_angle(this)) * q.currento->get_size()/2.5)*/;
 			
-			add(new JadWarheadExplosion2(stuff, scale_velocity(tw_random()%2+5), 100, 600, makecol(255,128,0), this));
+			add(new JadWarheadExplosion2(stuff, scale_velocity(tw_random(2)+5), 100, 600, makecol(255,128,0), this));
 			damage(q.currento, (int)ceil(r * blast_damage) - d, d);
 			
 			int i = iround_down(((int)ceil(r * blast_damage)) / 2);
@@ -323,14 +323,14 @@ void JadWarhead::animateExplosion()
 		{
 			/* + (unit_vector(q.currento->trajectory_angle(this)) * q.currento->get_size()/4)*/;
 			
-			add(new JadWarheadExplosion(stuff, scale_velocity(tw_random()%2+5), 100, 1000, makecol(128,128,255)));
+			add(new JadWarheadExplosion(stuff, scale_velocity(tw_random(2)+5), 100, 1000, makecol(128,128,255)));
 		}
         
 		
 		if ((q.currento->mass > 0) && (!q.currento->isPlanet()))
 			q.currento->accelerate(this, trajectory_angle(q.currento), kick * r / ((q.currento->mass > 1)?sqrt(q.currento->mass):1), boost_max);
 	}
-	add(new JadWarheadExplosion(pos, scale_velocity(tw_random()%20+25), 150, 450, makecol(255,128,0)));
+	add(new JadWarheadExplosion(pos, scale_velocity(tw_random(20)+25), 150, 450, makecol(255,128,0)));
 
     Missile::animateExplosion();
 }
@@ -357,7 +357,7 @@ JadWarheadExplosion::JadWarheadExplosion(Vector2 opos, double ov, int onum, int 
 	for (i=0; i<num; i++) 
 	{
 		xp[i] = opos;
-		xv[i] = ov * (0.5+sqrt(sqrt((random()%1000000001)/1000000000.0))) * unit_vector(PI2 * (random()%1000000)/1000000.0);
+		xv[i] = ov * (0.5+sqrt(sqrt(tw_random(1.0)))) * unit_vector(tw_random(PI2));
 	}
 }
 
@@ -444,7 +444,7 @@ JadWarheadExplosion2::JadWarheadExplosion2(Vector2 opos, double ov, int onum, in
 	for (i=0; i<num; i++) 
 	{
 		xp[i] = opos;
-		xv[i] = ov * ((0.5+sqrt(sqrt((random()%1000000001)/1000000000.0))) * unit_vector(trajectory_angle(opos, otarg->pos) - PI/2 + (PI * (random()%1000000)/1000000.0)));
+		xv[i] = ov * ((0.5+sqrt(sqrt(random(1.0)))) * unit_vector(trajectory_angle(opos, otarg->pos) - PI/2 + (random(PI))));
 	}
 }
 

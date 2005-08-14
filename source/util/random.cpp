@@ -216,6 +216,14 @@ void test_random()
 			// i=3:  1 -> 1
 		}
 
+
+		// extra test...
+		int maxval = 1000;
+		int w;
+		w = tw_random(maxval);
+		if (w < 0 || w >= maxval)
+			tw_error("unsigned int value out of bounds");
+
 	}
 
 	// display results
@@ -259,6 +267,13 @@ double tw_random(double a)
 	//* ((int*) &val + sizeof(int)) = tw_random();
 	val = a * (double(tw_random()) / double(0x0100000000));
 
+
+	if ((a != 0) && (val < 0 || val >= a))
+	{
+		tw_error("random (double), out of bounds!");
+	}
+
+
 	return val;
 }
 
@@ -267,7 +282,20 @@ double tw_random(double min, double max)
 	return min + tw_random(max - min);
 }
 
-unsigned int tw_random( int a )
+
+int tw_random( int a )
 {
-	return tw_random() % a;
+	if (a < 0)
+	{
+		tw_error("random: needing to convert a negative integer to an unsigned integer: should not happen");
+	}
+
+	int k = int( tw_random() % unsigned int(a) );
+
+	if (k < 0 || k >= a)
+	{
+		tw_error("random (int), out of bounds!");
+	}
+
+	return k;
 }

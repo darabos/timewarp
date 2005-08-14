@@ -28,7 +28,14 @@ double trajectory_angle(double x1, double y1, double x2, double y2) {STACKTRACE
 	double dx = min_delta(x2, x1, map_size.x);
 	double dy = min_delta(y2, y1, map_size.y);
 	double alpha = atan3(dy, dx);
-	if (alpha < 0) alpha += PI2;
+	
+	if (alpha < 0)
+		alpha += PI2;
+
+	if (alpha < 0 || alpha > PI2)
+	{
+		tw_error("The trajectory angle makes no sense");
+	}
 	return(alpha);
 	}
 
@@ -36,7 +43,14 @@ double trajectory_angle(Vector2 pos1, Vector2 pos2) {STACKTRACE
 	double dx = min_delta(pos2.x, pos1.x, map_size.x);
 	double dy = min_delta(pos2.y, pos1.y, map_size.y);
 	double alpha = atan3(dy, dx);
-	if (alpha < 0) alpha += PI2;
+	
+	if (alpha < 0)
+		alpha += PI2;
+
+	if (alpha < 0 || alpha > PI2)
+	{
+		tw_error("The trajectory angle makes no sense");
+	}
 	return(alpha);
 	}
 

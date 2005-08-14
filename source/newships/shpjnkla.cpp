@@ -211,7 +211,7 @@ void JnkdwoLazelCrystal::calculate()
 								r = marks;  t = q.currento; } }
 				
                 if (t) {
-					int c = random()%80;
+					int c = tw_random(80);
 					c = makecol(160+c, 120+c, 175+c);
 					//                        game->addItem(new PointLaser(c, ship->specialDamage, ship->specialRange, ship->specialFrames, this, t, 0, 0));
 					add(new JnkdwoLazelLaser (this, trajectory_angle(t), ship->specialAngle, c, ship->specialRange, ship->specialDamage,
@@ -314,7 +314,8 @@ Laser(creator, langle, lcolor, lrange, 1, lfcount/ldamage, opos, 0, 0) {
 	tgt = otgt; aim = oaim;
 	max_angle = mangle; lng = length;
 	base_length = length;
-	angle = normalize(angle + spread * (1000 - (random()%2001))/1000.0, PI2);
+	double r = random(-spread, spread);
+	angle = normalize(angle + r, PI2);
 
 	d_a = 0;
 }

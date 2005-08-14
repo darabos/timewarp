@@ -209,7 +209,7 @@ void SpeedMissile::calculate()
 			dv = blobspeedFraction * blobreleaser->vel / 1000;	// per second
 
 			P = blobreleaser->pos + blobreleaser->get_sprite()->size(0).y *
-				unit_vector(blobreleaser->vel.atan() + PI + random(2.0)-1.0);
+				unit_vector(blobreleaser->vel.atan() + PI + tw_random(2.0)-1.0);
 
 			add(
 				new SpeedBlob(this, P, 0.0,

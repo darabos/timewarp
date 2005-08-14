@@ -103,13 +103,13 @@ TauMercury::TauMercury(Vector2 opos, double shipAngle, ShipData *shipData, unsig
 int TauMercury::activate_weapon()
 {
 	STACKTRACE
-	double da = (1-0.002*(random()%1001));
+	double da = tw_random(-1.0, 1.0);
 	if (da >= 0)
 		da *= da;
 	else
 		da *= -da;
 	game->add(new TauMercuryShot(this, 0, 8, angle + weaponAngle*da,
-			weaponVelocity,	weaponDamage, weaponRange*(1-weaponSpread*(random()%1001)/1000.0), weaponArmour,
+			weaponVelocity,	weaponDamage, weaponRange*(1-random(weaponSpread)), weaponArmour,
 			data->spriteWeapon, weaponRelativity, weaponSparks, weaponFrags));
 
 	return true;
@@ -268,31 +268,16 @@ void TauMercury::calculate_fire_special()
 	while (special_recharge <= 0) {
 		special_recharge += special_rate;
 
-//		int i;
-
-//		for (i=0; i<1; i++) {
-		game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random(1000))/1000.0,
-					scale_velocity(2)*(random(101))/100.0,
-					iround(800*(1-0.5*(random(101))/100.0)),
-					190+random(50), 190+random(50), 200+random()%55,
+		game->add(new TauMercurySpark(this, -26, -3.5, random(PI2),
+					scale_velocity(2)*(random(1.0)),
+					iround(800*(1-random(0.5))),
+					190+random(50), 190+random(50), 200+random(55),
 					DEPTH_EXPLOSIONS, 1.0, 1));
-		game->add(new TauMercurySpark(this, 26, -3.5, PI2*(random()%1000)/1000.0,
-					scale_velocity(2)*(random(101))/100.0,
-					iround(800*(1-0.5*(random(101))/100.0)),
+		game->add(new TauMercurySpark(this, 26, -3.5, random(PI2),
+					scale_velocity(2)*(random(1.0)),
+					iround(800*(1-random(0.5))),
 					190+random(50), 190+random(50), 200+random(55),
 					DEPTH_EXPLOSIONS, 1.0, 1)); //}
-/*		for (i=0; i<1; i++) {
-			game->add(new TauMercurySpark(this, -26, -3.5, PI2*(random()%1000)/1000.0,
-						scale_velocity(5)*(random()%101)/100.0,
-						800*(1-0.5*(random()%101)/100.0),
-						190+random()%50, 190+random()%50, 200+random()%55,
-						DEPTH_EXPLOSIONS, 0.0));
-			game->add(new TauMercurySpark(this, 26, -3.5, PI2*(random()%1000)/1000.0,
-						scale_velocity(5)*(random()%101)/100.0,
-						800*(1-0.5*(random()%101)/100.0),
-						190+random()%50, 190+random()%50, 200+random()%55,
-						DEPTH_EXPLOSIONS, 0.0)); }
-*/	
 	}
 }
 
@@ -355,12 +340,12 @@ void TauMercuryShot::animateExplosion()
 	int i, ff;
 	double vv = magnitude_sqr(vel);
 	for (i=0; i<6; i++) {
-		ff = random()%10;
+		ff = random(10);
 		a = new Animation(this, pos, data->spriteWeaponExplosion,
 			ff, 20-ff, 25, DEPTH_EXPLOSIONS);
 		game->add(a);
 		a->accelerate(this, angle, vv*0, MAX_SPEED);
-		a->accelerate(this,  PI2*(random()%1000)/1000.0, 0.01*(random()%101)*scale_velocity(25), MAX_SPEED);
+		a->accelerate(this,  random(PI2), random(scale_velocity(25)), MAX_SPEED);
 		a->collide_flag_anyone = 0;
 	}
 }

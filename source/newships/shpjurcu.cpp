@@ -77,12 +77,12 @@ void JurgathaCutter::calculate()
 
 int JurgathaCutter::activate_weapon()
 {
-	int random_number = random()%10;
+	int random_number = tw_random(10);
 
     game->add(new Laser(this, angle, pallete_color[weaponColor], weaponRange,
       weaponDamage, weapon_rate, this, Vector2(-(double)(random_number), 2.0), true));
 
-    random_number = random()%10;
+    random_number = random(10);
 
     game->add(new Laser(this, angle, pallete_color[weaponColor], weaponRange,
       weaponDamage, weapon_rate, this, Vector2((double)(random_number), 2.0), true));

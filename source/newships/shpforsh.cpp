@@ -85,11 +85,11 @@ int ForevianShocker::activate_weapon()
 	if (weapon_type==2)	tmp_s = data->spriteExtra;
 	play_sound2(data->sampleWeapon[0]);
 	if (weapon_type == 0) {
-		if(random()%2)
+		if(tw_random(2))
 			tmp_s = data->spriteExtra;
 		add(new AnimatedShot(this, Vector2(27.0,20.0), angle , weaponVelocity,	weaponDamage, weaponRange, weaponArmour, this, tmp_s, 32, weapon_frame_size, 1.0));
 		if (weapon_type == 0) {
-			if(random()%2)	tmp_s = data->spriteExtra;
+			if(random(2))	tmp_s = data->spriteExtra;
 			else	tmp_s = data->spriteWeapon; } }
 	add(new AnimatedShot(this, Vector2(-27.0,20.0), angle , weaponVelocity,	weaponDamage, weaponRange, weaponArmour, this, tmp_s, 32, weapon_frame_size, 1.0));	return(TRUE);
 }

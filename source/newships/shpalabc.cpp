@@ -189,7 +189,7 @@ AlaryBC::AlaryBC (Vector2 opos, double shipAngle, ShipData *shipData, unsigned i
 
 	engine_phase = 0;
 
-	death_frame = 3500 + tw_random()%2000;
+	death_frame = 3500 + tw_random(2000);
 	exp_frame = 0;
 	dying = false;
 
@@ -223,10 +223,10 @@ void AlaryBC::calculate()
 		double aaa, rrr;
 		exp_frame -= frame_time;
 		while (exp_frame <= 0) {
-			exp_frame += 90+tw_random()%300;
-			aaa = PI2 * ((tw_random()%1001)/1000.0);
-			rrr = 66*sqrt((tw_random()%1001)/1000.0);
-			if (tw_random()%2 == 0) {
+			exp_frame += 90+tw_random(300);
+			aaa = tw_random(PI2);
+			rrr = 66 * sqrt(tw_random(1.0));
+			if (tw_random()&1 == 0) {
 				SpaceLocation *ani = new Animation(this, pos+rrr*unit_vector(aaa), data->spriteSpecialExplosion, 0, 10, 50, DEPTH_EXPLOSIONS);
 				game->add(ani); }
 //				ani->play_sound((SAMPLE *)(melee[MELEE_BOOM + 1].dat));}
@@ -272,10 +272,10 @@ void AlaryBC::calculate()
 	if (engines_death_frame > 0) {
 		if (engines_death_count > 0) engines_death_count -= frame_time;
 		else {
-			engines_death_count += 100 +random()%200;
+			engines_death_count += 100 + random(200);
 			engines_death_frame--;
 			double tx = cos(angle), ty = sin(angle);
-			double rrr= 42 - (random() % 85);
+			double rrr= 42 - (random(85));
 			double xx = ( -54*tx - rrr*ty);
 			double yy = ( -54*ty + rrr*tx);
 			game->add(new Animation(this, pos + Vector2(xx,yy), data->spriteSpecialExplosion, 0, 10, 50, DEPTH_SHIPS-0.25));
@@ -500,7 +500,7 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
         if (engines_armour <=0) {
 			play_sound(data->sampleExtra[0]);
 			engines_death_frame = 8;
-			engines_death_count = 500 +random()%100;
+			engines_death_count = 500 +random(100);
 			speed_max /= 2.0;
 			accel_rate /= 4.0;
 			turn_rate /= 3.0; } }
@@ -533,12 +533,12 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 //		game->add(new Animation(this, x, y,
 //			game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 //		if (attributes & ATTRIB_NOTIFY_ON_DEATH) game->ship_died(this, source);
-		turn_rate = scale_turning(12+tw_random()%80) * (1-2*(tw_random()%2)); 
+		turn_rate = scale_turning(12+tw_random(80)) * (1 - (tw_random() & 2) ); 
 		if (engines_armour > 0) {
 			engines_armour = 0;
 			play_sound(data->sampleExtra[0]);
 			engines_death_frame = 8;
-			engines_death_count = 500 +random()%100;
+			engines_death_count = 500 + random(100);
 		}
 	}
 
@@ -623,15 +623,15 @@ void AlaryBCTorpedo::calculate()
 			game->add(new Animation(this, pos, data->spriteWeaponExplosion, 0, 10, 50, DEPTH_EXPLOSIONS));
 			
 			game->add(new AlaryBCWarhead(this, 0, 10, angle,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random(101))), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle - 50*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random(101))), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle + 50*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random(101))), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle - 75*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random(101))), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			game->add(new AlaryBCWarhead(this, 0, 10, angle + 75*PI/180,
-				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random()%101)), wh_armour, wh_turn_rate, data->spriteExtra, target));
+				wh_v, wh_damage, wh_range*(1+0.0025*(tw_random(101))), wh_armour, wh_turn_rate, data->spriteExtra, target));
 			
 			state = 0;
 		}

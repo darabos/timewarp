@@ -1098,7 +1098,7 @@ Planet *Play::create_planet(double relx, double rely, int index)
 Ship *Play::create_ship(double relx, double rely, char *shpid, Control *c, TeamCode team)
 {
 	Ship *s;
-	s = Game::create_ship(shpid, c, map_size*Vector2(relx, rely), random(2*PI), team);
+	s = Game::create_ship(shpid, c, map_size*Vector2(relx, rely), tw_random(PI2), team);
 	add(s->get_ship_phaser());
 	add(new HealthBar(s, &healthtoggle));
 	return s;

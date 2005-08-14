@@ -116,7 +116,7 @@ void StarBase::calculate() {
 		o = (Ship *)a.currento;
 		if((!o->isInvisible()) && o->sameTeam(this))
 		{
-			if((random()%HealRate)!=0) continue;
+			if((tw_random(HealRate))!=0) continue;
 			if(batt<HealCost) continue;
 			if(o->crew==o->crew_max) continue;
 			batt-=HealCost;

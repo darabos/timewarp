@@ -1211,7 +1211,7 @@ BasiliskAreaHurt::BasiliskAreaHurt(Vector2 opos, double ov, int onum, int olife,
 	for (i=0; i<num; i++) 
 	{
 		xp[i] = opos;
-		xv[i] = ov * (0.5+sqrt(sqrt((random()%1000000001)/1000000000.0))) * unit_vector(PI2 * (random()%1000000)/1000000.0);
+		xv[i] = ov * (0.5+sqrt(sqrt(tw_random(1.0)))) * unit_vector(tw_random(PI2));
 	}
 }
 

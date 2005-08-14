@@ -534,7 +534,7 @@ void ImperialBlade::inflict_damage( SpaceObject *other ){
     other->get_vel().x + ty * IMPERIAL_DEBRIS_SPEED,
     other->get_vel().y - tx * IMPERIAL_DEBRIS_SPEED, other->get_angle(), iround(other->mass),
     spriteLeft,
-    iround(IMPERIAL_MIN_DEBRIS_LIFE + random(IMPERIAL_MAX_DEBRIS_LIFE -
+    iround(IMPERIAL_MIN_DEBRIS_LIFE + tw_random(IMPERIAL_MAX_DEBRIS_LIFE -
     IMPERIAL_MIN_DEBRIS_LIFE)) );
   game->add( left );
 

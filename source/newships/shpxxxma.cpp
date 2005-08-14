@@ -219,7 +219,7 @@ int XXXMangler::activate_special()
 	*/
 
 	double alpha = specialSpread / specialNumber;
-    double beta = normalize( angle + PI - 0.5 * specialSpread + random(alpha), PI2 );
+    double beta = normalize( angle + PI - 0.5 * specialSpread + tw_random(alpha), PI2 );
     double tx = cos( angle );
     double ty = sin( angle );
     double ox = pos.x + ILWRATH_SPECIAL_REL_Y * tx - ILWRATH_SPECIAL_REL_X * ty;

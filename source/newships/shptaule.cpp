@@ -266,7 +266,7 @@ TauLeviathan::TauLeviathan(Vector2 opos, double shipAngle, ShipData *shipData, u
 
 
 
-	missile_side    = 1 - 2 * (tw_random()%2);
+	missile_side    = 1 - (tw_random() & 2);
 
 }
 
@@ -275,37 +275,26 @@ TauLeviathan::TauLeviathan(Vector2 opos, double shipAngle, ShipData *shipData, u
 int TauLeviathan::activate_weapon()
 
 {
-	STACKTRACE
-
-    add(new LeviathanSlimeBall(0.0, size.y/2.6, normalize(angle + weaponSpread*(1.0-(random() % 2001)/1000.0), PI2),
-
+	STACKTRACE;
+    add(new LeviathanSlimeBall(0.0, size.y/2.6, normalize(angle + tw_random(-weaponSpread, weaponSpread), PI2),
 			weaponVelocity, weaponDamage, extraTime, extraSpeed, weaponRange,
-
 			weaponArmour, this, this, data->spriteWeapon, 10, 70, extraGreen, weaponRelativity));
-
 	return true;
-
 }
 
 
 
 int TauLeviathan::activate_special()
-
 {
-	STACKTRACE
+	STACKTRACE;
 
 	add(new LeviathanMissile(22*missile_side, 5, angle + (PI/12)*missile_side,
-
 			specialVelocity, specialDamage, specialRange, specialArmour,
-
 			specialTurnRate, this, data->spriteSpecial, data->spriteSpecialExplosion,
-
 			target));
-
 	missile_side *= -1;
 
 	return true;
-
 }
 
 
@@ -431,34 +420,20 @@ LeviathanSlimeBall::LeviathanSlimeBall(double ox, double oy, double oangle, doub
 
 
 void LeviathanSlimeBall::inflict_damage(SpaceObject *other)
-
 {
 	STACKTRACE
-
 	if (other->isShip()) {
-
 		int c = iround(((Ship*)other)->getCrew());
-
 		AnimatedShot::inflict_damage(other);
-
 		c -= iround(((Ship*)other)->getCrew());
-
 		///RGB col = ((Ship*)other)->crewPanelColor();
-
 			int i;
-
 			for (i=0; i<c; i++)
-
-				add(new LeviathanSlimeFood(random()%361, food_velocity*(1-0.90*(random()%101)/100.0),
-
-					(int)(l_time * (1-0.00*(random()%101)/100.0)), this, this, data->spriteExtra, 10, 70));
-
+				add(new LeviathanSlimeFood(random(361), food_velocity*(1-0.90*random(1.01)),
+					(int)(l_time * (1-0.00*(random(1.0)))), this, this, data->spriteExtra, 10, 70));
 	}
-
 	else
-
 		AnimatedShot::inflict_damage(other);
-
 };
 
 
@@ -482,31 +457,22 @@ LeviathanSlimeFood::LeviathanSlimeFood(double oangle, double ov, int otime,
 
 
 void LeviathanSlimeFood::inflict_damage(SpaceObject *other)
-
 {
 	STACKTRACE
-
 	other->handle_damage(this, 0);
-
 };
 
 
-
 void LeviathanSlimeFood::calculate()
-
 {
 	STACKTRACE
 
 	AnimatedShot::calculate();
-
 	vel *= exp(-0.0018*frame_time);
-
 	d = 0;
-
 	lifetime -= frame_time;
 
 	if (lifetime <= 0) state = 0;
-
 }
 
 
@@ -514,11 +480,8 @@ void LeviathanSlimeFood::calculate()
 
 
 int LeviathanSlimeFood::isAlly(SpaceLocation *other)
-
 {
-
 	return true;
-
 }
 
 

@@ -162,7 +162,7 @@ void KterbiSaber::calculate()
 	if (boostlevel >= 1)
 	{
 		int chance;
-		chance = random() % 10000;
+		chance = tw_random(10000);
 		
 		if (chance < (3 * frame_time))
 		{

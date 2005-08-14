@@ -76,7 +76,7 @@ int UtwigJugger::handle_damage(SpaceLocation *source, double normal, double dire
 		normal = 0;
 	}
 	if (fortitude && (normal > 0)) {
-		if (normal > random(3)) normal -= fortitude;
+		if (normal > tw_random(3)) normal -= fortitude;
 		if (normal < 0) normal = 0;
 	}
 	return Ship::handle_damage(source, normal, direct);

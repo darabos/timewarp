@@ -147,7 +147,7 @@ void DefenderGame::calculate ( ) {
 		}
 	}
 	else if (game_time >= time_for_next_attack) {
-		time_for_next_attack += time_between_attacks + (random(10000)) - 4000;
+		time_for_next_attack += time_between_attacks + (tw_random(10000)) - 4000;
 		time_between_attacks -= 10;
 		time_between_attacks = iround(time_between_attacks * 0.975);
 		time_between_attacks += 10;

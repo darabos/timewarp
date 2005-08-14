@@ -192,7 +192,7 @@ void RaalrithMenacer::calculate() {
        grabbed = NULL;
      }
    if (latched) {
-     if ((random() % suckRate) <= grabbed->crew) {
+     if ((tw_random(suckRate)) <= grabbed->crew) {
        crew +=1;
 	   damage(grabbed, 1);
      }
@@ -359,7 +359,7 @@ void RaalrithPoison::calculate() {
       oship->update_panel = TRUE;
   }
 
-  chance = random() % 2000;
+  chance = random(2000);
   if (chance < frame_time) {
       damage(oship, 0, 1);
       sound.play(data->sampleExtra[0]);

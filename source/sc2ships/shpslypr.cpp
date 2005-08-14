@@ -54,7 +54,7 @@ frame(0),
 thrustActive(FALSE),
 thrustForward(TRUE)
 {
-	sprite_index2 = random() & 63;
+	sprite_index2 = tw_random() & 63;
 	segment_length = get_config_int("Weapon", "SegmentLength",0);
 	segment_dispersion = get_config_int("Weapon", "SegmentLengthDispersion",0);
 	segments = get_config_int("Weapon", "Segments", 0);

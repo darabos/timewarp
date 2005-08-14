@@ -54,8 +54,8 @@ int ArilouSkiff::activate_special() {
 			specialSprite, 0, 40, iround(specialFrames/40), DEPTH_HOTSPOTS-0.1));
 	
 	Vector2 d = Vector2 ( 
-		random(-1500.0, 1500.0),
-		random(-1500.0, 1500.0)
+		tw_random(-1500.0, 1500.0),
+		tw_random(-1500.0, 1500.0)
 	);
 	translate(d);
 	just_teleported = 1;

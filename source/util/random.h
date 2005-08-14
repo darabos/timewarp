@@ -71,7 +71,7 @@ inline int tw_random()
 void seed_ohmy();
 double tw_random(double a);
 double tw_random(double min, double max);
-unsigned int tw_random( int a );
+int tw_random( int a );
 unsigned int tw_random();
 
 void tw_random_push_state();

@@ -380,7 +380,7 @@ void HydrovarEsFighter::calculate()
 		{
 			//FIXME: need 'planet_radius' above - WHEN IMPLEMENTED
 			changeDirection(trajectory_angle(p)+PI);
-			retreat_frames = random()%200+75; //CHECK TIMES (in ms)
+			retreat_frames = tw_random(200)+75; //CHECK TIMES (in ms)
 			Missile::calculate();
 			return;
 		}
@@ -527,7 +527,7 @@ void HydrovarEsFighter::UTurn(int m, int r)
 	STACKTRACE
 	angle = angle + PI;
 	vel *= -1;
-	retreat_frames = (random() % r) + m;
+	retreat_frames = random(r) + m;
 }
 
 void HydrovarEsFighter::RetreatFrom(SpaceLocation* L, int r, int m)
@@ -535,7 +535,7 @@ void HydrovarEsFighter::RetreatFrom(SpaceLocation* L, int r, int m)
 	STACKTRACE
   if(L==NULL || (!L->exists())) return;
   this->changeDirection(L->trajectory_angle(this));
-	retreat_frames = (random() % r) + m;
+	retreat_frames = random(r) + m;
 }
 
 void HydrovarEsFighter::searchForTarget(void)

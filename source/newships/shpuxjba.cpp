@@ -54,7 +54,7 @@ int Uxjoz::activate_weapon()
 
 	// shaky
 	double a = 0.04 * PI;
-	turn_step += random(2*a) - a;
+	turn_step += tw_random(2*a) - a;
 
 	Shot *s;
 	s = new Shot(this, Vector2(0,100), angle,

@@ -174,12 +174,9 @@ int BoggCenturion::activate_weapon()
         if ((gun_phase >= old_gun_phase) || (!gun_full_speed) || (delay_count < startup_delay))
                 return false;
 
-        double r = 1 - random(2.0);
-//        r *= r;
-//        double l = sqrt(1 - r*r) * (1 - (random()%101)/50.0);
-//        l *= l * sin(weaponSpread*ANGLE_RATIO) * weaponRange;
+        double r = tw_random(-1.0, 1.0);
 
-        double l = sqrt(random(1.0));
+        double l = sqrt(tw_random(1.0));
         game->add(new BoggCenturionShot(this, Vector2(+8 + 8*r, 21), angle + r*weaponSpread, weaponDamage, weaponRange * l,
                           data->spriteWeapon, data->sampleWeapon[1]));
 

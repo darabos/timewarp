@@ -994,7 +994,7 @@ void Lantern::calculate()
 
 		int col;
 		int i, r, g, b;
-		i = tw_random()%mother->lanternColorRandomAdd;
+		i = tw_random(mother->lanternColorRandomAdd);
 		r = mother->lanternColorR + i; if ( r > 255) r = 255;
 		g = mother->lanternColorG  + i; if ( g > 255) g = 255;
 		b = mother->lanternColorB + i; if ( b > 255) b = 255;

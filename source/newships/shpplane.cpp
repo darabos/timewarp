@@ -81,7 +81,7 @@ PlanetShip::PlanetShip( Vector2 opos, double shipAngle,
 					   ShipData *shipData, unsigned int code ):
 Ship( opos, shipAngle, shipData, code )
 {
-	sprite_index = planet_index = random() % 3;
+	sprite_index = planet_index = tw_random(3);
 	if( sprite_index != 0 ){
 		BITMAP *bmp = spritePanel->get_bitmap( 0 );
 		blit( spritePanel->get_bitmap( 6 + sprite_index ), bmp, 0, 0, 0, 0, 63, 99 );

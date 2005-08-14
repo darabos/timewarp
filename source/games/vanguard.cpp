@@ -616,100 +616,6 @@ void Vanguard::pick_new_ships()
 
 	item_sum("2");
 
-	/*
-	//player 1 selects a new ship
-	Fleet fleet;
-
-#define LOAD_FLEET log_file("fleets/all.scf"); fleet.load(NULL, "Fleet"); 
-
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	HumanPlayer1 = create_ship(fleet.getShipType(i)->id, human_control[0], tw_random(Vector2(width, height)));rand()%(int)width, rand()%(int)height, 0, human_team);
-	HumanPlayer1 = create_ship(fleet.getShipType(i)->id, human_control[0], tw_random(size), 0, human_team);
-	add(HumanPlayer1->get_ship_phaser());
-	human_panel[0] = new ShipPanel(HumanPlayer1);
-	human_panel[0]->window->init(window);
-	human_panel[0]->window->locate(0,0.9, 0,0, 0,0.1, 0,0.25);
-
-	add(human_panel[0]);
-	add_focus(HumanPlayer1, channel_server);
-
-	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) {
-		LOAD_FLEET
-		i = human_control[1]->choose_ship(window, "Hey You Player!\nPick a ship!", &fleet);
-		log_int(i, channel_network[1]);
-		if (i == -1) i = random() % fleet.getSize();
-//		Ship *s = create_ship(fleet.getShipType(i)->id, human_control[1], width/2 + 100, height/2, PI, human_team);
-		Ship *s = create_ship(fleet.getShipType(i)->id, human_control[1], size/2 + Vector2(100,0), PI, human_team);
-		add(s->get_ship_phaser());
-		add_focus(s, channel_network[1]);
-		human_panel[1] = new ShipPanel(s);
-		human_panel[1]->window->init(window);
-		human_panel[1]->window->locate(0,0.9, 0,0.25, 0,0.1, 0,0.25);
-		add(human_panel[1]);
-		}
-	else human_panel[1] = NULL;
-
-
-	Ship *e;
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You AI1!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width/4, height/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size/4, random(PI2), enemy_team);
-	add(e->get_ship_phaser());
-
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You AI2!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width*3/4, height/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size*Vector2(3.0,1.0)/4.0, random(PI2), enemy_team);
-	add(e->get_ship_phaser());
-
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You AI3!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width*3/4, height*3/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size*3.0/4.0, random(PI2), enemy_team);
-	add(e->get_ship_phaser());
-
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You AI4!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", width/4, height*3/4, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", size*Vector2(1.0,3.0)/4.0, random(PI2), enemy_team);
-	add(e->get_ship_phaser());
-
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You AI5!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", rand()%(int)width, rand()%(int)height, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
-	add(e->get_ship_phaser());
-
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You AI6!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", random()%(int)width, random()%(int)height, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
-	add(e->get_ship_phaser());
-
-	LOAD_FLEET
-	i = human_control[0]->choose_ship(window, "Hey You AI7!\nPick a ship!", &fleet);
-	log_int(i, channel_server);
-	if (i == -1) i = random() % fleet.getSize();
-//	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", random()%(int)width, random()%(int)height, random(PI2), enemy_team);
-	e = create_ship(channel_none, fleet.getShipType(i)->id, "WussieBot", tw_random(size), random(PI2), enemy_team);
-	add(e->get_ship_phaser());
-	*/
 
 //Solar system object code
 	Sun *Centre[1000];
@@ -730,7 +636,7 @@ void Vanguard::pick_new_ships()
 	{
 		ok = 0;
 		int n=0;
-		int Dir = ((random()%2)*2)-1;
+		int Dir = (tw_random() & 2) - 1;
 
 		while (ok!=1)
 		{
@@ -757,21 +663,21 @@ void Vanguard::pick_new_ships()
 		}
 
 
-		add(Centre[iSuns] = new Sun(Vector2(w, h), StarPics[random()%Num_Star_Pics],0));
+		add(Centre[iSuns] = new Sun(Vector2(w, h), StarPics[random(Num_Star_Pics)],0));
 
 		Centre[iSuns]->id=SUN_ID;
 
 		// planets creating loop
-		NumPlanets=MinPlanets+random()%(MaxPlanets-MinPlanets);
+		NumPlanets=MinPlanets+random(MaxPlanets-MinPlanets);
 
 		for(int num=0; num<NumPlanets; num++)
 		{
-			kind = random()%3;
-			moons = random()%(NumMoons+1);
+			kind = random(3);
+			moons = random(NumMoons+1);
 			if ((kind == 0) && (((num+1)*Radius)> 1600))
 			{	// gas giant
 //				Satellite = new Planet(width/2,height/2,GiantPics[rand()%Num_Giant_Pics],0);
-				Satellite = new Planet(size/2, GiantPics[random()%Num_Giant_Pics],0);
+				Satellite = new Planet(size/2, GiantPics[random(Num_Giant_Pics)],0);
 				Satellite->gravity_force *= GasGrav;
 
 //				handler = new OrbitHandler(Centre[j],width/2,height/2,random(PI2), (SpaceLocation *)Centre[j],
@@ -782,7 +688,7 @@ void Vanguard::pick_new_ships()
 			else
 			{	// normal planet
 //				Satellite = new Planet(width/2,height/2,PlanetPics[rand()%Num_Planet_Pics],0);
-				Satellite = new Planet(size/2,PlanetPics[random()%Num_Planet_Pics],0);
+				Satellite = new Planet(size/2,PlanetPics[random(Num_Planet_Pics)],0);
 
 //				handler = new OrbitHandler(Centre[j],width/2,height/2,random(PI2), (SpaceLocation *)Centre[j],
 //					(SpaceLocation *)Satellite, (num+1)*Radius, PlanetVel*Dir,0);
@@ -796,7 +702,7 @@ void Vanguard::pick_new_ships()
 			for (int i=0; i<moons; i+=1)
 			{
 //				Moon = new Planet(width/2,height/2,MoonPics[rand()%Num_Moon_Pics],0);
-				Moon = new Planet(size/2,MoonPics[random()%Num_Moon_Pics],0);
+				Moon = new Planet(size/2,MoonPics[random(Num_Moon_Pics)],0);
 				Moon->gravity_force *= MoonGrav;
 				Moon->gravity_range = 8;
 				Moon->id=MOON_ID;
@@ -822,7 +728,6 @@ done:
 	for (int num = 0; num < Comets; num++)
 	{
 		Planet *c;
-//		c = new Planet (random()%int(width), random()%int(height), kaboomSprite, 1);
 		c = new Planet (tw_random(size), meleedata.kaboomSprite, 1);
 		c->id=COMET_ID;
 		c->mass = CoMass;

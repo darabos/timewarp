@@ -1007,7 +1007,7 @@ void NormalGame::choose_new_ships()
 				// bots choose "randomly" (but synched randomly so don't use rand() !!).
 				// this is needed, otherwise a bot would need its own channel, while this way,
 				// they can use channel_none.
-				slot[i] = random(fleet->getSize());
+				slot[i] = tw_random(fleet->getSize());
 
 			share(i, &slot[i]);
 			}
@@ -1045,7 +1045,7 @@ void NormalGame::choose_new_ships()
 		Fleet *fleet = p->fleet;
 
 		if (slot[i] == -1)
-			slot[i] = random() % fleet->getSize();
+			slot[i] = random(fleet->getSize());
 
 		if (slot[i] < 0 || slot[i] >= fleet->getSize())
 		{

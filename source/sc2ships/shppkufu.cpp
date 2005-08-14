@@ -47,7 +47,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	if (num_reincarnations < 1)
 		++num_reincarnations;
 
-	double xra = random(1.0);
+	double xra = tw_random(1.0);
 	double ra = num_reincarnations / (num_reincarnations+1);
 	if ( xra > ra)
 	{
@@ -61,7 +61,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	
 	
 
-	pos = random(Vector2(3000,3000)) - Vector2(1500,1500);
+	pos = tw_random(Vector2(3000,3000)) - Vector2(1500,1500);
 	SpaceLocation *spacePlanet = nearest_planet();
 	if (spacePlanet && (distance(spacePlanet) < 1000.0)) {
 //		x += cos(trajectory_angle(spacePlanet)) * 1000.0;

@@ -249,7 +249,7 @@ void OrzMarine::calculate() {
 					invading->update_panel = TRUE; }
 				return; }
 
-			chance = random() % 10000;
+			chance = tw_random(10000);
 			if (chance < 9 * frame_time)
 			{
 				// the following is dangerous if eg a ploxis changes the owner (=ship pointer)

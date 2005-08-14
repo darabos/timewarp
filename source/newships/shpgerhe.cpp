@@ -190,7 +190,7 @@ void GerlVirtualship::calculate()
 		if (target && target->exists())
 			a = trajectory_angle(target);
 		else
-			a = random(PI2);
+			a = tw_random(PI2);
 
 		opos = morons->pos - 100.0 * unit_vector(a/*morons->angle*/);
 		hero = new GerlHero(this, morons, opos, angle, this->data->spriteExtra);
@@ -642,20 +642,6 @@ void GerlHero::calculate()
 		// disabled: it's a bit worthless, and not nice.
 
 
-		// he can fall off when he uses his weapon
-		/*
-		double targetdangle = target->angle - targetlastangle;
-		targetlastangle = target->angle;
-		if ( fabs(targetdangle*100) > tw_random()%100 )
-		{
-			attached = 0;
-			angle = target->angle + 90 * sign(targetdangle);
-			heroV = 1.0;
-			double a = angle*PI/180;
-			vx = heroV * cos(a);
-			vy = heroV * sin(a);
-		}
-		*/
 	}
 
 	if ( (activateyourspecial && !attached && !leavingship) || movetotip )

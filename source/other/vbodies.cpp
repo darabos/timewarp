@@ -190,7 +190,7 @@ int numSprites, int attribs, int firstSpriteNumber)
 
 //end sprite handling routines
 
-VSpaceInstallation::VSpaceInstallation():SpaceObject(NULL, random(map_size), random(PI2), meleedata.asteroidSprite)
+VSpaceInstallation::VSpaceInstallation():SpaceObject(NULL, tw_random(map_size), tw_random(PI2), meleedata.asteroidSprite)
 {
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = ALL_LAYERS;
@@ -1053,7 +1053,7 @@ void VStar::calculate() {
   if(this->starEnergy<0.0) this->starEnergy = 0.0;
   maxFlares = (double)frame_time * this->maxFlaresPerSecond / (double)1000.0;
   while(this->starEnergy>this->starEnergyToFlare && flareCounter>0.0) {
-    r = (double)(random() % 1000000) / (double)1000000.0;
+    r = random(1.0);
     LaunchFlare(PI2*r, this->flareSpeed, this->flareRange, this->flareDamage, this->finalFlareSpeed);
     this->starEnergy -=this->starEnergyPerFlare;
     flareCounter -= 1.00;

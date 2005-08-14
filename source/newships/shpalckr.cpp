@@ -420,15 +420,13 @@ void AlcheroLaser::calculate(){
     if( !released ){
       int l = (int)(1 + sparkNfactor * length/min_length);
       for( int i = 0; i < l; i++ ){
-        double alpha = random(PI2);
+        double alpha = tw_random(PI2);
         Animation *anim  = new Animation( this, pos + 0.5 * ship->size.x *unit_vector(alpha),
     //      x + 0.5*ship->width()*cos( alpha ), y + 0.5*ship->width()*sin( alpha ),
-        data->spriteExtra, 0, data->spriteExtra->frames(), 50+(random()%160), LAYER_HOTSPOTS );
+        data->spriteExtra, 0, data->spriteExtra->frames(), 50+(random(160)), LAYER_HOTSPOTS );
 
-//      anim->vx = vx - 0.2*cos( alpha ) - (100+random()%100)*0.0005*sin( alpha );
-//      anim->vy = vy - 0.2*sin( alpha ) + (100+random()%100)*0.0005*cos( alpha ),
-        anim->vel = vel + Vector2(- 0.2*cos( alpha ) - (100+random()%100)*0.0005*sin( alpha ),
-						- 0.2*sin( alpha ) + (100+random()%100)*0.0005*cos( alpha ));
+        anim->vel = vel + Vector2(- 0.2*cos( alpha ) - (100+random(100))*0.0005*sin( alpha ),
+						- 0.2*sin( alpha ) + (100+random(100))*0.0005*cos( alpha ));
         game->add( anim );
       }
     }

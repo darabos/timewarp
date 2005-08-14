@@ -86,7 +86,7 @@ void ChmmrAvatar::calculate()
 		add(new Animation(this, 
 				pos + unit_vector(angle) * (tw_random(weaponRange-15) + 25 + 25)
 				+ Vector2(tw_random(-25,25), tw_random(-25,25)),
-				data->spriteWeaponExplosion, (random()%4)*10, 10, 75, DEPTH_EXPLOSIONS));
+				data->spriteWeaponExplosion, (tw_random(4))*10, 10, 75, DEPTH_EXPLOSIONS));
 	};
 
 }
@@ -98,12 +98,12 @@ int ChmmrAvatar::activate_weapon()
 		add(new Animation(this, 
 			pos + unit_vector(angle) * (tw_random(weaponRange-15) + 25 + 25)
 			+ Vector2(tw_random(-25,25), tw_random(-25,25)),
-			data->spriteWeaponExplosion, (random()%4)*10, 10, 25+tw_random(50), DEPTH_EXPLOSIONS, tw_random(1.0) + tw_random(1.0))
+			data->spriteWeaponExplosion, (random(4))*10, 10, 25+tw_random(50), DEPTH_EXPLOSIONS, tw_random(1.0) + tw_random(1.0))
 		);
 		add(new Animation(this, 
 			pos + unit_vector(angle) * (tw_random(weaponRange-15) + 25 + 25)
 			+ Vector2(tw_random(-25,25), tw_random(-25,25)),
-			data->spriteWeaponExplosion, (random()%4)*10, 10, 50, DEPTH_EXPLOSIONS)
+			data->spriteWeaponExplosion, (random(4))*10, 10, 50, DEPTH_EXPLOSIONS)
 		);
 	}
 
@@ -139,7 +139,7 @@ void ChmmrAvatar::materialize()
 ChmmrLaser::ChmmrLaser(double langle, double lrange, int ldamage,
 	int lfcount, SpaceLocation *opos, Vector2 rel_pos) 
 :
-	Laser(opos, langle, pallete_color[hot_color[random() % HOT_COLORS]], lrange,
+	Laser(opos, langle, pallete_color[hot_color[random(HOT_COLORS)]], lrange,
 	ldamage, lfcount, opos, rel_pos, true)
 {
 	debug_id = 1026;

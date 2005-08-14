@@ -39,10 +39,10 @@ void HyperMelee::init_objects() {
 	log_file("server.ini");
 	m = get_config_int("Hyperspace", "Pholes", 2);
 	for (i = 0; i < m; i += 1) {
-		p = new Planet (random(size), meleedata.hotspotSprite, random(meleedata.hotspotSprite->frames()));
+		p = new Planet (random(size), meleedata.hotspotSprite, tw_random(meleedata.hotspotSprite->frames()));
 		p->collide_flag_anyone = 0;
 		p->gravity_force *= 0.5;
-		p->accelerate(NULL, random(PI2), 0.1 + (random()%36)/100., MAX_SPEED);
+		p->accelerate(NULL, random(PI2), 0.1 + random(0.36), MAX_SPEED);
 		add (p);
 		}
 	m = get_config_int("Hyperspace", "Nholes", 2);
@@ -50,7 +50,7 @@ void HyperMelee::init_objects() {
 		p = new Planet (random(size), meleedata.hotspotSprite, random(meleedata.hotspotSprite->frames()));
 		p->collide_flag_anyone = 0;
 		p->gravity_force *= -1;
-		p->accelerate(NULL, random(PI2), 0.1 + (random()%36)/100., MAX_SPEED);
+		p->accelerate(NULL, random(PI2), 0.1 + random(0.36), MAX_SPEED);
 		add (p);
 		}
 	add(new Asteroid());

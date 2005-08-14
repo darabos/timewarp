@@ -229,8 +229,8 @@ void TrugGame::init(Log *_log) {
 	TrugPlayer *sp = add_player ( channel_server );
 	TrugPlayer *cp = add_player ( channel_network[1] );
 
-	add(create_ship("kzedr", sp, random(size), random(PI2)));
-	add(create_ship("chebr", cp, random(size), random(PI2)));
+	add(create_ship("kzedr", sp, tw_random(size), tw_random(PI2)));
+	add(create_ship("chebr", cp, tw_random(size), tw_random(PI2)));
 
 	if (!hostcomputer())
 		add(gui = new TrugGUI( cp ));

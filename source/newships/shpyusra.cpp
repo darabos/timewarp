@@ -95,7 +95,7 @@ int YushRanger::activate_special()
 	game->add( new ObjectAnimation( this, pos, Vector2(0, 0), angle, data->spriteSpecial,
 		0, special_frames, time_ratio, LAYER_HOTSPOTS ));
 	//data->spriteSpecial->frames() don't use this for an ObjectAnimation, cause that has angle-dependency as well !!
-	special_sample = random() % 2;
+	special_sample = tw_random(2);
 	return TRUE;
 }
 
@@ -201,7 +201,7 @@ void YushSpear::inflict_damage( SpaceObject* other )
 	old_angle = angle - other->get_angle();
 	rel_dist = distance( other );
 	change_owner( other );       // are now part of the other ship
-	play_sound2( data->sampleWeapon[1 + random() % 2] );
+	play_sound2( data->sampleWeapon[1 + random(2)] );
 }
 
 int YushSpear::handle_damage( SpaceLocation* other, double normal, double direct ){

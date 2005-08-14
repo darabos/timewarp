@@ -1657,18 +1657,15 @@ void Game::play()
 							
 							if (next_tic_time + frame_time_length < time_current)
 							{
-								//message.print(1500, 15, "Catching up [%i]", num_catchups);
-
-								// trying to make the "gaps" not too small, otherwise... it may be...
-								// too... unstable? Cause iterations might follow to quickly, and then
-								// each player will generate bursts of information (to send across the net)
-								// The follow may be a little more stable in time...
 								catching_up = true;
-								next_tic_time += frame_time_length;	// hmmm...
+								next_tic_time += frame_time_length;
 								// perhaps this is better... cause you're below "time" anyway...
-								// so you will be catching up anyway...
+								// so you will be catching up anyway... in the loop that follows
+								// An immediate catchup will happen, because next_tic_time < time, which
+								// is the only constraint to enter this physics calculation immediately
+								// again, thus "accelerating" the physics updates, thus making up for
+								// time lost in animation or during network delays.
 
-								//xxx this might be... conceptual mistake...
 							} else {
 								catching_up = false;
 								

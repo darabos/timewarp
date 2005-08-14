@@ -147,10 +147,10 @@ void VuvJinxShot::inflict_damage(SpaceObject *other)
         state = 0;
         double vv;
         for (int i=0; i < 15; i++) {
-                vv = random(1.0);
+                vv = tw_random(1.0);
                 vv = 0.0+sqrt(vv);
                 game->add(new VuvJinxExplosion(this, pos,
-                                  random(360.0), scale_velocity(40)*vv));
+                                  tw_random(360.0), scale_velocity(40)*vv));
         }
 }
 

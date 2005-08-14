@@ -95,7 +95,7 @@ void SampleGame1::init(Log *_log) {
 	//now, we create some enemies to fight
 
 	Ship *e;
-	e = create_ship(channel_none, "kzedr", "WussieBot", Vector2(size.x/4,size.y/4), random(PI2), enemies);
+	e = create_ship(channel_none, "kzedr", "WussieBot", Vector2(size.x/4,size.y/4), tw_random(PI2), enemies);
 	//This is a different syntax for create_ship
 	//It creates a ship and an AI for it at the same time.  
 	//AIs created in this way are automatically destroyed when their ship dies
@@ -275,35 +275,6 @@ void SampleGame2::init(Log *_log)
 	humans = new_team();
 	enemies = new_team();
 
-
-
-	// no need here: is already called by Game::init.
-	//init_players();
-
-
-	/*
-	if ((glog->type == Log::log_net1server) || (glog->type == Log::log_net1client)) { 
-		//if we're in a network game...
-		//then do the same thing, only for the other player
-		Control *c = create_control(channel_client, "Human");
-		//we can re-use the same fleet, since we never modified it and both players use the same fleet
-		i = c->choose_ship(window, "Hey You!\nPick a ship!", &fleet);
-		log_int(channel_client, i);
-		if (i == -1) i = random() % fleet.getSize();
-		Ship *s = create_ship(fleet.getShipType(i)->id, c, size/2+Vector2(100,0), PI, humans);
-		add(s->get_ship_phaser());
-		add_focus(s, channel_client);
-		ShipPanel *sp = new ShipPanel(s);
-		sp->window->locate(
-			-PANEL_WIDTH, 1,
-			PANEL_HEIGHT, 0,
-			PANEL_WIDTH, 0,
-			PANEL_HEIGHT, 0
-			);
-		add(sp);
-		}
-		*/
-
 	//now, we need some enemies to fight
 
 	Ship *e;
@@ -435,7 +406,7 @@ void SampleGame3::pick_new_ships()
 		int i = slot[p];
 
 		if (i == -1)
-			i = random() % reference_fleet->getSize();
+			i = random(reference_fleet->getSize());
 
 		Ship *s = create_ship(reference_fleet->getShipType(i)->id, player[p]->control, size/2 + Vector2(100, 0), 0, humans);
 		add(s->get_ship_phaser());
@@ -452,26 +423,6 @@ void SampleGame3::pick_new_ships()
 			);
 		add(sp);
 	}
-
-	/* outdated, stemming from 2-player era:
-	if (glog->type == Log::log_net) { 
-		log_file("fleets/all.scf");
-		i = human_control[1]->choose_ship(window, "Hey You!\nPick a ship!", reference_fleet);
-		log_int(i, channel_network[1]);
-		if (i == -1) i = random() % reference_fleet->getSize();
-		Ship *s = create_ship(reference_fleet->getShipType(i)->id, human_control[1], size/2 + Vector2(100, 0), 180, humans);
-		add(s->get_ship_phaser());
-		ShipPanel *sp = new ShipPanel(s);
-		sp->window->init(window);
-		sp->window->locate(
-			0, 0.8,
-			0, 100.0/240, 
-			0, 0.2,
-			0, 100.0/240
-			);
-		add(sp);
-		}
-		*/
 
 
 	Ship *e;

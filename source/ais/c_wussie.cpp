@@ -292,7 +292,7 @@ int ControlWussie::think ()
 	if (ship->target && !ship->target->isInvisible ())
 	{
 		last_seen_time = game->game_time;
-	} else if ((random () & 32767) < frame_time)
+	} else if ((tw_random () & 32767) < frame_time)
 	{
 		last_seen_time = game->game_time - 1000;
 	}

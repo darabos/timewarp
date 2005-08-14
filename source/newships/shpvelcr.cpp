@@ -293,7 +293,8 @@ int VelronCruiser::fire_def_shot(double lowAngle, double highAngle, double defau
 	double angleShift, relativeAngle;
 	double firingAngle = defaultAngle;
 
-	angleShift = ((double)(random()%2001-1000)/1000.0) * specialLaunchAngleDeflectionRange;
+	double r = tw_random(-1.0, 1.0);
+	angleShift = r * specialLaunchAngleDeflectionRange;
 
 	Query a;
 	for (a.begin(this, OBJECT_LAYERS, specialRange); a.current; a.next()) {

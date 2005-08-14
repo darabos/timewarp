@@ -89,7 +89,7 @@ GobPlayer * Quest::GetPlayer()
 void Quest::Process()
 {
 	// just to speed up game
-	if( random()%50 )
+	if( random(50) )
 		return;
 
 	ASSERT(gob_player->ship);

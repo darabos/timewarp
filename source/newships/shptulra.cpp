@@ -160,7 +160,7 @@ int TulkonRam::activate_special(){
   game->add( bombs[numBombs] );
   numBombs++;
 
-  special_sample = random() % 3;
+  special_sample = tw_random(3);
   return TRUE;
 }
 
@@ -411,7 +411,7 @@ AnimatedShot( ocreator, opos, 0, 0, odamage, -1, oarmour, ocreator, osprite, 64,
   explosionSprite = data->spriteSpecialExplosion;
   explosionFrameCount = 12;
 
-  sprite_index = random() % 64;
+  sprite_index = random(64);
 }
 
 void TulkonBomb::calculate(){

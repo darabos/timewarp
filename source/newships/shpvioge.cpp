@@ -175,7 +175,7 @@ void ViogenMissile::calculate()
 	// release some smoke trail.
 	Vector2 relpos;
 
-	relpos = Vector2( random(10.0)-5.0, -40.0 + random(10.0) );
+	relpos = Vector2( tw_random(10.0)-5.0, -40.0 + tw_random(10.0) );
 	Animation *anim;
 	anim = new Animation(this, pos + rotate(relpos, angle-0.5*PI),
 					data->spriteExtra, 0, data->spriteExtra->frames(),

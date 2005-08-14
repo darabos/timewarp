@@ -76,7 +76,7 @@ ExquivanEnigma::ExquivanEnigma(Vector2 opos, double shipAngle,
 
 void ExquivanEnigma::calculate_fire_weapon()
 {
-  weapon_sample = random() % 2;
+  weapon_sample = tw_random(2);
   Ship::calculate_fire_weapon();
 }
 

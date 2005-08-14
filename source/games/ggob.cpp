@@ -112,7 +112,7 @@ void GobGame::add_gobplayer(Control *control) {
 	return;
 }
 void GobPlayer::died(SpaceLocation *killer) {
-	if (upgrade_list[UpgradeIndex::divinefavor]->num && (random()&1)) { //divine favor
+	if (upgrade_list[UpgradeIndex::divinefavor]->num && (tw_random()&1)) { //divine favor
 		ship->crew = ship->crew_max;
 		ship->batt = ship->batt_max;
 		ship->translate(random(Vector2(-2048,-2048), Vector2(2048,2048)));
@@ -193,7 +193,7 @@ void GobGame::init(Log *_log) {
 	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
 	i = 2;
 	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], station_build_name[i], station_pic_name[i]);
-	i = random() % 3;
+	i = random(3);
 	add_planet_and_station(meleedata.planetSprite, i, stationSprite[i], "utwju", station_pic_name[i]);
 
 	for (i = 0; i < 19; i += 1) add(new GobAsteroid());
@@ -332,9 +332,9 @@ void GobGame::calculate() {
 	if (next_add_new_enemy_time <= game_time) {
 		next_add_new_enemy_time = game_time;
 		int t = 28;
-		if ((random() % t) < 4) add_new_enemy();
+		if ((random(t)) < 4) add_new_enemy();
 		int e = gobenemies;
-		e -= random() % (1 + game_time / (250 * 1000));
+		e -= random(1 + game_time / (250 * 1000));
 		if (0) ;
 		else if (e >=12) next_add_new_enemy_time += 15000 / difficulty;
 		else if (e >= 7) next_add_new_enemy_time += 7000 / difficulty;
@@ -431,13 +431,12 @@ base	time	low		high
 
 */
 		e = base;
-		e = random() % (e + 2);
-		e = random() % (e + 3);
+		e = random(e + 2);
+		e = random(e + 3);
 		if (e < pow(2.5*base,0.4) - 1) 
-			e = random() % num_enemy_types;
+			e = random(num_enemy_types);
 		if (e > sqrt(3*base) + 2) 
-			e = random() % (e + 1);
-		//if (e > num_enemy_types * 2) e = e % num_enemy_types;
+			e = random(e + 1);
 		e = e;
 		}
 
@@ -657,7 +656,7 @@ void GobStation::buy_new_ship_menu(GobPlayer *s) {
 	}
 
 GobStation::GobStation ( SpaceSprite *pic, SpaceLocation *orbit_me, const char *ship, const char *background) : 
-		Orbiter(pic, orbit_me, random() % 200 + 500) 
+		Orbiter(pic, orbit_me, random(200) + 500) 
 	{
 	build_type = ship;
 	background_pic = background;
@@ -947,7 +946,7 @@ void RainbowRift::calculate() {
 		squiggle();
 	}
 	while (game->game_time > next_time2) {
-		next_time2 += random() % 10000;
+		next_time2 += random(10000);
 		Query q;
 		for (q.begin(this, bit(LAYER_SHIPS), 40); q.current; q.next()) {
 			GobPlayer *p = gobgame->get_player(q.currento);
@@ -958,13 +957,13 @@ void RainbowRift::calculate() {
 				if (i == -1) i = random(reference_fleet->getSize());
 				game->redraw();
 				if (reference_fleet->getShipType(i) == p->ship->type) {
-					p->starbucks += random() % 80;
-					p->buckazoids += random() % 80;
+					p->starbucks += random(80);
+					p->buckazoids += random(80);
 					game->add(new RainbowRift());
 				}
 				else {
-					p->starbucks += random() % (1+p->value_starbucks);
-					p->buckazoids += random() % (1+p->value_buckazoids);
+					p->starbucks += random(1+p->value_starbucks);
+					p->buckazoids += random(1+p->value_buckazoids);
 					p->new_ship(reference_fleet->getShipType(i));
 				}
 				die();

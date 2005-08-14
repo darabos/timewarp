@@ -111,8 +111,8 @@ TauDaggerBeam::TauDaggerBeam(SpaceLocation *creator, Vector2 rpos, double lrange
 	id |= SPACE_LASER;
 	damage_factor = ldamage;
 
-	int rrr = tw_random()%85;
-	color = makecol(100+rrr,100+rrr+tw_random()%55,205+tw_random()%51);
+	int rrr = tw_random(85);
+	color = makecol(100+rrr,100+rrr+tw_random(55),205+tw_random(51));
 
 	relative_angle = angle - lpos->get_angle();
 
@@ -133,8 +133,8 @@ void TauDaggerBeam::calculate()
 	else 
 		state = 0;
 
-	int rrr = tw_random()%85;
-	color = makecol(100+rrr,100+rrr+tw_random()%55,205+tw_random()%51);
+	int rrr = tw_random(85);
+	color = makecol(100+rrr,100+rrr+tw_random(55),205+tw_random(51));
 }
 
 

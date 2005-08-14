@@ -335,17 +335,17 @@ TauArchonShot::TauArchonShot(SpaceLocation *creator, Vector2 opos, double oangle
 	explosionSprite     = data->spriteWeaponExplosion;
 	explosionFrameCount = 10;
 	explosionFrameSize  = 50;
-	explosionSample = data->sampleWeapon[1+tw_random()%3];
+	explosionSample = data->sampleWeapon[1+tw_random(3)];
 	sprite_index = 80;
 
 	do_freeze = ofreeze;
-	index_base = (tw_random()%4)*20;
+	index_base = (tw_random(4))*20;
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 
 	if (max_divergence >= 0) {
 		
 		int aa = get_tw_aa_mode();
-		if ((tw_random()%2) && (aa & AA_ALPHA) && (aa & AA_BLEND) && !(aa & AA_NO_AA))
+		if ((tw_random(2)) && (aa & AA_ALPHA) && (aa & AA_BLEND) && !(aa & AA_NO_AA))
 			set_depth(creator->get_depth() + 0.1);
 
 		rotation_base = creator;
@@ -356,7 +356,7 @@ TauArchonShot::TauArchonShot(SpaceLocation *creator, Vector2 opos, double oangle
 
 		divergence_factor = max_divergence * rnd;
 	
-		if (tw_random()%2)
+		if (tw_random(2))
 			divergence_factor *= -1;
 
 		old_range = distance(creator);
@@ -500,12 +500,12 @@ TauArchonFrozen::TauArchonFrozen(SpaceLocation *creator, SpaceObject *source, Sp
 	set_depth(source->get_depth());
 	attributes &= ~ATTRIB_SHOT;
 	old_vel = vel;
-	explosionSample = data->sampleExtra[tw_random()%4];
+	explosionSample = data->sampleExtra[tw_random(4)];
 	exploded_already = false;
 
-	lifetime = 3000 + tw_random()%(15*60000);
+	lifetime = 3000 + tw_random(15*60000);
 
-	if (tw_random()%2)
+	if (tw_random(2))
 		play_sound(data->sampleWeapon[4]);
 	else
 		play_sound(data->sampleWeapon[5]);
@@ -525,7 +525,7 @@ void TauArchonFrozen::calculate()
 STACKTRACE
 
 	Shot::calculate();
-	if (length(vel-old_vel) > scale_velocity(15+tw_random()%20))
+	if (length(vel-old_vel) > scale_velocity(15+tw_random(20)))
 		handle_damage(this,armour,armour);
 	else
 		if ((lifetime -= frame_time) <= 0)

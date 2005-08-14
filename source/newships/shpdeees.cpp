@@ -179,7 +179,7 @@ int DeepSpaceEssence::activate_weapon()
 	
 	crew--;
 	game->add( new DeepSpaceWarrior( this, Vector2(0.0, -size.y * 0.8),
-		(120.0 + (double)(random() % 120))*PI/180 + angle, weaponVelocity, weaponRange,
+		(120.0 + tw_random(120*PI/180)) + angle, weaponVelocity, weaponRange,
 		weaponArmour, weaponTurnRate, this, weaponDrainRate, data->spriteWeapon, target ));
 	
 	return TRUE;
@@ -332,7 +332,7 @@ void DeepSpaceWarrior::inflict_damage(SpaceObject *other)
 		
 		//victim->damage += drainDamage;
 		victim->handle_damage( this, drainDamage );
-		play_sound( data->sampleWeapon[1 + random() % 4] );
+		play_sound( data->sampleWeapon[1 + random(4)] );
 		Query q;
 		int c = 0;
 		if (range > d)
@@ -344,7 +344,7 @@ void DeepSpaceWarrior::inflict_damage(SpaceObject *other)
 			}
 		}
 		if( !c ) return;
-		c = random() % c;
+		c = random(c);
 		for( q.begin( this, bit(LAYER_SHIPS), range - d ); q.currento; q.next() ){
 			if( !q.currento->isShip() ) continue;
 			if( q.currento->target != ship ) continue;

@@ -242,7 +242,7 @@ EarthlingCruiserMk3Beam::EarthlingCruiserMk3Beam(SpaceLocation *creator, Vector2
 		state = 0;
 	}
 
-	color = makecol(100+tw_random()%105,100+tw_random()%105,255);
+	color = makecol(100+tw_random(105),100+tw_random(105),255);
 	got_spark = false;
 	switch_counter = 0;
 }
@@ -298,7 +298,7 @@ void EarthlingCruiserMk3Beam::calculate()
 			switch_counter -= frame_time; }
 
 
-	color = makecol(100+tw_random()%105,100+tw_random()%105,255);
+	color = makecol(100+tw_random(105),100+tw_random(105),255);
 }
 
 

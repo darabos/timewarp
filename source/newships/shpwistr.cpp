@@ -264,50 +264,6 @@ int WissumTripod::activate_special()
 	if ( Nactive < 3 )
 	{
 
-
-		/* removed, cause the bombs sucked.
-		TripodBomb *t;
-		
-		int testfired;
-		
-		int ilast = ifiregun;
-		
-		testfired = 0;
-		for (;;)
-		{
-			
-			++ifiregun;
-			if ( ifiregun > 2 )
-				ifiregun = 0;
-			
-			if ( !engineactive[ifiregun] )
-			{
-				
-				t = new TripodBomb(this, rotate(Vector2(0, 15),moveangles[ifiregun]-PI/2),
-									moveangles[ifiregun]-angle, data->spriteSpecial);
-				add(t);
-		
-				
-				testfired = 1;
-
-				break;
-			}
-			
-			if ( ifiregun == ilast )	// in case none is active ....
-				break;
-		}
-		
-		
-		if ( testfired )
-		{
-			int k = random() % data->num_special_samples;
-//			play_sound(data->sampleSpecial[k]);
-			return TRUE;
-		}
-		else
-			return FALSE;
-
-  */
 		fire_guns(2);
 
 		if (weapon_sample >= 0)

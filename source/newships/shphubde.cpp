@@ -112,7 +112,7 @@ int Hellenian::activate_special()
 	
 	double a, a0;
 
-	a0 = (0.5 - random(1.0)) * 0.1*PI;
+	a0 = (0.5 - tw_random(1.0)) * 0.1*PI;
 
 
 	int i, N;

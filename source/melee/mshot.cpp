@@ -282,6 +282,16 @@ Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, d
 	damage_factor = ldamage;
 	relative_angle = angle - lpos->get_angle();
 
+	if (relative_angle < -2*PI2 || relative_angle > 2*PI2)
+	{
+		tw_error("Laser: relative angle is out of bounds");
+	}
+	while (relative_angle < -PI)
+		relative_angle += PI2;
+	while (relative_angle > PI)
+		relative_angle -= PI2;
+
+
 /*
 	double alpha;
 	alpha = (pos->get_angle());

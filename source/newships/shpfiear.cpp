@@ -281,10 +281,10 @@ void FierasShot::calculate() {
 
 	while (spark_counter <= 0) {
 		spark_counter += 25;
-		game->add(new FierasShotSpark(this, PI2*(random()%1000)/1000.0,
-					scale_velocity(5)*(random()%101)/100.0,
-					iround(4800*(1-0.5*(random()%101)/100.0)),
-					160+random()%50, 160+random()%50, 230+random()%25));
+		game->add(new FierasShotSpark(this, tw_random(PI2),
+					scale_velocity(5)*tw_random(1.0),
+					iround(4800*(1-0.5*(tw_random(1.0)))),
+					160+tw_random(50), 160+tw_random(50), 230+tw_random(25) ));
 	}
 	spark_counter -= frame_time;
 }

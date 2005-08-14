@@ -243,7 +243,7 @@ void TauEMP::calculate_hotspots()
 
 
 TauEMPVirtualTarget::TauEMPVirtualTarget(SpaceLocation *creator, SpaceSprite *osprite) :
-	SpaceObject(creator, random(map_size), 0, osprite)
+	SpaceObject(creator, tw_random(map_size), 0, osprite)
 {
 }
 

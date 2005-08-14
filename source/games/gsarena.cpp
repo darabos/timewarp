@@ -163,11 +163,11 @@ void SuperArena::pick_new_ships()
 		int i;
 		for ( i = 0; i < num_players; ++i )
 		{
-			Pl = new Planet(random(size), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
+			Pl = new Planet(random(size), meleedata.planetSprite, tw_random(meleedata.planetSprite->frames()) );
 			add(Pl);
-			s[i] = create_ship(channel_none, "staba", "WussieBot", random(size), 1, player[i]->team);
+			s[i] = create_ship(channel_none, "staba", "WussieBot", tw_random(size), 1, player[i]->team);
 			add ( new BlinkyIndicator(s[i], player[i]->color) );
-			handler = new OrbitHandler(Pl,Vector2(size.x/2,size.y/2),random(PI2), (SpaceLocation *)Pl,
+			handler = new OrbitHandler(Pl,Vector2(size.x/2,size.y/2),tw_random(PI2), (SpaceLocation *)Pl,
 				(SpaceLocation *)s[i], 400, 10.0*ANGLE_RATIO,0);
 			add(s[i]);
 			game->add(handler);
@@ -183,7 +183,7 @@ void SuperArena::pick_new_ships()
 	log_file("sarena.ini");
 	g = get_config_int(NULL, "Planet", 0);
 	if (g > 0) {
-		Pl = new Planet(Vector2(size.x/2, size.y/2), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
+		Pl = new Planet(Vector2(size.x/2, size.y/2), meleedata.planetSprite, random(meleedata.planetSprite->frames()) );
 		add(Pl);
 		s = get_config_int(NULL, "Station", 0);
 		if (s > 0) {
@@ -199,7 +199,7 @@ void SuperArena::pick_new_ships()
 	g = get_config_int(NULL, "Oplanets", 0);
 	s = get_config_int(NULL, "Ostations", 0);
 	for (m = 0; m < g; m += 1) {
-		Pl = new Planet(Vector2(random() % (int)size.x, random() % (int)size.y), meleedata.planetSprite, random()%meleedata.planetSprite->frames());
+		Pl = new Planet(Vector2(random(size.x), random(size.y)), meleedata.planetSprite, random(meleedata.planetSprite->frames()) );
 		add(Pl);
 		if (s>0) {
 			Ship *Station1 = create_ship(channel_none, "staba", "WussieBot", Vector2(size.x/2, size.y/2), 1, station_team);
@@ -216,7 +216,7 @@ void SuperArena::pick_new_ships()
 	log_file("sarena.ini");
 	m = get_config_int(NULL, "Comets", 2);
 	for (g = 1; g < m; g += 1) {
-		c = new Planet (Vector2(random()%int(size.x), random()%int(size.y)), meleedata.kaboomSprite, 1);
+		c = new Planet (Vector2(random(size.x), random(size.y)), meleedata.kaboomSprite, 1);
 		c->mass = get_config_int(NULL, "Comet_mass", 2);
 		c->gravity_force *= 0;
 		c->gravity_whip = 0;

@@ -16,7 +16,7 @@ REGISTER_FILE
 #include "mgame.h"
 
 Asteroid::Asteroid() 
-:	SpaceObject(NULL, random(map_size), random(PI2), meleedata.asteroidSprite), explosion(meleedata.asteroidExplosionSprite)
+:	SpaceObject(NULL, tw_random(map_size), random(PI2), meleedata.asteroidSprite), explosion(meleedata.asteroidExplosionSprite)
 {STACKTRACE
 	collide_flag_sameteam = ALL_LAYERS;
 	collide_flag_sameship = ALL_LAYERS;

@@ -98,7 +98,7 @@ int TauStorm::activate_weapon()
 	if (slot%2)	rx = -rx;
 	game->add(new TauStormMissile (this, rx, 10, angle, weaponAccel,
 				weaponVelocity, weaponTurnRate, target,
-				iround(weaponFuel*(1+weaponRandom*(100-random()%201)/100.0)), weaponThrust, weaponMass,
+				iround(weaponFuel*(1+weaponRandom*tw_random(-1.0, 1.0))), weaponThrust, weaponMass,
 				weaponBoosterSpeed, data->spriteWeapon,
 				weaponRotation, weaponStart, data->sampleWeapon[0]));
 	slot = (slot +1) % 6;
@@ -115,7 +115,7 @@ int TauStorm::activate_special()
 	if (slot%2)	rx = -rx;
 	game->add(new TauStormMissile (this, rx, 10, angle, specialAccel,
 			specialVelocity, specialTurnRate, target,
-			iround(specialFuel*(1+specialRandom*(100-random()%201)/100.0)), specialThrust, weaponMass,
+			iround(specialFuel*(1+specialRandom*(random(-1.0, 1.0)))), specialThrust, weaponMass,
 			specialBoosterSpeed, data->spriteSpecial,
 			specialRotation, specialStart, data->sampleSpecial[0]));
 	slot = (slot + 1) % 6;

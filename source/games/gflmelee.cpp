@@ -426,7 +426,7 @@ void FlMelee::init(Log *_log)
 
 		Planet *Centre;
 		if (rememberPlanetType == -1) {
-			PlanetType = random()%Num_Planet_Pics;
+			PlanetType = tw_random(Num_Planet_Pics);
 			iMessage("PlanetType= %d *RANDOM*",PlanetType);
 		}
 		else iMessage("PlanetType= %d *PRESET*",PlanetType);
@@ -487,24 +487,8 @@ void FlMelee::init(Log *_log)
 
 	// initialize the teams and the fleets :)
 
-//	int Nfleets;
 	int allyfleet[2], ifleet;		// there are 2 player fleets (can each fleet have >1 humans inside??)
 
-//	Nfleets = get_config_int("FleetInit", "Nalliances", 0);
-
-	/*
-	allyfleet[0]  = get_config_int("FleetInit", "PlayerAlliance", 0);
-	if ( allyfleet[0] == -1 )
-		allyfleet[0] = tw_random()%Nfleets + 1;
-
-	allyfleet[1]  = get_config_int("FleetInit", "EnemyAlliance", 0);
-	if ( allyfleet[1] == -1 )
-	{
-		allyfleet[1] = allyfleet[0] + tw_random()%(Nfleets-1) + 1;
-		if ( allyfleet[1] > Nfleets )
-			allyfleet[1] -= Nfleets;
-	}
-	*/
 
 	set_config_file("gflmelee.ini");
 

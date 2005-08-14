@@ -148,7 +148,7 @@ Planet *create_planet( Vector2 position )
 	if (planetD == 2)
 	{
 		// create a 2D planet
-		Planet *planet = new Planet (position, meleedata.planetSprite, random(meleedata.planetSprite->frames()));
+		Planet *planet = new Planet (position, meleedata.planetSprite, tw_random(meleedata.planetSprite->frames()));
 		game->add (planet);
 		return planet;
 

@@ -659,7 +659,7 @@ int AyronBS::activate_special()
 	// pick a random one from the dead ones.
 	int k;
 	
-	k = random(Ndead) + 1;
+	k = tw_random(Ndead) + 1;
 
 	for ( i = 0; i < Nparts; ++i )
 	{

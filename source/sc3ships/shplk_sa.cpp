@@ -36,7 +36,7 @@ LkSanctorum::LkSanctorum(Vector2 opos, double shipAngle,
 
 int LkSanctorum::activate_weapon() {
   add(new Missile(this, 
-    Vector2(0.0, (size.y / 2.0+5)), angle - (random(5) - 2) * (3.0 * ANGLE_RATIO),
+    Vector2(0.0, (size.y / 2.0+5)), angle - (tw_random(5) - 2) * (3.0 * ANGLE_RATIO),
     weaponVelocity, weaponDamage, weaponRange, weaponArmour, this,
     data->spriteWeapon));
   return(TRUE);

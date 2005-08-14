@@ -121,9 +121,9 @@ int KoanuaJavelin::activate_special() {
   double angleShift, velocityShift, rangeShift;
   Shot* S;
   for(i=0; i<8; i++) {
-    angleShift = random(-this->specialAngleSpread, this->specialAngleSpread) * PI / 180;
-    velocityShift = (random(-this->specialVelocitySpread, this->specialVelocitySpread));
-    rangeShift = (random(-this->specialRangeSpread, this->specialRangeSpread));
+    angleShift = tw_random(-this->specialAngleSpread, this->specialAngleSpread) * PI / 180;
+    velocityShift = (tw_random(-this->specialVelocitySpread, this->specialVelocitySpread));
+    rangeShift = (tw_random(-this->specialRangeSpread, this->specialRangeSpread));
     //angleShift = 0; velocityShift = 0; rangeShift = 0;
     S = new Shot(this, Vector2(0.3 * this->size.x * specialOriginShift, 0.4 * this->size.y),
      this->angle + angleShift, this->specialVelocity + velocityShift,

@@ -187,7 +187,7 @@ OverrideControlIceci::OverrideControlIceci()
 
 	for ( i = 0; i < 5; ++i )
 	{
-		k = random() % (5-i);
+		k = tw_random(5-i);
 		key_order[i] = key_available[k];
 		key_available[k] = key_available[5-i-1];
 	}

@@ -182,7 +182,7 @@ int PhedarPatrolShip::handle_damage(SpaceLocation *src, double normal, double di
 
 			crewinspace[i] = new CrewPodPP(
 					this->normal_pos() + (unit_vector(trajectory_angle(this) - PI) * 
-					this->size.x) + random(Vector2(50,50)) - Vector2(25,25),
+					this->size.x) + tw_random(Vector2(50,50)) - Vector2(25,25),
 					specialFrames, this, data->spriteSpecial, 32, 
 					specialFrames);
 

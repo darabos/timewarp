@@ -187,7 +187,7 @@ int KahrBoomerang::activate_weapon()
 		} else answer = FALSE;
   }
   if (weaponChoice == LARGE_BOOMERANG) {
-    chance = random() % 2;
+    chance = tw_random(2);
       if (chance) weapon3Turn = weapon3Turn * -1;
     if (boomerangL == NULL) {
       boomerangL = new KahrLarge(0.0, 0.0, angle, weapon3Velocity,

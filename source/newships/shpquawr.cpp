@@ -149,16 +149,6 @@ void QuarKathWraith::calculate()
 int QuarKathWraith::canCollide(SpaceLocation *other)
 { 
 	STACKTRACE
-	/* GEO: removes partial damage
-	int randomNumber = random() % 100;
-	if (cloak) {
-		if (other->isShot()) {
-				// message.print(100,5,"(%6.2d)",randomNumber);
-				if (randomNumber <= extraChanceToHit) return true;
-					return false;
-			} else return false;
-		}
-	else */
 	return Ship::canCollide(other);
 }
 
@@ -290,18 +280,23 @@ QuarKathLightning::QuarKathLightning(Ship *lship, SpaceLocation *lroot,
 		level(llevel), target(ltarget),	ship(lship),
                 aiming(oaiming), dispersion(odispersion) {
 
-	base_length = (random()%(2*r_length+1) - r_length) + b_length;
+	base_length = (tw_random(2*r_length+1) - r_length) + b_length;
 //	x = pos->normal_x();
 //	y = pos->normal_y();
 	pos = lpos->normal_pos();		// lpos is of class Laser
-	if (target) angle = trajectory_angle(target);
-	else angle = random(PI2);
+	
+	if (target)
+		angle = trajectory_angle(target);
+	else
+		angle = random(PI2);
+
 	if (ship != lpos) {
 //		x += ((QuarKathLightning *)(pos))->edge_x();
 //		y += ((QuarKathLightning *)(pos))->edge_y();
 		pos += ((QuarKathLightning *)(lpos))->edge();
 		}
-	angle += (random(r_angle*2+1)) - r_angle;
+	int r = random(r_angle*2+1);
+	angle += r - r_angle;
 	color = pallete_color[179 - level * 2 - (random(8))];
 	if (level) add(new QuarKathLightning(ship, this, target, level-1, b_length,
                                          r_length, r_angle, iround(aiming), iround(dispersion)));
@@ -326,9 +321,9 @@ void QuarKathLightning::calculate() {
         double d_a = normalize(trajectory_angle(target) - angle, PI2);
         if (d_a > PI) d_a -= PI2;
         if (d_a > 0)
-                angle += (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(-50+random()%101) / sqrt((double)frame_time)) * frame_time / 100.0;
+                angle += (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(random(-50.0, 50.0)) / sqrt((double)frame_time)) * frame_time / 100.0;
         else
-                angle -= (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(-50+random()%101) / sqrt((double)frame_time)) * frame_time / 100.0;
+                angle -= (ANGLE_RATIO * aiming + ANGLE_RATIO * dispersion*(random(-50.0, 50.0)) / sqrt((double)frame_time)) * frame_time / 100.0;
 	if (!target->exists()) target = NULL;
 	return;
 	}

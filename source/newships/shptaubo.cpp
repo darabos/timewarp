@@ -281,7 +281,7 @@ TauBomberBombExplosion::TauBomberBombExplosion(Vector2 opos, double ov, int onum
 	int i;
 	for (i=0; i<num; i++) {
 		xp[i] = opos;
-		xv[i] = ov * (0.5+sqrt(sqrt((random()%1000000001)/1000000000.0))) * unit_vector(PI2 * (random()%1000000)/1000000.0);
+		xv[i] = ov * (0.5+sqrt(sqrt((tw_random(1.0))))) * unit_vector(tw_random(PI2));
 	}
 }
 
@@ -348,7 +348,7 @@ TauBomberDecoy::TauBomberDecoy (SpaceLocation *creator, double ox, double oy, do
 
 	Query q;
 	for (q.begin(this, ALL_LAYERS, er); q.current; q.next())
-		if ((q.current->target == creator) && (tw_random()%100 < effect))
+		if ((q.current->target == creator) && (tw_random(100) < effect))
 			add(new TauBomberJam(this, q.currento, lifetime));
 	
 	sprite_index = 0;

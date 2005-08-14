@@ -51,7 +51,7 @@ AsteroidDebris::AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce)
   translate(new_pos - pos);
   frame_born=(int)(game->frame_number);
   collide_flag=FALSE;
-  sprite_index = random()%64;
+  sprite_index = tw_random(64);
   tractorForce=tforce;
 
   if (mass > 0)
@@ -162,7 +162,6 @@ IDENTITY(ChoraliTractorBeam);
 
 ChoraliTractorBeam::ChoraliTractorBeam(SpaceLocation *creator1, double langle, int lcolor, double lrange,
                int ldamage, int lfcount, SpaceLocation *opos, double rel_x, double rel_y, bool osinc_angle, int tForce, int tPushForce) :
-  // Laser(creator1, langle, makecol(0,random()%160,(random()%(255-161))+160), lrange, ldamage, lfcount, opos, rel_x, rel_y, osinc_angle)
 Laser(creator1, langle, lcolor, lrange, 
        ldamage, lfcount, opos, Vector2(rel_x,rel_y), osinc_angle)
 {
@@ -205,7 +204,7 @@ void ChoraliTractorBeam::inflict_damage(SpaceObject *other)
 	  }
 
       }
-    else if (other->isPlanet() && random()%100 <= 20)
+    else if (other->isPlanet() && random(100) <= 20)
       { //if it's a planet, make some non-regenerating asteroids
 	Vector2 dd = creator->normal_pos() - ( (SpaceLocation *)(creator->nearest_planet()) )->normal_pos();
 
@@ -303,10 +302,10 @@ void AsteroidMissile::calculate()
       sprite_index_count=0;
     }
   sprite_index=sprite_index_count;
-  //  if(random()%100 <=20)
+  //  if(random(100) <=20)
   //  {
       add(new ChoraliTractorBeam(this, this->trajectory_angle(creator),
-	makecol((random()%(tractorR-tractorRmin+1))+tractorRmin, (random()%(tractorG-tractorGmin+1))+tractorGmin, (random()%(tractorB-tractorBmin+1))+tractorBmin), 
+	makecol((random(tractorR-tractorRmin+1))+tractorRmin, (random(tractorG-tractorGmin+1))+tractorGmin, (random(tractorB-tractorBmin+1))+tractorBmin), 
 	range, 0, 0, this, 0.0, 0.0, true, 0, 0));
       //  }
 
@@ -574,13 +573,13 @@ void ChoraliExtractor::calculate()
 	{
 		if(grabbed == NULL)
 		{
-			amt_beams=(random()%tractorMaxBeams)+1;
+			amt_beams = random(tractorMaxBeams) + 1;
 			
 			for(int i=0;i<amt_beams;i++)
 			{
-				
-				add(new ChoraliTractorBeam(this, (double)(angle+(((random() % tractorSpread) - (tractorSpread/2))*ANGLE_RATIO) ),
-					makecol((random()%(tractorR-tractorRmin+1))+tractorRmin, (random()%(tractorG-tractorGmin+1))+tractorGmin, (random()%(tractorB-tractorBmin+1))+tractorBmin), 
+				int r = random(tractorSpread);
+				add(new ChoraliTractorBeam(this, (double)(angle+((r - (tractorSpread/2))*ANGLE_RATIO) ),
+					makecol((random(tractorR-tractorRmin+1))+tractorRmin, (random(tractorG-tractorGmin+1))+tractorGmin, (random(tractorB-tractorBmin+1))+tractorBmin), 
 					tractorRange, tractorDamage, tractorRate, this, 0.0, 0.0, true, tractorForce, tractorPushForce));
 				
 			}

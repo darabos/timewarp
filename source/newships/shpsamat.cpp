@@ -148,7 +148,7 @@ int SaMatra::activate_weapon()
 	STACKTRACE
 	if (Nweapons < weaponNumber)
 	{
-		game->add(new SaMatraBoxer(this, pos, random(PI2), data->spriteWeapon));
+		game->add(new SaMatraBoxer(this, pos, tw_random(PI2), data->spriteWeapon));
 		return true;
 
 	} else

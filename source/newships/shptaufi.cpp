@@ -157,13 +157,13 @@ int TauFiend::handle_damage(SpaceLocation *source, int normal, int direct)
         alpha = (90 - fabs(alpha)) / 90;
         alpha *= alpha;
         alpha *= alpha;
-        alpha = normal * (alpha + (1-alpha)*(random()%101)/100.0);
+        alpha = normal * (alpha + (1-alpha)*(tw_random(1.0)) );
         int d = normal;
         normal = (int)floor(alpha);
         if (alpha - normal >= 0.5) normal ++;
         d -= normal;
         if (d > 0)
-                play_sound(data->sampleExtra[random() % 8]);
+                play_sound(data->sampleExtra[random(8)]);
         return Ship::handle_damage(source, normal, direct);
 }
 
@@ -272,7 +272,8 @@ int TauFiendPWave::canCollide(SpaceLocation *other)
 
 
 TauFiendPEffect::TauFiendPEffect(SpaceLocation *creator, Ship *tgt, SpaceSprite *osprite, int ofs, int oduration) :
-        Animation(creator, 0, osprite, 0, oduration, 50, LAYER_EXPLOSIONS)
+        Animation(creator, 0, osprite, 0, osprite->frames(), oduration/*, 50*/, LAYER_EXPLOSIONS)
+			//xxx I inserted the sprite->frames() part, and removed the 50 part... dunno if it's correct though.
 {
         target = tgt;
         fs = ofs;
@@ -284,21 +285,25 @@ void TauFiendPEffect::calculate()
 	if (!(target && target->exists()))
 		target = 0;
 
-	if (target) {
+	if (target)
+	{
 		//x = target->normal_x();
 		//y = target->normal_y();
 		pos = target->normal_pos();
-	        frame_step -= frame_time;
-	        while (frame_step < 0) {
-                        frame_step += frame_size;
-		        sprite_index ++;
-                        if (sprite_index < frame_count) {
-                                target->handle_fuel_sap(this, fs); }
-		        if ((sprite_index >= 10) && (sprite_index >= frame_count))
-                                state = 0;
-                }
-                SpaceObject::calculate();
-        }
+		frame_step -= frame_time;
+		while (frame_step < 0)
+		{
+			frame_step += frame_size;
+			sprite_index ++;
+			if (sprite_index < frame_count) {
+				target->handle_fuel_sap(this, fs); }
+			if ((sprite_index >= 10) && (sprite_index >= frame_count))
+				state = 0;
+		}
+		
+		if (exists())
+			SpaceObject::calculate();
+	}
 	else state = 0;
 }
 

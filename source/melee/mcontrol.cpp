@@ -248,7 +248,7 @@ void Control::set_target(int i) {
 void Control::target_stuff() {STACKTRACE;
 	if (index == -1) {
 		if (targets->N) {
-			index = random() % targets->N;
+			index = tw_random(targets->N);
 			target = targets->item[index];
 			goto validate;
 			}
@@ -496,33 +496,5 @@ void Control::animate(Frame *space) {STACKTRACE;
 	int col = target_sign_color;
 	animate_target(space, target, (i%3)*2-2, ((i/3)%3)*2-2, 140 + i, pallete_color[col]);
 	}
-/*void Control::add_target(SpaceObject *killit) {
-	if (!killit) return;
-	if (!killit->exists()) return;
-	for (int i = 0; i < num_targets; i += 1) {
-		if (target[i] == killit) return;
-		}
-	num_targets += 1;
-	target = (SpaceObject**) realloc(target, sizeof(SpaceObject *) * num_targets);
-	target[num_targets-1] = killit;
-	if (active_target == -1) set_target(0);
-	return;
-	}
-void Control::remove_target(SpaceObject *killit) {
-	if (!killit) return;
-	for (int i = 0; i < num_targets; i += 1) {
-		if (target[i] == killit) {
-			num_targets -= 1;
-			target[i] = target[num_targets];
-			target = (SpaceObject**)realloc(target, num_targets * sizeof(SpaceObject *));
-			if (active_target == i) {
-				if (num_targets) set_target(random() % num_targets);
-				else set_target(-1);
-				return;
-				}
-			else if (active_target == num_targets) active_target = i;
-			}
-		}
-	return;
-	}*/
+
 

@@ -71,7 +71,7 @@ SpaceSprite *gensprite(char *datafilename, char *dataobjectname, char *ident)
 
 MissionObject::MissionObject(Vector2 opos, char *datafilename, char *dataobjectname)
 :
-SpaceObject(0, opos, random(PI2),
+SpaceObject(0, opos, tw_random(PI2),
 		gensprite(datafilename, dataobjectname, "object")
 		)
 {

@@ -522,7 +522,7 @@ void Ship::locate() {STACKTRACE
 	int tries = 0;
 	double mindist = 1000;
 	while (tries < 15) {
-		pos = random(map_size);
+		pos = tw_random(map_size);
 		SpaceLocation *spacePlanet = nearest_planet();
 		if (!spacePlanet || (distance(spacePlanet) > mindist))
 			break;

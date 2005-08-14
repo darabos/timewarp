@@ -332,7 +332,7 @@ void Creature::calculate()
 	if (time > turntime)
 	{
 		time -= turntime;
-		angle = random(PI2);
+		angle = tw_random(PI2);
 
 		vel = v * unit_vector(angle);
 

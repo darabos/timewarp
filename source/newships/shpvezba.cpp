@@ -247,21 +247,21 @@ void MissileCourse::ScrambleCourse(int iterations) {
   double R;
   int i;
   for(i=0; i<iterations; i++) {
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Turn1 += R / 30;
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Turn2 += R / 10;
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Turn3 += R / 5;
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Turn4 += R / 2;
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Range1 += R / 500;
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Range2 += R / 8;
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Range3 += R / 8;
-    R = (double)(random() % 2001 - 1000) / 1000.0;
+    R = tw_random(-1.0, 1.0);
     Range4 += R / 8;
   }
 }

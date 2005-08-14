@@ -673,7 +673,7 @@ void init_dialog_PLSY (double dialog_scale)
 
 double drand()
 {
-	return (random() % 1000) / 1000.0;
+	return tw_random(1.0);
 }
 
 
@@ -726,7 +726,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 
 	if ( iplanetpic == -1 )
 	{
-		iplanetpic = random() % Num_Planet_Pics;
+		iplanetpic = random(Num_Planet_Pics);
 	}
 
 	NumMoons = get_config_int(objectname,"PlanetNmoons",0);
@@ -734,7 +734,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 	if (NumMoons == -1)
 	{
 		if ( MinMoonsInSystem != MaxMoonsInSystem)
-			NumMoons = MinMoonsInSystem + random() % (MaxMoonsInSystem-MinMoonsInSystem);
+			NumMoons = MinMoonsInSystem + random(MaxMoonsInSystem-MinMoonsInSystem);
 		else
 			NumMoons = MinMoonsInSystem;
 		//iMessage("NumMoons = %d *RANDOM*", NumMoons);
@@ -802,7 +802,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 			continue;
 
 		// choose a random moon picture
-		k = random() % (Num_Moon_Pics - i);
+		k = random(Num_Moon_Pics - i);
 
 		// choose the k-th available (free) picture:
 		for ( j = 0; j < Num_Moon_Pics; ++j )
@@ -818,7 +818,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 			PlanetMoonPic[i] = j;	// this is the k-th available one
 			ichosen[j] = 1;
 		} else {	// oh my! there are not enough unique moons. Just choose any of them then
-			 PlanetMoonPic[i] = random() % Num_Moon_Pics;
+			 PlanetMoonPic[i] = random(Num_Moon_Pics);
 		}
 
 		if ( PlanetMoonPic[i] < 0 || PlanetMoonPic[i] > Num_Moon_Pics-1 )
@@ -859,7 +859,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 		int	j;
 		for ( j = i; j <= k; ++j )	// note, j <= k, we take one more range than the number of moons
 		{
-			z[j] = random() % 1000;
+			z[j] = random(1000);
 		}
 
 		for ( j = i+1; j <= k; ++j )
@@ -1519,16 +1519,15 @@ void Planets::init_objects()
 
 	// choose one of these planet systems:
 
-	//i = random() % NPlanets;
 	if (iDefaultPlanet == -1 ){
-		i = random() % NPlanets;
+		i = random(NPlanets);
 		iMessage("i  = %d *RANDOM*", i);
 	}
 	else {
 		i = iDefaultPlanet;
 		iMessage("i  = %d *Preset*", i);
 	}
-	
+
 	// required information:
 	int iplanetpic, NumMoons, NumStarbases;
 	int PlanetMoonPic[100];
@@ -1634,11 +1633,11 @@ void Planets::init_objects()
 	for ( num = 0; num < NumMoons; num++)
 	{
 		//iMessage("treating num   = %d *PRESET*",num);
-		kind = random()%2;
+		kind = random(2);
 
 		int k = PlanetMoonPic[num];
 		if (k == -1)	// this should not occur
-			k = random() % Num_Moon_Pics;
+			k = random(Num_Moon_Pics);
 		//iMessage("k=%i", k);
 		
 		//iMessage("moonpic num   = %d *Preset*", k);
