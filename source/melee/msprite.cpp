@@ -796,7 +796,7 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 	while (phase < 0) phase += count;
 	for (mip = 0; mip <= highest_mip; mip += 1) {
 		for (i = 0; i < count; i += 1) {
-			tmp2[i] = m[(i + phase) % count];
+			tmp2[i] = get_pmask((i + phase) % count);
 		}
 		for (i = 0; i < count; i += 1) {
 			m[i] = tmp2[i];
@@ -817,7 +817,7 @@ Vector2 SpaceSprite::size(int i)  const
 
 
 
-const struct PMASK *SpaceSprite::get_pmask(int index)
+PMASK *SpaceSprite::get_pmask(int index)
 {
 	if (!m[index])
 		m[index] = create_allegro_pmask(b[0][index]);
@@ -1053,7 +1053,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			break;
 			}
 		color_correct_bitmap(bmp, general_attributes & MASKED);
-		m[(i * rotations)] = create_allegro_pmask(bmp);
+		m[(i * rotations)] = 0;//create_allegro_pmask(bmp);
 		b[0][(i * rotations)] = bmp;
 		attributes[(i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
@@ -1088,7 +1088,7 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 	for(i = 0; i < count; i++) {
 		bmp = create_bitmap(old.b[0][i]->w, old.b[0][i]->h);
 		blit(old.b[0][i], bmp, 0, 0, 0, 0, old.b[0][i]->w, old.b[0][i]->h);
-		m[i] = create_allegro_pmask(bmp);
+		m[i] = 0;//create_allegro_pmask(bmp);
 		b[0][i] = bmp;
 		attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
@@ -1514,7 +1514,7 @@ int SpaceSprite::collide(int x, int y, int i, int ox, int oy, int oi,
 	if (oi >= other->count) { tw_error("SpaceSprite::collide - index2 %d >= count2 %d", oi, other->count); }
 	if (i < 0) { tw_error("SpaceSprite::collide - index1 %d < count1 %d", i, count); }
 	if (oi < 0) { tw_error("SpaceSprite::collide - index2 %d < count2 %d", oi, other->count); }
-	return (check_pmask_collision(m[i], other->m[oi], x, y, ox, oy));
+	return (check_pmask_collision(get_pmask(i), other->get_pmask(oi), x, y, ox, oy));
 }
 
 int line_collide;
@@ -1560,7 +1560,7 @@ int SpaceSprite::collide_ray(int lx1, int ly1, int *lx2, int *ly2,
 	if ((rect_x+w < lx1) && (rect_x+w < *lx2)) return FALSE;
 	if ((rect_y   > ly1) && (rect_y   > *ly2)) return FALSE;
 	if ((rect_y+h < ly1) && (rect_y+h < *ly2)) return FALSE;
-	rect_mask = m[sindex];
+	rect_mask = get_pmask(sindex);
 	do_line(NULL, lx1, ly1, *lx2, *ly2, 0, check_line_collision);
 	if(line_collide) {
 		*lx2 = collide_x;

@@ -481,7 +481,7 @@ public:
 //methods for direct access:
 	Surface     *get_bitmap(int index, int miplevel = 0);
 	Surface     *get_bitmap_readonly(int index);
-	const struct PMASK *get_pmask(int index);
+	PMASK *get_pmask(int index);
 	void lock();	//make surface writable
 	void unlock();
 
