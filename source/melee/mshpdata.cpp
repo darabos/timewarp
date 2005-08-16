@@ -203,9 +203,15 @@ void unload_all_ship_data() {
 void unload_unused_ship_data() {
 }
 
-void ShipData::unload() {
+void ShipData::unload()
+{
 
 	if (status != LOADED_FULL) return;
+
+	if (spritePanel) {
+		delete spritePanel;
+		spritePanel = NULL;
+	}
 
 	if (spriteShip) {
 		delete spriteShip;
@@ -231,19 +237,30 @@ void ShipData::unload() {
 		delete spriteExtra;
 		spriteExtra = NULL;
 	}
-
-	if (spritePanel) {
-		delete spritePanel;
-		spritePanel = NULL;
+	if (spriteExtraExplosion) {
+		delete spriteExtraExplosion;
+		spriteExtraExplosion = NULL;
 	}
 
 	if (num_more_sprites) {
 		int i;
-		for (i = 0; i < num_more_sprites; i += 1) delete more_sprites[i];
-		delete[] more_sprites;
+
+		for (i = 0; i < num_more_sprites; i += 1)
+			delete more_sprites[i];
+
+		//delete[] more_sprites;
+		// this was created with the "realloc" command --> use free
+		free( more_sprites );
+
 		more_sprites = NULL;
 		num_more_sprites = 0;
 	}
+
+	// clean up these pointer arrays ...
+	// these were created with the "new" command --> use delete
+	delete [] sampleWeapon;
+	delete [] sampleSpecial;
+	delete [] sampleExtra;
 
 	unload_datafile(data);
 
@@ -281,7 +298,7 @@ ShipData::ShipData(const char *filename) :
 	status = LOADED_NONE;
 }
 
-
+#include "mview.h"
 SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index) 
 {
 	char buffy[512]; buffy[0] = 0;
@@ -309,12 +326,39 @@ SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index)
 	SpaceSprite *sprite = NULL;
 	int attrib = string_to_sprite_attributes(buffy);
 	sprite = new SpaceSprite(&data[*index], count, attrib, rotations);
+
+	/*
+	// a sprite load/destroy-test (can be used to test memory-leaks:
+	i = 0;
+	for (;;)
+	{
+		++i;
+		sprite = new SpaceSprite(&data[*index], count, attrib, rotations);
+		delete sprite;
+		if (i % 100 == 0)
+		{
+			message.print(100, 15, "load/destroy test: %i", i);
+			message.animate(0);
+			readkey();
+		}
+	}
+	// end of the test.
+	*/
+
+	
 	for (i = 0; i < count; i += 1) {
-		destroy_rle_sprite((RLE_SPRITE*)data[(*index)+i].dat);
-		data[(*index)+i].dat = NULL;
+
+		//xxx Geo - I don't think there is much to gain by doing this.
+		// and why is it by default an RLE_SPRITE ?????
+//		destroy_rle_sprite((RLE_SPRITE*)data[(*index)+i].dat);
+//		data[(*index)+i].dat = NULL;
 		// brutal hack to free up the memory
 	}
 	*index += count;
+
+
+
+
 	return sprite;
 }
 

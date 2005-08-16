@@ -231,16 +231,16 @@ void MeleeData::init()
 
 	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
 	meleedata.kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+		SpaceSprite::ALPHA | SpaceSprite::MASKED);// | SpaceSprite::MIPMAPED);
 	meleedata.hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+		SpaceSprite::ALPHA | SpaceSprite::MASKED);// | SpaceSprite::MIPMAPED);
 	meleedata.sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED | SpaceSprite::MATCH_SCREEN_FORMAT);
+		SpaceSprite::ALPHA | SpaceSprite::MASKED /*| SpaceSprite::MIPMAPED*/ | SpaceSprite::MATCH_SCREEN_FORMAT);
 	meleedata.asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
 	meleedata.asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
 	meleedata.planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
 	meleedata.xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
+		SpaceSprite::ALPHA | SpaceSprite::MASKED);// | SpaceSprite::MIPMAPED);
 
 	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
 }

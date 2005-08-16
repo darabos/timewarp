@@ -695,13 +695,17 @@ int check_pmask_collision_list_wrap ( int maxx, int maxy, PMASKDATA *input, int 
 
 int check_pmask_collision_list_float_wrap ( float maxx, float maxy, PMASKDATA_FLOAT *input, int num, CONST void **output, int max_collisions ) 
 {
+
+
 	int i, j, ret = 0; 
 	float maxxh = maxx / 2;
 	if (max_collisions <= 0) return 0;
 	if (maxx <= 0) return 0;
 	if (maxy <= 0) return 0;
 	qsort ( input, num, sizeof(PMASKDATA_FLOAT), pmaskdata_float_sort);
-	for (i = 0; i < num; i += 1) {
+	
+	for (i = 0; i < num; i += 1)
+	{
 		float h = input[i].y + input[i].pmask->h;
 		for (j = i+1; (j < num) && (input[j].y < h); j += 1) {
 			int cr;

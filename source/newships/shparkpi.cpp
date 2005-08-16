@@ -202,6 +202,11 @@ ArkanoidPincerShip::ArkanoidPincerShip(Vector2 opos, double angle, ShipData *dat
 
 	// for debugging purpose
 	debug_id = 90;
+
+	if (!pincerL->exists() || !pincerR->exists())
+	{
+		tw_error("The pincer must not die!!");
+	}
 }
 
 ArkanoidPincerShip::~ArkanoidPincerShip(void) {
@@ -225,9 +230,14 @@ void ArkanoidPincerShip::animate(Frame* space) {
 }
 
 
-void ArkanoidPincerShip::calculate(void) {
-	STACKTRACE
-  //message.print(1500,9,"angle = %f turn_step = %f",this->angle, this->turn_step);
+void ArkanoidPincerShip::calculate(void)
+{
+	STACKTRACE;
+	if (!pincerL->exists() || !pincerR->exists())
+	{
+		tw_error("The pincer must not die!!");
+	}
+ //message.print(1500,9,"angle = %f turn_step = %f",this->angle, this->turn_step);
   Ship::calculate();
   isScuttlingOld = isScuttling;
   if(fire_special&&this->batt>0) isScuttling=TRUE;

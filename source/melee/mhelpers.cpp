@@ -131,12 +131,18 @@ void gamma_color_effects (RGB *c) {
 	else {
 		int alpha = (c->filler ^ 255) + 1;
 		int r, g, b;
+		//xxx geo: I don't think this is correct...
+		/*
 		r = (c->r << 8) / alpha;
 		g = (c->g << 8) / alpha;
 		b = (c->b << 8) / alpha;
 		if ((r | g | b) > 255) {
 			tw_error("gamma_color_effects : premultiplied alpha color invalid");
 		}
+		*/
+		r = c->r;
+		g = c->g;
+		b = c->b;
 		r = _gamma_map[r];
 		g = _gamma_map[g];
 		b = _gamma_map[b];

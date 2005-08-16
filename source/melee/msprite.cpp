@@ -731,7 +731,10 @@ void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 	return;
 	}
 
-void SpaceSprite::generate_mipmaps() {STACKTRACE
+void SpaceSprite::generate_mipmaps()
+{
+	STACKTRACE;
+
 	int bpp, level, i;
 	if (general_attributes & MIPMAPED) {
 		bpp = bitmap_color_depth(b[0][0]);
@@ -812,6 +815,17 @@ Vector2 SpaceSprite::size(int i)  const
 	return Vector2(b[0][i]->w, b[0][i]->h);
 }
 
+
+
+const struct PMASK *SpaceSprite::get_pmask(int index)
+{
+	if (!m[index])
+		m[index] = create_allegro_pmask(b[0][index]);
+
+	return m[index];
+}
+
+
 SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attributes, int rotations) {
 	STACKTRACE
 	int i, j, obpp=0;
@@ -862,14 +876,19 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 		}
 
 	if (bpp == 0) bpp = obpp;
-	if (obpp != bpp) tmp = create_bitmap_ex(obpp, w, h);
+	
+	if (obpp != bpp)
+		tmp = create_bitmap_ex(obpp, w, h);
+
 	if (general_attributes & ALPHA) {
 		if (bpp <= 16) bpp = 16;
 		else bpp = 32;
 	}
 
 
-	if (general_attributes & IRREGULAR) goto irregular;
+	if (general_attributes & IRREGULAR)
+		goto irregular;
+
 	for(i = 1; i < sprite_count; i++) {
 		if (images[i].type != originaltype) {tw_error ("SpaceSprite - bad data file");}
 		switch (originaltype) {
@@ -892,22 +911,29 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	b[0] = new BITMAP*    [count];
 	attributes  = new char [count];
 
-	for(i = 0; i < sprite_count; i += 1) {
+	for(i = 0; i < sprite_count; i += 1)
+	{
 		bmp = create_bitmap_ex(bpp, w, h);
-		if (!tmp) tmp = bmp;
-		if (general_attributes & MASKED) clear_to_color(bmp, bitmap_mask_color(bmp));
-/*		if (general_attributes & MASKED) {
-			if (general_attributes & ALPHA) {
-				if (bpp == 16) clear_to_color(bmp, );
-			}
+		
+		if (general_attributes & MASKED)
 			clear_to_color(bmp, bitmap_mask_color(bmp));
-		}*/
-		if (tmp != bmp) clear_to_color(tmp, bitmap_mask_color(tmp));
+
+		if (!tmp)
+			tmp = bmp;
+
+		if (tmp != bmp)
+			clear_to_color(tmp, bitmap_mask_color(tmp));
+
 		switch (originaltype) {
-			case DAT_RLE_SPRITE: {
+			case DAT_RLE_SPRITE:
+				{
 				draw_rle_sprite(tmp, (RLE_SPRITE *)(images[i].dat), 0, 0);
-				if (general_attributes & ALPHA) handle_alpha_load(tmp);
-				if (tmp != bmp) convert_bitmap(tmp, bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
+				
+				if (general_attributes & ALPHA)
+					handle_alpha_load(tmp);
+
+				if (tmp != bmp)
+					convert_bitmap(tmp, bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
 				}
 			break;
 			case DAT_BITMAP: {
@@ -923,22 +949,39 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			break;
 			}
 		color_correct_bitmap(bmp, general_attributes & MASKED);
-//		make_alpha(bmp);
-		if (tmp == bmp) tmp = NULL;
-		for (j = 1; j < rotations; j += 1) {
+
+		if (tmp == bmp)
+			tmp = NULL;
+
+		for (j = 1; j < rotations; j += 1)
+		{
 			BITMAP *tmp = create_bitmap_ex(bpp, w, h);
 			clear_to_color(tmp, bitmap_mask_color(tmp));
 			rotate_sprite(tmp, bmp, 0, 0, j * ((1<<24)/rotations));
-			m[j + (i * rotations)] = create_allegro_pmask(tmp);
+
+			m[j + (i * rotations)] = 0;
+//			m[j + (i * rotations)] = create_allegro_pmask(tmp);
+			
 			b[0][j + (i * rotations)] = tmp;
 			attributes[j + (i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 			}
-		m[(i * rotations)] = create_allegro_pmask(bmp);
+		m[(i * rotations)] = 0;
+//		m[(i * rotations)] = create_allegro_pmask(bmp);
 		b[0][(i * rotations)] = bmp;
 		attributes[(i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
-	if (general_attributes & MIPMAPED) {
+
+	if (tmp)
+	{
+		destroy_bitmap(tmp);
+		tmp = 0;
+	}
+
+	if (general_attributes & MIPMAPED)
+	{
+
 		generate_mipmaps();
+
 /*		for (int level = 1; level < MAX_MIP_LEVELS; level += 1) {
 			int lw, lh;
 			lw = (int)ceil(w * pow(0.5, level));
@@ -959,8 +1002,8 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	}
 
 
-	if (use_shademaps)
-		init_shademaps();
+//	if (use_shademaps)
+//		init_shademaps();
 
 	return;//end of normal/masked/autorotated
 
@@ -1014,8 +1057,16 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 		b[0][(i * rotations)] = bmp;
 		attributes[(i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
-	return;//end of irregular/masked
+
+	if (tmp)
+	{
+		destroy_bitmap(tmp);
+		tmp = 0;
 	}
+
+	return;//end of irregular/masked
+	
+}
 
 SpaceSprite::SpaceSprite(SpaceSprite &old) {
 	STACKTRACE
@@ -1206,14 +1257,20 @@ SpaceSprite::~SpaceSprite() {
 	int i, l;
 
 	for(i = 0; i < count; i++) {
-		if (attributes[i] & DEALLOCATE_MASK) destroy_pmask(m[i]);
+		//xxx why is this conditional ?? It never borrows, that's too messy...
+		//if (attributes[i] & DEALLOCATE_MASK)
+		if (m[i])
+			destroy_pmask(m[i]);
 		}
 	delete[] m;
 	m = NULL;
 
 	for (l = 0; l <= highest_mip; l += 1) {
 		for(i = 0; i < count; i++) {
-			if (attributes[i] & DEALLOCATE_IMAGE) destroy_bitmap(b[l][i]);
+			//xxx why is this conditional ?? It never borrows, that's too messy...
+			//if (attributes[i] & DEALLOCATE_IMAGE)
+			if (b[l][i])
+				destroy_bitmap(b[l][i]);
 		}
 		delete b[l];
 		b[l] = NULL;
@@ -1425,7 +1482,7 @@ void SpaceSprite::draw_character(int x, int y, int index, int color, BITMAP *bmp
 {STACKTRACE
 	if (index >= count) {tw_error("SpaceSprite::draw_character - index %d >= count %d", index, count); index = 0;}
 	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
-	draw_allegro_pmask ( m[index], bmp, x, y, color );
+	draw_allegro_pmask ( get_pmask(index), bmp, x, y, color );
 	return;
 }
 
@@ -1445,7 +1502,7 @@ void SpaceSprite::draw_character(int x, int y, int w, int h, int index, int colo
 {STACKTRACE
 	if (index >= count) {tw_error("SpaceSprite::draw_character_stretch - index %d >= count %d", index, count); index = 0;}
 	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
-	draw_allegro_pmask_stretch(m[index], bmp, x, y, w, h, color) ;
+	draw_allegro_pmask_stretch(get_pmask(index), bmp, x, y, w, h, color) ;
 	return;
 }
 

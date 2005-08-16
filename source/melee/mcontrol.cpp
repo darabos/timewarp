@@ -181,18 +181,26 @@ int my_list_proc( int msg, DIALOG* d, int c ){
             fleet->getCost());
 
 		BITMAP* panel = NULL;
-		DATAFILE* data = load_datafile_object( type->data->file, "SHIP_P00_PCX" );
+		//DATAFILE* data = load_datafile_object( type->data->file, "SHIP_P00_PCX" );
+		// load the whole datafile.
+		DATAFILE* data = load_datafile( type->data->file );
+		// record 0 = text file
+		// record 1 = general panel
+		// record 2 = neutral captain picture
+		// etc.
 
 		if( data ){
-			BITMAP* bmp = (BITMAP*)data->dat;
+			BITMAP* bmp = (BITMAP*)data [1].dat;
 			panel = create_bitmap_ex( bitmap_color_depth(screen), bmp->w, bmp->h );
 			blit( bmp, panel, 0, 0, 0, 0, bmp->w, bmp->h );
-			unload_datafile_object( data );
-			data = load_datafile_object( type->data->file, "SHIP_P01_PCX" );
-			bmp = (BITMAP*)data->dat;
+			//unload_datafile_object( data );
+			//data = load_datafile_object( type->data->file, "SHIP_P01_PCX" );
+			bmp = (BITMAP*)data [2].dat;
 			blit( bmp, panel, 0, 0, 4, 65, bmp->w, bmp->h );
-			unload_datafile_object( data );
+			//unload_datafile_object( data );
 			color_correct_bitmap( panel, 0 );
+
+			unload_datafile( data );
 		}
 
 		if( selectDialog[SELECT_DIALOG_PIC].dp ) destroy_bitmap( (BITMAP*)selectDialog[SELECT_DIALOG_PIC].dp );

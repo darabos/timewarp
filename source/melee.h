@@ -465,6 +465,7 @@ public:
 		NONE = 0
 	};
 	//sprite_count * rotation new images based upon sprite_count RLE_SPRITES, with gamma correction
+	//xxx spacesprite test
 	SpaceSprite(const DATAFILE *sprites, int sprite_count, int attributes = -1, int rotations = 1);
 	SpaceSprite(BITMAP *image, int _attributes = -1);
 	SpaceSprite(SpaceSprite &old);
@@ -480,7 +481,7 @@ public:
 //methods for direct access:
 	Surface     *get_bitmap(int index, int miplevel = 0);
 	Surface     *get_bitmap_readonly(int index);
-	const struct PMASK *get_pmask(int index) {return m[index];}
+	const struct PMASK *get_pmask(int index);
 	void lock();	//make surface writable
 	void unlock();
 
