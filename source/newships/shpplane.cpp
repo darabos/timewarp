@@ -194,7 +194,8 @@ void PlanetShip::inflict_damage(SpaceObject *other)
 	if (other->isShip()) {
 		i = (int) ceil(((Ship*)other)->crew / 3.0);
 		}
-	if (other->mass == 0) other->state = 0;
+	if (other->mass == 0)
+		i = 99999.0;//other->state = 0;
 	damage(other, 0, i);
 	i /= 2;
 	if (i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;

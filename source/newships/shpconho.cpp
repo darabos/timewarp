@@ -173,7 +173,7 @@ void ConfederationHornet::calculate()
 int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, double direct) {
 	STACKTRACE
    if ((normal - shield) <= 0) {
-     shield -= iround(normal);
+     shield -= normal;//iround(normal); DO NOT ROUND !!
 	 normal = 0;
    } else {
      normal -= shield;

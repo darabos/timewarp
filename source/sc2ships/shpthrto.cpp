@@ -7,7 +7,7 @@ REGISTER_FILE
 class ThraddashFlame : public Animation {
 public:
 IDENTITY(ThraddashFlame);
-  int armour;
+  double armour;
 
   public:
   ThraddashFlame(Vector2 opos, int odamage, int oarmour, Ship *oship,
@@ -82,7 +82,7 @@ void ThraddashFlame::calculate()
 }
 
 int ThraddashFlame::handle_damage(SpaceLocation *source, double normal, double direct) {
-	int total = iround(normal + direct);
+	double total = normal + direct;//iround(normal + direct);
 	armour -= total;
 
 	if ((armour <= 0) || (source->isObject() && ((SpaceObject*)source)->mass)) {

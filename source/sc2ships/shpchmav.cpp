@@ -40,7 +40,7 @@ IDENTITY(ChmmrZapSat);
 	int    lRechargeRate;
 	int    lRecharge;
 	int    lColor;
-	int    armour;
+	double    armour;
 
 	public:
 	ChmmrZapSat(double oangle, double orange, int odamage, int oframes,
@@ -299,7 +299,7 @@ int ChmmrZapSat::canCollide(SpaceLocation *other) {
 	}
 
 int ChmmrZapSat::handle_damage(SpaceLocation *source, double normal, double direct) {
-	int total = iround(normal + direct);
+	double total = normal + direct;//iround(normal + direct);
 	if (total) {
 		armour -= total;
 		if(armour <= 0) {

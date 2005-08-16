@@ -305,10 +305,10 @@ int Flamer::handle_damage(SpaceLocation *source, double normal, double direct)
 {
 	STACKTRACE
 	
-	int totdamage = iround(normal + direct);
+	double totdamage = normal + direct;//iround(normal + direct);
 
 	if (source->isShip())
-		totdamage = iround(armour);
+		totdamage = armour;//iround(armour);
 
 	armour -= totdamage;
 

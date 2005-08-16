@@ -34,7 +34,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	if (!exists())
 		return 0;
 
-	int r = iround(normal + direct);
+	double r = normal + direct;//iround(normal + direct);
 	crew -= r;
 	if (crew > 0) return r;
 

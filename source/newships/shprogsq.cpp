@@ -635,7 +635,7 @@ int RogueFighter::handle_damage(SpaceLocation* source, double normal, double dir
 	if (!state)
 		return 0;	// to avoid an infinite feedback with enemy rogue.
 
-	int total = iround(normal + direct);
+	double total = normal + direct;//iround(normal + direct);
 
 	if (source->sameTeam(this))
 		return 0;	// do nothing if it's friendly ones

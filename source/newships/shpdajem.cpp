@@ -33,8 +33,8 @@ IDENTITY(DajielkaSanctuary);
   int absorbtionEnergyToAdd;
   int absorbtionEnergyIsEnabled;
   int absorbtionRegenerationIsEnabled;
-  int armour;
-  int maxArmour;
+  double armour;
+  double maxArmour;
   int regenerationThreshhold;
   int regenerationCount;
   DajielkaCruiser* creator;
@@ -490,8 +490,8 @@ void DajielkaSanctuary::inflict_damage(SpaceObject *other){
 }
 
 int DajielkaSanctuary::handle_damage(SpaceLocation *source, double normal, double direct){
-	STACKTRACE
-  armour -= iround(normal + direct);
+	STACKTRACE;
+  armour -= normal + direct;//iround(normal + direct);
   if(armour<=0) state=0;
   if(normal+direct>0) regenerationCount /= 2;
   return iround(normal+direct);

@@ -51,7 +51,7 @@ IDENTITY(EstionShot);
 class EstionPlatform : public SpaceObject {
 public:
 IDENTITY(EstionPlatform);
-	int health;
+	double health;
 	int rotate_time;
 	int rotate_direction;
 
@@ -71,8 +71,8 @@ IDENTITY(EstionPlatform);
 	};
 
 int EstionPlatform::handle_damage (SpaceLocation *source, double normal, double direct) {
-	STACKTRACE
-	health -= iround(normal + direct * 2);
+	STACKTRACE;
+	health -= normal + direct * 2;//iround(normal + direct * 2);
 	if (health < 0){
 		state = 0;
 		// display explosion graphics [cyhawk]

@@ -22,7 +22,7 @@ IDENTITY(OrzMarine);
 	double speed_max;
 	int    hotspot_rate;
 	int    hotspot_frame;
-	int    armour;
+	double    armour;
 	Ship  *invading;
 	int    returning;
 	int    slot;
@@ -375,7 +375,7 @@ void OrzMarine::inflict_damage(SpaceObject *other) {
 
 int OrzMarine::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	int total = iround(normal + direct);
+	double total = normal + direct;//iround(normal + direct);
 	armour -= total;
 	if(armour <= 0)
 		state = 0;
