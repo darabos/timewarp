@@ -103,10 +103,18 @@ void Planet::inflict_damage(SpaceObject *other) {STACKTRACE
 	if (other->isShip()) {
 		i = (int) ceil(((Ship*)other)->crew / 3.0);
 		}
-	if (other->mass == 0) other->state = 0;
+	if (other->mass == 0)
+	{
+		//other->state = 0;	// you shouldn't "delete" something like this, because sometimes, an object must not die..
+		other->die();
+	}
+
 	damage(other, 0, i);
+
 	i /= 2;
+
 	if (i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
+
 	if (!other->isShot()) 
 		play_sound((SAMPLE *)(melee[MELEE_BOOM + i].dat));
 	return;

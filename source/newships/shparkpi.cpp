@@ -413,7 +413,8 @@ int ArkanoidPincerShip::handle_damage(SpaceLocation* source, double normal, doub
   int x;
   //message.print(1500,6,"ArkanoidPincerShipHandleDamage1");
   x = Ship::handle_damage(source, normal, direct);
-  if(state==0) {
+  if (!exists())//(state==0) {
+  {
     if(pincerL)pincerL->state = 0;
     if(pincerR)pincerR->state = 0;
   }
@@ -572,6 +573,10 @@ bool ArkanoidPincer::die(void) {
     collide_flag_sameteam = 0;
 //  x = SpaceObject::die();
   //message.print(1500,14,"ArkanoidPincerDie2");
+	if (!exists())
+	{
+		tw_error("The pincer must not die!!");
+	}
   return true;
 }
 
@@ -622,8 +627,16 @@ void ArkanoidPincer::calculate(void) {
   if(sprite_index<0) sprite_index=0;
   if(sprite_index>127) sprite_index=127;
   //sprite_index = spriteIndexSkew;
+	if (!exists())
+	{
+		tw_error("The pincer must not die!!");
+	}
   SpaceObject::calculate();
   //message.print(1500,15,"ArkanoidPincerCalculate2");
+	if (!exists())
+	{
+		tw_error("The pincer must not die!!");
+	}
 }
 
 void ArkanoidPincer::collide(SpaceObject *other) {
@@ -724,6 +737,10 @@ int ArkanoidPincer::handle_damage (SpaceLocation *source, double normal, double 
 	  collide_flag_sameship = 0;
     collide_flag_sameteam = 0;
   }
+	if (!exists())
+	{
+		tw_error("The pincer must not die!!");
+	}
   //message.print(1500,15,"ArkanoidPincerHandleDamage2 armour=%d normal=%d", armour, normal);
   return iround(normal + direct);
 }
