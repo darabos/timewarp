@@ -458,7 +458,7 @@ STACKTRACE
 
 	if (freeze) 
 	{
-		BITMAP* bmp = other->get_sprite()->get_bitmap_readonly( other->get_sprite_index() );
+		BITMAP* bmp = other->get_sprite()->get_bitmap( other->get_sprite_index() );
 		BITMAP* tmp;
 
 		DATAFILE* image = new DATAFILE;

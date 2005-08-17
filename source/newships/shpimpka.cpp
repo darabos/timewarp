@@ -420,7 +420,7 @@ void ImperialBlade::inflict_damage( SpaceObject *other ){
   // slice code starts here
 
   int si = other->get_sprite_index();
-  BITMAP* bmp = other->get_sprite()->get_bitmap_readonly( si );
+  BITMAP* bmp = other->get_sprite()->get_bitmap( si );
   BITMAP* tmp;
   int mcol = bitmap_mask_color( bmp );
 
