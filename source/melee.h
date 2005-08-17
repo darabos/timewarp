@@ -423,21 +423,13 @@ int get_tw_aa_mode();
 void animate_bmp(BITMAP *bmp, Vector2 p, Vector2 s, Frame *space);
 void animate_bmp(BITMAP *bmp, Vector2 pos, Frame *space);
 
-struct Light
-{
-	double r, g, b;
-	double intensity;
-	double angle;
-};
-
-extern bool showshademaps;
 
 class SpaceSprite {
 public:
 	static int mip_min, mip_max, mip_bias;
 protected:
 	enum { MAX_MIP_LEVELS = 8 };
-	int         count;
+	int         count, count_base, count_rotations;
 	char bpp;
 	char highest_mip;
 	int originaltype;
@@ -478,9 +470,11 @@ public:
 	virtual ~SpaceSprite();
 
 
+	void generate_mipmap(int level, int index, int bpp);
+
 //methods for direct access:
 	Surface     *get_bitmap(int index, int miplevel = 0);
-	Surface     *get_bitmap_readonly(int index);
+//	Surface     *get_bitmap_readonly(int index);
 	PMASK *get_pmask(int index);
 	void lock();	//make surface writable
 	void unlock();
@@ -520,15 +514,10 @@ public:
 
 	INLINE int frames() const {return count;}
 	// changed Rob.
-	Vector2  size(int i = 0) const;//   const {return Vector2(b[0][i]->w, b[0][i]->h);}
+	Vector2  size(int i = 0);//   const {return Vector2(b[0][i]->w, b[0][i]->h);}
 	int      width()  const {return w;}
 	int      height() const {return h;}
 
-	double *shademap;
-	double *rmap, *gmap, *bmap;
-	void init_shademaps();
-	void destroy_shademaps();
-	BITMAP *SpaceSprite::add_shades(BITMAP *ref, double amb, Light *lights, int Nlights, double ref_angle);
 };
 
 int string_to_sprite_attributes ( const char *s, int recommended = SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT | SpaceSprite::MIPMAPED) ;

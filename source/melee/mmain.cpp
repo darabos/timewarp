@@ -968,8 +968,6 @@ void NormalGame::choose_new_ships()
 	int i;
 	pause();
 
-	showshademaps = true;
-
 	
 	message.out("Selecting ships...", 1000);
 	int *slot = new int [num_players];
