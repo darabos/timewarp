@@ -258,11 +258,35 @@ void ShipData::unload()
 
 	// clean up these pointer arrays ...
 	// these were created with the "new" command --> use delete
+	// also, the wave data are kept in memory... you've to remove those data
+	int i;
+	for( i = 0; i < num_weapon_samples; ++i )
+	{
+		if (sampleWeapon[i])
+			destroy_sample(sampleWeapon[i]);
+	}
 	delete [] sampleWeapon;
+
+	for( i = 0; i < num_special_samples; ++i )
+	{
+		if (sampleSpecial[i])
+			destroy_sample(sampleSpecial[i]);
+	}
 	delete [] sampleSpecial;
+
+	for( i = 0; i < num_extra_samples; ++i )
+	{
+		if (sampleExtra[i])
+			destroy_sample(sampleExtra[i]);
+	}
 	delete [] sampleExtra;
 
-	unload_datafile(data);
+
+	if (moduleVictory)
+	{
+		destroy_mod(moduleVictory);
+		moduleVictory = 0;
+	}
 
 	shipdatas_loaded -= 1;
 	status = LOADED_NONE;
@@ -362,7 +386,108 @@ SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index)
 	return sprite;
 }
 
-void ShipData::load() {
+
+void *copy_data(void *data, int N)
+{
+	if (!data)
+	{
+		tw_error("Unable to copy data.");
+	}
+
+	if (N < 0 || N > 1E7)
+	{
+		tw_error("Invalid data size");
+	}
+
+	void *d;
+	if (N > 0)
+	{
+		//d = new unsigned char [N];
+		d = malloc(N);
+		memcpy(d, data, N);
+	} else {
+		d = 0;
+	}
+
+	return d;
+}
+
+
+SAMPLE *copy_sample(SAMPLE *source)
+{
+	SAMPLE *dest = (SAMPLE*) malloc(sizeof(SAMPLE));
+
+	// copy the sample info
+	memcpy(dest, source, sizeof(SAMPLE));
+
+	// copy the sample data (and set the pointer to the sample data)
+	dest->data = copy_data(source->data, (source->len * source->bits) / 8);
+
+	return dest;
+}
+
+//void *jgmod_calloc (int size);
+
+#define INIT_MEM(TYPE, NUM, DEST, SRC) \
+	DEST = (TYPE*) malloc(NUM*sizeof(TYPE)); \
+	memcpy(DEST, SRC, NUM*sizeof(TYPE));
+
+// geo- I had to look into the JGMOD *load_jgm (JGMOD_FILE *f) function to understand
+// how the data structures are organized and created... in the file load_jgm.c
+JGMOD *copy_jgmod(JGMOD *source)
+{
+
+	JGMOD *dest;
+	INIT_MEM(JGMOD, 1, dest, source);
+
+
+
+	// certain number of instruments
+
+	INIT_MEM(INSTRUMENT_INFO, dest->no_instrument, dest->ii, source->ii);
+
+	// certain number of samples
+
+	INIT_MEM(SAMPLE_INFO, dest->no_sample, dest->si, source->si);
+
+	// allocate memory for the SAMPLE headers
+	INIT_MEM(SAMPLE, dest->no_sample, dest->s, source->s);
+
+	// initialize the SAMPLE data pointers (and the sample data).
+	int i;
+	for ( i = 0; i < dest->no_sample; ++i )
+	{
+		SAMPLE *s, *s_src;
+		s = dest->s + i;	// the i-th sample.
+		s_src = source->s + i;
+
+		int L = s->len * s->bits / 8;
+		s->data = malloc (L);
+		memcpy(s->data, s_src->data, L);
+
+	}
+
+
+	INIT_MEM(PATTERN_INFO, dest->no_pat, dest->pi, source->pi);
+
+	for ( i = 0; i < dest->no_pat; ++i )
+	{
+		PATTERN_INFO *pi, *pi_src;
+		pi = dest->pi + i;
+		pi_src = source->pi + i;
+
+		int L = sizeof(NOTE_INFO) * dest->no_chn * pi->no_pos;
+		pi->ni = (NOTE_INFO*) malloc(L);
+		memcpy(pi->ni, pi_src->ni, L);
+	}
+
+
+	return dest;
+}
+
+void ShipData::load()
+{
+
 	int i, index = 0, count;
 
 	if (status != LOADED_NONE) return;
@@ -372,6 +497,7 @@ void ShipData::load() {
 	if(!data)
 		tw_error("Error loading '%s'", file);
 
+	push_config_state();
 	set_config_data((char *)(data[index].dat), data[index].size);
 
 	int num_panel_bitmaps = get_config_int("Objects", "PanelBitmaps", 0);
@@ -419,7 +545,7 @@ void ShipData::load() {
 	num_more_sprites = i;
 
 	// initialize ship victory ditty
-	moduleVictory = (Music *)(data[index].dat);
+	moduleVictory = copy_jgmod((JGMOD*)data[index].dat);//(Music *) copy_data(data[index].dat, data[index].size);
 	index++;
 
 	// load weapon samples
@@ -428,19 +554,24 @@ void ShipData::load() {
 	if(count > 0) {
 		sampleWeapon = new SAMPLE*[count];
 		for(i = 0; i < count; i++) {
-			sampleWeapon[i] = (SAMPLE *)(data[index].dat);
+			//sampleWeapon[i] = (SAMPLE *)copy_data(data[index].dat, data[index].size + min_sample_amount);//(data[index].dat);
+			//sampleWeapon[i] = (SAMPLE *)(data[index].dat);
+			sampleWeapon[i] = copy_sample( (SAMPLE *)data[index].dat );
 			index++;
 		}
 	}
 	else sampleWeapon = NULL;
 
+	
 	// load special ability samples
 	count = get_config_int("Objects", "SpecialSamples", 0);
 	num_special_samples = count;
 	if(count > 0) {
 		sampleSpecial = new SAMPLE*[count];
 		for(i = 0; i < count; i++) {
-			sampleSpecial[i] = (SAMPLE *)(data[index].dat);
+			//sampleSpecial[i] = (SAMPLE *)copy_data(data[index].dat, data[index].size + min_sample_amount);//(data[index].dat);
+			//sampleSpecial[i] = (SAMPLE *)data[index].dat;
+			sampleSpecial[i] = copy_sample( (SAMPLE *)data[index].dat );
 			index++;
 		}
 	}
@@ -452,7 +583,9 @@ void ShipData::load() {
 	if(count > 0) {
 		sampleExtra = new SAMPLE*[count];
 		for(i = 0; i < count; i++) {
-			sampleExtra[i] = (SAMPLE *)(data[index].dat);
+			//sampleExtra[i] = (SAMPLE *)copy_data(data[index].dat, data[index].size + min_sample_amount);
+			//sampleExtra[i] = (SAMPLE *)data[index].dat;
+			sampleExtra[i] = copy_sample( (SAMPLE *)data[index].dat );
 			index++;
 		}
 	}
@@ -460,6 +593,16 @@ void ShipData::load() {
 
 	shipdatas_loaded += 1;
 	status = LOADED_FULL;
+
+	// all data is copied, so now, you can discard the original data file !
+	pop_config_state();
+	unload_datafile(data);
+	data = 0;
+
+	// hmmm... in SAMPLE, there's a pointer to "data"
+	//sound.play(sampleSpecial[0], 32, 128, 1024);
+	
+	//sound.play_music(moduleVictory);
 
 	return;
 
