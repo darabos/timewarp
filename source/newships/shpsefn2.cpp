@@ -1100,7 +1100,8 @@ int Hook2::handle_damage(SpaceLocation *src, double normal, double direct)
 
 		if(src->isShip())
 		{
-			src->ship->turn_rate *= 0.80;
+			//src->ship->turn_rate *= 0.80;
+			((Ship*)src)->turn_rate *= 0.80;
 			damage(src, 1.0, 0.0);
 		}
 
