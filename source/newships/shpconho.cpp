@@ -12,6 +12,9 @@ REGISTER_FILE
 class ConfederationHornet : public Ship {
 public:
 IDENTITY(ConfederationHornet);
+
+	double		crew_real;
+
   int          regenrateFrames;
   int          regenrateCount;
   int          regenrating;
@@ -98,6 +101,7 @@ ConfederationHornet::ConfederationHornet(Vector2 opos, double shipAngle,
   }
   */
 
+  crew_real = 1;
   crew_max = 1 + shield_max;
 }
 
@@ -167,7 +171,7 @@ void ConfederationHornet::calculate()
    */
    Ship::calculate();
 
-   crew = 1 + shield;
+   crew = crew_real + shield;
 }
 
 int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, double direct) {
@@ -180,12 +184,16 @@ int ConfederationHornet::handle_damage(SpaceLocation *source, double normal, dou
      shield = 0;
    }
    
-   crew = 1;
+   //crew = 1; this is bad ...
+   crew = crew_real;
    Ship::handle_damage(source, normal, direct);
+
    if (crew <= 0)
 	   shield = 0;
-   else
-	   crew = 1 + shield;
+
+
+   crew_real = crew;
+	crew = crew_real + shield;
 
    return 0;
 }
