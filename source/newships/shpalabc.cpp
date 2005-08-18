@@ -226,7 +226,7 @@ void AlaryBC::calculate()
 			exp_frame += 90+tw_random(300);
 			aaa = tw_random(PI2);
 			rrr = 66 * sqrt(tw_random(1.0));
-			if (tw_random()&1 == 0) {
+			if ( (tw_random()&1) == 0) {
 				SpaceLocation *ani = new Animation(this, pos+rrr*unit_vector(aaa), data->spriteSpecialExplosion, 0, 10, 50, DEPTH_EXPLOSIONS);
 				game->add(ani); }
 //				ani->play_sound((SAMPLE *)(melee[MELEE_BOOM + 1].dat));}
