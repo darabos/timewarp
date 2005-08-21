@@ -188,10 +188,13 @@ void TauStormMissile::calculate()
 			latched->accelerate(this, angle, thrust * frame_time, booster_speed);
 			jr *= jr * 0.5; }
 
-		if (latched->isShip())
-			((Ship*)latched)->turn_step += rotation * 1000 * rt * frame_time / jr;
-		else
-			latched->angle += rotation * 1000 * rt * frame_time / jr;
+		if (jr)
+		{
+			if (latched->isShip())
+				((Ship*)latched)->turn_step += rotation * 1000 * rt * frame_time / jr;
+			else
+				latched->angle += rotation * 1000 * rt * frame_time / jr;
+		}
 	};
 
               

@@ -120,8 +120,14 @@ WasxSuperposition::WasxSuperposition(Vector2 opos, double shipAngle,
 		}
 		*/
 
+	/* HUH ?????
 	for (int i = 1; i <= max_Clone; i += 1) {
 		Clone[i] = NULL;
+		FireWeapon[i] = FALSE;
+		}
+		*/
+	for ( int i = 0; i < max_Clone; ++i ) {
+		Clone[i] = 0;
 		FireWeapon[i] = FALSE;
 		}
 	}
@@ -166,7 +172,12 @@ int WasxSuperposition::activate_weapon() {
 		FireWeapon[j] = TRUE;
 	} */
 
+	/* HUH ???
 	for (j=1; j <= max_Clone; j += 1) {
+		FireWeapon[j] = TRUE;
+	} 
+	*/
+	for ( j = 0; j < max_Clone; ++j) {
 		FireWeapon[j] = TRUE;
 	} 
 
@@ -250,12 +261,15 @@ int WasxSuperposition::activate_special() {
 	M = 0;
 
 	for (i=0; (i < 2) && (num_Clone < max_Clone) && (crew > SpawnLifeCost); i +=1) {
-		if (num_Clone == max_Clone) {
+
+		// geo-I suppose this never happens, because of the constraint in the for() loop.
+		if (num_Clone == max_Clone)
+		{
 			num_Clone -= 1;
 			Clone[0]->state = 0;
 			memcpy(&Clone[0], &Clone[1], sizeof(WasxSuperposition*) * num_Clone);
 			Clone[num_Clone] = NULL;
-			}
+		}
 
 		// these lines are made obsolete/overridden by formation routine???
 		if (i==0) {
@@ -274,6 +288,9 @@ int WasxSuperposition::activate_special() {
 		crew -= int(SpawnLifeCost);
 		num_Clone += 1;
 		WasxClone *tmp = new WasxClone(D,da,data ,control, this);
+
+		// added - Geo.
+		Clone[num_Clone-1] = tmp;
 
 //		mx = normal_x();
 //		my = normal_y();
@@ -649,7 +666,8 @@ void WasxClone::death() {
 		{
 
 			MotherShip->Clone[i] = NULL;
-			delete MotherShip->Clone[i];
+//			delete MotherShip->Clone[i];// huh ???? first set to 0, then delete ???
+//			you're not allowed to delete in the first place, because that's handled by the Physics manager.
 			MotherShip->num_Clone -= 1;
 
 			memmove(&MotherShip->Clone[i], &MotherShip->Clone[i+1], 

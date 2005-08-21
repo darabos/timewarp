@@ -179,7 +179,8 @@ void ChoraliTractorBeam::inflict_damage(SpaceObject *other)
     if ((other->mass > 0) && ( other->isShip() || other->isAsteroid() ))
       {
 
-	other->accelerate(this, other->trajectory_angle(this), tractorForce / (other->mass * 4), 2);
+		other->accelerate(this, other->trajectory_angle(this), tractorForce / (other->mass * 4), 2);
+
 	if(other->isShip())
 	  {
 	    //twist the enemy

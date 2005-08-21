@@ -386,7 +386,10 @@ TauBomberJam::TauBomberJam (SpaceObject *creator, SpaceObject *ohost, int olifet
 	collide_flag_sameteam = 0;
 	host->target = tgt;
 	if (host->isShip())
-		((Ship*)host)->control->target = tgt;
+	{
+		if ( ((Ship*)host)->control )
+			((Ship*)host)->control->target = tgt;
+	}
 }
 
 void TauBomberJam::calculate()
@@ -404,7 +407,10 @@ void TauBomberJam::calculate()
 	pos = host->normal_pos();
 	host->target = tgt;
 	if (host->isShip())
-		((Ship*)host)->control->target = tgt;
+	{
+		if ( ((Ship*)host)->control )
+			((Ship*)host)->control->target = tgt;
+	}
 }
 
 
