@@ -202,7 +202,7 @@ class Presence : public BaseClass {
 	virtual void animate(Frame *space); //displays ? on screen (NOT permitted to affect game physics in any way)
 	virtual void animate_predict(Frame *space, int time); //like animate, but attempts to predict the future
 	virtual void calculate(); //advance the item frame_time milliseconds in time
-	inline bool exists() {return state > 0;};  //returns 0 if dead, non-zero if alive
+	virtual bool exists() {return state > 0;};  //returns 0 if dead or dying, non-zero if alive
 	Presence();
 	virtual ~Presence();  // called when a presence is deallocated
 	virtual SpaceLocation *get_focus();

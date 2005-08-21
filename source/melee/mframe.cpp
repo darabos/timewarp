@@ -1172,9 +1172,26 @@ checksync();
 
 	//call objects calculate functions
 {_STACKTRACE("Physics::calculate() - item calculation")
-	for (i = 0; i < num_items; i += 1) {
-		if (item[i]->exists()) item[i]->calculate();
+	for (i = 0; i < num_items; i += 1)
+	{
+		if (item[i]->exists())
+		{
+			if (item[i]->ship && item[i]->ship < (void*)0x01000)
+			{
+				tw_error("Pointer error, overwritten data ??");
+			}
 
+			item[i]->calculate();
+
+			
+			if (item[i]->ship && item[i]->ship < (void*)0x01000)
+			{
+				tw_error("Pointer error, overwritten data ??");
+			}
+		}
+
+
+/*
 #ifdef _DEBUG
 		// check all velocities and such (costly check... only do this in debug mode.)
 		int j;
@@ -1193,6 +1210,7 @@ checksync();
 			}
 		}
 #endif
+		*/
 checksync();
 		}
 }
