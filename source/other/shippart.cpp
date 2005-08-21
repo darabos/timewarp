@@ -239,6 +239,12 @@ void BigShipPart::inflict_damage(SpaceObject *other)
 	collider = other;
 }
 
+bool BigShipPart::die()
+{
+	// you shouldn't lose a ship part !
+	return false;
+}
+
 
 bool BigShipPart::isdisabled()
 {

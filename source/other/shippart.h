@@ -60,6 +60,7 @@ public:
 	virtual void calculate();
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct=0);
 	virtual void inflict_damage(SpaceObject *other);
+	virtual bool die();
 
 	virtual void syncpos();
 	virtual bool isdisabled();

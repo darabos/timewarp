@@ -135,6 +135,7 @@ public:
 	virtual void animate(Frame *space);
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct = 0);
 	virtual void inflict_damage(SpaceObject *other);
+	virtual bool die();
 
 	virtual void ShipPart::collide(SpaceObject *other);	// add minor detection part
 	int collide_SpaceObject(SpaceObject *other);
@@ -246,6 +247,10 @@ void ShipPartManager::calculate_manager()
 	int i;
 	for ( i = 0; i < Nparts; ++i )
 	{
+		if (!partlist[i]->exists())
+		{
+			tw_error("A ship part should not die!");
+		}
 		
 		partlist[i]->calculate_manager(oldpos, oldvel);
 
@@ -368,6 +373,11 @@ void ShipPart::calculate_manager(Vector2 refpos, Vector2 refvel)
 
 }
 
+bool ShipPart::die()
+{
+	// do nothing
+	return false;
+}
 
 void ShipPart::inflict_damage(SpaceObject *other)
 {

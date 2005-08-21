@@ -268,28 +268,28 @@ int WasxSuperposition::activate_special() {
 			num_Clone -= 1;
 			Clone[0]->state = 0;
 			memcpy(&Clone[0], &Clone[1], sizeof(WasxSuperposition*) * num_Clone);
-			Clone[num_Clone] = NULL;
+			Clone[num_Clone] = 0;
 		}
 
 		// these lines are made obsolete/overridden by formation routine???
 		if (i==0) {
-//			dx = normal_x() + cos((angle +  30) ) * 100; 
-//			dy = normal_y() + sin((angle +  30) ) * 100;
 			D = normal_pos() + 100 * unit_vector((angle +  30 * ANGLE_RATIO) );
 			da = angle + (PI2/64);
 		}
 		 else {
-//			 dx = normal_x() + cos((angle + 330) ) * 100;
-//			 dy = normal_y() + sin((angle + 330) ) * 100;
 			D = normal_pos() + 100 * unit_vector((angle +  330 * ANGLE_RATIO) );
 			 da = angle - (PI2/64);
 		 }
-		 // upto here
-		crew -= int(SpawnLifeCost);
+
+		 crew -= int(SpawnLifeCost);
 		num_Clone += 1;
 		WasxClone *tmp = new WasxClone(D,da,data ,control, this);
+		if (tmp->CloneIndex != num_Clone-1)
+		{
+			tw_error("Error in clone index assignment");
+		}
 
-		// added - Geo.
+		// added - Geo. Why was this absent ???
 		Clone[num_Clone-1] = tmp;
 
 //		mx = normal_x();
@@ -410,8 +410,7 @@ CloneIndex(0)
 
 	if (MotherShip->target != NULL && MotherShip->target->exists()) this->target = MotherShip->target;
 
-	//this->CloneIndex			= MotherShip->num_Clone-1;
-	this->CloneIndex			= MotherShip->num_Clone;
+	CloneIndex					= MotherShip->num_Clone - 1;
 
 	this->specialArmour			= MotherShip->specialArmour;
 
@@ -587,16 +586,16 @@ void WasxClone::calculate() {
 		if (fabs(distance(MotherShip)) > 150 ||
 			fabs(distance(MotherShip)) < 50) {
 			switch (CloneIndex) {
-			case 1:	// upper right
+			case 0:	// upper right
 				RelAngle = 45 * ANGLE_RATIO;
 				break;
-			case 2: // upper left
+			case 1: // upper left
 				RelAngle = 315 * ANGLE_RATIO;
 				break;
-			case 3: // lower left
+			case 2: // lower left
 				RelAngle = 225 * ANGLE_RATIO;
 				break;
-			case 4: // lower right
+			case 3: // lower right
 				RelAngle = 135 * ANGLE_RATIO;
 				break;
 			default:
@@ -661,26 +660,37 @@ void WasxClone::death() {
 	}
 
 
-	for (int i = 1; i <= MotherShip->num_Clone; i += 1) {
+	for (int i = 0; i < MotherShip->num_Clone; ++i)
+	{
 		if (MotherShip->Clone[i] == this)
 		{
+			if (i != CloneIndex)
+			{
+				tw_error("Clone index is not correct");
+			}
 
-			MotherShip->Clone[i] = NULL;
-//			delete MotherShip->Clone[i];// huh ???? first set to 0, then delete ???
-//			you're not allowed to delete in the first place, because that's handled by the Physics manager.
+			MotherShip->Clone[i] = 0;
+
 			MotherShip->num_Clone -= 1;
 
 			memmove(&MotherShip->Clone[i], &MotherShip->Clone[i+1], 
 				(MotherShip->num_Clone-i) * sizeof(WasxClone*));
 
-			MotherShip->Clone[i]->CloneIndex = i;
+			int j;
+			for ( j = i; j < MotherShip->num_Clone; ++j )
+			{
+				MotherShip->Clone[j]->CloneIndex = j;
+			}
 
 			return;
-			}
+			
 		}
-
-
+		
 	}
+
+
+	
+}
 
 
 REGISTER_SHIP(WasxSuperposition)
