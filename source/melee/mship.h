@@ -110,6 +110,9 @@ protected:
 	int death_counter;
 	int death_explosion_counter;
 
+	// yeah, this is a little complicated.. a ship can also be in a *dying* state.
+	virtual bool exists();  //returns 0 if dead or dying, non-zero if alive
+
 	bool hashotspots;
 	virtual void assigntarget(SpaceObject *otarget);
 

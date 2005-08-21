@@ -1251,3 +1251,7 @@ void Ship::del_override_control(OverrideControl *delthiscontrol)
 	delete delthiscontrol;
 }
 
+bool Ship::exists()
+{
+	return Presence::exists() && death_counter == -1;
+};  //returns 0 if dead or dying, non-zero if alive
