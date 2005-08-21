@@ -436,7 +436,7 @@ protected:
 	int         w;
 	int         h;
 	struct PMASK **smask;
-	Surface **b[MAX_MIP_LEVELS];
+	Surface **sbitmap[MAX_MIP_LEVELS];
 
 	//char *type;
 	int references;

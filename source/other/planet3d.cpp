@@ -36,13 +36,13 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 	references = 0;
 	highest_mip = 0;
 	for (i = 1; i < MAX_MIP_LEVELS; i += 1) {
-		b[i] = NULL;
+		sbitmap[i] = NULL;
 	}
 
 	bpp = 32;//videosystem.bpp;
 
 	smask = new PMASK*			[count];
-	b[0] = new BITMAP*		[count];
+	sbitmap[0] = new BITMAP*		[count];
 	attributes = new char	[count];
 
 	w = image->w;
@@ -54,7 +54,7 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 	i = 0;
 	color_correct_bitmap(bmp, general_attributes & MASKED);
 	smask[i] = create_allegro_pmask(bmp);
-	b[0][i] = bmp;
+	sbitmap[0][i] = bmp;
 	attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 }
 

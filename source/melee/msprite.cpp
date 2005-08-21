@@ -308,9 +308,9 @@ void SpaceSprite::generate_mipmap(int level, int index, int bpp)
 
 	BITMAP *src = get_bitmap(i, 0);//b[0][i];
 	
-	b[level][i] = create_bitmap_ex(bpp, lw, lh);
+	sbitmap[level][i] = create_bitmap_ex(bpp, lw, lh);
 
-	BITMAP *dest = b[level][i];
+	BITMAP *dest = sbitmap[level][i];
 	if (general_attributes & MASKED)
 		clear_to_color(dest, bitmap_mask_color(dest));
 	
@@ -333,7 +333,7 @@ void SpaceSprite::generate_mipmaps()
 	int bpp, level, i;
 	if (general_attributes & MIPMAPED)
 	{
-		bpp = bitmap_color_depth(b[0][0]);
+		bpp = bitmap_color_depth(sbitmap[0][0]);
 
 		for (level = 1; level < MAX_MIP_LEVELS; level += 1)
 		{
@@ -342,14 +342,14 @@ void SpaceSprite::generate_mipmaps()
 			lh = iround(h * pow(0.5, level));
 			if ((lw < 8) || (lh < 8)) break;
 			this->highest_mip = level;
-			this->b[level] = new BITMAP*[count];
+			this->sbitmap[level] = new BITMAP*[count];
 			
 			this->highest_mip = level;
-			this->b[level] = new BITMAP*[count];
+			this->sbitmap[level] = new BITMAP*[count];
 
 			for (i = 0; i < count; i += 1)
 			{
-				b[level][i] = 0;//generate_mipmap(level, i, bpp);
+				sbitmap[level][i] = 0;//generate_mipmap(level, i, bpp);
 			}
 		}
 	}
@@ -359,13 +359,17 @@ void SpaceSprite::change_color_depth(int newbpp) {STACKTRACE
 	int i, l;
 	for (l = 0; l <= highest_mip; l += 1) {
 		for (i = 0; i < count; i += 1) {
-			if (b[l][i])
+			if (sbitmap[l][i])
 			{
 				BITMAP *tmp = create_bitmap_ex(newbpp, w, h);
-				convert_bitmap(b[l][i], tmp, (general_attributes & MASKED) ? AA_MASKED : 0);
-				if (attributes[i] & DEALLOCATE_IMAGE) destroy_bitmap(b[l][i]);
+
+				convert_bitmap(sbitmap[l][i], tmp, (general_attributes & MASKED) ? AA_MASKED : 0);
+				
+				if (attributes[i] & DEALLOCATE_IMAGE)
+					destroy_bitmap(sbitmap[l][i]);
+
 				attributes[i] |= DEALLOCATE_IMAGE;
-				b[l][i] = tmp;
+				sbitmap[l][i] = tmp;
 			}
 		}
 	}
@@ -378,10 +382,10 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 	while (phase < 0) phase += count;
 	for (mip = 0; mip <= highest_mip; mip += 1) {
 		for (i = 0; i < count; i += 1) {
-			tmp[i] = b[mip][(i + phase) % count];
+			tmp[i] = sbitmap[mip][(i + phase) % count];
 		}
 		for (i = 0; i < count; i += 1) {
-			b[mip][i] = tmp[i];
+			sbitmap[mip][i] = tmp[i];
 		}
 	}
 	delete[] tmp;
@@ -442,7 +446,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	references = 0;
 	highest_mip = 0;
 	for (i = 1; i < MAX_MIP_LEVELS; i += 1) {
-		b[i] = NULL;
+		sbitmap[i] = NULL;
 	}
 
 	general_attributes = _attributes;
@@ -509,7 +513,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 		}
 
 	smask = new PMASK*[count];
-	b[0] = new BITMAP*    [count];
+	sbitmap[0] = new BITMAP*    [count];
 	attributes  = new char [count];
 
 	for(i = 0; i < sprite_count; i += 1)
@@ -571,13 +575,13 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			smask[index] = 0;
 //			m[j + (i * rotations)] = create_allegro_pmask(tmp);
 			
-			b[0][index] = 0;//tmp;
+			sbitmap[0][index] = 0;//tmp;
 			attributes[j + (i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 			}
 		int index = i * rotations;
 		smask[index] = 0;
 //		m[(i * rotations)] = create_allegro_pmask(bmp);
-		b[0][index] = bmp;
+		sbitmap[0][index] = bmp;
 		attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
 
@@ -601,7 +605,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	if (rotations != 1) {tw_error (" irregular SpaceSprites are not permitted to be autorotated");}
 
 	smask = new PMASK*[count];
-	b[0] = new BITMAP*    [count];
+	sbitmap[0] = new BITMAP*    [count];
 	attributes  = new char [count];
 
 	for(i = 0; i < sprite_count; i += 1) {
@@ -643,7 +647,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			}
 		color_correct_bitmap(bmp, general_attributes & MASKED);
 		smask[(i * rotations)] = 0;//create_allegro_pmask(bmp);
-		b[0][(i * rotations)] = bmp;
+		sbitmap[0][(i * rotations)] = bmp;
 		attributes[(i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
 
@@ -668,7 +672,7 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 	w = old.w;
 	h = old.h;
 	smask = new PMASK*[count];
-	b[0] = new BITMAP*    [count];
+	sbitmap[0] = new BITMAP*    [count];
 
 	references = 0;
 	attributes  = new char [count];
@@ -679,26 +683,40 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 
 	for(i = 0; i < count; i++)
 	{
-		if (old.b[0][i])
+		if (old.sbitmap[0][i])
 		{
-			bmp = create_bitmap(old.b[0][i]->w, old.b[0][i]->h);
-			blit(old.b[0][i], bmp, 0, 0, 0, 0, old.b[0][i]->w, old.b[0][i]->h);
-			b[0][i] = bmp;
+			bmp = create_bitmap(old.sbitmap[0][i]->w, old.sbitmap[0][i]->h);
+			blit(old.sbitmap[0][i], bmp, 0, 0, 0, 0, old.sbitmap[0][i]->w, old.sbitmap[0][i]->h);
+			sbitmap[0][i] = bmp;
 		} else {
-			b[0][i] = 0;
+			sbitmap[0][i] = 0;
 		}
 
 		smask[i] = 0;//create_allegro_pmask(bmp);
 		attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
-	for (l = 1; l < MAX_MIP_LEVELS; l += 1) if (old.b[l])
-		for(i = 0; i < count; i++) {
-			bmp = create_bitmap(old.b[l][i]->w, old.b[l][i]->h);
-			blit(old.b[l][i], bmp, 0, 0, 0, 0, old.b[l][i]->w, old.b[l][i]->h);
-			b[l][i] = bmp;
+	for (l = 1; l < MAX_MIP_LEVELS; l += 1)
+	{
+		if (old.sbitmap[l])
+		{
+			sbitmap[l] = new BITMAP* [count];
+			
+			for(i = 0; i < count; i++)
+			{
+				if (old.sbitmap[l][i])
+				{
+					bmp = create_bitmap(old.sbitmap[l][i]->w, old.sbitmap[l][i]->h);
+					blit(old.sbitmap[l][i], bmp, 0, 0, 0, 0, old.sbitmap[l][i]->w, old.sbitmap[l][i]->h);
+					sbitmap[l][i] = bmp;
+				} else {
+					sbitmap[l][i] = 0;
+				}
+			}
+		} else {
+			sbitmap[l] = 0;
 		}
-		else b[l] = NULL;
 	}
+}
 
 void SpaceSprite::lock() {
 	STACKTRACE
@@ -706,11 +724,13 @@ void SpaceSprite::lock() {
 	return;
 }
 
-void SpaceSprite::unlock() {
+void SpaceSprite::unlock()
+{
 	STACKTRACE
 	int i, j;
 	for (i = 0; i < MAX_MIP_LEVELS; i += 1) {
-		if (b[i]) j = i;
+		if (sbitmap[i])
+			j = i;
 	}
 	//We aught to rebuild mipmaps	but too much work, so for now we do nothing
 	//highest_mip = j;
@@ -734,15 +754,19 @@ SpaceSprite::~SpaceSprite() {
 
 	smask = NULL;
 
-	for (l = 0; l <= highest_mip; l += 1) {
-		for(i = 0; i < count; i++) {
-			//xxx why is this conditional ?? It never borrows, that's too messy...
-			//if (attributes[i] & DEALLOCATE_IMAGE)
-			if (b[l][i])
-				destroy_bitmap(b[l][i]);
+	for (l = 0; l <= highest_mip; l += 1)
+	{
+		if (sbitmap[l])
+		{
+			for(i = 0; i < count; i++) {
+				//xxx why is this conditional ?? It never borrows, that's too messy...
+				//if (attributes[i] & DEALLOCATE_IMAGE)
+				if (sbitmap[l][i])
+					destroy_bitmap(sbitmap[l][i]);
+			}
+			delete[] sbitmap[l];
+			sbitmap[l] = NULL;
 		}
-		delete b[l];
-		b[l] = NULL;
 	}
 
 	delete[] attributes;
@@ -1096,10 +1120,15 @@ BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 	//highest_mip = 0;
 	// changed ROB
 
-	if (!b[miplevel][index])
+	if (!sbitmap[miplevel][index])
 	{
+		if (!sbitmap[miplevel])
+		{
+			tw_error("The pointer array for the mipmapped bitmaps hasn't been defined for this level!");
+		}
+
 		// generate a derived image...
-		if (!b[0][index])
+		if (!sbitmap[0][index])
 		{
 			// generate the unscaled image
 			int irot = index % count_rotations;	// which rotation
@@ -1110,7 +1139,7 @@ BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 				tw_error("Accessing invalid base picture");
 			}
 
-			BITMAP *bmp = b[0][ipic];
+			BITMAP *bmp = sbitmap[0][ipic];
 			if (!bmp)
 			{
 				tw_error("Basic sprite shape doesn't exist, cannot rotate");
@@ -1119,7 +1148,7 @@ BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 			clear_to_color(tmp, bitmap_mask_color(tmp));
 			rotate_sprite(tmp, bmp, 0, 0, irot * ((1<<24)/count_rotations));
 
-			b[0][index] = tmp;
+			sbitmap[0][index] = tmp;
 
 		}
 
@@ -1127,5 +1156,5 @@ BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 			generate_mipmap(miplevel, index, bpp);
 	}
 
-	return b[miplevel][index];
+	return sbitmap[miplevel][index];
 }
