@@ -390,10 +390,10 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 	while (phase < 0) phase += count;
 	for (mip = 0; mip <= highest_mip; mip += 1) {
 		for (i = 0; i < count; i += 1) {
-			tmp2[i] = m[(i + phase) % count];	// you don't have to generate, only shift
+			tmp2[i] = smask[(i + phase) % count];	// you don't have to generate, only shift
 		}
 		for (i = 0; i < count; i += 1) {
-			m[i] = tmp2[i];
+			smask[i] = tmp2[i];
 		}
 	}
 	delete[] tmp2;
@@ -415,10 +415,10 @@ Vector2 SpaceSprite::size(int i)
 
 PMASK *SpaceSprite::get_pmask(int index)
 {
-	if (!m[index])
-		m[index] = create_allegro_pmask(get_bitmap(index));
+	if (!smask[index])
+		smask[index] = create_allegro_pmask(get_bitmap(index));
 
-	return m[index];
+	return smask[index];
 }
 
 
@@ -508,7 +508,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			}
 		}
 
-	m = new PMASK*[count];
+	smask = new PMASK*[count];
 	b[0] = new BITMAP*    [count];
 	attributes  = new char [count];
 
@@ -523,7 +523,10 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			tmp = bmp;
 
 		if (tmp != bmp)
-			clear_to_color(tmp, bitmap_mask_color(tmp));
+		{
+			int col = bitmap_mask_color(tmp);
+			clear_to_color(tmp, col);
+		}
 
 		switch (originaltype) {
 			case DAT_RLE_SPRITE:
@@ -565,14 +568,14 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			*/
 
 			int index = j + (i * rotations);
-			m[index] = 0;
+			smask[index] = 0;
 //			m[j + (i * rotations)] = create_allegro_pmask(tmp);
 			
 			b[0][index] = 0;//tmp;
 			attributes[j + (i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 			}
 		int index = i * rotations;
-		m[index] = 0;
+		smask[index] = 0;
 //		m[(i * rotations)] = create_allegro_pmask(bmp);
 		b[0][index] = bmp;
 		attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
@@ -597,7 +600,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 
 	if (rotations != 1) {tw_error (" irregular SpaceSprites are not permitted to be autorotated");}
 
-	m = new PMASK*[count];
+	smask = new PMASK*[count];
 	b[0] = new BITMAP*    [count];
 	attributes  = new char [count];
 
@@ -639,7 +642,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 			break;
 			}
 		color_correct_bitmap(bmp, general_attributes & MASKED);
-		m[(i * rotations)] = 0;//create_allegro_pmask(bmp);
+		smask[(i * rotations)] = 0;//create_allegro_pmask(bmp);
 		b[0][(i * rotations)] = bmp;
 		attributes[(i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
@@ -664,18 +667,28 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 	originaltype = -1;
 	w = old.w;
 	h = old.h;
-	m = new PMASK*[count];
+	smask = new PMASK*[count];
 	b[0] = new BITMAP*    [count];
 
 	references = 0;
 	attributes  = new char [count];
 	general_attributes = old.general_attributes;
 
-	for(i = 0; i < count; i++) {
-		bmp = create_bitmap(old.b[0][i]->w, old.b[0][i]->h);
-		blit(old.b[0][i], bmp, 0, 0, 0, 0, old.b[0][i]->w, old.b[0][i]->h);
-		m[i] = 0;//create_allegro_pmask(bmp);
-		b[0][i] = bmp;
+	count_base = old.count_base;
+	count_rotations = old.count_rotations;
+
+	for(i = 0; i < count; i++)
+	{
+		if (old.b[0][i])
+		{
+			bmp = create_bitmap(old.b[0][i]->w, old.b[0][i]->h);
+			blit(old.b[0][i], bmp, 0, 0, 0, 0, old.b[0][i]->w, old.b[0][i]->h);
+			b[0][i] = bmp;
+		} else {
+			b[0][i] = 0;
+		}
+
+		smask[i] = 0;//create_allegro_pmask(bmp);
 		attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
 	for (l = 1; l < MAX_MIP_LEVELS; l += 1) if (old.b[l])
@@ -712,11 +725,14 @@ SpaceSprite::~SpaceSprite() {
 	for(i = 0; i < count; i++) {
 		//xxx why is this conditional ?? It never borrows, that's too messy...
 		//if (attributes[i] & DEALLOCATE_MASK)
-		if (m[i])
-			destroy_pmask(m[i]);
+		if (smask[i])
+			destroy_pmask(smask[i]);
 		}
-	delete[] m;
-	m = NULL;
+
+	if (smask)
+		delete[] smask;
+
+	smask = NULL;
 
 	for (l = 0; l <= highest_mip; l += 1) {
 		for(i = 0; i < count; i++) {

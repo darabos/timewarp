@@ -1158,7 +1158,7 @@ bool NormalGame::player_isalive(int i)
 {
 	NPI* p = (NPI*)player[i];
 
-	if (!p)
+	if (!(p && p->control) )
 		tw_error("Checking live state of a player who does not exist.");
 
 	return (p->control->ship || p->fleet->getSize() > 0);

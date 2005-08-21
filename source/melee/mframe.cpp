@@ -792,7 +792,9 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 	
 	Vector2 nd;
 	nd = unit_vector(dp);
-	nd /= (mass + other->mass);
+	if (a > 0)
+		nd /= a;
+
 	while (sprite->collide((int)p1.x, (int)p1.y, sprite_index, (int)p2.x, (int)p2.y, 
 			other->sprite_index, other->sprite)) {
 		//pos = normalize(pos + nd * other->mass);
@@ -807,6 +809,13 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 		p2 = p1 - dp - other->size / 2;
 		p1 = p1 - size / 2;
 	}
+
+#ifdef _DEBUG
+	if (fabs(vel.x) > 1E6 || fabs(vel.y) > 1E6 || fabs(other->vel.x) > 1E6 || fabs(other->vel.y) > 1E6 )
+	{
+		tw_error("velocity error involving objects [%s] and [%s]", get_identity(), other->get_identity());
+	}
+#endif
 
 	return;
 }
@@ -1165,6 +1174,25 @@ checksync();
 {_STACKTRACE("Physics::calculate() - item calculation")
 	for (i = 0; i < num_items; i += 1) {
 		if (item[i]->exists()) item[i]->calculate();
+
+#ifdef _DEBUG
+		// check all velocities and such (costly check... only do this in debug mode.)
+		int j;
+		for (j = 0; j < num_items; j += 1)
+		{
+			if (fabs(item[j]->vel.x) > 1E6 || fabs(item[j]->vel.y) > 1E6 )
+			{
+				int k;
+				if (j > 0)
+					k = j-1;
+				else
+					k = num_items - 1;
+
+				tw_error("velocity error in %s, probably due to %s", item[j]->get_identity(),
+					item[k]->get_identity());
+			}
+		}
+#endif
 checksync();
 		}
 }
@@ -1197,16 +1225,15 @@ checksync();
 
 {_STACKTRACE("Physics::calculate() - presence destruction")
 	//remove presences that have been dead long enough
-	int deleted = 0;
 	for(i = 0; i < num_presences; i ++) {
-		presence[i] = presence[i+deleted];
 		if (presence[i]->state == -DEATH_FRAMES) {
 			Presence *tmp = presence[i];
 			num_presences -= 1;
-			memmove(&presence[i], &presence[i+1], sizeof(Presence*) * (num_presences-i));
-			//presence[i] = presence[num_presences-1];
+			
+			if (num_presences > i)
+				memmove(&presence[i], &presence[i+1], sizeof(Presence*) * (num_presences-i));
+
 			i -= 1;
-			//deleted += 1;
 			delete tmp;
 		}
 		else {
@@ -1222,15 +1249,15 @@ checksync();
 
 	//remove objects that have been dead long enough
 {_STACKTRACE("Physics::calculate() - item destruction")
-	int deleted = 0;
 	for(i = 0; i < num_items; i ++) {
-		item[i] = item[i+deleted];
-		if (item[i]->state == -DEATH_FRAMES) {
+		if (item[i]->state == -DEATH_FRAMES)
+		{
 			SpaceLocation *tmp = item[i];
 			num_items -= 1;
-			//item[i] = item[num_items];
-			memmove(&item[i], &item[i+1], (num_items-i) * sizeof(SpaceLocation*));
-			//deleted += 1;
+			
+			if (num_items > i)
+				memmove(&item[i], &item[i+1], (num_items-i) * sizeof(SpaceLocation*));
+			
 			i -= 1;
 			delete tmp;
 		}
@@ -1438,6 +1465,7 @@ void Physics::collide() {_STACKTRACE("Physics::collide()")
 			tmp[l].x = p.x;
 			tmp[l].y = p.y;
 			if (tmp[l].y < 0) tmp[l].y += size.y;
+			//xxx goes wrong in case of Androsynth Guardian (=o) ; m=0x00003c.
 			tmp[l].pmask = o->get_sprite()->get_pmask(o->get_sprite_index());
 			tmp[l].data = o;
 			l += 1;
