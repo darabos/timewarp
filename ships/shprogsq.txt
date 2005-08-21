@@ -3,7 +3,7 @@ Rogue Squadron
 
 background:
 
-A rogue squadron of former UQ crew, now lawless scavengers of the universe, a curious mixture of different races in a simple general ship design which is harmless on its own, but can be dangerous in large numbers.
+A rogue squadron of human renegades, now lawless scavengers of the universe, piloting a simple general ship design which is weak on its own, but can be dangerous in large numbers.
 
 How to use this ship:
 
