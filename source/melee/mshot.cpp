@@ -309,15 +309,20 @@ Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, d
 }
 
 
-void Laser::calculate() {
+void Laser::calculate()
+{
+	SpaceLine::calculate();
+
 	if((frame < frame_count) && (lpos->exists())) {
 		pos = lpos->normal_pos() + rotate(rel_pos, lpos->get_angle() - PI/2);
 		vel = lpos->get_vel();
 		if (sinc_angle) angle = normalize(lpos->get_angle() + relative_angle, PI2);
-		SpaceLine::calculate();
+		//SpaceLine::calculate();
 		frame += frame_time;
 	}
-	else state = 0;
+	else
+		state = 0;
+
 	return;
 }
 
@@ -344,7 +349,8 @@ int PointLaser::canCollide(SpaceObject *other) {
 void PointLaser::calculate() {
 	double alpha;
 	alpha = (lpos->get_angle());
-	Laser::calculate();
+	
+	
 	if (target) {
 		if (target->exists() && canCollide(target) && target->canCollide(this)) {
 			inflict_damage(target);
@@ -353,5 +359,8 @@ void PointLaser::calculate() {
 		angle = trajectory_angle(target);
 		if (!target->exists()) target = NULL;
 	}
+
+	Laser::calculate();
+	
 	return;
 }

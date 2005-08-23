@@ -6,6 +6,7 @@
 #include "mgame.h"
 
 class Shot : public SpaceObject {
+	IDENTITY(Shot);
 	public:
 	double v;
 	double d;
@@ -40,6 +41,7 @@ class Shot : public SpaceObject {
 	};
 
 class AnimatedShot : public Shot {
+	IDENTITY(AnimatedShot);
 	protected:
 	int frame_count;
 	int frame_size;
@@ -54,6 +56,7 @@ class AnimatedShot : public Shot {
 	};
 
 class Missile : public Shot {
+	IDENTITY(Missile);
 	public:
 	Missile(SpaceLocation *creator, Vector2 rpos, double oangle, double ov, double odamage,
 			double orange, double oarmour, SpaceLocation *opos,
@@ -64,6 +67,7 @@ class Missile : public Shot {
 	};
 
 class HomingMissile : public Missile {
+	IDENTITY(HomingMissile);
 	protected:
 	double turn_rate;
 	double turn_step;
@@ -78,6 +82,7 @@ class HomingMissile : public Missile {
 	};
 
 class Laser : public SpaceLine {
+	IDENTITY(Laser);
 	protected:
 	double frame;
 	double frame_count;
@@ -94,7 +99,9 @@ class Laser : public SpaceLine {
 	void calculate();
 };
 
-class PointLaser : public Laser {
+class PointLaser : public Laser
+{
+	IDENTITY(PointLaser);
   protected:
 
   SpaceObject *target;

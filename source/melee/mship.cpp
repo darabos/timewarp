@@ -491,6 +491,21 @@ Ship::~Ship()
 		first_override_control = 0;
 		last_override_control = 0;
 	}
+
+#ifdef _DEBUG
+	// error check:
+	if (physics)
+	{
+		if (control && control->exists() && (control->ship == this) )
+		{
+			tw_error("Ship is deleted, but the control owned by the ship still exists!");
+		}
+		
+		if (control)
+			control->ship = 0;
+	}
+#endif
+
 }
 
 double Ship::getCrew()
@@ -536,6 +551,7 @@ void Ship::locate() {STACKTRACE
 
 void Ship::calculate()
 {STACKTRACE
+
 
 //added by Tau - start
 	if (exists() && death_counter >= 0) {
@@ -598,7 +614,17 @@ void Ship::calculate()
 	}
 //added by Tau - end
 
+
 	if (control) {
+
+		/*
+		#ifdef _DEBUG
+		if (exists() && (control->ship != this) && (control->ship != ship))
+		{
+			tw_error("Control has the wrong ship...");
+		}
+		#endif
+		*/
 
 		// it makes most sense, to place this in FRONT of these commands here ...
 		nextkeys = control->keys;
@@ -806,6 +832,7 @@ void Ship::calculate()
 	*/
 	calculate_index();
 
+
 	// hotspots are too much a luxury to include in massive games (lots of objects)
 	if (hashotspots)
 		calculate_hotspots();
@@ -899,9 +926,16 @@ int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {ST
 	return 1;
 }
 
-void Ship::materialize() {
+void Ship::materialize()
+{
+	// nothing
 }
 
+void Ship::handle_phasing()
+{
+	// keeps track of the default pointers (target)
+	SpaceObject::calculate();
+}
 
 void Ship::assigntarget(SpaceObject *otarget)
 {
@@ -1078,7 +1112,7 @@ Phaser::Phaser(
 	SpaceLocation *creator, Vector2 opos, Vector2 _rpos, 
 	Ship *ship, SpaceSprite *sprite, int osprite_index, int *ocolors, 
 	int onum_colors, int ofsize, int steps, int step_size) :
-	SpaceObject(creator, opos, 0.0, sprite),
+SpaceObject(creator, opos, 0.0, sprite),
 	rel_pos(_rpos),
 	ship(ship),
 	sprite_index(osprite_index),
@@ -1103,6 +1137,11 @@ Phaser::Phaser(
 	if (sprite_index >= sprite->frames())
 		sprite_index = 0;
 
+	// overwrite this... cause it's not really defined...
+	target = 0;
+
+	count_delay_iterations = 0;
+
 	return;
 }
 
@@ -1116,6 +1155,17 @@ void Phaser::animate(Frame *space)
 void Phaser::calculate()
 {
 	STACKTRACE;
+
+	++count_delay_iterations;
+	if (count_delay_iterations >= DEATH_FRAMES-3)	// I'm not sure, how many you need.
+	{
+		// this is needed, because often ships have components which are created on the spot...
+		// these are vulnerable, and can die. Then, ship-specific pointers get invalid (objects
+		// are removed from memory). Thus, we need need (hackish) some time before objects are removed.
+		// What we really need, is a Ship::add2game() function, which creates the components when
+		// it's time.
+		tw_error("Phasing takes too long; need more time for pointer-checks!");
+	}
 
 	if (!exists())
 		return;
@@ -1154,6 +1204,12 @@ void Phaser::calculate()
 			}
 		}
 	}
+
+	// needed to keep track of important pointers... which need to be checked each game iteration
+	// to see if they are still valid or not...
+	if (ship)
+		ship->handle_phasing();
+
 	SpaceObject::calculate();
 }
 
@@ -1253,5 +1309,5 @@ void Ship::del_override_control(OverrideControl *delthiscontrol)
 
 bool Ship::exists()
 {
-	return Presence::exists() && death_counter == -1;
-};  //returns 0 if dead or dying, non-zero if alive
+	return (Presence::exists());// & (death_counter == -1);
+};  //returns 0 if dead, non-zero if alive

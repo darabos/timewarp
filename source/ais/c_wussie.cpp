@@ -268,8 +268,24 @@ int ControlWussie::think ()
 		tw_error("WussieBot is not on a local channel. It should be, though.");
 	}
 
+	if (ship && ship->control != this)
+	{
+		tw_error("error in control reference...");
+	}
+
 	if (!(ship && ship->exists()))
+	{
+		// maybe it's possible that this is called before the calculate() function... by a ship
+		// calculate function or so. It shouldn't be possible, but I'll place it here anyway
+		if (ship && temporary)
+		{
+			tw_error("think() ship=0, shouldn't be possible");
+			state = 0;				// this control dies
+			ship->control = 0;		// the ship should know.
+		}
+
 		ship = 0;
+	}
 
 	if (!ship)
 		return 0;
@@ -1015,6 +1031,12 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 	//char tmp[20];
 	int i, j, k;
 	Control::select_ship (ship_pointer, ship_name);
+
+	if (ship && ship->control != this)
+	{
+		tw_error("error in control reference...");
+	}
+	
 	if (ship_name)
 	{
 		//replace_extension (tmp, ship_name, "ini", 19);

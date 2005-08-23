@@ -21,5 +21,8 @@ void NullPhaser::calculate(){
     ship = NULL;
     state = 0;
   }
+
+  if (ship)
+	ship->handle_phasing();
 }
 

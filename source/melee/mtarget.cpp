@@ -70,6 +70,16 @@ void Targets::calculate()
 			-- i;
 		}
 	}
+
+#ifdef _DEBUG
+	for (i = 0; i < N; i += 1)
+	{
+		if (!item[i]->exists())
+		{
+			tw_error("target item does not exist, should not happen");
+		}
+	}
+#endif
 }
 
 

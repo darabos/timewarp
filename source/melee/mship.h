@@ -40,6 +40,7 @@ class Phaser : public SpaceObject {
 	int phaser_step_position;
 	int phaser_steps;
 	int phaser_step_size;
+	int count_delay_iterations;	// for debug/error testing
 
 	public:
 	Phaser::Phaser(SpaceLocation *creator, Vector2 pos, Vector2 rel_pos, 
@@ -117,6 +118,8 @@ protected:
 	virtual void assigntarget(SpaceObject *otarget);
 
 	virtual void materialize();
+	virtual void handle_phasing();
+
 	double crew;
 	double crew_max;
 	double batt;

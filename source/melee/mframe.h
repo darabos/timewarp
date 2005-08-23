@@ -17,6 +17,13 @@ extern DATAFILE *melee;
 
 typedef unsigned int TeamCode;
 
+//#define DEATH_FRAMES 4
+//setting this too low will cause crashes
+//setting it too high will waste CPU power and RAM
+//the recommended value is 4
+#define DEATH_FRAMES 64
+// ALSO NOTE THE PHASERS... 
+
 struct Query;
 class Planet;
 class Presence;
@@ -181,9 +188,15 @@ class Physics : public BaseClass {
 	void check_linecollision(SpaceLine *l);
 };
 
+/** used in debug-mode, to see if physics functions are called outside of physics... */
+extern bool physics_allowed;
+
+#define IDENTITY(x) virtual const char *get_identity(){return #x;};
 
 class Presence : public BaseClass { 
 	friend class Physics;
+public:
+	IDENTITY(Presence);
 	public:
 
 	int    id;            // id code, indicates what type it is
@@ -202,7 +215,7 @@ class Presence : public BaseClass {
 	virtual void animate(Frame *space); //displays ? on screen (NOT permitted to affect game physics in any way)
 	virtual void animate_predict(Frame *space, int time); //like animate, but attempts to predict the future
 	virtual void calculate(); //advance the item frame_time milliseconds in time
-	virtual bool exists() {return state > 0;};  //returns 0 if dead or dying, non-zero if alive
+	virtual bool exists();// {return state > 0;};  //returns 0 if dead or dying, non-zero if alive
 	Presence();
 	virtual ~Presence();  // called when a presence is deallocated
 	virtual SpaceLocation *get_focus();
@@ -224,7 +237,6 @@ class Presence : public BaseClass {
 
 };
 
-#define IDENTITY(x) virtual const char *get_identity(){return #x;};
 
 class SpaceLocation : public Presence { // base class for all items in game
 	friend class Physics;

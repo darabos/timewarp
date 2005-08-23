@@ -21,16 +21,14 @@ REGISTER_FILE
 #include "scp.h"
 #include "melee/mnet1.h"
 
+
+bool physics_allowed = true;
+
 int total_presences;
 
 #define ANIMATE_BUFFER_SIZE 2048
 //setting this too low can cause things to not get drawn
 //setting it too high will waste RAM
-
-#define DEATH_FRAMES 4
-//setting this too low will cause crashes
-//setting it too high will waste CPU power and RAM
-//the recommended value is 4
 
 #define QUADS_X 8
 #define QUADS_Y 8
@@ -59,6 +57,10 @@ double MAX_SPEED = 0;
 
 
 void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange) {STACKTRACE
+
+	bool old_physics_allows = physics_allowed;
+	physics_allowed = true;
+	
 	if (qrange < 0) {tw_error("Query::begin - negative range");}
 	layers = qlayers;
 	range_sqr = qrange * qrange;
@@ -85,12 +87,24 @@ void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange) {STACKTRA
 	qx = qx_min;
 	current = physics->quadrant[qy * QUADS_X + qx];
 	if (!current) next_quadrant();
-	if (!current) return;
-	if (current_invalid()) next();
+
+	if (current)
+	{
+		if (current_invalid())
+			next();
+	}
+
+	physics_allowed = old_physics_allows;
 	return;
 	}
 
-void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double qrange) {STACKTRACE
+void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double qrange)
+{
+	STACKTRACE;
+
+	bool old_physics_allows = physics_allowed;
+	physics_allowed = true;
+
 	layers = qlayers;
 	range_sqr = qrange * qrange;
 	target = qtarget;
@@ -122,8 +136,13 @@ void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double q
 
 	current = physics->quadrant[qy * QUADS_X + qx];
 	if (!current) next_quadrant();
-	if (!current) return;
-	if (current_invalid()) next();
+	
+	if (current)
+	{
+		if (current_invalid())
+			next();
+	}
+	physics_allowed = old_physics_allows;
 	return;
 	}
 
@@ -150,18 +169,28 @@ tail_recurse4:
 	if (tmp > QUADS_TOTAL) {tw_error ("tmp was too large");}
 	current = physics->quadrant[tmp];
 	if (!current) goto tail_recurse4;
+
 	return;
 	}
 
-void Query::next () {STACKTRACE
+void Query::next ()
+{
+	STACKTRACE;
+	bool old_physics_allows = physics_allowed;
+	physics_allowed = true;
+
 tail_recurse3:
+
 	if (current == current->qnext) {tw_error ("Query::next - current = next");}
 	current = current->qnext;
 	if (!current) {
 		next_quadrant();
 		if (!current) return;
 		}
-	if (current_invalid()) goto tail_recurse3;
+	if (current_invalid())
+		goto tail_recurse3;
+
+	physics_allowed = old_physics_allows;
 	return;
 	}
 
@@ -307,6 +336,17 @@ void Presence::animate_predict(Frame *space, int time) {STACKTRACE
 	}
 void Presence::calculate() {STACKTRACE
 	}
+bool Presence::exists()
+{
+#ifdef _DEBUG
+	if (!physics_allowed)
+		tw_error("Accessing exists() in [%s] but animations are not allowed to mess with physics!!",
+		get_identity());
+#endif
+	//returns 0 if dead or dying, non-zero if alive
+	return state > 0;
+};
+
 bool Presence::die() {STACKTRACE
 	if (!exists())
 		return true;	//tw_error("Presence::die - already dead"); [note: this is not an error]
@@ -379,7 +419,12 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 		data = creator->data;
 
 		if (data) data->lock();
+
 		target = creator->target;
+
+		if (target && !target->exists())
+			target = 0;
+
 		}
 	else {
 		ally_flag = 0;
@@ -391,10 +436,48 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 }
 
 
-SpaceLocation::~SpaceLocation() {STACKTRACE
+SpaceLocation::~SpaceLocation()
+{
+	STACKTRACE
 	if (data) data->unlock();
 
+#ifdef _DEBUG
+	int i;
+
+	if (physics)
+	{
+		// also check the target list
+		for ( i = 0; i < targets->N; ++i)
+		{
+			if (targets->item[i] == this)
+			{
+				tw_error("Trying to remove a ship that is still in the target list! Should not happen.");
+			}
+		}
+		
+		// check if it's still in the physics list... which shouldn't be the case
+		for ( i = 0; i < physics->num_items; ++i)
+		{
+			if (physics->item[i]->exists())
+			{
+				if (physics->item[i] == this)
+				{
+					tw_error("Trying to remove a ship that is still in the physics list! Should not happen.");
+				}
+				if (physics->item[i]->target == this)
+				{
+					tw_error("Trying to remove a possible target [%s] for [%s]! Should not happen.",
+						get_identity(), physics->item[i]->get_identity());
+				}
+			}
+		}
 	}
+
+
+
+#endif
+
+}
 
 bool SpaceLocation::change_owner(SpaceLocation *new_owner) {STACKTRACE
 	if (new_owner) {
@@ -575,6 +658,12 @@ void SpaceLocation::play_sound2 (SAMPLE *sample, int vol, int freq) {STACKTRACE
 }
 int SpaceLocation::translate( Vector2 delta) {STACKTRACE
 	pos = normalize ( pos + delta, map_size );
+#ifdef _DEBUG
+	if (fabs(pos.x) > 1E9 || fabs(pos.y) > 1E9)
+	{
+		tw_error("translate: position overflow...");
+	}
+#endif
 	return true;
 }
 
@@ -601,6 +690,12 @@ void SpaceLocation::_accelerate(double angle, double velocity, double max_speed)
 		else ovm = sqrt(ovm);
 		vel = nv * ovm / (ovm + velocity);
 	}
+#ifdef _DEBUG
+	if (fabs(vel.x) > 1E6 || fabs(vel.y) > 1E6)
+	{
+		tw_error("accelerate: velocity overflow...");
+	}
+#endif
 	return;
 }
 void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {STACKTRACE
@@ -622,6 +717,12 @@ void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {STACKTRACE
 		//but only when turning, particularly turning fast
 		vel = nv * ovm / (ovm + magnitude(delta_v));
 	}
+#ifdef _DEBUG
+	if (fabs(vel.x) > 1E6 || fabs(vel.y) > 1E6)
+	{
+		tw_error("accelerate: velocity overflow...");
+	}
+#endif
 	return;
 }
 
@@ -1137,6 +1238,8 @@ bool Physics::remove(Presence *o) {
 	return false;
 	}
 
+extern void test_pointers();
+
 void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 	int i;
 
@@ -1144,11 +1247,14 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 	frame_number += 1;
 	game_time += frame_time;
 
+	//test_pointers();
+
 	//prepare global variables
 	prepare();
 
 	debug_value = num_items + num_presences;
 
+	//test_pointers();
 
 checksync();
 {_STACKTRACE("Physics::calculate() - item movement")
@@ -1161,14 +1267,17 @@ checksync();
 }
 checksync();
 
+	test_pointers();
 
 {_STACKTRACE("Physics::calculate() - presence calculation")
 	//call Presence calculate functions
 	for (i = 0; i < num_presences; i += 1) {
-		if (presence[i]->exists()) presence[i]->calculate();
+		if (presence[i]->exists())
+			presence[i]->calculate();
 checksync();
 		}
 }
+	//test_pointers();
 
 	//call objects calculate functions
 {_STACKTRACE("Physics::calculate() - item calculation")
@@ -1180,40 +1289,32 @@ checksync();
 			{
 				tw_error("Pointer error, overwritten data ??");
 			}
+	//test_pointers();
 
 			item[i]->calculate();
 
+	//test_pointers();
 			
+			// try to intercept a couple of errors that are possible here ...
 			if (item[i]->ship && item[i]->ship < (void*)0x01000)
 			{
 				tw_error("Pointer error, overwritten data ??");
 			}
-		}
-
-
-/*
-#ifdef _DEBUG
-		// check all velocities and such (costly check... only do this in debug mode.)
-		int j;
-		for (j = 0; j < num_items; j += 1)
-		{
-			if (fabs(item[j]->vel.x) > 1E6 || fabs(item[j]->vel.y) > 1E6 )
+			if (item[i]->target && (item[i]->target->state < -1))	// if it's dead for too long...
 			{
-				int k;
-				if (j > 0)
-					k = j-1;
-				else
-					k = num_items - 1;
-
-				tw_error("velocity error in %s, probably due to %s", item[j]->get_identity(),
-					item[k]->get_identity());
+				tw_error("Target pointer isn't cleaned up in [%s]", item[i]->get_identity());
+			}
+			if (item[i]->ship && item[i]->ship->state < -1)
+			{
+				tw_error("Ship pointer isn't cleaned up in [%s]", item[i]->get_identity());
 			}
 		}
-#endif
-		*/
+
+
 checksync();
 		}
 }
+	//test_pointers();
 
 	//prepare quadrants stuff
 {_STACKTRACE("Physics::calculate() - quadrants stuff")
@@ -1238,6 +1339,7 @@ checksync();
 {_STACKTRACE("Physics::calculate() - collisions")
 	collide();
 }
+	//test_pointers();
 
 checksync();
 
@@ -1262,6 +1364,7 @@ checksync();
 		}
 	}
 }
+	//test_pointers();
 
 checksync();
 
@@ -1298,6 +1401,7 @@ checksync();
 	}
 }
 checksync();
+	//test_pointers();
 
 	//remove dead listings
 /*{STACKTRACE
@@ -1323,9 +1427,19 @@ int compare_depth (const void *_a, const void *_b) {
 	//else return (*(const SpaceLocation**)_a)->get_serial() - (*(const SpaceLocation**)_b)->get_serial();
 }
 static Presence *animate_buffer[ANIMATE_BUFFER_SIZE];
+static double game_frame_rate = 0.0;
+static double game_animation_time = 0.0;
 
 void Physics::animate (Frame *frame) {STACKTRACE
 	int i, j;
+
+
+	#ifdef _DEBUG
+	game_frame_rate = 0.1 * game_frame_rate + 0.9 * (get_time() - game_animation_time);
+	game_animation_time = get_time();
+	message.print(1, 15, "frame rate = %i ms", int(game_frame_rate));
+	#endif
+
 
 	::render_time = this->game_time;
 
@@ -1348,6 +1462,7 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	// timing, for networking flushes
 	int time = get_time();
 
+	
 	for (i = 0; i < j; i += 1)
 	{
 		// test if the sprite_index doesn't change: that affects physics and can lead to a desynch
@@ -1364,7 +1479,9 @@ void Physics::animate (Frame *frame) {STACKTRACE
 				index = o->get_sprite_index();
 			}
 
+			physics_allowed = false;
 			animate_buffer[i]->animate(frame);
+			physics_allowed = true;
 		}
 
 
@@ -1396,6 +1513,7 @@ void Physics::animate (Frame *frame) {STACKTRACE
 		}
 
 	}
+
 	return;
 }
 
