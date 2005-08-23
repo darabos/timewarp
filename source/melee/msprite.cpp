@@ -807,8 +807,12 @@ void SpaceSprite::overlay (int index1, int index2, BITMAP *dest) {
 	BITMAP *bmp1, *bmp2;
 	bmp1 = get_bitmap(index1);
 	bmp2 = get_bitmap(index2);
-	for(y = 0; y < h; y += 1) {
-		for(x = 0; x < w; x += 1) {
+	if ((bmp1->w != bmp2->w) || (bmp1->h != bmp2->h))
+	{
+		tw_error("Overlay: trying to match bitmaps of different sizes.");
+	}
+	for(y = 0; y < bmp1->h; y += 1) {
+		for(x = 0; x < bmp1->w; x += 1) {
 			if (getpixel(bmp1, x, y) != getpixel(bmp2, x, y)) {
 				putpixel(dest, x, y, getpixel(bmp2, x, y));
 			}
@@ -864,8 +868,14 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, BITMAP *surface) {
 		iy = iround(pos.y);
 		iw = iround_up(size.x);
 		ih = iround_up(size.y);
-		aa_stretch_blit(bmp, surface, 0, 0, bmp->w, bmp->h, 
-					ix, iy, iw, ih);
+		if (tw_aa_mode & AA_NO_AA)
+		{
+			masked_stretch_blit(bmp, surface, 0, 0, bmp->w, bmp->h, 
+						ix, iy, iw, ih);
+		} else {
+			aa_stretch_blit(bmp, surface, 0, 0, bmp->w, bmp->h, 
+						ix, iy, iw, ih);
+		}
 	}
 	return;
 }
@@ -905,8 +915,14 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 		iy = iround(pos.y);
 		iw = iround(size.x);
 		ih = iround(size.y);
-		aa_stretch_blit(bmp, frame->surface, 0,0,bmp->w,bmp->h, 
-			ix, iy, iw, ih);
+		if (tw_aa_mode & AA_NO_AA)
+		{
+			masked_stretch_blit(bmp, frame->surface, 0,0,bmp->w,bmp->h, 
+				ix, iy, iw, ih);
+		} else {
+			aa_stretch_blit(bmp, frame->surface, 0,0,bmp->w,bmp->h, 
+				ix, iy, iw, ih);
+		}
 	}
 	frame->add_box(ix, iy, iw, ih);
 

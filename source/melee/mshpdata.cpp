@@ -18,9 +18,36 @@
 REGISTER_FILE
 #include "../util/aastr.h"
 
+#include "mship.h"
+#include "mtarget.h"
 
 
 int auto_unload = false;
+
+
+// for debugging ...
+void test_pointers()
+{
+	// also check the target list
+	int i;
+	for ( i = 0; i < targets->N; ++i)
+	{
+		targets->item[i]->exists();
+	}
+
+	// check if it's still in the physics list... which shouldn't be the case
+	for ( i = 0; i < physics->num_items; ++i)
+	{
+		if (physics->item[i]->exists())
+		{
+			if (physics->item[i]->target)
+				physics->item[i]->target->exists();
+
+			if (physics->item[i]->ship)
+				physics->item[i]->ship->exists();
+		}
+	}
+}
 
 
 /*------------------------------*
@@ -205,41 +232,42 @@ void unload_unused_ship_data() {
 
 void ShipData::unload()
 {
+	//test_pointers();
 
 	if (status != LOADED_FULL) return;
 
 	if (spritePanel) {
 		delete spritePanel;
-		spritePanel = NULL;
+		spritePanel = 0;
 	}
 
 	if (spriteShip) {
 		delete spriteShip;
-		spriteShip = NULL;
+		spriteShip = 0;
 	}
 	if (spriteWeapon) {
 		delete spriteWeapon;
-		spriteWeapon = NULL;
+		spriteWeapon = 0;
 	}
 	if (spriteWeaponExplosion) {
 		delete spriteWeaponExplosion;
-		spriteWeaponExplosion = NULL;
+		spriteWeaponExplosion = 0;
 	}
 	if (spriteSpecial) {
 		delete spriteSpecial;
-		spriteSpecial = NULL;
+		spriteSpecial = 0;
 	}
 	if (spriteSpecialExplosion) {
 		delete spriteSpecialExplosion;
-		spriteSpecialExplosion = NULL;
+		spriteSpecialExplosion = 0;
 	}
 	if (spriteExtra) {
 		delete spriteExtra;
-		spriteExtra = NULL;
+		spriteExtra = 0;
 	}
 	if (spriteExtraExplosion) {
 		delete spriteExtraExplosion;
-		spriteExtraExplosion = NULL;
+		spriteExtraExplosion = 0;
 	}
 
 	if (num_more_sprites) {
@@ -259,37 +287,64 @@ void ShipData::unload()
 	// clean up these pointer arrays ...
 	// these were created with the "new" command --> use delete
 	// also, the wave data are kept in memory... you've to remove those data
-	int i;
-	for( i = 0; i < num_weapon_samples; ++i )
+	if (data)
 	{
-		if (sampleWeapon[i])
-			destroy_sample(sampleWeapon[i]);
-	}
-	delete [] sampleWeapon;
+		unload_datafile(data);
+		data = 0;
+	} else {
+		int i;
+		if (sampleWeapon)
+		{
+			for( i = 0; i < num_weapon_samples; ++i )
+			{
+				if (sampleWeapon[i])
+					destroy_sample(sampleWeapon[i]);
+			}
+		}
+		
+		if (sampleSpecial)
+		{
+			for( i = 0; i < num_special_samples; ++i )
+			{
+				if (sampleSpecial[i])
+					destroy_sample(sampleSpecial[i]);
+			}
+		}
+		
+		if (sampleExtra)
+		{
+			for( i = 0; i < num_extra_samples; ++i )
+			{
+				if (sampleExtra[i])
+					destroy_sample(sampleExtra[i]);
+			}
+		}
 
-	for( i = 0; i < num_special_samples; ++i )
-	{
-		if (sampleSpecial[i])
-			destroy_sample(sampleSpecial[i]);
-	}
-	delete [] sampleSpecial;
 
-	for( i = 0; i < num_extra_samples; ++i )
-	{
-		if (sampleExtra[i])
-			destroy_sample(sampleExtra[i]);
+		if (moduleVictory)
+		{
+			destroy_mod(moduleVictory);
+			//moduleVictory = 0;
+		}
 	}
-	delete [] sampleExtra;
 
+	if (sampleWeapon)
+		delete [] sampleWeapon;
+	if (sampleSpecial)
+		delete [] sampleSpecial;
+	if (sampleExtra)
+		delete [] sampleExtra;
 
-	if (moduleVictory)
-	{
-		destroy_mod(moduleVictory);
-		moduleVictory = 0;
-	}
+	sampleWeapon = 0;
+	sampleSpecial = 0;
+	sampleExtra = 0;
+	moduleVictory = 0;
+
 
 	shipdatas_loaded -= 1;
 	status = LOADED_NONE;
+
+	//test_pointers();
 
 /*	num_weapon_samples0),
 	sampleWeapon(NULL),
@@ -487,10 +542,11 @@ JGMOD *copy_jgmod(JGMOD *source)
 
 void ShipData::load()
 {
+	//test_pointers();
 
 	int i, index = 0, count;
 
-	if (status != LOADED_NONE) return;
+//	if (status != LOADED_NONE) return;
 
 	data = load_datafile(file);
 
@@ -545,6 +601,8 @@ void ShipData::load()
 	num_more_sprites = i;
 
 	// initialize ship victory ditty
+	
+	//moduleVictory = (JGMOD*)data[index].dat;
 	moduleVictory = copy_jgmod((JGMOD*)data[index].dat);//(Music *) copy_data(data[index].dat, data[index].size);
 	index++;
 
@@ -603,6 +661,8 @@ void ShipData::load()
 	//sound.play(sampleSpecial[0], 32, 128, 1024);
 	
 	//sound.play_music(moduleVictory);
+
+	//test_pointers();
 
 	return;
 
