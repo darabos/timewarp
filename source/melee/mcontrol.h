@@ -30,6 +30,10 @@ class Control : public Presence
   
   /*! \brief points at the current ship being controlled */
   Ship *ship;
+
+  Ship *original_ship;
+  int lifetime;
+
   /*! \brief keys currently pressed */
   KeyCode keys;
   /*! \brief name of instance */

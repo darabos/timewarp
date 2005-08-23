@@ -110,13 +110,14 @@ void FixedAnimation::calculate()
 	if (follow->exists())
 	{
 		pos = follow->normal_pos();
-		Animation::calculate();
 	} 
 	else
 	{
 		state = 0;
 		follow = NULL;
 	}
+
+	Animation::calculate();
 }
 
 PositionedAnimation::PositionedAnimation(SpaceLocation *creator, 

@@ -112,6 +112,10 @@ void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE
 			{tw_error ("Control::select_ship - bad operation (incompatible with networking)");}
 		}
 	target_stuff() ;
+
+	original_ship = ship;
+	lifetime = 0;
+
 	return;
 	}
 void Control::load(const char* inifile, const char* inisection) {
@@ -307,6 +311,13 @@ validate:
 	target = targets->item[index];
 change:
 done:
+	if (target)
+	{
+		if (index < 0 || index > targets->N)
+		{
+			tw_error("Target index is out of range.");
+		}
+	}
 	return;
 	}
 
@@ -345,23 +356,46 @@ void Control::calculate()
 	if (!exists())
 		return;
 
+	if (ship && ship->control != this)
+	{
+		tw_error("error in control reference...");
+	} else
+		++ lifetime;
+
+	if (ship)
+	{
+		if (!ship->exists())
+		{
+			
+			//keys = 0;	// <--- goes into the gen_buffered_data !!
+			if (temporary)
+			{
+				state = 0;				// this control dies
+				ship->control = 0;		// the ship should know.
+				select_ship( 0, 0);
+				return;
+			}
+
+			//message.print(5000, 12, "Ship died in frame %d", game->frame_number);
+			select_ship( 0, 0);
+
+			if (ship != 0)
+			{
+				tw_error("control: ship should be zero now.");
+			}
+		}
+		//else keys = think();		// <--- goes into the gen_buffered_data !!
+	}
+
+	if (target && !target->exists())
+	{
+		target = 0;
+	}
+	
 	if (auto_update)
 		keys = think();
 
 	target_stuff();
-
-	if (ship) {
-		if (!ship->exists() || (ship->death_counter != -1)) {
-			//message.print(5000, 12, "Ship died in frame %d", game->frame_number);
-			select_ship( NULL, NULL);
-			}
-		//else keys = think();		// <--- goes into the gen_buffered_data !!
-		}
-	
-	if (!ship) {
-		//keys = 0;	// <--- goes into the gen_buffered_data !!
-		if (temporary) state = 0;
-		}
 
 	if (channel != channel_none) {
 		//prediction stuff
@@ -462,12 +496,21 @@ _prediction_keys(NULL)
 
 	cyborg = 0;
 	cyborg_control = false;
+
+	original_ship = 0;
+	lifetime = 0;
 }
 
 
-Control::~Control() { STACKTRACE;
+Control::~Control()
+{
+	STACKTRACE;
 	if (_prediction_keys) delete[] _prediction_keys;
-	}
+
+	if (ship)
+		ship->control = 0;
+}
+
 bool Control::die()
 {
 	return Presence::die();
