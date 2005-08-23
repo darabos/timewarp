@@ -360,6 +360,7 @@ void OlidandeeHabitat::calculate()
 		}
 	}
 	
+	SpaceObject::calculate();
 
 }
 

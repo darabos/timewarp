@@ -7,7 +7,7 @@ REGISTER_FILE
 #include "../scp.h"
 
 //#define TERON_COLLISION_FORWARDING
-#define TERON_TURRET_CONTROLLABLE
+//#define TERON_TURRET_CONTROLLABLE
 #define TERON_SHIPS_TARGETABLE
 
 #define TERON_BUILDER_SPRITE         spriteShip
@@ -290,6 +290,7 @@ IDENTITY(TeronFighter);
 class TeronTurret : public Ship {
 public:
 IDENTITY(TeronTurret);
+/*
 #ifdef TERON_TURRET_CONTROLLABLE
   TeronBuilder* docked;
   double dock_dir;
@@ -297,6 +298,7 @@ IDENTITY(TeronTurret);
   double dock_counter;
   Control* orig_control;
 #endif
+  */
 
   SpaceObject* base;
   double weaponRange;
@@ -783,13 +785,18 @@ just_docked( false ), resource( 0 ), docked( NULL ), goal( dock )
 
   weaponRange      = creator->droneWeaponRange;
 
-  control = new TeronDroneController( "Teron Drone", channel_none );
+  TeronDroneController *c = new TeronDroneController( "Teron Drone", channel_none );
   //control->load( "scp.ini", "Config0" );
-  game->add( control );
-  control->temporary = true;
-  control->select_ship( this, "terbi" );
-  ((ControlWussie*)control)->option_velocity[0][0] = scale_velocity( 999 );
-  ((ControlWussie*)control)->option_range[0][0] = weaponRange;
+  game->add( c );
+  c->select_ship( this, "terbi" );
+  c->temporary = true;
+  ((ControlWussie*)c)->option_velocity[0][0] = scale_velocity( 999 );
+  ((ControlWussie*)c)->option_range[0][0] = weaponRange;
+
+  if (control->ship != this || control != c)
+  {
+	  tw_error("incorrect control initialization");
+  }
 }
 
 TeronBuildPlatform* TeronDrone::get_build_platform(){
@@ -908,12 +915,21 @@ int TeronDrone::activate_weapon(){
 
 void TeronDrone::calculate()
 {
+	if (!exists())
+	{
+		Ship::calculate();
+		return;
+	}
+
+	/*
 	if (death_counter != -1)	// check used by control.
 	{
 		// the special ship-die routine...
 		Ship::calculate();
 		return;
 	}
+	*/
+
 
 	if (control && !control->exists())
 	{
@@ -927,12 +943,16 @@ void TeronDrone::calculate()
 		return;
 	}
 
+	if (control)
+	{
+
 
 	// execute the cpu ai.
 //	control->keys = control->think();
 
 	// do not allow the AI to pick a target, only the Drones subroutines can do that
 	control->keys &= ~(keyflag::next | keyflag::prev | keyflag::closest);
+	}
 
   nextkeys &= ~keyflag::next;
   nextkeys &= ~keyflag::prev;
@@ -1063,13 +1083,19 @@ Ship( creator, opos, shipAngle, osprite ){
   weaponDamage     = creator->fighterWeaponDamage;
   weaponArmour     = creator->fighterWeaponArmour;
 
-  control = new TeronShipController( "Teron Fighter", channel_none );
+  TeronShipController *c;
+  c = new TeronShipController( "Teron Fighter", channel_none );
   //control->load( "scp.ini", "Config0" );
-  game->add( control );
-  control->temporary = true;
-  control->select_ship( this, "terbi" );
-  ((ControlWussie*)control)->option_velocity[0][0] = weaponVelocity;
-  ((ControlWussie*)control)->option_range[0][0] = weaponRange;
+  game->add( c );
+  c->temporary = true;
+  c->select_ship( this, "terbi" );
+  ((ControlWussie*)c)->option_velocity[0][0] = weaponVelocity;
+  ((ControlWussie*)c)->option_range[0][0] = weaponRange;
+
+  if (control->ship != this || control != c)
+  {
+	  tw_error("incorrect control initialization");
+  }
 }
 
 TeronBuildPlatform* TeronFighter::get_build_platform(){
@@ -1101,8 +1127,9 @@ void TeronFighter::calculate_hotspots(){
 
 TeronTurret::TeronTurret( TeronBuilder *creator, Vector2 opos,
   double shipAngle, SpaceSprite *osprite ):
-Ship( creator, opos, shipAngle, osprite ),
-dock_counter( 0 ){
+Ship( creator, opos, shipAngle, osprite )
+//dock_counter( 0 )
+{
   set_depth( (double)LAYER_SHIPS + 0.01 );
 
   crew             = creator->turret_crew_max;
@@ -1133,15 +1160,20 @@ dock_counter( 0 ){
   weaponDamage     = creator->turretWeaponDamage;
   weaponArmour     = creator->turretWeaponArmour;
 
-  control = new TeronShipController( "Teron Turret", channel_none );
-  control->load( "scp.ini", "Config0" );
-  game->add( control );
-  control->temporary = true;
-  control->select_ship( this, "terbi" );
-  ((ControlWussie*)control)->option_velocity[0][0] = weaponVelocity;
-  ((ControlWussie*)control)->option_range[0][0] = weaponRange;
+  TeronShipController *c;
+  c = new TeronShipController( "Teron Turret", channel_none );
+  c->load( "scp.ini", "Config0" );
+  game->add( c );
+  c->temporary = true;
+  c->select_ship( this, "terbi" );
+  ((ControlWussie*)c)->option_velocity[0][0] = weaponVelocity;
+  ((ControlWussie*)c)->option_range[0][0] = weaponRange;
 
-  docked = 0;
+  if (control->ship != this || control != c)
+  {
+	  tw_error("incorrect control initialization");
+  }
+//  docked = 0;
 }
 
 TeronBuildPlatform* TeronTurret::get_build_platform(){
@@ -1156,6 +1188,7 @@ int TeronTurret::activate_weapon(){
 }
 
 int TeronTurret::activate_special(){
+	/*
 #ifdef TERON_TURRET_CONTROLLABLE
   if( docked ){
     recharge_amount  = docked->turret_recharge_amount;
@@ -1181,11 +1214,18 @@ int TeronTurret::activate_special(){
     return true;
   }
 #endif
+  */
   return false;
 }
 
 void TeronTurret::calculate()
 {
+	if (!exists())
+	{
+		Ship::calculate();
+		return;
+	}
+
 	if (target && !target->exists())
 		target = 0;
 
@@ -1199,6 +1239,7 @@ void TeronTurret::calculate()
   //base->x = x;
   //base->y = y;
   base->pos = pos;
+  /*
 #ifdef TERON_TURRET_CONTROLLABLE
   if( dock_counter > 0 ) dock_counter -= frame_time;
   else dock_counter = 0;
@@ -1214,6 +1255,7 @@ void TeronTurret::calculate()
     }
   }
 #endif
+  */
 }
 
 void TeronTurret::calculate_turn_left(){
@@ -1233,6 +1275,8 @@ void TeronTurret::materialize(){
 
 void TeronTurret::inflict_damage( SpaceObject* other ){
   SpaceObject::inflict_damage( other );
+
+  /* geo- okay, this code crashes (control pointer) and it's not useful
 #ifdef TERON_TURRET_CONTROLLABLE
   if( other == ship && !dock_counter ){
     docked = (TeronBuilder*)other;
@@ -1257,6 +1301,7 @@ void TeronTurret::inflict_damage( SpaceObject* other ){
     weaponArmour     = docked->attachedTurretWeaponArmour;
   }
 #endif
+  */
 }
 
 int TeronTurret::handle_damage(SpaceLocation *source, double normal, double direct)
@@ -1275,12 +1320,14 @@ TeronTurretBase::TeronTurretBase( TeronTurret *creator, Vector2 opos,
 SpaceObject( creator, opos, oangle, osprite ){
   ship = creator;
   sprite_index = TERON_TURRET_BASE_INDEX;
+  /*
 #ifdef TERON_TURRET_CONTROLLABLE
   collide_flag_anyone = collide_flag_sameteam = ALL_LAYERS;
   collide_flag_sameship = ALL_LAYERS & ~bit(LAYER_SHIPS);
 #else
+  */
   collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;
-#endif
+//#endif
   mass = creator->mass;
   layer = LAYER_SHIPS;
 }
@@ -1352,7 +1399,10 @@ int TeronBuildPlatform::handle_damage(SpaceLocation *source, double normal, doub
     if( sprite_index < index_zero ){
       sprite_index = index_zero;
       state = 0;
-      delete new_ship;
+
+	  new_ship->control->die();			// the control of the ship was already added to physics
+      delete new_ship;					// fine, this wasn't added to physics yet.
+
       new_ship = NULL;
     }
   }
@@ -1376,8 +1426,11 @@ int TeronBuildPlatform::handle_damage(SpaceLocation *source, double normal, doub
 void TeronBuildPlatform::death(){
   if( new_ship ){
     sprite_index = index_zero;
-    delete new_ship;
-    new_ship = NULL;
+
+	new_ship->control->die();	// the control of the ship was already added to physics
+    delete new_ship;			// fine, this wasn't added to physics yet.
+    
+	new_ship = NULL;
   }
 }
 

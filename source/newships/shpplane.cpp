@@ -344,6 +344,9 @@ void Moon::calculate()
 		return;
 	}
 
+	// to clean up pointers...
+	SpaceLocation::calculate();
+
 	// velocity and position are handled by the orbiter
 	return;
 }

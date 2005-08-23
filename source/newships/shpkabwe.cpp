@@ -714,11 +714,11 @@ void KaboHaze::animate(Frame *space)
 
 */
 
-	if (!host || !host->exists())
+	if (!host)
 		return;
 
-	if ( state == 0 )
-		return;
+	//if ( state == 0 )
+	//	return;
 
 	// the host can die in-between calculate and animate, therefore I use this; it's
 	// not allowed to change state of this presence though; that's done only in

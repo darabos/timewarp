@@ -180,7 +180,10 @@ TauBomberBomb::TauBomberBomb (SpaceLocation *creator, double ox, double oy, doub
 
 void TauBomberBomb::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	SpaceLocation::calculate();	// to clean up pointers
+
 	if (ship && !active) 
 		if ((!ship->exists()) || (!ship->fire_weapon)) {
 			ship = NULL;
@@ -394,7 +397,10 @@ TauBomberJam::TauBomberJam (SpaceObject *creator, SpaceObject *ohost, int olifet
 
 void TauBomberJam::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+	
+	SpaceLocation::calculate();	// needed to clean up pointers.
+
 	if ((lifetime -= frame_time) <= 0) {
 		state = 0; return; }
 	if ( (!(host && host->exists())) || (!(tgt && tgt->exists())) )
@@ -411,6 +417,7 @@ void TauBomberJam::calculate()
 		if ( ((Ship*)host)->control )
 			((Ship*)host)->control->target = tgt;
 	}
+
 }
 
 

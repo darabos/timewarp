@@ -319,6 +319,8 @@ void RaalrithPoison::calculate() {
 
   int chance;
 
+	SpaceObject::calculate();
+
   if (!(oship && oship->exists())) {
 	  oship = 0;
     state = 0;

@@ -137,6 +137,8 @@ void YushSpear::calculate()
 {
 	STACKTRACE;
 
+	Missile::calculate();
+
 	if (latched)
 	{
 		// if it's attached to some host, and the host suddenly dies ...
@@ -162,7 +164,6 @@ void YushSpear::calculate()
 		return;
 	}
 	
-	Missile::calculate();
 	if( released ) return;
 	if( !ship ){ release(); return; }
 	if( !ship->exists() ){ ship = NULL; release(); return; }

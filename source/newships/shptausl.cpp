@@ -196,6 +196,14 @@ void TauSlider::calculate()
                         layer = LAYER_SHIPS;
                         collide_flag_anyone = collide_flag_reserve; }                        
         }        
+
+		// keep track of stuff used in animations (but which are physical)
+		int j;
+        for ( j = 0; j < max_trace_number; ++j)
+		{
+			if (tr[j] &&  !tr[j]->exists())
+				tr[j] = 0;
+		}
 }
 
 int TauSlider::handle_damage(SpaceLocation *source, int normal, int direct) {
@@ -227,12 +235,11 @@ void TauSlider::animate(Frame* space)
 {
         int i,j,r,g,b;
         double a;
-        for (i=max_trace_number; i>=0; i--) {
+        for (i=max_trace_number; i>=0; i--)
+		{
                 j = (ct + i) % max_trace_number;
-                if (tr[j]!=NULL) {
-                        if (!tr[j]->exists()) {
-                                tr[j] = NULL;
-                                continue; }
+                if (tr[j])
+				{
                         a = tr[j]->lifetime / trace_lifetime;
                         r = (int)floor(195 - a*500);
                         if (r < 0) r = 0;
@@ -314,6 +321,8 @@ void TauSliderTrace::calculate()
 {
         if ((lifetime += frame_time) >= trace_lifetime)
                 state = 0;
+
+		SpaceLocation::calculate();
 }
 
 

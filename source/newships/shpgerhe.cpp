@@ -171,7 +171,12 @@ GerlVirtualship::GerlVirtualship(Vector2 opos, double angle, ShipData *data, uns
 
 void GerlVirtualship::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	if (!(hero && hero->exists()))
+	{
+		hero = 0;
+	}
 
 	if ( crew == 0 )	// this value is manipulated by the moronship and the heroship
 	{

@@ -683,7 +683,7 @@ SpaceLocation(creator, lpos, langle)
 void GravWell::calculate()
 {
 	STACKTRACE
-	Presence::calculate();
+	SpaceLocation::calculate();
 
 	vel = 0;
 	pos = oldpos;

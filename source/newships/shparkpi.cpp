@@ -181,8 +181,10 @@ ArkanoidPincerShip::ArkanoidPincerShip(Vector2 opos, double angle, ShipData *dat
   pincerR->spriteIndexSkew = 64;
   pincerR->angleSkew = -weaponSkewAngleOpen;
   pincerR->pointerToMe = &pincerR;
+
   game->add(pincerL);
   game->add(pincerR);
+
   jawAngle=30;
   jawAngle=weaponAngleOpen;
   angleShift=weaponAngleOpen;

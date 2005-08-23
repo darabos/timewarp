@@ -286,7 +286,14 @@ JnkdwoLazelMarker::JnkdwoLazelMarker(SpaceLocation *creator, SpaceObject *oo) :
 void JnkdwoLazelMarker::calculate() {
 	STACKTRACE;
 
-	if (state == 0) return;
+	if (state == 0)
+		return;
+	
+	pos = o->normal_pos();
+
+	// dunno if the absence of this could cause something strange ... perhaps it does?
+	// maybe "some" routine needs to access its "ship" pointer sometime ?
+	SpaceLocation::calculate();
 
 	if (!(o && o->exists()))
 	{
@@ -294,12 +301,6 @@ void JnkdwoLazelMarker::calculate() {
 		state = 0;
 		return;
 	}
-	
-	pos = o->normal_pos();
-
-	// dunno if the absence of this could cause something strange ... perhaps it does?
-	// maybe "some" routine needs to access its "ship" pointer sometime ?
-	SpaceLocation::calculate();
 }
 
 JnkdwoLazelLaser::JnkdwoLazelLaser (SpaceLocation *creator, double langle, double mangle, int lcolor, double lrange, int ldamage, int lfcount,

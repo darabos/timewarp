@@ -197,6 +197,8 @@ void SpeedMissile::calculate()
 
 	if (blobreleaser)
 	{
+		SpaceObject::calculate();
+
 		Trelease -= frame_time * 1E-3;
 
 		if (Trelease < Tnextreleasetime)

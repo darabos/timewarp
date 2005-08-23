@@ -104,8 +104,10 @@ void QuaiShot::calculate()
 		return;
 	}
 
+
 	if (twait < timedelay)
 	{
+		SpaceObject::calculate();	// need this, to check for other pointers... this is used best! (target pointers)
 		twait += frame_time * 1E-3;
 
 	} else {

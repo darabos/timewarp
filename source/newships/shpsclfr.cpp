@@ -133,7 +133,11 @@ void ScloreFrigate::fireSting(void) {
 int ScloreFrigate::addPowerToSting(void) {
 	STACKTRACE
   if(!Sting) return(FALSE);
-  if(!Sting->exists()) return(FALSE);
+  if(!Sting->exists())
+  {
+	  Sting = 0;
+	  return(FALSE);
+  }
   if(Sting->powerLevel>=specialMaxPower) return(FALSE);
   Sting->damage_factor++; // a kludge
   Sting->armour++;
@@ -149,9 +153,14 @@ ScloreFrigate::~ScloreFrigate(void) {
 void ScloreFrigate::calculate() {
 	STACKTRACE
   if(fire_special && fire_weapon) fireSting();
-  if(Sting!=NULL) {
+  if(Sting!=NULL)
+  {
     Sting->resetRange();
+
+	if (!Sting->exists())
+		Sting = 0;
   }
+
   Ship::calculate();
 }
 
@@ -227,8 +236,15 @@ ScloreSting::ScloreSting(double ox, double oy, double oangle, double ov,
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
-void ScloreSting::calculate(void) {
-	STACKTRACE
+void ScloreSting::calculate(void)
+{
+	STACKTRACE;
+
+	if (!(creator && creator->exists()))
+	{
+		creator = 0;
+	}
+
   int x, si;
   double dx, dy;
   x = iround(this->damage_factor - 1);
@@ -243,10 +259,13 @@ void ScloreSting::calculate(void) {
     this->v = creator->vel.magnitude();
     this->vel = creator->vel;
   }
+
   Missile::calculate();
+
   si = get_index(this->angle);
   if(!launched) si = (si + 32) % 64;
   sprite_index = si + (x * 64);
+
 }
 
 void ScloreSting::resetRange(void) {
@@ -305,6 +324,7 @@ void ScloreShot::calculate()
 {
 	STACKTRACE
 	Missile::calculate();
+
 }
 
 

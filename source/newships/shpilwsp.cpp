@@ -127,7 +127,10 @@ void IlwrathSpider::calculate()
 
 void IlwrathSpiderMine::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	SpaceObject::calculate();
+
   double alpha = (-10 + random(21)) * ANGLE_RATIO;
   alpha *= randomness;
   angle += alpha * frame_time;

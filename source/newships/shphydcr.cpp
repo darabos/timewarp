@@ -337,6 +337,9 @@ HydrovarEsFighter::HydrovarEsFighter (double ox, double oy, double oangle, doubl
 	creator = (HydrovarCruiser*) oship;
 //	if(creator==NULL)tw_error("creator==NULL"); //debugging code
 
+	if (!(creator && creator->exists()))
+		creator = 0;
+
 }
 
 
@@ -568,9 +571,13 @@ HydrovarEsFighter::~HydrovarEsFighter()
 {
 	STACKTRACE
 	if(creator)
-		if(creator->exists()) {
+	{
+		if(creator->exists())
+		{
 			*pointerToMe=NULL;
-			creator->fightersOut--; }
+			creator->fightersOut--;
+		}
+	}
 }
 
 

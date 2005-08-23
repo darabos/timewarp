@@ -398,9 +398,8 @@ STACKTRACE
 
 void TauArchonShot::animate(Frame *space)
 {
-STACKTRACE
-	if (exists())
-		sprite->animate(pos, index_base + (int)(19.89 * d / range), space);
+STACKTRACE;
+	sprite->animate(pos, index_base + (int)(19.89 * d / range), space);
 }
 
 void TauArchonShot::inflict_damage(SpaceObject *other)

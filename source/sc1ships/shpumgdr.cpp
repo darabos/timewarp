@@ -168,7 +168,7 @@ int UmgahCone::canCollide(SpaceLocation* other) {
 
 void UmgahCone::animate(Frame* space) {
 //  calc_base();
-  if (!umgahship || !umgahship->exists() || !umgahship->firing) return;
+  if (!umgahship || !umgahship->firing) return;
   int si = sprite_index;
   sprite_index += ((rand()%6) << 6);	//graphics
   SpaceObject::animate(space);

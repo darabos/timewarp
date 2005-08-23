@@ -289,8 +289,11 @@ isblockingweapons = true;
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
-void YevShield::calculate() {
-	STACKTRACE
+void YevShield::calculate()
+{
+	STACKTRACE;
+
+	SpaceObject::calculate();
 
 	if(!(ship && ship->exists()))
 	{

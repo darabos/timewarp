@@ -85,7 +85,7 @@ int NeoDrain::activate_special()
 
 void NeoDrain::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	Ship::calculate();
 
 	if (special_recharge > 0)

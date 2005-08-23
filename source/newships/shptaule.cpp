@@ -544,9 +544,9 @@ void LeviathanJammer::calculate()
 		//return;
 	}
 
-	if (!ship->exists())
+	if (!(ship && ship->exists()) )
 	{
-		state = 0;
+		die();
 	}
 
 	// perform this test here, cause there's a return later on...

@@ -206,8 +206,7 @@ void EarthlingCruiserMk3Shot::calculate()
 void EarthlingCruiserMk3Shot::animate(Frame *space)
 {
 	STACKTRACE;
-	if (exists())
-		sprite->animate(pos, sprite_index, space);
+	sprite->animate(pos, sprite_index, space);
 }
 
 void EarthlingCruiserMk3Shot::soundExplosion()

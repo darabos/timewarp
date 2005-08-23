@@ -201,7 +201,7 @@ void KzerZaFighter::inflict_damage(SpaceObject *other)
 	{
 		state = 0;
 		
-		if (other->isShip())
+		if (other->isShip() && other != ship)
 			damage(other, 1, 0);
 	}
 	else {

@@ -331,7 +331,7 @@ void ShpHotSpot::animate(Frame *frame)
 
 	data->spriteWeapon->animate(pos-Vlens, sprite_index, frame);
 
-	if ( weaponhs && weaponhs->exists() )
+	if ( weaponhs )
 		data->spriteWeapon->animate(pos-Vflame, sprite_index+64, frame);
 
 	// then, draw (animate?) the ship.
@@ -483,6 +483,9 @@ void TheHotSpot::calculate()
 		hidefromview = 1;
 	else
 		hidefromview = 0;
+
+	// call this for pointer cleanup.
+	SpaceObject::calculate();
 
 	// check which graphic to use:
 	//if ( normalhotspot )
