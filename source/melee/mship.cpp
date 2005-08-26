@@ -1206,7 +1206,8 @@ void Phaser::calculate()
 	}
 
 	// needed to keep track of important pointers... which need to be checked each game iteration
-	// to see if they are still valid or not...
+	// to see if they are still valid or not... hmm.. in principle at least. For now, DEATH_COUNTER
+	// is set to a high value so that objects aren't deleted while the ship is still phasing in.
 	if (ship)
 		ship->handle_phasing();
 

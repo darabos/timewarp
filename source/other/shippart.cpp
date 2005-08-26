@@ -294,7 +294,9 @@ SpaceObject(aownerpart, aownerpart->pos, aownerpart->angle, ospr)
 
 void BigShipPartDevice::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	SpaceObject::calculate();
 
 	if ( !(ownerpart && ownerpart->exists()) )
 	{
@@ -309,7 +311,6 @@ void BigShipPartDevice::calculate()
 	pos = ownerpart->pos;
 	vel = ownerpart->vel;
 
-	SpaceObject::calculate();
 }
 
 

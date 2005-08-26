@@ -11,6 +11,7 @@ public:
 	virtual void calculate(short *key);
 };
 
+#define ASTEROID_CENTER 0x03a8c9f5a
 
 
 /*
@@ -40,107 +41,161 @@ IDENTITY(AsteroidDebris);
   double multiple;
 public:
   AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce );
-  virtual void death(){SpaceObject::death();}
+  virtual ~AsteroidDebris();
+  virtual void death();
   virtual int canCollide(SpaceLocation *other);
   virtual void calculate();
 };
+
 AsteroidDebris::AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce)
 : Asteroid()
 {
-  creator=creator1;
-  translate(new_pos - pos);
-  frame_born=(int)(game->frame_number);
-  collide_flag=FALSE;
-  sprite_index = tw_random(64);
-  tractorForce=tforce;
+	creator=creator1;
+	translate(new_pos - pos);
+	frame_born=(int)(game->frame_number);
+	collide_flag=FALSE;
+	sprite_index = tw_random(sprite->frames());
+	tractorForce=tforce;
+	
+	if (mass > 0 && creator && tractorForce)
+		this->accelerate(creator, this->trajectory_angle(creator), tractorForce / (this->mass * 2), 6);
 
-  if (mass > 0)
-	this->accelerate(creator, this->trajectory_angle(creator), tractorForce / (this->mass * 2), 6);
 	attributes &= ~ATTRIB_STANDARD_INDEX;
+}
+
+AsteroidDebris::~AsteroidDebris()
+{
+	int i = 0;
+}
+
+void AsteroidDebris::death()
+{
+	SpaceObject::death();
 }
 
 void AsteroidDebris::calculate()
 {
-	STACKTRACE
-  step-= frame_time;
-  while(step <= 0) {
-    step += speed * time_ratio;
-    sprite_index++;
-    if(sprite_index == ASTEROID_FRAMES)
-      sprite_index = 0;
-  }
 
-  SpaceObject::calculate();
+	if (creator && !creator->exists())
+		creator = 0;
 
+	SpaceObject::calculate();
 
-  if(!collide_flag)
-    {
-      if (game->frame_number - frame_born >= 40)
-	{
-	  collide_flag=TRUE;
+	//xxx test
+	return;
+
+	STACKTRACE;
+	step-= frame_time;
+	while(step <= 0) {
+		step += speed * time_ratio;
+		sprite_index++;
+		if(sprite_index == sprite->frames())//ASTEROID_FRAMES)
+			sprite_index = 0;
 	}
+	
+	
+	
+	if(!collide_flag)
+    {
+		if (game->frame_number - frame_born >= 40)
+		{
+			collide_flag=TRUE;
+		}
     }
 }
+
 int AsteroidDebris::canCollide(SpaceLocation *other) 
 {
-	STACKTRACE
-  if (collide_flag)
+	//xxx test
+	return 0;
+
+	STACKTRACE;
+	if (collide_flag)
     { return SpaceObject::canCollide(other);
     }
-  else if(other != creator)
+	else if(other != creator)
     { return SpaceObject::canCollide(other);
     }
-  return false;
+	return false;
 }
 
 class AsteroidCenter : virtual public AsteroidDebris
 {
 public:
 IDENTITY(AsteroidCenter);
-  Ship *creator;
+  //Ship *creator; already defined in the asteroidcenter class?!
 public:
   AsteroidCenter(Ship *creator, Vector2 new_pos);
   virtual void calculate();
   virtual int canCollide(SpaceLocation *other);
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
-  virtual int isAsteroid();
+  //virtual bool isAsteroid();	//this is not a virtual routine...
+  virtual bool die();
 };
+
 
 AsteroidCenter::AsteroidCenter(Ship *creator1, Vector2 new_pos) 
 : AsteroidDebris(creator1, new_pos, 0)
 {
   layer = LAYER_SHOTS;
   collide_flag_anyone = ALL_LAYERS &~ bit(LAYER_CBODIES);
-  creator=creator1;
+//  creator=creator1;
+
+  // so that it is not recognized as an asteroid anymore...
+  id = ASTEROID_CENTER;
 }
+
+bool AsteroidCenter::die()
+{
+	// do nothing...
+	return false;
+}
+
 void AsteroidCenter::calculate()
 {
-	STACKTRACE
-  if (creator == NULL)
+
+	STACKTRACE;
+	AsteroidDebris::calculate();
+	
+	//xxx test
+	if (!creator)
+		state = 0;
+	return;
+
+	if (creator == NULL)
     {
-      this->~AsteroidCenter();
+		//this->~AsteroidCenter();	//highly illegal because it's also destroyed in a physics list!!
+		state = 0;
     }
-  else
+	else
     {
-      // translate(creator->normal_x() - normal_x(), creator->normal_y() - normal_y());
-	  pos = creator->normal_pos();
-      AsteroidDebris::calculate();
+		// translate(creator->normal_x() - normal_x(), creator->normal_y() - normal_y());
+		pos = creator->normal_pos();
     }
 }
+
 int AsteroidCenter::canCollide(SpaceLocation *other) 
 {
-	STACKTRACE
+	//xxx test
+	return 0;
+
+	STACKTRACE;
+	if (!other)
+		return 0;
+
   if (!other->damage_factor) return false;
   return SpaceObject::canCollide(other);
 }
+
 int AsteroidCenter::handle_damage(SpaceLocation *source, double normal, double direct) 
 {
 	return iround(normal + direct);
 }
-int AsteroidCenter::isAsteroid()
-{
-  return 0;
-}
+
+//bool AsteroidCenter::isAsteroid()
+//{
+//  return false;
+//}
 
 /*****************************************************************************/
 //tractorBeam class defs
@@ -172,54 +227,58 @@ Laser(creator1, langle, lcolor, lrange,
 
 void ChoraliTractorBeam::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
-  // SpaceObject::inflict_damage(other);
- if(other != NULL)
-  {
-    if ((other->mass > 0) && ( other->isShip() || other->isAsteroid() ))
-      {
-
-		other->accelerate(this, other->trajectory_angle(this), tractorForce / (other->mass * 4), 2);
-
-	if(other->isShip())
-	  {
-	    //twist the enemy
-	    if (other->trajectory_angle(this) <= other->get_angle() )
-	      {
-		if ((other->get_angle() - other->trajectory_angle(this)) <= PI)
-		  {((Ship*)other)->turn_step+=CH_TWIST_ANGLE;
-		  }
-		else
-		  {((Ship*)other)->turn_step-=CH_TWIST_ANGLE;
-		  }
-	      }
-	    else
-	      {
-		if ((other->trajectory_angle(this) - other->get_angle()) <= PI)
-		  {((Ship*)other)->turn_step-=CH_TWIST_ANGLE;
-		  }
-		else
-		  {((Ship*)other)->turn_step+=CH_TWIST_ANGLE;
-		  }	    
-	      }
-	  }
-
-      }
-    else if (other->isPlanet() && random(100) <= 20)
-      { //if it's a planet, make some non-regenerating asteroids
-	Vector2 dd = creator->normal_pos() - ( (SpaceLocation *)(creator->nearest_planet()) )->normal_pos();
-
-	dd /= 2;
-	add( new AsteroidDebris((Ship *)creator, creator->normal_pos() - dd, tractorForce) );
-      }
-    else if (other->isShot()) 
-      {//if It's a weapon Shot
-		if (other->mass > 0)
-		other->accelerate(this, (other->trajectory_angle(this) + PI), (tractorPushForce / ((other->mass * 3)+20)), MAX_SPEED);
-	
-      }   
-    state = 0;
-  }
+	STACKTRACE;
+	// SpaceObject::inflict_damage(other);
+	if(other != NULL)
+	{
+		if ((other->mass > 0) && ( other->isShip() || other->isAsteroid() ))
+		{
+			
+			other->accelerate(this, other->trajectory_angle(this), tractorForce / (other->mass * 4), 2);
+			
+			if(other->isShip())
+			{
+				//twist the enemy
+				if (other->trajectory_angle(this) <= other->get_angle() )
+				{
+					if ((other->get_angle() - other->trajectory_angle(this)) <= PI)
+					{
+						((Ship*)other)->turn_step+=CH_TWIST_ANGLE;
+					}
+					else
+					{
+						((Ship*)other)->turn_step-=CH_TWIST_ANGLE;
+					}
+				}
+				else
+				{
+					if ((other->trajectory_angle(this) - other->get_angle()) <= PI)
+					{
+						((Ship*)other)->turn_step-=CH_TWIST_ANGLE;
+					}
+					else
+					{
+						((Ship*)other)->turn_step+=CH_TWIST_ANGLE;
+					}	    
+				}
+			}
+			
+		}
+		else if (other->isPlanet() && random(100) <= 20)
+		{ //if it's a planet, make some non-regenerating asteroids
+			Vector2 dd = creator->normal_pos() - ( (creator->nearest_planet()) )->normal_pos();
+			
+			dd /= 2;
+			add( new AsteroidDebris((Ship *)creator, creator->normal_pos() - dd, tractorForce) );
+		}
+		else if (other->isShot()) 
+		{//if It's a weapon Shot
+			if (other->mass > 0)
+				other->accelerate(this, (other->trajectory_angle(this) + PI), (tractorPushForce / ((other->mass * 3)+20)), MAX_SPEED);
+			
+		}   
+		state = 0;
+	}
 }
 /*****************************************************************************/
 
@@ -461,6 +520,7 @@ ChoraliExtractor::ChoraliExtractor(Vector2 opos, double shipAngle,
   grabbed         = NULL;
   spacePlanet     = NULL;
 
+  asteroid_center = 0;
 
 }
 
@@ -471,13 +531,21 @@ void ChoraliExtractor::death()
 
   // dangerous, this is a memory leak:
   //game->remove(asteroid_center);
-	asteroid_center->state = 0;
+	if (asteroid_center && asteroid_center->exists())
+		asteroid_center->die();
 }
 void ChoraliExtractor::materialize()
 {
-	STACKTRACE
+	STACKTRACE;
 	Ship::materialize();
-	add(asteroid_center = new AsteroidCenter(this, this->normal_pos()));
+
+	
+	if (asteroid_center)
+	{
+		tw_error("asteroid center already present.");
+	}
+	asteroid_center = new AsteroidCenter(this, this->normal_pos());
+	add(asteroid_center);
 }
 
 void ChoraliExtractor::calculate_turn_left()
@@ -494,39 +562,47 @@ void ChoraliExtractor::calculate_turn_right()
 
 int ChoraliExtractor::activate_weapon()
 {
-	STACKTRACE
-  if (drillFrames > 0)
-    {
-      count=0;      
-      if( grabbed != NULL && !(grabbed->isAsteroid()) )
-	{
-	  drillFrames=0;
-	  return(TRUE);
-	}
-      else if(grabbed == NULL)
-	{
-	  drillFrames=0;	  
-	  return(TRUE);
-	}
-      else
-	{
-	  grabbed->die();
-       	  add(new AsteroidMissile(0.0, (size.y * 1.0), angle, AsteroidMissileVelocity, AsteroidMissileDamage, AsteroidMissileRange, AsteroidMissileArmour, AsteroidMissileTurnRate, this, meleedata.asteroidSprite, 1,
-                 tractorR, tractorRmin, tractorG, tractorGmin, tractorB, tractorBmin ));
-	  return(TRUE);
-     	}
-    }
-  else
-    {
-      drillFrames = weaponFrames;
-      return(TRUE);
-    }
+	STACKTRACE;
+	//xxx test
+	return FALSE;
 
+	if (drillFrames > 0)
+    {
+		count=0;
+		
+		if (grabbed == NULL)
+		{
+			drillFrames=0;	  
+			return(TRUE);
+		}
+		else if( !(grabbed->isAsteroid()) )
+		{
+			drillFrames=0;
+			return(TRUE);
+		}
+		else
+		{
+			grabbed->die();
+			add(new AsteroidMissile(0.0, (size.y * 1.0), angle, AsteroidMissileVelocity,
+				AsteroidMissileDamage, AsteroidMissileRange, AsteroidMissileArmour,
+				AsteroidMissileTurnRate, this, meleedata.asteroidSprite, 1,
+				tractorR, tractorRmin, tractorG, tractorGmin, tractorB, tractorBmin ));
+			return(TRUE);
+		}
+    }
+	else
+    {
+		drillFrames = weaponFrames;
+		return(TRUE);
+    }
+	
 }
 
 int ChoraliExtractor::activate_special()
 {
 	STACKTRACE;
+	//xxx test
+	return FALSE;
 	
 	if(this->nearest_planet() != NULL)
     {
@@ -569,6 +645,10 @@ int ChoraliExtractor::activate_special()
 
 void ChoraliExtractor::calculate()
 {
+	//xxx test
+	Ship::calculate();
+	return;
+
 	STACKTRACE;
 	if(drillFrames > 0) 
 	{
@@ -612,7 +692,7 @@ void ChoraliExtractor::calculate()
 		if (!(grabbed->exists()) || grabbed->damage_factor > 0)
 		{
 			// if it does not exist, or the target deals damage, then, release it again.
-			// This is because of the following report:
+			// The latter is because of the following report:
 			// "When a Chorhli grabs a guardian, it still hangs on if it goes into blazer form,
 			// killing it almost instantly. A bit unfair, no. "
 			
@@ -678,6 +758,12 @@ void ChoraliExtractor::calculate()
 		grabbed->vel = this->vel;
 	}
 	old_angle = angle;
+
+	if (asteroid_center && !asteroid_center->exists())
+	{
+		asteroid_center = 0;
+	}
+
 	Ship::calculate();
 }
 
@@ -701,6 +787,9 @@ void ChoraliExtractor::animate(Frame *space)
 
 void ChoraliExtractor::inflict_damage(SpaceObject *other)
 {
+	//xxx test
+	return;
+
 	STACKTRACE;
 	if (drillFrames > 0)
     {
