@@ -135,41 +135,54 @@ int JyglarStarfarer::activate_weapon(){
   return TRUE;
 }
 
-int JyglarStarfarer::activate_special(){
-	STACKTRACE
-  if( numBubbles >= maxBubbles ) return FALSE;
-  bubbles[numBubbles] = new JyglarBubble( this, size.x / 5 + random(size.x / 3),
-    random(PI2), data->spriteWeapon, specialMass);
-  game->add( bubbles[numBubbles] );
-  numBubbles++;
-  return TRUE;
+int JyglarStarfarer::activate_special()
+{
+	STACKTRACE;
+	if( numBubbles >= maxBubbles )
+		return FALSE;
+	
+	bubbles[numBubbles] = new JyglarBubble( this, size.x / 5 + random(size.x / 3),
+		random(PI2), data->spriteWeapon, specialMass);
+	game->add( bubbles[numBubbles] );
+	numBubbles++;
+	return TRUE;
 }
 
-void JyglarStarfarer::calculate(){
-	STACKTRACE
-  int j = 0;
-  for( int i = 0; i < numBubbles; i++ ){
-    bubbles[i - j] = bubbles[i];
-    if( !bubbles[i]->exists() ) j++;
-  }
-  numBubbles -= j;
+void JyglarStarfarer::calculate()
+{
+	STACKTRACE;
 
-  Ship::calculate();
+	int j = 0;
+	for( int i = 0; i < numBubbles; i++ )
+	{
+		bubbles[i - j] = bubbles[i];
+		if( !bubbles[i]->exists() )
+			j++;
+	}
+	numBubbles -= j;
+	
+	Ship::calculate();
 }
 
-void JyglarStarfarer::calculate_hotspots(){
-	STACKTRACE
-  if( thrust && hotspot_frame <= 0 ){
-    game->add( new Animation( this, 
-		normal_pos() - unit_vector(angle) * size.y / 4,
-      data->spriteExtra, 0, 12, time_ratio, LAYER_HOTSPOTS));
-      hotspot_frame += hotspot_rate;
-  }
-  if( hotspot_frame > 0 ) hotspot_frame -= frame_time;
+void JyglarStarfarer::calculate_hotspots()
+{
+	STACKTRACE;
+
+	if( thrust && hotspot_frame <= 0 )
+	{
+		game->add( new Animation( this, 
+			normal_pos() - unit_vector(angle) * size.y / 4,
+			data->spriteExtra, 0, data->spriteExtra->frames(), time_ratio, LAYER_HOTSPOTS));
+		hotspot_frame += hotspot_rate;
+	}
+
+	if( hotspot_frame > 0 )
+		hotspot_frame -= frame_time;
 }
 
-JyglarStarfarer::~JyglarStarfarer(){
-  delete bubbles;
+JyglarStarfarer::~JyglarStarfarer()
+{
+	delete[] bubbles;
 }
 
 JyglarShot::JyglarShot( SpaceLocation *creator, Vector2 rpos,
@@ -191,7 +204,7 @@ void JyglarShot::inflict_damage( SpaceObject* other ){
 
 JyglarShot::~JyglarShot(){
 	STACKTRACE
-  if( beacon ) delete beacon;
+  if( beacon ) delete_location(beacon);
 }
 
 JyglarStrayShot::JyglarStrayShot( SpaceLocation *creator, Vector2 rpos,

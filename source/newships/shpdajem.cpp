@@ -443,7 +443,13 @@ DajielkaSanctuary::~DajielkaSanctuary(void) {
 }
 
 void DajielkaSanctuary::calculate(void) {
-	STACKTRACE
+	STACKTRACE;
+
+	if (creator && !creator->exists())
+	{
+		creator = 0;
+	}
+
   int i,j;
   int oldSpriteIndex;
   int regenMultiplier;
@@ -473,7 +479,7 @@ void DajielkaSanctuary::calculate(void) {
     sprite_index = (int)((((double)armour / (double)maxArmour) * 10)+0.2);
     if(sprite_index<0) sprite_index=0;
     if(sprite_index>9) sprite_index=9;
-    if(oldSpriteIndex!=sprite_index&&oldSpriteIndex<sprite_index)
+    if(creator && oldSpriteIndex!=sprite_index&&oldSpriteIndex<sprite_index)
       creator->play_sound2(creator->data->sampleSpecial[creator->special_sample]);
 
 }
@@ -503,20 +509,32 @@ void DajielkaSanctuary::addEnergy(int energy) {
   int i, j;
   int damageBefore, damageAfter;
   for(j=1;j<10 && energy>0;j++)
-    for(i=0;i<30 && energy>0;i++) {
-      damageBefore = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
+  {
+    for(i=0;i<30 && energy>0;i++)
+	{
+		if (tendril[i]->energyLevelPerDamagePoint)
+			damageBefore = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
+		else
+			damageBefore = 0;
+
       if(tendril[i]!=NULL && tendril[i]->state !=0)
         if(tendril[i]->energyLevelPerDamagePoint * j > tendril[i]->energyLevel
           && tendril[i]->energyLevel < tendril[i]->energyLevelMax) {
           tendril[i]->energyLevel += energy;
           energy = 0;
         }
-      damageAfter = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
+
+		if (tendril[i]->energyLevelPerDamagePoint)
+			damageAfter = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
+		else
+			damageAfter = 0;
+
       if(damageBefore!=damageAfter && tendril[i]->get_length()==0) {
         //tendril[i]=this->RecreateTendril(tendril[i]);
         tendril[i]->isActive = TRUE;
       }
     }
+  }
 }
 
 DajielkaTendril* DajielkaSanctuary::RecreateTendril(DajielkaTendril* DT) {
@@ -568,7 +586,7 @@ DajielkaTendril::DajielkaTendril(DajielkaSanctuary* osanctuary, int odamage, int
 }
 
 void DajielkaTendril::calculate(void) {
-	STACKTRACE
+	STACKTRACE;
   if(energyLevel<energyLevelPerDamagePoint) {
     isActive = FALSE;
     length = 0;
@@ -588,7 +606,15 @@ void DajielkaTendril::calculate(void) {
   angle = angle + frame_time / 1000.0 * rotation;
   while(angle<0) angle+=PI2;
   while(angle>PI2) angle-=PI2;
+
+  if (creator && !creator->exists())
+  {
+	  creator = 0;
+	  state = 0;
+  }
+  
   SpaceLine::calculate();
+
   color=palette_color[(int)(energyLevel/energyLevelPerDamagePoint)+7];
   if(creator!=NULL)
     if(isActive)

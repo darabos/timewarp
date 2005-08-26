@@ -854,7 +854,10 @@ void LaserArc::update_lasersegs()
 
 void LaserArc::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+	
+	SpaceLocation::calculate();
+
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;

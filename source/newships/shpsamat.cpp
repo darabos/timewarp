@@ -621,7 +621,7 @@ SpaceObject(ocreator, opos, oangle, osprite)
 
 SaMatraFlame::~SaMatraFlame()
 {
-	delete trailPos;
+	delete[] trailPos;
 }
 
 

@@ -299,14 +299,6 @@ void KaboMine::inflict_damage(SpaceObject *other)
 		// it's the first time a haze is applied to this ship ...
 		haze = new KaboHaze( this, (Ship*) other, Haze_basepower);
 
-		// update the list (insert at the start)
-		KaboHaze *hazenext = KaboHazeFirst;
-		if (hazenext)
-			hazenext->prev = haze;
-		haze->next = hazenext;
-		haze->prev = 0;
-		KaboHazeFirst = haze;
-
 		game->add(haze);
 	}
 
@@ -551,6 +543,17 @@ KaboHaze::KaboHaze(SpaceLocation *creator, Ship *ohost, double obasepower)
 :
 SpaceLocation(creator, Vector2(0.0, 0.0), 0.0)
 {
+	prev = 0;
+	next = 0;
+
+	// update the list (insert at the start)
+	if (KaboHazeFirst)
+		KaboHazeFirst->prev = this;
+	next = KaboHazeFirst;
+	prev = 0;
+	KaboHazeFirst = this;
+
+
 	//mother = omother;
 	host = ohost;
 	basepower = obasepower;

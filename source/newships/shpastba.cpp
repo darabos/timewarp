@@ -1276,8 +1276,8 @@ void BasiliskAreaHurt::animate(Frame *space)
 BasiliskAreaHurt::~BasiliskAreaHurt()
 {
 	if (num > 0) {
-		delete xp;
-		delete xv; }
+		delete[] xp;
+		delete[] xv; }
 }
 
 // ***************************************************************************

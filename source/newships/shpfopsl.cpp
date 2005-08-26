@@ -58,7 +58,7 @@ Ship(opos, shipAngle, shipData, code)
 
 FopVob::~FopVob()
 {
-	delete T0;
+	delete[] T0;
 }
 
 int FopVob::activate_weapon()

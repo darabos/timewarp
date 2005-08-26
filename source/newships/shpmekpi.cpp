@@ -115,8 +115,8 @@ Ship(opos,  shipAngle, shipData, code)
 
 MeknikPincer::~MeknikPincer()
 {
-	delete saw;
-	delete sawrefangle;
+	delete[] saw;
+	delete[] sawrefangle;
 }
 
 

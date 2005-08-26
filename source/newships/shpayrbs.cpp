@@ -211,14 +211,14 @@ BigShip(opos, shipAngle, shipData, code | SpaceSprite::NO_AA)
 		}
 	}
 
-	delete itype;
-	delete iweapon;
-	delete anglecenter;
-	delete moveangle;
+	delete[] itype;
+	delete[] iweapon;
+	delete[] anglecenter;
+	delete[] moveangle;
 
 	for ( i = 0; i < nBSinfo; ++i )
 		delete BSinfo[i];
-	delete BSinfo;
+	delete[] BSinfo;
 
 
 	weaponColor  = get_config_int("Weapon", "Color", 0);
@@ -463,7 +463,7 @@ BigShipPartDevice(aowner, spr)
 
 void AutoGun::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
 	BigShipPartDevice::calculate();
 
 	if (!(ownerpart && !ownerpart->isdisabled()))

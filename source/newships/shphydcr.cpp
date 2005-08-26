@@ -159,6 +159,8 @@ public:
 	void UTurn(int m, int r); //only used ONCE - no need for a separate  function
   void RetreatFrom(SpaceLocation* L, int r, int m);
 
+  virtual void death();
+
 };
 
 HydrovarCruiser::HydrovarCruiser(Vector2 opos, double angle, ShipData *data, unsigned int code) :
@@ -569,7 +571,21 @@ void HydrovarEsFighter::searchForTarget(void)
 
 HydrovarEsFighter::~HydrovarEsFighter()
 {
-	STACKTRACE
+	STACKTRACE;
+	/* this is rather illegal here !! --> move to the death() function [geo]
+	if(creator)
+	{
+		if(creator->exists())
+		{
+			*pointerToMe=NULL;
+			creator->fightersOut--;
+		}
+	}
+	*/
+}
+
+void HydrovarEsFighter::death()
+{
 	if(creator)
 	{
 		if(creator->exists())

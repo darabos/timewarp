@@ -157,7 +157,9 @@ void JnkdwoLazelCrystal::calculate()
 {
 	STACKTRACE;
 	
-	if (state == 0) return;
+	if (state == 0) return;	//shouldn't happen
+
+	SpaceLocation::calculate();
 
 	if (!(ship && ship->exists())) {
 		ship = 0;

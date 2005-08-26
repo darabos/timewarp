@@ -249,7 +249,7 @@ void TauMercury::calculate_hotspots()
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation( this, 
 				normal_pos() - unit_vector(angle) * 14,
-				meleedata.hotspotSprite, 0, HOTSPOT_FRAMES, time_ratio, DEPTH_HOTSPOTS));
+				meleedata.hotspotSprite, 0, meleedata.hotspotSprite->frames(), time_ratio, DEPTH_HOTSPOTS));
 		hotspot_frame += hotspot_rate; }
 	if (hotspot_frame > 0) hotspot_frame -= frame_time;
 	return;

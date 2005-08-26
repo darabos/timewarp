@@ -83,7 +83,7 @@ int ToUl::activate_special()
 	STACKTRACE
 
 	double L;
-	L = specialRange * (0.1 + 0.9 * sin(PI2 * lasertime / laserperiod));
+	L = fabs( specialRange * (0.1 + 0.9 * sin(PI2 * lasertime / laserperiod)) );
 
 	add(new Laser(this, angle + PI/2,
 		pallete_color[specialColor], L, specialDamage, special_rate,

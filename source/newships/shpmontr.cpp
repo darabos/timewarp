@@ -307,17 +307,17 @@ void MonoMissile::calculate() {
 
   if( distance( from_beacon ) > distance( to_beacon )){
     play_sound2( data->sampleWeapon[1] );
-    if( from_beacon ) delete from_beacon;
+    if( from_beacon ) delete_location(from_beacon);
     from_beacon = new SpaceLocation( this, pos, 0.0 );
     double tangle = trajectory_angle( target );
     int itangle = (int)((tangle + PI/4) / (PI/2)) % 4;
     changeDirection( (PI/2) * itangle );
     sprite_index = itangle;
     if( itangle % 2 == 0 ){
-      if( to_beacon ) delete to_beacon;
+      if( to_beacon ) delete_location(to_beacon);
       to_beacon = new SpaceLocation( this, Vector2(2*target->normal_pos().x-pos.x, pos.y), 0.0 );
     }else if( itangle % 2 == 1 ){
-      if( to_beacon ) delete to_beacon;
+      if( to_beacon ) delete_location(to_beacon);
       to_beacon = new SpaceLocation( this, Vector2(pos.x, 2*target->normal_pos().y-pos.y), 0.0 );
     }
   }
@@ -334,21 +334,21 @@ void MonoMissile::set_up_beacons(){
     target = NULL;
   }else{
     int iangle = (int)((angle + PI/4) / (PI/2)) % 4;
-    if( from_beacon ) delete from_beacon;
+    if( from_beacon ) delete_location(from_beacon);
     from_beacon = new SpaceLocation( this, pos, 0.0 );
     if( iangle % 2 == 0 ){
-      if( to_beacon ) delete to_beacon;
+      if( to_beacon ) delete_location(to_beacon);
       to_beacon = new SpaceLocation( this, Vector2(2*target->normal_pos().x-pos.x, pos.y), 0.0 );
     }else if( iangle % 2 == 1 ){
-      if( to_beacon ) delete to_beacon;
+      if( to_beacon ) delete_location(to_beacon);
       to_beacon = new SpaceLocation( this, Vector2(pos.x, 2*target->normal_pos().y-pos.y), 0.0 );
     }
   }
 }
 
 MonoMissile::~MonoMissile(){
-  if( from_beacon ) delete from_beacon;
-  if( to_beacon ) delete to_beacon;
+  if( from_beacon ) delete_location(from_beacon);
+  if( to_beacon ) delete_location(to_beacon);
 }
 
 MonoLaser::MonoLaser( SpaceLocation* source, MonoLaser* olaser, int odamage )

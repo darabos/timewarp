@@ -150,7 +150,7 @@ ExquivanBarrier::ExquivanBarrier(Vector2 opos, double oangle,
 void ExquivanBarrier::calculate()
 {
   Missile::calculate();
-  SpaceLocation *R;
+  SpaceLocation *R = 0;
   double final_angle = 0;
 
   if (!(ship && ship->exists()))
@@ -244,7 +244,9 @@ void ExquivanBarrier::calculate()
       vel = 0;
     }
     sprite_index = get_index(angle);
-    delete R;
+
+	if (R)
+		delete R;
 }
 
 

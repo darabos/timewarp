@@ -167,7 +167,7 @@ VezlagariMissile::VezlagariMissile(VezlagariBarge* ocreator, Vector2 opos, doubl
 	}
 
 VezlagariMissile::~VezlagariMissile(void) {
-  if(Course!=NULL) delete(Course);
+  if(Course!=NULL) delete_location(Course);	// wasn't added to physics.
 }
 
 

@@ -488,7 +488,7 @@ void SlylandroLaserNew::animate(Frame *frame)
 {
 	int i, iline;
 	
-	if ( !(mother && mother->exists()) )
+	if ( !mother )
 		return;
 	
 	for ( iline = 0; iline < MAXlines; ++iline )

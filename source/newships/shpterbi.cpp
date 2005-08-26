@@ -1401,7 +1401,7 @@ int TeronBuildPlatform::handle_damage(SpaceLocation *source, double normal, doub
       state = 0;
 
 	  new_ship->control->die();			// the control of the ship was already added to physics
-      delete new_ship;					// fine, this wasn't added to physics yet.
+      delete_location(new_ship);					// fine, this wasn't added to physics yet.
 
       new_ship = NULL;
     }
@@ -1428,7 +1428,7 @@ void TeronBuildPlatform::death(){
     sprite_index = index_zero;
 
 	new_ship->control->die();	// the control of the ship was already added to physics
-    delete new_ship;			// fine, this wasn't added to physics yet.
+    delete_location(new_ship);			// fine, this wasn't added to physics yet.
     
 	new_ship = NULL;
   }

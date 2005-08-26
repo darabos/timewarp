@@ -39,7 +39,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 	if (crew > 0) return r;
 
 	play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
-	game->add(new Animation(this, pos,	meleedata.kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
+	game->add(new Animation(this, pos,	meleedata.kaboomSprite, 0, meleedata.kaboomSprite->frames(), time_ratio, DEPTH_EXPLOSIONS));
 
 
 	

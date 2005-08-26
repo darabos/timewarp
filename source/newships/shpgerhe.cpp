@@ -339,7 +339,7 @@ void GerlVirtualship::calculate()
 int GerlVirtualship::activate_weapon()
 {
 	STACKTRACE
-	if ( hero->attached )
+	if ( hero && hero->attached )
 	{
 		hero->activateyourweapon = 1;		// issue order to the hero that he activates his weapon.
 		batt += weapon_drain;	// prevent fuel drain
@@ -350,9 +350,12 @@ int GerlVirtualship::activate_weapon()
 
 int GerlVirtualship::activate_special()
 {
-	STACKTRACE
-	hero->activateyourspecial = 1;
-	batt += special_drain;	// prevent fuel drain
+	STACKTRACE;
+	if (hero)
+	{
+		hero->activateyourspecial = 1;
+		batt += special_drain;	// prevent fuel drain
+	}
 
 	return true;
 }
@@ -947,6 +950,8 @@ void GerlMorons::calculate()
 
 		if ( a > 1.0 )
 			a = 0.999;
+		if (a < 0)
+			a = 0;
 
 		vel *= a;
 	}
