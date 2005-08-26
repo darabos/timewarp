@@ -63,6 +63,11 @@ void Animation::calculate() {
 		if (!frame_count)
 			state = 0;
 	}
+
+	if (sprite_index < 0 || sprite_index >= sprite->frames())
+	{
+		tw_error("Animation: sprite index overflow.");
+	}
 	
 	SpaceObject::calculate();
 }

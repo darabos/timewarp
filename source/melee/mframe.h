@@ -17,6 +17,15 @@ extern DATAFILE *melee;
 
 typedef unsigned int TeamCode;
 
+class Presence;
+
+void delete_location(void *tmp);
+void check_physics_correctness();
+void check_physics_correctness_item(int i);
+void check_physics_presence(Presence *p);
+
+
+
 //#define DEATH_FRAMES 4
 //setting this too low will cause crashes
 //setting it too high will waste CPU power and RAM
@@ -412,6 +421,7 @@ class SpaceLine : public SpaceLocation {
 	virtual void animate(Frame *space);
 	virtual void collide(SpaceObject *o);
 	virtual void inflict_damage(SpaceObject *other);
+	virtual void calculate();
 
 	double collide_testdistance(SpaceObject *o);
 };

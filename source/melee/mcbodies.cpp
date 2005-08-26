@@ -31,7 +31,7 @@ Asteroid::Asteroid()
 
 	armour = 0.99;//*tau*
 
-	sprite_index = random(sprite->frames());
+	sprite_index = tw_random(sprite->frames());
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 

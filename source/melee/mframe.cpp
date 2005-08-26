@@ -56,6 +56,60 @@ Vector2 map_size;
 double MAX_SPEED = 0;
 
 
+// for debugging purpose...
+void check_physics_correctness_item(int i)
+{
+	if (physics)
+	{
+		SpaceLocation *l = physics->item[i];
+		bool e = l->exists();
+		if (e)
+		{
+			if ( (l->attributes & ATTRIB_INGAME) == 0)
+			{
+				tw_error("a object that is not ingame? impossible.");
+			}
+		}
+
+		if (fabs(l->pos.x) > 1E6 || fabs(l->pos.y) > 1E6 || fabs(l->vel.x) > 1E6 || fabs(l->vel.x) > 1E6)
+		{
+			tw_error("error in item [%i] [%s]", i, l->get_identity());
+		}
+	}
+}
+
+void check_physics_correctness()
+{
+	int i;
+	for ( i = 0; i < physics->num_items; ++i )
+	{
+		check_physics_correctness_item(i);
+	}
+}
+
+void check_physics_presence(Presence *p)
+{
+	if (!physics)
+		return;
+
+	int i;
+	for ( i = 0; i < physics->num_items; ++i )
+	{
+		if (physics->item[i] == p)
+		{
+			tw_error("Physics location deleted, but is still in the list.");
+		}
+	}
+	for ( i = 0; i < physics->num_presences; ++i )
+	{
+		if (physics->presence[i] == p)
+		{
+			tw_error("Physics presence deleted, but is still in the list.");
+		}
+	}
+}
+
+
 void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange) {STACKTRACE
 
 	bool old_physics_allows = physics_allowed;
@@ -353,9 +407,19 @@ bool Presence::die() {STACKTRACE
 	state = 0;
 	return true;
 	}
-Presence::~Presence() {STACKTRACE
+Presence::~Presence()
+{
+	STACKTRACE;
+
 	total_presences -= 1;
-	}
+
+#ifdef _DEBUG
+	// for debugging purpose: in case an object is deleted, and the physics list refers to
+	// the "left-over" data that still remain in memory (for a while).
+	attributes &= ~ATTRIB_INGAME;
+	check_physics_presence(this);
+#endif
+}
 
 bool Presence::isLocation() const {
 	return ((attributes & ATTRIB_LOCATION) != 0);
@@ -927,13 +991,25 @@ double SpaceObject::collide_ray(Vector2 lp1, Vector2 lp2, double llength)
 	int collide_y = (int)(lp2.y);
 	Vector2 d;
 
+	double old_length = llength;
+	double magn = 0;
+
 	if (sprite->collide_ray(
 			(int)(lp1.x), (int)(lp1.y), &collide_x, &collide_y,
 			(int)(lp1.x - min_delta(lp1.x, pos.x, map_size.x)),
 			(int)(lp1.y - min_delta(lp1.y, pos.y, map_size.y)), 
 			sprite_index)) {
 		d = lp2 - Vector2(collide_x, collide_y);
-		llength = llength - magnitude(d);
+
+		magn = magnitude(d);
+		llength = llength - magn;
+	}
+
+	if (llength < -2)
+	{
+		tw_error("negative length!");
+	} else {
+		llength = 0;
 	}
 
 	return(llength);
@@ -978,13 +1054,13 @@ void SpaceObject::destroy_external_ai()
 }
 */
 
-SpaceLine::SpaceLine(SpaceLocation *creator, Vector2 lpos, double langle, 
-	double llength, int lcolor) 
-	:
-	SpaceLocation(creator, lpos, langle),
-	length(llength),
-	color(lcolor)
-	{STACKTRACE
+SpaceLine::SpaceLine(SpaceLocation *creator, Vector2 lpos, double langle, double llength, int lcolor) 
+:
+SpaceLocation(creator, lpos, langle),
+length(llength),
+color(lcolor)
+{
+	STACKTRACE;
 	id = SPACE_LINE;
 	attributes |= ATTRIB_LINE;// | ATTRIB_COLLIDE_STATIC;
 	layer = LAYER_LINES;
@@ -992,7 +1068,23 @@ SpaceLine::SpaceLine(SpaceLocation *creator, Vector2 lpos, double langle,
 	collide_flag_anyone   &= OBJECT_LAYERS;
 	collide_flag_sameteam &= OBJECT_LAYERS;
 	collide_flag_sameship &= OBJECT_LAYERS;
+
+	if (length < 0)
+	{
+		tw_error("error in length !");
 	}
+
+}
+
+void SpaceLine::calculate()
+{
+	SpaceLocation::calculate();
+
+	if (length < 0)
+	{
+		tw_error("error in length !");
+	}
+}
 
 double SpaceLine::edge_x() const
 {
@@ -1011,12 +1103,22 @@ Vector2 SpaceLine::edge() const
 
 double SpaceLine::get_length() const
 {
+	if (length < 0)
+	{
+		tw_error("error in length !");
+	}
+
   return(length);
 }
 
 void SpaceLine::set_length(double d)
 {
 	length = d;
+
+	if (length < 0)
+	{
+		tw_error("error in length !");
+	}
 }
 
 void SpaceLine::inflict_damage(SpaceObject *other) {STACKTRACE
@@ -1067,7 +1169,7 @@ void SpaceLine::collide(SpaceObject *o)
 
 	length = o->collide_ray(normal_pos(), normal_pos() + edge(), length);
 	*/
-	length = collide_testdistance(o);
+	set_length(collide_testdistance(o));
 	if (length != old_length)
 		inflict_damage(o);
 	return;
@@ -1174,6 +1276,11 @@ void Physics::add(SpaceLocation *o) {
 	item[num_items] = o;
 	num_items += 1;
 
+	if (num_items > max_items)
+	{
+		tw_error("physics array overflow, should not happen.");
+	}
+
 	if (o->detectable())
 	{
 		Vector2 n = o->normal_pos();
@@ -1189,6 +1296,9 @@ void Physics::add(SpaceLocation *o) {
 
 bool Physics::remove(SpaceLocation *o) {
 	STACKTRACE;
+	
+	tw_error("Better leave *remove* to normal physics...");
+
 	int i;
 	if (!(o->attributes & ATTRIB_INGAME)) {tw_error("removeItem - not added");}
 	o->attributes &= ~ATTRIB_INGAME;
@@ -1240,6 +1350,29 @@ bool Physics::remove(Presence *o) {
 
 extern void test_pointers();
 
+void delete_location(void *tmp)
+{
+	if (!physics)
+		return;
+
+	int i;
+	for (i = 0; i < physics->num_items; i += 1)
+	{
+		// check if this object still exists in the physics list... if it does, you're going to create a problem!
+		if (physics->item[i] == tmp)
+		{
+			tw_error("Problem, trying to delete an item that is still in the physics (locations) list");
+		}
+	}
+
+	// otherwise, it's ok to remove it.
+	delete tmp;
+}
+
+static const int max_physics_pointer_test = 1024;
+static int num_physics_pointer_test = 0;
+static SpaceLocation *physics_pointer_test[max_physics_pointer_test];
+
 void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 	int i;
 
@@ -1254,20 +1387,29 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 
 	debug_value = num_items + num_presences;
 
-	//test_pointers();
+	test_pointers();
+	check_physics_correctness();
 
 checksync();
 {_STACKTRACE("Physics::calculate() - item movement")
 	//move objects
-	for (i = 0; i < num_items; i += 1) {
-		if (!item[i]->exists()) continue;
+	for (i = 0; i < num_items; i += 1)
+	{
+		if (!item[i]->exists())
+			continue;
+
 		//if (i == 1 && game_time == 100) tw_error("debug me!");
+		if (fabs(item[i]->vel.x) > 1E6 || fabs(item[i]->vel.y) > 1E6)
+		{
+			tw_error("velocity error in %s", item[i]->get_identity());
+		}
 		item[i]->pos = normalize(item[i]->pos + item[i]->vel * frame_time, map_size);
 		}
 }
 checksync();
 
 	test_pointers();
+	check_physics_correctness();
 
 {_STACKTRACE("Physics::calculate() - presence calculation")
 	//call Presence calculate functions
@@ -1277,7 +1419,8 @@ checksync();
 checksync();
 		}
 }
-	//test_pointers();
+	test_pointers();
+	check_physics_correctness();
 
 	//call objects calculate functions
 {_STACKTRACE("Physics::calculate() - item calculation")
@@ -1300,11 +1443,11 @@ checksync();
 			{
 				tw_error("Pointer error, overwritten data ??");
 			}
-			if (item[i]->target && (item[i]->target->state < -1))	// if it's dead for too long...
+			if (item[i]->target && (item[i]->target->state < -2))	// if it's dead for too long...
 			{
 				tw_error("Target pointer isn't cleaned up in [%s]", item[i]->get_identity());
 			}
-			if (item[i]->ship && item[i]->ship->state < -1)
+			if (item[i]->ship && item[i]->ship->state < -2)
 			{
 				tw_error("Ship pointer isn't cleaned up in [%s]", item[i]->get_identity());
 			}
@@ -1314,7 +1457,8 @@ checksync();
 checksync();
 		}
 }
-	//test_pointers();
+	test_pointers();
+	check_physics_correctness();
 
 	//prepare quadrants stuff
 {_STACKTRACE("Physics::calculate() - quadrants stuff")
@@ -1339,7 +1483,8 @@ checksync();
 {_STACKTRACE("Physics::calculate() - collisions")
 	collide();
 }
-	//test_pointers();
+	test_pointers();
+	check_physics_correctness();
 
 checksync();
 
@@ -1364,9 +1509,20 @@ checksync();
 		}
 	}
 }
-	//test_pointers();
+	test_pointers();
+	check_physics_correctness();
 
 checksync();
+
+	// checking for mem-overwrite
+	for(i = 0; i < num_physics_pointer_test; i ++)
+	{
+		if (physics_pointer_test[i] != item[i])
+		{
+			tw_error("Physics memory array has been changed !!");
+		}
+	}
+	// end of test
 
 	//remove objects that have been dead long enough
 {_STACKTRACE("Physics::calculate() - item destruction")
@@ -1380,9 +1536,23 @@ checksync();
 				memmove(&item[i], &item[i+1], (num_items-i) * sizeof(SpaceLocation*));
 			
 			i -= 1;
-			delete tmp;
+			const char *name = tmp->get_identity();
+			if (strcmp(name, "AsteroidCenter") == 0)
+			{
+				int k = 0;
+			}
+			delete_location(tmp);
+			//xxx despite that TEST, it's still going wrong here !! So, something gets deleted outside of this physics, after being added to the physics... nasty!.
+			// it's the CHORALI EXTRACTOR !!!! But, why ????
 		}
 	}
+
+	// copying info for mem-overwrite test
+	num_physics_pointer_test = max_physics_pointer_test;
+	if (num_physics_pointer_test > num_items)
+		num_physics_pointer_test = num_items;
+	memcpy(physics_pointer_test, item, num_physics_pointer_test * sizeof(SpaceLocation*));
+	// end of copy
 
 	for(i = 0; i < num_items; i ++)
 	{
@@ -1401,7 +1571,8 @@ checksync();
 	}
 }
 checksync();
-	//test_pointers();
+	test_pointers();
+	check_physics_correctness();
 
 	//remove dead listings
 /*{STACKTRACE
@@ -1438,6 +1609,8 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	game_frame_rate = 0.1 * game_frame_rate + 0.9 * (get_time() - game_animation_time);
 	game_animation_time = get_time();
 	message.print(1, 15, "frame rate = %i ms", int(game_frame_rate));
+
+	check_physics_correctness();
 	#endif
 
 
@@ -1465,6 +1638,8 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	
 	for (i = 0; i < j; i += 1)
 	{
+
+
 		// test if the sprite_index doesn't change: that affects physics and can lead to a desynch
 		
 		SpaceObject *o = 0;
@@ -1477,6 +1652,11 @@ void Physics::animate (Frame *frame) {STACKTRACE
 			{
 				o = (SpaceObject*) animate_buffer[i];
 				index = o->get_sprite_index();
+			}
+
+			if (!animate_buffer[i]->exists())
+			{
+				tw_error("Objects are not allowed to die during animation()");
 			}
 
 			physics_allowed = false;
@@ -1512,7 +1692,11 @@ void Physics::animate (Frame *frame) {STACKTRACE
 			time = get_time();
 		}
 
+
+		check_physics_correctness();
 	}
+
+	check_physics_correctness();
 
 	return;
 }
@@ -1603,13 +1787,21 @@ void Physics::collide() {_STACKTRACE("Physics::collide()")
 			if (tmp[l].y < 0) tmp[l].y += size.y;
 			//xxx goes wrong in case of Androsynth Guardian (=o) ; m=0x00003c.
 			tmp[l].pmask = o->get_sprite()->get_pmask(o->get_sprite_index());
+
+#ifdef _DEBUG
+			// may help to detect error in pointers
+			int dummy = tmp[l].pmask->h;
+			//tmp[l].pmask->h = dummy;
+			// end of help
+#endif
+
 			tmp[l].data = o;
 			l += 1;
 		}
 	}
 	SpaceObject *col[128 * 2 + 1];
 	int nc = check_pmask_collision_list_float_wrap(size.x, size.y, tmp, l, (const void**)&col[0], 128);
-	delete tmp;
+	delete[] tmp;
 //	return;
 	for (i = 0; i < nc; i += 1) {
 		col[i*2]->collide(col[i*2+1]);
