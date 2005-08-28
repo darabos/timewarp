@@ -319,7 +319,7 @@ void SlownessMine::calculate()
 
 	// check if anything is in range ... which should be maxed speeded ...
 	Query a;
-	for (a.begin(this, OBJECT_LAYERS, range); a.currento; a.next())
+	for (a.begin(this, OBJECT_LAYERS, range, QUERY_OBJECT); a.currento; a.next())
 	{
 		SpaceObject *o = a.currento;
 

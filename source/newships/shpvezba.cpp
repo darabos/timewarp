@@ -87,7 +87,7 @@ public:
   double resilience;
   VezlagariBarge* creator;
   VezlagariBulkhead(VezlagariBarge* ocreator);
-  ~VezlagariBulkhead(void);
+virtual void death();
   virtual void calculate(void);
   virtual void inflict_damage(SpaceObject *other);
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
@@ -167,7 +167,7 @@ VezlagariMissile::VezlagariMissile(VezlagariBarge* ocreator, Vector2 opos, doubl
 	}
 
 VezlagariMissile::~VezlagariMissile(void) {
-  if(Course!=NULL) delete_location(Course);	// wasn't added to physics.
+  if(Course!=NULL) delete Course;	// wasn't added to physics.
 }
 
 
@@ -282,9 +282,12 @@ VezlagariBulkhead::VezlagariBulkhead(VezlagariBarge* ocreator):
 }
 
 
-VezlagariBulkhead::~VezlagariBulkhead(void) {
-	STACKTRACE
-  if(creator) creator->Bulkhead = NULL;
+void VezlagariBulkhead::death()
+{
+	STACKTRACE;
+
+	SpaceObject::death();
+	if(creator) creator->Bulkhead = NULL;
 }
 
 void VezlagariBulkhead::calculate(void) {
@@ -299,7 +302,7 @@ void VezlagariBulkhead::calculate(void) {
   }
 
   this->pos = creator->pos;
-  this->vel = creator->vel;
+  set_vel( creator->vel );
   this->angle = creator->angle;
   x = (int) (damageAbsorbed / armourEfficiency);
   if(x<0)x=0;

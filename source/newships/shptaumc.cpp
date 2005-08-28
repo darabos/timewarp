@@ -411,7 +411,7 @@ void TauMCMissile::calculate()
         if (!target) {
                 Query q;
                 double a_a, a0 = -1e20;
-                for (q.begin(this, OBJECT_LAYERS, range - d); q.currento; q.next())
+                for (q.begin(this, OBJECT_LAYERS, range - d, QUERY_OBJECT); q.currento; q.next())
                         if ( (!q.currento->sameTeam(this)) && (q.currento->collide_flag_anyone&bit(layer))
                            && !q.currento->isPlanet() ) {
                                 a_a = fabs(get_aim(q.currento));
@@ -499,7 +499,7 @@ void TauMCTorpedo::animateExplosion()
         if (old_range < blast_range) {
                 Query q;
                 double r, d;
-                for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next()) {
+                for (q.begin(this, OBJECT_LAYERS, blast_range, QUERY_OBJECT); q.currento; q.next()) {
                         r = distance(q.currento) / blast_range;
 						if (r > 1)
 							r = 1;

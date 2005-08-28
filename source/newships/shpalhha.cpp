@@ -55,7 +55,6 @@ public:
 	
 public:
 	AlhordianHalo(Vector2 opos, double angle, ShipData *data, unsigned int code);
-	~AlhordianHalo(void);
 protected:
 	virtual int activate_weapon();
 	virtual int activate_special();
@@ -167,9 +166,7 @@ Ship(opos, angle, data, code)
 	debug_id = 70;
 }
 
-AlhordianHalo::~AlhordianHalo(void) {
-  ;
-}
+
 
 void AlhordianHalo::calculate()
 {
@@ -386,7 +383,7 @@ void AlhordianTorp::calculate(void)
 	damage_factor = (1 - fractionDone) * startDamage + fractionDone * endDamage;
 	armour = (1 - fractionDone) * startArmour + fractionDone * endArmour;
 	this->v *= (1 - this->friction * frame_time);
-	this->vel = unit_vector(this->angle) * this->v;
+	this->set_vel ( unit_vector(this->angle) * this->v );
 	
 }
 

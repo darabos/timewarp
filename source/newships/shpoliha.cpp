@@ -187,7 +187,7 @@ BigShipPart(omother, orelpos, orelangle, osprite, 0)
 	layer = LAYER_SHIPS;
 	collide_flag_sameship = 0;
 
-	collide_flag_sameship = bit(LAYER_SPECIAL);
+	collide_flag_sameship = 0;
 
 	relangle = 0;
 }
@@ -310,7 +310,7 @@ void OlidandeeHabitat::calculate()
 	SpaceObject *o = 0;
 	Query a;
 
-	for (a.begin(this, OBJECT_LAYERS, mother->laserRange); a.current; a.next())
+	for (a.begin(this, OBJECT_LAYERS, mother->laserRange, QUERY_OBJECT); a.current; a.next())
 	{
 		if ((distance(a.current) < r) && !a.current->isInvisible()
 			&& a.current->ship != mother)

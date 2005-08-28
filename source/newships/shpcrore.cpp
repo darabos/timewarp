@@ -143,7 +143,7 @@ void Crome::calculate()
                 double r, p, t, xp, xt, ov, nv, ta;
 				Vector2 nvel, ovel;
 
-                for (q.begin(this, OBJECT_LAYERS, specialRange); q.currento; q.next()) {
+                for (q.begin(this, OBJECT_LAYERS, specialRange, QUERY_OBJECT); q.currento; q.next()) {
                         if (((q.currento->mass <= 0) && !q.currento->isShot()) ) continue;
                         xt = 0; xp = 0;
                         r = distance(q.currento)/specialRange;
@@ -202,7 +202,7 @@ void Crome::calculate()
 								{
 //                                        q.currento->vx = ovx;
 //                                        q.currento->vy = ovy;
-										q.currento->vel = ovel;
+										q.currento->set_vel ( ovel );
 								}
                         }
                 }
@@ -266,7 +266,7 @@ void CromeShot::animateExplosion()
 	Query q;
 
 	
-	for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next())
+	for (q.begin(this, OBJECT_LAYERS, blast_range, QUERY_OBJECT); q.currento; q.next())
 	{
 		if (q.currento != direct_hit)
 		{

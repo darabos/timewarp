@@ -212,7 +212,7 @@ public:
 	PopupOk			*alertwin;		// only accept option
 	PopupYN			*alertlose;		// accept and retry option
 
-	~gmissions();
+	virtual ~gmissions();
 
 	int Nmissions, chosenmission;
 
@@ -2887,7 +2887,7 @@ SpaceObject *find_closest_team(SpaceLocation *s, int test_attr, double R, TeamCo
 	Dmin = Vector2(1E99, 1E99);
 
 	// check for neighbouring (small) objects
-	for (q.begin(s, ALL_LAYERS, R); q.current; q.next())
+	for (q.begin(s, ALL_LAYERS, R, QUERY_OBJECT); q.current; q.next())
 	{
 		SpaceObject *o;
 		o = q.currento;

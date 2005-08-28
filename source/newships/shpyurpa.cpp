@@ -52,7 +52,7 @@ public:
 	YuryulRam(YuryulPatriot* creator, Vector2 relativePosition,
 		double oangle, double angleOffset,
 		double ov, double odamage, double orange, double oarmour);
-	~YuryulRam();
+	virtual void death();
 	virtual void calculate(void);
 };
 
@@ -93,7 +93,6 @@ public:
 	YuryulPatriot(Vector2 opos, double angle, ShipData *data, unsigned int code);
 	
 protected:
-	~YuryulPatriot();
 	virtual void calculate();
 	virtual int activate_weapon();
 	virtual int activate_special();
@@ -137,17 +136,17 @@ Ship(opos, angle, data, code)
 	ramrelpos.y = get_config_float("Special", "RamYrel", 0);
 }
 
-YuryulPatriot::~YuryulPatriot(void) {
-	if(Ram1!=NULL)
-		Ram1->creator = NULL;
-	if(Ram2!=NULL)
-		Ram2->creator = NULL;
-}
+
 
 
 void YuryulPatriot::death(void) {
 	STACKTRACE
-		Ship::death();
+	Ship::death();
+
+	if(Ram1!=NULL)
+		Ram1->creator = NULL;
+	if(Ram2!=NULL)
+		Ram2->creator = NULL;
 }
 
 int YuryulPatriot::activate_weapon() {
@@ -238,7 +237,10 @@ Missile(ocreator, ocreator->pos, oangle,
 	decayCount = 0;
 }
 
-YuryulRam::~YuryulRam(void) {
+void YuryulRam::death()
+{
+	Missile::death();
+
 	if(creator!=NULL) {
 		if(RamNumber == 1)
 			creator->Ram1 = NULL;
@@ -246,6 +248,7 @@ YuryulRam::~YuryulRam(void) {
 			creator->Ram2 = NULL;
 	}
 }
+
 
 
 void YuryulRam::calculate(void) {
@@ -259,7 +262,7 @@ void YuryulRam::calculate(void) {
 		}
 		this->changeDirection(creator->angle + this->angleOffset);
 		this->pos = creator->pos;
-		this->vel = creator->vel;
+		set_vel(creator->vel);
 		pos = normalize(pos + rotate(relativePosition, -PI/2+creator->get_angle()));
 		Missile::calculate();
 }

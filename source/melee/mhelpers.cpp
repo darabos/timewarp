@@ -572,6 +572,7 @@ void VideoWindow::init ( VideoWindow *parent_window) {
 	//if (parent == this) {tw_error("VideoWindow - incest");}
 	if (parent && (parent != this)) parent->add_callback ( this );
 	update_pos();
+
 	event(VideoEvent::RESIZE);
 	event(VideoEvent::REDRAW);
 	return;

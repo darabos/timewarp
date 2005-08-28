@@ -254,6 +254,8 @@ MelnormeDisable::MelnormeDisable(Ship *creator, Ship *oship, SpaceSprite *osprit
 
 void MelnormeDisable::calculate()
 {
+	SpaceObject::calculate();
+
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
@@ -278,7 +280,6 @@ void MelnormeDisable::calculate()
 		//ship->del_override_control(ocm);	is done later on.
 	}
 
-	SpaceObject::calculate();
 
 	if (!exists())
 	{

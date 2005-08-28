@@ -308,6 +308,11 @@ void SpaceSprite::generate_mipmap(int level, int index, int bpp)
 
 	BITMAP *src = get_bitmap(i, 0);//b[0][i];
 	
+	if ( level < 0 || level > highest_mip || level > MAX_MIP_LEVELS)
+	{
+		tw_error("Illegal mipmap used...");
+	}
+
 	sbitmap[level][i] = create_bitmap_ex(bpp, lw, lh);
 
 	BITMAP *dest = sbitmap[level][i];
@@ -340,12 +345,17 @@ void SpaceSprite::generate_mipmaps()
 			int lw, lh;
 			lw = iround(w * pow(0.5, level));
 			lh = iround(h * pow(0.5, level));
-			if ((lw < 8) || (lh < 8)) break;
-			this->highest_mip = level;
-			this->sbitmap[level] = new BITMAP*[count];
 			
-			this->highest_mip = level;
-			this->sbitmap[level] = new BITMAP*[count];
+			if ((lw < 8) || (lh < 8))
+				break;
+
+			if (sbitmap[level])
+			{
+				tw_error("new mipmap level: already defined!");
+			}
+
+			highest_mip = level;
+			sbitmap[level] = new BITMAP*[count];
 
 			for (i = 0; i < count; i += 1)
 			{
@@ -446,7 +456,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	references = 0;
 	highest_mip = 0;
 	for (i = 1; i < MAX_MIP_LEVELS; i += 1) {
-		sbitmap[i] = NULL;
+		sbitmap[i] = 0;
 	}
 
 	general_attributes = _attributes;
@@ -751,8 +761,7 @@ SpaceSprite::~SpaceSprite() {
 
 	if (smask)
 		delete[] smask;
-
-	smask = NULL;
+	smask = 0;
 
 	for (l = 0; l <= highest_mip; l += 1)
 	{
@@ -764,13 +773,14 @@ SpaceSprite::~SpaceSprite() {
 				if (sbitmap[l][i])
 					destroy_bitmap(sbitmap[l][i]);
 			}
+
 			delete[] sbitmap[l];
-			sbitmap[l] = NULL;
+			sbitmap[l] = 0;
 		}
 	}
 
 	delete[] attributes;
-	attributes = NULL;
+	attributes = 0;
 	return;
 }
 

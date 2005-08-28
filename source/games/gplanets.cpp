@@ -279,7 +279,7 @@ void RadarMap::animate(Frame *frame)
 	Query a;
 	SpaceObject *o;
 	for (a.begin(NULL, Vector2(x0, y0), bit(LAYER_SHIPS) + bit(LAYER_CBODIES) + bit(LAYER_SHOTS),
-		scandist); a.current; a.next())
+		scandist, QUERY_OBJECT); a.current; a.next())
 	{
 		o = a.currento;
 
@@ -354,7 +354,7 @@ class Planets : public NormalGame
     SpaceSprite **MoonPics; //[Num_Moon_Pics];
 	SpaceSprite **backgrimages;
 
-	~Planets();
+	virtual ~Planets();
 
 	virtual void init_objects();
 	virtual void ReadPlanetSystem(int iPlanetSystem,

@@ -19,7 +19,7 @@ typedef unsigned int TeamCode;
 
 class Presence;
 
-void delete_location(void *tmp);
+void delete_location(SpaceLocation *tmp);
 void check_physics_correctness();
 void check_physics_correctness_item(int i);
 void check_physics_presence(Presence *p);
@@ -314,6 +314,7 @@ protected: public://aught to be protected, but we're lazy
 	virtual double handle_speed_loss(SpaceLocation *source, double normal);
 
 	virtual void change_vel(Vector2 dvel);
+	virtual void set_vel(Vector2 newvel);
 	virtual void scale_vel(double scale);
 	virtual void change_pos(Vector2 dpos);
 	virtual void change_pos(double scale);
@@ -426,6 +427,14 @@ class SpaceLine : public SpaceLocation {
 	double collide_testdistance(SpaceObject *o);
 };
 
+enum query_type { QUERY_LOC = 1, QUERY_OBJECT, QUERY_LINE };
+
+/** searching a grid.
+You can specify layers which space locations and objects are in. Those are not a guarantee for
+the correct type.
+If you make use of currento, then specify QUERY_OBJECT
+If you make use of currentl, then specify QUERY_LINE
+*/
 struct Query {
 	private:
 	int layers;
@@ -435,6 +444,7 @@ struct Query {
 	int qx, qy;
 	Vector2 target_pos;
 	double range_sqr;
+	query_type qtype;
 	void next_quadrant ();
 	public:
 	union {
@@ -442,16 +452,12 @@ struct Query {
 		SpaceLine     *currentl;
 		SpaceLocation *current;
 	};
-	void begin (SpaceLocation *target, int layers, double range);
-	void begin (SpaceLocation *target, Vector2 center, int layers, double range);
+	void begin (SpaceLocation *target, int layers, double range, query_type qqtype = QUERY_LOC);
+	void begin (SpaceLocation *target, Vector2 center, int layers, double range, query_type qqtype = QUERY_LOC);
 	void next ();
 	void end();
 	private:
-	bool current_invalid() {
-		if (!(bit(current->layer) & layers) || (current == target) || !current->exists()) return true;
-		if (magnitude_sqr(min_delta(target_pos, current->normal_pos())) > range_sqr) return true;
-		return false;
-	}
+	bool current_invalid();
 };
 
 inline Uint64 REQUIRE_ATTRIBUTES(Uint32 a) {return a | (Uint64(a) << 32);}

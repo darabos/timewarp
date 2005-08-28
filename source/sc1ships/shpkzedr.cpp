@@ -140,14 +140,14 @@ void KzerZaFighter::calculate()
 
 	target = ship->target;
 	if((target == NULL) || (air_frames < (max_air_frames / 2)) || target->isInvisible()) {
-		collide_flag_sameship |= bit(LAYER_SHIPS);
+		collide_flag_sameship = ~bit(LAYER_SPECIAL);
 		changeDirection(trajectory_angle(ship));
 		return;
 		}
-	collide_flag_sameship &= ~bit(LAYER_SHIPS);
+	collide_flag_sameship = 0;
 
 	if ((distance(target) < laser_range) && (batt <= 0)) {
-		collide_flag_sameship = 0;
+		//collide_flag_sameship = 0;
 		vel = 0;
 		play_sound2(data->sampleExtra[0]);
 		add(new Laser(this, trajectory_angle(target),
@@ -197,7 +197,8 @@ void KzerZaFighter::inflict_damage(SpaceObject *other)
 		play_sound2(data->sampleExtra[1]);
 		damage(ship, 0, -1);
 	} 
-	if (!other->isPlanet())
+
+	if (!other->isPlanet() && !(other->parent == parent))	// don't collide with a planet or other fighters.
 	{
 		state = 0;
 		

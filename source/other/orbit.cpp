@@ -45,7 +45,7 @@ void SpaceStation::calculate()
 
 	Query a;
 	SpaceObject *o;
-	for (a.begin(this, bit(LAYER_SHIPS), 200.); a.current; a.next())
+	for (a.begin(this, bit(LAYER_SHIPS), 200., QUERY_OBJECT); a.current; a.next())
 	{
 		o = a.currento;
 		if(!o->isInvisible())
@@ -88,7 +88,9 @@ OrbitHandler::OrbitHandler(SpaceLocation *creator, Vector2 lpos,
 
 void OrbitHandler::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	SpaceLocation::calculate();
 
 	if((sun==NULL)||(plan==NULL))
 		return;
@@ -122,7 +124,6 @@ void OrbitHandler::calculate()
 	plan->pos=sun->pos+Radius*unit_vector(angle);
 	plan->vel=sun->vel+theta*unit_vector(angle+PI/2);
 
-	SpaceLocation::calculate();
 }
 
 int OrbitHandler::canCollide(SpaceLocation *other)
@@ -185,7 +186,7 @@ void Sun::calculate() {
 	SpaceObject::calculate();
 	SpaceObject *o;
 	Query a;
-	a.begin(this, OBJECT_LAYERS, gravity_range);
+	a.begin(this, OBJECT_LAYERS, gravity_range, QUERY_OBJECT);
 	for (;a.currento;a.next()) {
 		o = a.currento;
 		if (o->mass > 0) {

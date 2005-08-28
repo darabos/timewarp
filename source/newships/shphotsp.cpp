@@ -441,7 +441,7 @@ void TheHotSpot::calculate()
 	double passiveRange = mother->focus_loc;
 
 	Query q;
-	for (q.begin(this, layers, passiveRange); q.current; q.next())
+	for (q.begin(this, layers, passiveRange, QUERY_OBJECT); q.current; q.next())
 	{
 		SpaceObject *o = q.currento;
 

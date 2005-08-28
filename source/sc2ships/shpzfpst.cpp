@@ -116,6 +116,8 @@ frame_step(0)
   
 void ZoqFotPikTongue::calculate()
 {
+	SpaceObject::calculate();
+
 	int current_frame = frame;
 	
 	if (!(ship && ship->exists()))
@@ -147,7 +149,6 @@ void ZoqFotPikTongue::calculate()
 	sprite_index = get_index(ship->get_angle());
 	sprite_index += (64 * frame);
 	
-	SpaceObject::calculate();
 }
 
 void ZoqFotPikTongue::inflict_damage(SpaceObject *other)

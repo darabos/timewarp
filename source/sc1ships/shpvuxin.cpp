@@ -74,16 +74,17 @@ VuxLimpet::VuxLimpet(Vector2 opos, double ov, double slowdown,
 
 void VuxLimpet::calculate()
 {
+	AnimatedShot::calculate();
+
 	if(!(ship && ship->exists())) {
 		state = 0;
 		return;
 		}
 
-	if((ship->target) && (!ship->target->isInvisible())) {
+	if((ship && ship->target) && (!ship->target->isInvisible())) {
 		angle = trajectory_angle(ship->target);
 		vel = v * unit_vector(angle);
 		}
-	AnimatedShot::calculate();
 	}
 
 void VuxLimpet::inflict_damage(SpaceObject *other) {

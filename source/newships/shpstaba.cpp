@@ -89,7 +89,7 @@ int StarBase::activate_special() {
 
 	Query a;
 	for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
-			bit(LAYER_CBODIES), specialRange); a.current; a.next()) {
+			bit(LAYER_CBODIES), specialRange, QUERY_OBJECT); a.current; a.next()) {
 		o = a.currento;
 		if( (!o->isInvisible()) && !o->sameTeam(this) && (o->collide_flag_anyone & bit(LAYER_LINES))) {
 			SpaceLocation *l = new PointLaser(this, pallete_color[specialColor], 1,
@@ -112,7 +112,10 @@ void StarBase::calculate() {
   Ship *o;
 
 	Query a;
-	for (a.begin(this, bit(LAYER_SHIPS), HealRange); a.current; a.next()) {
+	for (a.begin(this, bit(LAYER_SHIPS), HealRange, QUERY_OBJECT); a.current; a.next()) {
+		if (!o->isShip())
+			continue;
+
 		o = (Ship *)a.currento;
 		if((!o->isInvisible()) && o->sameTeam(this))
 		{

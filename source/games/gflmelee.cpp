@@ -111,7 +111,7 @@ class YRadar : public Presence
 
 	YRadar(Control *ocontroller, double Size, TeamCode hteam, char *datafilename,
 			bool rel, int shape);
-	~YRadar();
+	virtual ~YRadar();
 
 	// the code for painting on the radar screen is in here.
 	void PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale);
@@ -224,7 +224,7 @@ public:
 
 	int radar_pos_id;
 
-	~FlMelee();
+	virtual ~FlMelee();
 
 	SpaceSprite *HugePics[Num_Planet_Pics];
 

@@ -140,7 +140,7 @@ void TauEMP::calculate_fire_special()
 		game->add(t);
 		SpaceObject *o;
 		Query q;
-		for (q.begin(this, OBJECT_LAYERS, wave_radius); q.currento; q.next()) {
+		for (q.begin(this, OBJECT_LAYERS, wave_radius, QUERY_OBJECT); q.currento; q.next()) {
 			o = q.currento;
 			if (specialJamFriendly || !o->sameTeam(this))
 			{

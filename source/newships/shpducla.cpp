@@ -82,6 +82,7 @@ public:
 	SpaceLineArc(LaserArc *creator, Vector2 lpos, double langle, 
 	double llength, int lcolor);
 
+	virtual void calculate();
 	void set_props(Vector2 opos, double oangle, double olength);
 	virtual int handle_damage(SpaceLocation *source, double normal, double direct = 0);
 	virtual void inflict_damage(SpaceObject *other);
@@ -102,7 +103,7 @@ public:
 
 
 	LaserArc(DuclyLanternjaws *creator, Vector2 lpos, int lcolor, int N);
-	~LaserArc();
+	virtual ~LaserArc();
 
 	virtual void calculate();
 //	virtual void inflict_damage(SpaceObject *other);
@@ -259,7 +260,7 @@ void ShipPartManager::calculate_manager()
 		if ( partlist[i]->hascollided )	// important - this should override pos/vel settings
 		{
 			mother->pos = oldpos + partlist[i]->change_pos;
-			mother->vel = oldvel + partlist[i]->change_vel;
+			mother->set_vel ( oldvel + partlist[i]->change_vel );
 		}
 
 
@@ -487,7 +488,7 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 		if (mass > 1)
 			vel += _dp * tmp / mass;
 		if (other->mass > 1)
-			other->vel -= _dp * tmp / other->mass;
+			other->change_vel (- _dp * tmp / other->mass );
 	}
 	
 	Vector2 nd;
@@ -809,12 +810,15 @@ SpaceLocation(creator, creator->pos+lpos, 0.0)
 
 LaserArc::~LaserArc()
 {
+	/* should not be here! Cause in a physics-delete operation, the objects that we refer to here,
+	could already be dead! - geo  [and gosh, I wrote this myself..]
 	int i;
 	for ( i = 0; i < Nseg; ++i )
 	{
 		if ( laser_o[i] && laser_o[i]->exists() )
 			laser_o[i]->state = 0;
 	}
+	*/
 
 	delete[] laser_o;
 
@@ -830,6 +834,14 @@ void LaserArc::update_lasersegs()
 
 	for ( i = 0; i < Nseg; ++i )
 	{
+		if ( laser_o[i] && !laser_o[i]->exists() )
+			laser_o[i] = 0;
+
+		if (!laser_o[i])
+		{
+			tw_error("LaserArc: laser segment has died.");
+		}
+
 		double a, a1, a2, L;
 		a1 = mother->angle + angle_min + i * angle_step;
 		a2 = a1 + angle_step;
@@ -893,6 +905,17 @@ SpaceLine(creator, lpos, langle, llength, lcolor)
 	mother = creator;
 }
 
+void SpaceLineArc::calculate()
+{
+	SpaceLine::calculate();
+	
+	if (mother && !mother->exists())
+		mother = 0;
+
+	if (!mother)
+		state = 0;
+}
+
 void SpaceLineArc::set_props(Vector2 opos, double oangle, double olength)
 {
 	STACKTRACE
@@ -908,8 +931,7 @@ int SpaceLineArc::handle_damage(SpaceLocation *source, double normal, double dir
 
 void SpaceLineArc::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
-	
+	STACKTRACE;
 
 	// copied from space_line:
 	int i;

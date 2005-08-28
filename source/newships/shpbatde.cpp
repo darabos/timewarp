@@ -48,7 +48,7 @@ public:
 	double				existtime, delaytime;
 
 	SpriteDrawList(SpaceObject *creator, int N, SpaceSprite **osprites, double odelaytime);
-	~SpriteDrawList();
+	virtual ~SpriteDrawList();
 
 	void calculate();
 
@@ -249,7 +249,7 @@ void BathaDeviant::calculate ()
 //	double passiveRange = 1000.0;	// outside this area, gravity doesn't do anything
 
 	Query a;
-	for (a.begin(this, layers, gravRange); a.current; a.next())
+	for (a.begin(this, layers, gravRange, QUERY_OBJECT); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
 		if (/*!(o->isPlanet()) &&*/ o->mass != 0 && o != ship )
@@ -292,11 +292,11 @@ void BathaDeviant::calculate ()
 			Vector2 Vacc = -(Vd/R) * gravforce*bb;
 			
 			if (!o->isPlanet())
-				o->vel += Vacc;
+				o->change_vel ( Vacc );
 			else
-				vel -= Vacc;
+				change_vel ( -Vacc );
 	
-			vel -= Vacc;
+			change_vel (-Vacc);
 			if (vel.length() > speed_max)
 				vel *= speed_max / vel.length();
 
@@ -568,7 +568,7 @@ SpaceObject(creator, opos, oangle, osprite)
 	double passiveRange = 1000.0;	// outside this area, don't do anything
 
 	Query a;
-	for (a.begin(this, layers, passiveRange); a.current; a.next())
+	for (a.begin(this, layers, passiveRange, QUERY_OBJECT); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
 		if ( o->isShot() && ((Shot*)o)->isHomingMissile() && o->target == ship )

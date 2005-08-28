@@ -145,10 +145,19 @@ XchaggerDisable::XchaggerDisable(SpaceObject *creator, Ship *oship, SpaceSprite 
 
 void XchaggerDisable::calculate()
 {
+	SpaceObject::calculate();
 	
-	if (!(ship && ship->exists()))
+	if (ship && !ship->exists())
 	{
+		ship = 0;
 		state = 0;
+	}
+
+	if ( affectship && !affectship->exists() )
+	{
+		// note that target == affectship, so that if target is reset to 0, the affectship is still a valid pointer.
+		affectship->del_override_control(ocx);
+		affectship = 0;
 	}
 	
 	frame_step+= frame_time;
@@ -176,7 +185,6 @@ void XchaggerDisable::calculate()
 		} 
 		else {
 			pos = t->normal_pos() + (frame_time * t->get_vel());
-			SpaceObject::calculate();
 		}
 		disableframe += frame_time;
 		if (disableframe >= disableframe_count)
@@ -185,11 +193,10 @@ void XchaggerDisable::calculate()
 		}
 	}
 
-	// THIS CHECK IS NEEDED BEFORE RETURNING ...
 	if (!exists())
 	{
-		// note that target == affectship, so that if target is reset to 0, the affectship is still a valid pointer.
-		affectship->del_override_control(ocx);
+		if (affectship)
+			affectship->del_override_control(ocx);
 	}
 }
 
@@ -222,8 +229,11 @@ void XchaggerSpecial::inflict_damage(SpaceObject *other)
 		SpaceObject *o = NULL;
 		Query a;
 		int found = FALSE;
-		for (a.begin(this, ALL_LAYERS ,distance(other)+ 10);
-		a.current; a.next()) {
+		
+		for (a.begin(this, ALL_LAYERS ,distance(other)+ 10, QUERY_OBJECT);
+		a.currento; a.next())
+		{
+			
 			o = a.currento;
 			if ((o->getID()) == XCHAGGERDISABLE_SPEC)
 				if ((((XchaggerDisable *)o)->return_disable()) == other) {

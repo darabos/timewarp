@@ -34,7 +34,7 @@ IDENTITY(LyrmristuWaSphere);
 	virtual void inflict_damage(SpaceObject *other);
 	virtual void destroy();
   virtual bool die(void);
-	virtual ~LyrmristuWaSphere();
+	virtual void death();
 	private:
 
 
@@ -274,13 +274,13 @@ bool LyrmristuWaSphere::die(void)
 
 void LyrmristuWaSphere::destroy(void)
 {
-	STACKTRACE
+	STACKTRACE;
 	*PP=NULL;
 	Shot::destroy();
 }
 
-LyrmristuWaSphere::~LyrmristuWaSphere(){
-	STACKTRACE
+void LyrmristuWaSphere::death(){
+	STACKTRACE;
 	*PP=NULL;
 }
 

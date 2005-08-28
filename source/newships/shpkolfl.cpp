@@ -164,7 +164,7 @@ void KoloryFlamer :: calculate ()
 	double passiveRange = 1000.0;	// outside this area, gravity doesn't do anything
 
 	Query a;
-	for (a.begin(this, layers, passiveRange); a.current; a.next())
+	for (a.begin(this, layers, passiveRange, QUERY_OBJECT); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
 		if (!(o->isPlanet()) && o != ship )

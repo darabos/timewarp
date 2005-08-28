@@ -817,7 +817,7 @@ SpaceObject *AlaryBCTurret::get_target(SpaceObject *tgt)
 	Query q;
 	SpaceObject *tgt0=tgt;
 
-	for (q.begin(this, OBJECT_LAYERS, ship->specialRange); q.currento; q.next())
+	for (q.begin(this, OBJECT_LAYERS, ship->specialRange, QUERY_OBJECT); q.currento; q.next())
 		if ((!q.currento->isInvisible()) && (!q.currento->sameTeam(this))
 				&& (!q.currento->isPlanet())
 				&& (q.currento->collide_flag_anyone&bit(LAYER_SHOTS))

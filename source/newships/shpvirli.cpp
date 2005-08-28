@@ -61,7 +61,7 @@ int VirtaoLimb::activate_special() {
   int fire = FALSE;
 
 	Query q;
-	for (q.begin(this, ALL_LAYERS, specialRange);q.current;q.next()) {
+	for (q.begin(this, ALL_LAYERS, specialRange, QUERY_OBJECT);q.current;q.next()) {
 		if (q.current->canCollide(this)) {
 			double a = trajectory_angle(q.current);
 			q.current->translate(specialPower * unit_vector(a));

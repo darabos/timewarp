@@ -349,9 +349,12 @@ YevSaber::YevSaber(YevMech *oship,SpaceSprite *osprite) :
   calculate();
 }
 
-void YevSaber::calculate() {
-	STACKTRACE
+void YevSaber::calculate()
+{
+	STACKTRACE;
   int		   si;
+
+  SpaceObject::calculate();
 
   if(!(ship && ship->exists()))
   {

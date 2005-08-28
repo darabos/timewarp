@@ -22,7 +22,7 @@ IDENTITY(FopVob);
 
 public:
 	FopVob(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int code);
-	~FopVob();
+	virtual ~FopVob();
 
 	virtual void calculate();
 	virtual void animate(Frame *f);

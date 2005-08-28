@@ -158,7 +158,7 @@ int EarthlingCruiserMk3::activate_special()
 	pos -= unit_vector(angle) * 6;	//!!!
 	Query q;
 	for (q.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
-			bit(LAYER_CBODIES), specialRange); q.current; q.next()) {
+			bit(LAYER_CBODIES), specialRange, QUERY_OBJECT); q.current; q.next()) {
 		o = q.currento;
 		if (!o->isInvisible() && !o->sameTeam(this)	&& (o->collide_flag_anyone&bit(LAYER_LINES))
 				&& (distance(o) < rng)) {
@@ -269,7 +269,7 @@ void EarthlingCruiserMk3Beam::calculate()
 		SpaceObject *tgt = NULL;
 		Query a;
 		for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
-				bit(LAYER_CBODIES), base_length); a.current; a.next()) {
+				bit(LAYER_CBODIES), base_length, QUERY_OBJECT); a.current; a.next()) {
 			o = a.currento;
 			if (!o->isInvisible() && !o->sameTeam(this)	&& (o->collide_flag_anyone&bit(LAYER_LINES))
 					&& (distance(o) < rng)) {

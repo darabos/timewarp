@@ -250,7 +250,7 @@ int KatPoly::activate_special()
 	morph->materialize();                // materialize it
 	morph->crew = crew;                  // set it's attributes
 	morph->batt = batt - special_drain;  // [battery has to be decreased now]
-	morph->vel = vel;
+	morph->set_vel ( vel );
 	update_panel = true;                 // maybe the colors changed
 
 	// add control-override for the morph (disable its special key)

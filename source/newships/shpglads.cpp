@@ -131,7 +131,7 @@ void GlathrielMissile::calculate()
 		SpaceObject *o;
 		double a;
 		Query q;
-		for (q.begin(this, bit(LAYER_SHIPS),(laser_range *.80)); q.current; q.next()) {
+		for (q.begin(this, bit(LAYER_SHIPS),(laser_range *.80), QUERY_OBJECT); q.current; q.next()) {
 			o = q.currento;
 			a = normalize(trajectory_angle(o)-angle,360);
 			if ((!o->sameTeam(this)) && (!o->isInvisible()) &&

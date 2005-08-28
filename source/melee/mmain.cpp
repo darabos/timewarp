@@ -1067,7 +1067,7 @@ void NormalGame::choose_new_ships()
 		s->locate();
 		add ( new WedgeIndicator ( s, 30, p->color ) );
 		ShipPanel *panel = new ShipPanel(s);
-		panel->window->init(window);
+		panel->window->init(window);	//xxx this causes the flicker in the screen.
 		panel->window->locate(
 			0, 0.9,
 			0, i * (100.0/480), 

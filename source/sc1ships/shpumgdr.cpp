@@ -63,12 +63,13 @@ void UmgahDrone::calculate_thrust()
 
 void UmgahDrone::calculate()
 {
+  Ship::calculate();
+
   if (fire_weapon)
     recharge_step = recharge_rate;
   else
     firing = false;
 
-  Ship::calculate();
 }
 
 UmgahCone::UmgahCone(double odist, int odamage, UmgahDrone *oship,

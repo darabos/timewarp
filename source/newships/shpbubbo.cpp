@@ -225,7 +225,7 @@ int BubalosBomber::activate_weapon()
   SpaceObject *o, *t = NULL;
   SpaceObject *PrevTarget = target;
   Query a;
-  for (a.begin(this,bit(LAYER_SPECIAL),ExtraRange); a.current; a.next()) {
+  for (a.begin(this,bit(LAYER_SPECIAL),ExtraRange, QUERY_OBJECT); a.current; a.next()) {
 		o = a.currento;  r1 = distance(o);
     if (r1 > size.y)
       if ((!o->sameTeam(this)) && (r1 < r) &&
@@ -347,7 +347,7 @@ void BubalosBomber::death()
 	{
 		Query q;
 		//message.print(4500,9,"BOOM!");
-		for (q.begin(this,OBJECT_LAYERS, explosionRangeBigBoom); q.currento; q.next()) 
+		for (q.begin(this,OBJECT_LAYERS, explosionRangeBigBoom, QUERY_OBJECT); q.currento; q.next()) 
 		{
 			lastHurrah = (int)ceil((explosionRangeBigBoom - distance(q.currento)) /
 				explosionRangeBigBoom * explosionDamageBigBoom);

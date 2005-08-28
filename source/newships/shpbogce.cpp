@@ -259,7 +259,7 @@ void BoggCenturion::calculate()
         Query q;
         links_num = 0;
         BoggCenturion* bro;
-        for (q.begin(this, bit(LAYER_SHIPS), share_range); q.currento; q.next())
+        for (q.begin(this, bit(LAYER_SHIPS), share_range, QUERY_OBJECT); q.currento; q.next())
 		{
                 if (q.currento->getID() == BOGEI_CENTURION_ID)
 				{
@@ -376,7 +376,7 @@ int BoggCenturion::handle_damage(SpaceLocation *source, double normal, double di
         Query q;
         int ln = 0;
         BoggCenturion* bro;
-        for (q.begin(this, bit(LAYER_SHIPS), share_range); q.currento; q.next())
+        for (q.begin(this, bit(LAYER_SHIPS), share_range, QUERY_OBJECT); q.currento; q.next())
                 if (q.currento->getID() == BOGEI_CENTURION_ID) {
                         bro = (BoggCenturion*)q.currento;
                         if (bro->exists()) {

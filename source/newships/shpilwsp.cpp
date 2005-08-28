@@ -177,7 +177,7 @@ void IlwrathSpiderMine::inflict_damage(SpaceObject *other)
 
     if( other->vel != 0 )
 	{
-		other->vel = 0;
+		other->set_vel ( 0 );
         //if( other->isShip() ) ((Ship*)other)->nextkeys &= ~(keyflag::thrust | keyflag::left | keyflag::right);
 
         game->add( new IlwrathStop( this, other, stoptime ));
@@ -235,14 +235,14 @@ void IlwrathStop::calculate()
 	{
 		//if( victim->isShip() ) ((Ship*)victim)->nextkeys &= ~(keyflag::thrust | keyflag::left | keyflag::right);
 		// this is not necessary, cause the velocity is already being overridden. And who cares about left/right.
-		victim->vel = 0;
+		victim->set_vel ( 0 );
 		
 		life -= frame_time;
 		if( life <= 0 ){
 			state = 0;
 			if( victim->isShot() ){
 				((Shot*)victim)->v = old_v;
-				victim->vel = old_v * unit_vector(victim->get_angle());
+				victim->set_vel ( old_v * unit_vector(victim->get_angle()) );
 			}
 		}
 	}

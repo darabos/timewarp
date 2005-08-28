@@ -187,7 +187,7 @@ void JnkdwoLazelCrystal::calculate()
 			SpaceObject *t = NULL;
 			double r1, r = 0;
 			double marks;
-			for (q.begin(this, OBJECT_LAYERS, ship->specialRange); q.currento; q.next())
+			for (q.begin(this, OBJECT_LAYERS, ship->specialRange, QUERY_OBJECT); q.currento; q.next())
 				if ((!q.currento->sameTeam(this)) && (q.currento->collide_flag_anyone & bit(LAYER_LINES)) && (!q.currento->isPlanet())) {
 					if (ship->extraShipsOnly && q.currento->isShip()) continue;
 					alpha = trajectory_angle(q.currento);

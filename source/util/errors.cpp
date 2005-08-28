@@ -29,7 +29,7 @@ void dump_physics(const char *message)
 	{
 		SpaceLocation *o = physics->item[i];
 		// write: address, parent, target pointer, identity, pos, angle, and vel
-		fprintf(f, "0x%08p p:0x%08p t:0x%08p id:%s\n\t\tx:%9.3f y:%9.3f a:%6.3f  vx:%6.4f vy:%6.4f\n",
+		fprintf(f, "0x%08p p:0x%08p t:0x%08p id:%s   x:%9.3f y:%9.3f a:%6.3f  vx:%6.4f vy:%6.4f\n",
 			o, o->parent, o->target,
 			o->get_identity(),
 			o->pos.x, o->pos.y,

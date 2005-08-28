@@ -137,12 +137,13 @@ int VyroIngoInvader::activate_special()
 void VyroIngoInvader::calculate()
 
 {
+  Ship::calculate();
+
   if (sheild)
     if (sheild->exists()) {
       if (!fire_weapon)
         sheild->state = 0;
     } else sheild = NULL;
-  Ship::calculate();
 }
 
 VyroIngoSheild::VyroIngoSheild (Vector2 opos, int odamage, int oframes,
@@ -164,6 +165,8 @@ VyroIngoSheild::VyroIngoSheild (Vector2 opos, int odamage, int oframes,
 
 void VyroIngoSheild::calculate()
 {
+  SpaceObject::calculate();
+
   if(!(ship && ship->exists()))
   {
 	  ship = 0;
@@ -181,7 +184,6 @@ void VyroIngoSheild::calculate()
 
 	pos = ship->normal_pos();
 	vel = ship->get_vel();
-  SpaceObject::calculate();
 }
 
 void VyroIngoSheild::inflict_damage(SpaceObject *other) {

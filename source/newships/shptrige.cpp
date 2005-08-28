@@ -204,7 +204,8 @@ void TrideminGemini::calculate()
 
 //	turret->vx=vx=vfx;
 //	turret->vy=vy=vfy;
-	turret->vel = vel = vf;
+	turret->set_vel(vf);
+	set_vel( vf );
 
 	turn_left=FALSE;	//Ensure that ship_calculate_turn_xxxx()
 	turn_right=FALSE;	//isn't done twice.

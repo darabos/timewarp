@@ -115,7 +115,7 @@ void CargoLink::do_area_damage()
 {
 	STACKTRACE
 	Query q;
-	for (q.begin(this, OBJECT_LAYERS, explosionRange); q.currento; q.next())
+	for (q.begin(this, OBJECT_LAYERS, explosionRange, QUERY_OBJECT); q.currento; q.next())
 	{
 		if (q.currento->canCollide(this))
 		{
@@ -244,7 +244,7 @@ void Chain::Uncouple()
 
 	add(m=new CargoLink(this,this->pos,this->angle,this->sprite,NULL,NULL,this->mass));
 
-	m->vel = this->vel;
+	m->set_vel ( this->vel );
 	m->collide_flag_sameship = ALL_LAYERS;
 	m->collide_flag_sameteam = ALL_LAYERS;
 	m->collide_flag_anyone = ALL_LAYERS;
@@ -454,8 +454,8 @@ void Chain::ChainPhysics(SpaceObject *first, SpaceObject *second)
 	else
 		vfinal = first->mass * v1 + second->mass * v2;
 	
-	first->vel += (vfinal - v1) * L;
-	second->vel += (vfinal - v2) * L;
+	first->change_vel ( (vfinal - v1) * L );
+	second->change_vel ( (vfinal - v2) * L );
 
 		
 	// accelerations of "second" due to centripetal force on either side :
@@ -483,14 +483,14 @@ void Chain::ChainPhysics(SpaceObject *first, SpaceObject *second)
 
 	// apply these accelerations:
 
-	second->vel += 1E-3 * accel * frame_time;
+	second->change_vel ( 1E-3 * accel * frame_time );
 
 
 	
 	// By default, let the element become neutral in rotational velocity by
 	// including drag in the rotation direction.
 
-	second->vel -= 0.2 * frame_time*1E-3 * (second->vel - L*second->vel.dot(L));
+	second->change_vel ( -0.2 * frame_time*1E-3 * (second->vel - L*second->vel.dot(L)) );
 
 }
 

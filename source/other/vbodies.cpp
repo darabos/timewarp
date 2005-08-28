@@ -436,7 +436,7 @@ bool VGroundDefenseLaser::BattleAction() {
 
 	double r = 99999;  
 	Query a;
-	for (a.begin(this->location, bit(LAYER_SHIPS)|bit(LAYER_SHOTS)|bit(LAYER_SPECIAL), weaponRange + 200); a.current; a.next()) {
+	for (a.begin(this->location, bit(LAYER_SHIPS)|bit(LAYER_SHOTS)|bit(LAYER_SPECIAL), weaponRange + 200, QUERY_OBJECT); a.current; a.next()) {
 		if ((this->location->distance(a.current) < r) && !a.current->isInvisible()) {
       if(a.current) {
         ta = a.current->trajectory_angle(this->location);
@@ -491,7 +491,7 @@ bool VGroundIonCannon::BattleAction(void) {
 
 	double r = 99999;  
 	Query a;
-	for (a.begin(this->location, bit(LAYER_SHIPS), weaponRange + 200); a.current; a.next()) {
+	for (a.begin(this->location, bit(LAYER_SHIPS), weaponRange + 200, QUERY_OBJECT); a.current; a.next()) {
 		if ((this->location->distance(a.current) < r) && !a.current->isInvisible()) {
 			o = a.currento;
 			r = this->location->distance(o);
@@ -537,7 +537,7 @@ bool VGroundMissileLauncher::BattleAction(void) {
 
 	double r = 99999;  
 	Query a;
-	for (a.begin(this->location, bit(LAYER_SHIPS), weaponRange + 200); a.current; a.next()) {
+	for (a.begin(this->location, bit(LAYER_SHIPS), weaponRange + 200, QUERY_OBJECT); a.current; a.next()) {
 		if ((this->location->distance(a.current) < r) && !a.current->isInvisible()) {
 			o = a.currento;
 			r = this->location->distance(o);
@@ -978,7 +978,7 @@ void VStar::AttractShots(int warping_power, double intensity) {
 	SpaceObject::calculate();
 	SpaceObject *o;
 	Query a;
-	a.begin(this, bit(LAYER_LINES)|bit(LAYER_SHOTS)|bit(LAYER_SPECIAL), gravity_range);
+	a.begin(this, bit(LAYER_LINES)|bit(LAYER_SHOTS)|bit(LAYER_SPECIAL), gravity_range, QUERY_OBJECT);
 	for (;a.currento;a.next()) {
 		o = a.currento;
     if(true) {
@@ -1062,7 +1062,7 @@ void VStar::calculate() {
   Planet::calculate();
 	SpaceObject *o;
 	Query a;
-	a.begin(this, OBJECT_LAYERS, this->frictionRadius);
+	a.begin(this, OBJECT_LAYERS, this->frictionRadius, QUERY_OBJECT);
 	for (;a.currento;a.next()) {
 		o = a.currento;
     if(o->mass > 0.001) {
@@ -1811,7 +1811,7 @@ void VFlare::calculate() {
   currentAngle = (this->vel).angle();
   calcVelocity = amountToFly * originalVelocity + amountFlown * finalVelocity;
   this->v = calcVelocity;
-  this->vel = unit_vector(currentAngle) * calcVelocity;
+  set_vel(unit_vector(currentAngle) * calcVelocity);
   Missile::calculate();
 }
 

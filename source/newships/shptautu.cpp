@@ -281,7 +281,7 @@ void TauTurboMissile::calculate()
 
 	Query q;
 	double aa, bb;
-	for (q.begin(this, bit(LAYER_SHOTS), 30); q.currento; q.next())
+	for (q.begin(this, bit(LAYER_SHOTS), 30, QUERY_OBJECT); q.currento; q.next())
 		if (q.currento->getID() == id) {
 			aa = (trajectory_angle(q.currento)+PI);
 			bb = 0.01*frame_time;//*(30-distance(q.currento))/30.0;

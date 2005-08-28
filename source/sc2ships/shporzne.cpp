@@ -144,13 +144,17 @@ void OrzNemesis::calculate()
 {
   int i;
 
+  Ship::calculate();
+
   for(i = 0; i < MAX_MARINES; i++)
+  {
     if((marine[i]) && (!marine[i]->exists()))
       marine[i] = NULL;
+  }
 
   recoil -= frame_time;
-  if (recoil < 0) recoil = 0;
-  Ship::calculate();
+  if (recoil < 0)
+	  recoil = 0;
 }
 
 void OrzNemesis::animate(Frame *space)
@@ -223,6 +227,9 @@ OrzMarine::OrzMarine(Vector2 opos, OrzNemesis *oship, double oAccelRate,
 
 void OrzMarine::calculate() {
 	int    chance;
+
+	SpaceObject::calculate();
+	// should be first, it must be guaranteed that it's done every iteration! To handle pointer references.
 
     if (!(orzship && orzship->exists()))
 	{
@@ -341,7 +348,6 @@ void OrzMarine::calculate() {
         	if(hotspot_frame > 0) hotspot_frame-= frame_time;
         }
 
-	SpaceObject::calculate();
 }
 
 void OrzMarine::animate(Frame *space)

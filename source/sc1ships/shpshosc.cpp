@@ -39,7 +39,7 @@ void ShofixtiScout::calculate_fire_special() {
 			glory++;
 			if(glory == 3) {
 				Query q;
-				for (q.begin(this, OBJECT_LAYERS, specialRange); q.currento; q.next()) {
+				for (q.begin(this, OBJECT_LAYERS, specialRange, QUERY_OBJECT); q.currento; q.next()) {
 					if (q.currento->canCollide(this)) {
 						gloryDamage = (int)ceil((specialRange - distance(q.currento)) / specialRange * specialDamage);
 						damage(q.current, 0, gloryDamage);

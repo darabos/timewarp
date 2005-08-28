@@ -179,7 +179,7 @@ void FierasArbiter::calculate()
 		Vector2 ov, tv;
 
 		Query q;
-		for (q.begin(this, OBJECT_LAYERS, repulsor_radius); q.currento; q.next()) {
+		for (q.begin(this, OBJECT_LAYERS, repulsor_radius, QUERY_OBJECT); q.currento; q.next()) {
 			o = q.currento;
 			if (!o->sameShip(this)){
 				ta = trajectory_angle(o);

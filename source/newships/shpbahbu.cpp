@@ -220,6 +220,7 @@ void BahaoidBabyBuzzsaw::calculate()
 
 		fully_dropped = TRUE;
 
+		//xxx meaningless loop ?!?!
 		for (b.begin(this, bit(LAYER_SHIPS),scale_range(1.0)); b.current; b.next())
 		{
 			collide_flag_sameship = bahooodle;
@@ -231,7 +232,7 @@ void BahaoidBabyBuzzsaw::calculate()
 
 	Query a;
 	for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_CBODIES) + bit(LAYER_SPECIAL),
-			MineRange); a.current; a.next())
+			MineRange, QUERY_OBJECT); a.current; a.next())
 	{
 		o = a.currento;
 		if (!o->sameTeam(this) && !o->isInvisible() && (distance(o) < oldrange) && (o->ally_flag != (unsigned int)-1) || (o->getID() == ID_ASTEROID))

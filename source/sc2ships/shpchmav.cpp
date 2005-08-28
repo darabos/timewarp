@@ -282,7 +282,7 @@ void ChmmrZapSat::calculate() {
 		}
 
 	Query q;
-	for (q.begin(this, OBJECT_LAYERS &~ bit(LAYER_CBODIES), lRange); q.currento; q.next()) {
+	for (q.begin(this, OBJECT_LAYERS &~ bit(LAYER_CBODIES), lRange, QUERY_OBJECT); q.currento; q.next()) {
 		if (!q.currento->isInvisible() && !q.currento->sameTeam(this) && (q.currento->collide_flag_anyone&bit(LAYER_LINES))) {
 			add(new PointLaser(this, pallete_color[lColor], 1, lFrames,
                         		this, q.currento, Vector2(0.0, 0.0) ));

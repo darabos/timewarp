@@ -322,7 +322,7 @@ void TauLeviathan::calculate()
 
     Query q;
 
-	for (q.begin(this, bit(LAYER_SHOTS), size.y*4.0); q.currento; q.next())
+	for (q.begin(this, bit(LAYER_SHOTS), size.y*4.0, QUERY_OBJECT); q.currento; q.next())
 
 		if (q.currento->getID() == LEVIATHAN_SLIME_FOOD) {
 

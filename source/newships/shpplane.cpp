@@ -159,7 +159,7 @@ void PlanetShip::calculate()
 	planet->pos = pos;
 	//  planet->vx = vx;
 	//  planet->vy = vy;
-	planet->vel = vel;
+	planet->set_vel( vel );
 }
 
 
@@ -225,7 +225,7 @@ Planet *PlanetShip::nearest_other_planet(){
   Planet *p = NULL;
   double r = 99999999;
   Query q;
-  q.begin( this, bit(LAYER_CBODIES), 1600 );
+  q.begin( this, bit(LAYER_CBODIES), 1600, QUERY_OBJECT );
   while( q.current ){
     if( q.current->isPlanet() && q.currento != planet ){
       double t = distance(q.current);
@@ -294,7 +294,7 @@ void InvisiblePlanet::calculate()
 	SpaceObject *o;
 	Query a;
 
-	a.begin(this, OBJECT_LAYERS, gravity_range);
+	a.begin(this, OBJECT_LAYERS, gravity_range, QUERY_OBJECT);
 
 	for (;a.currento;a.next())
 	{

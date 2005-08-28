@@ -855,7 +855,7 @@ void GobDefender::calculate() {
 	if (next_shoot_time < gobgame->game_time) {
 		SpaceObject *target = NULL;
 		Query q;
-		q.begin(this, OBJECT_LAYERS &~ bit(LAYER_SHIPS), 300);
+		q.begin(this, OBJECT_LAYERS &~ bit(LAYER_SHIPS), 300, QUERY_OBJECT);
 		while (q.currento && !target) {
 			if (!q.currento->sameTeam(ship)) {
 				SpaceLine *l = new PointLaser ( 
@@ -948,7 +948,7 @@ void RainbowRift::calculate() {
 	while (game->game_time > next_time2) {
 		next_time2 += random(10000);
 		Query q;
-		for (q.begin(this, bit(LAYER_SHIPS), 40); q.current; q.next()) {
+		for (q.begin(this, bit(LAYER_SHIPS), 40, QUERY_OBJECT); q.current; q.next()) {
 			GobPlayer *p = gobgame->get_player(q.currento);
 			if (q.currento == p->ship) {
 				int i = 0;

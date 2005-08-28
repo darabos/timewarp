@@ -104,7 +104,7 @@ SpaceObject *find_closest(SpaceLocation *s, int test_attr, double R)
 	Dmin = Vector2(1E99, 1E99);
 
 	// check for neighbouring (small) objects
-	for (q.begin(s, ALL_LAYERS, R); q.current; q.next())
+	for (q.begin(s, ALL_LAYERS, R, QUERY_OBJECT); q.current; q.next())
 	{
 		SpaceObject *o;
 		o = q.currento;
@@ -1024,7 +1024,7 @@ void Plsurface::calculate()
 		SpaceObject *o = (SpaceObject*) obj[iobj];
 
 		// check for neighbouring (small) objects
-		for (q.begin(o, OBJECT_LAYERS, (192 + o->get_size().x + o->get_size().y)/2); q.current; q.next())
+		for (q.begin(o, OBJECT_LAYERS, (192 + o->get_size().x + o->get_size().y)/2, QUERY_OBJECT); q.current; q.next())
 		{
 			o->collide(q.currento);
 		}

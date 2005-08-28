@@ -190,7 +190,7 @@ if (repulse)
 	{
 
 		Query q;
-		for (q.begin(this, OBJECT_LAYERS, specialRange); q.currento; q.next()) {
+		for (q.begin(this, OBJECT_LAYERS, specialRange, QUERY_OBJECT); q.currento; q.next()) {
 
 			// bugfix Geo
 			// Space-locations have mass, but can be included in this search. So, add an extra
@@ -240,7 +240,7 @@ void GarashTyrant::stun_ship(SpaceObject *other){
 		   64, 31, specialStunFrames);
       game->add(GRS);
       GRS->pos = other->pos;
-      GRS->vel = other->vel;
+      GRS->set_vel ( other->vel );
       }
 		}
 	}
@@ -345,7 +345,7 @@ void GarashRepulsarStun::calculate()
 	if(!targetIsDead)
 	{
 		this->pos = targetship->pos;
-		this->vel = targetship->vel;
+		this->set_vel ( targetship->vel );
 	}
 
 	//may crash if target dies while the stun is in place.

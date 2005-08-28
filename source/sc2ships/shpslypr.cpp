@@ -169,7 +169,7 @@ void SlylandroProbe::calculate()
 	
 	if (fire_special) {
 		Query q;
-		for (q.begin(this, bit(LAYER_CBODIES), 100);q.current;q.next()) {
+		for (q.begin(this, bit(LAYER_CBODIES), 100, QUERY_OBJECT);q.current;q.next()) {
 			if (q.current->isAsteroid() && q.current->canCollide(this)) {
 				if (damage(q.current, 1)) {
 					batt = batt_max;
@@ -276,6 +276,8 @@ SlylandroLaserNew::SlylandroLaserNew(SpaceLocation *lroot, SpaceLocation *ltarge
 
 void SlylandroLaserNew::calculate()
 {
+	Presence::calculate();
+
 	lifetime += frame_time;
 
 	if ( lifetime > existtime || !(mother && mother->exists()) )
@@ -285,7 +287,6 @@ void SlylandroLaserNew::calculate()
 		return;
 	}
 	
-	Presence::calculate();
 
 	double relativelifetime = lifetime / existtime;	// a value increasing from 0 to 1
 	
@@ -424,8 +425,13 @@ void SlylandroLaserNew::calculate()
 				// only check, when the rays are recalculated (to simulate starcon2 rates when applying damage)
 				double range = magnitude(lights[i].pos2) * 1.1;
 				Query q;
-				for (q.begin(mother, bit(LAYER_CBODIES)+bit(LAYER_SHOTS)+bit(LAYER_SHIPS), range); q.currento; q.next())
+				for (q.begin(mother, bit(LAYER_CBODIES)+bit(LAYER_SHOTS)+bit(LAYER_SHIPS), range, QUERY_OBJECT); q.currento; q.next())
 				{
+					if (!q.currento->isObject())
+					{
+						tw_error("wrong grid search ...");
+					}
+
 					tsprite = q.currento->get_sprite();
 					int indexnum = q.currento->get_sprite_index();
 					

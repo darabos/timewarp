@@ -204,7 +204,7 @@ void ShipPart2Manager::calculate_manager()
 		if ( partlist[i]->hascollided )	// important - this should override pos/vel settings
 		{
 			mother->pos = oldpos + partlist[i]->change_pos;
-			mother->vel = oldvel + partlist[i]->change_vel;
+			mother->set_vel( oldvel + partlist[i]->change_vel );
 		}
 
 
@@ -456,7 +456,7 @@ int ShipPart2::collide_SpaceObject(SpaceObject *other)
 			vel += _dp * tmp / mass;
 
 		if (other->mass > 0)
-			other->vel -= _dp * tmp / other->mass;
+			other->change_vel (- _dp * tmp / other->mass );
 	}
 	
 	Vector2 nd;

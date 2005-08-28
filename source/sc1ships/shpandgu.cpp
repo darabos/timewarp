@@ -154,6 +154,8 @@ AndrosynthBubble::AndrosynthBubble(Vector2 opos, double oangle,
 
 void AndrosynthBubble::calculate()
 {
+	AnimatedShot::calculate();
+
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -162,7 +164,6 @@ void AndrosynthBubble::calculate()
 
 	double newAngle;
 
-	AnimatedShot::calculate();
 	courseFrames += frame_time;
 	if(courseFrames >= 150) {
 		courseFrames -= 150;

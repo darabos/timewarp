@@ -343,6 +343,7 @@ BigShipPart(aowner, orelpos, 0.0, info[otype-1]->spr_crewed, info[otype-1]->spr_
 	recharge_amount = 1;
 	turn_rate = info[otype-1]->turning;
 	accel_rate = info[otype-1]->thrusting;
+
 }
 	
 
@@ -455,6 +456,10 @@ BigShipPartDevice(aowner, spr)
 	shotbusy = 0;
 
 	attributes &= ~ATTRIB_STANDARD_INDEX;
+
+	collide_flag_sameteam = 0;
+	collide_flag_sameship = 0;
+	collide_flag_anyone = 0;
 }
 
 //Shot::Shot(SpaceLocation *creator, Vector2 rpos, double oangle, double ov, 
@@ -480,7 +485,7 @@ void AutoGun::calculate()
 	double da_track;
 	da_track = -a_track;	// forces to go back into default position
 
-	for (a.begin(this, OBJECT_LAYERS, 0.75*shotrange); a.current != 0; a.next())
+	for (a.begin(this, OBJECT_LAYERS, 0.75*shotrange, QUERY_OBJECT); a.current != 0; a.next())
 	{
 		SpaceObject *o;
 		o = a.currento;
@@ -558,7 +563,7 @@ void AutoGun::calculate()
 	sprite_index = get_index(angle);
 
 	// fire the weapon ?
-	if (oclosest && ownerpart->ship->batt > shotdrain && !shotbusy)
+	if (oclosest && ownerpart->ship && ownerpart->ship->batt > shotdrain && !shotbusy)
 	{
 		
 		Shot *s;

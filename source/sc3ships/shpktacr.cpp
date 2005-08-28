@@ -118,6 +118,8 @@ int KtangCrippler::activate_special()
 
 void KtangCrippler::calculate()
 {
+  Ship::calculate();
+
   int j = 0;
   for (int i = 0; i < numMines; i += 1) {
     weaponObject[i-j] = weaponObject[i];
@@ -125,7 +127,6 @@ void KtangCrippler::calculate()
     if (j) weaponObject[i] = NULL;
     }
   numMines -= j;
-  Ship::calculate();
 }
 
 KtangMine::KtangMine(Vector2 opos,double ov, double oangle, int odamage,
@@ -159,7 +160,7 @@ void KtangMine::calculate()
     SpaceObject *o, *t = NULL;
     double oldrange = 999999;
     Query a;
-    for (a.begin(this, bit(LAYER_SHIPS),(missileRange *.9));
+    for (a.begin(this, bit(LAYER_SHIPS),(missileRange *.9), QUERY_OBJECT);
            a.current; a.next()) {
 		o = a.currento;
 		if (!o->sameTeam(this) && (distance(o) < oldrange) && !(o->isAsteroid() || o->isPlanet())) {

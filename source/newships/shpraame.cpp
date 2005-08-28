@@ -305,7 +305,7 @@ RaalrithPoison::RaalrithPoison(RaalrithMenacer *creator, int nduration, Ship *ns
   start = TRUE;
   collide_flag_anyone = 0;
   Query q;
-  for (q.begin(oship, bit(LAYER_HOTSPOTS), 10); q.current; q.next()) {
+  for (q.begin(oship, bit(LAYER_HOTSPOTS), 10, QUERY_OBJECT); q.current; q.next()) {
     if ((q.current->getID() == getID()) && (((RaalrithPoison*)q.current)->oship == oship)) {
       ((RaalrithPoison*)q.current)->duration = duration;
       state = 0;

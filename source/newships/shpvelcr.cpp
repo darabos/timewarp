@@ -297,7 +297,7 @@ int VelronCruiser::fire_def_shot(double lowAngle, double highAngle, double defau
 	angleShift = r * specialLaunchAngleDeflectionRange;
 
 	Query a;
-	for (a.begin(this, OBJECT_LAYERS, specialRange); a.current; a.next()) {
+	for (a.begin(this, OBJECT_LAYERS, specialRange, QUERY_OBJECT); a.current; a.next()) {
 		o = a.currento;
 		if( (!o->isInvisible()) && !o->sameTeam(this)
 			&& (o->collide_flag_anyone & bit(LAYER_SHOTS))) {

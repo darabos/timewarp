@@ -34,7 +34,7 @@ public:
   public:
   ScloreSting* Sting;
   ScloreFrigate(Vector2 opos, double angle, ShipData *data, unsigned int code);
-  ~ScloreFrigate(void);
+	virtual void death();
   protected:
   void fireSting();
   void energizeSting(int Energy);
@@ -75,7 +75,7 @@ public:
   virtual bool die(void);
   virtual void inflict_damage(SpaceObject* other);
   virtual int handle_damage(SpaceLocation* source, double normal, double direct = 0);
-  ~ScloreSting(void);
+	virtual void death();
 };
 
 
@@ -121,7 +121,7 @@ void ScloreFrigate::fireSting(void) {
       v.x = -v.x; v.y = -v.y;
     }
     vr = this->vel * specialRelativity;
-    Sting->vel = v + vr;
+    Sting->set_vel( v + vr );
     Sting->v = (v + vr).magnitude();
     Sting=NULL; //sting is released.
   	this->play_sound2(data->sampleSpecial[1]);
@@ -145,8 +145,10 @@ int ScloreFrigate::addPowerToSting(void) {
   return(TRUE);
 }
 
-ScloreFrigate::~ScloreFrigate(void) {
-	STACKTRACE
+void ScloreFrigate::death()
+{
+	STACKTRACE;
+	Ship::death();
   if(Sting!=NULL && Sting->exists()) Sting->state = 0; // possible crash problem.
 }
 
@@ -257,7 +259,7 @@ void ScloreSting::calculate(void)
     this->pos.y = creator->pos.y + dy;
     this->changeDirection(creator->angle);
     this->v = creator->vel.magnitude();
-    this->vel = creator->vel;
+    set_vel( creator->vel );
   }
 
   Missile::calculate();
@@ -312,8 +314,12 @@ void ScloreSting::inflict_damage(SpaceObject* other) {
   return;
 }
 
-ScloreSting::~ScloreSting(void) {
-	STACKTRACE
+void ScloreSting::death()
+{
+	STACKTRACE;
+
+	Missile::death();
+
   if(!creator) return;
   if(!creator->exists()) return;
   if(creator->state == 0) return;

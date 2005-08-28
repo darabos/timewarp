@@ -257,7 +257,7 @@ void XillzCrescentOrbiter::calculate()
 		int layers = OBJECT_LAYERS;
 		
 		Query a;
-		for (a.begin(this, layers, passiveRange); a.current; a.next())
+		for (a.begin(this, layers, passiveRange, QUERY_OBJECT); a.current; a.next())
 		{
 			SpaceObject *o = a.currento;
 			if (o->isShip() && o->mass != 0 && o != ship && (!sameTeam(o)) )
@@ -326,7 +326,7 @@ void XillzCrescentOrbiter::calculate()
 	// and are within reach,
 	int layers = OBJECT_LAYERS;
 	Query a;
-	for (a.begin(this, layers, passiveRange); a.current; a.next())
+	for (a.begin(this, layers, passiveRange, QUERY_OBJECT); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
 		if ( o->isShot() )
@@ -342,8 +342,8 @@ void XillzCrescentOrbiter::calculate()
 
 			dv = accel*frame_time * unit_vector(ang) * b;
 
-			s->vel = s->v * unit_vector(s->angle);
-			s->vel -= dv;
+			s->set_vel( s->v * unit_vector(s->angle) );
+			s->change_vel( - dv );
 
 			s->v = s->vel.length();
 			s->angle = s->vel.atan();

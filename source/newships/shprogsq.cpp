@@ -231,7 +231,7 @@ void RogueSquadron::materialize()
 
 		fighter[i]->pos = fighter[i]->idealpos;
 		fighter[i]->angle = player_angle;
-		fighter[i]->vel = 0;
+		fighter[i]->set_vel ( 0 );
 	}
 
 
@@ -410,7 +410,7 @@ void RogueSquadron::calculate()
 	
 	SpaceObject *o;
 	Query a;
-	for (a.begin(this, bit(LAYER_SHIPS), 999999.0); a.current; a.next())
+	for (a.begin(this, bit(LAYER_SHIPS), 999999.0, QUERY_OBJECT); a.current; a.next())
 	{
 		o = a.currento;
 		if (o->target == this )

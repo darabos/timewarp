@@ -164,9 +164,9 @@ void UlzrakInterceptor::calculate() {
     else
       this->zoomVel = unit_vector(this->angle) * this->specialZoomSpeedAddition;
     if(this->specialZoomSpeedIsAdditive)
-      this->vel = this->normalVel + this->zoomVel;
+      set_vel ( this->normalVel + this->zoomVel );
     else
-      this->vel = this->zoomVel;
+      set_vel ( this->zoomVel );
     this->damage_factor = this->specialCollisionDamage;
     this->zoomCounter += frame_time;
     this->DrawZoomLines();
@@ -332,14 +332,14 @@ void UlzrakInterceptor::UnZoom(void) {
   this->zoomSequenceInitiated = false;
   if(this->specialZeroBaseVelocityAfterZoom!=0) {
     this->normalVel = Vector2(0,0);
-    this->vel = Vector2(0,0);
+    set_vel ( Vector2(0,0) );
   }
   if(this->specialZoomVelocityBecomesBaseVelocityDirection!=0) {
     this->normalVel = unit_vector(this->zoomVel) * this->speed_max;
     if(this->zoomReversed) this->normalVel = -this->normalVel;
     //message.print(1000,10, "normalVel override");
   }
-  this->vel = this->normalVel;
+  set_vel ( this->normalVel );
   this->spriteShift = 0;
   this->zoomCounter = 0;
   this->zoomReversed = false;

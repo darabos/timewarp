@@ -25,7 +25,6 @@ IDENTITY(ArkanoidPincer);
   double angleSkew;
   ArkanoidPincer(ArkanoidPincerShip* ocreator, Vector2 opos, 
 	double oangle, SpaceSprite *osprite);
-  virtual ~ArkanoidPincer(void);
   virtual void calculate();
   virtual void collide(SpaceObject *other);
   virtual void inflict_damage(SpaceObject *other);
@@ -96,7 +95,6 @@ public:
 
   public:
   ArkanoidPincerShip(Vector2 opos, double angle, ShipData *data, unsigned int code);
-  virtual ~ArkanoidPincerShip(void);
   ArkanoidPincer* pincerL;
   ArkanoidPincer* pincerR;
   double jawAngle;
@@ -211,17 +209,26 @@ ArkanoidPincerShip::ArkanoidPincerShip(Vector2 opos, double angle, ShipData *dat
 	}
 }
 
-ArkanoidPincerShip::~ArkanoidPincerShip(void) {
-  //message.print(1500,3,"~ArkanoidPincerShip1");
-  if(pincerL) {
-    pincerL->state=0;
-    pincerL->creator=NULL;
-  }
-  if(pincerR){
-    pincerR->state=0;
-    pincerR->creator=NULL;
-  }
-  //message.print(1500,3,"~ArkanoidPincerShip2");
+void ArkanoidPincerShip::death()
+{
+	STACKTRACE;
+
+   Ship::death();
+
+ //message.print(1500,13,"ShipDeath1");
+  if (pincerL && pincerL->exists()) {
+      pincerL->creator = NULL;
+      pincerL->otherPincer = NULL;
+      pincerL->state = 0;
+      pincerL = NULL;
+    }
+  if(pincerR && pincerR->exists()) {
+      pincerR->creator = NULL; 
+      pincerR->otherPincer = NULL;
+      pincerR->state = 0;
+      pincerR = NULL;
+    }
+  //message.print(1500,13,"ShipDeath2");
 }
 
 void ArkanoidPincerShip::animate(Frame* space) {
@@ -497,24 +504,7 @@ void ArkanoidPincerShip::Regrow(void) {
   //message.print(1500,11,"Regrow2");
 }
 
-void ArkanoidPincerShip::death(void) {
-	STACKTRACE
-  //message.print(1500,13,"ShipDeath1");
-  if (pincerL && pincerL->exists()) {
-      pincerL->creator = NULL;
-      pincerL->otherPincer = NULL;
-      pincerL->state = 0;
-      pincerL = NULL;
-    }
-  if(pincerR && pincerR->exists()) {
-      pincerR->creator = NULL; 
-      pincerR->otherPincer = NULL;
-      pincerR->state = 0;
-      pincerR = NULL;
-    }
-  Ship::death();
-  //message.print(1500,13,"ShipDeath2");
-}
+
 
 ArkanoidPincer::ArkanoidPincer(ArkanoidPincerShip *ocreator, Vector2 opos, 
 	double oangle, SpaceSprite *osprite) :
@@ -546,15 +536,7 @@ ArkanoidPincer::ArkanoidPincer(ArkanoidPincerShip *ocreator, Vector2 opos,
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
-ArkanoidPincer::~ArkanoidPincer(void) {
-  //message.print(1500,13,"~ArkanoidPincer1");
-  if(creator) {
-    *pointerToMe = NULL;
-    if(otherPincer)
-      this->otherPincer->otherPincer = NULL;
-  }
-  //message.print(1500,13,"~ArkanoidPincer2");
-}
+
 
 void ArkanoidPincer::death(void) {
 	STACKTRACE
@@ -562,6 +544,12 @@ void ArkanoidPincer::death(void) {
   //state=1;
   //isAlive = 0;
   SpaceObject::death();
+
+  if(creator) {
+    *pointerToMe = NULL;
+    if(otherPincer)
+      this->otherPincer->otherPincer = NULL;
+  }
   //message.print(1500,14,"ArkanoidPincerDeath2");
 }
 
@@ -651,7 +639,7 @@ void ArkanoidPincer::collide(SpaceObject *other) {
   SpaceObject::collide(other);
   if(vv!=vel) {
     if(creator) {
-      creator->vel = vel;
+      creator->set_vel ( vel );
 //      message.print(4000,15,"old %f -- %f new %f -- %f",vxx, vyy, this->vx, this->vy);
     }
   }

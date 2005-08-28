@@ -124,7 +124,7 @@ void Planet::calculate() {STACKTRACE
 	SpaceObject::calculate();
 	SpaceObject *o;
 	Query a;
-	a.begin(this, OBJECT_LAYERS, gravity_range);
+	a.begin(this, OBJECT_LAYERS, gravity_range, QUERY_OBJECT);
 	for (;a.currento;a.next()) {
 		o = a.currento;
 		if (o->mass > 0) {

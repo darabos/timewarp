@@ -170,7 +170,7 @@ SpaceObject* KlisruDragon::FindMissileTarget(void) {
 	SpaceObject *o;
 	Query a;
 	a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
-			bit(LAYER_CBODIES), this->specialRange);
+			bit(LAYER_CBODIES), this->specialRange, QUERY_OBJECT);
 	for (;a.current;a.next()) {
 		o = a.currento;
     if(!o->isInvisible() && !o->sameTeam(this) && this->distance(o)<bestRange) {
@@ -268,7 +268,7 @@ void KlisruTorpedo::calculate(void)
 	armour = (1 - fractionDone) * startArmour + fractionDone * endArmour;
 	
 	this->v *= (1 - this->friction * frame_time);
-	this->vel = unit_vector(this->angle) * this->v;
+	set_vel( unit_vector(this->angle) * this->v );
 
 }
 

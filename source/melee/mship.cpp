@@ -331,8 +331,9 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	nextkeys = 0;
 	id = SPACE_SHIP;
 
-	type = NULL;
-	code = NULL;
+	type = 0;
+	code = 0;
+	// data is initialized in SpaceLocation constructor
 
 	// modified otherwise the kat poly crashes
 	if (creator && creator->isShip())
@@ -365,7 +366,6 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	target_pressed(false),
 	control(NULL)
 {STACKTRACE
-	shipData->lock();
 	attributes |= ATTRIB_SHIP;
 	layer = LAYER_SHIPS;
 	set_depth(DEPTH_SHIPS);
@@ -378,7 +378,18 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 
 	captain_name[0] = '\0';
 	ship = this;
+
+	if (data)
+	{
+		tw_error("ship with data out of nowhere? Shouldn't be possible.");
+	}
 	data = shipData;
+	if (!data)
+	{
+		tw_error("A ship without data.");
+	}
+	data->lock();
+
 	this->ally_flag = ally_flag;
 
 	collide_flag_sameteam = ALL_LAYERS;
@@ -471,6 +482,7 @@ Ship::~Ship()
 	STACKTRACE;
 
 	delete spritePanel;
+	spritePanel = 0;
 
 //f (override_control)
 //delete override_control;

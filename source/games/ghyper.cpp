@@ -27,7 +27,7 @@ class HyperMelee : public NormalGame {
 	virtual void init(Log *_log);
 	virtual void set_resolution (int screen_x, int screen_y);
 	virtual void init_objects();
-	~HyperMelee();
+	virtual ~HyperMelee();
 	};
 
 void HyperMelee::init_objects() {

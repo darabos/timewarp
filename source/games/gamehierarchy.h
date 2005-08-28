@@ -40,7 +40,7 @@ public:
 //	double		refscaletime;		// scale factor for time in the "prev" game
 
 	SubGame();
-	~SubGame();
+	virtual ~SubGame();
 
 	virtual void init(Log *_log);
 };

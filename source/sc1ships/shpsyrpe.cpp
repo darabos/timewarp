@@ -114,7 +114,10 @@ int CrewPod::sameTeam(SpaceLocation *other) {
 	return true;
 	}
 
-void CrewPod::calculate() {
+void CrewPod::calculate()
+{
+	SpaceObject::calculate();
+
 	frame_step += frame_time;
 	while (frame_step >= frame_size) {
 		frame_step -= frame_size;
@@ -133,7 +136,6 @@ void CrewPod::calculate() {
 		}
 	else ship = NULL;
 
-	SpaceObject::calculate();
 	}
 
 void CrewPod::inflict_damage(SpaceObject *other)

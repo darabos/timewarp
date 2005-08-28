@@ -80,7 +80,7 @@ Asteroid *Crash::closest_asteroid(double maxrange)
 	double R, Rmin = 1E9;
 
 	Query a;
-	for (a.begin(this, layers, Range); a.current; a.next())
+	for (a.begin(this, layers, Range, QUERY_OBJECT); a.current; a.next())
 	{
 		SpaceObject *o = a.currento;
 		if (o->isAsteroid())

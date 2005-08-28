@@ -46,7 +46,7 @@ public:
 	virtual void animate(Frame *space);
 	virtual void collide(SpaceObject *other);
 	//virtual void death();
-	~KaboHaze();
+	virtual ~KaboHaze();
 };
 
 

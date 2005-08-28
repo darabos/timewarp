@@ -58,7 +58,7 @@ int QlonRedeemer::activate_weapon() {
 
 	Query a;
 	for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL) + 
-			bit(LAYER_CBODIES), weaponRange); a.current; a.next()) {
+			bit(LAYER_CBODIES), weaponRange, QUERY_OBJECT); a.current; a.next()) {
 		o = a.currento;
 		if( (!o->isInvisible()) && !o->sameTeam(this) && (o->collide_flag_anyone & bit(LAYER_LINES))) {
 			SpaceLocation *l = new PointLaser(this, pallete_color[weaponColor], 1, 

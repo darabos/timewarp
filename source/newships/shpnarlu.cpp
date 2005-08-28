@@ -35,7 +35,7 @@ IDENTITY(NaroolLurker);
 		ShipData *shipData, unsigned int code);
 
 	BITMAP *lightningbmp;
-	~NaroolLurker();
+	virtual ~NaroolLurker();
 
 
 	virtual double isInvisible() const;

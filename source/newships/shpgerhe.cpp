@@ -209,7 +209,7 @@ void GerlVirtualship::calculate()
 		hero->pos = pos;
 		batt = batt_max;	// otherwise they keep dying of lack of juice !!
 		vel = morons->vel;
-		hero->vel = vel;
+		hero->set_vel ( vel );
 
 		crew -= 1;	// 2 leave the moron ship, but only 1 is effectively sacrificed - one
 					// is on the hero vessel.
@@ -440,7 +440,7 @@ void GerlHero::calculate()
 
 
 	mother->pos = pos;
-	mother->vel = vel;
+	mother->set_vel ( vel );
 	mother->angle = angle;
 
 	sprite_index = get_index(angle, 0.5*PI);
@@ -774,7 +774,7 @@ void GerlHero::calculate()
 				vel = moronbrother->vel + heroV * unit_vector(angle);	// launched in the orientation of the moron ship!
 				
 				// rebound of the moron ship upon launch ... does this work?
-				moronbrother->vel -= 0.5 * heroV * unit_vector(angle);
+				moronbrother->change_vel (- 0.5 * heroV * unit_vector(angle) );
 				
 				movetotip = 0;
 				
@@ -821,7 +821,7 @@ void GerlHero::inflict_damage(SpaceObject *other)
 			Vboarding = boardingship->pos;
 
 			// give the enemy a small amount of impact velocity ;)
-			boardingship->vel = 0.5 * (boardingship->vel + vel);
+			boardingship->set_vel ( 0.5 * (boardingship->vel + vel) );
 			//if (boardingship->vel
 
 		}

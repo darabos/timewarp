@@ -101,7 +101,7 @@ IDENTITY(TauArchonFrozen);
 public:
 
 	TauArchonFrozen(SpaceLocation *creator, SpaceObject *source, SpaceSprite *osprite);
-	~TauArchonFrozen();
+	virtual ~TauArchonFrozen();
 	virtual void inflict_damage(SpaceObject *other);
 	virtual void calculate();
 	virtual void animateExplosion();

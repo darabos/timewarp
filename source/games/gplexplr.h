@@ -152,7 +152,7 @@ public:
 	Vector2 size();
 
 	Plsurface(char *datafilename, char *subdatafilename);
-	~Plsurface();
+	virtual ~Plsurface();
 	void calculate();
 	void animate(Frame *frame);
 	int surf_color(int x, int y);

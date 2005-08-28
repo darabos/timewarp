@@ -140,7 +140,7 @@ int KorvianSidekick::activate_special()
 	Query a;
 	if(tugger == NULL) {
 		for (a.begin(this, bit(LAYER_SHIPS) | bit(LAYER_SHOTS) | bit(LAYER_SPECIAL) | bit(LAYER_CBODIES),
-			tuggerDistance); a.current; a.next()) 
+			tuggerDistance, QUERY_OBJECT); a.current; a.next()) 
 		{
 			o = a.currento;
 			if( (!o->isInvisible()) && (o->collide_flag_anyone & bit(LAYER_LINES))

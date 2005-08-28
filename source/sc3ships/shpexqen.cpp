@@ -97,7 +97,7 @@ int ExquivanEnigma::activate_special() {
 
 	 Query a;
   double multi = ((double)((random () % 20) + 10) / 10);
-  for (a.begin(this, bit(LAYER_SHIPS), specialRange); a.current; a.next()) {
+  for (a.begin(this, bit(LAYER_SHIPS), specialRange, QUERY_OBJECT); a.current; a.next()) {
 		o = a.currento;
   if( (!o->sameTeam(this)) && (distance(o) < specialRange) &&
 			 o->isShip() && o->exists()) {
@@ -186,7 +186,7 @@ void ExquivanBarrier::calculate()
       double oldrange = 9999999;
       Query a;
       for (a.begin(this,bit(LAYER_SHOTS) + bit(LAYER_SPECIAL),
-        dist); a.current; a.next()) {
+        dist, QUERY_OBJECT); a.current; a.next()) {
 		      o = a.currento;
 		      if( (!o->sameTeam(this)) && (distance(o) < oldrange) &&
 			       canCollide(o) && o->exists() && !(o->isAsteroid() || o->isPlanet()) &&
@@ -218,7 +218,7 @@ void ExquivanBarrier::calculate()
       double oldrange = 9999999;
       Query a;
       for (a.begin(this,bit(LAYER_SHOTS) + bit(LAYER_SPECIAL),
-        safedist * 2.5); a.current; a.next()) {
+        safedist * 2.5, QUERY_OBJECT); a.current; a.next()) {
 		      o = a.currento;
 		      if( (!o->sameTeam(this)) && (distance(o) < oldrange) &&
 			       canCollide(o) && o->exists() && !(o->isAsteroid() || o->isPlanet())) {

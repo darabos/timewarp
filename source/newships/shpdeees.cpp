@@ -193,7 +193,7 @@ int DeepSpaceEssence::activate_special()
 	handle_damage(this, 1, 0);
 	
 	Query q;
-	for( q.begin( this, OBJECT_LAYERS, specialRange ); q.currento; q.next() )
+	for( q.begin( this, OBJECT_LAYERS, specialRange, QUERY_OBJECT ); q.currento; q.next() )
 	{
 		if( q.currento->isShip() && q.currento != this ){
 			Ship* s = (Ship*)q.currento;
@@ -337,7 +337,7 @@ void DeepSpaceWarrior::inflict_damage(SpaceObject *other)
 		int c = 0;
 		if (range > d)
 		{
-			for( q.begin( this, bit(LAYER_SHIPS), range - d ); q.currento; q.next() ){
+			for( q.begin( this, bit(LAYER_SHIPS), range - d, QUERY_OBJECT ); q.currento; q.next() ){
 				if( !q.currento->isShip() ) continue;
 				if( q.currento->target != ship ) continue;
 				c++;
@@ -345,7 +345,7 @@ void DeepSpaceWarrior::inflict_damage(SpaceObject *other)
 		}
 		if( !c ) return;
 		c = random(c);
-		for( q.begin( this, bit(LAYER_SHIPS), range - d ); q.currento; q.next() ){
+		for( q.begin( this, bit(LAYER_SHIPS), range - d, QUERY_OBJECT ); q.currento; q.next() ){
 			if( !q.currento->isShip() ) continue;
 			if( q.currento->target != ship ) continue;
 			if( !c ) break;

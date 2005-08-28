@@ -143,7 +143,7 @@ int ImperialKatana::activate_special(){
 
   bool found = false;
   Query q;
-  for( q.begin( this, OBJECT_LAYERS, size.x ); q.currento; q.next() ){
+  for( q.begin( this, OBJECT_LAYERS, size.x, QUERY_OBJECT ); q.currento; q.next() ){
     if( q.currento->get_sprite() == data->spriteSpecialExplosion && q.currento->ship == this ){
       q.currento->state = 0;
       if( found ) continue;
@@ -233,7 +233,7 @@ void ImperialKatana::calculate()
   }
   bool raded = false;
   Query q;
-  for( q.begin( this, OBJECT_LAYERS, size.x ); q.currento; q.next() ){
+  for( q.begin( this, OBJECT_LAYERS, size.x, QUERY_OBJECT ); q.currento; q.next() ){
     if( q.currento->get_sprite() == data->spriteSpecialExplosion && q.currento->ship == this ){
       raded = true;
     }
@@ -353,7 +353,7 @@ void ImperialRadioactivity::inflict_damage( SpaceObject* other ){
   if( !other->isShip() ) return;
 
   Query q;
-  for( q.begin( other, OBJECT_LAYERS, size.x ); q.currento; q.next() ){
+  for( q.begin( other, OBJECT_LAYERS, size.x, QUERY_OBJECT ); q.currento; q.next() ){
     if( q.currento->get_sprite() == data->spriteSpecialExplosion && q.currento->ship == other ){
       q.end();
       return;

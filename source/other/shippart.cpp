@@ -31,14 +31,15 @@ Ship(opos, shipAngle, shipData, code)
 
 void BigShip::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	Ship::calculate();
 
 	// make sure the "ship" is not a real target
 	if (targets->isintargetlist(this))
 		//removefromtargetlist(this);
 		targets->rem(this);
 
-	Ship::calculate();
 
 	// check if all the parts are still alive.
 	int i;
@@ -56,11 +57,12 @@ void BigShip::calculate()
 // change velocities of the ship and all its parts
 void BigShip::change_vel(Vector2 dvel)
 {
-	STACKTRACE
+	STACKTRACE;
 
 	int i;
 
-	vel += dvel;
+
+	SpaceLocation::change_vel( dvel );	// adds dvel, and checks the size.
 
 	for ( i = 0; i < Nparts; ++i )
 	{
@@ -176,6 +178,8 @@ void BigShipPart::calculate()
 {
 	STACKTRACE
 
+	Ship::calculate();
+
 	if ( !(owner && owner->exists()) )
 	{
 		owner = 0;
@@ -213,7 +217,6 @@ void BigShipPart::calculate()
 	*/
 
 
-	Ship::calculate();
 
 }
 

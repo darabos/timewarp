@@ -124,6 +124,8 @@ int DaktaklakpakVivisector::activate_special()
 
 void DaktaklakpakVivisector::calculate()
 {
+   Ship::calculate();
+
    if(drillFrames > 0) {
      drillFrames-= frame_time;
      if ((drillFrames <= 0) && (!latched)) {
@@ -161,7 +163,6 @@ void DaktaklakpakVivisector::calculate()
     }
     numMines -= j;
 
-   Ship::calculate();
 }
 int DaktaklakpakVivisector::canCollide(SpaceObject *other)
 {
@@ -240,7 +241,7 @@ void DaktaklakpakMine::calculate()
     SpaceObject *o, *t = NULL;
     double oldrange = 999999;
     Query a;
-    for (a.begin(this, bit(LAYER_SHIPS),(missileRange *.9));
+    for (a.begin(this, bit(LAYER_SHIPS),(missileRange *.9), QUERY_OBJECT);
            a.current; a.next()) {
 		o = a.currento;
 		if (!o->sameTeam(this) && (distance(o) < oldrange) && !(o->isAsteroid() || o->isPlanet())) {

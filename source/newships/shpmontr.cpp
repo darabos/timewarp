@@ -54,7 +54,7 @@ IDENTITY(MonoTron);
   virtual void calculate_hotspots();      // does nothing
   virtual int accelerate(SpaceLocation *source, double angle, double velocity, 
 			double max_speed);  // avoids acceleration effects
-  ~MonoTron();                            // frees some memory
+  virtual ~MonoTron();                            // frees some memory
 };
 
 class MonoMissile : public HomingMissile {
@@ -78,7 +78,7 @@ IDENTITY(MonoMissile);
 
   virtual void calculate_index();
 
-  ~MonoMissile();                                          // frees up beacon memory
+  virtual ~MonoMissile();                                          // frees up beacon memory
 };
 
 class MonoLaser : public Laser {

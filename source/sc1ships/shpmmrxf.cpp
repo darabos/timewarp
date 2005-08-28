@@ -64,6 +64,8 @@ MmrnmhrmXForm::MmrnmhrmXForm(Vector2 opos, double shipAngle,
 
 void MmrnmhrmXForm::calculate()
 {
+  Ship::calculate();
+
   if(laserSpark > 0) {
     laserSpark-= frame_time;
     if((laserSpark <= 0) && (laserSpark > -frame_time)) {
@@ -76,7 +78,6 @@ void MmrnmhrmXForm::calculate()
     }
   }
 
-  Ship::calculate();
 }
 
 int MmrnmhrmXForm::activate_weapon()

@@ -40,9 +40,10 @@ int YehatTerminator::activate_special()
 
 void YehatTerminator::calculate()
 {
+   Ship::calculate();
+
    if(shieldFrames > 0)
      shieldFrames-= frame_time;
-   Ship::calculate();
 }
 
 void YehatTerminator::animate(Frame *space)

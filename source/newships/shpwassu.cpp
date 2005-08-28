@@ -344,8 +344,12 @@ CloneIndex(0)
 			
 	// extra stuff
 
-	data = shipData;
-	data->lock();
+	if (data != shipData)
+	{
+		tw_error("ship data mismatch in wasxclone");
+	}
+//	data = shipData;
+//	data->lock();		// the matching unlock should be in the SpaceLocation destructor.
 
 	crew     = MotherShip->crew;
 	crew_max = MotherShip->crew_max;

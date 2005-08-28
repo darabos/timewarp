@@ -325,8 +325,8 @@ void TulkonDevice::collide( SpaceObject* other ){
     return;
   }
   if( pos != P ) ship->translate( pos - P );
-  if( vel != PV ){
-    ship->vel = PV;
+  if( ship && vel != PV ){
+    ship->set_vel( PV );
   }
 }
 
@@ -430,7 +430,7 @@ void TulkonBomb::calculate(){
   */
 
   Query q;
-  for( q.begin( this, OBJECT_LAYERS, srange ); q.currento; q.next() ){
+  for( q.begin( this, OBJECT_LAYERS, srange, QUERY_OBJECT ); q.currento; q.next() ){
     if( q.currento->isObject() && !q.currento->sameShip(this) ){
 		  damage(this, armour);
     }
@@ -459,7 +459,7 @@ int TulkonBomb::handle_damage( SpaceLocation* other, double normal, double direc
   int d= AnimatedShot::handle_damage( other, normal, direct );
   if( s && !exists() ){
     Query q;
-    for( q.begin( this, OBJECT_LAYERS, drange ); q.currento; q.next() ){
+    for( q.begin( this, OBJECT_LAYERS, drange, QUERY_OBJECT ); q.currento; q.next() ){
 // we could use a distance dependant damage factor
 //      int dmg = (int)ceil((drange - distance(q.currento)) / drange * damage_factor);
 	  //q.currento->damage(this, damage_factor);

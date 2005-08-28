@@ -18,6 +18,7 @@ enum {OPTION_UNKNOWN = 0, OPTION_FRONT, OPTION_NO_FRONT, OPTION_SIDES,
     OPTION_NONE,
 	OPTION_LAST // this must be the last in the line
 };
+
 /*
 #define OPTION_UNKNOWN 0
 #define OPTION_NONE 1
@@ -67,7 +68,7 @@ double ControlWussie::check_danger ()
 
 	double d = 0;
 	Query q;
-	q.begin (ship, OBJECT_LAYERS, ship->size.x + ship->size.y + 200);
+	q.begin (ship, OBJECT_LAYERS, ship->size.x + ship->size.y + 200, QUERY_OBJECT);
 	for (; q.currento; q.next ())
 	{
 		if ((ship->distance (q.currento) <
@@ -146,7 +147,7 @@ double ControlWussie::evasion (Ship * ship)
 	double collider_distance = 1E6;
 	double collider_t = 1E6;
 
-	for ( b.begin (&center_check, OBJECT_LAYERS & ~bit (LAYER_CBODIES) & ~bit (LAYER_SHIPS), check_range); b.current; b.next() )
+	for ( b.begin (&center_check, OBJECT_LAYERS & ~bit (LAYER_CBODIES) & ~bit (LAYER_SHIPS), check_range, QUERY_OBJECT); b.current; b.next() )
 	{
 		shot = b.currento;
 		if ( shot->canCollide(ship) && shot != ship->target && !shot->isAsteroid() )
@@ -313,7 +314,7 @@ int ControlWussie::think ()
 		last_seen_time = game->game_time - 1000;
 	}
 
-	for (ap.begin (ship, bit (LAYER_CBODIES), planet_safe[state]);
+	for (ap.begin (ship, bit (LAYER_CBODIES), planet_safe[state], QUERY_OBJECT);
 		ap.current; ap.next ())
 	{
 		p = ap.currento;

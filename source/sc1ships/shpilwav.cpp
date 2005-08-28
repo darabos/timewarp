@@ -80,12 +80,13 @@ void IlwrathAvenger::calculate_hotspots()
 
 void IlwrathAvenger::calculate()
 {
+  Ship::calculate();
+
   if((cloak) && (cloak_frame < 300))
     cloak_frame += frame_time;
   if((!cloak) && (cloak_frame > 0))
     cloak_frame -= frame_time;
 
-  Ship::calculate();
 }
 
 void IlwrathAvenger::animate(Frame *space)

@@ -154,7 +154,7 @@ void KohrAhBlade::calculate() {
 	if(passive) {
 		Query a;
 		for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SPECIAL), 
-				passiveRange); a.current; a.next()) {
+				passiveRange, QUERY_OBJECT); a.current; a.next()) {
 			o = a.currento;
 			if (!o->sameTeam(this) && o->canCollide(this) && !(o->isAsteroid() || o->isPlanet()) && (distance(o) < oldrange) && !o->isInvisible() && (distance(o) != 0) ) {
 				t = o;

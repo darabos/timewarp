@@ -54,7 +54,7 @@ Planet * FindPlanet (std::string name)
 {
   Planet *p = NULL;
   Query q;
-  q.begin(game->item[0], bit(LAYER_CBODIES), 99999999);
+  q.begin(game->item[0], bit(LAYER_CBODIES), 99999999, QUERY_OBJECT);
 
   // if first object is planet
   if (game->item[0]->isPlanet())

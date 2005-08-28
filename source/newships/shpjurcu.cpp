@@ -115,7 +115,7 @@ void JurgathaPortal::calculate()
 
 	// the animation needs to check if it inflicts damage on its own.
 	for (a.begin(this, bit(LAYER_SHIPS) + bit(LAYER_SHOTS) + bit(LAYER_SPECIAL),
-			sprite->width()/2); a.current; a.next())
+			sprite->width()/2, QUERY_OBJECT); a.current; a.next())
 	{
 		if (!a.currento->sameTeam(this) && !(a.currento->isAsteroid() || a.currento->isPlanet() ) )
 		{

@@ -297,6 +297,8 @@ void OwaDisable::target_died() {
 
 void OwaDisable::calculate() {
 
+	SpaceObject::calculate();
+
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -310,18 +312,22 @@ void OwaDisable::calculate() {
 			sprite_index = lowerindex;
 		}
 
-	if (!lowerindex) {
-		pos = target->normal_pos();
-		//((Ship*)target)->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
-		}
-	else {
-		pos = target->normal_pos();
-		}
 
+	if (target)
+	{
+		if (!lowerindex)
+		{
+			pos = target->normal_pos();
+			//((Ship*)target)->nextkeys &= ~(keyflag::left | keyflag::right | keyflag::thrust);
+		}
+		else {
+			pos = target->normal_pos();
+		}
+	}
 	disableframe += frame_time;
 	if (disableframe >= disableframe_count) state = 0;
 
-	if (!target->exists())
+	if (!target)
 	{
 		state = 0;
 	}
@@ -332,8 +338,6 @@ void OwaDisable::calculate() {
 			targetship->del_override_control(oco);
 	}
 
-	// the following can set target=0, so must be done last
-	SpaceObject::calculate();
 
 }
 

@@ -146,7 +146,7 @@ public:
 		int odamage, double orange, int oarmour, double otrate, Ship *oship,
 		SpaceSprite *osprite, SpaceObject* oTarget);
 
-	~HydrovarEsFighter(void);
+	virtual ~HydrovarEsFighter(void);
 
 	virtual void calculate();
 	virtual void inflict_damage(SpaceObject *other);
@@ -557,7 +557,7 @@ void HydrovarEsFighter::searchForTarget(void)
   if(this->targetsShips) searchLayers += bit(LAYER_SHIPS);
   if(this->targetsShots) searchLayers += bit(LAYER_SHOTS);
   if(this->targetsSpecial) searchLayers += bit(LAYER_SPECIAL);
-	for (a.begin(this, searchLayers, trackingRange); a.current; a.next()) {
+	for (a.begin(this, searchLayers, trackingRange, QUERY_OBJECT); a.current; a.next()) {
 //		if(a.currento==NULL)
 //			tw_error("Null object during search loop.");
 		o = a.currento;

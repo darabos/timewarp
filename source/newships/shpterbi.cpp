@@ -534,7 +534,7 @@ int TeronBuilder::activate_special()
 
 	}else{
 		Query q;
-		for( q.begin( this, bit(LAYER_SHIPS), selectRange ); q.currento; q.next() ){
+		for( q.begin( this, bit(LAYER_SHIPS), selectRange, QUERY_OBJECT ); q.currento; q.next() ){
 			if( sameShip( q.currento ) && q.currento->get_sprite() == data->TERON_DRONE_SPRITE ){
 				if( current_option == option_order_assist_building ){
 					((TeronDrone*)q.currento)->assist_building();
@@ -554,7 +554,7 @@ void TeronBuilder::animate( Frame* space ){
   Ship::animate( space );
   if( select_all ){
     Query q;
-    for( q.begin( this, bit(LAYER_SHIPS), selectRange ); q.currento; q.next() ){
+    for( q.begin( this, bit(LAYER_SHIPS), selectRange, QUERY_OBJECT ); q.currento; q.next() ){
       if( sameShip( q.currento ) && q.currento->get_sprite() == data->TERON_DRONE_SPRITE ){
         data->TERON_SELECTION_SPRITE->animate(
           q.currento->normal_pos(),
@@ -584,7 +584,7 @@ void TeronBuilder::calculate(){
   }else{
     if( collect_step <= 0 && collectRange ){
       Query q;
-      for( q.begin( this, bit(LAYER_CBODIES), collectRange ); q.currento; q.next() ){
+      for( q.begin( this, bit(LAYER_CBODIES), collectRange, QUERY_OBJECT ); q.currento; q.next() ){
         if( q.currento->isAsteroid() ){
           collecting = q.currento;
           game->add( new Laser( this, trajectory_angle( collecting ),
@@ -646,7 +646,7 @@ void TeronBuilder::calculate_fire_weapon()
 			TeronDrone* first_drone = NULL;
 			TeronDrone* next_drone = NULL;
 			Query q;
-			for( q.begin( this, bit(LAYER_SHIPS), selectRange ); q.currento; q.next() ){
+			for( q.begin( this, bit(LAYER_SHIPS), selectRange, QUERY_OBJECT ); q.currento; q.next() ){
 				if( !next_drone && sameShip( q.currento ) && q.currento->get_sprite() == data->TERON_DRONE_SPRITE ){
 					next_drone = (TeronDrone*)q.currento;
 					if( !first_drone ) first_drone = (TeronDrone*)q.currento;
@@ -664,7 +664,7 @@ void TeronBuilder::calculate_fire_weapon()
 			select_all = false;
 			TeronDrone* prev_drone = NULL;
 			Query q;
-			for( q.begin( this, bit(LAYER_SHIPS), selectRange ); q.currento; q.next() ){
+			for( q.begin( this, bit(LAYER_SHIPS), selectRange, QUERY_OBJECT ); q.currento; q.next() ){
 				if( q.currento == current_drone ){
 					if( prev_drone ) break;
 				}
@@ -791,7 +791,7 @@ just_docked( false ), resource( 0 ), docked( NULL ), goal( dock )
   c->select_ship( this, "terbi" );
   c->temporary = true;
   ((ControlWussie*)c)->option_velocity[0][0] = scale_velocity( 999 );
-  ((ControlWussie*)c)->option_range[0][0] = weaponRange;
+  ((ControlWussie*)c)->option_range[0][0] = 0.8 * weaponRange;
 
   if (control->ship != this || control != c)
   {
@@ -820,7 +820,7 @@ void TeronDrone::inflict_damage( SpaceObject* other ){
 
 void TeronDrone::assist_building(){
   Query q;
-  for( q.begin( this, bit(LAYER_SPECIAL), TERON_DRONE_SIGHT_RANGE ); q.currento; q.next() ){
+  for( q.begin( this, bit(LAYER_SPECIAL), TERON_DRONE_SIGHT_RANGE, QUERY_OBJECT ); q.currento; q.next() ){
     if( sameShip( q.currento )){
       TeronBuildPlatform* platform = ((TeronBuildPlatform*)q.currento);
       
@@ -842,7 +842,7 @@ void TeronDrone::collect_resources(){
   SpaceObject* ast = NULL;
   double d = TERON_DRONE_SIGHT_RANGE;
   Query q;
-  for( q.begin( this, bit(LAYER_CBODIES), TERON_DRONE_SIGHT_RANGE ); q.currento; q.next() ){
+  for( q.begin( this, bit(LAYER_CBODIES), TERON_DRONE_SIGHT_RANGE, QUERY_OBJECT ); q.currento; q.next() ){
     if( q.currento->isAsteroid() ){
       double i = distance( q.currento );
       if( i < d ){
@@ -899,6 +899,7 @@ int TeronDrone::activate_weapon(){
   if( goal == build ){
     game->add( new TeronDroneLaser( this, angle, pallete_color[TERON_DRONE_BEAM_COLOR],
       weaponRange, 0, time_ratio, this, Vector2(size)*Vector2(0,0.5)/*0.0, 0.5 * h*/, true ));
+	//xxx          0 instead of -1 ?
     //vx = -vx;
     //vy = -vy;
 	vel = -vel;
@@ -1235,7 +1236,7 @@ void TeronTurret::calculate()
   //vx = vy = 0;
   vel = 0;
   //base->vx = base->vy = 0;
-  base->vel = 0;
+  base->set_vel ( 0 );
   //base->x = x;
   //base->y = y;
   base->pos = pos;
@@ -1330,6 +1331,8 @@ SpaceObject( creator, opos, oangle, osprite ){
 //#endif
   mass = creator->mass;
   layer = LAYER_SHIPS;
+
+  attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 void TeronTurretBase::calculate(){
@@ -1384,6 +1387,14 @@ index_zero( osprite_index )
   sprite_index = osprite_index;
   collide_flag_anyone = collide_flag_sameteam = collide_flag_sameship = ALL_LAYERS;
   layer = LAYER_SPECIAL;
+
+  int n = sprite->frames();
+  if (sprite_index >= n)
+  {
+	  tw_error("error in sprite index!");
+  }
+
+  attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
 int TeronBuildPlatform::handle_damage(SpaceLocation *source, double normal, double direct)
@@ -1394,7 +1405,8 @@ int TeronBuildPlatform::handle_damage(SpaceLocation *source, double normal, doub
   double tot;
   tot = normal + direct;
 
-  if( tot > 0 ){
+  if( tot > 0 )
+  {
     sprite_index--;
     if( sprite_index < index_zero ){
       sprite_index = index_zero;
@@ -1413,7 +1425,7 @@ int TeronBuildPlatform::handle_damage(SpaceLocation *source, double normal, doub
       sprite_index--;
       state = 0;
       new_ship->pos = pos;
-      new_ship->vel = 0;
+      new_ship->set_vel( 0 );
       game->add( new_ship );
       new_ship->materialize();
       new_ship = NULL;

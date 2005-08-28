@@ -35,7 +35,7 @@ int ArilouSkiff::activate_weapon() {
 	double r = 99999;  
 
 	Query a;
-	for (a.begin(this, bit(LAYER_SHIPS), weaponRange + 200); a.current; a.next()) {
+	for (a.begin(this, bit(LAYER_SHIPS), weaponRange + 200, QUERY_OBJECT); a.current; a.next()) {
 		if ((distance(a.current) < r) && !a.current->isInvisible()) {
 			o = a.currento;
 			r = distance(o);

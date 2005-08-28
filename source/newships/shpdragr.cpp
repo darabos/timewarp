@@ -182,7 +182,7 @@ void DraxMine::calculate() {
 	int Seek=FALSE;
 
 	// re-direct homingmissiles
-	for (a.begin(this, bit(LAYER_SHOTS),MineRadius); a.current; a.next()) {
+	for (a.begin(this, bit(LAYER_SHOTS),MineRadius, QUERY_OBJECT); a.current; a.next()) {
 		if (a.currento->isShot()) {
 			Shot *o = NULL;
 			o = (Shot *) a.currento;
@@ -194,7 +194,7 @@ void DraxMine::calculate() {
 	
 	// find the closest shot(f) which the mine seeks out (if it is visible).
 	Shot *f = NULL;
-	for (a.begin(this, bit(LAYER_SHOTS),MineSeek); a.current; a.next()){
+	for (a.begin(this, bit(LAYER_SHOTS),MineSeek, QUERY_OBJECT); a.current; a.next()){
 		if (a.current->exists() && a.currento->isShot())
 		{
 			if ((distance(a.current) < r) && (!a.current->sameTeam(this)) &&

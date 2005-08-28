@@ -71,7 +71,7 @@ IDENTITY(SaMatraFlame);
 public:
 
 	SaMatraFlame(SaMatra* ocreator, Vector2 opos, double oangle, SpaceSprite *osprite);
-	~SaMatraFlame();
+	virtual ~SaMatraFlame();
 
 
 	virtual void calculate();

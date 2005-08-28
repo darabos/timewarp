@@ -232,7 +232,7 @@ void AktunComSat::calculate()
 	}
 	
 	Query q;
-	for (q.begin(this, OBJECT_LAYERS &~ bit(LAYER_CBODIES), lRange); q.currento; q.next()) {
+	for (q.begin(this, OBJECT_LAYERS &~ bit(LAYER_CBODIES), lRange, QUERY_OBJECT); q.currento; q.next()) {
 		if (!q.currento->isInvisible() && !q.currento->sameTeam(this)) {
 			SpaceLocation *l;
 			l = new PointLaser(this, pallete_color[lColor], 1, lFrames, 

@@ -77,7 +77,7 @@ public:
   int thrustFacingNumber; //-2, -1, 0, 1, or 2
   VenKekThrust* Thrust;
   VenKekFrigate(Vector2 opos, double angle, ShipData *data, unsigned int code);
-  virtual ~VenKekFrigate(void);
+	virtual void death();
   protected:
   void createThrust();
   void createSpark(int n);
@@ -123,7 +123,7 @@ public:
   virtual bool die(void);
   virtual void inflict_damage(SpaceObject* other);
   virtual int handle_damage(SpaceLocation* source, double normal, double direct = 0);
-  virtual ~VenKekThrust(void);
+	virtual void death();
 };
 
 VenKekFrigate::VenKekFrigate(Vector2 opos, double angle, ShipData *data, unsigned int code) 
@@ -192,8 +192,10 @@ VenKekFrigate::VenKekFrigate(Vector2 opos, double angle, ShipData *data, unsigne
 }
 
 
-VenKekFrigate::~VenKekFrigate(void) {
-	STACKTRACE
+void VenKekFrigate::death()
+{
+	STACKTRACE;
+	Ship::death();
   if(Thrust!=NULL && Thrust->exists()) Thrust->state = 0; // possible crash problem.
 }
 
@@ -347,7 +349,7 @@ void VenKekFrigate::createThrust(void) {
   Thrust = new VenKekThrust(this, Vector2(0,this->size.x * 0.0), this->angle + PI,
     0, 1, -1, 1, this, data->spriteSpecial, 0);
   Thrust->creator = this;
-  Thrust->vel = this->vel;
+  Thrust->set_vel( this->vel );
   Thrust->pos = this->pos;
   Thrust->damage_factor = 1;
   Thrust->armour = 1;
@@ -438,7 +440,7 @@ void VenKekThrust::calculate(void) {
     this->pos = creator->pos + relPos;
     this->changeDirection(creator->angle);
     this->v = creator->vel.magnitude();
-    this->vel = creator->vel;
+    set_vel( creator->vel );
   }
   Missile::calculate();
   si = get_index(this->angle);
@@ -482,7 +484,9 @@ void VenKekThrust::inflict_damage(SpaceObject* other) {
   return;
 }
 
-VenKekThrust::~VenKekThrust(void) {
+void VenKekThrust::death()
+{
+	Missile::death();
   if(!creator) return;
   if(!creator->exists()) return;
   if(creator->state == 0) return;

@@ -69,11 +69,13 @@ int PloxisPlunderer::activate_special()
 
 void PloxisPlunderer::calculate()
 {
+   Ship::calculate();
+
    if(shieldFrames > 0) {
      recharge_amount = 0;
      shieldFrames-= frame_time;
      Query a;
-     for (a.begin(this, bit(LAYER_SHOTS),250); a.current; a.next()) {
+     for (a.begin(this, bit(LAYER_SHOTS),250, QUERY_OBJECT); a.current; a.next()) {
        SpaceObject *o = a.currento;
        if ((!o->sameShip(this)) && (o->isShot()) && ((distance(o) 
 				 - abss(cos(trajectory_angle(o) ) * (size.y /2))
@@ -94,7 +96,6 @@ void PloxisPlunderer::calculate()
      sprite = data->spriteShip;
      }
    else recharge_amount = 1;
-   Ship::calculate();
 }
 
 int PloxisPlunderer::handle_damage(SpaceLocation *source, double normal, double direct)

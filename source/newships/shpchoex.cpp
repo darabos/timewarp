@@ -30,7 +30,7 @@ The sources of my inspiration:
 #define CH_TWIST_ANGLE 0.03*PI	//added by Tau, as a simple hack for consistent tractor-induced rotation
 //enemy "twisting" can be improved further, but I'm too lazy to do that at the moment
 
-class AsteroidDebris : virtual public Asteroid
+class AsteroidDebris : public Asteroid
 {
 public:
 IDENTITY(AsteroidDebris);
@@ -41,7 +41,6 @@ IDENTITY(AsteroidDebris);
   double multiple;
 public:
   AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce );
-  virtual ~AsteroidDebris();
   virtual void death();
   virtual int canCollide(SpaceLocation *other);
   virtual void calculate();
@@ -51,7 +50,7 @@ AsteroidDebris::AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce)
 : Asteroid()
 {
 	creator=creator1;
-	translate(new_pos - pos);
+	pos = new_pos;
 	frame_born=(int)(game->frame_number);
 	collide_flag=FALSE;
 	sprite_index = tw_random(sprite->frames());
@@ -61,11 +60,6 @@ AsteroidDebris::AsteroidDebris(Ship *creator1, Vector2 new_pos, int tforce)
 		this->accelerate(creator, this->trajectory_angle(creator), tractorForce / (this->mass * 2), 6);
 
 	attributes &= ~ATTRIB_STANDARD_INDEX;
-}
-
-AsteroidDebris::~AsteroidDebris()
-{
-	int i = 0;
 }
 
 void AsteroidDebris::death()
@@ -80,9 +74,6 @@ void AsteroidDebris::calculate()
 		creator = 0;
 
 	SpaceObject::calculate();
-
-	//xxx test
-	return;
 
 	STACKTRACE;
 	step-= frame_time;
@@ -106,20 +97,21 @@ void AsteroidDebris::calculate()
 
 int AsteroidDebris::canCollide(SpaceLocation *other) 
 {
-	//xxx test
-	return 0;
-
 	STACKTRACE;
+
 	if (collide_flag)
-    { return SpaceObject::canCollide(other);
+    {
+		return SpaceObject::canCollide(other);
     }
 	else if(other != creator)
-    { return SpaceObject::canCollide(other);
+    {
+		return SpaceObject::canCollide(other);
     }
-	return false;
+
+	return 0;
 }
 
-class AsteroidCenter : virtual public AsteroidDebris
+class AsteroidCenter : public AsteroidDebris
 {
 public:
 IDENTITY(AsteroidCenter);
@@ -157,10 +149,6 @@ void AsteroidCenter::calculate()
 	STACKTRACE;
 	AsteroidDebris::calculate();
 	
-	//xxx test
-	if (!creator)
-		state = 0;
-	return;
 
 	if (creator == NULL)
     {
@@ -176,15 +164,16 @@ void AsteroidCenter::calculate()
 
 int AsteroidCenter::canCollide(SpaceLocation *other) 
 {
-	//xxx test
-	return 0;
-
 	STACKTRACE;
+
 	if (!other)
 		return 0;
 
-  if (!other->damage_factor) return false;
-  return SpaceObject::canCollide(other);
+  if (!other->damage_factor)
+	  return false;
+
+  return
+	  SpaceObject::canCollide(other);
 }
 
 int AsteroidCenter::handle_damage(SpaceLocation *source, double normal, double direct) 
@@ -563,8 +552,6 @@ void ChoraliExtractor::calculate_turn_right()
 int ChoraliExtractor::activate_weapon()
 {
 	STACKTRACE;
-	//xxx test
-	return FALSE;
 
 	if (drillFrames > 0)
     {
@@ -601,8 +588,6 @@ int ChoraliExtractor::activate_weapon()
 int ChoraliExtractor::activate_special()
 {
 	STACKTRACE;
-	//xxx test
-	return FALSE;
 	
 	if(this->nearest_planet() != NULL)
     {
@@ -619,7 +604,7 @@ int ChoraliExtractor::activate_special()
 				//grabbed->accelerate(this, grabbed->trajectory_angle(spacePlanet), specialForce / (grabbed->mass + mass), MAX_SPEED);
 				//accelerate(this, trajectory_angle(spacePlanet), specialForce / (grabbed->mass + mass), MAX_SPEED);
 
-				grabbed->vel = vel;
+				grabbed->set_vel ( vel );
 
 				double a = angle;//trajectory_angle(grabbed);
 				double dv = specialForce / (grabbed->mass + mass);
@@ -645,11 +630,8 @@ int ChoraliExtractor::activate_special()
 
 void ChoraliExtractor::calculate()
 {
-	//xxx test
-	Ship::calculate();
-	return;
-
 	STACKTRACE;
+
 	if(drillFrames > 0) 
 	{
 		if(grabbed == NULL)
@@ -755,7 +737,7 @@ void ChoraliExtractor::calculate()
 		}
 		
 		grabbed->pos = this->normal_pos() - unit_vector(angle+PI) * grabdistance;
-		grabbed->vel = this->vel;
+		grabbed->set_vel ( this->vel );
 	}
 	old_angle = angle;
 
@@ -787,8 +769,6 @@ void ChoraliExtractor::animate(Frame *space)
 
 void ChoraliExtractor::inflict_damage(SpaceObject *other)
 {
-	//xxx test
-	return;
 
 	STACKTRACE;
 	if (drillFrames > 0)
@@ -801,7 +781,7 @@ void ChoraliExtractor::inflict_damage(SpaceObject *other)
 				{
 					latched=TRUE;
 					grabbed= (SpaceObject *) other;
-					grabbed->vel = this->vel;
+					grabbed->set_vel ( this->vel );
 					grabangle= (trajectory_angle(other) );
 					grabdistance = (distance(other) * 1.1);
 					grabshipangle = (other->get_angle());

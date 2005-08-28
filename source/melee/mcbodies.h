@@ -58,7 +58,7 @@ class Stars2 : public Presence {
 	public:
 	static SpaceSprite *starpics;
 	Stars2();
-	~Stars2();
+	virtual ~Stars2();
 	int num_layers;
 	StarLayer *layer;
 	void load_next ( const char *sect, const StarLayer *old );
@@ -69,7 +69,7 @@ class Stars : public Presence {
 	virtual void _event( Event *e);
 	public:
 	Stars();
-	~Stars();
+	virtual ~Stars();
 	SpaceSprite **pic;
 	double width;
 	double height;

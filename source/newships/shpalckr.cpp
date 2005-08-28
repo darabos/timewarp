@@ -70,7 +70,7 @@ IDENTITY(AlcheroKronos);
   virtual void animate( Frame* space );   // draws charge gfx
   virtual void death();                   // restores turbo
 
-  ~AlcheroKronos();
+  virtual ~AlcheroKronos();
 };
 
 class AlcheroLaser : public Laser {
@@ -425,8 +425,8 @@ void AlcheroLaser::calculate(){
     //      x + 0.5*ship->width()*cos( alpha ), y + 0.5*ship->width()*sin( alpha ),
         data->spriteExtra, 0, data->spriteExtra->frames(), 50+(random(160)), LAYER_HOTSPOTS );
 
-        anim->vel = vel + Vector2(- 0.2*cos( alpha ) - (100+random(100))*0.0005*sin( alpha ),
-						- 0.2*sin( alpha ) + (100+random(100))*0.0005*cos( alpha ));
+        anim->set_vel ( vel + Vector2(- 0.2*cos( alpha ) - (100+random(100))*0.0005*sin( alpha ),
+						- 0.2*sin( alpha ) + (100+random(100))*0.0005*cos( alpha )) );
         game->add( anim );
       }
     }

@@ -32,7 +32,7 @@ IDENTITY(JyglarStarfarer);
   virtual int activate_special();     // creates a bubble
   virtual void calculate();           // takes note of bursted bubbles
   virtual void calculate_hotspots();  // blue hotspots
-  ~JyglarStarfarer();
+  virtual ~JyglarStarfarer();
 };
 
 class JyglarShot : public Shot {
@@ -50,7 +50,7 @@ IDENTITY(JyglarShot);
 
   virtual void inflict_damage( SpaceObject* other );
 
-  ~JyglarShot();  // frees up beacon memory
+  virtual ~JyglarShot();  // frees up beacon memory
 };
 
 class JyglarStrayShot : public JyglarShot {

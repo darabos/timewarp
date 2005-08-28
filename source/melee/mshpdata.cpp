@@ -28,6 +28,10 @@ int auto_unload = false;
 // for debugging ...
 void test_pointers()
 {
+#ifdef _DEBUG
+	if (!physics)
+		return;
+
 	// also check the target list
 	int i;
 	for ( i = 0; i < targets->N; ++i)
@@ -47,6 +51,7 @@ void test_pointers()
 				physics->item[i]->ship->exists();
 		}
 	}
+#endif
 }
 
 
@@ -422,7 +427,7 @@ SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index)
 		}
 	}
 	// end of the test.
-	*/
+	//*/
 
 	
 	for (i = 0; i < count; i += 1) {

@@ -44,7 +44,7 @@ class NormalGame : public Game {
 		num_asteroids = 4 
 		};
 		
-	~NormalGame();
+	virtual ~NormalGame();
 
 	virtual void calculate();
 	virtual void preinit();	

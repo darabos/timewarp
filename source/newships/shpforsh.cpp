@@ -179,7 +179,7 @@ void ForevianShockwave::inflict_damage(SpaceObject *other)
 	Query q;
 	double r0=1e40;
 	SpaceObject *tgt = NULL;
-	for (q.begin(this, OBJECT_LAYERS&~bit(LAYER_SHOTS), range-d); q.currento; q.next()) {
+	for (q.begin(this, OBJECT_LAYERS&~bit(LAYER_SHOTS), range-d, QUERY_OBJECT); q.currento; q.next()) {
 		if ((q.currento==last_hit) || q.currento->isPlanet() || !(q.currento->canCollide(this)&&canCollide(q.currento)) ) continue;	if (distance(q.currento)<r0) {
 			tgt = q.currento;
 			r0 = distance(tgt); } }

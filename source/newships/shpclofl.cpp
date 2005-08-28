@@ -55,7 +55,7 @@ public:
 	int		*tracecol;
 
 	MissileTrace(SpaceObject *creator, double add_tail_time, int N);
-	~MissileTrace();
+	virtual ~MissileTrace();
 
 	virtual void calculate();
 	void animate(Frame *space);
@@ -139,7 +139,7 @@ public:
 	SpaceLocation	*mother;
 
 	FallingParticles(SpaceLocation *creator, Vector2 lpos, double langle);
-	~FallingParticles();
+	virtual ~FallingParticles();
 	virtual void calculate();
 	virtual void animate(Frame *space);
 	virtual int canCollide(SpaceLocation *other);
@@ -700,7 +700,7 @@ void GravWell::calculate()
 	
 	SpaceObject *o;
 	Query a;
-	a.begin(this, OBJECT_LAYERS, gravity_range);
+	a.begin(this, OBJECT_LAYERS, gravity_range, QUERY_OBJECT);
 	for (;a.currento;a.next()) {
 		o = a.currento;
 

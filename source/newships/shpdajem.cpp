@@ -40,7 +40,7 @@ IDENTITY(DajielkaSanctuary);
   DajielkaCruiser* creator;
   DajielkaTendril* tendril[30];
   DajielkaSanctuary(DajielkaCruiser* ocreator);
-  ~DajielkaSanctuary(void);
+	virtual void death();
   DajielkaTendril* RecreateTendril(DajielkaTendril* DT);
   virtual void calculate();
   void addEnergy(int energy);
@@ -91,10 +91,12 @@ public:
   DajielkaTendril** pointerToMe;
   DajielkaTendril(DajielkaSanctuary* osanctuary, int odamage, int orange,
     double ostartingAngle, double orotation);
-  ~DajielkaTendril(void);
+  virtual ~DajielkaTendril(void);
   virtual void animate(Frame* space);
   virtual void calculate(void);
   virtual void inflict_damage(SpaceObject *other);
+  virtual int handle_damage(SpaceLocation *source, double normal, double direct);
+	virtual bool DajielkaTendril::die();
 };
 
 
@@ -162,7 +164,7 @@ public:
 
   public:
   DajielkaCruiser(Vector2 opos, double angle, ShipData *data, unsigned int code);
-  ~DajielkaCruiser(void);
+	virtual void death();
   DajielkaSanctuary* sanctuary;
   protected:
   virtual void calculate();
@@ -235,8 +237,12 @@ DajielkaCruiser::DajielkaCruiser(Vector2 opos, double angle, ShipData *data, uns
   redeployTime = 0;
 }
 
-DajielkaCruiser::~DajielkaCruiser(void) {
-	STACKTRACE
+void DajielkaCruiser::death()
+{
+	STACKTRACE;
+	
+	Ship::death();
+
   if(sanctuary!=NULL) {
     sanctuary->state = 0;
     sanctuary->creator = NULL;
@@ -265,33 +271,43 @@ int DajielkaCruiser::activate_special() {
 	return(FALSE);
 }
 
-void DajielkaCruiser::calculate(void) {
-	STACKTRACE
-  if(!fire_special) redeployTime=0;
-  if(accumulatedCharge>shipChargeThreshhold) {
-    if(batt<batt_max) {
-      batt++;
-      update_panel = TRUE;
-      accumulatedCharge -= shipChargeThreshhold;
-      if(batt>batt_max)
-        batt=batt_max;
-    }
-    else
-      accumulatedCharge = shipChargeThreshhold;
-  }
-  if(accumulatedRegeneration>shipRegenerationThreshhold) {
-    if(crew<crew_max) {
-      crew++;
-      update_panel = TRUE;
-      accumulatedRegeneration -= shipRegenerationThreshhold;
-      if(crew>crew_max)
-        crew=crew_max;
-    }
-    else
-      accumulatedRegeneration = shipRegenerationThreshhold;
-  }
+void DajielkaCruiser::calculate(void)
+{
+	STACKTRACE;
+	
+	Ship::calculate();
+	
+	if (sanctuary && !sanctuary->exists())
+		sanctuary = 0;
+	
+	if(!fire_special)
+		redeployTime=0;
+	
+	if(accumulatedCharge>shipChargeThreshhold)
+	{
+		if(batt<batt_max) {
+			batt++;
+			update_panel = TRUE;
+			accumulatedCharge -= shipChargeThreshhold;
+			if(batt>batt_max)
+				batt=batt_max;
+		}
+		else
+			accumulatedCharge = shipChargeThreshhold;
+	}
+	if(accumulatedRegeneration>shipRegenerationThreshhold)
+	{
+		if(crew<crew_max) {
+			crew++;
+			update_panel = TRUE;
+			accumulatedRegeneration -= shipRegenerationThreshhold;
+			if(crew>crew_max)
+				crew=crew_max;
+		}
+		else
+			accumulatedRegeneration = shipRegenerationThreshhold;
+	}
 
-  Ship::calculate();
 }
 
 int DajielkaCruiser::activate_weapon() {
@@ -343,7 +359,11 @@ DajielkaCrTorpedo::DajielkaCrTorpedo(DajielkaCruiser* ocreator, double ox, doubl
 
 void DajielkaCrTorpedo::calculate()
 {
-	STACKTRACE
+	STACKTRACE;
+
+	if (creator && !creator->exists())
+		creator = 0;
+
 	AnimatedShot::calculate();
 }
 
@@ -431,8 +451,11 @@ DajielkaSanctuary::DajielkaSanctuary(DajielkaCruiser* ocreator)
 		attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
-DajielkaSanctuary::~DajielkaSanctuary(void) {
-	STACKTRACE
+void DajielkaSanctuary::death()
+{
+	STACKTRACE;
+	SpaceObject::death();
+
   int i;
   for(i=0; i<30; i++) {
     if(tendril[i]!=NULL) {
@@ -442,8 +465,11 @@ DajielkaSanctuary::~DajielkaSanctuary(void) {
   }
 }
 
-void DajielkaSanctuary::calculate(void) {
+void DajielkaSanctuary::calculate(void)
+{
 	STACKTRACE;
+
+	SpaceObject::calculate();
 
 	if (creator && !creator->exists())
 	{
@@ -454,14 +480,27 @@ void DajielkaSanctuary::calculate(void) {
   int oldSpriteIndex;
   int regenMultiplier;
   DajielkaSanctuary::addEnergy( iround(energyPerFrame*frame_time/25.0) ); //corrected for click-dependant regeneration. Tau.
-  for(i=0;i<30;i++)
-    if(tendril[i]!=NULL)
-      if(tendril[i]->recreateMe == TRUE) {
+
+  for ( i = 0; i < 30; i++)
+  {
+    if (tendril[i])
+	{
+		if (!tendril[i]->exists())
+		{
+			tw_error("a dead tendril? this should not happen");
+			tendril[i] = 0;
+		}
+
+
+		if(tendril[i]->recreateMe == TRUE) {
         //tw_error("Want to recreate!");
         //tendril[i] = this->RecreateTendril(tendril[i]);
       }
+	}
+  }
+  
   vel = 0;
-  SpaceObject::calculate();
+
   regenMultiplier=1;
   for(j=0;j<regenerationExponent;j++)
     regenMultiplier *= armour;
@@ -504,37 +543,45 @@ int DajielkaSanctuary::handle_damage(SpaceLocation *source, double normal, doubl
 }
 
 
-void DajielkaSanctuary::addEnergy(int energy) {
-	STACKTRACE
-  int i, j;
-  int damageBefore, damageAfter;
-  for(j=1;j<10 && energy>0;j++)
-  {
-    for(i=0;i<30 && energy>0;i++)
+void DajielkaSanctuary::addEnergy(int energy)
+{
+	STACKTRACE;
+	int i, j;
+	int damageBefore, damageAfter;
+	for(j=1;j<10 && energy>0;j++)
 	{
-		if (tendril[i]->energyLevelPerDamagePoint)
-			damageBefore = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
-		else
-			damageBefore = 0;
-
-      if(tendril[i]!=NULL && tendril[i]->state !=0)
-        if(tendril[i]->energyLevelPerDamagePoint * j > tendril[i]->energyLevel
-          && tendril[i]->energyLevel < tendril[i]->energyLevelMax) {
-          tendril[i]->energyLevel += energy;
-          energy = 0;
-        }
-
-		if (tendril[i]->energyLevelPerDamagePoint)
-			damageAfter = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
-		else
-			damageAfter = 0;
-
-      if(damageBefore!=damageAfter && tendril[i]->get_length()==0) {
-        //tendril[i]=this->RecreateTendril(tendril[i]);
-        tendril[i]->isActive = TRUE;
-      }
-    }
-  }
+		for(i=0;i<30 && energy>0;i++)
+		{
+			if (tendril[i])
+			{
+				if (tendril[i]->energyLevelPerDamagePoint)
+					damageBefore = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
+				else
+					damageBefore = 0;
+				
+				if (tendril[i]->state !=0)
+				{
+					if(tendril[i]->energyLevelPerDamagePoint * j > tendril[i]->energyLevel
+						&& tendril[i]->energyLevel < tendril[i]->energyLevelMax)
+					{
+						tendril[i]->energyLevel += energy;
+						energy = 0;
+					}
+				}
+				
+				if (tendril[i]->energyLevelPerDamagePoint)
+					damageAfter = (int)(tendril[i]->energyLevel/tendril[i]->energyLevelPerDamagePoint);
+				else
+					damageAfter = 0;
+				
+				if(damageBefore!=damageAfter && tendril[i]->get_length()==0)
+				{
+					//tendril[i]=this->RecreateTendril(tendril[i]);
+					tendril[i]->isActive = TRUE;
+				}
+			}
+		}
+	}
 }
 
 DajielkaTendril* DajielkaSanctuary::RecreateTendril(DajielkaTendril* DT) {
@@ -585,41 +632,55 @@ DajielkaTendril::DajielkaTendril(DajielkaSanctuary* osanctuary, int odamage, int
 
 }
 
-void DajielkaTendril::calculate(void) {
+void DajielkaTendril::calculate(void)
+{
 	STACKTRACE;
-  if(energyLevel<energyLevelPerDamagePoint) {
-    isActive = FALSE;
-    length = 0;
-    damage_factor = 0;
-    collide_flag_anyone = 0;
-    collide_flag_sameteam = 0;
-    collide_flag_sameship = 0;
-  }
-  else {
-    isActive = TRUE;
-    length = originalLength;
-    damage_factor = 1;
-    collide_flag_anyone = ALL_LAYERS;
-    collide_flag_sameteam = bit(LAYER_SHIPS)|bit(LAYER_SHOTS);
-    collide_flag_sameship = bit(LAYER_SHIPS)|bit(LAYER_SHOTS);
-  }
-  angle = angle + frame_time / 1000.0 * rotation;
-  while(angle<0) angle+=PI2;
-  while(angle>PI2) angle-=PI2;
 
-  if (creator && !creator->exists())
-  {
-	  creator = 0;
-	  state = 0;
-  }
-  
-  SpaceLine::calculate();
+	SpaceLine::calculate();
+	
+	if (creator && !creator->exists())
+	{
+		creator = 0;
+		//state = 0;
+	}
+	if (sanctuary && !sanctuary->exists())
+	{
+		sanctuary = 0;
+		state = 0;
+	}
+	
 
-  color=palette_color[(int)(energyLevel/energyLevelPerDamagePoint)+7];
-  if(creator!=NULL)
-    if(isActive)
-      if(regenerationIsTendrilBased==1)
-        sanctuary->regenerationCount += frame_time;
+	
+	if(energyLevel<energyLevelPerDamagePoint) {
+		isActive = FALSE;
+		length = 0;
+		damage_factor = 0;
+		collide_flag_anyone = 0;
+		collide_flag_sameteam = 0;
+		collide_flag_sameship = 0;
+	}
+	else {
+		isActive = TRUE;
+		length = originalLength;
+		damage_factor = 1;
+		collide_flag_anyone = ALL_LAYERS;
+		collide_flag_sameteam = bit(LAYER_SHIPS)|bit(LAYER_SHOTS);
+		collide_flag_sameship = bit(LAYER_SHIPS)|bit(LAYER_SHOTS);
+	}
+	angle = angle + frame_time / 1000.0 * rotation;
+	while(angle<0) angle+=PI2;
+	while(angle>PI2) angle-=PI2;
+	
+
+	color=palette_color[(int)(energyLevel/energyLevelPerDamagePoint)+7];
+	if (creator && sanctuary)
+	{
+		if(isActive)
+		{
+			if(regenerationIsTendrilBased==1)
+				sanctuary->regenerationCount += frame_time;
+		}
+	}
 }
 
 void DajielkaTendril::animate(Frame *space) {
@@ -628,6 +689,13 @@ void DajielkaTendril::animate(Frame *space) {
   //length = originalLength;
   SpaceLine::animate(space);
 }
+
+int DajielkaTendril::handle_damage(SpaceLocation *source, double normal, double direct)
+{
+	// don't die.
+	return 0;
+}
+
 
 void DajielkaTendril::inflict_damage(SpaceObject *other) {
 	STACKTRACE
@@ -691,10 +759,20 @@ void DajielkaTendril::inflict_damage(SpaceObject *other) {
     isActive = FALSE;
 }
 
-DajielkaTendril::~DajielkaTendril(void) {
-  if(sanctuary!=NULL)
-    if(creator!=NULL)
+DajielkaTendril::~DajielkaTendril(void)
+{
+	/*	//xxx I don't think this is necessary - geo.
+  if(sanctuary!=NULL && creator!=NULL)
+  {
       *pointerToMe = NULL;
+	  tw_error("what is this ??");
+  }
+  */
+}
+
+bool DajielkaTendril::die()
+{
+	return false;	// this is not allowed to die !!
 }
 
 

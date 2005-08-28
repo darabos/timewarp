@@ -606,7 +606,7 @@ void GahmurMonitor::CalculateTractorEffect() {
 	}
 	if(tractorTarget->isShot()) {
 		tractorTarget->pos = pos + unit_vector(tractorAngle) * tractorLength;
-		tractorTarget->vel = vel;
+		tractorTarget->set_vel ( vel );
 		return;
 	}
 	if(tractorTarget->mass>0.01) {
@@ -620,7 +620,7 @@ void GahmurMonitor::CalculateTractorEffect() {
 
 		vtransfer = (specialVelocityCouplingFactor * frame_time) / (1+(specialVelocityCouplingFactor * frame_time));
 		vel = vel * (1-vtransfer) + TM * vtransfer;
-		tractorTarget->vel = tractorTarget->vel * (1-vtransfer) + TM * vtransfer;
+		tractorTarget->set_vel(tractorTarget->vel * (1-vtransfer) + TM * vtransfer);
 		return;
 	}
 }

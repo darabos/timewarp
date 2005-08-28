@@ -848,8 +848,8 @@ void BChain::BChainPhysics(SpaceObject *first, SpaceObject *second)
 	else
 		vfinal = 0;
 	
-	first->vel += (vfinal - v1) * L;
-	second->vel += (vfinal - v2) * L;
+	first->change_vel ( (vfinal - v1) * L );
+	second->change_vel ( (vfinal - v2) * L );
 
 		
 	// accelerations of "second" due to centripetal force on either side :
@@ -880,13 +880,13 @@ void BChain::BChainPhysics(SpaceObject *first, SpaceObject *second)
 
 	// apply these accelerations:
 
-	second->vel += 1E-3 * accel * frame_time;
+	second->change_vel ( 1E-3 * accel * frame_time );
 
 
 	// By default, let the element become neutral in rotational velocity by
 	// including drag in the rotation direction.
 
-	second->vel -= 0.5 * frame_time*1E-3 * (second->vel - L*second->vel.dot(L));
+	second->change_vel (-0.5 * frame_time*1E-3 * (second->vel - L*second->vel.dot(L)) );
 
 }
 

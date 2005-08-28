@@ -293,7 +293,7 @@ void JadWarhead::animateExplosion()
 	double r;
 	int d;
 	Vector2 stuff;
-	for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next()) 
+	for (q.begin(this, OBJECT_LAYERS, blast_range, QUERY_OBJECT); q.currento; q.next()) 
 	{
 		r = distance(q.currento);
         if (r > blast_range) 

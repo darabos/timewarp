@@ -204,7 +204,7 @@ void TauBomberBomb::calculate()
 
 	double r0 = 1e40;
 	Query q;
-	for (q.begin(this, OBJECT_LAYERS, proximity_range); q.currento; q.next())
+	for (q.begin(this, OBJECT_LAYERS, proximity_range, QUERY_OBJECT); q.currento; q.next())
 		if (q.currento->isShip() && q.currento->exists()
 			&& (!q.currento->isInvisible()) && (!q.currento->sameTeam(this))) {
 			
@@ -254,7 +254,7 @@ void TauBomberBomb::animateExplosion()
 		Query q;
 		double r;
 		int d;
-		for (q.begin(this, OBJECT_LAYERS, blast_range); q.currento; q.next()) {
+		for (q.begin(this, OBJECT_LAYERS, blast_range, QUERY_OBJECT); q.currento; q.next()) {
 			r = distance(q.currento);
             if (r > blast_range) continue;
 			r = (blast_range - distance(q.currento)) / blast_range;
@@ -350,7 +350,7 @@ TauBomberDecoy::TauBomberDecoy (SpaceLocation *creator, double ox, double oy, do
 	collide_flag_sameship = 0;
 
 	Query q;
-	for (q.begin(this, ALL_LAYERS, er); q.current; q.next())
+	for (q.begin(this, ALL_LAYERS, er, QUERY_OBJECT); q.current; q.next())
 		if ((q.current->target == creator) && (tw_random(100) < effect))
 			add(new TauBomberJam(this, q.currento, lifetime));
 	

@@ -176,7 +176,7 @@ void HellenianShot::calculate()
 			{
 				a = new Animation(this, pos, data->spriteSpecialExplosion, 0,
 					data->spriteSpecialExplosion->frames(), 100, DEPTH_SHOTS);
-				a->vel = i * vel2;
+				a->set_vel ( i * vel2 );
 				add(a);
 			}
 		}
