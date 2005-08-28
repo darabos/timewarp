@@ -415,7 +415,7 @@ void MousePtr::calculate()
 		closestrange = range2;
 
 		Query a;
-		for (a.begin(this, OBJECT_LAYERS, range2); a.current; a.next() )
+		for (a.begin(this, OBJECT_LAYERS, range2, QUERY_OBJECT); a.current; a.next() )
 		{
 			double d;
 			if (!a.current->isObject())
