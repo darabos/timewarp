@@ -211,13 +211,13 @@ void MissileTrace::animate(Frame *space)
 			tracecol[i] = tracecol[i+1];
 		}
 		
-		if ( mother && mother->exists() )
+		if ( mother )
 			tracepos[Npos-1] = mother->normal_pos();
 		else
 			tracepos[Npos-1] = tracepos[Npos-2];
 
 		double v;
-		if ( mother && mother->exists() )
+		if ( mother )
 			v = mother->vel.magnitude();
 		else
 			v = -1.0;

@@ -427,8 +427,10 @@ GarashShot::GarashShot(Vector2 opos, double oangle, double ov,
 void GarashShot::calculate() {
 	STACKTRACE
 
-	if(released) Shot::calculate();
-	else SpaceObject::calculate();
+	if(released)
+		Shot::calculate();
+	else
+		SpaceObject::calculate();
 
 	if (!exists()) return;
 
