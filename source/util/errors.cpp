@@ -24,6 +24,7 @@ void dump_physics(const char *message)
 	if (!physics)
 		return;
 
+	/*
 	int i;
 	for ( i = 0; i < physics->num_items; ++i )
 	{
@@ -36,6 +37,7 @@ void dump_physics(const char *message)
 			o->angle,
 			o->vel.x, o->vel.y);
 	}
+	*/
 }
 
 #if defined DO_STACKTRACE

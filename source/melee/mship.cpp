@@ -503,21 +503,6 @@ Ship::~Ship()
 		first_override_control = 0;
 		last_override_control = 0;
 	}
-
-#ifdef _DEBUG
-	// error check:
-	if (physics)
-	{
-		if (control && control->exists() && (control->ship == this) )
-		{
-			tw_error("Ship is deleted, but the control owned by the ship still exists!");
-		}
-		
-		if (control)
-			control->ship = 0;
-	}
-#endif
-
 }
 
 double Ship::getCrew()
@@ -620,16 +605,23 @@ void Ship::calculate()
 
 		death_counter += frame_time;
 		if (death_counter > 700 * (15+mass)/35 || death_counter > 3000) //smaller ships will make smaller explosions ; GEO: but a real upper limit is also good to have
+		{
 			state = 0; //die already
+			//message.print(1500, 12, "Ship [%s] is now state=0", get_identity());
+		}
 
 		return;
 	}
 //added by Tau - end
 
 
-	if (control) {
+	if (control && !control->exists())
+		control = 0;
 
-		/*
+	if (control)
+	{
+
+		/* this test does not work in case of the teron builder
 		#ifdef _DEBUG
 		if (exists() && (control->ship != this) && (control->ship != ship))
 		{
@@ -661,7 +653,10 @@ void Ship::calculate()
 		target_prev      = 1&&(nextkeys & keyflag::prev);
 		target_closest   = 1&&(nextkeys & keyflag::closest);
 
-        if (nextkeys & keyflag::suicide) {
+        if (nextkeys & keyflag::suicide)
+		{
+			handle_damage(this, 999, 999);
+			/*
             crew  = 0;
             play_sound((SAMPLE *)(melee[MELEE_BOOMSHIP].dat));
 
@@ -678,12 +673,12 @@ void Ship::calculate()
                 game->ship_died(this, NULL);
                 attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
             }
+			*/
         }
 
 
         
 
-		if (!control->exists()) control = NULL;
 	}
 
 	if(batt < batt_max) {
@@ -925,6 +920,24 @@ int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {ST
 		}
 		if (attributes & ATTRIB_NOTIFY_ON_DEATH) {
 			game->ship_died(this, source);
+			
+			// problem:
+			// this resets the counter. This is reset, while the ship is still alive (dying),
+			// and the control still "owns" the ship.
+			// IF by some mishap, another ship died just a little earlier, and the counter has already
+			// been reset ... then, this ship could still be in the dying phase while the moment
+			// for choosing a new ship has passed (and it'll not be re-set either, cause this own
+			// moment to reset counter has already passed...)... therefore, remove control. So that
+			// choose-new-ships will know to choose a new ship.
+			if (control)
+			{
+				control->select_ship(0, 0);
+				control = 0;
+			}
+			// ok, end of the addition (geo).
+			// ... note that originally, the death_counter check was also included somewhere, but
+			// I think this is more explicit...
+
 			attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
 		}
 //modified by Tau - end
@@ -1146,7 +1159,7 @@ SpaceObject(creator, opos, 0.0, sprite),
 
 	// extra check
 	// note that if this happens, there's something wrong in the ships' constructor...
-	if (sprite_index >= sprite->frames())
+	if (sprite_index < 0 || sprite_index >= sprite->frames())
 		sprite_index = 0;
 
 	// overwrite this... cause it's not really defined...
@@ -1171,11 +1184,10 @@ void Phaser::calculate()
 	++count_delay_iterations;
 	if (count_delay_iterations >= DEATH_FRAMES-3)	// I'm not sure, how many you need.
 	{
-		// this is needed, because often ships have components which are created on the spot...
+		// this is needed, because sometimes ships have components which are created on the spot...
 		// these are vulnerable, and can die. Then, ship-specific pointers get invalid (objects
 		// are removed from memory). Thus, we need need (hackish) some time before objects are removed.
-		// What we really need, is a Ship::add2game() function, which creates the components when
-		// it's time.
+		// notice that this can be avoided by the ... "materialize" function.
 		tw_error("Phasing takes too long; need more time for pointer-checks!");
 	}
 
@@ -1200,6 +1212,11 @@ void Phaser::calculate()
 			state = 0;
 	}
 
+	if (exists() && (color_index < 0 || color_index >= num_colors))
+	{
+		tw_error("phaser index mismatch: should not occur");
+	}
+
 	if (phaser_step_position < phaser_step_size) {
 		if (ship && !ship->exists())
 			ship = NULL;
@@ -1208,11 +1225,12 @@ void Phaser::calculate()
 			if (phaser_steps > 1) {
 				Vector2 d = rel_pos / phaser_steps;
 				game->add(new Phaser(this, pos + d, rel_pos-d, ship, sprite, sprite_index, colors, num_colors, frame_size, phaser_steps-1, phaser_step_size));
+				ship = 0;
 			}
 			else if (ship) {
 				game->add(ship);
 				ship->materialize();
-				ship = NULL;
+				ship = 0;
 			}
 		}
 	}

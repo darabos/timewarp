@@ -520,6 +520,8 @@ void NormalGame::calculate()
 		else
 		{
 			choose_new_ships();
+
+			// disable ship selection...
 			next_choose_new_ships_time = game_time + 24*60*60*1000;
 		}
 		
@@ -975,40 +977,54 @@ void NormalGame::choose_new_ships()
 	
 //	log_test();
 
+	int crc_test1 = 0;
+	int crc_test2 = 0;
+
 	for (i = 0; i < num_players; i += 1)
 	{
+		slot[i] = -2;
+
 		NPI* p = player[i];
 
 		if (!p)
 			continue;
 
-		slot[i] = -2;
-		if (p->control->ship) {
+		if (p->control->ship)
+		{
+			if (!p->control->ship->exists())
+			{
+				tw_error("Ship under control does not exist !?!?");
+			}
 			}
 		else {
 //			if (player_panel[i]) player_panel[i]->window->hide();
 //			player_panel[i] = NULL;
 			sprintf (tmp, "Player%d", i+1);
 			Fleet *fleet = p->fleet;
-			if (fleet->getSize() == 0) continue;
-			char buffy[512];
 
-            if (strlen(fleet->getTitle()) != 0) 
-                sprintf(buffy, "%s\n%s\n", p->name, fleet->getTitle());
-            else
-                sprintf(buffy, "%s\n", p->name);
-
-			// humans can choose ships
-			if (p->channel != channel_none)
-				slot[i] = p->control->choose_ship(window, buffy, fleet);
-			else
-				// bots choose "randomly" (but synched randomly so don't use rand() !!).
-				// this is needed, otherwise a bot would need its own channel, while this way,
-				// they can use channel_none.
-				slot[i] = tw_random(fleet->getSize());
+			if (fleet->getSize() != 0)
+			{
+				char buffy[512];
+				
+				if (strlen(fleet->getTitle()) != 0) 
+					sprintf(buffy, "%s\n%s\n", p->name, fleet->getTitle());
+				else
+					sprintf(buffy, "%s\n", p->name);
+				
+				// humans can choose ships
+				if (p->channel != channel_none)
+					slot[i] = p->control->choose_ship(window, buffy, fleet);
+				else
+					// bots choose "randomly" (but synched randomly so don't use rand() !!).
+					// this is needed, otherwise a bot would need its own channel, while this way,
+					// they can use channel_none.
+					slot[i] = tw_random(fleet->getSize());
+			}
 
 			share(i, &slot[i]);
 			}
+
+			crc_test1 = num_players * crc_test1 + slot[i];
 		}
 
 	//recieve the ships that were chosen
@@ -1032,12 +1048,16 @@ void NormalGame::choose_new_ships()
 	//create the ships that were chosen
 	for (i = 0; i < num_players; i += 1)
 	{
-		NPI* p = (NPI*)player[i];
+		NPI* p = player[i];
 
 		if (!p)
 			continue;
 
-		if (slot[i] == -2) continue;
+		crc_test2 = num_players * crc_test2 + slot[i];
+
+		if (slot[i] == -2)
+			continue;
+
 		sprintf (tmp, "Player%d", i+1);
 		//fleet->load("./fleets.tmp", tmp);
 		Fleet *fleet = p->fleet;
@@ -1075,14 +1095,28 @@ void NormalGame::choose_new_ships()
 			0, (100.0/480)
 			);
 		add(panel);
+
 		add(s->get_ship_phaser());
 
 		// add a healthbar for the ship, and also a team indicator.
 		add(new HealthBar(s, &indhealthtoggle));
 		add(new TeamIndicator(s, &indteamtoggle));
 
+		//message.print(1500, 9, "Adding ship [%s] at time [%i]", s->get_identity(), game_time);
 		
 	}
+
+#ifdef _DEBUG
+	if (num_network == 1)
+	{
+		//message.print(1500, 9, "crc1 = [%i] crc2 = [%i]", crc_test1, crc_test2);
+		if (crc_test1 != crc_test2)
+		{
+			// this is only useful for a local game.
+			tw_error("CRC test goes wrong!!");
+		}
+	}
+#endif
 
 //	log_test();
 

@@ -4,17 +4,17 @@
 
 #include "../melee.h"
 
-extern int PANEL_WIDTH;
-extern int PANEL_HEIGHT;
+extern const int PANEL_WIDTH;
+extern const int PANEL_HEIGHT;
 
 
-extern int CAPTAIN_X;
-extern int CAPTAIN_Y;
-extern int PANEL_DEATH_FRAMES;
-extern int crew_x;
-extern int crew_y;
-extern int batt_x;
-extern int batt_y;
+extern const int CAPTAIN_X;
+extern const int CAPTAIN_Y;
+extern const int PANEL_DEATH_FRAMES;
+extern const int crew_x;
+extern const int crew_y;
+extern const int batt_x;
+extern const int batt_y;
 
 
 class ShipPanel : public Presence {

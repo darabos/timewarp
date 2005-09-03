@@ -404,7 +404,7 @@ inline Vector2 nearest_coord ( Vector2 from, Vector2 to, Vector2 max = map_size)
 double distance_from(Vector2 from, Vector2 to);
 
 int sign(double a);
-inline int get_index(double angle, double o=PI/2, int n=64) {int i = iround((o + angle) * n / PI2); while (i < 0) i += n; while (i >= n) i -= n; return i;}
+int get_index(double angle, double o=PI/2, int n=64);// {int i = iround((o + angle) * n / PI2); while (i < 0) i += n; while (i >= n) i -= n; return i;}
 
 
 //graphics stuff, melee/msprite.cpp

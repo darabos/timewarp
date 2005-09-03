@@ -10,16 +10,16 @@ REGISTER_FILE
 #include "../id.h"
 #include "../util/aastr.h"
 
-int PANEL_WIDTH = 64;
-int PANEL_HEIGHT = 100;
+const int PANEL_WIDTH = 64;
+const int PANEL_HEIGHT = 100;
 
-int CAPTAIN_X = 4;
-int CAPTAIN_Y = 65;
-int PANEL_DEATH_FRAMES = 2500;
-int crew_x = 8;
-int crew_y = 53;
-int batt_x = 56;
-int batt_y = 53;
+const int CAPTAIN_X = 4;
+const int CAPTAIN_Y = 65;
+const int PANEL_DEATH_FRAMES = 2500;
+const int crew_x = 8;
+const int crew_y = 53;
+const int batt_x = 56;
+const int batt_y = 53;
 
 
 ShipPanel::ShipPanel(Ship *_ship) {STACKTRACE
@@ -72,7 +72,15 @@ void ShipPanel::refresh() {STACKTRACE
 	return;
 	}
 
-void ShipPanel::calculate() {STACKTRACE
+void ShipPanel::calculate()
+{
+	STACKTRACE;
+
+	if (!exists())
+	{
+		tw_error("should not occur");
+	}
+
 	if (!ship) {
 		deathframe -= frame_time;
 		if (deathframe <= 0) this->die();
@@ -81,7 +89,7 @@ void ShipPanel::calculate() {STACKTRACE
 	if (!ship->exists()) {//ship is dieing
 		ship->spritePanel->draw(0, 0, 0, panel);
 		panel_needs_update = true;
-		ship = NULL;	  
+		ship = 0;	  
 		deathframe = PANEL_DEATH_FRAMES;
 		return;
 		} 
@@ -102,6 +110,11 @@ void ShipPanel::calculate() {STACKTRACE
 
 void ShipPanel::animate(Frame *space) {
 	STACKTRACE;
+
+	if (!(state > 0))
+	{
+		tw_error("should not occur");
+	}
 
 	BITMAP *screen = window->surface;
 	if (!screen) return;

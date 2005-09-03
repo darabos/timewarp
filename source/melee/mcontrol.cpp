@@ -506,9 +506,6 @@ Control::~Control()
 {
 	STACKTRACE;
 	if (_prediction_keys) delete[] _prediction_keys;
-
-	if (ship)
-		ship->control = 0;
 }
 
 bool Control::die()

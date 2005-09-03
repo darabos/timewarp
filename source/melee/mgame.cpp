@@ -1811,7 +1811,11 @@ void Game::ship_died(Ship *who, SpaceLocation *source)
 		Music *tmp = NULL;
 		//if (source && source->ship && source->ship->data) tmp = source->ship->data->moduleVictory;
 		// note: it's not guaranteed that a ship exists longer than its weapon, while data keep existing, right ?
-		if (source && source->exists()) tmp = source->data->moduleVictory;
+		//if (source && source->exists())
+		// better NOT check for "exists", cause usually weapons die on impact. The fact that they're
+		// used by physics is enough guarantee that they are alive...
+		if (source)
+			tmp = source->data->moduleVictory;
 		if (tmp) sound.play_music(tmp);
 	}
 	return;
@@ -1886,7 +1890,7 @@ void Game::fps()
 			tmp = "BAD!";
 		message.print((int)msecs_per_fps, 12, "render time: %.3fms (that's %s)", rt, tmp);
 		message.print((int)msecs_per_fps, 12, "debug: %d", debug_value);
-		message.print((int)msecs_per_fps, 12, "shipdatas loaded: %d", shipdatas_loaded);
+		message.print((int)msecs_per_fps, 12, "shipdatas loaded: [%d] num_items: [%i]", shipdatas_loaded, physics->num_items);
 	}
 
 	if (chat_on)

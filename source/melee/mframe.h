@@ -26,12 +26,12 @@ void check_physics_presence(Presence *p);
 
 
 
-//#define DEATH_FRAMES 4
-//setting this too low will cause crashes
-//setting it too high will waste CPU power and RAM
-//the recommended value is 4
-#define DEATH_FRAMES 64
+// default frame size is 25 ms, i.e., 0.025 s. You have 40 frames per second.
+// there are 800 frames in 20 seconds... so, a safe margin to also include mod music would be...
+const int DEATH_FRAMES = 1024;
 // ALSO NOTE THE PHASERS... 
+// AND ALSO THE GAME MUSIC... or is that copied by the play-sound algorithm?
+// so... make it long enough ?!?!
 
 struct Query;
 class Planet;
@@ -210,7 +210,8 @@ public:
 
 	int    id;            // id code, indicates what type it is
 	int attributes;       // describes it
-	signed char state;    // may be set to any positive value if alive, or 0 to kill it
+	//signed char state;    // may be set to any positive value if alive, or 0 to kill it
+	int state;	// a char is too small, because objects need to be kept in memory for a while until sound/graphics access is guaranteed to end
 	//private: int _serial; // unique reference number
 	private: int _depth;  // determines rendering order ; read/write with set_depth, get_depth
 	public:

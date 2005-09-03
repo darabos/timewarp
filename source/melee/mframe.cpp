@@ -26,7 +26,7 @@ bool physics_allowed = true;
 
 int total_presences;
 
-#define ANIMATE_BUFFER_SIZE 2048
+#define ANIMATE_BUFFER_SIZE 4096
 //setting this too low can cause things to not get drawn
 //setting it too high will waste RAM
 
@@ -113,6 +113,25 @@ void check_physics_presence(Presence *p)
 		}
 	}
 #endif
+}
+
+
+int get_index(double angle, double o, int n)
+{
+	if (angle < -100 || angle > 100)
+	{
+		tw_error("index: excessive angle");
+	}
+
+	int i = iround((o + angle) * n / PI2);
+	
+	while (i < 0)
+		i += n;
+	
+	while (i >= n)
+		i -= n;
+	
+	return i;
 }
 
 
@@ -550,42 +569,6 @@ SpaceLocation::~SpaceLocation()
 	STACKTRACE
 	if (data)
 		data->unlock();
-
-#ifdef _DEBUG
-	int i;
-
-	if (physics)
-	{
-		// also check the target list
-		for ( i = 0; i < targets->N; ++i)
-		{
-			if (targets->item[i] == this)
-			{
-				tw_error("Trying to remove a ship that is still in the target list! Should not happen.");
-			}
-		}
-		
-		// check if it's still in the physics list... which shouldn't be the case
-		for ( i = 0; i < physics->num_items; ++i)
-		{
-			if (physics->item[i]->exists())
-			{
-				if (physics->item[i] == this)
-				{
-					tw_error("Trying to remove a ship that is still in the physics list! Should not happen.");
-				}
-				if (physics->item[i]->target == this)
-				{
-					tw_error("Trying to remove a possible target [%s] for [%s]! Should not happen.",
-						get_identity(), physics->item[i]->get_identity());
-				}
-			}
-		}
-	}
-
-
-
-#endif
 
 }
 
@@ -1469,17 +1452,6 @@ void delete_location(SpaceLocation *tmp)
 	if (!physics)
 		return;
 
-	int i;
-	for (i = 0; i < physics->num_items; i += 1)
-	{
-		// check if this object still exists in the physics list... if it does, you're going to create a problem!
-		if (physics->item[i] == tmp)
-		{
-			tw_error("Problem, trying to delete an item that is still in the physics (locations) list");
-		}
-	}
-
-	// otherwise, it's ok to remove it.
 	const char *name = 0;
 	if (tmp->data)
 		name = tmp->data->file;
@@ -1502,11 +1474,8 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 
 	debug_value = num_items + num_presences;
 
-	//test_pointers();
-	//check_physics_correctness();
 
-checksync();
-{_STACKTRACE("Physics::calculate() - item movement")
+
 	//move objects
 	for (i = 0; i < num_items; i += 1)
 	{
@@ -1519,26 +1488,25 @@ checksync();
 			tw_error("velocity error in %s", item[i]->get_identity());
 		}
 		item[i]->pos = normalize(item[i]->pos + item[i]->vel * frame_time, map_size);
-		}
-}
-checksync();
+	}
 
-	//test_pointers();
-	//check_physics_correctness();
 
-{_STACKTRACE("Physics::calculate() - presence calculation")
+
+
 	//call Presence calculate functions
-	for (i = 0; i < num_presences; i += 1) {
+	for (i = 0; i < num_presences; i += 1)
+	{
 		if (presence[i]->exists())
 			presence[i]->calculate();
-checksync();
-		}
-}
-	//test_pointers();
-	//check_physics_correctness();
+
+	}
+
 
 	//call objects calculate functions
-{_STACKTRACE("Physics::calculate() - item calculation")
+	int time = 0;
+	int dt_longest = 0;
+	int i_longest = 0;
+
 	for (i = 0; i < num_items; i += 1)
 	{
 		if (item[i]->exists())
@@ -1548,11 +1516,21 @@ checksync();
 				tw_error("Pointer error, overwritten data ??");
 			}
 
+			time = get_time();
+			
 			item[i]->calculate();
+			
+			int dt = get_time() - time;
+			if (dt > dt_longest)
+			{
+				dt_longest = dt;
+				i_longest = i;
+			}
 
-			//xxx costly check...
-			//check_physics_correctness();
-
+	if (dt_longest > 1)
+	{
+		message.print(100, 14, "longest duration = item [%s]", item[i_longest]->get_identity());
+	}
 			
 			// try to intercept a couple of errors that are possible here ...
 			if (item[i]->ship && item[i]->ship < (void*)0x01000)
@@ -1567,17 +1545,22 @@ checksync();
 			{
 				tw_error("Ship pointer isn't cleaned up in [%s]", item[i]->get_identity());
 			}
+
+			if (!(item[i]->attributes & ATTRIB_INGAME))
+			{
+				tw_error("This item [%s] is not in-game", item[i]->get_identity());
+			}
 		}
 
 
-checksync();
-		}
-}
-	//test_pointers();
-	check_physics_correctness();
 
-	//prepare quadrants stuff
-{_STACKTRACE("Physics::calculate() - quadrants stuff")
+	}
+
+	if (dt_longest > 1)
+	{
+		message.print(100, 14, "longest duration = item [%s]", item[i_longest]->get_identity());
+	}
+
 	for(i = 0; i < QUADS_TOTAL; i += 1) {
 		quadrant[i] = NULL;
 		}
@@ -1592,64 +1575,73 @@ checksync();
 			}
 		else item[i]->qnext = NULL;
 		}
-}
 
-checksync();
 	//check for collisions
-{_STACKTRACE("Physics::calculate() - collisions")
+
+
 	collide();
-}
-	//test_pointers();
-	//check_physics_correctness();
 
-checksync();
-
-{_STACKTRACE("Physics::calculate() - presence destruction")
 	//remove presences that have been dead long enough
-	for(i = 0; i < num_presences; i ++) {
+	int count_undead = 0;
+	for(i = 0; i < num_presences; i ++)
+	{
 		if (presence[i]->state == -DEATH_FRAMES) {
 			Presence *tmp = presence[i];
-			num_presences -= 1;
+			//num_presences -= 1;
 			
-			if (num_presences > i)
-				memmove(&presence[i], &presence[i+1], sizeof(Presence*) * (num_presences-i));
+			//if (num_presences > i)
+			//	memmove(&presence[i], &presence[i+1], sizeof(Presence*) * (num_presences-i));
+			//i -= 1;
 
-			i -= 1;
 			delete tmp;
 		}
 		else {
 			if (!presence[i]->exists()) {
 				//if (presence[i]->state == 0) presence[i]->death();
 				presence[i]->state -= 1;
-			}
-		}
-	}
-}
-	//test_pointers();
-	//check_physics_correctness();
 
-checksync();
+			}
+
+			presence[count_undead] = presence[i];
+			++count_undead;
+		}
+
+
+	}
+	
+	num_presences = count_undead;
 
 
 	//remove objects that have been dead long enough
-{_STACKTRACE("Physics::calculate() - item destruction")
-	for(i = 0; i < num_items; i ++) {
+
+	count_undead = 0;
+
+	for(i = 0; i < num_items; i ++)
+	{
 		if (item[i]->state == -DEATH_FRAMES)
 		{
 			SpaceLocation *tmp = item[i];
-			num_items -= 1;
+			//num_items -= 1;
 			
-			if (num_items > i)
-				memmove(&item[i], &item[i+1], (num_items-i) * sizeof(SpaceLocation*));
-			
-			i -= 1;
+			//if (num_items > i)
+			//	memmove(&item[i], &item[i+1], (num_items-i) * sizeof(SpaceLocation*));
+			//i -= 1;
+
 			const char *name = tmp->get_identity();
-			//delete tmp;
+			char str[128];
+			strcpy(str, tmp->get_identity());	// remember the name
+
 			delete_location(tmp);
-			//xxx despite that TEST, it's still going wrong here !! So, something gets deleted outside of this physics, after being added to the physics... nasty!.
-			// it's the CHORALI EXTRACTOR !!!! But, why ????
+
+		} else {
+
+			item[count_undead] = item[i];
+			++count_undead;
 		}
+
 	}
+
+	num_items = count_undead;
 
 
 	for(i = 0; i < num_items; i ++)
@@ -1666,24 +1658,15 @@ checksync();
 			}
 			item[i]->state -= 1;
 		}
+
+		if (item[i]->state > 1)
+		{
+			tw_error("State is higher than 1");
+		}
 	}
-}
-checksync();
+
 	test_pointers();
 	check_physics_correctness();
-
-	//remove dead listings
-/*{STACKTRACE
-	int deleted = 0;
-	for (i = 0; i + deleted < num_listed; i += 1) {
-		if (listed[i].serial == 0) deleted += 1;
-		if (deleted) listed[i] = listed[i+deleted];
-	}
-	num_listed -= deleted;
-
-}*/
-
-checksync();
 
 	return;
 	}
@@ -1708,12 +1691,12 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	game_animation_time = get_time();
 //	message.print(1, 15, "frame rate = %i ms", int(game_frame_rate));
 
-	//check_physics_correctness();
 	#endif
 
 
 	::render_time = this->game_time;
 
+	/*
 	//add presences to list
 	j = num_presences;
 	if (j > ANIMATE_BUFFER_SIZE / 2) j = ANIMATE_BUFFER_SIZE / 2;
@@ -1725,10 +1708,43 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	memcpy(&animate_buffer[j], item, sizeof(Presence *) * i);
 
 	j += i;
+	*/
+
+	j = 0;
+
+	for ( i = 0; i < num_presences; ++i )
+	{
+		if (presence[i]->exists())
+		{
+			animate_buffer[j] = presence[i];
+			++j;
+			if (j >= ANIMATE_BUFFER_SIZE)
+				break;
+		}
+	}
+
+	for ( i = 0; i < num_items; ++i )
+	{
+		if (item[i]->exists())
+		{
+			animate_buffer[j] = item[i];
+			++j;
+			if (j >= ANIMATE_BUFFER_SIZE)
+				break;
+		}
+	}
+
 	qsort(animate_buffer, j, sizeof(SpaceLocation*), compare_depth);
 	prepare();
 	RGB back = { frame->background_red, frame->background_green, frame->background_blue };
 	aa_set_background ( back );
+
+	if (j >= ANIMATE_BUFFER_SIZE)
+	{
+		tw_error("reaching animation buffer ... should not happen");
+	}
+
+	int animate_buffersize = j;
 
 	// timing, for networking flushes
 	int time = get_time();
@@ -1756,9 +1772,10 @@ void Physics::animate (Frame *frame) {STACKTRACE
 			{
 				tw_error("Objects are not allowed to die during animation()");
 			}
-
 			physics_allowed = false;
+
 			animate_buffer[i]->animate(frame);
+
 			physics_allowed = true;
 		}
 
@@ -1791,10 +1808,8 @@ void Physics::animate (Frame *frame) {STACKTRACE
 		}
 
 
-		//check_physics_correctness();
 	}
 
-	//check_physics_correctness();
 
 	return;
 }
@@ -1927,7 +1942,7 @@ void Physics::collide() {_STACKTRACE("Physics::collide()")
 	}//*/
 	Query q;
 	for (i = 0; i < num_items; i += 1) {
-		if (item[i]->exists() && item[i]->detectable() &&
+		if (item[i] && item[i]->exists() && item[i]->detectable() &&
 			(item[i]->collide_flag_sameship | item[i]->collide_flag_sameteam | item[i]->collide_flag_anyone) && 
 			!(item[i]->attributes & ATTRIB_COLLIDE_STATIC)) {
 			if (item[i]->isObject()) {

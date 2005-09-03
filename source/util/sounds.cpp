@@ -8,6 +8,9 @@
 #include "sounds.h"
 #include "errors.h" //only used for log_debug() function
 
+//#include "../melee.h"
+#include "../melee/mframe.h"
+
 //#if defined DIGI_DIRECTAMX
 //#	define DIGI_TW DIGI_DIRECTAMX(0)
 //#else 
@@ -118,13 +121,43 @@ void SoundSystem::init() {
 	}
 	return;
 }
+
+void check_sample_duration(SAMPLE *spl, int freq, bool loop)
+{
+	if (!physics)
+		return;
+
+	if (loop)
+	{
+		tw_error("a looped option for a temporary SAMPLE is not allowed");
+	} else {
+
+		// frequency modifier.
+		double factor = double(freq) / 1000.0;
+
+		// duration in seconds.
+		double duration = double(spl->len) / (double(spl->freq) * factor);
+
+		// available time in seconds.
+		double time_available = DEATH_FRAMES * physics->frame_time * 1E-3;
+		if ( duration > time_available )
+		{
+			tw_error("the sample might disappear too soon; increase DEATH_FRAMES");
+		}
+	}
+
+}
+
 int SoundSystem::play (SAMPLE *spl, int vol, int pan, int freq, bool loop) {
-	if ((state & (ENABLED | SOUND_ON)) == (ENABLED | SOUND_ON)) {
+	if ((state & (ENABLED | SOUND_ON)) == (ENABLED | SOUND_ON))
+	{
 		//if (freq > 4535) freq = 4535;
 		//I THINK that the 4536 bug is specific to my sound hardware, so that's commented out
+		check_sample_duration(spl, freq, loop);
 		return ::play_sample (spl, (vol * sound_volume) >> 8, pan, freq, loop);
-		}
-	else return -1;
+	} else {
+		return -1;
+	}
 	}
 void SoundSystem::stop (SAMPLE *spl) {
 	if (state & ENABLED) {
@@ -141,10 +174,36 @@ void SoundSystem::stop (int voice_id) {
 		}
 	else return;
 	}
-void SoundSystem::play_music (Music *music, int loop) {
-	if ((state & (MOD_ENABLED | MUSIC_ON)) == (MOD_ENABLED | MUSIC_ON)) {
-		::play_mod(music, loop);
+
+
+void check_music_duration(JGMOD *music, bool loop)
+{
+	if (!physics)
+		return;
+
+	if (loop)
+	{
+		tw_error("a looped option for a temporary JGMOD is not allowed");
+	} else {
+		double time_available = DEATH_FRAMES * physics->frame_time * 1E-3;
+
+		// I do not know how to calculate the duration of a mod...
+		// so I'll just be on the safe side, with 20 seconds or so.
+		if (time_available < 20.0)
+		{
+			tw_error("the mod music might disappear too soon; increase DEATH_FRAMES");
 		}
+	}
+
+}
+
+void SoundSystem::play_music (Music *music, int loop) {
+	if ((state & (MOD_ENABLED | MUSIC_ON)) == (MOD_ENABLED | MUSIC_ON))
+	{
+		check_music_duration(music, loop);
+		::play_mod(music, loop);
+	}
+
 	fake_mod_playing = loop;
 	if (fake_mod_playing)
 		looping_music = music;
