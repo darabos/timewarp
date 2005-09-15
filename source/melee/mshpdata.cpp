@@ -28,6 +28,9 @@ int auto_unload = false;
 // for debugging ...
 void test_pointers()
 {
+	//xxx test
+	return;
+
 #ifdef _DEBUG
 	if (!physics)
 		return;
@@ -481,7 +484,13 @@ SAMPLE *copy_sample(SAMPLE *source)
 	memcpy(dest, source, sizeof(SAMPLE));
 
 	// copy the sample data (and set the pointer to the sample data)
-	dest->data = copy_data(source->data, (source->len * source->bits) / 8);
+	int mult;
+	if (source->stereo != 0)
+		mult = 2;
+	else
+		mult = 1;
+
+	dest->data = copy_data(source->data, (source->len * (source->bits/8) * mult));
 
 	return dest;
 }
@@ -521,7 +530,13 @@ JGMOD *copy_jgmod(JGMOD *source)
 		s = dest->s + i;	// the i-th sample.
 		s_src = source->s + i;
 
-		int L = s->len * s->bits / 8;
+		int mult;
+		if (s->stereo != 0)
+			mult = 2;
+		else
+			mult = 1;
+
+		int L = mult * s->len * s->bits / 8;
 		s->data = malloc (L);
 		memcpy(s->data, s_src->data, L);
 

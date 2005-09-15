@@ -431,6 +431,8 @@ void Game::add_focus(Presence *new_focus, int channel) {
 
 void Game::set_focus(Control *c)
 {
+	focus_index = -1;
+
 	int i;
 	for ( i = 0; i < num_focuses; ++i )
 	{
@@ -1369,10 +1371,6 @@ void Game::play()
 
 	iteration_histogram_init(time_start);
 
-	// only for debugging/testing purpose.
-	int debug_idle_time_animate = 50 + rand()%50;
-	debug_idle_time_animate = 0;
-
 
 	// if you increase lag, iterations can be skipped...
 	skip_iteration = false;
@@ -1584,9 +1582,6 @@ void Game::play()
 						network_crc_check();
 
 
-
-
-
 					// approve of the next iteration, after ALL possible event thingies are done.
 					if (lag_decrease == 0)
 					{
@@ -1742,7 +1737,7 @@ void Game::play()
 					animate();
 
 					#ifdef _DEBUG
-					idle(debug_idle_time_animate);
+					//idle(debug_idle_time_animate);
 					#endif
 
 
@@ -1890,7 +1885,8 @@ void Game::fps()
 			tmp = "BAD!";
 		message.print((int)msecs_per_fps, 12, "render time: %.3fms (that's %s)", rt, tmp);
 		message.print((int)msecs_per_fps, 12, "debug: %d", debug_value);
-		message.print((int)msecs_per_fps, 12, "shipdatas loaded: [%d] num_items: [%i]", shipdatas_loaded, physics->num_items);
+		message.print((int)msecs_per_fps, 12, "shipdatas: [%i] items: [%i] deadites: [%i]  collisions: [%i]  quadrants: [%i]",
+			shipdatas_loaded, num_items, num_dead_presences, num_collisions, num_quadrant);
 	}
 
 	if (chat_on)
@@ -2720,9 +2716,12 @@ void Game::share_crc(int iplayer)
 		
 		for ( i = 0; i < num_items; ++i )
 		{
-			SpaceLocation *o = item[i];
-			sumpos += iround(o->pos.x + o->pos.y);
-			sumvel += iround(o->vel.x + o->vel.y);
+			if (item[i]->exists())
+			{
+				SpaceLocation *o = item[i];
+				sumpos += iround(o->pos.x + o->pos.y);
+				sumvel += iround(o->vel.x + o->vel.y);
+			}
 		}
 
 		crcvalue = sumpos + sumvel;

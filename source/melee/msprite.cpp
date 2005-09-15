@@ -241,6 +241,13 @@ void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 */
 void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 	//return;//remove me!!!
+
+	int bpp = bitmap_color_depth(bmp);
+	if (bpp != 16 && bpp != 32 && bpp != 24)
+	{
+		tw_error("invalid target bitmap depth in color-correct");
+	}
+
 	int x, y, w, h;
 	w = bmp->w;
 	h = bmp->h;
@@ -252,7 +259,7 @@ void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 			int c;
 			c = getpixel(bmp, x, y);
 			if ((c == bmc) && masked) continue;
-			switch (bitmap_color_depth(bmp)) {
+			switch (bpp) {
 				case 8:{
 					a.r = getr8(c);
 					a.g = getg8(c);
@@ -528,7 +535,14 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 
 	for(i = 0; i < sprite_count; i += 1)
 	{
+		// error intercept? perhaps if memory is overwritten or so?
+		if (bpp != 16 && bpp != 32 && bpp != 24)
+		{
+			tw_error("invalid target bitmap depth");
+		}
+
 		bmp = create_bitmap_ex(bpp, w, h);
+
 		
 		if (general_attributes & MASKED)
 			clear_to_color(bmp, bitmap_mask_color(bmp));
