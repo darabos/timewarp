@@ -148,12 +148,13 @@ void check_sample_duration(SAMPLE *spl, int freq, bool loop)
 
 }
 
-int SoundSystem::play (SAMPLE *spl, int vol, int pan, int freq, bool loop) {
+int SoundSystem::play (SAMPLE *spl, int vol, int pan, int freq, bool loop, bool noerrorcheck) {
 	if ((state & (ENABLED | SOUND_ON)) == (ENABLED | SOUND_ON))
 	{
 		//if (freq > 4535) freq = 4535;
 		//I THINK that the 4536 bug is specific to my sound hardware, so that's commented out
-		check_sample_duration(spl, freq, loop);
+		if (!noerrorcheck)
+			check_sample_duration(spl, freq, loop);
 		return ::play_sample (spl, (vol * sound_volume) >> 8, pan, freq, loop);
 	} else {
 		return -1;

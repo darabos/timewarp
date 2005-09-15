@@ -39,7 +39,7 @@ class SoundSystem : public BaseClass {
 	void save() ;
 	void init() ;
 
-	int play (Sound *spl, int vol = 256, int pan = 128, int freq = 1000, bool loop = false) ;
+	int play (Sound *spl, int vol = 256, int pan = 128, int freq = 1000, bool loop = false, bool noerrorcheck = false) ;
 	void stop (Sound *spl);
 	void stop (int voice_id);
 
