@@ -59,6 +59,8 @@ double MAX_SPEED = 0;
 // for debugging purpose...
 void check_physics_correctness_item(int i)
 {
+	//xxx test
+	return;
 #ifdef _DEBUG
 	if (physics)
 	{
@@ -82,6 +84,8 @@ void check_physics_correctness_item(int i)
 
 void check_physics_correctness()
 {
+	//xxx test
+	return;
 #ifdef _DEBUG
 	int i;
 	for ( i = 0; i < physics->num_items; ++i )
@@ -93,6 +97,8 @@ void check_physics_correctness()
 
 void check_physics_presence(Presence *p)
 {
+	//xxx test
+	return;
 #ifdef _DEBUG
 	if (!physics)
 		return;
@@ -807,8 +813,8 @@ void SpaceLocation::play_sound (SAMPLE *sample, int vol, int freq) {STACKTRACE
 	physics->play_sound(sample, this, vol, freq);
 	return;
 }
-void SpaceLocation::play_sound2 (SAMPLE *sample, int vol, int freq) {STACKTRACE
-	physics->play_sound2(sample, this, vol, freq);
+void SpaceLocation::play_sound2 (SAMPLE *sample, int vol, int freq, bool noerrorcheck) {STACKTRACE
+	physics->play_sound2(sample, this, vol, freq, noerrorcheck);
 	return;
 }
 int SpaceLocation::translate( Vector2 delta) {STACKTRACE
@@ -869,7 +875,10 @@ void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {STACKTRACE
 	return;
 }
 
-int SpaceLocation::accelerate_gravwhip(SpaceLocation *source, double angle, double velocity, double max_speed) {STACKTRACE
+int SpaceLocation::accelerate_gravwhip(SpaceLocation *source, double angle, double velocity, double max_speed)
+{
+	STACKTRACE;
+
 	Planet *p = nearest_planet();
 	if (!p) return SpaceLocation::accelerate(source, angle, velocity, max_speed);
 	double tmp;
@@ -1284,6 +1293,7 @@ void Physics::destroy_all() {
 	presence = NULL;
 	num_presences = 0;
 	max_presences = 0;
+	
 	for (i = 0; i < num_items; i += 1) {
 		SpaceLocation *tmp = item[i];
 		item[i] = NULL;
@@ -1293,6 +1303,16 @@ void Physics::destroy_all() {
 	item = NULL;
 	num_items = 0;
 	max_items = 0;
+
+	for (i = 0; i < num_dead_presences; i += 1) {
+		Presence *tmp = dead_presences[i];
+		dead_presences[i] = 0;
+		delete tmp;
+	}
+	if (dead_presences) free(dead_presences);
+	dead_presences = 0;
+	num_dead_presences = 0;
+	max_dead_presences = 0;
 }
 
 Physics::~Physics() {STACKTRACE
@@ -1303,12 +1323,24 @@ Physics::~Physics() {STACKTRACE
 
 void Physics::preinit() {STACKTRACE
 	quadrant = NULL;
+
+	// spacelocations listing
 	num_items = max_items = 0;
-	item = NULL;
+	item = 0;
+
+	// presences listing
 	num_presences = max_presences = 0;
-	presence = NULL;
+	presence = 0;
+
+	// death listing
+	num_dead_presences = 0;
+	max_dead_presences = 0;
+	dead_presences = 0;
+
 	last_ship = 0;
 	last_team = 0;
+
+
 	return;
 	}
 
@@ -1391,6 +1423,7 @@ void Physics::add(SpaceLocation *o) {
 	return;
 	}
 
+/*
 bool Physics::remove(SpaceLocation *o) {
 	STACKTRACE;
 	
@@ -1411,6 +1444,7 @@ bool Physics::remove(SpaceLocation *o) {
 		}
 	return false;
 	}
+	*/
 
 void Physics::add(Presence *p) {
 	STACKTRACE;
@@ -1428,7 +1462,7 @@ void Physics::add(Presence *p) {
 	num_presences += 1;
 	return;
 	}
-
+/*
 bool Physics::remove(Presence *o) {
 	STACKTRACE;
 	int i;
@@ -1444,6 +1478,7 @@ bool Physics::remove(Presence *o) {
 		}
 	return false;
 	}
+*/
 
 extern void test_pointers();
 
@@ -1458,6 +1493,40 @@ void delete_location(SpaceLocation *tmp)
 	delete tmp;
 }
 
+
+// move dead items to a death presence list ...
+
+void Physics::add2deathlist(Presence *p)
+{
+	if (num_dead_presences >= max_dead_presences)
+	{
+		max_dead_presences += 1024;
+		dead_presences = (Presence**) realloc(dead_presences, sizeof(Presence*) * max_dead_presences);
+	}
+	
+	dead_presences[num_dead_presences] = p;
+	++ num_dead_presences;
+}
+
+void Physics::check_deathlist()
+{
+	// normally this shouldn't happen, but you never know ...
+	int i;
+	for ( i = 0; i < num_dead_presences; ++i )
+	{
+		if (dead_presences[i]->exists())
+		{
+			//xxx test
+//			tw_error("Reviving a dead object is illegal.");
+
+			physics->add(dead_presences[i]);
+			dead_presences[i] = dead_presences[num_dead_presences-1];
+			--num_dead_presences;
+			--i;
+		}
+
+	}
+}
 
 
 void Physics::calculate() {_STACKTRACE("Physics::calculate()")
@@ -1527,10 +1596,6 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 				i_longest = i;
 			}
 
-	if (dt_longest > 1)
-	{
-		message.print(100, 14, "longest duration = item [%s]", item[i_longest]->get_identity());
-	}
 			
 			// try to intercept a couple of errors that are possible here ...
 			if (item[i]->ship && item[i]->ship < (void*)0x01000)
@@ -1556,11 +1621,12 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 
 	}
 
-	if (dt_longest > 1)
-	{
-		message.print(100, 14, "longest duration = item [%s]", item[i_longest]->get_identity());
-	}
+//	if (dt_longest > 1)
+//	{
+//		message.print(100, 14, "longest duration = item [%s]", item[i_longest]->get_identity());
+//	}
 
+	num_quadrant = 0;
 	for(i = 0; i < QUADS_TOTAL; i += 1) {
 		quadrant[i] = NULL;
 		}
@@ -1572,6 +1638,8 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 			if ((q < 0) || (q > QUADS_TOTAL)) {tw_error("bad quadrant");}
 			item[i]->qnext = quadrant[q];
 			quadrant[q] = item[i];
+
+			++ num_quadrant;
 			}
 		else item[i]->qnext = NULL;
 		}
@@ -1581,6 +1649,65 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 
 	collide();
 
+
+
+	check_deathlist();
+
+	int count_undead = 0;
+	for ( i = 0; i < num_presences; i ++ )
+	{
+		if (!presence[i]->exists())
+		{
+			add2deathlist(presence[i]);
+
+		} else {
+			// removes from the list, while preserving list ordering
+			presence[count_undead] = presence[i];
+			++count_undead;
+		}
+	}
+	num_presences = count_undead;
+
+	count_undead = 0;
+	for ( i = 0; i < num_items; i ++ )
+	{
+		if (!item[i]->exists())
+		{
+			item[i]->death();
+			add2deathlist(item[i]);
+
+		} else {
+			// removes from the list, while preserving list ordering
+			item[count_undead] = item[i];
+			++count_undead;
+		}
+	}
+	num_items = count_undead;
+
+
+	//remove presences that have been dead long enough
+
+	for(i = 0; i < num_dead_presences; i ++)
+	{
+		if (dead_presences[i]->state == -DEATH_FRAMES)
+		{
+			delete dead_presences[i];
+
+			dead_presences[i] = dead_presences[num_dead_presences-1];
+			--num_dead_presences;
+			--i;
+		}
+		else {
+			dead_presences[i]->state -= 1;
+
+		}
+
+
+	}
+	
+	
+	
+	/*
 	//remove presences that have been dead long enough
 	int count_undead = 0;
 	for(i = 0; i < num_presences; i ++)
@@ -1627,11 +1754,12 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 			//	memmove(&item[i], &item[i+1], (num_items-i) * sizeof(SpaceLocation*));
 			//i -= 1;
 
-			const char *name = tmp->get_identity();
-			char str[128];
-			strcpy(str, tmp->get_identity());	// remember the name
+			//const char *name = tmp->get_identity();
+			//char str[128];
+			//strcpy(str, tmp->get_identity());	// remember the name
 
-			delete_location(tmp);
+			//delete_location(tmp);
+			delete tmp;
 
 		} else {
 
@@ -1664,6 +1792,7 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 			tw_error("State is higher than 1");
 		}
 	}
+	*/
 
 	test_pointers();
 	check_physics_correctness();
@@ -1886,18 +2015,25 @@ void Physics::check_linecollision(SpaceLine *l)
 		l->set_length(distance);
 		l->inflict_damage(o);
 	}
-
 }
 
+
+
+
 #include "../util/pmask.h"
-void Physics::collide() {_STACKTRACE("Physics::collide()")
+void Physics::collide()
+{
+	_STACKTRACE("Physics::collide()");
+
+	int tmp_size = 0;
+	PMASKDATA_FLOAT *tmp = new PMASKDATA_FLOAT [num_items];
+
 	int i;
-	PMASKDATA_FLOAT *tmp;
 	int l = 0;
-	tmp = new PMASKDATA_FLOAT[num_items];
-	for (i = 0; i < num_items; i += 1) {
-		if (item[i] && item[i]->exists() && item[i]->isObject()
-				&& item[i]->detectable() ) {
+	for (i = 0; i < num_items; i += 1)
+	{
+		if (item[i] && item[i]->exists() && item[i]->isObject() && item[i]->detectable() )
+		{
 			SpaceObject *o = (SpaceObject *) item[i];
 			Vector2 p = o->pos - o->size / 2;
 			tmp[l].x = p.x;
@@ -1919,6 +2055,7 @@ void Physics::collide() {_STACKTRACE("Physics::collide()")
 			l += 1;
 		}
 	}
+	num_collisions = l;
 	SpaceObject *col[128 * 2 + 1];
 	int nc = check_pmask_collision_list_float_wrap(size.x, size.y, tmp, l, (const void**)&col[0], 128);
 	delete[] tmp;
@@ -1940,6 +2077,8 @@ void Physics::collide() {_STACKTRACE("Physics::collide()")
 		}
 #endif
 	}//*/
+
+
 	Query q;
 	for (i = 0; i < num_items; i += 1) {
 		if (item[i] && item[i]->exists() && item[i]->detectable() &&
@@ -2004,13 +2143,13 @@ int Physics::checksum() {_STACKTRACE("Physics::checksum")
 void Physics::dump_state ( const char *file_name ) {STACKTRACE
 	//unimplemented
 }
-void Physics::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {STACKTRACE
-	sound.play(sample, vol, 128, iround(freq * turbo));
+void Physics::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq, bool noerrorcheck) {STACKTRACE
+	sound.play(sample, vol, 128, iround(freq * turbo), false, noerrorcheck);
 	return;
 }
-void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int freq) {STACKTRACE
+void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int freq, bool noerrorcheck) {STACKTRACE
 	sound.stop(sample);
-	play_sound(sample, source, vol, freq);
+	play_sound(sample, source, vol, freq, noerrorcheck);
 	return;
 }
 

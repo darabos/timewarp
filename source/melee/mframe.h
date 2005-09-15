@@ -122,6 +122,9 @@ enum {
 class Physics : public BaseClass {
 	public:
 
+		int num_collisions;	// just for debugging display.
+		int num_quadrant; // just for debugging display.
+
 	SpaceLocation **quadrant;
 	friend struct Query;
 
@@ -140,8 +143,14 @@ class Physics : public BaseClass {
 	Presence **presence;
 	void add(SpaceLocation *p);
 	void add(Presence *p);
-	bool remove(SpaceLocation *o);
-	bool remove(Presence *p) ;
+//	bool remove(SpaceLocation *o);
+//	bool remove(Presence *p) ;
+	
+	int num_dead_presences;
+	int max_dead_presences;
+	Presence **dead_presences;
+	void add2deathlist(Presence *p);
+	void check_deathlist();
 
 	TeamCode last_team;
 	unsigned int last_ship;
@@ -172,8 +181,8 @@ class Physics : public BaseClass {
 	/*Presence *find_serial(int serial);
 	int _find_serial(int serial);*/
 
-	virtual void play_sound (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000);
-	virtual void play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000);
+	virtual void play_sound (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000, bool noerrorcheck = false);
+	virtual void play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol = 255, int freq = 1000, bool noerrorcheck = false);
 
 	virtual void preinit();
 	virtual void init();
@@ -362,7 +371,7 @@ protected: public://aught to be protected, but we're lazy
 	virtual void calculate(); //advance the item frame_time milliseconds in time
 
 	void play_sound (SAMPLE *sample, int vol = 256, int freq = 1000); //plays a sound
-	void play_sound2 (SAMPLE *sample, int vol = 256, int freq = 1000);//like play_sound, only stops the previous sound
+	void play_sound2 (SAMPLE *sample, int vol = 256, int freq = 1000, bool noerrorcheck = false);//like play_sound, only stops the previous sound
 
 	int debug_id;	// for debugging purpose
 };
