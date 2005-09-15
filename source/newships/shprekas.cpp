@@ -82,14 +82,13 @@ void RekojAssassin::calculate()
 	{
 	STACKTRACE
 
-	Ship::calculate();
 
 	if (target && target->exists()) {
 		
 			if (distance(target) > weaponRange) 
 				 specialMatchSpeed = false;
 
-			if (specialMatchSpeed) {
+			if (specialMatchSpeed && control) {
 				control->keys &= ~(keyflag::thrust);
 				recharge_step=0;
 				//recharge_rate=0;//Bad!
@@ -102,7 +101,9 @@ void RekojAssassin::calculate()
 		}
 	 else specialMatchSpeed = false;
 
-	 if (batt==0)  specialMatchSpeed = false;
+	Ship::calculate();
+
+	if (batt==0)  specialMatchSpeed = false;
 
 	 if (!specialMatchSpeed) {
 		 //recharge_rate=normal_rate;

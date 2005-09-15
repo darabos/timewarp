@@ -112,8 +112,9 @@ void StarBase::calculate() {
   Ship *o;
 
 	Query a;
-	for (a.begin(this, bit(LAYER_SHIPS), HealRange, QUERY_OBJECT); a.current; a.next()) {
-		if (!o->isShip())
+	for (a.begin(this, bit(LAYER_SHIPS), HealRange, QUERY_OBJECT); a.current; a.next())
+	{
+		if (!a.current->isShip())
 			continue;
 
 		o = (Ship *)a.currento;

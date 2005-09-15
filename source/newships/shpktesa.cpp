@@ -114,6 +114,11 @@ int KterbiSaber::activate_special()
 	STACKTRACE
     if (boostlevel < 3) {
     boostlevel++;
+
+	if (data->num_extra_samples < 2)
+	{
+		tw_error("No extra samples ?!");
+	}
     sound.stop(data->sampleExtra[1]);
     sound.play(data->sampleExtra[1]);
     if (boostlevel == TURBO_SPEED) {

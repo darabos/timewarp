@@ -187,6 +187,12 @@ void AlcheroKronos::calculate(){
 
 
   dial_angle += turbo_change * frame_time / (1.0 + turbo_change) * PI/180;
+
+  while (dial_angle > PI)
+	  dial_angle -= PI2;
+  while (dial_angle < -PI)
+	  dial_angle += PI2;
+
   dial_index = get_index(angle + dial_angle);
   if( weaponObject ){
     if( !weaponObject->exists() || !fire_weapon || !batt ){
@@ -226,7 +232,7 @@ int AlcheroKronos::activate_special(){
 
 	if ( up ) {
 		sound.stop( data->sampleSpecial[1] );
-		play_sound2( copy_of_sampleSpecial, 255, 1000 );
+		play_sound2( copy_of_sampleSpecial, 255, 1000, true );
 		up = false;
 	}
 

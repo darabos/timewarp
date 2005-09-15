@@ -222,10 +222,10 @@ void MeknikPincer::calculate()
 	if (i < Nsaws)	// if there's a saw alive, increase angle.
 	{
 		sawangle += PI2 * frame_time*1E-3 / specialTurnperiod;
-		if (angle > PI)
-			angle -= PI2;
-		if (angle < -PI)
-			angle += PI2;
+		if (sawangle > PI)
+			sawangle -= PI2;
+		if (sawangle < -PI)
+			sawangle += PI2;
 	}
 
 	Ship::calculate();

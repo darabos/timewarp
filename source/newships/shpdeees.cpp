@@ -179,7 +179,7 @@ int DeepSpaceEssence::activate_weapon()
 	
 	crew--;
 	game->add( new DeepSpaceWarrior( this, Vector2(0.0, -size.y * 0.8),
-		(120.0 + tw_random(120*PI/180)) + angle, weaponVelocity, weaponRange,
+		(120.0 + tw_random(120))*ANGLE_RATIO + angle, weaponVelocity, weaponRange,
 		weaponArmour, weaponTurnRate, this, weaponDrainRate, data->spriteWeapon, target ));
 	
 	return TRUE;
