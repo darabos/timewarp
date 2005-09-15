@@ -10,6 +10,7 @@ There are several configuration options here, hope they aren't too
 confusing.
 */
 
+
 #define PMASK_VERSION          4
 
 #define USE_ALLEGRO
@@ -131,8 +132,6 @@ PMASK *create_deserialize_pmask(void *source, int maxsize, int *size);
 //it accepts a buffer to read from, and a maximum number of bytes to read
 //it accepts a pointer at an integer to put the # of bytes read 
 //it returns a newly allocated PMASK structure, or NULL if an error occured
-
-
 
 typedef struct PMASKDATA {
 	int x, y;
