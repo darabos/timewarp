@@ -198,10 +198,12 @@ void check_music_duration(JGMOD *music, bool loop)
 
 }
 
-void SoundSystem::play_music (Music *music, int loop) {
+void SoundSystem::play_music (Music *music, int loop, bool do_error_check) {
 	if ((state & (MOD_ENABLED | MUSIC_ON)) == (MOD_ENABLED | MUSIC_ON))
 	{
-		check_music_duration(music, loop);
+		if (do_error_check)
+			check_music_duration(music, loop);
+
 		::play_mod(music, loop);
 	}
 

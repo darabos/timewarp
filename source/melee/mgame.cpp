@@ -2439,7 +2439,7 @@ void Game::play_music() {STACKTRACE
 		music = sound.load_music(f);
 		if (!music) music = (Music*) -1;
 	}
-	if (music) sound.play_music(music, TRUE);
+	if (music) sound.play_music(music, TRUE, false);
 	return;
 }
 

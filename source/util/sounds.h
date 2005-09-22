@@ -43,7 +43,7 @@ class SoundSystem : public BaseClass {
 	void stop (Sound *spl);
 	void stop (int voice_id);
 
-	void play_music (Music *mus, int loop = false);
+	void play_music (Music *mus, int loop = false, bool do_error_check = true);
 	void stop_music ();
 	int is_music_playing() const;
 	int is_music_supported() const;
