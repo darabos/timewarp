@@ -269,7 +269,7 @@ int ControlWussie::think ()
 		tw_error("WussieBot is not on a local channel. It should be, though.");
 	}
 
-	if (ship && ship->control != this)
+	if ((ship) && (ship->control != this) && (ship->control && ship->control->cyborg != this) )
 	{
 		tw_error("error in control reference...");
 	}
