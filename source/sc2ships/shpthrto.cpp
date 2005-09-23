@@ -74,6 +74,8 @@ ThraddashFlame::ThraddashFlame(Vector2 opos, int odamage, int oarmour,
     state = 0;
   }
 	debug_id = 1045;
+
+	isblockingweapons = false;
 }
 
 void ThraddashFlame::calculate()
