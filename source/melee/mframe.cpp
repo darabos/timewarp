@@ -711,6 +711,28 @@ bool inline SpaceLocation::detectable()
 };
 
 
+/*
+the original subroutine
+int SpaceLocation::canCollide(SpaceLocation *other) {
+	if (!detectable()) return 0;
+	if (sameShip(other)) return ((1 << other->layer) & collide_flag_sameship);
+	else if (sameTeam(other)) return ((1 << other->layer) & collide_flag_sameteam);
+	return ((1 << other->layer) & collide_flag_anyone);
+}
+
+the layer definitions (copied from source/melee.h)
+#define LAYER_HOTSPOTS   0
+#define LAYER_CBODIES    1
+#define LAYER_LINES      2
+#define LAYER_SHOTS      3
+#define LAYER_SHIPS      4
+#define LAYER_SPECIAL    5
+#define LAYER_EXPLOSIONS 6
+#define LAYER_LOCATIONS  7
+#define ALL_LAYERS ( (1<<SPACE_LAYERS) - 1)
+#define OBJECT_LAYERS ( (1<<SPACE_LAYERS) - 1 - (1<<LAYER_LINES) - (1<<LAYER_LOCATIONS) )
+#define LINE_LAYERS ( (1<<LAYER_LINES) )
+*/
 
 int SpaceLocation::canCollide(SpaceLocation *other)
 {
@@ -734,7 +756,6 @@ int SpaceLocation::canCollide(SpaceLocation *other)
 	}
 
 	// if you should not collide with objects from the same ship
-	//if (collide_flag_sameship == 0)
 	if ( (collide_flag_sameship & bit(other->layer) ) == 0)
 	{
 		// but they share the same parent
@@ -743,7 +764,6 @@ int SpaceLocation::canCollide(SpaceLocation *other)
 	}
 
 	// if you are only allowed to collide with ships from other teams
-	//if (collide_flag_sameteam == 0)
 	if ( (collide_flag_sameteam & bit(other->layer) ) == 0)
 	{
 		// but the other happens to be in the same team
@@ -751,8 +771,7 @@ int SpaceLocation::canCollide(SpaceLocation *other)
 			result = 0;		// then set it to 0
 	}
 
-	// if you are not allowed to collide with *anyone* ...
-	//if (collide_flag_anyone == 0)
+	// if you are not allowed to collide with *anyone* in the other layer
 	if ( (collide_flag_anyone & bit(other->layer) ) == 0)
 	{
 		result = 0;
