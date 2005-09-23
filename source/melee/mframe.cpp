@@ -755,6 +755,7 @@ int SpaceLocation::canCollide(SpaceLocation *other)
 			result = 0;
 	}
 
+	/*
 	// if you should not collide with objects from the same ship
 	if ( (collide_flag_sameship & bit(other->layer) ) == 0)
 	{
@@ -762,6 +763,7 @@ int SpaceLocation::canCollide(SpaceLocation *other)
 		if ( other->parent == parent )
 			result = 0;		// then set to zero, because they're brothers
 	}
+	*/
 
 	// if you are only allowed to collide with ships from other teams
 	if ( (collide_flag_sameteam & bit(other->layer) ) == 0)
