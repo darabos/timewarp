@@ -979,7 +979,7 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	double oangle, SpaceSprite *osprite) 
 	:
 	SpaceLocation(creator, opos, oangle),
-	size(osprite->width(), osprite->height()),
+	size(osprite->width(0), osprite->height(0)),
 	mass(0),
 	sprite(osprite),
 	sprite_index(0)

@@ -131,7 +131,7 @@ void LeagueGame::init_objects() {
 	add( post );
 	post = new FixedObject( NULL, Vector2(2 * size.x / 5 - meleedata.planetSprite->size().x / 2, 9 * size.y / 10), 0, meleedata.planetSprite );
 	add( post );
-	post = new FixedObject( NULL, Vector2(3 * size.x / 5 + meleedata.planetSprite->width() / 2, 9 * size.y / 10), 0, meleedata.planetSprite );
+	post = new FixedObject( NULL, Vector2(3 * size.x / 5 + meleedata.planetSprite->width(0) / 2, 9 * size.y / 10), 0, meleedata.planetSprite );
 	add( post );
 
 	size *= 2;

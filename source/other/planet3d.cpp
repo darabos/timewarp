@@ -45,10 +45,10 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 	sbitmap[0] = new BITMAP*		[count];
 	attributes = new char	[count];
 
-	w = image->w;
-	h = image->h;
+	//w = image->w;
+	//h = image->h;
 
-	bmp = create_bitmap_ex ( bpp, w, h);
+	bmp = create_bitmap_ex ( bpp, image->w, image->h);
 	convert_bitmap(image, bmp, general_attributes & MASKED);
 	
 	i = 0;

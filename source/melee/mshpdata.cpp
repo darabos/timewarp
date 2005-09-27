@@ -146,9 +146,9 @@ void save_spacesprite2(SpaceSprite *ss, const char *spritename, const char *dest
 	if (ss->frames() != 64)
 		tw_error("save_spacesprite2 - error");
 
-	BITMAP *tmp = create_bitmap(int(ss->width() * 8), int(ss->height() * 8));
+	BITMAP *tmp = create_bitmap(int(ss->width(0) * 8), int(ss->height(0) * 8));
 	for (i = 0; i < ss->frames(); i += 1) {
-		blit(ss->get_bitmap(i), tmp, 0, 0, (i&7) * (int)ss->width(), int((i/8) * ss->height()), (int)ss->width(), (int)ss->height());
+		blit(ss->get_bitmap(i), tmp, 0, 0, (i&7) * (int)ss->width(i), int((i/8) * ss->height(i)), (int)ss->width(i), (int)ss->height(i));
 		sprintf(buf, "%s%i.%s", spritename, i, extension);
 		save_bitmap(buf, tmp, NULL);
 	}
@@ -194,8 +194,8 @@ void save_spacesprite(SpaceSprite *ss, const char *spritename, const char *desti
 	set_config_file(buf);
 	set_config_string("Main", "Type", "SpaceSprite");
 	set_config_int("SpaceSprite", "Number", (int)ss->frames());
-	set_config_int("SpaceSprite", "Width", (int)ss->width());
-	set_config_int("SpaceSprite", "Height", (int)ss->height());
+	set_config_int("SpaceSprite", "Width", (int)ss->width(0));
+	set_config_int("SpaceSprite", "Height", (int)ss->height(0));
 	set_config_string("SpaceSprite", "SubType", "Normal");
 	set_config_string("SpaceSprite", "Extension", extension);
 	chdir("tmp");

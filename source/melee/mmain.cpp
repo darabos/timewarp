@@ -989,14 +989,16 @@ void NormalGame::choose_new_ships()
 		if (!p)
 			continue;
 
-		if (p->control->ship)
+		/*if (p->control->ship)
 		{
 			if (!p->control->ship->exists())
 			{
 				tw_error("Ship under control does not exist !?!?");
 			}
 			}
-		else {
+		else {*/
+		if (!p->control->ship)
+		{
 //			if (player_panel[i]) player_panel[i]->window->hide();
 //			player_panel[i] = NULL;
 			sprintf (tmp, "Player%d", i+1);

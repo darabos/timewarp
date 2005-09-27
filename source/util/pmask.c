@@ -25,14 +25,35 @@
 
 #define MAX_INTVAL(int_type) ((((unsigned int_type)(-1))-1)/2)
 
-int get_pmask_pixel(CONST struct PMASK *mask, int x, int y) {
-	return 1 & (mask->mask[(mask->h * (x >> MASK_WORD_BITBITS)) + y] >> (x & (MASK_WORD_BITS-1)));
+
+int get_pmask_pixel(CONST struct PMASK *mask, int x, int y)
+{
+	int k;
+
+#ifdef _DEBUG
+	if (x < 0 || y < 0 || x > mask->w || y > mask->h)
+	{
+		*(int*) 0 = 0;	// happens with collision with MortarFire = an irregular sprite...
+	}
+#endif
+	k = (mask->h * (x >> MASK_WORD_BITBITS)) + y;
+	return 1 & (mask->mask[k] >> (x & (MASK_WORD_BITS-1)));
 }
-void set_pmask_pixel(struct PMASK *mask, int x, int y, int value) {
+void set_pmask_pixel(struct PMASK *mask, int x, int y, int value)
+{
+	int k;
+#ifdef _DEBUG
+	if (x < 0 || y < 0 || x > mask->w || y > mask->h)
+	{
+		*(int*) 0 = 0;
+	}
+#endif
+
+	k = (mask->h * (x >> MASK_WORD_BITBITS)) + y;
 	if (value) {
-		mask->mask[(mask->h * (x >> MASK_WORD_BITBITS)) + y] |= 1 << (x & (MASK_WORD_BITS-1));
+		mask->mask[k] |= 1 << (x & (MASK_WORD_BITS-1));
 	} else {
-		mask->mask[(mask->h * (x >> MASK_WORD_BITBITS)) + y] &=~(1 << (x & (MASK_WORD_BITS-1)));
+		mask->mask[k] &=~(1 << (x & (MASK_WORD_BITS-1)));
 	}
 }
 
@@ -59,6 +80,9 @@ void init_pmask (struct PMASK *mask, int w, int h)
 	words = 1 + ((w-1) >> MASK_WORD_BITBITS);
 	
 	total_words = words * h;
+
+	// so... the pmask is a series of bits, which indicate if there is a color or not.
+	// that's why there is the shift-right: there is less room needed.
 
 #ifdef MASK_SINGLE_MEMORY_BLOCK
 

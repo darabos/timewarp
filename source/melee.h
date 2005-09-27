@@ -433,8 +433,8 @@ protected:
 	char bpp;
 	char highest_mip;
 	int originaltype;
-	int         w;
-	int         h;
+//	int         w;
+//	int         h;
 	struct PMASK **smask;
 	Surface **sbitmap[MAX_MIP_LEVELS];
 
@@ -515,8 +515,9 @@ public:
 	INLINE int frames() const {return count;}
 	// changed Rob.
 	Vector2  size(int i = 0);//   const {return Vector2(b[0][i]->w, b[0][i]->h);}
-	int      width()  const {return w;}
-	int      height() const {return h;}
+	void size(int *w, int *h, int i);
+	int      width(int i);
+	int      height(int i);
 
 };
 

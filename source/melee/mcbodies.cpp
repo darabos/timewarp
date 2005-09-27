@@ -178,8 +178,8 @@ void _draw_starfield_raw (
 	double wx, wy;
 	RNG_FS rng;
 	rng.set_state64(s64);
-	wx = sprite->width() * zoom;
-	wy = sprite->height() * zoom;
+	wx = sprite->width(index) * zoom;
+	wy = sprite->height(index) * zoom;
 	if (!wx || !wy) return;
 	x = normalize ( x , mx);
 	y = normalize ( y , my);
@@ -232,8 +232,8 @@ void _draw_starfield_cached (
 	RNG_FS rng;
 	rng.set_state64(s64);
 	int iwx, iwy;
-	wx = sprite->width() * zoom;
-	wy = sprite->height() * zoom;
+	wx = sprite->width(index) * zoom;
+	wy = sprite->height(index) * zoom;
 	if (aa_mode) {
 		iwx = iround_up(wx);
 		iwy = iround_up(wy);

@@ -881,11 +881,11 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 	// make sure the moons are not too close to each other
 	for ( i = 0; i < NumMoons-1; ++i )
 	{
-		int R1 = max(MoonPics[PlanetMoonPic[i]]->height(), 
-			MoonPics[PlanetMoonPic[i]]->width());
+		int R1 = max(MoonPics[PlanetMoonPic[i]]->height(0), 
+			MoonPics[PlanetMoonPic[i]]->width(0));
 
-		int R2 = max(MoonPics[PlanetMoonPic[i+1]]->height(),
-			MoonPics[PlanetMoonPic[i+1]]->width());
+		int R2 = max(MoonPics[PlanetMoonPic[i+1]]->height(0),
+			MoonPics[PlanetMoonPic[i+1]]->width(0));
 		
 		if (PlanetMoonEllipsW[i+1]-PlanetMoonEllipsW[i] < R1+R2)
 			PlanetMoonEllipsW[i+1] = PlanetMoonEllipsW[i]+R1+R2;
@@ -1096,8 +1096,8 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 			stretch_blit (bitmap_selectscreen, tmpscreen, 0, 0, bitmap_selectscreen->w, bitmap_selectscreen->h,
 				0, 0, tmpscreen->w, tmpscreen->h);
 
-			x = xcenter - PlanetPics[iplanetpic]->width()/2;
-			y = ycenter - PlanetPics[iplanetpic]->height()/2;
+			x = xcenter - PlanetPics[iplanetpic]->width(0)/2;
+			y = ycenter - PlanetPics[iplanetpic]->height(0)/2;
 
 			Vector2 P, S;
 
@@ -1128,8 +1128,8 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 			for ( i = 0; i < NumMoons; ++i )
 			{
 				double R = PlanetMoonEllipsW[i] * 0.9*tmpscreen->h*dialog_scale * scalefactor / MapSize;
-				x = xcenter + int(R * cos(orbitangle[i])) - MoonPics[PlanetMoonPic[i]]->width()/2;
-				y = ycenter + int(R * sin(orbitangle[i])) - MoonPics[PlanetMoonPic[i]]->height()/2;
+				x = xcenter + int(R * cos(orbitangle[i])) - MoonPics[PlanetMoonPic[i]]->width(0)/2;
+				y = ycenter + int(R * sin(orbitangle[i])) - MoonPics[PlanetMoonPic[i]]->height(0)/2;
 
 				Vector2 P, S;
 

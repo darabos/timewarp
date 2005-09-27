@@ -157,8 +157,8 @@ void BlinkyIndicator::animate(Frame *space) {
 	p -= s->size() * space_zoom / 2;
 	p -= space_view_size / 2;
 
-	p.x -= sign(p.x) * s->width()  / 4 * sqrt(space_zoom);
-	p.y -= sign(p.y) * s->height() / 4 * sqrt(space_zoom);
+	p.x -= sign(p.x) * s->width(0)  / 4 * sqrt(space_zoom);
+	p.y -= sign(p.y) * s->height(0) / 4 * sqrt(space_zoom);
 	//shouldn't be sqrt ... maybe there's a bug somewhere
 
 	p += space_view_size / 2;
