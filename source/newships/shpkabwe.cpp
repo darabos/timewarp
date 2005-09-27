@@ -609,8 +609,8 @@ SpaceLocation(creator, Vector2(0.0, 0.0), 0.0)
 	}
 
 	//BITMAP *ship_bmp;
-	int wship = ship_spr->width();
-	int hship = ship_spr->height();
+	int wship = ship_spr->width(0);
+	int hship = ship_spr->height(0);
 
 	BITMAP *ship_bmp = create_bitmap(wship, hship);
 	clear_to_color(ship_bmp, 0);	// important otherwise it contains artefacts

@@ -252,22 +252,24 @@ void XXXAssimilator::collide(SpaceObject *other)
 	
 	if (other->isShip())
 	{
+		Ship *s = (Ship*)other;
+
 		crew += 2;
 		if (crew >= crew_max)
 			crew = crew_max;
 		
-		if (other->ship->speed_max > speed_max)
+		if (s->speed_max > speed_max)
 		{
-			speed_max = other->ship->speed_max;
+			speed_max = s->speed_max;
 			reload_panel();
 			play_sound(data->sampleExtra[0]);
 			
 		}
 		
-		if (other->ship->accel_rate  > accel_rate) 
+		if (s->accel_rate  > accel_rate) 
 		{
-			accel_rate		= other->ship->accel_rate;
-			hotspot_rate = other->ship->hotspot_rate;
+			accel_rate	 = s->accel_rate;
+			hotspot_rate = s->hotspot_rate;
 			reload_panel();
 			play_sound(data->sampleExtra[0]);
 		}
