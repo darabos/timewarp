@@ -430,7 +430,14 @@ void tw_error_exit(const char* message) {
 //const int tw_error_str_len = 2048;	// should be pleny of room.
 //char tw_error_str[tw_error_str_len];
 
-void caught_error(const char *format, ...) {
+void caught_error(const char *format, ...)
+{
+
+#ifdef _DEBUG
+	// in debug mode, crash right away, that is much easier.
+	*(int*)0 = 0;
+#endif
+
 	char error_string[4096];
 	if (format) {
 		va_list those_dots;
@@ -463,7 +470,9 @@ void caught_error(const char *format, ...) {
 #if defined(USE_ALLEGRO) && defined(DO_STACKTRACE)
 
 volatile int _crash_detected = 0;
-static void _crash_detector() {
+static void _crash_detector()
+{
+
 	int i = get_time();
 	if (_crash_detected) {
 		if (videosystem.last_poll == -1) return;

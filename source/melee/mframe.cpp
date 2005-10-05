@@ -643,7 +643,7 @@ double SpaceLocation::handle_speed_loss (SpaceLocation *source, double normal) {
 	return 0;
 }
 
-inline void check_vector_sanity(Vector2 &v)
+static void check_vector_sanity(Vector2 &v)
 {
 #ifdef _DEBUG
 	if (fabs(v.x) > 1E6 || fabs(v.y) > 1E6 )
@@ -1074,17 +1074,6 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 			other->change_vel( -_dp * tmp / other->mass);
 	}
 	
-#ifdef _DEBUG
-	SpaceObject *c1 = this;
-	SpaceObject *c2 = other;
-	if (fabs(c1->vel.x) > 1E6 || fabs(c1->vel.y) > 1E6 || fabs(c2->vel.x) > 1E6 || fabs(c2->vel.y) > 1E6 )
-	{
-		int a1 = c1->canCollide(c2);
-		int a2 = c2->canCollide(c1);
-		bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
-		tw_error("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
-	}
-#endif
 
 	Vector2 nd;
 	nd = unit_vector(dp);
@@ -1106,6 +1095,17 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 		p1 = p1 - size / 2;
 	}
 
+#ifdef _DEBUG
+	SpaceObject *c1 = this;
+	SpaceObject *c2 = other;
+	if (fabs(c1->vel.x) > 1E6 || fabs(c1->vel.y) > 1E6 || fabs(c2->vel.x) > 1E6 || fabs(c2->vel.y) > 1E6 )
+	{
+		int a1 = c1->canCollide(c2);
+		int a2 = c2->canCollide(c1);
+		bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
+		tw_error("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+	}
+#endif
 
 	return;
 }
@@ -1584,11 +1584,14 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 		if (!item[i]->exists())
 			continue;
 
+#ifdef _DEBUG
 		//if (i == 1 && game_time == 100) tw_error("debug me!");
 		if (fabs(item[i]->vel.x) > 1E6 || fabs(item[i]->vel.y) > 1E6)
 		{
 			tw_error("velocity error in %s", item[i]->get_identity());
 		}
+#endif
+
 		item[i]->pos = normalize(item[i]->pos + item[i]->vel * frame_time, map_size);
 	}
 
@@ -1648,6 +1651,23 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 			{
 				tw_error("This item [%s] is not in-game", item[i]->get_identity());
 			}
+
+			//xxx this is an expensive test !!
+#ifdef _DEBUG
+			int k;
+			for (k = 0; k < num_items; k += 1)
+			{
+				if (!item[k]->exists())
+					continue;
+				
+				//if (i == 1 && game_time == 100) tw_error("debug me!");
+				if (fabs(item[k]->vel.x) > 1E6 || fabs(item[k]->vel.y) > 1E6)
+				{
+					tw_error("velocity error involving %s and %s", item[k]->get_identity(), item[i]->get_identity());
+				}
+			}
+#endif
+
 		}
 
 
@@ -1724,6 +1744,14 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 	{
 		if (dead_presences[i]->state == -DEATH_FRAMES)
 		{
+#ifdef _DEBUG
+			Presence *p = dead_presences[i];
+			const char *name = p->get_identity();
+			SpaceLocation *l = 0;
+			SpaceObject *o = 0;
+			if (p->isLocation())	l = (SpaceLocation*) p;
+			if (p->isObject())		o = (SpaceObject*) p;
+#endif
 			delete dead_presences[i];
 
 			dead_presences[i] = dead_presences[num_dead_presences-1];
@@ -1873,6 +1901,8 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	*/
 
 	j = 0;
+
+	physics_allowed = true;
 
 	for ( i = 0; i < num_presences; ++i )
 	{
@@ -2096,6 +2126,19 @@ void Physics::collide()
 	
 	for (i = 0; i < nc; i += 1)
 	{
+#ifdef _DEBUG
+		SpaceObject *c1 = col[i*2];
+		SpaceObject *c2 = col[i*2+1];
+		if (fabs(c1->vel.x) > 1E6 || fabs(c1->vel.y) > 1E6 || fabs(c2->vel.x) > 1E6 || fabs(c2->vel.y) > 1E6 )
+		{
+			tw_error("velocity error prior to collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+		}
+#endif
+	}
+
+	for (i = 0; i < nc; i += 1)
+	{
+
 		col[i*2]->collide(col[i*2+1]);
 
 #ifdef _DEBUG
@@ -2106,7 +2149,7 @@ void Physics::collide()
 			int a1 = c1->canCollide(c2);
 			int a2 = c2->canCollide(c1);
 			bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
-			tw_error("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+			tw_error("velocity error after collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
 		}
 #endif
 	}//*/
