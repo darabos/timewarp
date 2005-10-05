@@ -223,6 +223,12 @@ void ShipData::lock() {
 
 void ShipData::unlock() {
 	references -= 1;
+
+	if (references < 0)
+	{
+		tw_error("Too few references.");
+	}
+
 	if (!islocked() && auto_unload) {
 		unload();
 	}
