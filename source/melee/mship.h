@@ -170,6 +170,7 @@ protected:
 	virtual SpaceLocation *get_ship_phaser() ;
 	virtual ~Ship();
 	virtual void death();
+	void copy_values(Ship *owner);
 
 
 	virtual double getCrew();

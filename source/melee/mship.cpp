@@ -1342,3 +1342,29 @@ bool Ship::exists()
 {
 	return (Presence::exists());// & (death_counter == -1);
 };  //returns 0 if dead, non-zero if alive
+
+
+
+
+void Ship::copy_values(Ship *owner)
+{
+	mass = owner->mass;
+
+	crew = owner->crew;
+	crew_max = owner->crew_max;
+	batt = owner->batt;
+	batt_max = owner->batt_max;
+	
+	recharge_rate = owner->recharge_rate;
+	recharge_step = recharge_rate;
+	recharge_amount = owner->recharge_amount;
+
+	turn_rate = owner->turn_rate;
+	accel_rate = owner->accel_rate;
+	speed_max = owner->speed_max;
+
+	damage_factor = 0;
+	isblockingweapons = owner->isblockingweapons;
+}
+
+
