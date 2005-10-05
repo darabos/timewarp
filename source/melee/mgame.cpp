@@ -229,7 +229,7 @@ void MeleeData::init()
 	melee = load_datafile("melee.dat");
 	if (!melee) tw_error("Error loading melee data\n");
 
-	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
+	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR | SpaceSprite::MATCH_SCREEN_FORMAT);
 	meleedata.kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
 		SpaceSprite::ALPHA | SpaceSprite::MASKED);// | SpaceSprite::MIPMAPED);
 	meleedata.hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,

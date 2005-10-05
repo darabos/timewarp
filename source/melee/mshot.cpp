@@ -145,6 +145,11 @@ void Shot::scale_vel(double scale)
 {
 	SpaceLocation::scale_vel(scale);
 	v *= scale;
+
+	if (v < 0.01)
+		v = 0.01;
+	// prevent negative velocities!
+
 	range = d + (range - d) * scale;
 	// the remaining distance should also be scaled, otherwise it could live forever.
 }
