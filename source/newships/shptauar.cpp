@@ -399,6 +399,7 @@ STACKTRACE
 void TauArchonShot::animate(Frame *space)
 {
 STACKTRACE;
+//xxx d<0 is possible..
 	sprite->animate(pos, index_base + (int)(19.89 * d / range), space);
 }
 

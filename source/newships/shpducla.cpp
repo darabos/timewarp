@@ -510,6 +510,18 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 		p1 = p1 - size / 2;
 	}
 
+#ifdef _DEBUG
+	SpaceObject *c1 = this;
+	SpaceObject *c2 = other;
+	if (fabs(c1->vel.x) > 1E6 || fabs(c1->vel.y) > 1E6 || fabs(c2->vel.x) > 1E6 || fabs(c2->vel.y) > 1E6 )
+	{
+		int a1 = c1->canCollide(c2);
+		int a2 = c2->canCollide(c1);
+		bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
+		tw_error("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+	}
+#endif
+
 	return 1;
 }
 

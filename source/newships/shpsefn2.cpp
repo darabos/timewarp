@@ -478,6 +478,18 @@ int ShipPart2::collide_SpaceObject(SpaceObject *other)
 		p1 = p1 - size / 2;
 	}
 
+#ifdef _DEBUG
+	SpaceObject *c1 = this;
+	SpaceObject *c2 = other;
+	if (fabs(c1->vel.x) > 1E6 || fabs(c1->vel.y) > 1E6 || fabs(c2->vel.x) > 1E6 || fabs(c2->vel.y) > 1E6 )
+	{
+		int a1 = c1->canCollide(c2);
+		int a2 = c2->canCollide(c1);
+		bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
+		tw_error("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+	}
+#endif
+
 	return 1;
 }
 
@@ -1049,7 +1061,7 @@ void Hook2::calculate()
 				V1 = magnitude(ship->vel);
 				V2 = 2 * ship->speed_max;
 				if ( V1 > V2 )
-					ship->vel *= V2 / V1;
+					ship->scale_vel(V2 / V1);
 			}
 			
 			if ( hooktarget->isShip() )
@@ -1057,7 +1069,7 @@ void Hook2::calculate()
 				V1 = magnitude(hooktarget->vel);
 				V2 = 2 * ((Ship*) hooktarget)->speed_max;
 				if ( V1 > V2 )
-					hooktarget->vel *= V2 / V1;
+					hooktarget->scale_vel(V2 / V1);
 			}
 			
 		}

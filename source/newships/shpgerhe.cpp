@@ -903,6 +903,8 @@ GerlMorons::GerlMorons(GerlVirtualship *creator, SpaceLocation *brother, Vector2
 
 	mother = creator;
 
+	copy_values(mother);
+
 	dangle = 0.0;
 
 	herobrother = brother;
@@ -937,6 +939,9 @@ void GerlMorons::calculate()
 	// set/ overrule (!) the angle in order to avoid the planet!
 	if ( !avoid_planet() )	// if true, this changes the angle by itself already
 		angle += dangle;
+
+	while (angle > PI)	angle -= PI2;
+	while (angle < -PI)	angle += PI2;
 
 	// acceleration:
 	accelerate_gravwhip(this, angle, accel_rate * frame_time, speed_max);

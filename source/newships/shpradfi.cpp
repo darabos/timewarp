@@ -81,8 +81,11 @@ int RadeanFirestorm::handle_damage(SpaceLocation* source, double normal, double 
 	STACKTRACE
 	if (shipmode)
 	{
-		// damage also adds to your battery.
-		handle_fuel_sap(this, -battmultiplier * normal);
+		// damage also adds to your battery... let's make this the absolute value of the damage ;)
+		handle_fuel_sap(this, -battmultiplier * fabs(normal));
+
+		if (batt < 0)
+			batt = 0;
 	}
 
 	// handle crew damage as usual
@@ -120,6 +123,8 @@ void RadeanFirestorm::animate(Frame *f)
 		r = batt / weapon_drain;
 		if (r > 0.999)
 			r = 0.999;
+		if (r < 0)
+			r = 0;
 		index =  int( r * data->spriteSpecial->frames());
 
 		data->spriteSpecial->animate(rpos, index, f);

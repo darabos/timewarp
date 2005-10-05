@@ -53,6 +53,15 @@ void BigShip::calculate()
 	}
 }
 
+static void check_vector_sanity(Vector2 &v)
+{
+#ifdef _DEBUG
+	if (fabs(v.x) > 1E6 || fabs(v.y) > 1E6 )
+	{
+		tw_error("invalid velocity change");
+	}
+#endif
+}
 
 // change velocities of the ship and all its parts
 void BigShip::change_vel(Vector2 dvel)
@@ -70,6 +79,8 @@ void BigShip::change_vel(Vector2 dvel)
 			continue;
 
 		parts[i]->vel += dvel;
+
+		check_vector_sanity(parts[i]->vel);
 	}
 }
 
@@ -112,24 +123,13 @@ Ship(aowner, 0, 0, spr)
 	relpos = orelpos;
 	relangle = orelangle;
 
+	copy_values(owner);
+
 	layer = LAYER_SHIPS;
 	set_depth(DEPTH_SHIPS-0.1);		// the ship should come first in calculations.
-	mass = owner->mass;
 
 	oldpos = pos;
 	oldvel = vel;
-
-	// these values aren't really used ... I think ...
-	crew = owner->crew;
-	crew_max = owner->crew_max;
-	batt = owner->batt;
-	batt_max = owner->batt_max;
-	recharge_rate = owner->recharge_rate;
-
-	recharge_step = recharge_rate;
-	recharge_amount = owner->recharge_amount;
-	turn_rate = owner->turn_rate;
-	accel_rate = owner->accel_rate;
 
 	sprite_uncrewed = spr_uncrewed;
 
@@ -170,6 +170,7 @@ void BigShipPart::syncpos()
 	oldvel = vel;
 	vel = owner->vel;
 
+	check_vector_sanity(vel);
 
 	// THIS SHOULD BE REPLACED BY ADDING ROTATIONAL VELOCITY ...
 }
@@ -179,6 +180,8 @@ void BigShipPart::calculate()
 	STACKTRACE
 
 	Ship::calculate();
+
+	check_vector_sanity(vel);
 
 	if ( !(owner && owner->exists()) )
 	{
@@ -192,6 +195,9 @@ void BigShipPart::calculate()
 		syncpos();
 	else
 		collider = 0;
+	
+	check_vector_sanity(vel);
+
 	// otherwise, you shouldn't touch the current ship-part settings,
 	// instead let the owner handle this case. The vel/ pos are needed
 	// to update the ship and all the other parts velocities ...
@@ -262,6 +268,8 @@ void BigShipPart::change_vel(Vector2 dvel)
 	STACKTRACE
 
 	owner->change_vel(dvel);
+	
+	check_vector_sanity(vel);
 }
 
 // change positions of the ship and all its parts
@@ -270,6 +278,9 @@ void BigShipPart::change_pos(Vector2 dpos)
 	STACKTRACE
 
 	owner->change_pos(dpos);
+
+	check_vector_sanity(vel);
+	check_vector_sanity(pos);
 }
 
 
@@ -314,6 +325,8 @@ void BigShipPartDevice::calculate()
 	pos = ownerpart->pos;
 	vel = ownerpart->vel;
 
+	check_vector_sanity(vel);
+	check_vector_sanity(pos);
 }
 
 
