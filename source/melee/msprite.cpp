@@ -619,11 +619,19 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 
 				draw_rle_sprite(tmp, (RLE_SPRITE *)(images[i].dat), 0, 0);
 				
+				/*
 				if (general_attributes & ALPHA)
 					handle_alpha_load(tmp);
 
+				// go from tmp to bmp
 				if (obpp != bpp)
 					convert_bitmap(tmp, bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
+				else
+					blit(tmp, bmp, 0, 0, 0, 0, bw, bh);
+					*/
+
+				//xxx test
+				blit(tmp, bmp, 0, 0, 0, 0, bw, bh);
 
 				destroy_bitmap(tmp);
 				}
@@ -1017,7 +1025,6 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 		}
 	}
 	frame->add_box(ix, iy, iw, ih);
-
 
 	return;
 }
