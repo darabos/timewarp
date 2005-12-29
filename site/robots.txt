@@ -1,0 +1,17 @@
+#Updated 2005.12.27 yB!
+
+User-agent: *
+Allow: /
+Disallow: /temp
+Disallow: /downloads
+Disallow: /installers
+Disallow: /forum/config.php
+Disallow: /forum/modcp.php
+Disallow: /forum/posting.php
+Disallow: /forum/privmsg.php
+Disallow: /forum/rss.php
+Disallow: /forum/rss_body.tpl
+Disallow: /forum/admin
+Disallow: /forum/cache
+Disallow: /forum/db
+Disallow: /forum/images
