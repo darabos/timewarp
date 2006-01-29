@@ -175,7 +175,6 @@ void AlaryBomberBomb::calculate()
 	if (ship && !active)
 	{
 		if ((!ship->exists()) || (!ship->fire_weapon)) {
-			ship = NULL;
             active = true;
 		}
 	}
@@ -212,7 +211,7 @@ void AlaryBomberBomb::calculate()
 		if ( r0 > old_range || target->isInvisible() )
 		{
 			// however, do not detonate if you're still too close to your own ship ...
-			if (distance(ship) > blast_range)
+			if (ship && distance(ship) > proximity_range)
 			{
 				damage(this, 9999);
 			}
