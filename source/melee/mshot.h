@@ -5,6 +5,7 @@
 #include "mframe.h"
 #include "mgame.h"
 
+/** shot - uses one image, independent of angle */
 class Shot : public SpaceObject {
 	IDENTITY(Shot);
 	public:
@@ -40,6 +41,7 @@ class Shot : public SpaceObject {
 	virtual void scale_vel(double scale);
 	};
 
+/** animated shot - flies straight ahead, and cycles through images in the spacesprite */
 class AnimatedShot : public Shot {
 	IDENTITY(AnimatedShot);
 	protected:
@@ -55,6 +57,7 @@ class AnimatedShot : public Shot {
 	virtual void calculate();
 	};
 
+/** missile - flies straight ahead */
 class Missile : public Shot {
 	IDENTITY(Missile);
 	public:
@@ -66,6 +69,7 @@ class Missile : public Shot {
 //	virtual void animate_predict(Frame *space, int time);
 	};
 
+/** homing missile - flies to target. Uses indexed image from the spacesprite */
 class HomingMissile : public Missile {
 	IDENTITY(HomingMissile);
 	protected:
@@ -81,6 +85,7 @@ class HomingMissile : public Missile {
 	virtual void calculate();
 	};
 
+/** a laser */
 class Laser : public SpaceLine {
 	IDENTITY(Laser);
 	protected:
@@ -99,6 +104,7 @@ class Laser : public SpaceLine {
 	void calculate();
 };
 
+/** laser that goes from source point to target point  */
 class PointLaser : public Laser
 {
 	IDENTITY(PointLaser);
@@ -112,6 +118,25 @@ class PointLaser : public Laser
 
   void calculate();
   int canCollide(SpaceObject *other);
+};
+
+
+/** A shot that expires after a specified time */
+class TimedShot : public SpaceObject
+{
+public:
+IDENTITY(TimedShot);
+public:
+	double armour;
+	double existtime, maxtime;
+
+	TimedShot(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
+		double ovel, double otime, double oarmour, double odamage);
+
+	virtual void calculate();
+
+	virtual void inflict_damage(SpaceObject *other);
+	virtual int handle_damage(SpaceLocation *source, double normal, double direct);
 };
 
 

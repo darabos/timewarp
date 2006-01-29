@@ -180,12 +180,16 @@ static void register_shiptype ( const char *file ) {
 	}
 	shiptypes[i].name = strdup(name);
 	shiptypes[i].cost = get_config_int("Info", "TWCost", 0);
+	
 	const char *data = get_config_string("Info", "Data", NULL);
+	
 	if (!data) {
 		replace_extension(buffy, file, "dat", 2040);
 		shiptypes[i].data = shipdata(buffy);
 	}
-	else shiptypes[i].data = shipdata(data);
+	else
+		shiptypes[i].data = shipdata(data);
+
 	const char *text = get_config_string("Info", "Description", NULL);
 	if (!text) {
 		char duck[2048];
@@ -234,8 +238,19 @@ void _register_shiptype ( const char *fn, int attrib, int param ) {
 
 void _register_shiptype_dir ( const char *fn, int attrib, int param ) {
 	char buffy[2048];
-	if (!(attrib & FA_DIREC)) return;
-	if (strstr(fn, ".")) return;
+
+	// you can only recurse into a directory
+	if (!(attrib & FA_DIREC))
+		return;
+
+	// do not go to directories containing a .
+	if (strstr(fn, "."))
+		return;
+
+	// do not go to subdirectories that start with shp, because those are reserved for ship-data
+	if (strncmp(fn, "shp", 3) == 0)
+		return;
+
 	if (param > 0) {
 		sprintf(buffy, "%s/*", fn);
 		for_each_file ( buffy, FA_DIREC|FA_RDONLY|FA_ARCH, _register_shiptype_dir, param-1 );
@@ -247,63 +262,6 @@ void _register_shiptype_dir ( const char *fn, int attrib, int param ) {
 void init_ships() {STACKTRACE
 	_register_shiptype_dir ( "ships", FA_DIREC|FA_RDONLY|FA_ARCH, 3 );
 
-/*	shiptype_type tmp;
-	int i = _num_shiptypes;
-	int num_bad = 0;
-
-	num_shiptypes = i;
-	while (i > 0) {
-		int bad = false;
-		i -= 1;
-
-		//check ini file exists
-		char ini_name[80];
-		char dat_name[80];
-		sprintf(fname, "ships/shp%s.ini", shiptypes[i].id);
-		if (!exists(ini_name)) bad = true;
-
-		sprintf(dat_name, "ships/shp%s.dat", shiptypes[i].id);
-		if (!exists(dat_name)) bad = true;
-		
-		set_config_file(ini_name);
-		const char *tmp = get_config_string("Info", "Data", NULL);
-		if (!tmp) tmp = ini_name;
-		if (!exists(tmp)) bad = true;
-		shiptypes[i].cost = get_config_int("Info", "TWCost", 999);
-		shiptypes[i].name = get_config_string("Info", "Name", NULL);
-		if (!shiptypes[i].name) {
-			char sname[1024];
-			const char *tmp;
-			int l = 0;
-			tmp = get_config_string("Info", "Name0", NULL);
-			if (tmp) {
-				l += sprintf(sname + l, "%s ", tmp);
-			}
-			tmp = get_config_string("Info", "Name1", NULL);
-			if (!tmp)
-				tw_error("init_ships - error initializing name (%s)", shiptypes[i].id);
-			l += sprintf(sname + l, "%s", tmp);
-			int n = 1;
-			while (true) {
-				char buf[25];
-				n += 1;
-				sprintf(buf, "Name%d", n);
-				tmp = get_config_string("Info", buf, NULL);
-				if (!tmp) break;
-				l += sprintf(sname + l, " %s", tmp);
-			}
-			shiptypes[i].name = strdup(sname);
-		}
-		else shiptypes[i].name = strdup(shiptypes[i].name);
-	}
-			tmp = shiptypes[i];
-			shiptypes[i] = shiptypes[num_shiptypes-1];
-			memmove(&shiptypes[i], &shiptypes[num_shiptypes-1], sizeof(shiptype_type));
-			num_shiptypes -= 1;
-
-	if (num_shiptypes == 0)
-		tw_error("No ship data available.\nProbably caused to an install problem.\nConsult readme.txt");
-*/
 	return;
 }
 

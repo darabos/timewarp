@@ -1363,13 +1363,13 @@ void Game::play()
 	lag_increase = 0;
 	lag_decrease = 0;
 
-	// tracker about home many extra physics iterations are inserted; this shouldn't get too high
-	int num_catchups = 0;
-	const int max_catchups = 3;
-
 	int time_start = get_time();
 
 	iteration_histogram_init(time_start);
+
+	int check_game_time = get_time();
+
+	static av_frame_time = 0;
 
 
 	// if you increase lag, iterations can be skipped...
@@ -1378,8 +1378,9 @@ void Game::play()
 	try {
 		while(!game_done)
 		{
+//			int av_frame_time_t1, av_frame_time_t2;
+//			av_frame_time_t1 = get_time();
 
-			unsigned int time;
 			
 
 			poll_input();
@@ -1388,17 +1389,6 @@ void Game::play()
 				play_music();
 			}
 
-
-			// physics can  catch up with graphics.
-			bool catching_up;
-			catching_up = false;
-
-			// check if something interesting happens in this iteration (false), otherwise (true)
-			// issue an idle time.
-			bool idle_iteration = true;
-
-			time = get_time();
-			// this is used to time animation and physics
 
 
 #ifdef _DEBUG
@@ -1416,290 +1406,242 @@ void Game::play()
 			}
 #endif
 
-			// note, you go to the next calculation either because some required time has
-			// passed, or because you need to catch up with some kind of lag...
 
-			if (time >= next_tic_time)//geo:physics should be independent of animation && (next_render_time > game_time)) &&
-				/*(game_ready() || game_time == 0)*/ {		// note that game_time==0 is also needed, cause otherwise it'll wait for data, while no data've been generated yet.
-				_STACKTRACE("Game::play - Game physics");
+			// timing is as follows: [idle] [physics] [rendering]  = total frame_time milliseconds.
 
+			// the [idle] part
 
+			int ttest = get_time();
 
-				// wait till you receive signal that you can proceed to the next iteration.
-				// ALL COMMUNICATION EXCEPT FOR DESYNCH TEST SHOULD GO THROUGH HERE.
-				// also see the CALL and EVENT macros
-					
-				if (events.all_ready())
+			if (check_game_time <= ttest)	// if you're lagging
+			{
+				// you've exceeded the frame boundary... try to set a new one
+				// using the desired period.
+				check_game_time = ttest + frame_time;	// increase by a minimal amount.
+				
+			} else {
+				// stay idle for the part that isn't used in this frame
+				while (get_time() < check_game_time)
 				{
-					// only reset the call-state, if previously, all calls have been handled.
-					events.set_wait();
+					idle(1);
 				}
+				
+				// set the time of the next frame boundary
+				check_game_time += frame_time;
+			}
+
+
+			// the [physics] part
+
+
+
+
+
+			// wait till you receive signal that you can proceed to the next iteration.
+			// ALL COMMUNICATION EXCEPT FOR DESYNCH TEST SHOULD GO THROUGH HERE.
+			// also see the CALL and EVENT macros
+				
+			if (events.all_ready())
+			{
+				// only reset the call-state, if previously, all calls have been handled.
+				events.set_wait();
+			}
 			
+			
+			int t = get_time();
+			
+			NetLog *l = (NetLog*) glog;
+			if (l->type == Log::log_net)
+			{
+				l->flush_noblock();
 				
-				int t = get_time();
-
-				NetLog *l = (NetLog*) glog;
-				if (l->type == Log::log_net)
-				{
-					l->flush_noblock();
-					
-					l->recv_noblock();		// receive stuff, if you can
-					
-				}
-				events.handle();	// this will read events. You send events during the game.
-				// if all "start-iterations" are set, then they're all_ready.
-				
-				// Note, that the IF statement ensures, that you do not block the game by waiting
-				// for (networked) input. This means, that graphics won't be blocked: otherwise,
-				// graphics of this user can be delayed by graphics of another user, resulting in
-				// a pretty slow framerate.
-
-				if (events.all_ready())
-				{
-					idle_iteration = false;
-					
-					
-					iteration_histogram(time);	//ok, another iteration; update the histogram!
-
-					// check if a player was asked to be removed here..
-					int i;
-					for ( i = 0; i < num_network; ++i )
-					{
-						if (!player[i])
-							continue;
-						
-						if (!player[i]->status)
-						{
-							if ( i == p_local)
-							{
-								// send remaining data before disconnecting.
-								NetLog *l = (NetLog*) glog;
-								if (l->type == Log::log_net)
-								{
-									l->flush_block();
-								}
-							}
-							
-							player[i]->control->keys = 0;	// leave with clean default keys.
-							remove_player(i);
-							// this will set player[i]=0
-						}
-					}
-					
-					// test if there was an event that causes the game to quit.
-					if (game_done)
-					{
-						iteration_histogram_writelog();
-						return;
-					}
-					//	}
-					// note that, to reduce lag, you keep reading data from the buffer without
-					// adding extra stuff (through CALL), so that it becomes smaller.
-					// BUT: that skips keys, and this leads to a desynch SO THIS IS NOT A GOOD WAY TO DO IT !!
-					
-					
-					int t_execute = get_time();
-
-					// calculate game stuff
-					// this increases game_time.
-					calculate();
-
-					// this measures how much time it takes to execute one physics iteration
-					t_execute = get_time() - t_execute;
-					
-					
-					
-					// check if the network is in synch?
-					
-					// enable this if you want to check for desynches
-					// but, it only makes sense (in current implementation), if the two games are synched.
-					if (global_lag_synch && do_desynch_test)
-					{
-						// send desynch data for local player(s)
-						int p;
-						for ( p = 0 ; p < num_network; ++p )
-						{
-							if (player[p] && player[p]->islocal())
-							{
-								CALL(event_share_desynch, p);
-							}
-						}
-						
-						// check desynch data of the players in the current (lagged) frame.
-						check_desynch();
-					}
-					
-					// it's best to do this only in debug mode...
-					
-
-					// handle some important buttons...
-					// must be done before the keys are re-set to 0 by the share_key
-					if (player[p_local] && !skip_iteration )
-					{
-
-						if ( (player[p_local]->control->keys & keyflag::inc_lag) != 0)
-						{
-
-							if (toggle_key_inc_lag)
-							{
-								CALL(event_lag_increase, p_local);
-								toggle_key_inc_lag = false;
-							}
-						} else {
-							toggle_key_inc_lag = true;
-						}
-						
-						if ( (player[p_local]->control->keys & keyflag::dec_lag) != 0)
-						{
-
-							if (toggle_key_dec_lag && lag_buffer > 1)
-							{
-								CALL(event_lag_decrease, p_local);
-								toggle_key_dec_lag = false;
-							}
-						} else {
-							toggle_key_dec_lag = true;
-						}
-					}
-					
-					// this can also do some game stuff ... (namely, Esc = quit)
-					while (keypressed())
-						handle_key(readkey());
-					
-					// actually ... duh ... it's best to call this AFTER the events-handle, cause then the data
-					// have some time to be sent across the network, while the game is doing its calculations.
-					// namely, then it's using the idle() time that's required or so...
-					
-					
-					network_share_keys();
-					
-					// after it's used, it can be re-set.
-					skip_iteration = false;
-
-					// crc checking is now only available, if all the games involved run synchronized,
-					// this is also a (much simpler) desynch test.
-					if (global_lag_synch)
-						network_crc_check();
-
-
-					// approve of the next iteration, after ALL possible event thingies are done.
-					if (lag_decrease == 0)
-					{
-						int p;
-						for ( p = 0 ; p < num_network; ++p )
-						{
-							if (player[p] && player[p]->islocal())
-							{
-								CALL(start_iteration, p);
-							}
-						}
-					} else {
-						--lag_decrease;	// skip new-iteration calls.
-						--lag_buffer;
-					}
-					
-					// and increasing lag means, adding extra, empty, iterations...
-					int ilag;
-					for ( ilag = 0; ilag < lag_increase; ++ilag )
-					{
-						int p;
-						for ( p = 0 ; p < num_network; ++p )
-						{
-							if (player[p] && player[p]->islocal())
-							{
-								// notify within this iteration
-								// that this iteration is "empty", i.e., no control-info and such
-								CALL(notify_skip_iteration, p);
-
-								CALL(start_iteration, p);
-
-							}
-						}
-						++lag_buffer;
-						--lag_increase;
-					}
-					
-					if (auto_unload)
-						unload_unused_ship_data();
-				
-					
-					
-					
-					//if (key[KEY_F4])
-					//	turbo = f4_turbo;
-					//else
-					//	turbo = normal_turbo;
-
-					// ------------ GAME TIME MANAGEMENT ------------
-
-					// this hiccup-margin allows physics to "catch up" a few iterations that are
-					// skipped by graphics.
-					int time_current = get_time();
-
-
-
-					double factor = 0.25;
-					int frame_time_length = frame_time / turbo;
-					if (t_execute < factor*frame_time_length)
-					{
-						// in this case, you can try to have physics in a linear fashion
-
-						if ((hiccup_margin >= 0)
-							&& (num_catchups < max_catchups)		// prevent too many catchups (that will delay graphics update too much)
-							&& (next_tic_time + hiccup_margin > time_current + frame_time_length))
-						{
-
-							
-							if (next_tic_time + frame_time_length < time_current)
-							{
-								catching_up = true;
-								next_tic_time += frame_time_length;
-								// perhaps this is better... cause you're below "time" anyway...
-								// so you will be catching up anyway... in the loop that follows
-								// An immediate catchup will happen, because next_tic_time < time, which
-								// is the only constraint to enter this physics calculation immediately
-								// again, thus "accelerating" the physics updates, thus making up for
-								// time lost in animation or during network delays.
-
-							} else {
-								catching_up = false;
-								
-								// trying to execute frames in a linear fashion.
-								next_tic_time += frame_time_length;	// but if there are >1 catchups, then hurry up!!
-							}
-							
-						} else {
-							catching_up = false;
-							next_tic_time = time_current + frame_time_length;	// execute as often as possible.
-						}
-					} else {
-						// otherwise, the game calculations take so long, that trying to catch up
-						// is nigh impossible.
-						catching_up = false;
-						next_tic_time += frame_time_length;
-
-						if (next_tic_time < time_current)
-							next_tic_time = time_current + frame_time_length;	// execute as often as possible.
-					}
-
-					if (catching_up)
-						++num_catchups;
-					else
-						num_catchups = 0;
-
-					
-					if (next_fps_time <= game_time)
-					{
-						next_fps_time += msecs_per_fps;
-						fps();
-					}					
-					
-					
-				}
-
+				l->recv_noblock();		// receive stuff, if you can
 				
 			}
+			events.handle();	// this will read events. You send events during the game.
+			// if all "start-iterations" are set, then they're all_ready.
+			
+			// Note, that the IF statement ensures, that you do not block the game by waiting
+			// for (networked) input. This means, that graphics won't be blocked: otherwise,
+			// graphics of this user can be delayed by graphics of another user, resulting in
+			// a pretty slow framerate.
+			
+			// wait till all events are ready...
+			int count_idle = 0;
+			while (!events.all_ready())
+			{
+				idle(1);
 				
+				++count_idle;
+				if (count_idle > 1000)
+				{
+					tw_error("Too much lag.");
+				}
+			}
+			
+			
+			iteration_histogram(get_time());	//ok, another iteration; update the histogram!
+			
+			// check if a player was asked to be removed here..
+			int i;
+			for ( i = 0; i < num_network; ++i )
+			{
+				if (!player[i])
+					continue;
+				
+				if (!player[i]->status)
+				{
+					if ( i == p_local)
+					{
+						// send remaining data before disconnecting.
+						NetLog *l = (NetLog*) glog;
+						if (l->type == Log::log_net)
+						{
+							l->flush_block();
+						}
+					}
+					
+					player[i]->control->keys = 0;	// leave with clean default keys.
+					remove_player(i);
+					// this will set player[i]=0
+				}
+			}
+			
+			// test if there was an event that causes the game to quit.
+			if (game_done)
+			{
+				iteration_histogram_writelog();
+				return;
+			}
+			//	}
+			// note that, to reduce lag, you keep reading data from the buffer without
+			// adding extra stuff (through CALL), so that it becomes smaller.
+			// BUT: that skips keys, and this leads to a desynch SO THIS IS NOT A GOOD WAY TO DO IT !!
+			
+			
+			int t_execute = get_time();
+			
+			// calculate game stuff
+			// this increases game_time.
+			calculate();
+			
+			// this measures how much time it takes to execute one physics iteration
+			t_execute = get_time() - t_execute;
+			
+			
+			
+			// check if the network is in synch?
+			
+			// enable this if you want to check for desynches
+			// but, it only makes sense (in current implementation), if the two games are synched.
+			if (global_lag_synch && do_desynch_test)
+			{
+				// send desynch data for local player(s)
+				int p;
+				for ( p = 0 ; p < num_network; ++p )
+				{
+					if (player[p] && player[p]->islocal())
+					{
+						CALL(event_share_desynch, p);
+					}
+				}
+				
+				// check desynch data of the players in the current (lagged) frame.
+				check_desynch();
+			}
+			
+			// it's best to do this only in debug mode...
+			
+			
+			// handle some important buttons...
+			// must be done before the keys are re-set to 0 by the share_key
+			if (player[p_local] && !skip_iteration )
+			{
+				
+				if ( (player[p_local]->control->keys & keyflag::inc_lag) != 0)
+				{
+					
+					if (toggle_key_inc_lag)
+					{
+						CALL(event_lag_increase, p_local);
+						toggle_key_inc_lag = false;
+					}
+				} else {
+					toggle_key_inc_lag = true;
+				}
+				
+				if ( (player[p_local]->control->keys & keyflag::dec_lag) != 0)
+				{
+					
+					if (toggle_key_dec_lag && lag_buffer > 1)
+					{
+						CALL(event_lag_decrease, p_local);
+						toggle_key_dec_lag = false;
+					}
+				} else {
+					toggle_key_dec_lag = true;
+				}
+			}
+			
+			// this can also do some game stuff ... (namely, Esc = quit)
+			while (keypressed())
+				handle_key(readkey());
+			
+			// actually ... duh ... it's best to call this AFTER the events-handle, cause then the data
+			// have some time to be sent across the network, while the game is doing its calculations.
+			// namely, then it's using the idle() time that's required or so...
+			
+			
+			network_share_keys();
+			
+			// after it's used, it can be re-set.
+			skip_iteration = false;
+			
+			// crc checking is now only available, if all the games involved run synchronized,
+			// this is also a (much simpler) desynch test.
+			if (global_lag_synch)
+				network_crc_check();
+			
+			
+			// approve of the next iteration, after ALL possible event thingies are done.
+			if (lag_decrease == 0)
+			{
+				int p;
+				for ( p = 0 ; p < num_network; ++p )
+				{
+					if (player[p] && player[p]->islocal())
+					{
+						CALL(start_iteration, p);
+					}
+				}
+			} else {
+				--lag_decrease;	// skip new-iteration calls.
+				--lag_buffer;
+			}
+			
+			// and increasing lag means, adding extra, empty, iterations...
+			int ilag;
+			for ( ilag = 0; ilag < lag_increase; ++ilag )
+			{
+				int p;
+				for ( p = 0 ; p < num_network; ++p )
+				{
+					if (player[p] && player[p]->islocal())
+					{
+						// notify within this iteration
+						// that this iteration is "empty", i.e., no control-info and such
+						CALL(notify_skip_iteration, p);
+						
+						CALL(start_iteration, p);
+						
+					}
+				}
+				++lag_buffer;
+				--lag_increase;
+			}
+			
+			if (auto_unload)
+				unload_unused_ship_data();
 				
 			
 			// ALWAYS send/recv at end.
@@ -1716,52 +1658,20 @@ void Game::play()
 				// data are received first (namely that's what game_ready() tests).
 				l->flush_noblock();			// this sends, if there's something to send at least
 			}
-			
 
+
+
+			// the [animate] part
 				
-			// geo: instead of game_time, I use time, so that physics and animation are competely
-			// independent; then, if physics has to wait for networked data, animation can continue
-			// regardless of that.
-			// well... except if physics tries to catch up a few frames of time. But in that case,
-			// in networked games, it can take a while to synch back again;
-			// so there must be an upper limit to the animation frame rate !!
-			time = get_time();
-			if (!catching_up || time >= next_render_time - msecs_per_render + msecs_per_render_max)
-			{
-				if (/*interpolate_frames ||*/ (time >= next_render_time))
-				{
-					_STACKTRACE("Game::play - Game rendering")
-						
-					idle_iteration = false;
-
-					animate();
-
-					#ifdef _DEBUG
-					//idle(debug_idle_time_animate);
-					#endif
-
-
-					next_render_time += msecs_per_render;
-
-					time = get_time();
-					// actually, just don't bother about linear timing animations... because there is
-					// a rather bad effect on game lag if too much time is allocated for animation.
-					next_render_time = time + msecs_per_render;
-				}
-			}
-
-
-			if (idle_iteration)
-			{
-				// if nothing interesting happened in this iteration, then insert some idle time
-				int n = 1;
-				idle(n);
-				tot_idle_time += n;
-			}
+			animate();
 
 			
 
-				
+
+			// some statistics.
+//			av_frame_time_t2 = get_time();
+//			av_frame_time = 0.8 * av_frame_time + 0.1 * (av_frame_time_t2 - av_frame_time_t1);
+//			message.print(100, 15, "desired frametime = %3i actual frame-time = %3i ms", frame_time, av_frame_time);
 
 		}
 

@@ -675,19 +675,29 @@ int ControlWussie::think ()
 		else
 			field_fire = TRUE;
 
-		// intercept time along the ship orientation (line of sight)
-		double t_intercept;
-		if (weapon_vel > target_vel)
-			t_intercept = distance / (weapon_vel - target_vel);		// weapon_vel includes correction for weapon relativity
-		else
-			t_intercept = 1E6;
+		bool weapon_in_range;
 
-		// intercept distance along the line of sight
-		double d_intercept;
-		d_intercept = t_intercept * weapon_vel;
-		//xxx this does not take relativity into account ?
+		if (fabs (angle_fire) < sweep[j])// && distance < option_range[state][j])
+		{
+			// first check, if the weapon has the correct angle and distance...
+			//weapon_in_range = true;
 
-		bool weapon_in_range = (option_range[state][j]+0.5*ship->size.x > 1.0 * d_intercept);
+			// otherwise, make a more complex check...
+			
+			// intercept time along the ship orientation (line of sight)
+			double t_intercept;
+			if (weapon_vel > target_vel)
+				t_intercept = distance / (weapon_vel - target_vel);		// weapon_vel includes correction for weapon relativity
+			else
+				t_intercept = 1E6;
+			
+			// intercept distance along the line of sight
+			double d_intercept;
+			d_intercept = t_intercept * weapon_vel;
+			//xxx this does not take relativity into account ?
+			
+			weapon_in_range = (option_range[state][j]+0.5*ship->size.x > 1.0 * d_intercept);
+		}
 
 
 		/* hmmm... this is too detailed, and too general.
@@ -708,6 +718,9 @@ int ControlWussie::think ()
 		
 		if ( rD < rV * out_of_range_multiplier  )	// out of range condition
 			dontfireoption[j] = TRUE;
+		
+
+
 
 		//if (j == 0)// && weapon_in_range)
 		//{
@@ -724,8 +737,7 @@ int ControlWussie::think ()
 			// this is the case, if there were no options checked...
 			if (j == 0)
 			{
-				if ((fabs (angle_fire) < sweep[j]) &&
-					weapon_in_range )
+				if (weapon_in_range )
 					fireoption[0] = TRUE;
 			}
 		}
@@ -772,7 +784,7 @@ int ControlWussie::think ()
 		{
 			if (distance < option_range[state][j])
 				dontfireoption[j] = TRUE;
-			else
+			else if (weapon_in_range)
 				fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
 			range_fire = FALSE;
 		}
@@ -781,7 +793,7 @@ int ControlWussie::think ()
 		{
 			if (distance > option_range[state][j])
 				dontfireoption[j] = TRUE;
-			else
+			else if (weapon_in_range)
 				fireoption[j] = TRUE;	// added... is needed for mrmrm state-change
 			range_fire = TRUE;
 		}

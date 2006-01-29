@@ -243,6 +243,7 @@ static void tw_error_handler (
 	const char *message
 ) 
 {
+
 	char error_string[4096];
 	int i;
 
@@ -433,10 +434,6 @@ void tw_error_exit(const char* message) {
 void caught_error(const char *format, ...)
 {
 
-#ifdef _DEBUG
-	// in debug mode, crash right away, that is much easier.
-	*(int*)0 = 0;
-#endif
 
 	char error_string[4096];
 	if (format) {

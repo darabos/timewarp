@@ -1285,3 +1285,98 @@ BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 
 	return sbitmap[miplevel][index];
 }
+
+
+
+
+
+
+// all the sprite-relevant information (and nothing else).
+SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, int rotations)
+{
+	count_base = sprite_count;		// real different images
+	count_rotations = rotations;	// derived rotations from each image.
+	count = sprite_count * rotations;
+	if ((rotations < 1) || (count < 1)) {tw_error("SpaceSprite::SpaceSprite - bad parameters");}
+
+	int i, j, obpp;
+
+	if (_attributes == -1) _attributes = string_to_sprite_attributes(NULL);
+
+	references = 0;
+	highest_mip = 0;
+	for (i = 1; i < MAX_MIP_LEVELS; i += 1) {
+		sbitmap[i] = NULL;
+	}
+
+	general_attributes = _attributes;
+	if (general_attributes &  MATCH_SCREEN_FORMAT) {
+		bpp = videosystem.bpp;
+		if (general_attributes & ALPHA) {
+			if (bpp <= 16) bpp = 16;
+			else bpp = 32;
+			bpp = 32;
+		}
+	}
+	else bpp = 0;
+
+	obpp = bitmap_color_depth(bmplist[0]);
+
+	if (bpp == 0) bpp = obpp;
+	if (general_attributes & ALPHA) {
+		if (bpp <= 16) bpp = 16;
+		else bpp = 32;
+	}
+
+
+	smask = new PMASK*[count];
+	sbitmap[0] = new BITMAP*    [count];
+	attributes  = new char [count];
+
+	for ( i = 0; i < sprite_count; ++i )
+	{
+
+		BITMAP *bmp = NULL;
+		bmp = create_bitmap_ex(bpp, bmplist[i]->w, bmplist[i]->h);
+
+		if (general_attributes & MASKED)
+			clear_to_color(bmp, bitmap_mask_color(bmp));
+
+		if (obpp != bpp)
+		{
+			convert_bitmap(bmplist[i], bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
+
+		} else {
+
+			if (general_attributes & MASKED)
+				draw_sprite(bmp, bmplist[i], 0, 0);
+			else
+				blit(bmplist[i], bmp, 0, 0, 0, 0, bmp->w, bmp->h);
+		}
+
+		//color_correct_bitmap(bmp, general_attributes & MASKED);
+
+
+		for (j = 1; j < rotations; j += 1)
+		{
+
+			int index = j + (i * rotations);
+			smask[index] = 0;
+			
+			sbitmap[0][index] = 0;//tmp;
+			attributes[j + (i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+		}
+
+		int index = i * rotations;
+		smask[index] = 0;
+
+		sbitmap[0][index] = bmp;
+		attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+
+	}
+
+	if (general_attributes & MIPMAPED) {
+		generate_mipmaps();
+	}
+}
+

@@ -369,3 +369,93 @@ void PointLaser::calculate() {
 	
 	return;
 }
+
+
+
+
+
+
+
+
+TimedShot::TimedShot(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
+		double ovel, double otime, double oarmour, double odamage)
+:
+SpaceObject(creator, 0, 0, osprite),
+armour(oarmour),
+existtime(0),
+maxtime(otime)
+{
+	angle = creator->angle + orelangle;
+	pos = creator->pos + rotate(orelpos, creator->angle - PI/2);
+	vel = ovel * unit_vector(angle);
+
+	layer = LAYER_SHOTS;
+
+	collide_flag_anyone = ALL_LAYERS;
+	collide_flag_sameteam = ALL_LAYERS;
+	collide_flag_sameship = 0;
+
+	damage_factor = odamage;
+
+	isblockingweapons = false;
+	attributes &= ~ATTRIB_STANDARD_INDEX;
+}
+
+void TimedShot::calculate()
+{
+	STACKTRACE
+	SpaceObject::calculate();
+
+	if (!(ship && ship->exists()))
+	{
+		state = 0;
+		return;
+	}
+
+	if (existtime >= maxtime)
+	{
+		state = 0;
+		return;
+	}
+
+	existtime += frame_time * 1E-3;
+
+	// always orient the shot in the direction of movement.
+	angle = vel.angle();
+	sprite_index = get_index(angle);
+}
+
+void TimedShot::inflict_damage(SpaceObject *other)
+{
+	STACKTRACE
+	// copied from Shot::infli...
+
+	if (!other->exists()) return;
+
+	damage(other, damage_factor);
+
+	//if (!other->isShot()) state = 0;
+	if (other->isblockingweapons) state = 0;
+
+	if (state == 0)
+	{
+		//animateExplosion();
+		//soundExplosion(); 
+	}
+
+}
+
+int TimedShot::handle_damage(SpaceLocation *source, double normal, double direct)
+{
+	STACKTRACE
+	armour -= (normal + direct);
+
+	if (armour <= 0)
+	{
+		armour = 0;
+		state = 0;
+	}
+
+	return true;
+}
+

@@ -11,6 +11,10 @@ REGISTER_FILE
 
 #include <stdlib.h>
 
+#include "../other/lightning.h"
+
+
+
 
 class NaroolPoison;
 
@@ -27,6 +31,8 @@ IDENTITY(NaroolLurker);
 	int	   cloak;
 	int    cloak_frame;
 
+	Lightning lightning;
+
 	public:
 
 	static int cloak_color[3];
@@ -34,7 +40,6 @@ IDENTITY(NaroolLurker);
 	NaroolLurker(Vector2 opos, double shipAngle,
 		ShipData *shipData, unsigned int code);
 
-	BITMAP *lightningbmp;
 	virtual ~NaroolLurker();
 
 
@@ -45,9 +50,6 @@ IDENTITY(NaroolLurker);
 	virtual void calculate();
 	virtual void animate(Frame *space);
 
-	void calc_lightning();
-	double maxsparktime, sparktime, Rmax;
-	Vector2 sparkpos;
 	virtual void inflict_damage(SpaceObject *other);
 
 };
@@ -103,27 +105,24 @@ NaroolLurker::NaroolLurker(Vector2 opos, double shipAngle,
 	cloak_frame = 0;
 
 	BITMAP *shpbmp = sprite->get_bitmap(0);
-	int bpp = bitmap_color_depth(shpbmp);
-	lightningbmp = create_bitmap_ex(bpp, shpbmp->w, shpbmp->h);
-	clear_to_color(lightningbmp, makeacol(0,0,0,255));
-	//maxsparktime = 2000;
-	maxsparktime = get_config_float("Quirk", "maxsparktime", 2000);
-	sparktime = maxsparktime;
-	sparkpos = 0.5 * Vector2(lightningbmp->w,lightningbmp->h);
+	double maxsparktime = get_config_float("Quirk", "maxsparktime", 2000);
+	double Rmax = get_config_float("Quirk", "Rmax", 1);
+	lightning.init(shpbmp, 0, maxsparktime, Rmax);
 
-	Rmax = get_config_float("Quirk", "Rmax", 1);
+
 }
 
 NaroolLurker::~NaroolLurker()
 {
-	if (lightningbmp)
-		destroy_bitmap(lightningbmp);
+
 }
 
-double NaroolLurker::isInvisible() const {
-	if (cloak_frame >= 300
-		&& sparktime <= 0) return(1);
-	return 0;
+double NaroolLurker::isInvisible() const
+{
+	if ( (cloak_frame >= 300) && (!lightning.visible()) )
+		return 1;
+	else
+		return 0;
 	}
 
 int NaroolLurker::activate_weapon()
@@ -190,10 +189,7 @@ void NaroolLurker::calculate()
 	Ship::calculate();
 
 
-	if (sparktime > 0)
-		sparktime -= frame_time;
-	else
-		sparktime = 0;
+	lightning.update(frame_time);
 }
 
 void NaroolLurker::animate(Frame *space)
@@ -208,8 +204,6 @@ void NaroolLurker::animate(Frame *space)
 		{
 			sprite->animate_character( pos, sprite_index, pallete_color[0], space);
 
-			//Vector2 lightningrelpos = 0.5 * Vector2(lightningbmp->w,lightningbmp->h);
-			calc_lightning();
 			
 			//	aa_set_mode(find_aa_mode(general_attributes));
 			
@@ -217,27 +211,8 @@ void NaroolLurker::animate(Frame *space)
 			S = sprite->size(0) * ::space_zoom;
 			P = corner(pos, sprite->size(0));
 			
-			int ix, iy, iw, ih;
-			// target position
-			ix = iround(P.x);
-			iy = iround(P.y);
-			// target size
-			iw = iround(S.x);
-			ih = iround(S.y);
-			
-			//int a;
-			//a = aa_get_trans();
-			//aa_set_trans(128);
-			
-			int a;
-			a = aa_get_mode();
-			aa_set_mode(a | AA_ALPHA);
-			aa_stretch_blit(lightningbmp, space->surface,
-				0, 0,lightningbmp->w,lightningbmp->h,
-				ix, iy, iw, ih);
-			aa_set_mode(a);
-			
-			space->add_box(ix, iy, iw, ih);
+			lightning.draw(space, P, S);
+
 		
 		} else
 			sprite->animate_character( pos, sprite_index, pallete_color[4], space);
@@ -363,135 +338,17 @@ void NaroolLurker::inflict_damage(SpaceObject *other)
 	Ship::inflict_damage(other);
 
 	//you've hit something; activate sparks.
-	sparktime = maxsparktime;
+	lightning.reset();
 
 	// but, where did you hit it ?
 	// place the source somewhere... at the edge .. how ?
 	double a, R;
 	a = trajectory_angle(other);
 	R = 40;
-	sparkpos = R * unit_vector(a);
-	sparkpos += 0.5 * Vector2(lightningbmp->w,lightningbmp->h);
+	
+	lightning.locate(R * unit_vector(a));
 }
 
-
-void NaroolLurker::calc_lightning()
-{
-	STACKTRACE
-
-	Vector2 P;
-	P = sparkpos;
-
-	//return;
-	//clear_to_color(lightningbmp, makeacol(0,0,0,255));
-	//circlefill(lightningbmp, P.x, P.y, 10, makeacol(255,0,0,200));
-
-	// first, let the image grow fainter
-	BITMAP *b;
-	b = lightningbmp;
-	int ix, iy;
-	int iw, ih;
-	iw = b->w;
-	ih = b->h;
-
-	BITMAP *shpbmp;
-	shpbmp = sprite->get_bitmap(sprite_index);
-
-
-
-	// assume it's a 32 bit image ...
-	unsigned char *a;
-
-	for ( iy = 0; iy < ih; ++iy )
-	{
-		a = (unsigned char*) b->line[iy];
-		a += 0;		// red = the 3rd color (in my case).
-		
-		for ( ix = 0; ix < iw; ++ix )
-		{
-			// reduce colors
-			int i;
-			for ( i = 0; i < 3; ++i )
-			{
-				if (*a > 5)
-					(*a) -= 5;
-				else
-					(*a) = 0;
-
-				++a;
-			}
-
-			++a;
-		}
-	}
-
-	if (sparktime > 0)
-	{
-		// create some kind of lightning now ? How ?
-		int i, N;
-		
-		N = 5 + rand() % 5;	//graphics
-
-		double ang, R;
-		ang = (rand() % 360) * PI/180;	//graphics
-		
-		for ( i = 0; i < N; ++i )
-		{
-			double dx, dy;
-			//dx = (random(double(iw)) - 0.5*iw) / N;
-			//dy = (random(double(ih)) - 0.5*ih) / N;
-
-			ang += (rand() % 180 - 90) * PI/180;	//graphics
-			R = (rand() % int(Rmax+1)) / N;	//graphics
-			dx = R * cos(ang);
-			dy = R * sin(ang);
-			
-			
-			int j, M;
-			M = 10;
-			for ( j = 0; j < M; ++j )
-			{
-				P.x += dx / M;
-				P.y += dy / M;
-				
-				int col;
-				int re, gr, bl;
-				
-				col = getpixel(shpbmp, iround(P.x), iround(P.y));
-				
-				re = getr(col);
-				gr = getg(col);
-				bl = getb(col);
-				
-				if ( !(re == 255 && gr == 0 && bl == 255))
-				{
-					int k;
-					k = iround(128*(0.5 + 0.5*sparktime/maxsparktime));
-					
-				//	re = 0;
-				//	bl = 0;
-				//	if ( k > 96)
-				//		re = k + 127 / (i+1);
-				//	else
-				//		bl = k + 127 / (i+1);
-
-					double c, f;
-					//f = (0.5 + (0.5*sparktime)/maxsparktime);
-					f = sparktime / maxsparktime;
-					c = 255;// / (i+1);
-					re = iround(f * c);
-					bl = iround((1-f) * c);
-					
-					putpixel(b, iround(P.x), iround(P.y), makeacol(re,0,bl,255));
-				}
-			}
-			
-		}
-	}
-		
-
-
-}
 
 
 REGISTER_SHIP(NaroolLurker)

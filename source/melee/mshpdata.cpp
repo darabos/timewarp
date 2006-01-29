@@ -20,6 +20,7 @@ REGISTER_FILE
 
 #include "mship.h"
 #include "mtarget.h"
+#include "mview.h"
 
 
 int auto_unload = false;
@@ -68,76 +69,33 @@ ShipData **shipdatas = NULL;
 
 int shipdatas_loaded = 0;
 
-ShipData *shipdata ( const char *file ) {
+ShipData *shipdata ( const char *file )
+{
 	int i;
-	if (!file) return NULL;
-	for ( i = 0; i < num_shipdatas; i += 1 ) {
-		if (!strcmp(file, shipdatas[i]->file) ) return shipdatas[i];
+
+	if (!file)
+		return NULL;
+
+	for ( i = 0; i < num_shipdatas; i += 1 )
+	{
+		// if these data already exist
+		if (strcmp(file, shipdatas[i]->file) == 0 )
+			return shipdatas[i];
 	}
-	if (!exists(file)) return NULL;
-	ShipData *data = new ShipData(file);
+
+	// well... there's now also the option of a directory, so ... don't perform this check anymore
+	//if (!exists(file))
+	//	return NULL;
+
 	num_shipdatas += 1;
 	shipdatas = (ShipData**)realloc(shipdatas, num_shipdatas * sizeof(ShipData*));
+
+	ShipData *data = new ShipData(file);
 	shipdatas[num_shipdatas-1] = data;
+
 	return data;
 }
-/*
-void load_ship_data(shiptype_type *type) {
-	if(type->dat != NULL)
-		return;
-	ships_loaded += 1;
-	char fn[256];
-	sprintf(fn, "ships/shp%s.dat", type->id);
-	type->dat = new ShipData(fn);
-	type->dat->type = type;
-	return;
-}
 
-void unload_ship_data(shiptype_type *type) {
-	if(type->dat == NULL)
-		return;
-	ships_loaded -= 1;
-	delete type->dat;
-	type->dat = NULL;
-	return;
-}
-
-void load_all_ship_data() {
-	int i;
-	for (i = 0; i < num_shiptypes; i += 1) {
-		load_ship_data(&shiptypes[i]);
-	}
-	return;
-}
-
-void unload_all_ship_data() {
-	int i;
-	for (i = 0; i < num_shiptypes; i += 1) {
-		unload_ship_data(&shiptypes[i]);
-	}
-	return;
-}
-
-void unload_unused_ship_data() {
-	int i;
-	for (i = 0; i < num_shiptypes; i += 1) {
-		if (shiptypes[i].dat && (shiptypes[i].dat->references == 0)) {
-			unload_ship_data(&shiptypes[i]);
-		}
-	}
-	return;
-}
-*/
-
-
-/*
- static BITMAP *copy_bitmap(BITMAP *old) {
-	BITMAP *r;
-	r = create_bitmap(old->w, old->h);
-	blit (old, r, 0, 0, 0, 0, old->w, old->h);
-	return r;
-}
-*/
 
 void save_spacesprite2(SpaceSprite *ss, const char *spritename, const char *destination, const char *extension) {
 	int i;
@@ -221,7 +179,8 @@ void ShipData::lock() {
 	references += 1;
 }
 
-void ShipData::unlock() {
+void ShipData::unlock()
+{
 	references -= 1;
 
 	if (references < 0)
@@ -298,48 +257,40 @@ void ShipData::unload()
 		num_more_sprites = 0;
 	}
 
-	// clean up these pointer arrays ...
-	// these were created with the "new" command --> use delete
-	// also, the wave data are kept in memory... you've to remove those data
-	if (data)
+
+	int i;
+	if (sampleWeapon)
 	{
-		unload_datafile(data);
-		data = 0;
-	} else {
-		int i;
-		if (sampleWeapon)
+		for( i = 0; i < num_weapon_samples; ++i )
 		{
-			for( i = 0; i < num_weapon_samples; ++i )
-			{
-				if (sampleWeapon[i])
-					destroy_sample(sampleWeapon[i]);
-			}
+			if (sampleWeapon[i])
+				destroy_sample(sampleWeapon[i]);
 		}
-		
-		if (sampleSpecial)
+	}
+	
+	if (sampleSpecial)
+	{
+		for( i = 0; i < num_special_samples; ++i )
 		{
-			for( i = 0; i < num_special_samples; ++i )
-			{
-				if (sampleSpecial[i])
-					destroy_sample(sampleSpecial[i]);
-			}
+			if (sampleSpecial[i])
+				destroy_sample(sampleSpecial[i]);
 		}
-		
-		if (sampleExtra)
+	}
+	
+	if (sampleExtra)
+	{
+		for( i = 0; i < num_extra_samples; ++i )
 		{
-			for( i = 0; i < num_extra_samples; ++i )
-			{
-				if (sampleExtra[i])
-					destroy_sample(sampleExtra[i]);
-			}
+			if (sampleExtra[i])
+				destroy_sample(sampleExtra[i]);
 		}
-
-
-		if (moduleVictory)
-		{
-			destroy_mod(moduleVictory);
-			//moduleVictory = 0;
-		}
+	}
+	
+	
+	if (moduleVictory)
+	{
+		destroy_mod(moduleVictory);
+		//moduleVictory = 0;
 	}
 
 	if (sampleWeapon)
@@ -370,7 +321,6 @@ void ShipData::unload()
 }
 
 ShipData::ShipData(const char *filename) :
-	data(NULL),
 	spriteShip(NULL),
 	spriteWeapon(NULL),
 	spriteWeaponExplosion(NULL),
@@ -391,7 +341,9 @@ ShipData::ShipData(const char *filename) :
 	status = LOADED_NONE;
 }
 
-#include "mview.h"
+
+
+/** load (copy) a sprite from a data file in memory */
 SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index) 
 {
 	char buffy[512]; buffy[0] = 0;
@@ -439,21 +391,157 @@ SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index)
 	//*/
 
 	
-	for (i = 0; i < count; i += 1) {
-
-		//xxx Geo - I don't think there is much to gain by doing this.
-		// and why is it by default an RLE_SPRITE ?????
-//		destroy_rle_sprite((RLE_SPRITE*)data[(*index)+i].dat);
-//		data[(*index)+i].dat = NULL;
-		// brutal hack to free up the memory
-	}
 	*index += count;
-
-
-
 
 	return sprite;
 }
+
+
+
+
+
+/** load a sprite from a set of .bmp files in format *_01.bmp from disk.
+A sample line can read: ShipSprites = ship 1  +r +alpha.
+The first item is the base of the file name, the second is the number of files to read into
+the sprite, and then there are options. */
+SpaceSprite *load_sprite(const char *ini_string, char *dirname, int default_attrib) 
+{
+	// first, read the arguments from the .ini string.
+	int argc;
+	char **argv = get_config_argv("Objects", ini_string, &argc);
+	if (!argc) return NULL;
+
+	// the first argument is the base of the filename.
+	char base_filename[512];
+	strcpy(base_filename, dirname);
+	strcat(base_filename, "/");
+	strcat(base_filename, argv[0]);
+
+	// the second is the number of files that you should read.
+	int count = 0;
+	count = atoi(argv[1]);
+	if (!count)
+		return 0;
+
+	// and then, there are some options.
+
+	char buffy[512]; buffy[0] = 0;
+	char *cp = buffy;
+	int rotations = 1;
+	
+	int i;
+	// arg 0 = base name
+	// arg 1 = count
+	// start checking for options at 2.
+	for (i = 2; i < argc; i += 1)
+	{
+		char *command = argv[i];
+		if (strcmp(command, "+r")==0 || strcmp(command, "+rotate")==0)
+		{
+			// use default rotations (64)
+			rotations = 64;
+
+		} else if ((argv[i][0] == '-') || (argv[i][0] == '+'))
+		{
+			// read spacesprite attributes.
+			cp += sprintf(cp, "%s ", argv[i]);
+		} else
+		{
+			tw_error("Unrecognized command %s in %s", argv[i], base_filename);
+		}
+	}
+
+	// read the bitmaps into memory (in the colordepth of the file)
+	// these are temporary - they usually require a color-depth conversion anyway.
+
+	// allow count start at 0 or at 1...
+	int count_base = 0;
+
+	BITMAP **bmplist = new BITMAP* [count];
+	for ( i = 0; i < count; ++i )
+	{
+		char filename[512];
+		sprintf(filename, "%s%02i.bmp", base_filename, i+count_base);	// combine the filename-base, the _number, and the .bmp extension
+		bmplist[i] = load_bitmap(filename, 0);
+		if (!bmplist[i])
+		{
+			if (i == 0)
+			{
+				// perhaps you should start counting at 1 instead of 0.
+				--i;	// start checking at 0 again
+				++count_base;	// but with a higher base count.
+
+				if (count_base > 1)
+				{
+					tw_error("Count base too high for sprite image %s", filename);
+				}
+			} else {
+				tw_error("Failed to load sprite image file %s", filename);
+			}
+		}
+	}
+
+	int attrib = default_attrib | string_to_sprite_attributes(buffy, 0);
+
+	SpaceSprite *sprite = new SpaceSprite(bmplist, count, attrib, rotations);
+
+	// remove the temporary image data
+	for ( i = 0; i < count; ++i )
+	{
+		destroy_bitmap(bmplist[i]);
+	}
+	delete [] bmplist;
+
+	
+	return sprite;
+}
+
+
+
+/** load .wav samples */
+void load_sample(char *ini_string, char *dirname, int *num_weapon_samples, Sound*** sampleWeapon)
+{
+	int argc;
+	char **argv = get_config_argv("Objects", ini_string, &argc);
+	if (!argc)
+		return;
+
+	// base name
+	char base_filename[512];
+	strcpy(base_filename, dirname);
+	strcat(base_filename, "/");
+	strcat(base_filename, argv[0]);
+
+	// load weapon samples
+	int count = atoi(argv[1]);
+	if (!count)
+		return;
+
+	Sound **sample;
+
+	
+	sample = new SAMPLE*[count];
+
+	int i;
+	for(i = 0; i < count; i++)
+	{
+		char filename[512];
+		sprintf(filename, "%s%02i.wav", base_filename, i+1);
+
+		sample[i] = load_sample(filename);//copy_sample( (SAMPLE *)data[index].dat );
+
+		if (!sample[i])
+		{
+			tw_error("Failed to initialize sample %s", filename);
+		}
+
+	}
+
+
+	*num_weapon_samples = count;
+	*sampleWeapon = sample;
+}
+
 
 
 void *copy_data(void *data, int N)
@@ -566,18 +654,10 @@ JGMOD *copy_jgmod(JGMOD *source)
 	return dest;
 }
 
-void ShipData::load()
+
+void ShipData::load_datafile(DATAFILE *data)
 {
-	//test_pointers();
-
 	int i, index = 0, count;
-
-//	if (status != LOADED_NONE) return;
-
-	data = load_datafile(file);
-
-	if(!data)
-		tw_error("Error loading '%s'", file);
 
 	push_config_state();
 	set_config_data((char *)(data[index].dat), data[index].size);
@@ -681,7 +761,6 @@ void ShipData::load()
 	// all data is copied, so now, you can discard the original data file !
 	pop_config_state();
 	unload_datafile(data);
-	data = 0;
 
 	// hmmm... in SAMPLE, there's a pointer to "data"
 	//sound.play(sampleSpecial[0], 32, 128, 1024);
@@ -689,78 +768,120 @@ void ShipData::load()
 	//sound.play_music(moduleVictory);
 
 	//test_pointers();
-
-	return;
-
-/*	if (tw_alert("transform this datafile?", "No", "Yes") != 2) 
-		return;
-
-	char dname[512], fname[512], header[8192];
-	sprintf(dname, strstr(file, "shp")+3);
-	dname[strlen(dname)-4] = 0;
-	sprintf (header, "[Main]\n");
-	sprintf (header, "type = Ship\n");
-
-//panel bitmaps
-	sprintf (header, "num_panel_bitmaps = %d\n", num_panel_bitmaps);
-	for (i = 0; i < num_panel_bitmaps; i += 1) {
-		sprintf(fname, "%s/panel%03d.pcx", dname, i);
-		save_bitmap(fname, bitmapPanel[i], NULL);
-		}*/
-
-//sound effects
-/*	fprintf (f, "num_weapon_samples = %d\n", num_weapon_samples);
-	for (i = 0; i < num_weapon_samples; i += 1) {
-		sprintf(fname, "%s/WeaponSample%03d.wav", dname, i);
-		//save_sample(fname, bitmapPanel[i]);
-		}
-	fprintf (f, "num_special_samples = %d\n", num_special_samples);
-	for (i = 0; i < num_weapon_samples; i += 1) {
-		sprintf(fname, "%s/SpecialSample%03d.wav", dname, i);
-		//save_sample(fname, bitmapPanel[i]);
-		}
-	fprintf (f, "num_extra_samples = %d\n", num_extra_samples);
-	for (i = 0; i < num_extra_samples; i += 1) {
-		sprintf(fname, "%s/ExtraSample%03d.wav", dname, i);
-		//save_sample(fname, bitmapPanel[i]);
-		}
-	fclose(f);*/
-
-//SpaceSprites
-/*	sprintf(fname, "%s/000index.txt", dname);
-	set_config_file(fname);
-	
-//	moduleVictory;
-	save_spacesprite2(spriteShip,             "ShipSprite",             dname, ".bmp");
-//	save_spacesprite(spriteWeapon,           "WeaponSprite",           dname, ".bmp");
-//	save_spacesprite(spriteWeaponExplosion,  "WeaponExplosionSprite",  dname, ".bmp");
-//	save_spacesprite(spriteSpecial,          "SpecialSprite",          dname, ".bmp");
-//	save_spacesprite(spriteSpecialExplosion, "SpecialExplosionSprite", dname, ".bmp");
-//	save_spacesprite(spriteExtra,            "ExtraSprite",            dname, ".bmp");
-//	save_spacesprite(spriteExtraExplosion,   "ExtraExplosionSprite",   dname, ".bmp");
-	return;*/
 }
+
+
+
+
+
+void ShipData::load_directory(char *dirname)
+{
+	// load the ship configuration data.
+	char info_filename[512];
+	strcpy(info_filename, dirname);
+	strcat(info_filename, "/content.ini");
+
+	push_config_state();
+	set_config_file(info_filename);
+
+	int basic_attrib = SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT;
+	// and mipmapped? nah.
+
+	// load the ship panel sprites. This sprite are irregular by default, because the bitmaps have different sizes.
+	spritePanel = load_sprite("PanelBitmaps", dirname, basic_attrib | SpaceSprite::IRREGULAR);
+
+	// load ship sprites
+	spriteShip = load_sprite("ShipSprites", dirname, basic_attrib);
+
+	// load weapon sprites
+	spriteWeapon = load_sprite("WeaponSprites", dirname, basic_attrib);
+
+	// load weapon explosion sprites
+	spriteWeaponExplosion = load_sprite("WeaponExplosion", dirname, basic_attrib);
+
+	// load special ability sprites
+	spriteSpecial = load_sprite("SpecialSprites", dirname, basic_attrib);
+
+	// load special ability explosion sprites
+	spriteSpecialExplosion = load_sprite("SpecialExplosion", dirname, basic_attrib);
+
+	// load extra sprites
+	spriteExtra = load_sprite("ExtraSprites", dirname, basic_attrib);
+
+	// load extra explosion sprites
+	spriteExtraExplosion = load_sprite("ExtraExplosion", dirname, basic_attrib);
+
+	//load optional super-extra sprites
+	int i = 0;
+	more_sprites = NULL;
+	for (;;)
+	{
+		char buffy[512];
+		sprintf(buffy, "ExtraExtraSprites%d", i);
+
+		if (get_config_int("Objects", buffy, -1) == -1)
+			break;
+
+		more_sprites = (SpaceSprite**) realloc(more_sprites, (i+1) * sizeof(SpaceSprite*));
+		more_sprites[i] = load_sprite(buffy, dirname, 0);
+		i += 1;
+	}
+	num_more_sprites = i;
+
+
+
+	// initialize ship victory ditty
+	
+	char modfilename[512];
+	strcpy(modfilename, get_config_string("Objects", "Ditty", ""));
+	moduleVictory = load_mod(modfilename);
+
+	load_sample("WeaponSamples", dirname, &num_weapon_samples, &sampleWeapon);
+
+	load_sample("SpecialSamples", dirname, &num_special_samples, &sampleSpecial);
+
+	load_sample("ExtraSamples", dirname, &num_extra_samples, &sampleExtra);
+	
+
+	shipdatas_loaded += 1;
+	status = LOADED_FULL;
+
+	// all data is copied, so now, you can discard the original data file !
+	pop_config_state();
+
+}
+
+
+
+
+
+void ShipData::load()
+{
+	//test_pointers();
+
+	DATAFILE *data;
+	data = ::load_datafile(file);
+
+	if(data)
+	{
+		load_datafile(data);
+		//tw_error("Error loading '%s'", file);
+	} else {
+		char tmp[512];
+		strcpy(tmp, file);
+		char *dot = strrchr(tmp, '.');	//Find last occurrence of character in string
+		*dot = 0;	// now, the dot becomes the end of the string.
+
+		load_directory(tmp);	// without the .dat extension.
+	}
+
+}
+
+
 
 ShipData::~ShipData()
 {
 	unload();
-/*	if(spriteShip)
-    delete spriteShip;
-	if(spriteWeapon)
-		delete spriteWeapon;
-	if(spriteWeaponExplosion)
-		delete spriteWeaponExplosion;
-	if(spriteSpecial)
-		delete spriteSpecial;
-	if(spriteSpecialExplosion)
-		delete spriteSpecialExplosion;
-	if(spriteExtra)
-		delete spriteExtra;
-
-	if (spritePanel)
-    delete spritePanel;
-
-	unload_datafile(data);*/
 
 	free(file);
 }

@@ -1,32 +1,25 @@
-/* $Id$ */ 
-/************************************************/
-/*	Modified from Earthling Cruiser		*/
-/*	Mines lifted from Vux			*/
-/*	highlight taken from Owa		*/
-/************************************************/
-/*	In total defiance of Timewarp tradition	*/
-/*	I have COMMENTED MY CODE! Muhahahahaha!	*/
-/*			-Corona688, 2001	*/
-/************************************************/
 
 #include "ship.h"
 REGISTER_FILE
 
 static int MAX_TARGETS=3;
+static int	specialMode;	//Beacon behavior(0=old, 1=new);
+static int	specialMulti;
+
+/** Copy of Strivanar Scrutinizer
+*/
 
 //Target structure, includes Ship * and Time_Count.
-struct Marked
+struct GlutaSensorMarked
 {
 	Ship *Tagged;	//Pointer to the object it inhabits.
 	int Time_Count;	//Keeps track of it's age.
 };
 
-static int	specialMode;	//Beacon behavior(0=old, 1=new);
-static int	specialMulti;
 
-class StrivanarScrutinizer : public Ship {
+class GlutaSensor : public Ship {
 public:
-IDENTITY(StrivanarScrutinizer);
+IDENTITY(GlutaSensor);
 	double	weaponRange;
 	double	weaponVelocity;
 	int	weaponDamage;
@@ -36,17 +29,17 @@ IDENTITY(StrivanarScrutinizer);
 	double	specialRange;	//Range of marker beacons
 	double	specialFan;	//How wide a spread the beacons are fired in
 	int	specialLifespan;	//How long an attached beacon lives
-	int	specialMarkernum;
+	int	specialGlutaSensorMarkernum;
 	int	specialArmor;	//How much damage a loose marker can take
 	int	specialSoundRate;	//Inteval between beeps
 	double	specialVelocity;	//Velocity of marker beacons
 
-	Marked	Tag[16];	//Struct that holds data on a tagged ship
+	GlutaSensorMarked	Tag[16];	//Struct that holds data on a tagged ship
 	int	Next_Tag;
 
 
 public:
-	StrivanarScrutinizer(Vector2 opos, double shipAngle,
+	GlutaSensor(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code);
 
 protected:
@@ -57,12 +50,12 @@ protected:
 };
 
 /* This section contains ALL my code on the homing missile. */
-class TechMissile : public HomingMissile
+class GlutaSensorMissile : public HomingMissile
 {
 public:
-IDENTITY(TechMissile);
+IDENTITY(GlutaSensorMissile);
 public:
-	TechMissile(Vector2 opos, double oangle, double ov,
+	GlutaSensorMissile(Vector2 opos, double oangle, double ov,
 		int odamage, double orange, int oarmour, double otrate, Ship *oship,
 		SpaceSprite *osprite, Ship *Target);
 
@@ -70,9 +63,9 @@ public:
 };
 
 //I have overloaded the missile tracking function with one that can track
-//invisible ships.  Note that these missiles are not fired unless a Marker
+//invisible ships.  Note that these missiles are not fired unless a GlutaSensorMarker
 //has attached to something.
-void TechMissile::calculate() {
+void GlutaSensorMissile::calculate() {
 	STACKTRACE;
 
 	//This used to be if(target&&!invisible()), or something like that.
@@ -106,7 +99,7 @@ void TechMissile::calculate() {
 
 //This is the overloaded missile function.  It lets it home in on a beacons
 //instead of targeting something automatically.
-TechMissile::TechMissile(Vector2 opos, double oangle,
+GlutaSensorMissile::GlutaSensorMissile(Vector2 opos, double oangle,
 	double ov, int odamage, double orange, int oarmour, double otrate,
 	Ship *oship, SpaceSprite *osprite,Ship *Target) :
 	HomingMissile(oship, opos, oangle, ov, odamage, orange, oarmour, otrate,
@@ -125,28 +118,28 @@ TechMissile::TechMissile(Vector2 opos, double oangle,
 
 /*This section contains ALL my code for the red flashing hilight on ships. */
 
-//These are the spots of red flashing light that appear on 'marked' ships.
+//These are the spots of red flashing light that appear on 'GlutaSensorMarked' ships.
 //Modified from the Owa disable special.
-class Hilight : public SpaceObject
+class GlutaSensorHilight : public SpaceObject
 {
 public:
-IDENTITY(Hilight);
+IDENTITY(GlutaSensorHilight);
 	int 	frame_min;
 	int	frame_max;
 	int	frame_count;
 	int	MaxTime;
-	Marked	*mk;		//Pointer to target structure
+	GlutaSensorMarked	*mk;		//Pointer to target structure
 
 public:
 
-	Hilight(Marked *otarget, Ship *ocreator, SpaceSprite *osprite, int Delay,
+	GlutaSensorHilight(GlutaSensorMarked *otarget, Ship *ocreator, SpaceSprite *osprite, int Delay,
 		int FrameMin, int FrameMax);
 
 	virtual void calculate();
 
 };
 
-Hilight::Hilight(Marked *otarget, Ship *ocreator, SpaceSprite *osprite,
+GlutaSensorHilight::GlutaSensorHilight(GlutaSensorMarked *otarget, Ship *ocreator, SpaceSprite *osprite,
 	int Delay, int FrameMin,int FrameMax) :
 	SpaceObject(ocreator, otarget->Tagged->normal_pos(), 0.0, osprite),
 	frame_min(FrameMin),
@@ -162,7 +155,7 @@ Hilight::Hilight(Marked *otarget, Ship *ocreator, SpaceSprite *osprite,
 	layer = LAYER_SPECIAL;
 }
 
-void Hilight::calculate()
+void GlutaSensorHilight::calculate()
 {
 	STACKTRACE;
 	frame_count+=1;
@@ -199,7 +192,7 @@ void Hilight::calculate()
 		return;
 	}
 
-	//Move Hilight to current position of target
+	//Move GlutaSensorHilight to current position of target
 //	x = mk->Tagged->normal_x()+1;
 //	y = mk->Tagged->normal_y()+1;
 	pos = mk->Tagged->normal_pos() + Vector2(1,1);
@@ -218,27 +211,27 @@ void Hilight::calculate()
 	return;
 }
 
-/*Hilight secton ends here.	*/
+/*GlutaSensorHilight secton ends here.	*/
 
 
 /*This contains ALL my code for the loose marker beacons. */
 //These are modified from Vux limpets.
-class Marker : public AnimatedShot
+class GlutaSensorMarker : public AnimatedShot
 {
 public:
-IDENTITY(Marker);
+IDENTITY(GlutaSensorMarker);
 	double local_angle;
 	int D_Time;
-	Marked *To_Target;
+	GlutaSensorMarked *To_Target;
 public:
-	Marker(Vector2 opos, double ov, double s_angle, Marked *Tag, int Duration,
+	GlutaSensorMarker(Vector2 opos, double ov, double s_angle, GlutaSensorMarked *Tag, int Duration,
 		double orange, int oarmour, Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, Vector2 ovel);
 
 	virtual void calculate();
 	virtual void inflict_damage(SpaceObject *other);
 };
 
-Marker::Marker(Vector2 opos, double ov, double s_angle, Marked *Tag, int Duration,
+GlutaSensorMarker::GlutaSensorMarker(Vector2 opos, double ov, double s_angle, GlutaSensorMarked *Tag, int Duration,
 	double orange, int oarmour, Ship *oship, SpaceSprite *osprite,
 	int ofsize, int ofcount,Vector2 ovel) :
 	AnimatedShot(oship, opos, 0.0, ov, 0, orange, oarmour, oship, osprite,
@@ -265,7 +258,7 @@ Marker::Marker(Vector2 opos, double ov, double s_angle, Marked *Tag, int Duratio
 	}
 }
 
-void Marker::calculate()
+void GlutaSensorMarker::calculate()
 {
 	STACKTRACE;
 	state=1;
@@ -281,7 +274,7 @@ void Marker::calculate()
 	AnimatedShot::calculate();
 }
 
-void Marker::inflict_damage(SpaceObject *other)
+void GlutaSensorMarker::inflict_damage(SpaceObject *other)
 {
 	STACKTRACE;
 	//If the target isn't the right type, don't latch on.
@@ -341,16 +334,16 @@ void Marker::inflict_damage(SpaceObject *other)
 	To_Target[slot_index].Tagged=(Ship *)other;	//Record pointer
 	To_Target[slot_index].Time_Count=0;
 
-	add(new Hilight(&To_Target[slot_index],ship,data->spriteExtraExplosion,
+	add(new GlutaSensorHilight(&To_Target[slot_index],ship,data->spriteExtraExplosion,
 		D_Time, 1,63));
 
 	state = 0;				//Remove loose marker from melee
 }
-/*Marker code ends here. */
 
-/*This contains my code for the Strivinar Scrutinezer. */
 
-StrivanarScrutinizer::StrivanarScrutinizer(Vector2 opos, double shipAngle,
+
+
+GlutaSensor::GlutaSensor(Vector2 opos, double shipAngle,
 	ShipData *shipData, unsigned int code) :
 	Ship(opos, shipAngle, shipData, code)
 {
@@ -361,15 +354,16 @@ StrivanarScrutinizer::StrivanarScrutinizer(Vector2 opos, double shipAngle,
 	weaponArmour   = get_config_int("Weapon", "Armour", 0);
 	weaponTurnRate = scale_turning(get_config_float("Weapon", "TurnRate", 0));
 
-	specialRange  = scale_range(get_config_float("Special", "Range", 0));
-	specialFan = get_config_float("Special","Fan",0) * ANGLE_RATIO;
-	specialVelocity=scale_velocity(get_config_float("Special","Velocity",0));
-	specialMarkernum=get_config_int("Special","Markers",0);
-	specialArmor=get_config_int("Special","Armor",0);
-	specialMode=get_config_int("Special","Mode",0);
-	specialSoundRate=get_config_int("Special","SoundRate",0);
-	specialLifespan=get_config_int("Special","Lifespan",0);
-	MAX_TARGETS=get_config_int("Special","MaxTargets",0);
+	specialRange       = scale_range(get_config_float("Special", "Range", 0));
+	specialFan         = get_config_float("Special","Fan",0) * ANGLE_RATIO;
+	specialVelocity    = scale_velocity(get_config_float("Special","Velocity",0));
+	specialGlutaSensorMarkernum    = get_config_int("Special","Markers",0);
+	specialArmor       = get_config_int("Special","Armor",0);
+	specialMode        = get_config_int("Special","Mode",0);
+	specialSoundRate   = get_config_int("Special","SoundRate",0);
+	specialLifespan    = get_config_int("Special","Lifespan",0);
+	MAX_TARGETS        = get_config_int("Special","MaxTargets",0);
+
 	if(MAX_TARGETS>16)	MAX_TARGETS=16;
 
 	specialMulti=get_config_int("Special","Multi",0);
@@ -382,7 +376,7 @@ StrivanarScrutinizer::StrivanarScrutinizer(Vector2 opos, double shipAngle,
 	}
 }
 
-void StrivanarScrutinizer::calculate()
+void GlutaSensor::calculate()
 {
 	STACKTRACE;
 	/*My code*/
@@ -413,7 +407,7 @@ void StrivanarScrutinizer::calculate()
 }
 
 
-int StrivanarScrutinizer::activate_weapon()
+int GlutaSensor::activate_weapon()
 {
 	STACKTRACE;
 	int flag=0;
@@ -434,7 +428,7 @@ int StrivanarScrutinizer::activate_weapon()
 		flag=1;
 
 		float xpos=10.*sin(-angle+51.42*ANGLE_RATIO);
-		add(new TechMissile(Vector2(xpos, get_size().y * .5), angle, weaponVelocity, weaponDamage, weaponRange,
+		add(new GlutaSensorMissile(Vector2(xpos, get_size().y * .5), angle, weaponVelocity, weaponDamage, weaponRange,
 			weaponArmour, weaponTurnRate, this, data->spriteWeapon,Tag[Cur_Target].Tagged));
 
 	}
@@ -444,23 +438,23 @@ int StrivanarScrutinizer::activate_weapon()
 	{
 		flag=1;
 		float xpos=10.*sin(-angle+51.42*ANGLE_RATIO);
-		add(new TechMissile(Vector2(xpos, get_size().y * .5), angle, weaponVelocity, weaponDamage, weaponRange,
+		add(new GlutaSensorMissile(Vector2(xpos, get_size().y * .5), angle, weaponVelocity, weaponDamage, weaponRange,
 			weaponArmour, weaponTurnRate, this, data->spriteWeapon,NULL));
 	}
 	return(flag);
 }
 
-int StrivanarScrutinizer::activate_special()
+int GlutaSensor::activate_special()
 {
 	STACKTRACE;
 	float min=angle-(specialFan/2);
 	float max=angle+(specialFan/2);
-	float step=(max-min)/specialMarkernum;
+	float step=(max-min)/specialGlutaSensorMarkernum;
 
 	int index=0;
 	for(float num=min; num<max; num+=step)
 	{
-		add(new Marker(Vector2(0, 0) ,specialVelocity, num, Tag,specialLifespan, specialRange, specialArmor, this,data->spriteSpecial, 100, 5, vel));
+		add(new GlutaSensorMarker(Vector2(0, 0) ,specialVelocity, num, Tag,specialLifespan, specialRange, specialArmor, this,data->spriteSpecial, 100, 5, vel));
 		index++;
 	}
 
@@ -471,4 +465,4 @@ int StrivanarScrutinizer::activate_special()
 
 
 
-REGISTER_SHIP(StrivanarScrutinizer)
+REGISTER_SHIP(GlutaSensor)

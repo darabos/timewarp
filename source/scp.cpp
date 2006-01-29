@@ -2523,6 +2523,48 @@ DIALOG fleetDialog[] = {
 
 bool safeToDrawPreview = false;
 
+static ShipType* showing_shipimage_type = 0;
+
+static int rotationFrame = 0;
+
+void add_ship_image(int k)
+{
+	// show a new ship image.
+	ShipType* type = reference_fleet->getShipType(k);
+	
+	if (type && type->data)
+	{
+		type->data->lock();
+
+		if (type->data->spriteShip)
+			rotationFrame = 0;//(int)(fractionRotated * type->data->spriteShip->frames());
+
+		showing_shipimage_type = type;
+	}
+}
+
+void remove_ship_image()
+{
+	if (showing_shipimage_type)
+	{
+		// if some image was shown, then you should remove/dereference it.
+		
+		safeToDrawPreview = false;
+		
+		ShipType* type = showing_shipimage_type;
+		
+		if (type && type->data)
+		{
+			type->data->unlock();
+
+			showing_shipimage_type = 0;
+		}
+        
+	}
+}
+
+
+
 // FLEET - dialog function
 void edit_fleet(int player) {STACKTRACE
 	char tmp[40];
@@ -2530,6 +2572,9 @@ void edit_fleet(int player) {STACKTRACE
     char fleetCostString[80] = "";
     char maxFleetCostString[80] = "";
     bool availableFleetDirty = true;
+
+	// reset the ship image ?
+	showing_shipimage_type = 0;
 
     static Fleet::SortingMethod sortMethod1 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT,
         sortMethod2 = (Fleet::SortingMethod) Fleet::SORTING_METHOD_DEFAULT;
@@ -2753,11 +2798,12 @@ void edit_fleet(int player) {STACKTRACE
 
 //	reference_fleet = old_reference_fleet;
 
+	remove_ship_image();
+
 	fleet->save("fleets.ini", tmp);
 	delete fleet;
 	showTitle();
 }
-
 
 int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 
@@ -2817,33 +2863,18 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
 	// this is initialized once
     static BITMAP * sprite = create_bitmap(fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].w,
                                            fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
-    static int rotationFrame = 0;
 
 	if (!sprite || !panel)
 		tw_error("bitmap error");
 
 	//selection has changed
-    if (d->d1 != old_d1) {
-        safeToDrawPreview = false;
-        float fractionRotated = 0;
+	// (or nothing is shown, yet)
 
-        {ShipType* type = reference_fleet->getShipType(old_d1);
+    if (d->d1 != old_d1 || !showing_shipimage_type)
+	{
+		remove_ship_image();
         
-        if (type && type->data) {
-            if (type->data->spriteShip) {
-                fractionRotated = (float)((float)rotationFrame / (float)(type->data->spriteShip->frames()));
-            }
-            type->data->unlock();
-        }}
-
-        rotationFrame = 0;
-
-        {ShipType* type = reference_fleet->getShipType(d->d1);
-        if (type && type->data) {
-            type->data->lock();
-            if (type->data->spriteShip)
-               rotationFrame = (int)(fractionRotated * type->data->spriteShip->frames());
-        }}
+		add_ship_image(d->d1);
     }
 
 	if ( ( d->d1 != old_d1 || msg == MSG_START) || 

@@ -269,6 +269,14 @@ SOURCE=.\source\other\gup.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\other\lightning.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\other\lightning.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\other\luaport.cpp
 # End Source File
 # Begin Source File
@@ -410,14 +418,6 @@ SOURCE=.\source\games\gsolar.cpp
 # Begin Source File
 
 SOURCE=.\source\games\gtrug.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\ShipDocGenerator.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\ShipDocGenerator.h
 # End Source File
 # Begin Source File
 
@@ -617,6 +617,10 @@ SOURCE=.\source\newships\shpalckr.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpalhdr.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\newships\shpalhha.cpp
 # End Source File
 # Begin Source File
 
@@ -1105,6 +1109,50 @@ SOURCE=.\source\newships\shpyurpa.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpyusra.cpp
+# End Source File
+# End Group
+# Begin Group "ppiships"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpalabo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpchmba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpfrebo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpfweav.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpgluse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpostor.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpsacda.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpscain.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shpstrgu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shputwde.cpp
 # End Source File
 # End Group
 # End Group

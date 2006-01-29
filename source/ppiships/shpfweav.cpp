@@ -4,11 +4,10 @@ REGISTER_FILE
 
 #include "../sc1ships.h"
 
-
-class PanCohAvian : public Ship
+class FweiksAvian : public Ship
 {
 public:
-IDENTITY(PanCohAvian);
+IDENTITY(FweiksAvian);
 public:
 	double       weaponTime;
 	double       weaponVelocity;
@@ -21,7 +20,7 @@ public:
 	int          specialArmour;
 
 	public:
-	PanCohAvian(Vector2 opos, double angle, ShipData *data, unsigned int code);
+	FweiksAvian(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
 	virtual int activate_weapon();
 	virtual int activate_special();
@@ -31,12 +30,12 @@ public:
 
 
 
-class PanCohCrystal : public TimedShot
+class FweiksCrystal : public TimedShot
 {
 public:
-IDENTITY(PanCohCrystal);
+IDENTITY(FweiksCrystal);
 public:
-	PanCohCrystal(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
+	FweiksCrystal(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
 		double ovel, double otime, double oarmour, double odamage);
 	
 	virtual void inflict_damage(SpaceObject *other);
@@ -44,14 +43,14 @@ public:
 
 
 
-class PanCohFeather : public TimedShot
+class FweiksFeather : public TimedShot
 {
 public:
-IDENTITY(PanCohFeather);
+IDENTITY(FweiksFeather);
 	double vref, period, angle0;
 	double alpha, dalpha;
 public:
-	PanCohFeather(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
+	FweiksFeather(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
 		double ovel, double otime, double oarmour, double odamage, double perturbedangle);
 
 	virtual void calculate();
@@ -62,7 +61,8 @@ public:
 
 
 
-PanCohCrystal::PanCohCrystal(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
+
+FweiksCrystal::FweiksCrystal(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
 		double ovel, double otime, double oarmour, double odamage)
 :
 TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
@@ -71,7 +71,7 @@ TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
 	mass = 0.1;
 }
 	
-void PanCohCrystal::inflict_damage(SpaceObject *other)
+void FweiksCrystal::inflict_damage(SpaceObject *other)
 {
 	STACKTRACE
 	if (!state)
@@ -85,7 +85,7 @@ void PanCohCrystal::inflict_damage(SpaceObject *other)
 
 
 
-PanCohFeather::PanCohFeather(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
+FweiksFeather::FweiksFeather(SpaceLocation *creator, Vector2 orelpos, double orelangle, SpaceSprite *osprite,
 		double ovel, double otime, double oarmour, double odamage, double perturbedangle)
 :
 TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
@@ -100,7 +100,7 @@ TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
 	dalpha = 0;			// at rest
 }
 
-void PanCohFeather::calculate()
+void FweiksFeather::calculate()
 {
 	STACKTRACE
 	// the velocity of a falling feather is ... somewhat weird.
@@ -144,7 +144,7 @@ void PanCohFeather::calculate()
 
 
 
-PanCohAvian::PanCohAvian(Vector2 opos, double angle, ShipData *data, unsigned int code) 
+FweiksAvian::FweiksAvian(Vector2 opos, double angle, ShipData *data, unsigned int code) 
 :
 Ship(opos, angle, data, code)
 {
@@ -161,11 +161,11 @@ Ship(opos, angle, data, code)
 }
 
 
-int PanCohAvian::activate_weapon()
+int FweiksAvian::activate_weapon()
 {
 	STACKTRACE
 	//creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage
-	TimedShot *tmp = new PanCohCrystal( this, 
+	TimedShot *tmp = new FweiksCrystal( this, 
 		Vector2(0.0, size.y / 1.5), 0.0, data->spriteWeapon,
 		weaponVelocity, weaponTime, weaponArmour, weaponDamage);
 	add(tmp);
@@ -179,7 +179,7 @@ int PanCohAvian::activate_weapon()
 }
 
 
-int PanCohAvian::activate_special()
+int FweiksAvian::activate_special()
 {
 	STACKTRACE
 	int i;
@@ -189,7 +189,7 @@ int PanCohAvian::activate_special()
 		if (i == 0)
 			continue;
 
-		PanCohFeather *tmp = new PanCohFeather( this, 
+		FweiksFeather *tmp = new FweiksFeather( this, 
 			Vector2(0.0, -size.y / 1.5), PI*(1+0.1*i), data->spriteSpecial,
 			specialVelocity, specialTime, specialArmour, specialDamage,
 			i*0.4*PI);
@@ -209,4 +209,4 @@ int PanCohAvian::activate_special()
 
 
 
-REGISTER_SHIP ( PanCohAvian )
+REGISTER_SHIP ( FweiksAvian )

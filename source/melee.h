@@ -459,13 +459,9 @@ public:
 	//sprite_count * rotation new images based upon sprite_count RLE_SPRITES, with gamma correction
 	//xxx spacesprite test
 	SpaceSprite(const DATAFILE *sprites, int sprite_count, int attributes = -1, int rotations = 1);
+	SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, int rotations);
 	SpaceSprite(BITMAP *image, int _attributes = -1);
 	SpaceSprite(SpaceSprite &old);
-//	SpaceSprite(const char *sourcename, const char *spritename);
-	// added GEO    (should be deleted)
-//	SpaceSprite::SpaceSprite(char *bmpfilename, int _attributes);
-	// added GEO
-	SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int rotations, int _attributes);
 
 	virtual ~SpaceSprite();
 
@@ -578,6 +574,7 @@ ShipData *shipdata ( const char *file ) ;
 void unload_all_ship_data() ;
 void unload_unused_ship_data() ;
 
+/** is responsible for reading/removing raw data related to ships: sprites and sounds. It does not read ship-settings. */
 class ShipData {
 	enum { 
 		LOADED_NONE,
@@ -591,10 +588,14 @@ class ShipData {
 	char *file;
 	void lock();
 	void unlock();
+
 	void load();
+	void load_datafile(DATAFILE *file);
+	void load_directory(char *dirname);
+
 	void unload();
 	bool islocked();
-	DATAFILE    *data;
+	
 //	int num_panel_bitmaps;
 //	Surface     **bitmapPanel;
 	SpaceSprite *spritePanel;
