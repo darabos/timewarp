@@ -423,6 +423,7 @@ int get_tw_aa_mode();
 void animate_bmp(BITMAP *bmp, Vector2 p, Vector2 s, Frame *space);
 void animate_bmp(BITMAP *bmp, Vector2 pos, Frame *space);
 
+BITMAP* copybmp( BITMAP* src );
 
 class SpaceSprite {
 public:

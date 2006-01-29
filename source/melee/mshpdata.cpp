@@ -755,9 +755,6 @@ void ShipData::load_datafile(DATAFILE *data)
 	}
 	else sampleExtra = NULL;
 
-	shipdatas_loaded += 1;
-	status = LOADED_FULL;
-
 	// all data is copied, so now, you can discard the original data file !
 	pop_config_state();
 	unload_datafile(data);
@@ -843,9 +840,6 @@ void ShipData::load_directory(char *dirname)
 	load_sample("ExtraSamples", dirname, &num_extra_samples, &sampleExtra);
 	
 
-	shipdatas_loaded += 1;
-	status = LOADED_FULL;
-
 	// all data is copied, so now, you can discard the original data file !
 	pop_config_state();
 
@@ -875,6 +869,8 @@ void ShipData::load()
 		load_directory(tmp);	// without the .dat extension.
 	}
 
+	shipdatas_loaded += 1;
+	status = LOADED_FULL;
 }
 
 

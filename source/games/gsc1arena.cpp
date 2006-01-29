@@ -71,6 +71,13 @@ public:
 	void spawn_a_ship2(int iplayer, int iship);
 
 	virtual void register_events();
+
+
+	Ship *last_playership[max_players];
+	BITMAP *bmp_show[128];
+	void menu_data_init(NPI *player);
+	void menu_data_cleanup(NPI *player);
+	bool menu_data_initialized;
 };
 
 
@@ -84,6 +91,7 @@ void SC1Arena::init(Log *_log)
 
 	//prepare needs to be called before you add items, or do physics or graphics or anything like that.  Don't ask why.  
 	prepare(); 
+
 
 
 
@@ -232,6 +240,11 @@ void SC1Arena::init(Log *_log)
 	spawn_ship_fleetindex = -2;
 
 
+	menu_data_initialized = false;
+	for ( i = 0; i < num_players; ++i )
+	{
+		last_playership[i] = 0;
+	}
 }
 
 
@@ -252,6 +265,50 @@ void SC1Arena::animate_predict(Frame *frame, int time)
 }
 
 
+void SC1Arena::menu_data_init(NPI *player)
+{
+	int i;
+
+	if (player->fleet->getSize() > 32)
+	{
+		tw_error("There are too many ships in this fleet for display");
+	}
+
+	for ( i = 0; i < player->fleet->getSize(); ++i )
+	{
+		ShipType *t;
+		t = player->fleet->getShipType(i);
+		
+
+		// temp load data
+		if (!t->data->islocked())
+			t->data->load();
+		
+		bmp_show[i] = copybmp( t->data->spriteShip->get_bitmap(0) );
+
+		// unload the temp data right away
+		if (!t->data->islocked())
+			t->data->unload();
+
+	}
+
+	menu_data_initialized = true;
+}
+
+
+void SC1Arena::menu_data_cleanup(NPI *player)
+{
+	int i;
+
+	for ( i = 0; i < player->fleet->getSize(); ++i )
+	{
+		destroy_bitmap(bmp_show[i]);
+	}
+
+	menu_data_initialized = false;
+}
+
+
 void SC1Arena::animate( Frame* frame )
 {
 	STACKTRACE;
@@ -259,45 +316,48 @@ void SC1Arena::animate( Frame* frame )
 	
 	Game::animate( frame );
 
-	FULL_REDRAW = false;
 
-	// if a local player has to choose a new ship...
-	int p;
-	for ( p = 0; p < num_network; ++p )
+	if (menu_data_initialized)
 	{
-		if (!player[p])
-			continue;
-
-		if (player[p]->islocal() && !playership[p])
+		FULL_REDRAW = false;
+		
+		// if a local player has to choose a new ship...
+		int p;
+		for ( p = 0; p < num_network; ++p )
 		{
-			FULL_REDRAW = true;
+			if (!player[p])
+				continue;
 			
-			int xpos = 10;
-			int ypos = screen->h / 2;
-			// show all ships that are still available to you
-			int i;
-			for ( i = 0; i < player[p]->fleet->getSize(); ++i )
+			if (player[p]->islocal() && !playership[p])
 			{
-				ShipType *t;
-				t = player[p]->fleet->getShipType(i);
+				FULL_REDRAW = true;
 				
-				if (!t->data->islocked())
-					t->data->load();
-				
-				BITMAP *bmp = t->data->spriteShip->get_bitmap(0);
-				masked_blit(bmp, frame->surface, 0, 0, xpos, ypos, bmp->w, bmp->h);
-				
-				if (i == player_shipchoice)
+				int xpos = 10;
+				int ypos = screen->h / 2;
+				// show all ships that are still available to you
+				int i;
+				for ( i = 0; i < player[p]->fleet->getSize(); ++i )
 				{
-					rect(frame->surface, xpos, ypos, xpos+bmp->w-1, ypos+bmp->h-1, makecol(200,200,200));
+					//ShipType *t;
+					//t = player[p]->fleet->getShipType(i);
+					
+					BITMAP *bmp = bmp_show[i];
+					masked_blit(bmp, frame->surface, 0, 0, xpos, ypos, bmp->w, bmp->h);
+					
+					if (i == player_shipchoice)
+					{
+						rect(frame->surface, xpos, ypos, xpos+bmp->w-1, ypos+bmp->h-1, makecol(200,200,200));
+					}
+					
+					xpos += bmp->w + 5;
+					
 				}
-				
-				xpos += bmp->w + 5;
-				
 			}
+			
 		}
-
 	}
+
+
 }
 
 
@@ -560,6 +620,11 @@ void SC1Arena::calculate()
 
 		if (playership[i] && !playership[i]->exists())
 			playership[i] = 0;
+		
+	}
+
+	for ( i = 0; i < num_players; ++i )
+	{
 
 		// bots: these should choose a new ship randomly
 		if (!playership[i] && i >= num_network)
@@ -597,8 +662,34 @@ void SC1Arena::calculate()
 		if (!player[p])
 			continue;
 
-		if (player[p]->islocal() && !playership[p])
+		
+		
+		if (player[p]->islocal() && (!playership[p] || !last_playership[p]))
 		{
+			// check change in the state of your player ship
+			if (menu_data_initialized == false)
+			{
+				// it's time to reinitialize the menu
+				if (!playership[p])
+				{
+					// initialize.
+					menu_data_init(player[p]);
+				}
+
+			} else {
+				
+				// detect if a ship is chosen
+				// otherwise, don't clean it up yet...
+				if (playership[p] && !last_playership[p])
+				{
+					// clean it up.
+					menu_data_cleanup(player[p]);
+				}
+			}
+			// it's been used for detection, that's all you need.
+			last_playership[p] = playership[p];
+			
+			
 			int keys = player[p]->control->keys;
 			
 			if (player[p]->fleet->getSize() > 0)
@@ -642,6 +733,8 @@ void SC1Arena::calculate()
 			lastkeys = keys;
 		}
 	}
+
+
 }
 
 

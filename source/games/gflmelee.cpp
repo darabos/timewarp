@@ -1582,20 +1582,6 @@ StatsManager::~StatsManager()
 
 
 
-BITMAP* copybmp( BITMAP* src )
-{
-	STACKTRACE;
-
-	BITMAP *dest;
-
-	// copied from vanguard
-	dest = create_bitmap_ex(bitmap_color_depth(screen), src->w, src->h);	//Create a new bitmap
-	if(!dest) return NULL;							//If failed, return NULL
-
-	blit(src, dest, 0, 0, 0, 0, src->w, src->h);	//Copy bitmap from datafile
-
-	return dest;
-}
 
 
 
