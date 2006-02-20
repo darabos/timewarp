@@ -28,7 +28,7 @@ protected:
 
 
 
-	double	specialVelocity;
+	double	specialVelocity, specialTurnRate, specialAccelRate;
 	int		specialFrames;
 
 	double	energizetimer, energizetimemax;
@@ -87,10 +87,13 @@ public:
 	int    life;
 	int    lifetime;
 
-	double v;
+	double maxvelocity;
+	double turnrate;
+	double accelrate;
 
-	UtwigDefenderCrewPodPP(Vector2 opos, int oLifeTime,
-		Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double ov);
+	UtwigDefenderCrewPodPP(Vector2 opos, double oangle, int oLifeTime,
+		Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double ov,
+		double oturnrate, double oaccelrate);
 	
 	virtual void calculate();
 	virtual int sameTeam(SpaceLocation *other);
@@ -134,12 +137,12 @@ Ship(opos, angle, data, code)
 	energizepersonalarmour = 0;
 
 
-	specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 0));
+	specialVelocity = scale_velocity(get_config_float("Special", "Velocity", 10));
+	specialTurnRate = scale_turning(get_config_float("Special", "TurnRate", 1));
+	specialAccelRate = scale_acceleration(get_config_float("Special", "AccelRate", 1));
 	specialFrames   = get_config_int("Special", "Frames", 0);
 	energizetimemax = get_config_float("Special", "Timer", 0) * 1000.0;
 	energizetimer = 0;
-
-
 }
 
 int UtwigDefender::activate_weapon()
@@ -171,7 +174,8 @@ RGB UtwigDefender::crewPanelColor(int k)
   	// change the crew color, if needed
 	if ( energizepersonalarmour )
 	{
-		RGB c = {255,200,200};
+		double a = energizetimer / energizetimemax;
+		RGB c = {255,200*a,200*a};
 		return c;
 	} else {
 		return Ship::crewPanelColor(k);
@@ -272,21 +276,34 @@ int UtwigDefender::handle_damage(SpaceLocation *src, double normal, double direc
 		return iround(totdam);
 	}
 
+	double impact_angle;
+	if (src->vel != 0)
+		impact_angle = src->vel.atan();
+	else
+		impact_angle = trajectory_angle(src) + PI;
+
+
 	if ( energizepersonalarmour )
 	{
 		double evac = 0;
 		while ( evac < totdam && crew >= 1 )	// yeah, the last one may also leave !!
 		{										// otherwise, it's hard to die ;)
 
-			Vector2 D = -unit_vector(vel) * this->size.x;
-			D += tw_random(Vector2(50,50)) - Vector2(25,25);
+			Vector2 D;
+			//D = -unit_vector(vel) * this->size.x;
+			//D += tw_random(Vector2(50,50)) - Vector2(25,25);
+
+			double a = impact_angle + 0.25 * PI * (1.0 - random(2.0));
+			// travel in the "same" direction as the impact - which means, you'll travel in the opposite direction of fire.
+			D = unit_vector(a) * 0.8*size.x;
 
 			UtwigDefenderCrewPodPP *cp = new UtwigDefenderCrewPodPP(
-					this->normal_pos() + D,
+					this->normal_pos() + D, a,
 					specialFrames, this, data->spriteSpecial, 32, 
-					specialFrames, specialVelocity);
+					specialFrames, specialVelocity,
+					specialTurnRate, specialAccelRate);
 
-			cp->vel = 0.5 * vel;
+			//cp->vel = 0.5 * vel;
 			cp->target = this;
 
 			add(cp);
@@ -392,17 +409,20 @@ void UtwigDefenderBolt::animateExplosion()
 
 
 
-UtwigDefenderCrewPodPP::UtwigDefenderCrewPodPP(Vector2 opos, int oLifeTime,
-					Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double ov)
+UtwigDefenderCrewPodPP::UtwigDefenderCrewPodPP(Vector2 opos, double oangle, int oLifeTime,
+					Ship *oship, SpaceSprite *osprite, int ofcount, int ofsize, double ov,
+					double oturnrate, double oaccelrate)
 :
-SpaceObject(oship, opos, 0.0, osprite),
+SpaceObject(oship, opos, oangle, osprite),
 frame_count(ofcount),
 frame_size(ofsize),
 frame_step(0),
 life(0),
-lifetime(oLifeTime),
-v(ov)
+lifetime(oLifeTime)
 {
+	turnrate  = oturnrate * frame_time;
+	accelrate = oaccelrate * frame_time;
+
 	collide_flag_sameship = ALL_LAYERS;
 	collide_flag_sameteam = ALL_LAYERS;
 	layer = LAYER_SPECIAL;
@@ -412,6 +432,12 @@ v(ov)
 
 	debug_id = 2;	// for debugging purpose
 	attributes &= ~ATTRIB_STANDARD_INDEX;
+
+	// starting velocity: maxed
+	maxvelocity = ov;
+	vel = unit_vector(angle) * maxvelocity;
+	// make the starting velocity relative to your ship
+	vel += ship->vel;
 }
 
 int UtwigDefenderCrewPodPP::sameTeam(SpaceLocation *other)
@@ -424,25 +450,40 @@ void UtwigDefenderCrewPodPP::calculate()
 {
 	STACKTRACE;
 	frame_step += frame_time;
-	while (frame_step >= frame_size) {
+	while (frame_step >= frame_size)
+	{
 		frame_step -= frame_size;
 		sprite_index++;
 		if(sprite_index == frame_count)	sprite_index = 0;
 	}
 	
 	life += frame_time;
-	if(life >= lifetime) {
-		state = 0;
+	if(life >= lifetime)
+	{
+		die();
 		return;
 	}
 
-	double a = trajectory_angle(target);
-	vel = v * unit_vector(a);
+	if (!target)
+	{
+		die();
+		return;
+	}
+
+	double a = trajectory_angle(target) - angle;
+	while (a < -PI) a += PI2;
+	while (a >  PI) a -= PI2;
+	// between -PI and +PI
+
+	if (a < 0)
+		angle -= turnrate;
+	else
+		angle += turnrate;
+
+	accelerate(this, angle, accelrate, maxvelocity);
 
 	SpaceObject::calculate();
 
-	if (!target)
-		die();
 }
 
 

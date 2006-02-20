@@ -3,15 +3,10 @@
 #include "../scp.h"
 REGISTER_FILE
 
-#include "../other/lightning.h"
-
 /** Copy of the Korvian Sniper
-Lightning taken from Narool Lurker
+Extra quirk is after the Narool Lurker
 */
 
-void draw_lightning(Vector2 lightningrelpos, int sparktime, int maxsparktime, int Rmax,
-					BITMAP *lightningbmp, BITMAP *shpbmp, Frame *space,
-					Vector2 plot_pos, Vector2 plot_size);
 
 class ScavengerInterloper : public Ship {
 public:
@@ -26,14 +21,17 @@ public:
 	int specialDamage, specialArmour, SkipperPeriod, VisiblePeriod;
 	double SkipperMaxAngle;
 
-	int cloak;
-	int cloak_frame;
+	bool cloak;
+
+	// visible after taking damage
+	int visible_time, visible_period;
+
+	// bright flare after shooting
+	int flare_time;
+
 	
 
-	Lightning lightning;
-
 	public:
-	static int cloak_color[3];
 	ScavengerInterloper(Vector2 opos, double angle, ShipData *data, unsigned int code);
 
 	virtual double isInvisible() const;
@@ -43,7 +41,6 @@ public:
 	virtual void calculate();
 	virtual void animate(Frame *space);
 
-	// add code to activate the sparks
 	virtual void inflict_damage(SpaceObject *other);
 };
 
@@ -92,32 +89,39 @@ ScavengerInterloper::ScavengerInterloper(Vector2 opos, double angle, ShipData *d
 	SkipperMaxAngle = get_config_float("Special", "MaxAngle", 45.0) * PI / 180.0;
 
 
-  cloak = TRUE;
+	cloak = true;
 	debug_id = 1009;
+	visible_time = 0;
+	visible_period = get_config_int("Quirk", "VisiblePeriod", 1000);
+	flare_time = get_config_int("Quirk", "FlareTime", 100);
 
-	BITMAP *shpbmp = sprite->get_bitmap(0);
-	double maxsparktime = get_config_float("Quirk", "maxsparktime", 2000);
-	double Rmax = get_config_float("Quirk", "Rmax", 1);
-	lightning.init(shpbmp, 0, maxsparktime, Rmax);
 }
 
 double ScavengerInterloper::isInvisible() const
 {
-	if (lightning.visible())
-		return 0;
-	else
-		return 1;
-	
+	return cloak;
 }
 
 int ScavengerInterloper::activate_weapon()
 {
 
-	game->add(new ScavengerInterloperMissile( Vector2(0.0, size.y / 2.0),
+	Vector2 dP = Vector2(0.0, 0.7*size.y);
+
+	ScavengerInterloperMissile *m;
+	m = new ScavengerInterloperMissile( dP,
 		angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
-		this, data->spriteWeapon));
+		this, data->spriteWeapon);
+	game->add(m);
 
 	play_sound2(data->sampleWeapon[0]);
+
+	// when a weapon is fired, also add a bright flash to the game:
+	SpaceSprite *spr = data->spriteWeaponExplosion;
+	Animation *a = new Animation(this, m->pos, spr,
+		0, spr->frames(), flare_time, DEPTH_EXPLOSIONS);
+	
+	targets->add(a);
+	game->add(a);
 
 	return TRUE;
 }
@@ -125,9 +129,17 @@ int ScavengerInterloper::activate_weapon()
 
 int ScavengerInterloper::activate_special()
 {
-	game->add(new SkipperMissile( Vector2(0.0, size.y / 2.0),
+	SkipperMissile *m = new SkipperMissile( Vector2(0.0, 0.7*size.y),
 		angle, specialVelocity, specialDamage, specialRange, specialArmour,
-		this, data->spriteSpecial, SkipperPeriod, VisiblePeriod, SkipperMaxAngle));
+		this, data->spriteSpecial, SkipperPeriod, VisiblePeriod, SkipperMaxAngle);
+	game->add(m);
+
+	SpaceSprite *spr = data->spriteSpecialExplosion;
+	Animation *a = new Animation(this, m->pos, spr,
+		0, spr->frames(), flare_time, DEPTH_EXPLOSIONS);
+
+	targets->add(a);
+	game->add(a);
 
 	return TRUE;
 }
@@ -143,7 +155,17 @@ void ScavengerInterloper::calculate_hotspots()
 void ScavengerInterloper::calculate()
 {
 	
-	lightning.update(frame_time);
+
+	if (visible_time > 0)
+	{
+		cloak = false;
+
+		visible_time -= frame_time;
+		if (visible_time < 0)
+			visible_time = 0;
+	} else {
+		cloak = true;
+	}
 	
 	Ship::calculate();
 }
@@ -153,11 +175,15 @@ void ScavengerInterloper::animate(Frame *space)
 
 	if (!show_red_cloaker || (control && is_bot(control->channel)) || (control && !is_local(control->channel)) || (!game_networked && num_network>1))	// bots and remote players are "hidden"
 	{
-#ifdef _DEBUG
-		sprite->animate_character( pos, sprite_index, pallete_color[4], space);
-#else
-		sprite->animate_character( pos, sprite_index, pallete_color[255], space);
-#endif
+//#ifdef _DEBUG
+//		// in debug mode, show where the enem
+//		sprite->animate_character( pos, sprite_index, pallete_color[4], space);
+//#else
+		if (cloak)
+			sprite->animate_character( pos, sprite_index, pallete_color[255], space);
+		else
+			sprite->animate_character( pos, sprite_index, pallete_color[15], space);
+//#endif
 	}
 	else
 	{
@@ -165,7 +191,7 @@ void ScavengerInterloper::animate(Frame *space)
 	}
 
 	return;
-	}
+}
 
 
 
@@ -174,16 +200,20 @@ void ScavengerInterloper::inflict_damage(SpaceObject *other)
 
 	Ship::inflict_damage(other);
 
+	// after hitting something, the ship should become visible.
+	visible_time = visible_period;
+	cloak = false;
+
 	//you've hit something; (re)activate sparks.
-	lightning.reset();
+	//lightning.reset();
 
 	// but, where did you hit it ?
 	// place the source somewhere... at the edge .. how ?
-	double a, R;
-	a = trajectory_angle(other);
-	R = 20;
+//	double a, R;
+//	a = trajectory_angle(other);
+//	R = 20;
 	
-	lightning.locate(R * unit_vector(a));
+//	lightning.locate(R * unit_vector(a));
 }
 
 ScavengerInterloperMissile::ScavengerInterloperMissile(Vector2 opos, double oangle, double ov,

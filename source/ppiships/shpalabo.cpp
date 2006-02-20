@@ -16,10 +16,14 @@ IDENTITY(AlaryBomber);
 	int			bombLifetime;
 	double		bombDamageMin, bombDamageMax, bombArmour;
 	double		bombProximity, bombBlastRange, bombKick;
+	double		bombDrag;
 
 	double		special_speedmax, special_accelrate;
 		
 	bool		can_launch_bomb;
+
+	bool gun_use;
+	double gun_v, gun_damage, gun_range, gun_armour;
 
 public:
 	AlaryBomber	(Vector2 opos, double shipAngle,
@@ -40,6 +44,8 @@ IDENTITY(AlaryBomberBomb);
 	double		blast_range, proximity_range, old_range, kick;
 	//int		rotation_index;
 	double		blast_damage_max, blast_damage_min, lifetime;
+
+	double		drag_factor;
 	//double		rotation_angle;
 	SpaceObject *tgt;
 	bool		active;
@@ -47,7 +53,7 @@ IDENTITY(AlaryBomberBomb);
 public:
 	AlaryBomberBomb (SpaceLocation *creator, double ox, double oy, double oangle, double odamage_min, double odamage_max,
 				double oarmour, SpaceSprite *osprite, double oblast_range, double oproximity,
-				int olifetime, double okick);
+				int olifetime, double okick, double drag);
 	virtual void calculate();
 	virtual void animate(Frame *space);
 	virtual void animateExplosion();
@@ -80,9 +86,17 @@ AlaryBomber::AlaryBomber(Vector2 opos, double shipAngle, ShipData *shipData, uns
 	bombProximity	= scale_range(get_config_float("Bomb", "Proximity", 0));
 	bombBlastRange	= scale_range(get_config_float("Bomb", "BlastRange", 0));
 	bombKick		= scale_velocity(get_config_float("Bomb", "Kick", 0));
+	bombDrag        = get_config_float("Bomb", "Drag", 0.01);
 
 	special_speedmax = scale_velocity(get_config_float("Afterburn", "SpeedMax", 10.0));
 	special_accelrate = scale_acceleration(get_config_float("Afterburn", "AccelRate", 10.0));
+
+
+	gun_use            = get_config_int("Gun", "Use", 0) != 0;
+	gun_v              = scale_velocity(get_config_float("Gun", "Velocity", 10.0) );
+	gun_range          = scale_range( get_config_float("Gun", "Range", 1.0) );
+	gun_damage         = get_config_float("Gun", "Damage", 1.0);
+	gun_armour         = get_config_float("Gun", "Armour", 1.0);
 
 	can_launch_bomb = true;
 
@@ -93,7 +107,7 @@ int AlaryBomber::activate_weapon()
 	STACKTRACE
 	if (!can_launch_bomb) return false;
 	add(new AlaryBomberBomb(this, 0, 0, angle, bombDamageMin, bombDamageMax, bombArmour, data->spriteWeapon,
-		bombBlastRange, bombProximity, bombLifetime, bombKick));
+		bombBlastRange, bombProximity, bombLifetime, bombKick, bombDrag));
 	can_launch_bomb = false;
 	return true;
 }
@@ -102,8 +116,16 @@ int AlaryBomber::activate_special()
 {
 	STACKTRACE;
 
-	// just some kind of afterburn
-	accelerate(this, angle, special_accelrate * frame_time, special_speedmax);
+	if (!gun_use)
+	{
+		// just some kind of afterburn
+		accelerate(this, angle, special_accelrate * frame_time, special_speedmax);
+	} else {
+		add(new AnimatedShot(this, Vector2(0,60), angle,
+			gun_v, gun_damage, gun_range, gun_armour,
+			this, data->spriteSpecial, data->spriteSpecial->frames(), 0, 0.0)
+			);
+	}
 
 	return true;
 }
@@ -114,7 +136,7 @@ void AlaryBomber::calculate_hotspots()
 
 	Ship::calculate_hotspots();
 
-	if (this->fire_special)
+	if (this->fire_special && !gun_use)
 	{
 		Vector2 D = -17*unit_vector(angle+0.5*PI);
 		game->add(new Animation(this, pos + D,
@@ -142,7 +164,7 @@ void AlaryBomber::calculate()
 AlaryBomberBomb::AlaryBomberBomb (SpaceLocation *creator, double ox, double oy, double oangle, double odamage_min,
 								  double odamage_max,
 							double oarmour, SpaceSprite *osprite, double oblast_range, double oproximity,
-							int olifetime, double okick)
+							int olifetime, double okick, double drag)
 :
 Missile(creator, Vector2(ox, oy), oangle, 0, odamage_max, 1e40, oarmour, creator, osprite, 1.0),
 blast_range(oblast_range),
@@ -153,7 +175,8 @@ blast_damage_min(odamage_min),
 blast_damage_max(odamage_max),
 lifetime(olifetime),
 tgt(NULL),
-active(false)
+active(false),
+drag_factor(drag)
 {
 	id = SPACE_OBJECT;
     collide_flag_sameteam = 0;
@@ -196,12 +219,19 @@ void AlaryBomberBomb::calculate()
 
 	// explode at the end of its life
 	if (lifetime > 0)
+	{
 		lifetime -= frame_time;
-	else
-		damage(this, 999);
+	} else {
+		if (ship && distance(ship) > proximity_range)
+		{
+			damage(this, 999);
+		} else {
+			die();
+		}
+	}
 
 
-	// the original Tau Bomber checked it neighbourhood in order to detonate the bomb, however, it's far more
+	// the original Tau Bomber checked its neighbourhood in order to detonate the bomb, however, it's far more
 	// efficient to scan only the target.
 
 	double r0;
@@ -215,10 +245,12 @@ void AlaryBomberBomb::calculate()
 			{
 				damage(this, 9999);
 			}
+			// otherwise, just keep flying.
 		}
 	}
 	old_range = r0;
 
+	scale_vel(1 - drag_factor);
 
 }
 
@@ -262,11 +294,14 @@ void AlaryBomberBomb::animateExplosion()
 			d = int( blast_damage_min + r * (blast_damage_max - blast_damage_min) );
 
             damage(q.currento, d);
+
+			
             if ((q.currento->mass > 0) && (!q.currento->isPlanet()))
 				q.currento->accelerate(this, trajectory_angle(q.currento), kick * r / ((q.currento->mass > 1)?sqrt(q.currento->mass):1), MAX_SPEED);
+				
 		}
 
-		add(new AlaryBomberBombExplosion(pos, scale_velocity(70), 150, 450, makecol(255,240,140)));
+		add(new AlaryBomberBombExplosion(pos, scale_velocity(70), 150, 350, makecol(255,240,140)));
 	}
 
     Missile::animateExplosion();
