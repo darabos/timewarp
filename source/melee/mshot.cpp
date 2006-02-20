@@ -167,13 +167,24 @@ AnimatedShot::AnimatedShot(SpaceLocation *creator, Vector2 rpos,
 	attributes &= ~ATTRIB_STANDARD_INDEX;
 }
 
-void AnimatedShot::calculate() {
+void AnimatedShot::calculate()
+{
 	Shot::calculate();
-	frame_step -= frame_time;
-	while (frame_step < 0) {
-		frame_step += frame_size;
-		sprite_index++;
-		if (sprite_index == frame_count) sprite_index = 0;
+
+	if (frame_size)
+	{
+		// periodic graphics, can restart
+		frame_step -= frame_time;
+		while (frame_step < 0) {
+			frame_step += frame_size;
+			sprite_index++;
+			if (sprite_index == frame_count) sprite_index = 0;
+		}
+	} else {
+		// frame depends on the distance travelled
+		sprite_index = (d / range) * frame_count;
+		if (sprite_index >= frame_count)
+			sprite_index = frame_count-1;
 	}
 	return;
 }
