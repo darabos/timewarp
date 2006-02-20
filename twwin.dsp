@@ -1148,7 +1148,15 @@ SOURCE=.\source\ppiships\shpscain.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\ppiships\shpsefna.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\ppiships\shpstrgu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\ppiships\shptauh2.cpp
 # End Source File
 # Begin Source File
 
