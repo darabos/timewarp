@@ -155,7 +155,8 @@ void tw_random_pop_state()
 	}
 }
 
-unsigned int tw_random()
+
+unsigned int tw_random_unsigned()
 {
 	// some other thingy...
 	int i;
@@ -173,6 +174,12 @@ unsigned int tw_random()
 	tw_random_value += carrybit;
 
 	return tw_random_value;
+}
+
+// integer output is needed, otherwise an equation like "1 - tw_random()" can return a value of 4 billion.
+int tw_random()
+{
+	return int(tw_random_unsigned());
 }
 
 #ifdef _DEBUG
@@ -265,7 +272,7 @@ double tw_random(double a)
 	double val;
 	//* ((int*) &val + 0)           = tw_random();
 	//* ((int*) &val + sizeof(int)) = tw_random();
-	val = a * (double(tw_random()) / double(0x0100000000));
+	val = a * (double(tw_random_unsigned()) / double(0x0100000000));
 
 
 	if ((a != 0) && (val < 0 || val >= a))
@@ -290,7 +297,7 @@ int tw_random( int a )
 		tw_error("random: needing to convert a negative integer to an unsigned integer: should not happen");
 	}
 
-	int k = int( tw_random() % unsigned int(a) );
+	int k = int( tw_random_unsigned() % unsigned int(a) );
 
 	if (k < 0 || k >= a)
 	{
