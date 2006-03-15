@@ -533,7 +533,16 @@ int AlaryBC::handle_damage(SpaceLocation* source, double normal, double direct)
 //		game->add(new Animation(this, x, y,
 //			game->kaboomSprite, 0, KABOOM_FRAMES, time_ratio, DEPTH_EXPLOSIONS));
 //		if (attributes & ATTRIB_NOTIFY_ON_DEATH) game->ship_died(this, source);
-		turn_rate = scale_turning(12+tw_random(80)) * (1 - (tw_random() & 2) ); 
+
+//		int k = 12 + tw_random(80);
+//		double tr = scale_turning(k);
+//		int fac = (1 - (tw_random() & 2) );
+//		turn_rate = tr * fac; 
+		double t = (1 - (tw_random() & 2));
+		turn_rate = scale_turning(12.0 + tw_random(80.0)) * t ;
+		if (fabs(turn_rate) > 1.0)
+			tw_error("Turn rate error");
+
 		if (engines_armour > 0) {
 			engines_armour = 0;
 			play_sound(data->sampleExtra[0]);
