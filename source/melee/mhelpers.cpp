@@ -630,7 +630,11 @@ int scale_frames(double value) {
 	}
 double scale_turning (double turn_rate) {
 //  turn_rate = 20.0 / ((turn_rate + 1.0) * 5.0);	
-	return (PI2 / 16) / (turn_rate + 1.0) / time_ratio;
+
+	double tr = (PI2 / 16) / (turn_rate + 1.0) / time_ratio;
+	if (fabs(tr) > 1.0)
+		tw_error("Turn rate error");
+	return tr;
 	}
 double scale_velocity (double velocity) {
 //  velocity = velocity / 7.5;

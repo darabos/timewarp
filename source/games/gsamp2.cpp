@@ -217,7 +217,7 @@ void DefenderGame::init( Log * _log) {
 	tmpdata = load_datafile_object("gob.dat", "station0sprite");
 	if (!tmpdata) error( "couldn't find gob.dat#station0sprite");
 	stationsprite = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED, 64);
-	stationsprite->permanent_phase_shift(8);
+//	stationsprite->permanent_phase_shift(8);
 	unload_datafile_object(tmpdata);
 
 	restart();

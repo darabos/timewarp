@@ -56,6 +56,11 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 	smask[i] = create_allegro_pmask(bmp);
 	sbitmap[0][i] = bmp;
 	attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+
+	if (!sbitmap[0][0])
+	{
+		tw_error("Basic sprite shape expected, but doesn't exist");
+	}
 }
 
 

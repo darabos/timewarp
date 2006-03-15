@@ -154,19 +154,19 @@ void GobGame::init(Log *_log) {
 	if (!tmpdata) error( "couldn't find gob.dat#station0sprite");
 	stationSprite[0] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
 	unload_datafile_object(tmpdata);
-	stationSprite[0]->permanent_phase_shift(8);
+//	stationSprite[0]->permanent_phase_shift(8);
 
 	tmpdata = load_datafile_object("gob.dat", "station1sprite");
 	if (!tmpdata) error ("couldn't find gob.dat#station1sprite");
 	stationSprite[1] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
 	unload_datafile_object(tmpdata);
-	stationSprite[1]->permanent_phase_shift(8);
+//	stationSprite[1]->permanent_phase_shift(8);
 
 	tmpdata = load_datafile_object("gob.dat", "station2sprite");
 	if (!tmpdata) error ("couldn't find gob.dat#station2sprite");
 	stationSprite[2] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
 	unload_datafile_object(tmpdata);
-	stationSprite[2]->permanent_phase_shift(8);
+//	stationSprite[2]->permanent_phase_shift(8);
 
 	tmpdata = load_datafile_object("gob.dat", "defender");
 	if (!tmpdata) error ("couldn't find gob.dat#defender");

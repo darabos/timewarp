@@ -781,7 +781,7 @@ void ShipData::load_directory(char *dirname)
 	push_config_state();
 	set_config_file(info_filename);
 
-	int basic_attrib = SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT;
+	int basic_attrib = SpaceSprite::MASKED;
 	// and mipmapped? nah.
 
 	// load the ship panel sprites. This sprite are irregular by default, because the bitmaps have different sizes.

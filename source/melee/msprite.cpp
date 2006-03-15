@@ -30,13 +30,6 @@ int string_to_sprite_attributes ( const char *s, int recommended ) {STACKTRACE
 	int a = recommended;
 	if (!s) return a;
 
-	if (strstr(s, "+screen")) {
-		a |= SpaceSprite::MATCH_SCREEN_FORMAT;
-	}
-	if (strstr(s, "-screen")) {
-		a &=~SpaceSprite::MATCH_SCREEN_FORMAT;
-	}
-
 	if (strstr(s, "+mipmap")) {
 		a |= SpaceSprite::MIPMAPED;
 	}
@@ -60,7 +53,6 @@ int string_to_sprite_attributes ( const char *s, int recommended ) {STACKTRACE
 
 	if (strstr(s, "+alpha")) {
 		a |= SpaceSprite::ALPHA;
-		a &=~SpaceSprite::MATCH_SCREEN_FORMAT;//remove me
 	}
 	if (strstr(s, "-alpha")) {
 		a &=~SpaceSprite::ALPHA;
@@ -393,6 +385,8 @@ void SpaceSprite::change_color_depth(int newbpp) {STACKTRACE
 	return;
 }
 
+
+/*
 void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 	int i, mip;
 	Surface **tmp = new Surface*[count];
@@ -420,6 +414,7 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 	delete[] tmp2;
 	return;
 }
+*/
 
 
 Vector2 SpaceSprite::size(int i)
@@ -489,15 +484,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	}
 
 	general_attributes = _attributes;
-	if (general_attributes &  MATCH_SCREEN_FORMAT) {
-		bpp = videosystem.bpp;
-		if (general_attributes & ALPHA) {
-			if (bpp <= 16) bpp = 16;
-			else bpp = 32;
-			bpp = 32; //quick hack, because converting to 16bpp isn't quite working properly
-		}
-	}
-	else bpp = 0;
+	bpp = videosystem.bpp;
 
 	originaltype = images[0].type;
 	switch (originaltype) {
@@ -696,6 +683,11 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	}
 
 
+	if (!sbitmap[0][0])
+	{
+		tw_error("Basic sprite shape expected, but doesn't exist");
+	}
+
 /*	THE MAIN ROUTINE IS GENERALIZED, BECAUSE A MIX OF 2 TYPES JUST CONFUSING, AND NOT NEEDED ANYMORE
 	return;//end of normal/masked/autorotated
 
@@ -814,6 +806,11 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 		} else {
 			sbitmap[l] = 0;
 		}
+	}
+
+	if (!sbitmap[0][0])
+	{
+		tw_error("Basic sprite shape expected, but doesn't exist");
 	}
 }
 
@@ -1310,15 +1307,7 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 	}
 
 	general_attributes = _attributes;
-	if (general_attributes &  MATCH_SCREEN_FORMAT) {
-		bpp = videosystem.bpp;
-		if (general_attributes & ALPHA) {
-			if (bpp <= 16) bpp = 16;
-			else bpp = 32;
-			bpp = 32;
-		}
-	}
-	else bpp = 0;
+	bpp = videosystem.bpp;
 
 	obpp = bitmap_color_depth(bmplist[0]);
 
@@ -1377,6 +1366,11 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 
 	if (general_attributes & MIPMAPED) {
 		generate_mipmaps();
+	}
+
+	if (!sbitmap[0][0])
+	{
+		tw_error("Basic sprite shape expected, but doesn't exist");
 	}
 }
 

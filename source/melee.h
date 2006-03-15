@@ -446,7 +446,6 @@ protected:
 public:
 	unsigned int general_attributes;
 	enum {
-		MATCH_SCREEN_FORMAT = 0x001, 
 		IRREGULAR           = 0x002, 
 		MIPMAPED            = 0x004, 
 
@@ -500,7 +499,7 @@ public:
 	void generate_mipmaps();
 	void regenerate_mipmaps();
 
-	void permanent_phase_shift ( int index );
+	//void permanent_phase_shift ( int index );
 
 	virtual void change_color_depth(int dest);
 
@@ -518,7 +517,7 @@ public:
 
 };
 
-int string_to_sprite_attributes ( const char *s, int recommended = SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT | SpaceSprite::MIPMAPED) ;
+int string_to_sprite_attributes ( const char *s, int recommended = SpaceSprite::MASKED | SpaceSprite::MIPMAPED) ;
 
 
 
