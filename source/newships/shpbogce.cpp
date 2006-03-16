@@ -276,7 +276,7 @@ void BoggCenturion::calculate()
 void BoggCenturion::animate(Frame* space)
 {
         BITMAP *bmp;
-        bmp = sprite->get_bitmap(64, 0);
+        bmp = sprite->get_bitmap(64);
         clear_to_color( bmp, makecol(255,0,255));
 
         double tx, ty;

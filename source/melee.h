@@ -429,15 +429,13 @@ class SpaceSprite {
 public:
 	static int mip_min, mip_max, mip_bias;
 protected:
-	enum { MAX_MIP_LEVELS = 8 };
 	int         count, count_base, count_rotations;
 	char bpp;
-	char highest_mip;
 	int originaltype;
 //	int         w;
 //	int         h;
 	struct PMASK **smask;
-	Surface **sbitmap[MAX_MIP_LEVELS];
+	Surface **sbitmap;
 
 	//char *type;
 	int references;
@@ -464,7 +462,7 @@ public:
 
 
 //methods for direct access:
-	Surface     *get_bitmap(int index, int miplevel = 0);
+	Surface     *get_bitmap(int index);
 //	Surface     *get_bitmap_readonly(int index);
 	PMASK *get_pmask(int index);
 	void lock();	//make surface writable

@@ -193,7 +193,7 @@ void TauMC::animate(Frame *space)
         ra = normalize(turret_angle + angle, PI2);
         turret_index = get_index(ra);//((int)(ra / 5.625) + 16) & 63;
         //ra *= ANGLE_RATIO;
-        bmp = data->spriteShip->get_bitmap(64, 0);
+        bmp = data->spriteShip->get_bitmap(64);
         clear_to_color(bmp, makecol(255,0,255));
         sprite->draw(0, 0, sprite_index, bmp);
         data->spriteExtra->draw(31, 31, turret_index, bmp);

@@ -34,19 +34,12 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 	count = 1;
 
 	references = 0;
-	highest_mip = 0;
-	for (i = 1; i < MAX_MIP_LEVELS; i += 1) {
-		sbitmap[i] = NULL;
-	}
+	sbitmap = 0;
 
 	bpp = 32;//videosystem.bpp;
 
 	smask = new PMASK*			[count];
-	sbitmap[0] = new BITMAP*		[count];
-//	attributes = new char	[count];
-
-	//w = image->w;
-	//h = image->h;
+	sbitmap = new BITMAP*		[count];
 
 	bmp = create_bitmap_ex ( bpp, image->w, image->h);
 	convert_bitmap(image, bmp, general_attributes & MASKED);
@@ -54,10 +47,9 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 	i = 0;
 	color_correct_bitmap(bmp, general_attributes & MASKED);
 	smask[i] = create_allegro_pmask(bmp);
-	sbitmap[0][i] = bmp;
-//	attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+	sbitmap[i] = bmp;
 
-	if (!sbitmap[0][0])
+	if (!sbitmap[0])
 	{
 		tw_error("Basic sprite shape expected, but doesn't exist");
 	}
