@@ -315,25 +315,33 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 		video_screen = 0;
 	}
 
-	if ( set_gfx_mode((fullscreen ? GFX_TIMEWARP_FULLSCREEN : GFX_TIMEWARP_WINDOW), width, height, 0, 0)) {
-		const char *part1 = "Error switching to graphics mode";
-		char part2[256];
-		sprintf (part2, "(%dx%d @ %d bit)", width, height, bpp);
-		const char *part3 = allegro_error;
-		if (this->bpp == -1) {
-			char buffy[1024];
-			sprintf(buffy, "%s\n%s\n%s", part1, part2, part3);
-			tw_error_exit(buffy);
+
+	if ( set_gfx_mode((fullscreen ? GFX_TIMEWARP_FULLSCREEN : GFX_TIMEWARP_WINDOW), width, height, 0, 0))
+	{
+		// try 1 failed
+		if ( set_gfx_mode(GFX_TIMEWARP_FULLSCREEN, 640, 480, 0, 0))
+		{
+			// trying default value, also failed
+			
+			const char *part1 = "Error switching to graphics mode";
+			char part2[256];
+			sprintf (part2, "(%dx%d @ %d bit)", width, height, bpp);
+			const char *part3 = allegro_error;
+			if (this->bpp == -1) {
+				char buffy[1024];
+				sprintf(buffy, "%s\n%s\n%s", part1, part2, part3);
+				tw_error_exit(buffy);
+			}
+			set_color_depth(this->bpp);
+			set_gfx_mode((this->fullscreen ? GFX_TIMEWARP_FULLSCREEN : GFX_TIMEWARP_WINDOW), this->width, this->height, 0, 0);
+			alert (part1, part2, part3, "Continue", NULL, ' ', '\n');
+			surface = screen;
+			ve.subtype = VideoEvent::VALID;
+			window._event(&ve);
+			surface = NULL;
+			redraw();
+			return false;
 		}
-		set_color_depth(this->bpp);
-		set_gfx_mode((this->fullscreen ? GFX_TIMEWARP_FULLSCREEN : GFX_TIMEWARP_WINDOW), this->width, this->height, 0, 0);
-		alert (part1, part2, part3, "Continue", NULL, ' ', '\n');
-		surface = screen;
-		ve.subtype = VideoEvent::VALID;
-		window._event(&ve);
-		surface = NULL;
-		redraw();
-		return false;
 	}
 
 	allegro_screen = screen;
