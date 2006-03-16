@@ -782,7 +782,6 @@ void ShipData::load_directory(char *dirname)
 	set_config_file(info_filename);
 
 	int basic_attrib = SpaceSprite::MASKED;
-	// and mipmapped? nah.
 
 	// load the ship panel sprites.
 	spritePanel = load_sprite("PanelBitmaps", dirname, basic_attrib);

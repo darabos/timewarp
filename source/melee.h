@@ -446,10 +446,8 @@ protected:
 public:
 	unsigned int general_attributes;
 	enum {
-		MIPMAPED            = 0x004, 
-
-		MASKED              = 0x100, 
-		ALPHA               = 0x200, 
+		MASKED              = 0x100,
+		ALPHA               = 0x200,
 		DITHER              = 0x400,
 		NO_AA               = 0x800,
 
@@ -464,8 +462,6 @@ public:
 
 	virtual ~SpaceSprite();
 
-
-	void generate_mipmap(int level, int index, int bpp);
 
 //methods for direct access:
 	Surface     *get_bitmap(int index, int miplevel = 0);
@@ -495,9 +491,6 @@ public:
 	void draw_character(int x, int y, int w, int h, int index, int color, Surface *bmp);
 	void draw_character(int x, int y, int w, int h, int index, int color, Frame *space);
 
-	void generate_mipmaps();
-	void regenerate_mipmaps();
-
 	//void permanent_phase_shift ( int index );
 
 	virtual void change_color_depth(int dest);
@@ -516,7 +509,7 @@ public:
 
 };
 
-int string_to_sprite_attributes ( const char *s, int recommended = SpaceSprite::MASKED | SpaceSprite::MIPMAPED) ;
+int string_to_sprite_attributes ( const char *s, int recommended = SpaceSprite::MASKED) ;
 
 
 

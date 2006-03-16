@@ -476,7 +476,7 @@ SpaceObject *addsolarobject(Vector2 opos, DATAFILE *dat, char *basename, int num
 	DATAFILE *tmpdat = find_datafile_object(dat, tempstr);
 	if (!tmpdat){tw_error("no data file object moon");}
 
-	sprite = new SpaceSprite(tmpdat, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 1);
+	sprite = new SpaceSprite(tmpdat, 1, SpaceSprite::MASKED, 1);
 	
 	o = new SpaceObject(NULL, opos, 0.0, sprite);
 
@@ -505,7 +505,7 @@ SpaceObject_ext *addsolarship(Vector2 opos, DATAFILE *dat, char *basename)
 		tw_error("no data file object solar -- ship");
 	}
 
-	sprite = new SpaceSprite(tmpdat, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
+	sprite = new SpaceSprite(tmpdat, 1, SpaceSprite::MASKED, 64);
 	
 	o = new SpaceObject_ext(NULL, opos, 0.0, sprite);
 

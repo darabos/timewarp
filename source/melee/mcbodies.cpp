@@ -300,8 +300,7 @@ Stars2::Stars2()
 		if (!stardat) i = 1;
 		else for (i = 0; (stardat[i].type == DAT_RLE_SPRITE) || (stardat[i].type == DAT_BITMAP); i += 1) ;
 		starpics = new SpaceSprite(stardat, i, 
-			SpaceSprite::MASKED | 
-			SpaceSprite::MIPMAPED
+			SpaceSprite::MASKED
 		);
 		unload_datafile(stardat);
 	}
@@ -452,8 +451,7 @@ Stars::Stars()
 	for(i = 0; i < num_pics; i++) {
 		pic[i] = new SpaceSprite(&stardat[i], 1, 
 			SpaceSprite::ALPHA | 
-			SpaceSprite::MASKED | 
-			SpaceSprite::MIPMAPED
+			SpaceSprite::MASKED
 		);
 	}
 	set_config_file("server.ini");

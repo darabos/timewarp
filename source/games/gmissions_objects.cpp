@@ -61,7 +61,7 @@ SpaceSprite *gensprite(char *datafilename, char *dataobjectname, char *ident)
 	bmpdata = find_datafile_object(d, ident2);
 
 	// I'm assuming here it contains only 1 image (should be changed!)
-	return new SpaceSprite(bmpdata, Nbmp, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, Nrot);
+	return new SpaceSprite(bmpdata, Nbmp, SpaceSprite::MASKED, Nrot);
 
 	unload_datafile_object(d_raw);
 	// this isn't efficient, but it works...
@@ -131,23 +131,6 @@ Ship(0, opos, random(PI2),
 
 	ally_flag |= team << team_shift;
 }
-
-/*
-SpaceSprite *MissionShip::gensprite(char *datafilename, char *dataobjectname)
-{
-	DATAFILE *d;
-
-	// here should be analysis of a text file to see how many sprites there are ...
-
-	// d should be a data file itself, containing the ship bitmaps
-	d = (DATAFILE*) load_datafile_object(datafilename, dataobjectname)->dat;
-				
-	// I'm assuming here it contains only 1 image (should be changed!)
-	return new SpaceSprite(&d[0], 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
-
-	unload_datafile_object(d);
-}
-*/
 
 
 

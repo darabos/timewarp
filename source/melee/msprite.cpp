@@ -30,13 +30,6 @@ int string_to_sprite_attributes ( const char *s, int recommended ) {STACKTRACE
 	int a = recommended;
 	if (!s) return a;
 
-	if (strstr(s, "+mipmap")) {
-		a |= SpaceSprite::MIPMAPED;
-	}
-	if (strstr(s, "-mipmap")) {
-		a &=~SpaceSprite::MIPMAPED;
-	}
-
 	if (strstr(s, "+masked")) {
 		a |= SpaceSprite::MASKED;
 	}
@@ -290,78 +283,6 @@ void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 	return;
 	}
 
-/** this simply scales the sprite and puts it in a buffer. */
-void SpaceSprite::generate_mipmap(int level, int index, int bpp)
-{
-	int i = index;
-
-	int lw, lh;
-	lw = iround(width(index) * pow(0.5, level));
-	lh = iround(height(index) * pow(0.5, level));
-
-	BITMAP *src = get_bitmap(i, 0);//b[0][i];
-	
-	if ( level < 0 || level > highest_mip || level > MAX_MIP_LEVELS)
-	{
-		tw_error("Illegal mipmap used...");
-	}
-
-	sbitmap[level][i] = create_bitmap_ex(bpp, lw, lh);
-
-	BITMAP *dest = sbitmap[level][i];
-	if (general_attributes & MASKED)
-		clear_to_color(dest, bitmap_mask_color(dest));
-	
-	int a = find_aa_mode(general_attributes);
-	if (a & AA_ALPHA)
-		a |= AA_RAW_ALPHA;
-	
-	a |= AA_MASKED_DEST;
-	a &=~AA_BLEND;
-	aa_set_mode( a );
-
-	aa_stretch_blit(src, dest, 0,0,src->w,src->h, 0,0,dest->w, dest->h );
-
-}
-
-void SpaceSprite::generate_mipmaps()
-{
-	// NOTE:
-	// for some unknown reason, this causes a crash when the star sprites are deleted in 16-bit mode.
-	// so, I've disabled the use of these cached sprites.
-	STACKTRACE;
-
-#ifdef _USE_MIPMAP
-	int bpp, level, i;
-	if (general_attributes & MIPMAPED)
-	{
-		bpp = bitmap_color_depth(sbitmap[0][0]);
-
-		for (level = 1; level < MAX_MIP_LEVELS; level += 1)
-		{
-			int lw, lh;
-			lw = iround(width(0) * pow(0.5, level));
-			lh = iround(height(0) * pow(0.5, level));
-			
-			if ((lw < 8) || (lh < 8))
-				break;
-
-			if (sbitmap[level])
-			{
-				tw_error("new mipmap level: already defined!");
-			}
-
-			highest_mip = level;
-			sbitmap[level] = new BITMAP*[count];
-
-			for (i = 0; i < count; i += 1)
-			{
-				sbitmap[level][i] = 0;//generate_mipmap(level, i, bpp);
-			}
-		}
-	}
-#endif
-}
 
 void SpaceSprite::change_color_depth(int newbpp) {STACKTRACE
 	int i, l;
@@ -485,7 +406,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 
 	general_attributes |= SpaceSprite::NO_AA;
 	general_attributes |= SpaceSprite::ALPHA;
-	general_attributes |= SpaceSprite::DITHER;
+//	general_attributes |= SpaceSprite::DITHER;
 
 	// this is moved lower...
 //	if (obpp != bpp)
@@ -616,12 +537,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 //		tmp = 0;
 //	}
 
-#ifdef _USE_MIPMAP
-	if (general_attributes & MIPMAPED)
-	{
-		generate_mipmaps();
-	}
-#endif
+
 
 
 	if (!sbitmap[0][0])
@@ -707,8 +623,6 @@ void SpaceSprite::unlock()
 		if (sbitmap[i])
 			j = i;
 	}
-	//We aught to rebuild mipmaps	but too much work, so for now we do nothing
-	//highest_mip = j;
 	return;
 }
 
@@ -775,7 +689,6 @@ void SpaceSprite::animate_character(Vector2 pos, int index, int color, Frame *sp
 void SpaceSprite::overlay (int index1, int index2, BITMAP *dest) {
 	STACKTRACE
 	int x, y;
-	if (general_attributes & MIPMAPED) {tw_error ("overlay on a mipmaped sprite!  oh no!");}
 	if (index1 > count) {tw_error("SpaceSprite::overlay - index1 %d > count %d", index1, count);}
 	if (index2 > count) {tw_error("SpaceSprite::overlay - index2 %d > count %d", index2, count);}
 
@@ -1099,15 +1012,9 @@ void destroy_sprite(SpaceSprite **sprite)
 
 BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 {STACKTRACE
-	// changed ROB
-	//if (general_attributes & MIPMAPED) if (highest_mip > 0) 
-	//	{tw_error ("get_bitmap on a mipmaped sprite!\n(retry likely to work)");}
-	if (general_attributes & MIPMAPED)
+	if (miplevel != 0) 
 	{
-		if (miplevel > highest_mip) 
-		{
-			tw_error ("get_bitmap on undefined mipmap level");
-		}
+		tw_error ("get_bitmap on undefined mipmap level");
 	}
 
 	if (index >= count)
@@ -1155,8 +1062,6 @@ BITMAP *SpaceSprite::get_bitmap(int index, int miplevel)
 
 		}
 
-		if (miplevel > 0)
-			generate_mipmap(miplevel, index, bpp);
 	}
 
 	return sbitmap[miplevel][index];
@@ -1249,11 +1154,6 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 
 	}
 
-#ifdef _USE_MIPMAP
-	if (general_attributes & MIPMAPED) {
-		generate_mipmaps();
-	}
-#endif
 
 	if (!sbitmap[0][0])
 	{

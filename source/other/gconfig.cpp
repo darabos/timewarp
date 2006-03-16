@@ -256,7 +256,7 @@ static int l_AddStation(lua_State* ls)
 	}
   tmpdata = load_datafile_object(file.c_str(), pic.c_str());
   if (!tmpdata) error( "couldn't find gob.dat#station0sprite");
-  SpaceSprite * stationSprite = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED | SpaceSprite::MIPMAPED, 64);
+  SpaceSprite * stationSprite = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED, 64);
   unload_datafile_object(tmpdata);
   stationSprite->permanent_phase_shift(8);
 
