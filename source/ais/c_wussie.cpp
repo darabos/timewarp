@@ -394,92 +394,7 @@ int ControlWussie::think ()
 				//- ship->get_angle();
 
 
-			// do another test, namely, check if the enemy ship is not moving away from you. If
-			// it does, then you've a problem, cause hot pursuit can be deadly.
 
-			double a;
-			a = ship->target->vel.atan() - ship->vel.atan();
-			while (a < -PI)	a += PI2;
-			while (a > PI)	a -= PI2;
-
-			if (fabs(a) < 0.3 * PI)
-			{
-				// and is moving away from you...
-				// then, try engaging the enemy from another angle of attack ...
-				
-				
-				if (distance > 0.9*option_range[state][0])
-				{
-					if (ship->target->vel.length() > intercept_abort_speed_factor * ship->speed_max)
-					{
-						// if the enemy is too fast for you...
-						// just move to some other direction
-						
-						// hmm, actually, this is good practice in almost any occasion...
-						// except if you're really much faster than the enemy
-						
-						double b;
-						b = ship->trajectory_angle(ship->target);
-						a = ship->angle - b;
-						while (a < -PI)	a += PI2;
-						while (a > PI)	a -= PI2;
-						
-						if ( a < 0 )
-							angle_aim = b + 0.5*PI;
-						else
-							angle_aim = b - 0.5*PI;
-					}
-				}
-				
-			}
-			
-			Ship *t;
-			if (ship->target->isShip())
-			{
-				t = (Ship*) ship->target;
-			} else {
-				t = 0;
-			}
-
-			// and what, if the enemy is facing you ? You should be really scared then ... unless ...
-			if (t &&
-				(t->vel - ship->vel).length() > scared_enemyship_speed_factor * ship->speed_max &&		// be scared if enemy is moving away very fast
-				ship->speed_max > 1.1 * t->vel.length() &&		// be scared if you are able to run away from the enemy
-				(t->crew/t->crew_max > scare_crew_factor && t->crew > scare_owncrew_minimum) &&		// be scared if the enemy has much crew left
-				!ship->isInvisible() &&									// be scared if you're visible
-				(distance > option_range[state][0] ||		// be scared if you're out of firing range
-				distance < scare_close_distance)					// or be scared if you're *very* close.
-				)
-			{
-				// well... only if the enemy isn't faster than you, otherwise, evading or running
-				// away doesn't help you anything.
-				// and, only if the enemy has lots of life left (say, 6 life, or only a small fraction of life).
-				// and, if you're cloaked you don't have to worry either
-				// and, if you're not within fire-range
-				
-				double d = 2.0 * option_range[state][0];
-				if (d > 1000)
-					d = 1000;
-				
-				// evade the enemy
-				// the enemy is close
-				if (distance < d)
-				{
-					double b = ship->trajectory_angle(ship->target) + PI;
-					a = ship->target->angle - b;
-					while (a < -PI)	a += PI2;
-					while (a > PI)	a -= PI2;
-					
-					// the enemy is facing you
-					if (fabs(a) < 0.2 * PI)
-					{
-						if (a > 0)
-							angle_aim = b + 0.5*PI;
-						else
-							angle_aim = b - 0.5*PI;
-					}
-				}
-			}
 
 
 			/*double rx, ry;
@@ -547,6 +462,98 @@ int ControlWussie::think ()
 			break;
 
 		}
+
+
+		// ----------------- ATTACK ANALYSIS -------------------
+
+		
+		Ship *t;
+		if (ship->target->isShip())
+		{
+			t = (Ship*) ship->target;
+		} else {
+			t = 0;
+		}
+		
+		// What, if the enemy is facing you ? Or if he's running away ? You should be really scared then ... unless ...
+		if (t)
+		{
+			Vector2 direction;
+
+			direction = unit_vector(ship->vel);
+			
+			double v_enemy_diff = dot_product(direction, t->vel);
+
+			double vmax;
+			vmax = t->speed_max;
+			if (t->vel.length() > vmax)	// this can happen, in case of a grav whip
+				vmax = t->vel.length();
+
+			// be scared if enemy is moving too fast, i.e., you can't get close fast enough
+			bool too_fast_away = v_enemy_diff > intercept_abort_speed_factor * ship->speed_max;
+
+			// if the enemy is approaching very fast...
+			bool too_fast_approach = v_enemy_diff < -intercept_abort_speed_factor * ship->speed_max;
+
+			// you can only be scared if you are able to run away from the enemy
+			// you should have a significant speed advantage.. especially if you're close to the enemy
+			double range_factor = 1.75 - distance / 100.0;
+			if (range_factor < 1.25)
+				range_factor = 1.25;
+
+
+			bool can_run_away = ship->speed_max > range_factor * vmax;
+
+			// and you only need to be scared, if you've not so many crew (compared to the enemy)
+			bool few_crew = t->crew/t->crew_max > scare_crew_factor && t->crew > scare_owncrew_minimum;
+
+			// be scared if you're out of firing range
+			double d = intercept_abort_range_factor * option_range[state][0];
+			if (d < 400)
+				d = 400;
+			bool out_of_range = distance > d;
+			// or be scared if you're *very* close.
+			bool too_close = distance < scare_close_distance;
+			bool bad_range = out_of_range | (too_close & can_run_away);
+
+			if (!ship->isInvisible())		// only be scared if you're visible
+			{
+				// some conditions to be scared about:
+				if ( too_fast_away |
+					(too_fast_approach & can_run_away & few_crew) |
+					bad_range)
+				{
+					// well... only if the enemy isn't faster than you, otherwise, evading or running
+					// away doesn't help you.
+					// and, only if the enemy has lots of life left (say, 6 life), or you only a small fraction of life.
+					// and, if you're cloaked you don't have to worry either
+					// and, if you're not within fire-range
+					
+
+					double d = 2.0 * option_range[state][0];
+					if (d > 1500)
+						d = 1500;
+					if (d < 400)
+						d = 400;
+					
+					// evade the enemy .. and that's only needed, if the enemy is relatively close.
+					if (distance < d)
+					{
+						double b = t->vel.atan();//ship->trajectory_angle(ship->target);
+						double a = ship->angle - b;
+						while (a < -PI)	a += PI2;
+						while (a > PI)	a -= PI2;
+						
+						if (a > 0)
+							angle_aim = b + scare_evade_angle*PI;
+						else
+							angle_aim = b - scare_evade_angle*PI;
+					}
+				}
+			}
+		}
+
+		// --------------------- END OF ATTACK ANALYSIS -----------------
 
 		// if aim is good, you can fire.
 		// that's checked here...
@@ -1237,17 +1244,18 @@ void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 	evasion_angle_change = (0.4 + random(0.2)) * PI;
 
 	// lower means, more cowardly
-	intercept_abort_speed_factor = 0.3 + random(0.2);
+	intercept_abort_speed_factor = 0.5 + random(0.4);
+	intercept_abort_range_factor = 0.6 + random(0.3);
 
 	// scareness: when an attack is aborted..
 	scare_crew_factor = 0.25 + random(0.1);
 	scare_owncrew_minimum = 4 + random(4);
 	scare_close_distance = 150 + random(100);
-	scared_enemyship_speed_factor = 0.85 + random(0.1);
 
 	// out of range (shoot or not, the further you are, the smaller the chance).
 	out_of_range_multiplier = 0.1 + random(0.1);	// smaller means, less range
 
+	scare_evade_angle = 0.4 + random(0.4);
 
 
 
