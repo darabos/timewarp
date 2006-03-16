@@ -972,12 +972,12 @@ void GamePlanetscan::init()
 		image32bit->w/2, image32bit->h/2,
 		image32bit->w/2 - 2, makecol(255,255,255));
 	
-	dummy  = new SpaceSprite(image32bit, SpaceSprite::IRREGULAR | SpaceSprite::MASKED | SpaceSprite::NO_AA);
+	dummy  = new SpaceSprite(image32bit, SpaceSprite::MASKED | SpaceSprite::NO_AA);
 		
 	Vector2 opos = 0.5 * map_size;
 	SpaceSprite *color_map, *spec_map;
 
-	color_map  = new SpaceSprite(map_bmp, SpaceSprite::IRREGULAR | SpaceSprite::MASKED );
+	color_map  = new SpaceSprite(map_bmp, SpaceSprite::MASKED );
 
 	spec_map = 0;
 	int aPlanetUsespec = 0;

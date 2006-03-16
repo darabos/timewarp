@@ -441,12 +441,11 @@ protected:
 
 	//char *type;
 	int references;
-	char *attributes;
+//	char *attributes;
 	enum { DEALLOCATE_IMAGE = 0x01, DEALLOCATE_MASK = 0x02 };
 public:
 	unsigned int general_attributes;
 	enum {
-		IRREGULAR           = 0x002, 
 		MIPMAPED            = 0x004, 
 
 		MASKED              = 0x100, 

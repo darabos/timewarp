@@ -669,7 +669,7 @@ void ShipData::load_datafile(DATAFILE *data)
 	// load ship panel
 	if (num_panel_bitmaps < 2)
 		tw_error("Too few ship panel bitmaps");
-	spritePanel = new SpaceSprite(&data[index], num_panel_bitmaps, SpaceSprite::IRREGULAR);
+	spritePanel = new SpaceSprite(&data[index], num_panel_bitmaps);
 	index += num_panel_bitmaps;
 
 	// load ship sprites
@@ -784,8 +784,8 @@ void ShipData::load_directory(char *dirname)
 	int basic_attrib = SpaceSprite::MASKED;
 	// and mipmapped? nah.
 
-	// load the ship panel sprites. This sprite are irregular by default, because the bitmaps have different sizes.
-	spritePanel = load_sprite("PanelBitmaps", dirname, basic_attrib | SpaceSprite::IRREGULAR);
+	// load the ship panel sprites.
+	spritePanel = load_sprite("PanelBitmaps", dirname, basic_attrib);
 
 	// load ship sprites
 	spriteShip = load_sprite("ShipSprites", dirname, basic_attrib);

@@ -43,7 +43,7 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 
 	smask = new PMASK*			[count];
 	sbitmap[0] = new BITMAP*		[count];
-	attributes = new char	[count];
+//	attributes = new char	[count];
 
 	//w = image->w;
 	//h = image->h;
@@ -55,7 +55,7 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 	color_correct_bitmap(bmp, general_attributes & MASKED);
 	smask[i] = create_allegro_pmask(bmp);
 	sbitmap[0][i] = bmp;
-	attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+//	attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 
 	if (!sbitmap[0][0])
 	{
@@ -197,7 +197,7 @@ Planet *create_planet( Vector2 position )
 		
 		k = planetlist[tw_random(Nplanets)];
 		
-		color_map  = new SpaceSprite(&rawdata[k], 1, SpaceSprite::IRREGULAR | SpaceSprite::MASKED );
+		color_map  = new SpaceSprite(&rawdata[k], 1, SpaceSprite::MASKED );
 
 		// first, determine the spec map name from the color name, by
 		// replacing the last few characters.
@@ -213,7 +213,7 @@ Planet *create_planet( Vector2 position )
 			tw_error("Cannot find the specular map of the planet, or not a bmp");
 		}
 		// create a sprite
-		spec_map = new SpaceSprite(datapart, 1, SpaceSprite::IRREGULAR);
+		spec_map = new SpaceSprite(datapart, 1);
 		
 		unload_datafile(rawdata);
 		
@@ -238,7 +238,7 @@ Planet *create_planet( Vector2 position )
 			image32bit->w/2, image32bit->h/2,
 			image32bit->w/2 - 2, makecol(255,255,255));
 		
-	    dummy  = new SpaceSprite(image32bit, SpaceSprite::IRREGULAR | SpaceSprite::MASKED);
+	    dummy  = new SpaceSprite(image32bit, SpaceSprite::MASKED);
 		
 		double tilt, spin, sun_hangle, sun_vangle;
 		tilt = tw_random(-40.0, 40.0);

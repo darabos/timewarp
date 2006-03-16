@@ -37,13 +37,6 @@ int string_to_sprite_attributes ( const char *s, int recommended ) {STACKTRACE
 		a &=~SpaceSprite::MIPMAPED;
 	}
 
-	if (strstr(s, "+irregular")) {
-		a |= SpaceSprite::IRREGULAR;
-	}
-	if (strstr(s, "-irregular")) {
-		a &=~SpaceSprite::IRREGULAR;
-	}
-
 	if (strstr(s, "+masked")) {
 		a |= SpaceSprite::MASKED;
 	}
@@ -380,10 +373,10 @@ void SpaceSprite::change_color_depth(int newbpp) {STACKTRACE
 
 				convert_bitmap(sbitmap[l][i], tmp, (general_attributes & MASKED) ? AA_MASKED : 0);
 				
-				if (attributes[i] & DEALLOCATE_IMAGE)
-					destroy_bitmap(sbitmap[l][i]);
+//				if (attributes[i] & DEALLOCATE_IMAGE)
+//					destroy_bitmap(sbitmap[l][i]);
 
-				attributes[i] |= DEALLOCATE_IMAGE;
+//				attributes[i] |= DEALLOCATE_IMAGE;
 				sbitmap[l][i] = tmp;
 			}
 		}
@@ -425,8 +418,6 @@ void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
 
 Vector2 SpaceSprite::size(int i)
 {
-	// in case the sprite is irregular, you cannot return a default size, but must check
-	// each bitmap size.
 
 	BITMAP *b;
 	b = get_bitmap(i);
@@ -492,6 +483,10 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	general_attributes = _attributes;
 	bpp = videosystem.bpp;
 
+	general_attributes |= SpaceSprite::NO_AA;
+	general_attributes |= SpaceSprite::ALPHA;
+	general_attributes |= SpaceSprite::DITHER;
+
 	// this is moved lower...
 //	if (obpp != bpp)
 //		tmp = create_bitmap_ex(obpp, bw, bh);
@@ -504,7 +499,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 
 	smask = new PMASK*[count];
 	sbitmap[0] = new BITMAP*    [count];
-	attributes  = new char [count];
+//	attributes  = new char [count];
 
 	for(i = 0; i < sprite_count; i += 1)
 	{
@@ -606,13 +601,13 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 //			m[j + (i * rotations)] = create_allegro_pmask(tmp);
 			
 			sbitmap[0][index] = 0;//tmp;
-			attributes[j + (i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+//			attributes[j + (i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 			}
 		int index = i * rotations;
 		smask[index] = 0;
 //		m[(i * rotations)] = create_allegro_pmask(bmp);
 		sbitmap[0][index] = bmp;
-		attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+//		attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
 
 //	if (tmp)
@@ -634,68 +629,6 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 		tw_error("Basic sprite shape expected, but doesn't exist");
 	}
 
-/*	THE MAIN ROUTINE IS GENERALIZED, BECAUSE A MIX OF 2 TYPES JUST CONFUSING, AND NOT NEEDED ANYMORE
-	return;//end of normal/masked/autorotated
-
-	irregular:
-
-	if (rotations != 1) {tw_error (" irregular SpaceSprites are not permitted to be autorotated");}
-
-	smask = new PMASK*[count];
-	sbitmap[0] = new BITMAP*    [count];
-	attributes  = new char [count];
-
-	for(i = 0; i < sprite_count; i += 1) {
-		switch (images[i].type) {
-			case DAT_RLE_SPRITE: {
-				w = ((RLE_SPRITE *)images[i].dat)->w;
-				h = ((RLE_SPRITE *)images[i].dat)->h;
-				obpp = ((RLE_SPRITE *)images[i].dat)->color_depth;
-				if (!tmp) tmp = create_bitmap_ex ( obpp, w, h);
-				if (general_attributes & MASKED) clear_to_color(tmp, bitmap_mask_color(tmp));
-				draw_rle_sprite(tmp, (RLE_SPRITE *)(images[i].dat), 0, 0);
-				if (general_attributes & ALPHA) handle_alpha_load(tmp);
-				if (bpp == obpp) {
-					bmp = tmp;
-					tmp = NULL;
-				}
-				else {
-					bmp = create_bitmap_ex ( bpp, w, h);
-
-					// added, otherwise maybe the "convert" skips masked parts in
-					// tmp, and those are then undefined in bmp.
-					if (general_attributes & MASKED)
-						clear_to_color(bmp, bitmap_mask_color(bmp));
-
-					convert_bitmap(tmp, bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
-					destroy_bitmap(tmp);
-					tmp = NULL;
-					}
-				}
-			break;
-			case DAT_BITMAP: {
-				if (general_attributes & ALPHA) handle_alpha_load((BITMAP *)(images[i].dat));
-				w = ((BITMAP *)images[i].dat)->w;
-				h = ((BITMAP *)images[i].dat)->h;
-				bmp = create_bitmap_ex ( bpp, w, h);
-				convert_bitmap((BITMAP *)images[i].dat, bmp, general_attributes & MASKED);
-				}
-			break;
-			}
-		color_correct_bitmap(bmp, general_attributes & MASKED);
-		smask[(i * rotations)] = 0;//create_allegro_pmask(bmp);
-		sbitmap[0][(i * rotations)] = bmp;
-		attributes[(i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
-		}
-
-	if (tmp)
-	{
-		destroy_bitmap(tmp);
-		tmp = 0;
-	}
-
-	return;//end of irregular/masked
-	*/
 }
 
 SpaceSprite::SpaceSprite(SpaceSprite &old) {
@@ -712,7 +645,7 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 	sbitmap[0] = new BITMAP*    [count];
 
 	references = 0;
-	attributes  = new char [count];
+//	attributes  = new char [count];
 	general_attributes = old.general_attributes;
 
 	count_base = old.count_base;
@@ -730,7 +663,7 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 		}
 
 		smask[i] = 0;//create_allegro_pmask(bmp);
-		attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+//		attributes[i] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
 	for (l = 1; l < MAX_MIP_LEVELS; l += 1)
 	{
@@ -811,8 +744,8 @@ SpaceSprite::~SpaceSprite() {
 		}
 	}
 
-	delete[] attributes;
-	attributes = 0;
+//	delete[] attributes;
+//	attributes = 0;
 	return;
 }
 
@@ -1264,7 +1197,7 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 
 	smask = new PMASK*[count];
 	sbitmap[0] = new BITMAP*    [count];
-	attributes  = new char [count];
+//	attributes  = new char [count];
 
 	for ( i = 0; i < sprite_count; ++i )
 	{
@@ -1305,14 +1238,14 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 			smask[index] = 0;
 			
 			sbitmap[0][index] = 0;//tmp;
-			attributes[j + (i * rotations)] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+//			attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 		}
 
 		int index = i * rotations;
 		smask[index] = 0;
 
 		sbitmap[0][index] = bmp;
-		attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
+//		attributes[index] = DEALLOCATE_IMAGE | DEALLOCATE_MASK;
 
 	}
 

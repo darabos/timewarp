@@ -274,34 +274,6 @@ void SubGame::init(Log *_log)
 
 	// start copying stuff ...
 
-	/*
-	//melee = maingame->melee;	// this is a global variable
-
-	panelSprite             = maingame->panelSprite;
-	kaboomSprite            = maingame->kaboomSprite;
-	hotspotSprite           = maingame->hotspotSprite;
-	sparkSprite             = maingame->sparkSprite;
-	asteroidExplosionSprite = maingame->asteroidExplosionSprite;
-	asteroidSprite          = maingame->asteroidSprite;
-	planetSprite            = maingame->planetSprite;
-	xpl1Sprite              = maingame->xpl1Sprite;
-	planet_victory			= maingame->planet_victory;
-	*/
-	/*
-	meleedata.panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
-	meleedata.kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	meleedata.hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-	meleedata.sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED | SpaceSprite::MATCH_SCREEN_FORMAT);
-	meleedata.asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
-	meleedata.asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
-	meleedata.planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
-	meleedata.xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MIPMAPED);
-		*/
-	
 
 	set_config_file("client.ini");
 	msecs_per_fps		= maingame->msecs_per_fps;

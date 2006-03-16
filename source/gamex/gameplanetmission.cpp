@@ -287,24 +287,6 @@ offset	size	format		data
 	if (!is_paused()) pause();
 
 	text_mode(-1);
-	/*
-	if (!melee) melee = load_datafile("melee.dat");
-	if (!melee) tw_error("Error loading melee data\n");
-
-	panelSprite             = new SpaceSprite(&melee[MELEE_PANEL], PANEL_FRAMES, SpaceSprite::IRREGULAR);
-	kaboomSprite            = new SpaceSprite(&melee[MELEE_KABOOM], KABOOM_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT | SpaceSprite::MIPMAPED);
-	hotspotSprite           = new SpaceSprite(&melee[MELEE_HOTSPOT], HOTSPOT_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT | SpaceSprite::MIPMAPED);
-	sparkSprite             = new SpaceSprite(&melee[MELEE_SPARK], SPARK_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT | SpaceSprite::MIPMAPED);
-	asteroidExplosionSprite = new SpaceSprite(&melee[MELEE_ASTEROIDEXPLOSION], ASTEROIDEXPLOSION_FRAMES);
-	asteroidSprite          = new SpaceSprite(&melee[MELEE_ASTEROID], ASTEROID_FRAMES);
-	planetSprite            = new SpaceSprite(&melee[MELEE_PLANET], PLANET_FRAMES);
-	xpl1Sprite              = new SpaceSprite(&melee[MELEE_XPL1], XPL1_FRAMES,
-		SpaceSprite::ALPHA | SpaceSprite::MASKED | SpaceSprite::MATCH_SCREEN_FORMAT | SpaceSprite::MIPMAPED);
-	planet_victory = (Music*) (melee[MELEE_PLANET+PLANET_FRAMES].dat);
-	*/
 
 	set_config_file("client.ini");
 	msecs_per_fps = get_config_int("View", "FPS_Time", 200);

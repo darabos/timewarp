@@ -606,7 +606,7 @@ void GameHyperspace::init()
 		// this defaults to a 32 bit depth (doh) !!
 		bool vidmem = true;	// try to store the sprites in video-memory, for speed
 		// too bad; true or false makes no difference...
-		spr[i] = create_sprite( sprname, SpaceSprite::MASKED | SpaceSprite::IRREGULAR, 1, 32, sprscale, vidmem );
+		spr[i] = create_sprite( sprname, SpaceSprite::MASKED, 1, 32, sprscale, vidmem );
 		
 
 		hyperexpl->addlevel(spr[i], depthfactor, period, wait, density);

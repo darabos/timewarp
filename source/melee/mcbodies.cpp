@@ -301,7 +301,6 @@ Stars2::Stars2()
 		else for (i = 0; (stardat[i].type == DAT_RLE_SPRITE) || (stardat[i].type == DAT_BITMAP); i += 1) ;
 		starpics = new SpaceSprite(stardat, i, 
 			SpaceSprite::MASKED | 
-			SpaceSprite::IRREGULAR | 
 			SpaceSprite::MIPMAPED
 		);
 		unload_datafile(stardat);
@@ -454,7 +453,6 @@ Stars::Stars()
 		pic[i] = new SpaceSprite(&stardat[i], 1, 
 			SpaceSprite::ALPHA | 
 			SpaceSprite::MASKED | 
-			SpaceSprite::IRREGULAR | 
 			SpaceSprite::MIPMAPED
 		);
 	}
