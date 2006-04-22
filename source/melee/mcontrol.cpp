@@ -205,6 +205,19 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 			color_correct_bitmap( panel, 0 );
 
 			unload_datafile( data );
+		} else {
+			char tmp[512];
+			strcpy(tmp, type->data->file);
+			
+			char *dot = strrchr(tmp, '.');
+			if (dot)
+			{
+				*dot = 0;
+			}
+			
+			strcat(tmp, "/panel_01.bmp");
+			// it's a directory I suppose - load panel directly
+			panel = load_bitmap(tmp, 0);
 		}
 
 		if( selectDialog[SELECT_DIALOG_PIC].dp ) destroy_bitmap( (BITMAP*)selectDialog[SELECT_DIALOG_PIC].dp );

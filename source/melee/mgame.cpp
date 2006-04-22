@@ -1450,26 +1450,23 @@ void Game::play()
 			
 			int t = get_time();
 			
-			NetLog *l = (NetLog*) glog;
-			if (l->type == Log::log_net)
-			{
-				l->flush_noblock();
-				
-				l->recv_noblock();		// receive stuff, if you can
-				
-			}
-			events.handle();	// this will read events. You send events during the game.
-			// if all "start-iterations" are set, then they're all_ready.
-			
-			// Note, that the IF statement ensures, that you do not block the game by waiting
-			// for (networked) input. This means, that graphics won't be blocked: otherwise,
-			// graphics of this user can be delayed by graphics of another user, resulting in
-			// a pretty slow framerate.
-			
 			// wait till all events are ready...
 			int count_idle = 0;
+
 			while (!events.all_ready())
 			{
+				NetLog *l = (NetLog*) glog;
+				if (l->type == Log::log_net)
+				{
+					l->flush_noblock();		// send stuff, if you can.
+					
+					l->recv_noblock();		// receive stuff, if you can.
+					
+				}
+				events.handle();	// this will read events. You send events during the game.
+				// if all "start-iterations" are set, then they're all_ready.
+			
+			
 				idle(1);
 				
 				++count_idle;
@@ -1646,7 +1643,9 @@ void Game::play()
 			
 			// ALWAYS send/recv at end.
 			// this is the best place for this, in FRONT of the animation, cause
-			// it's best to send data BEFORE an animation starts...
+			// it's best to send data BEFORE an animation starts... so that the network can send data
+			// to the other computers while the animation runs - then there's less waiting time when
+			// the calculate starts.
 			
 			// if you don't have to be careful about your connection speed.
 			if (glog->type == Log::log_net)
