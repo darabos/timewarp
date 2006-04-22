@@ -50,6 +50,7 @@ public:
 IDENTITY(ImperialBlade);
   // blade. a laser that handles non-integer damage and splits victim in two after kill
 
+  double old_length;
   double res;
   ImperialKatana* katana;
   
@@ -58,7 +59,6 @@ IDENTITY(ImperialBlade);
     double ldamage, int lfcount, SpaceLocation *opos, double rel_x, double rel_y,
     bool osinc_angle = false );
 
-  virtual void collide( SpaceObject* other );
   virtual void inflict_damage( SpaceObject* other );
 };
 
@@ -386,19 +386,20 @@ ImperialBlade::ImperialBlade( ImperialKatana *creator, double langle, int lcolor
   double lrange, double ldamage, int lfcount, SpaceLocation *opos, double rel_x,
   double rel_y, bool osinc_angle ):
 Laser( creator, langle, lcolor, lrange, (int)ldamage, lfcount, opos, Vector2(rel_x,rel_y), osinc_angle ),
-  res( ldamage - (int)ldamage ), katana( creator ){
+  res( ldamage - (int)ldamage ), katana( creator )
+{
+
+	// store original length (to undo length shortening on collision)
+	old_length = length;
 }
 
-void ImperialBlade::collide( SpaceObject* other ){
-	STACKTRACE
-  double old_length = length;
-  SpaceLine::collide( other );
-  length = old_length;
-}
 
-void ImperialBlade::inflict_damage( SpaceObject *other ){
-	STACKTRACE
+void ImperialBlade::inflict_damage( SpaceObject *other )
+{
+
+	length = old_length;
   if( !other->exists() ) return;
+
 
   katana->residualDamage += res;
   if( katana->residualDamage >= 1 ){

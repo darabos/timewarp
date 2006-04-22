@@ -1297,22 +1297,18 @@ double SpaceLine::collide_testdistance(SpaceObject *o)
 	//return;
 }
 
+/*
 void SpaceLine::collide(SpaceObject *o)
 {
 	STACKTRACE;
 	double old_length = length;
-	/*
-  
-	if((!canCollide(o)) || (!o->canCollide(this)))
-		return;
 
-	length = o->collide_ray(normal_pos(), normal_pos() + edge(), length);
-	*/
 	set_length(collide_testdistance(o));
 	if (length != old_length)
 		inflict_damage(o);
 	return;
 }
+*/
 
 void Physics::destroy_all() {
 	STACKTRACE
@@ -2054,19 +2050,23 @@ void Physics::check_linecollision(SpaceLine *l)
 	Vector2 center = normalize(lineorigin + offset, map_size);
 
 	Query q;
-	for (q.begin(l, center, OBJECT_LAYERS, 96 + distance/2, QUERY_OBJECT);
-			q.currento && l->exists(); q.next())
+	for (q.begin(l, center, OBJECT_LAYERS, 96 + distance/2, QUERY_OBJECT); q.currento && l->exists(); q.next())
 	{
-		double d;
-		d = l->collide_testdistance(q.currento);
-		// this is the distance to the point of impact
-
-		// for long lines (eg chmmr laser), and several objects closeby, there can be >1 points of impact.
-		// the point that's closest by makes most sense.s
-		if (d < distance)
+		if (l->canCollide(q.currento))
 		{
-			o = q.currento;
-			distance = d;
+			
+			double d;
+			d = l->collide_testdistance(q.currento);
+			// this is the distance to the point of impact
+			
+			// for long lines (eg chmmr laser), and several objects closeby, there can be >1 points of impact.
+			// the point that's closest by makes most sense.s
+			if (d < distance)
+			{
+				o = q.currento;
+				distance = d;
+			}
+			
 		}
 	}
 	q.end();

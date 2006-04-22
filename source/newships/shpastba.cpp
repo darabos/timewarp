@@ -113,13 +113,15 @@ IDENTITY(BasiliskAimline);
 private:
 	double angle_range;
 	int oncolor, offcolor;
+	int len;
 
 protected:
 	AstromorphBasilisk* ship;
 
 public:
 	virtual void calculate();
-	virtual void collide(SpaceObject *o);
+	//virtual void collide(SpaceObject *o);
+	virtual void inflict_damage( SpaceObject* other );
 
 	BasiliskAimline::BasiliskAimline(AstromorphBasilisk *creator, double langle, 
 		int ooffcolor, int ooncolor, double lrange, SpaceLocation *opos, 
@@ -136,6 +138,8 @@ BasiliskAimline::BasiliskAimline(AstromorphBasilisk *creator, double langle,
 	angle_range = oangle_range;
 	oncolor = ooncolor;
 	offcolor = ooffcolor;
+
+	len = length;
 
 	ship = creator;
 	
@@ -185,20 +189,16 @@ void BasiliskAimline::calculate()
 
 // ***************************************************************************
 
-void BasiliskAimline::collide(SpaceObject *o)
+void BasiliskAimline::inflict_damage( SpaceObject* other )
 {
-	STACKTRACE;
+	if(target == NULL && other->isShip())
+	{
+		target = other;
 
-	if (  *(int*)(o) < 0x01000000 )
-		tw_error("Error in pointer addresss...");
-  
-	if((!canCollide(o)) || (!o->canCollide(this)))
-		return;
+		// also restore laser length
+		length = len;
+	}
 
-	if(target == NULL && o->isShip())
-		target = o;
-
-	
 	return;
 }
 

@@ -430,7 +430,7 @@ class SpaceLine : public SpaceLocation {
 	void set_length(double d);
 
 	virtual void animate(Frame *space);
-	virtual void collide(SpaceObject *o);
+	//virtual void collide(SpaceObject *o);
 	virtual void inflict_damage(SpaceObject *other);
 	virtual void calculate();
 

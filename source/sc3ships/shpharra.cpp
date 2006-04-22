@@ -57,7 +57,8 @@ IDENTITY(LassoLaser);
 
   public:
   virtual void calculate();
-  virtual void collide(SpaceObject *o);
+  //virtual void collide(SpaceObject *o);
+	virtual void inflict_damage( SpaceObject* other );   // does not inflict damage
   LassoLaser (LassoMissile *oLeft ,LassoMissile *oRight,Ship *oship);
 };
 
@@ -200,31 +201,22 @@ void LassoLaser::calculate()
   oldlen[0] = length;
 }
 
-void LassoLaser::collide(SpaceObject *o)
+void LassoLaser::inflict_damage( SpaceObject* other )
 {
-  double old_length = length;
-  double old_oldlen;
-  int collison = FALSE;
-
-  if((!canCollide(o)) || (!o->canCollide(this)))
-    return;
-  for (int i=0; i < BCC ; i++) {
-  old_oldlen = o->collide_ray(Vector2(oldnx[i], oldny[i]), Vector2(oldnx[i] + oldex[i],
-    oldny[i] + oldey[i]), oldlen[i]);
-  collison = (collison || (old_oldlen != oldlen[i]));
-  }
-  length = o->collide_ray(normal_pos(), normal_pos() + edge(), length);
-  if ( (length == old_length) && (!collison) )
-    return;
-
-  play_sound2(LeftMissile->data->sampleExtra[0]);
-
-  if ((LeftMissile->exists()) && (LeftMissile->sameShip(this)) && (!snapped))
-    LeftMissile->changeDirection(normalize(LeftMissile->get_angle()+PI/2,PI2));
-  if ((RightMissile->exists()) && (RightMissile->sameShip(this)) && (!snapped))
-    RightMissile->changeDirection(normalize(RightMissile->get_angle()-PI/2,PI2));
-  state = 0;
-  snapped = TRUE;
+	Laser::inflict_damage(other);
+	
+	
+	play_sound2(LeftMissile->data->sampleExtra[0]);
+	
+	if ((LeftMissile->exists()) && (LeftMissile->sameShip(this)) && (!snapped))
+		LeftMissile->changeDirection(normalize(LeftMissile->get_angle()+PI/2,PI2));
+	
+	if ((RightMissile->exists()) && (RightMissile->sameShip(this)) && (!snapped))
+		RightMissile->changeDirection(normalize(RightMissile->get_angle()-PI/2,PI2));
+	
+	die();
+	
+	snapped = TRUE;
 }
 
 

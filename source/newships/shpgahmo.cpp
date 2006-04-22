@@ -123,7 +123,9 @@ public:
 	GahmurTractor(GahmurMonitor *ocreator, double langle, int lcolor, double lrange, double ldamage,
 		int lfcount, SpaceLocation *opos, Vector2 rpos, bool osinc_angle);
 	virtual void inflict_damage(SpaceObject *other);
-	virtual void collide(SpaceObject *other);
+
+	virtual int canCollide(SpaceLocation *other);
+
 	virtual void calculate();
 	GahmurMonitor* creator;
 	int explosionSpriteIndex;
@@ -189,11 +191,15 @@ void GahmurTractor::calculate()
 }
 
 
-void GahmurTractor::collide(SpaceObject* other) {
-	STACKTRACE;
-	if(other->isShot()) return;
-	if(other->isLine()) return;
-	Laser::collide(other);
+int GahmurTractor::canCollide(SpaceLocation *other)
+{
+	if(other->isShot())
+		return false;
+
+	if(other->isLine())
+		return false;
+
+	return Laser::canCollide(other);
 }
 
 
