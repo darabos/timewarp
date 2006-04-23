@@ -26,6 +26,52 @@ REGISTER_FILE
 int auto_unload = false;
 
 
+char *create_filename(const char *base_directory, const char *file_name)
+{
+	static char result[512];
+
+	if (file_name[0] == '/')
+	{
+		// skip the '/' character
+		++file_name;
+
+		// use "absolute" path, wrt the game root
+		// i.e., ignore the current custom base_directory.
+		strcpy(result, file_name);
+
+	} else if (file_name[0] == '.' && file_name[1] == '.' && file_name[2] == '/')
+	{
+		// relative path
+		char tmp_dir[512];
+		strcpy(tmp_dir, base_directory);
+
+		while (file_name[0] == '.' && file_name[1] == '.' && file_name[2] == '/')
+		{
+			// skip the ../ part
+			file_name += 3;
+
+			// also reduce the base-dir:
+			char *tmp = strrchr(tmp_dir, '/');
+			if (tmp)
+				*tmp = 0;
+		}
+
+		// finally, combine the two:
+		strcpy(result, tmp_dir);
+		strcat(result, "/");
+		strcat(result, file_name);
+
+	} else {
+		// normal path
+		strcpy(result, base_directory);
+		strcat(result, "/");
+		strcat(result, file_name);
+	}
+
+	return result;
+}
+
+
 // for debugging ...
 void test_pointers()
 {
@@ -413,9 +459,7 @@ SpaceSprite *load_sprite(const char *ini_string, char *dirname, int default_attr
 
 	// the first argument is the base of the filename.
 	char base_filename[512];
-	strcpy(base_filename, dirname);
-	strcat(base_filename, "/");
-	strcat(base_filename, argv[0]);
+	strcpy(base_filename, create_filename(dirname, argv[0]));
 
 	// the second is the number of files that you should read.
 	int count = 0;
@@ -508,9 +552,7 @@ void load_sample(char *ini_string, char *dirname, int *num_weapon_samples, Sound
 
 	// base name
 	char base_filename[512];
-	strcpy(base_filename, dirname);
-	strcat(base_filename, "/");
-	strcat(base_filename, argv[0]);
+	strcpy(base_filename, create_filename(dirname, argv[0]));
 
 	// load weapon samples
 	int count = atoi(argv[1]);
@@ -828,8 +870,8 @@ void ShipData::load_directory(char *dirname)
 
 	// initialize ship victory ditty
 	
-	char modfilename[512];
-	strcpy(modfilename, get_config_string("Objects", "Ditty", ""));
+	char *modfilename;
+	modfilename = create_filename(dirname, get_config_string("Objects", "Ditty", ""));
 	moduleVictory = load_mod(modfilename);
 
 	load_sample("WeaponSamples", dirname, &num_weapon_samples, &sampleWeapon);
