@@ -1,4 +1,0 @@
-gamex/interface/planetview/list/list_backgr_y = 3
-gamex/interface/planetview/list/list_backgr_x = 5
-gamex/interface/planetview/listraces/list_backgr_y = 3
-gamex/interface/planetview/listraces/list_backgr_x = 5
