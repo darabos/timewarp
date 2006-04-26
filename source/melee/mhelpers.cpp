@@ -319,8 +319,15 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 	if ( set_gfx_mode((fullscreen ? GFX_TIMEWARP_FULLSCREEN : GFX_TIMEWARP_WINDOW), width, height, 0, 0))
 	{
 		// try 1 failed
-		if ( set_gfx_mode(GFX_TIMEWARP_FULLSCREEN, 640, 480, 0, 0))
+
+		// now, try a default setting
+		// define new dimensions
+		width = 640;
+		height = 480;
+
+		if ( set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, width, height, 0, 0))
 		{
+			/*
 			// trying default value, also failed
 			
 			const char *part1 = "Error switching to graphics mode";
@@ -340,6 +347,7 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 			window._event(&ve);
 			surface = NULL;
 			redraw();
+			*/
 			return false;
 		}
 	}
