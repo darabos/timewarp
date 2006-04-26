@@ -397,9 +397,6 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	general_attributes = _attributes;
 	bpp = videosystem.bpp;
 
-	general_attributes |= SpaceSprite::NO_AA;
-	general_attributes |= SpaceSprite::ALPHA;
-//	general_attributes |= SpaceSprite::DITHER;
 
 	// this is moved lower...
 //	if (obpp != bpp)
@@ -537,6 +534,96 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	}
 
 }
+
+
+
+
+// all the sprite-relevant information (and nothing else).
+SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, int rotations)
+{
+	count_base = sprite_count;		// real different images
+	count_rotations = rotations;	// derived rotations from each image.
+	count = sprite_count * rotations;
+	if ((rotations < 1) || (count < 1)) {tw_error("SpaceSprite::SpaceSprite - bad parameters");}
+
+	int i, j, obpp;
+
+	if (_attributes == -1) _attributes = string_to_sprite_attributes(NULL);
+
+	references = 0;
+	sbitmap = 0;
+
+	general_attributes = _attributes;
+	bpp = videosystem.bpp;
+
+
+	if (general_attributes & ALPHA) {
+		if (bpp <= 16) bpp = 16;
+		else bpp = 32;
+	}
+
+
+	smask = new PMASK*[count];
+	sbitmap = new BITMAP*    [count];
+//	attributes  = new char [count];
+
+	for ( i = 0; i < sprite_count; ++i )
+	{
+
+		BITMAP *bmp = NULL;
+		bmp = create_bitmap_ex(bpp, bmplist[i]->w, bmplist[i]->h);
+
+		if (general_attributes & MASKED)
+			clear_to_color(bmp, bitmap_mask_color(bmp));
+
+		obpp = bitmap_color_depth(bmplist[i]);
+
+		/*
+		if (obpp != bpp)
+		{
+			convert_bitmap(bmplist[i], bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
+
+		} else {
+
+			if (general_attributes & MASKED)
+				draw_sprite(bmp, bmplist[i], 0, 0);
+			else
+				blit(bmplist[i], bmp, 0, 0, 0, 0, bmp->w, bmp->h);
+		}*/
+		// this will copy, and convert if necessary.
+		blit(bmplist[i], bmp, 0, 0, 0, 0, bmp->w, bmp->h);
+
+		//color_correct_bitmap(bmp, general_attributes & MASKED);
+
+		if (general_attributes & ALPHA)
+			handle_alpha_load(bmp);
+
+
+		for (j = 1; j < rotations; j += 1)
+		{
+
+			int index = j + (i * rotations);
+			smask[index] = 0;
+			
+			sbitmap[index] = 0;
+		}
+
+		int index = i * rotations;
+		smask[index] = 0;
+
+		sbitmap[index] = bmp;
+
+	}
+
+
+	if (!sbitmap[0])
+	{
+		tw_error("Basic sprite shape expected, but doesn't exist");
+	}
+}
+
+
+
 
 SpaceSprite::SpaceSprite(SpaceSprite &old) {
 	STACKTRACE
@@ -1024,91 +1111,6 @@ BITMAP *SpaceSprite::get_bitmap(int index)
 
 
 
-
-
-// all the sprite-relevant information (and nothing else).
-SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, int rotations)
-{
-	count_base = sprite_count;		// real different images
-	count_rotations = rotations;	// derived rotations from each image.
-	count = sprite_count * rotations;
-	if ((rotations < 1) || (count < 1)) {tw_error("SpaceSprite::SpaceSprite - bad parameters");}
-
-	int i, j, obpp;
-
-	if (_attributes == -1) _attributes = string_to_sprite_attributes(NULL);
-
-	references = 0;
-	sbitmap = 0;
-
-	general_attributes = _attributes;
-	bpp = videosystem.bpp;
-
-
-	if (general_attributes & ALPHA) {
-		if (bpp <= 16) bpp = 16;
-		else bpp = 32;
-	}
-
-
-	smask = new PMASK*[count];
-	sbitmap = new BITMAP*    [count];
-//	attributes  = new char [count];
-
-	for ( i = 0; i < sprite_count; ++i )
-	{
-
-		BITMAP *bmp = NULL;
-		bmp = create_bitmap_ex(bpp, bmplist[i]->w, bmplist[i]->h);
-
-		if (general_attributes & MASKED)
-			clear_to_color(bmp, bitmap_mask_color(bmp));
-
-		obpp = bitmap_color_depth(bmplist[i]);
-
-		/*
-		if (obpp != bpp)
-		{
-			convert_bitmap(bmplist[i], bmp, (general_attributes & MASKED) ? AA_MASKED : 0);
-
-		} else {
-
-			if (general_attributes & MASKED)
-				draw_sprite(bmp, bmplist[i], 0, 0);
-			else
-				blit(bmplist[i], bmp, 0, 0, 0, 0, bmp->w, bmp->h);
-		}*/
-		// this will copy, and convert if necessary.
-		blit(bmplist[i], bmp, 0, 0, 0, 0, bmp->w, bmp->h);
-
-		//color_correct_bitmap(bmp, general_attributes & MASKED);
-
-		if (general_attributes & ALPHA)
-			handle_alpha_load(bmp);
-
-
-		for (j = 1; j < rotations; j += 1)
-		{
-
-			int index = j + (i * rotations);
-			smask[index] = 0;
-			
-			sbitmap[index] = 0;
-		}
-
-		int index = i * rotations;
-		smask[index] = 0;
-
-		sbitmap[index] = bmp;
-
-	}
-
-
-	if (!sbitmap[0])
-	{
-		tw_error("Basic sprite shape expected, but doesn't exist");
-	}
-}
 
 
 

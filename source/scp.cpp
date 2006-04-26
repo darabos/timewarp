@@ -17,7 +17,6 @@
  * - Comments added.
  */
 
-//#define INCLUDE_GAMEX
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -85,10 +84,6 @@ REGISTER_FILE
 #define SCPGUI_MUSIC   0
 #define SCPGUI_TITLE   1
 
-#ifdef INCLUDE_GAMEX
-	#include "gamex/projectx.h"
-// for future use (Rob)
-#endif
 
 Game *old_game = NULL;
 
@@ -156,9 +151,6 @@ enum {
 	MAIN_DIALOG_OPTIONS,
 	MAIN_DIALOG_HELP,
 	MAIN_DIALOG_EXIT,
-#ifdef INCLUDE_GAMEX
-	MAIN_DIALOG_FG,
-#endif
 };
 
 DIALOG mainDialog[] = {
@@ -173,10 +165,6 @@ DIALOG mainDialog[] = {
   { my_d_button_proc,  45,   255,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
   { my_d_button_proc,  45,   290,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
   { my_d_button_proc,  45,   325,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
-#ifdef INCLUDE_GAMEX
-  { my_d_button_proc, 550,   440,   50,  30,   255,  0,    0,    D_EXIT | D_SPECIAL_BUTTON,
-                                                                             0,    0,    (void *)"FG" , NULL, NULL },
-#endif
   { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 };
@@ -1821,14 +1809,6 @@ void MainMenu::doit() {STACKTRACE
 				change_teams();
 				showTitle();
 				break;
-#ifdef INCLUDE_GAMEX
-			case MAIN_DIALOG_FG:
-				disable();
-				play_fg(&scp, SCPGUI_MUSIC);
-				enable();
-				showTitle();
-				break;
-#endif
 		}
 	} while((mainRet != MAIN_DIALOG_EXIT) && (mainRet != -1));
 
@@ -2050,9 +2030,6 @@ int tw_main(int argc, char *argv[]) { STACKTRACE
 			if (!strcmp(auto_play, "net1client")) play_net1client(auto_param, auto_port);
 			if (!strcmp(auto_play, "net1server")) play_net1server(auto_param, auto_port);
 			if (!strcmp(auto_play, "net")) play_net(atoi(auto_param));
-#ifdef INCLUDE_GAMEX
-			if (!strcmp(auto_play, "fg")) play_fg(&scp, SCPGUI_MUSIC, auto_param);
-#endif
 		}
 		else {
 			mainmenu.preinit();
