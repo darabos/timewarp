@@ -1,6 +1,0 @@
-Xillz Crescent
-
-Weapon: crescent missiles
-
-Special: orbiters which apply some acceleration to the enemy to confuse him.
-
