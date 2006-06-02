@@ -11,8 +11,9 @@
 #include "../melee/mcontrol.h"
 #include "../melee/mgame.h"
 
+#include "editkeys.h"
 
-
+/*
 Control *load_player(int i) {STACKTRACE
 	char tmp[32];
 	Control *r = NULL;
@@ -23,6 +24,7 @@ Control *load_player(int i) {STACKTRACE
 		r->load("scp.ini", tmp);
 	return r;
 }
+*/
 
 // TEAMS - dialog objects
 enum {
@@ -82,7 +84,13 @@ void change_teams() {STACKTRACE
 				control_name[teamsDialog[TEAMS_DIALOG_CONTROLLIST].d1];
 			teamsDialog[TEAMS_DIALOG_PLAYERLIST].d1 += 1;
 		}
-		else if ((a == TEAMS_DIALOG_SETUP) || (a == TEAMS_DIALOG_PLAYERLIST)) {
+		else if ((a == TEAMS_DIALOG_SETUP) || (a == TEAMS_DIALOG_PLAYERLIST))
+		{
+			int iplayer = player_config[teamsDialog[TEAMS_DIALOG_PLAYERLIST].d1];
+			showTitle();
+			ControlHuman_setup(iplayer);
+			showTitle();
+			/*
 			Control *tmpc = load_player(teamsDialog[TEAMS_DIALOG_PLAYERLIST].d1);
 			if (tmpc) {
 				showTitle();
@@ -90,6 +98,7 @@ void change_teams() {STACKTRACE
 				delete tmpc;
 				showTitle();
 			}
+			*/
 		}
 		else if (a == TEAMS_DIALOG_TEAM_NUM) {
 			player_team[teamsDialog[TEAMS_DIALOG_PLAYERLIST].d1] += 1;

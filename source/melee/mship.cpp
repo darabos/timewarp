@@ -28,7 +28,6 @@ REGISTER_FILE
 #include "manim.h"
 #include "mview.h"
 
-#include "ais/ext_ai.h"
 
 /*------------------------------*
  *		Ship Class Registration *

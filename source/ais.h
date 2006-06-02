@@ -10,17 +10,9 @@
 
 const int MAX_OPTIONS  = 1024;
 
-
-//ais/c_input.cpp
-/*! \brief Human Ship Control */
-class ControlHuman : public Control
-{	
-	private:
-	bool toggle_cruise_thrust_press;
-
+struct player_keys
+{
 	int thrust;
-	bool cruise_control_thrust;
-
 	int left;
 	int right;
 	int back;
@@ -32,13 +24,29 @@ class ControlHuman : public Control
 	int closest;
 	int extra1, extra2, communicate, dec_lag, inc_lag;
 	int suicide;
+};
+
+typedef enum {key_load=1, key_write} KEY_EDIT_OPTION;
+void player_keys_load_write (player_keys *keys, const char *inifile, const char *inisection, KEY_EDIT_OPTION localoption);
+
+
+//ais/c_input.cpp
+/*! \brief Human Ship Control */
+class ControlHuman : public Control
+{	
+	private:
+	bool toggle_cruise_thrust_press;
+
+	bool cruise_control_thrust;
+
+	player_keys userkeys;
+
 	public:
 	virtual void load(const char* inifile, const char* inisection);
 	virtual void save(const char* inifile, const char* inisection);
 	virtual const char *getTypeName();
 	virtual int think();
 	ControlHuman (const char *name, int channel) ;
-	virtual void setup();
 	};
 
 //ais/c_other.cpp

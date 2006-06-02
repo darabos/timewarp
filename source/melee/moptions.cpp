@@ -9,6 +9,8 @@ REGISTER_FILE
 
 #include "../scp.h"
 #include "../gui.h"
+#include "../menu/editkeys.h"
+#include "../menu/menugeneral.h"
 
 #include "../util/aastr.h"
 
@@ -60,6 +62,7 @@ enum {
 	DIALOG_OPTIONS_VIDEO,
 	DIALOG_OPTIONS_AUDIO,
 	DIALOG_OPTIONS_CONFIG,
+	DIALOG_OPTIONS_CONFIGKEYS,
 	DIALOG_OPTIONS_KEYJAMTEST
 	};
 DIALOG options_dialog[] = {
@@ -69,7 +72,8 @@ DIALOG options_dialog[] = {
   { my_d_button_proc,  50,    90,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Video Mode", NULL, NULL },
   { my_d_button_proc,  50,   130,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Audio Settings", NULL, NULL },
   { my_d_button_proc,  50,   170,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Game && Rendering", NULL, NULL },
-  { my_d_button_proc,  50,   210,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Keyjam test", NULL, NULL },
+  { my_d_button_proc,  50,   210,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Configure keys", NULL, NULL },
+  { my_d_button_proc,  50,   250,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Keyjam test", NULL, NULL },
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,     0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 	};
@@ -96,6 +100,12 @@ void options_menu (Game *game) {STACKTRACE
 				config_menu(game);
 				}
 			break;
+
+			case DIALOG_OPTIONS_CONFIGKEYS:
+				showTitle();
+				ControlHuman_setup(0);
+				showTitle();
+				break;
 
 			case DIALOG_OPTIONS_KEYJAMTEST:
 				keyjamming_tester();

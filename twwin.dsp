@@ -277,14 +277,6 @@ SOURCE=.\source\other\lightning.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\other\luaport.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\other\luaport.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\other\nullphas.cpp
 # End Source File
 # Begin Source File
@@ -600,10 +592,6 @@ SOURCE=.\source\newships\shpayrbs.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpbahbu.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpbatde.cpp
 # End Source File
 # Begin Source File
@@ -636,15 +624,7 @@ SOURCE=.\source\newships\shpconca.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpconho.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpcrapl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpcresu.cpp
 # End Source File
 # Begin Source File
 
@@ -676,10 +656,6 @@ SOURCE=.\source\newships\shpdyzha.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpearc2.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpearc3.cpp
 # End Source File
 # Begin Source File
@@ -705,14 +681,6 @@ SOURCE=.\source\newships\shpgahmo.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpgarty.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpgerhe.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpgerra.cpp
 # End Source File
 # Begin Source File
 
@@ -768,10 +736,6 @@ SOURCE=.\source\newships\shpkatpo.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpkoaja.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpkoapa.cpp
 # End Source File
 # Begin Source File
@@ -824,10 +788,6 @@ SOURCE=.\source\newships\shpoliha.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpostdi.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpplala.cpp
 # End Source File
 # Begin Source File
@@ -845,14 +805,6 @@ SOURCE=.\source\newships\shpquawr.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpraame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpradfi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shprekas.cpp
 # End Source File
 # Begin Source File
 
@@ -916,23 +868,7 @@ SOURCE=.\source\newships\shptautu.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shptelno.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpterbi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptougr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptrige.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptulra.cpp
 # End Source File
 # Begin Source File
 
@@ -940,15 +876,7 @@ SOURCE=.\source\newships\shpulzin.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpuosli.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpuxjba.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpvenke.cpp
 # End Source File
 # Begin Source File
 
@@ -957,10 +885,6 @@ SOURCE=.\source\newships\shpvezba.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpvioge.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpvirli.cpp
 # End Source File
 # Begin Source File
 
@@ -976,19 +900,7 @@ SOURCE=.\source\newships\shpwistr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpxaaar.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpxilcr.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpxxxma.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpyevme.cpp
 # End Source File
 # Begin Source File
 
@@ -1170,6 +1082,14 @@ SOURCE=.\source\menu\editfleet.cpp
 # Begin Source File
 
 SOURCE=.\source\menu\editfleet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\editkeys.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\editkeys.h
 # End Source File
 # Begin Source File
 

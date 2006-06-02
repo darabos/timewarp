@@ -65,36 +65,36 @@ void prepareTitleScreenAssets() {
 
 
 enum {
-	MAIN_DIALOG_BOX = 0,
-	MAIN_DIALOG_NET_JOIN,
+//	MAIN_DIALOG_BOX = 0,
+	MAIN_DIALOG_NET_JOIN = 0,
 	MAIN_DIALOG_NET_HOST,
 	MAIN_DIALOG_MELEE,
 	MAIN_DIALOG_SC1ARENA,
 	MAIN_DIALOG_OTHER_GAME,
-	MAIN_DIALOG_OPTIONS,
-	MAIN_DIALOG_HELP,
-	MAIN_DIALOG_EXIT,
 	MAIN_DIALOG_EDITFLEET,
 	MAIN_DIALOG_TEAMS,
-	MELEE_EX_DIALOG_SHIPINFO
+	MAIN_DIALOG_OPTIONS,
+	MELEE_EX_DIALOG_SHIPINFO,
+	MAIN_DIALOG_HELP,
+	MAIN_DIALOG_EXIT
 
 };
 
 DIALOG mainDialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_shadow_box_proc, 40,   40,   180,  285,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+//  { d_shadow_box_proc, 40,   40,   180,  285,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { my_d_button_proc,  45,   45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Join" , NULL, NULL }, //MAIN_DIALOG_NET_JOIN
   { my_d_button_proc,  45,   80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Host" , NULL, NULL }, //MAIN_DIALOG_NET_HOST
   { my_d_button_proc,  45,   115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Melee" , NULL, NULL }, //MAIN_DIALOG_MELEE
   { my_d_button_proc,  45,   150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"SC1 Arena" , NULL, NULL }, //MAIN_DIALOG_SC1ARENA
   { my_d_button_proc,  45,   185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Other game" , NULL, NULL },
-  { my_d_button_proc,  45,   220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
-  { my_d_button_proc,  45,   255,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
-  { my_d_button_proc,  45,   290,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
-  { my_d_button_proc,  250,  115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Fleet", NULL, NULL },
-  { my_d_button_proc,  250,  150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Teams" , NULL, NULL },
-  { my_d_button_proc,  250,  185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Ship Info", NULL, NULL },//MELEE_EX_DIALOG_SHIPINFO
-  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { my_d_button_proc,  250,  45,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Fleet", NULL, NULL },
+  { my_d_button_proc,  250,  80,   170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Edit Teams" , NULL, NULL },
+  { my_d_button_proc,  250,  115,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Options", NULL, NULL },
+  { my_d_button_proc,  250,  150,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Ship Info", NULL, NULL },//MELEE_EX_DIALOG_SHIPINFO
+  { my_d_button_proc,  250,  185,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Help", NULL, NULL },
+  { my_d_button_proc,  150,  220,  170,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Exit", NULL, NULL },
+ { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 };
 
@@ -172,12 +172,14 @@ void MainMenu::doit() {STACKTRACE
 				disable();
 				play_single("Melee");
 				enable();
+				showTitle();
 				break;
 
 			case MAIN_DIALOG_SC1ARENA:
 				disable();
 				play_single("SC1 Arena");
 				enable();
+				showTitle();
 				break;
 			
 			case MAIN_DIALOG_NET_HOST:
@@ -185,6 +187,7 @@ void MainMenu::doit() {STACKTRACE
 				disable();
 				play_net(mainRet == MAIN_DIALOG_NET_HOST);
 				enable();
+				showTitle();
 				break;
 
 			case MAIN_DIALOG_OTHER_GAME:
@@ -193,15 +196,18 @@ void MainMenu::doit() {STACKTRACE
 				disable();
 				if (gname) play_single(gname);
 				enable();
+				showTitle();
 				break;
 				}
 
 			case MAIN_DIALOG_OPTIONS:
 				options_menu(NULL);
+				showTitle();
 				break;
 
 			case MAIN_DIALOG_HELP:
 				show_file("ingame.txt");
+				showTitle();
 				break;
 
 			case MAIN_DIALOG_TEAMS:
@@ -216,7 +222,9 @@ void MainMenu::doit() {STACKTRACE
 
 			case MELEE_EX_DIALOG_SHIPINFO:
 				ship_view_dialog(0, NULL);
+				showTitle();
 				break;
+
 		}
 	} while((mainRet != MAIN_DIALOG_EXIT) && (mainRet != -1));
 

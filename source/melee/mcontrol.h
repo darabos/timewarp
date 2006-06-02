@@ -37,7 +37,7 @@ class Control : public Presence
   /*! \brief keys currently pressed */
   KeyCode keys;
   /*! \brief name of instance */
-  char *iname;
+//  char *iname;
   SpaceObject *target;
   int index;
   bool valid_target(SpaceObject *t);
@@ -69,13 +69,11 @@ class Control : public Presence
   /*! \brief returns the name of the control type, like "Joystick" */
   virtual const char *getTypeName() = 0;
   /*! \brief returns the description of the control, like "NetworkGame(local)_Keyboard0" */
-  virtual char *getDescription();
+//  virtual char *getDescription();
   /*! \brief the constructor initializes ship to NULL */
   Control (const char *name, int channel) ;
   /*! \brief the destructor, which is rarely used */
   virtual ~Control () ;
-  /*! called by the GUI stuff to setup the controls (calibrate Joystick, set keys, etc.) */
-  virtual void setup();
   virtual void set_target(int i);
   virtual void target_stuff();
   virtual void animate(Frame *space);

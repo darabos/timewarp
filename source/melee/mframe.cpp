@@ -16,7 +16,6 @@ REGISTER_FILE
 #include "mship.h"
 #include "mcbodies.h"
 
-#include "ais/ext_ai.h"
 
 #include "scp.h"
 #include "melee/mnet1.h"

@@ -2,16 +2,7 @@
 /*
  * Star Control - TimeWarp
  *
- * c_input.cpp - controller input module
- *
- * 25-Jun-2002, Revision 1 by The Fly
- *
- *
- * - ControlHuman::setup() function modified. setup_key_description() 
- * is now redundant due to modifications in key_to_description(). There
- * was also a duplication of closest target setting.
- * - JOY dialog structure and function modified. Should work O.K. now.
- * - Cosmetic code changes.
+
  */
 
 #include <stdio.h>
@@ -26,141 +17,59 @@ REGISTER_FILE
 bool cruise_control = false;
 
 
-#define JOY_DIALOG_BOX          0
-#define JOY_DIALOG_TITLE        1
-#define JOY_DIALOG_CALIBRATE    2
-#define JOY_DIALOG_SWITCH       3
-#define JOY_DIALOG_DONE         4
-#define JOY_DIALOG_DESCRIPTION  5
-
-DIALOG joyDialog[] = {
-  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_box_proc,        40,   40,   200,  250,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_textbox_proc,    50,   50,   180,  30,   255,  0,    0,    0,       0,    0,    (char*)"Joystick Calibration", NULL, NULL },
-	{ my_d_button_proc,  50,   100,  180,  30,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[0], NULL, NULL },
-  { my_d_button_proc,  50,   140,  100,  30,   255,  0,    0,    D_EXIT,  0,    0,    (char*)"Next Joystick", NULL, NULL },
-  { my_d_button_proc,  160,  140,  70,   30,   255,  0,    0,    D_EXIT,  0,    0,    (char*)"Done", NULL, NULL },
-  { d_textbox_proc,    50,   180,  180,  100,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
-};
-
-void calibrate_joysticks() {
-	int i;
-	const char *cal;
-
-	if (!num_joysticks) {
-		tw_alert("No joysticks detected", "Done");
-		return;
-	}
-
-	int which_joystick = 0;
-	while (true) {
-		if(poll_joystick() != 0)
-			return;
-		if (::joy[which_joystick].flags & JOYFLAG_CALIBRATE) {
-			cal = calibrate_joystick_name(which_joystick);
-			if (cal)
-				sprintf(dialog_string[0], "Calibrate : %s", cal);
-			else
-				sprintf(dialog_string[0], "Calibrate : ?");
-		}	else
-			sprintf (dialog_string[0], "De-Calibrate");
-
-		char buffy[1024];
-		char *d = buffy;
-
-		d += sprintf(d, "Joystick %d\n\n", which_joystick);
-
-		for (i = 0; i < ::joy[which_joystick].num_sticks; i += 1) {
-			d += sprintf(d, "%s %d\n", ::joy[which_joystick].stick[i].name, i);
-		}
-
-		d += sprintf(d, "\nBUTTONS\n");
-		for (i = 0; i < ::joy[which_joystick].num_buttons; i += 1) {
-			d += sprintf(d, " %s", ::joy[which_joystick].button[i].name);
-		}
-		
-		joyDialog[JOY_DIALOG_DESCRIPTION].dp = buffy;
-		i = tw_popup_dialog(NULL,joyDialog, 1);
-		if (i == -1)
-			i = JOY_DIALOG_DONE;
-
-		switch (i) {
-			case JOY_DIALOG_SWITCH:
-				if (num_joysticks)
-					which_joystick = (which_joystick + 1) % num_joysticks; 
-			  break;
-			case JOY_DIALOG_DONE:
-				return;
-			case JOY_DIALOG_CALIBRATE:
-				if (::joy[which_joystick].flags & JOYFLAG_CALIBRATE) {
-					calibrate_joystick(which_joystick);
-					save_joystick_data("joys.ini");
-				} else {
-					delete_file("joys.ini");
-					remove_joystick();
-					install_joystick(JOY_TYPE_AUTODETECT);
-				}
-			  break;
-		}
-	}
+void player_key_edit(const char *inisection, const char *id, int *value, KEY_EDIT_OPTION option)
+{
+	if (option == key_load)
+		*value = get_config_int(inisection, id, 0);
+	else
+		set_config_int(inisection, id, *value);
 }
 
 /*! \brief load players keys 
   \param inifile with players keys
   \param inisection with players keys 
 */
-void ControlHuman::load (const char *inifile, const char *inisection) {
+void player_keys_load_write (player_keys *userkeys, const char *inifile, const char *inisection, KEY_EDIT_OPTION localoption) {
+	
 	set_config_file (inifile);
-	thrust      = get_config_int(inisection, "Thrust",      0);
-	back        = get_config_int(inisection, "Backwards",   0);
-	left        = get_config_int(inisection, "Left",        0);
-	right       = get_config_int(inisection, "Right",       0);
-	fire        = get_config_int(inisection, "Fire",        0);
-	altfire     = get_config_int(inisection, "AltFire",     0);
-	special     = get_config_int(inisection, "Special",     0);
-	next        = get_config_int(inisection, "Next_Target", 0);
-	prev        = get_config_int(inisection, "Prev_Target", 0);
-	closest     = get_config_int(inisection, "Closest_Target", 0);
-	extra1      = get_config_int(inisection, "Extra1", 0);
-	extra2      = get_config_int(inisection, "Extra2", 0);
-	communicate = get_config_int(inisection, "Communicate", 0);
-	dec_lag     = get_config_int(inisection, "DecLag", 0);
-	inc_lag     = get_config_int(inisection, "IncLag", 0);
-	suicide     = get_config_int(inisection, "Extra6", 0);
+
+	player_key_edit(inisection, "Thrust",		&userkeys->thrust, localoption);
+	player_key_edit(inisection, "Backwards",	&userkeys->back, localoption);
+	player_key_edit(inisection, "Left",			&userkeys->left, localoption);
+	player_key_edit(inisection, "Right",		&userkeys->right, localoption);
+	player_key_edit(inisection, "Fire",			&userkeys->fire, localoption);
+	player_key_edit(inisection, "AltFire",		&userkeys->altfire, localoption);
+	player_key_edit(inisection, "Special",		&userkeys->special, localoption);
+	player_key_edit(inisection, "Next_Target",	&userkeys->next, localoption);
+	player_key_edit(inisection, "Prev_Target",	&userkeys->prev, localoption);
+	player_key_edit(inisection, "Closest_Target",	&userkeys->closest, localoption);
+	player_key_edit(inisection, "Extra1",		&userkeys->extra1, localoption);
+	player_key_edit(inisection, "Extra2",		&userkeys->extra2, localoption);
+	player_key_edit(inisection, "Communicate",	&userkeys->communicate, localoption);
+	player_key_edit(inisection, "DecLag",	&userkeys->dec_lag, localoption);
+	player_key_edit(inisection, "IncLag",	&userkeys->inc_lag, localoption);
+	player_key_edit(inisection, "Extra6",	&userkeys->suicide, localoption);
+
 	return;
 }
 
-/*! \brief Save players key
-  \param inifile with players keys
-  \param inisection with players keys
- */
-void ControlHuman::save (const char *inifile, const char *inisection) {
-	set_config_file (inifile);
-	set_config_int(inisection, "Thrust",         thrust);
-	set_config_int(inisection, "Backwards",      back);
-	set_config_int(inisection, "Left",           left);
-	set_config_int(inisection, "Right",          right);
-	set_config_int(inisection, "Fire",           fire);
-	set_config_int(inisection, "AltFire",        altfire);
-	set_config_int(inisection, "Special",        special);
-	set_config_int(inisection, "Next_Target",    next);
-	set_config_int(inisection, "Prev_Target",    prev);
-	set_config_int(inisection, "Closest_Target", closest);
-	set_config_int(inisection, "Extra1", extra1);
-	set_config_int(inisection, "Extra2", extra2);
-	set_config_int(inisection, "Communicate", communicate);
-	set_config_int(inisection, "DecLag", dec_lag);
-	set_config_int(inisection, "IncLag", inc_lag);
-	set_config_int(inisection, "Extra6", suicide);
-	return;
-}
 
 /*! \brief Get control name */
 const char *ControlHuman::getTypeName() {
 	return "Keyboard/Joystick";
 }
+
+void ControlHuman::load(const char* inifile, const char* inisection)
+{
+	player_keys_load_write(&userkeys, inifile, inisection, key_load);
+}
+
+void ControlHuman::save(const char* inifile, const char* inisection)
+{
+	tw_error("should not be used?");
+	player_keys_load_write(&userkeys, inifile, inisection, key_write);
+}
+
 
 #include "../melee/mview.h"
 /*! \brief Process get input from player */
@@ -236,7 +145,7 @@ int ControlHuman::think()
 	}
 
 	// manual thrust or cruise change
-	if (key_pressed(thrust))
+	if (key_pressed(userkeys.thrust))
 	{
 		if (!cruise_control)
 		{
@@ -260,37 +169,37 @@ int ControlHuman::think()
 		r |= keyflag::thrust;
 	}
 
-	if (key_pressed(back)) r |= keyflag::back;
+	if (key_pressed(userkeys.back)) r |= keyflag::back;
 	
-	if (key_pressed(left))
+	if (key_pressed(userkeys.left))
 		r |= keyflag::left;
 	
-	if (key_pressed(right))
+	if (key_pressed(userkeys.right))
 		r |= keyflag::right;
 
-	if (key_pressed(fire))
+	if (key_pressed(userkeys.fire))
 		r |= keyflag::fire;
 
-	if (key_pressed(altfire))
+	if (key_pressed(userkeys.altfire))
 		r |= keyflag::altfire;
 
-	if (key_pressed(special))
+	if (key_pressed(userkeys.special))
 		r |= keyflag::special;
 
-	if (key_pressed(next))
+	if (key_pressed(userkeys.next))
 		r |= keyflag::next;
 
-	if (key_pressed(prev))
+	if (key_pressed(userkeys.prev))
 		r |= keyflag::prev;
 
-	if (key_pressed(closest)) r |= keyflag::closest;
-	if (key_pressed(extra1)) r |= keyflag::extra1;
-	if (key_pressed(extra2))
+	if (key_pressed(userkeys.closest)) r |= keyflag::closest;
+	if (key_pressed(userkeys.extra1)) r |= keyflag::extra1;
+	if (key_pressed(userkeys.extra2))
 		r |= keyflag::extra2;
-	if (key_pressed(communicate)) r |= keyflag::communicate;
-	if (key_pressed(dec_lag)) r |= keyflag::dec_lag;
-	if (key_pressed(inc_lag)) r |= keyflag::inc_lag;
-	if (key_pressed(suicide)) r |= keyflag::suicide;
+	if (key_pressed(userkeys.communicate)) r |= keyflag::communicate;
+	if (key_pressed(userkeys.dec_lag)) r |= keyflag::dec_lag;
+	if (key_pressed(userkeys.inc_lag)) r |= keyflag::inc_lag;
+	if (key_pressed(userkeys.suicide)) r |= keyflag::suicide;
 	return r;
 }
 
@@ -304,142 +213,3 @@ Control(name, channel)
 	cruise_control_thrust = false;
 }
 
-#define KEY_DIALOG_MODIFY    0
-#define KEY_DIALOG_OK        17
-#define KEY_DIALOG_CANCEL    18
-#define KEY_DIALOG_CALIBRATE 19
-
-DIALOG keyDialog[] = {
-  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
-  { d_textbox_proc,    0,    0,    160,  80,   255,  0,    0,    0,       0,    0,    dialog_string[0], NULL, NULL },
-  { my_d_button_proc,  60,   90,   500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[1], NULL, NULL },
-  { my_d_button_proc,  60,   120,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[2], NULL, NULL },
-  { my_d_button_proc,  60,   150,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[3], NULL, NULL },
-  { my_d_button_proc,  60,   180,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[4], NULL, NULL },
-  { my_d_button_proc,  60,   210,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[5], NULL, NULL },
-  { my_d_button_proc,  60,   240,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[6], NULL, NULL },
-  { my_d_button_proc,  60,   270,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[7], NULL, NULL },
-  { my_d_button_proc,  60,   300,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[8], NULL, NULL },
-  { my_d_button_proc,  60,   330,  500,  25,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[9], NULL, NULL },
-  { my_d_button_proc,  60,   360,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[10], NULL, NULL },
-  { my_d_button_proc,  60,   375,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[11], NULL, NULL },
-  { my_d_button_proc,  60,   390,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[12], NULL, NULL },
-  { my_d_button_proc,  60,   405,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[13], NULL, NULL },
-  { my_d_button_proc,  60,   420,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[14], NULL, NULL },
-  { my_d_button_proc,  60,   435,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[15], NULL, NULL },
-  { my_d_button_proc,  60,   450,  500,  15,   255,  0,    0,    D_EXIT,  0,    0,    dialog_string[16], NULL, NULL },
-
-  { my_d_button_proc,  180,  20,   180,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void*)"Accept Changes", NULL, NULL },
-  { d_button_proc,     180,  50,   180,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void*)"Cancel", NULL, NULL },
-  { my_d_button_proc,  360,  35,   200,  25,   255,  0,    0,    D_EXIT,  0,    0,    (void*)"Calibrate Joysticks", NULL, NULL },
-  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
-  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
-};
-
-/*! \brief setap players keys */
-void ControlHuman::setup() {
-	int i, t = 0;
-	int last = 0;
-	while (true) {
-		char *s;
-		int index = 0;
-
-		s = dialog_string[index]; index += 1;
-
-		s += sprintf(s, "Set Your Keys\nController %s", getDescription());
-		s = dialog_string[index]; index += 1;
-
-		s += sprintf ( s, "Left:           ");
-		key_to_description(left, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Right:          ");
-		key_to_description(right, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Thrust:         ");
-		key_to_description(thrust, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Backwards:      ");
-		key_to_description(back, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Fire:           ");
-		key_to_description(fire, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Special:        ");
-		key_to_description(special, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "AltFire:        ");
-		key_to_description(altfire, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Next Target:    ");
-		key_to_description(next, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Prev Target:    ");
-		key_to_description(prev, s);
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Closest Target: ");
-		key_to_description ( closest, s );
-
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Extra1: ");
-		key_to_description ( extra1, s );
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Extra2: ");
-		key_to_description ( extra2, s );
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Communicate: ");
-		key_to_description ( communicate, s );
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Decrease Lag: ");
-		key_to_description ( dec_lag, s );
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Increase Lag: ");
-		key_to_description ( inc_lag, s );
-		s = dialog_string[index]; index += 1;
-		s += sprintf ( s, "Suicide: ");
-		key_to_description ( suicide, s );
-
-		s = dialog_string[index]; index += 1;
-
-		int maxlen = 0;
-		for (i = 1; i < KEY_DIALOG_OK; i += 1) {
-			int t = strlen(dialog_string[i]);
-			if (maxlen < t) maxlen = t;
-		}
-		for (i = 1; i < KEY_DIALOG_OK; i += 1) {
-			int t = strlen(dialog_string[i]);
-			dialog_string[i][maxlen] = 0; 
-			memset(dialog_string[i]+t, ' ', maxlen-t);
-		}
-		clear_keybuf();
-		if (last < KEY_DIALOG_OK) last += 1;
-		i = tw_do_dialog(NULL, keyDialog, last);
-		if (i == -1) return;
-		if (i < KEY_DIALOG_OK) {
-			t = get_key();
-			clear_keybuf();
-		}
-		if (t == KEY_ESC) i = KEY_DIALOG_CANCEL;
-		switch (i) {
-			case 1:  left        = t; break;
-			case 2:  right       = t; break;
-			case 3:  thrust      = t; break;
-			case 4:  back	     = t; break;
-			case 5:  fire        = t; break;
-			case 6:  special     = t; break;
-			case 7:  altfire     = t; break;
-			case 8:  next        = t; break;
-			case 9:  prev        = t; break;
-			case 10: closest     = t; break;
-			case 11: extra1      = t; break;
-			case 12: extra2      = t; break;
-			case 13: communicate = t; break;
-			case 14: dec_lag     = t; break;
-			case 15: inc_lag     = t; break;
-			case 16: suicide     = t; break;
-			case KEY_DIALOG_OK:  save("scp.ini", getDescription()); return;
-			case KEY_DIALOG_CANCEL: load("scp.ini", getDescription()); return;
-			case KEY_DIALOG_CALIBRATE: calibrate_joysticks(); break;
-		}
-	}
-	return;
-}

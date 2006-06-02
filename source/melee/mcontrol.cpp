@@ -103,7 +103,7 @@ int Control::rand()
 	return (::rand() ^ ((::rand() << 12) + (::rand() <<24))) & 0x7fffffff;	// local
 	}
 	*/
-void Control::setup() {}
+
 void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE;
 	ship = ship_pointer;
 	if (ship) {
@@ -474,9 +474,9 @@ int Control::think()
 	STACKTRACE;
 	return 0;
 	}
-char *Control::getDescription() {STACKTRACE;
-	return iname;
-	}
+//char *Control::getDescription() {STACKTRACE;
+//	return iname;
+//	}
 void Control::_event(Event *e) {STACKTRACE;
 	//add code for lag increase / decrease here
 	return;
@@ -507,7 +507,7 @@ _prediction_keys(NULL)
 			error("Control::Control - invalid channel!");
 		}
 	}
-	iname = strdup(name);
+//	iname = strdup(name);
 
 	auto_update = true;	// for bots.
 
