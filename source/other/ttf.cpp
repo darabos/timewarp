@@ -388,7 +388,8 @@ static int color_render_char_props(AL_CONST FONT* f, int ch, int fg, int bg, BIT
 	    //bmp->vtable->draw_256_sprite(bmp, g, x, y);
 		draw_transparent(bmp, g, x, y);
 	} else {
-	    bmp->vtable->draw_character(bmp, g, x, y, fg);
+		int bg = -1;
+	    bmp->vtable->draw_character(bmp, g, x, y, fg, bg);
 	}
 
 	w = g->w;
