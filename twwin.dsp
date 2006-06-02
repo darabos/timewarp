@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /Zi /O1 /Op /Ob2 /I "./include" /I "./source" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /c
+# ADD CPP /nologo /G5 /MT /W3 /GX /Zi /O1 /Op /Ob2 /I "./include" /I "./source" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Op /Ob1 /I "./include" /I "./source" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /GZ /c
+# ADD CPP /nologo /G5 /MDd /W3 /Gm /GX /Zi /Op /Ob1 /I "./include" /I "./source" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "__i386__" /FR /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -365,14 +365,6 @@ SOURCE=.\source\games\ghyper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\games\gleague.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gluagame.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\games\gmissions.cpp
 # End Source File
 # Begin Source File
@@ -385,23 +377,7 @@ SOURCE=.\source\games\gplanets.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\games\gplexplr.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\games\gplhuge.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gsamp2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gsample.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gsarena.cpp
 # End Source File
 # Begin Source File
 
@@ -409,15 +385,7 @@ SOURCE=.\source\games\gsc1arena.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\games\gsidescroll.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\games\gsolar.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\games\gtrug.cpp
 # End Source File
 # Begin Source File
 
@@ -596,14 +564,6 @@ SOURCE=.\source\sc3ships\shpxchex.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\source\newships\_howto_1.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\_howto_2.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpaktgu.cpp
 # End Source File
 # Begin Source File
@@ -617,10 +577,6 @@ SOURCE=.\source\newships\shpalckr.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpalhdr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpalhha.cpp
 # End Source File
 # Begin Source File
 
@@ -728,10 +684,6 @@ SOURCE=.\source\newships\shpearc3.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpestgu.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpfiear.cpp
 # End Source File
 # Begin Source File
@@ -757,10 +709,6 @@ SOURCE=.\source\newships\shpgarty.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpgerhe.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpgeror.cpp
 # End Source File
 # Begin Source File
 
@@ -804,10 +752,6 @@ SOURCE=.\source\newships\shpimpka.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpjnkla.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpjurcu.cpp
 # End Source File
 # Begin Source File
@@ -820,15 +764,7 @@ SOURCE=.\source\newships\shpkabwe.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpkahbo.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpkatpo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpklidr.cpp
 # End Source File
 # Begin Source File
 
@@ -845,10 +781,6 @@ SOURCE=.\source\newships\shpkolfl.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpkorsi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpkorsn.cpp
 # End Source File
 # Begin Source File
 
@@ -876,10 +808,6 @@ SOURCE=.\source\newships\shpmontr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpnarlu.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpneccr.cpp
 # End Source File
 # Begin Source File
@@ -900,19 +828,7 @@ SOURCE=.\source\newships\shpostdi.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shppanav.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpphepa.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpplala.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpplane.cpp
 # End Source File
 # Begin Source File
 
@@ -952,27 +868,11 @@ SOURCE=.\source\newships\shpsclfr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpsefn2.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpstaba.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpstrsc.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shptauar.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptaubo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptauda.cpp
 # End Source File
 # Begin Source File
 
@@ -985,10 +885,6 @@ SOURCE=.\source\newships\shptaufi.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shptaugl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptauhu.cpp
 # End Source File
 # Begin Source File
 
@@ -1052,10 +948,6 @@ SOURCE=.\source\newships\shpuxjba.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpvelcr.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpvenke.cpp
 # End Source File
 # Begin Source File
@@ -1089,10 +981,6 @@ SOURCE=.\source\newships\shpxaaar.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpxilcr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpxxxas.cpp
 # End Source File
 # Begin Source File
 
@@ -1264,6 +1152,58 @@ SOURCE=.\source\jpgalleg\jpgalleg.c
 SOURCE=.\source\jpgalleg\jpgalleg.h
 # End Source File
 # End Group
+# Begin Group "menu"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\menu\config_keys.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\config_keys.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\editfleet.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\editfleet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\editteams.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\editteams.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\mainmenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\mainmenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\menuextended.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\menuextended.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\menugeneral.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\menu\menugeneral.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\source\frame.cpp
@@ -1279,6 +1219,10 @@ SOURCE=.\source\input.cpp
 # Begin Source File
 
 SOURCE=.\source\scp.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\scp.h
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -1791,10 +1735,6 @@ SOURCE=.\source\sc1ships.h
 # Begin Source File
 
 SOURCE=.\source\sc2ships.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\scp.h
 # End Source File
 # Begin Source File
 
