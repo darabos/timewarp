@@ -36,6 +36,15 @@
 #pragma disable_message (120 201 202)
 
 
+/* these are available in OpenWatcom 1.3 (12.3) */
+#if __WATCOMC__ >= 1230
+   #define HAVE_INTTYPES_H
+   #define HAVE_STDINT_H
+#else
+   #define ALLEGRO_GUESS_INTTYPES_OK
+#endif
+
+
 /* describe this platform */
 #define ALLEGRO_PLATFORM_STR  "Watcom"
 #define ALLEGRO_DOS
@@ -45,6 +54,8 @@
 #define ALLEGRO_VRAM_SINGLE_SURFACE
 
 #define ALLEGRO_LFN  0
+
+#define LONG_LONG    long long
 
 #if __WATCOMC__ >= 1100
    #define ALLEGRO_MMX
@@ -88,6 +99,10 @@
 #define _crt0_startup_flags         1
 #define _CRT0_FLAG_NEARPTR          1
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef union __dpmi_regs
 {
@@ -157,6 +172,11 @@ long _allocate_real_mode_callback(void (*handler)(__dpmi_regs *r), __dpmi_regs *
 /* memory locking macros */
 void _unlock_dpmi_data(void *addr, int size);
 
+#ifdef __cplusplus
+}
+#endif
+
+
 #define END_OF_FUNCTION(x)          void x##_end(void) { }
 #define END_OF_STATIC_FUNCTION(x)   static void x##_end(void) { }
 #define LOCK_DATA(d, s)             _go32_dpmi_lock_data(d, s)
@@ -169,4 +189,3 @@ void _unlock_dpmi_data(void *addr, int size);
 /* arrange for other headers to be included later on */
 #define ALLEGRO_EXTRA_HEADER     "allegro/platform/aldos.h"
 #define ALLEGRO_INTERNAL_HEADER  "allegro/platform/aintdos.h"
-

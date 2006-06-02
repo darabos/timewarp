@@ -19,11 +19,16 @@
 #ifndef ALLEGRO_FIXED_H
 #define ALLEGRO_FIXED_H
 
+#include "base.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
 
-typedef long fixed;
+typedef int32_t fixed;
+
+AL_VAR(AL_CONST fixed, fixtorad_r);
+AL_VAR(AL_CONST fixed, radtofix_r);
 
 #ifdef __cplusplus
    }

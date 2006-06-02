@@ -19,14 +19,13 @@
 #ifndef ALLEGRO_FMATHS_INL
 #define ALLEGRO_FMATHS_INL
 
-#ifdef __cplusplus
-   extern "C" {
-#endif
-
-
 #define ALLEGRO_IMPORT_MATH_ASM
 #include "asm.inl"
 #undef ALLEGRO_IMPORT_MATH_ASM
+
+#ifdef __cplusplus
+   extern "C" {
+#endif
 
 
 /* ftofix and fixtof are used in generic C versions of fixmul and fixdiv */
@@ -42,7 +41,7 @@ AL_INLINE(fixed, ftofix, (double x),
       return -0x7FFFFFFF;
    }
 
-   return (long)(x * 65536.0 + (x < 0 ? -0.5 : 0.5));
+   return (fixed)(x * 65536.0 + (x < 0 ? -0.5 : 0.5));
 })
 
 
@@ -102,10 +101,47 @@ AL_INLINE(fixed, fixsub, (fixed x, fixed y),
 })
 
 
-AL_INLINE(fixed, fixmul, (fixed x, fixed y),
-{
-   return ftofix(fixtof(x) * fixtof(y));
-})
+/* In benchmarks conducted circa May 2005 we found that, in the main:
+ * - IA32 machines performed faster with one implementation;
+ * - AMD64 and G4 machines performed faster with another implementation.
+ *
+ * Benchmarks were mainly done with differing versions of gcc.
+ * Results varied with other compilers, optimisation levels, etc.
+ * so this is not optimal, though a tenable compromise.
+ *
+ * Note that the following implementation are NOT what were benchmarked.
+ * We had forgotten to put in overflow detection in those versions.
+ * If you don't need overflow detection then previous versions in the
+ * CVS tree might be worth looking at.
+ *
+ * PS. Don't move the #ifs inside the AL_INLINE; BCC doesn't like it.
+ */
+#if (defined ALLEGRO_I386) || (!defined LONG_LONG)
+   AL_INLINE(fixed, fixmul, (fixed x, fixed y),
+   {
+      return ftofix(fixtof(x) * fixtof(y));
+   })
+#else
+   AL_INLINE(fixed, fixmul, (fixed x, fixed y),
+   {
+      LONG_LONG lx = x;
+      LONG_LONG ly = y;
+      LONG_LONG lres = (lx*ly);
+
+      if (lres > 0x7FFFFFFF0000LL) {
+	 *allegro_errno = ERANGE;
+	 return 0x7FFFFFFF;
+      }
+      else if (lres < -0x7FFFFFFF0000LL) {
+	 *allegro_errno = ERANGE;
+	 return 0x80000000;
+      }
+      else {
+	 int res = lres >> 16;
+	 return res;
+      }
+   })
+#endif	    /* fixmul() C implementations */
 
 
 AL_INLINE(fixed, fixdiv, (fixed x, fixed y),
@@ -131,7 +167,7 @@ AL_INLINE(int, fixfloor, (fixed x),
 
 AL_INLINE(int, fixceil, (fixed x),
 {
-   if (x > (long)(0x7FFF0000)) {
+   if (x > 0x7FFF0000) {
       *allegro_errno = ERANGE;
       return 0x7FFF;
    }

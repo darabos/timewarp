@@ -19,15 +19,18 @@
 #ifndef ALLEGRO_SYSTEM_H
 #define ALLEGRO_SYSTEM_H
 
+#include "base.h"
+#include "unicode.h"
+#include "config.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
 
-#include "base.h"
-
 struct RGB;
 struct BITMAP;
 struct GFX_VTABLE;
+struct GFX_MODE;
 
 #define ALLEGRO_ERROR_SIZE 256
 
@@ -51,10 +54,12 @@ AL_ARRAY(char, allegro_error);
 #define OSTYPE_FREEBSD     AL_ID('F','B','S','D')
 #define OSTYPE_NETBSD      AL_ID('N','B','S','D')
 #define OSTYPE_IRIX        AL_ID('I','R','I','X')
+#define OSTYPE_DARWIN      AL_ID('D','A','R','W')
 #define OSTYPE_QNX         AL_ID('Q','N','X',' ')
 #define OSTYPE_UNIX        AL_ID('U','N','I','X')
 #define OSTYPE_BEOS        AL_ID('B','E','O','S')
 #define OSTYPE_MACOS       AL_ID('M','A','C',' ')
+#define OSTYPE_MACOSX      AL_ID('M','A','C','X')
 
 AL_VAR(int, os_type);
 AL_VAR(int, os_version);
@@ -64,17 +69,36 @@ AL_VAR(int, os_multitasking);
 #define SYSTEM_AUTODETECT  0
 #define SYSTEM_NONE        AL_ID('N','O','N','E')
 
-AL_FUNC(int, install_allegro, (int system_id, int *errno_ptr, AL_METHOD(int, atexit_ptr, (AL_METHOD(void, func, (void))))));
+#if (ALLEGRO_SUB_VERSION&1)
+#define MAKE_VERSION(a, b, c) (((a)<<16)|((b)<<8)|(c))
+#else
+#define MAKE_VERSION(a, b, c) (((a)<<16)|((b)<<8))
+#endif
+
+AL_FUNC(int, _get_allegro_version, (void));
+AL_FUNC(int, _install_allegro, (int system_id, int *errno_ptr, AL_METHOD(int, atexit_ptr, (AL_METHOD(void, func, (void))))));
+
+AL_INLINE(int, install_allegro, (int system_id, int *errno_ptr, AL_METHOD(int, atexit_ptr, (AL_METHOD(void, func, (void))))),
+{
+   if (MAKE_VERSION(ALLEGRO_VERSION, ALLEGRO_SUB_VERSION, ALLEGRO_WIP_VERSION) !=
+       _get_allegro_version()) {
+      ustrzcpy(allegro_error, ALLEGRO_ERROR_SIZE, get_config_text("Library version mismatch"));
+      return !0;
+   }
+
+   return _install_allegro(system_id, errno_ptr, atexit_ptr);
+})
 #define allegro_init()  install_allegro(SYSTEM_AUTODETECT, &errno, (int (*)(void (*)(void)))atexit)
 AL_FUNC(void, allegro_exit, (void));
 
-AL_FUNC(void, get_executable_name, (char *output, int size));
 AL_PRINTFUNC(void, allegro_message, (AL_CONST char *msg, ...), 1, 2);
+AL_FUNC(void, get_executable_name, (char *output, int size));
+AL_FUNC(int, set_close_button_callback, (AL_METHOD(void, proc, (void))));
 
 
 AL_FUNC(void, check_cpu, (void));
 
-/* CPU Capabilities flags - set to 0 on non x86 capable chips */
+/* CPU Capabilities flags for x86 capable chips */
 #define CPU_ID       0x0001
 #define CPU_FPU      0x0002
 #define CPU_MMX      0x0004
@@ -84,6 +108,82 @@ AL_FUNC(void, check_cpu, (void));
 #define CPU_3DNOW    0x0040
 #define CPU_ENH3DNOW 0x0080
 #define CPU_CMOV     0x0100
+#define CPU_AMD64    0x0200
+#define CPU_IA64     0x0400
+#define CPU_SSE3     0x0800
+
+/* CPU families - PC */
+#define CPU_FAMILY_UNKNOWN  0
+#define CPU_FAMILY_I386     3
+#define CPU_FAMILY_I486     4
+#define CPU_FAMILY_I586     5
+#define CPU_FAMILY_I686     6
+#define CPU_FAMILY_ITANIUM  7
+#define CPU_FAMILY_EXTENDED 15
+/* CPUID only returns 15 bits, we need extra information from the CPU */
+/*  model to identify Pentium IV, Xeon and Athlon 64 processors. */
+
+/* CPU families - Power PC */
+#define CPU_FAMILY_POWERPC  18
+
+/* CPU models - PC */
+/* 486 */
+#define CPU_MODEL_I486DX    0
+#define CPU_MODEL_I486DX50  1
+#define CPU_MODEL_I486SX    2
+#define CPU_MODEL_I487SX    3
+#define CPU_MODEL_I486SL    4
+#define CPU_MODEL_I486SX2   5
+#define CPU_MODEL_I486DX2   7
+#define CPU_MODEL_I486DX4   8
+
+/* Intel/586 */
+#define CPU_MODEL_PENTIUM              1
+#define CPU_MODEL_PENTIUMP54C          2
+#define CPU_MODEL_PENTIUMOVERDRIVE     3
+#define CPU_MODEL_PENTIUMOVERDRIVEDX4  4
+#define CPU_MODEL_CYRIX                14
+#define CPU_MODEL_UNKNOWN              15
+
+/* AMD/586 */
+#define CPU_MODEL_K5                   0
+#define CPU_MODEL_K6                   6
+
+/* Intel/686 */
+#define CPU_MODEL_PENTIUMPROA          0
+#define CPU_MODEL_PENTIUMPRO           1
+#define CPU_MODEL_PENTIUMIIKLAMATH     3
+#define CPU_MODEL_PENTIUMII            5
+#define CPU_MODEL_CELERON              6
+#define CPU_MODEL_PENTIUMIIIKATMAI     7
+#define CPU_MODEL_PENTIUMIIICOPPERMINE 8
+#define CPU_MODEL_PENTIUMIIIMOBILE     9
+
+/* AMD/686 */
+#define CPU_MODEL_ATHLON               2
+#define CPU_MODEL_DURON                3
+
+
+/* Information when CPU_FAMILY is 15 */
+#define CPU_MODEL_PENTIUMIV            0
+#define CPU_MODEL_XEON                 2
+
+#define CPU_MODEL_ATHLON64             4
+#define CPU_MODEL_OPTERON              5
+
+/* Information for Power PC processors */
+/* these defines are taken from <mach-o/machine.h> */
+#define CPU_MODEL_POWERPC_601	       1
+#define CPU_MODEL_POWERPC_602	       2
+#define CPU_MODEL_POWERPC_603	       3
+#define CPU_MODEL_POWERPC_603e	       4
+#define CPU_MODEL_POWERPC_603ev	       5
+#define CPU_MODEL_POWERPC_604	       6
+#define CPU_MODEL_POWERPC_604e	       7
+#define CPU_MODEL_POWERPC_620	       8
+#define CPU_MODEL_POWERPC_750	       9
+#define CPU_MODEL_POWERPC_7400	       10
+#define CPU_MODEL_POWERPC_7450	       11
 
 AL_ARRAY(char, cpu_vendor);
 AL_VAR(int, cpu_family);
@@ -102,8 +202,7 @@ typedef struct SYSTEM_DRIVER
    AL_METHOD(void, get_executable_name, (char *output, int size));
    AL_METHOD(int, find_resource, (char *dest, AL_CONST char *resource, int size));
    AL_METHOD(void, set_window_title, (AL_CONST char *name));
-   AL_METHOD(int, set_window_close_button, (int enable));
-   AL_METHOD(void, set_window_close_hook, (AL_METHOD(void, proc, (void))));
+   AL_METHOD(int, set_close_button_callback, (AL_METHOD(void, proc, (void))));
    AL_METHOD(void, message, (AL_CONST char *msg));
    AL_METHOD(void, assert, (AL_CONST char *msg));
    AL_METHOD(void, save_console_state, (void));
@@ -117,12 +216,15 @@ typedef struct SYSTEM_DRIVER
    AL_METHOD(void, set_palette_range, (AL_CONST struct RGB *p, int from, int to, int retracesync));
    AL_METHOD(struct GFX_VTABLE *, get_vtable, (int color_depth));
    AL_METHOD(int, set_display_switch_mode, (int mode));
-   AL_METHOD(int, set_display_switch_callback, (int dir, AL_METHOD(void, cb, (void))));
-   AL_METHOD(void, remove_display_switch_callback, (AL_METHOD(void, cb, (void))));
    AL_METHOD(void, display_switch_lock, (int lock, int foreground));
    AL_METHOD(int, desktop_color_depth, (void));
    AL_METHOD(int, get_desktop_resolution, (int *width, int *height));
+   AL_METHOD(void, get_gfx_safe_mode, (int *driver, struct GFX_MODE *mode));
    AL_METHOD(void, yield_timeslice, (void));
+   AL_METHOD(void *, create_mutex, (void));
+   AL_METHOD(void, destroy_mutex, (void *handle));
+   AL_METHOD(void, lock_mutex, (void *handle));
+   AL_METHOD(void, unlock_mutex, (void *handle));
    AL_METHOD(_DRIVER_INFO *, gfx_drivers, (void));
    AL_METHOD(_DRIVER_INFO *, digi_drivers, (void));
    AL_METHOD(_DRIVER_INFO *, midi_drivers, (void));
@@ -137,11 +239,11 @@ AL_VAR(SYSTEM_DRIVER, system_none);
 AL_VAR(SYSTEM_DRIVER *, system_driver);
 AL_ARRAY(_DRIVER_INFO, _system_driver_list);
 
-#include "inline/system.inl"
-
 #ifdef __cplusplus
    }
 #endif
+
+#include "inline/system.inl"
 
 #endif          /* ifndef ALLEGRO_SYSTEM_H */
 

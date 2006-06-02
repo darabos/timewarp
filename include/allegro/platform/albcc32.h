@@ -30,7 +30,6 @@
 
 #pragma warn -8004  /* unused assigned value         */
 #pragma warn -8008  /* condition always met          */
-#pragma warn -8027  /* inline functions not expanded */
 #pragma warn -8057  /* unused parameter              */
 #pragma warn -8066  /* unreachable code              */
 
@@ -40,8 +39,11 @@
 #define ALLEGRO_WINDOWS
 #define ALLEGRO_I386
 #define ALLEGRO_LITTLE_ENDIAN
+#define ALLEGRO_GUESS_INTTYPES_OK
+   /* TODO: check if BCC has inttypes.h and/or stdint.h */
+#define ALLEGRO_MULTITHREADED
 
-#ifdef USE_CONSOLE
+#ifdef ALLEGRO_USE_CONSOLE
    #define ALLEGRO_CONSOLE_OK
    #define ALLEGRO_NO_MAGIC_MAIN
 #endif

@@ -19,11 +19,11 @@
 #ifndef ALLEGRO_UNICODE__H
 #define ALLEGRO_UNICODE__H
 
+#include "base.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
-
-#include "base.h"
 
 #define U_ASCII         AL_ID('A','S','C','8')
 #define U_ASCII_CP      AL_ID('A','S','C','P')
@@ -56,11 +56,11 @@ AL_FUNCPTR(int, usetc, (char *s, int c));
 AL_FUNCPTR(int, uwidth, (AL_CONST char *s));
 AL_FUNCPTR(int, ucwidth, (int c));
 AL_FUNCPTR(int, uisok, (int c));
-AL_FUNC(int, uoffset, (AL_CONST char *s, int index));
-AL_FUNC(int, ugetat, (AL_CONST char *s, int index));
-AL_FUNC(int, usetat, (char *s, int index, int c));
-AL_FUNC(int, uinsert, (char *s, int index, int c));
-AL_FUNC(int, uremove, (char *s, int index));
+AL_FUNC(int, uoffset, (AL_CONST char *s, int idx));
+AL_FUNC(int, ugetat, (AL_CONST char *s, int idx));
+AL_FUNC(int, usetat, (char *s, int idx, int c));
+AL_FUNC(int, uinsert, (char *s, int idx, int c));
+AL_FUNC(int, uremove, (char *s, int idx));
 AL_FUNC(int, utolower, (int c));
 AL_FUNC(int, utoupper, (int c));
 AL_FUNC(int, uisspace, (int c));
@@ -76,6 +76,7 @@ AL_FUNC(char *, ustrzncpy, (char *dest, int size, AL_CONST char *src, int n));
 AL_FUNC(char *, ustrzncat, (char *dest, int size, AL_CONST char *src, int n));
 AL_FUNC(int, ustrncmp, (AL_CONST char *s1, AL_CONST char *s2, int n));
 AL_FUNC(int, ustricmp, (AL_CONST char *s1, AL_CONST char *s2));
+AL_FUNC(int, ustrnicmp, (AL_CONST char *s1, AL_CONST char *s2, int n));
 AL_FUNC(char *, ustrlwr, (char *s));
 AL_FUNC(char *, ustrupr, (char *s));
 AL_FUNC(char *, ustrchr, (AL_CONST char *s, int c));
@@ -93,7 +94,11 @@ AL_FUNC(int, uvszprintf, (char *buf, int size, AL_CONST char *format, va_list ar
 AL_PRINTFUNC(int, usprintf, (char *buf, AL_CONST char *format, ...), 2, 3);
 
 #ifndef ustrdup
-   #define ustrdup(src)               _ustrdup(src, malloc)
+   #ifdef FORTIFY
+      #define ustrdup(src)            _ustrdup(src, Fortify_malloc)
+   #else
+      #define ustrdup(src)            _ustrdup(src, malloc)
+   #endif
 #endif
 
 #define ustrcpy(dest, src)            ustrzcpy(dest, INT_MAX, src)

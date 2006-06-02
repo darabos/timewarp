@@ -19,11 +19,14 @@
 #ifndef ALLEGRO_DIGI_H
 #define ALLEGRO_DIGI_H
 
+#include "base.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
 
-#include "base.h"
+struct PACKFILE;       
+
 
 #define DIGI_VOICES           64       /* Theoretical maximums: */
                                        /* actual drivers may not be */
@@ -82,19 +85,19 @@ typedef struct DIGI_DRIVER             /* driver for playing digital sfx */
    /* volume control functions */
    AL_METHOD(int,  get_volume, (int voice));
    AL_METHOD(void, set_volume, (int voice, int volume));
-   AL_METHOD(void, ramp_volume, (int voice, int time, int endvol));
+   AL_METHOD(void, ramp_volume, (int voice, int tyme, int endvol));
    AL_METHOD(void, stop_volume_ramp, (int voice));
 
    /* pitch control functions */
    AL_METHOD(int,  get_frequency, (int voice));
    AL_METHOD(void, set_frequency, (int voice, int frequency));
-   AL_METHOD(void, sweep_frequency, (int voice, int time, int endfreq));
+   AL_METHOD(void, sweep_frequency, (int voice, int tyme, int endfreq));
    AL_METHOD(void, stop_frequency_sweep, (int voice));
 
    /* pan control functions */
    AL_METHOD(int,  get_pan, (int voice));
    AL_METHOD(void, set_pan, (int voice, int pan));
-   AL_METHOD(void, sweep_pan, (int voice, int time, int endpan));
+   AL_METHOD(void, sweep_pan, (int voice, int tyme, int endpan));
    AL_METHOD(void, stop_pan_sweep, (int voice));
 
    /* effect control functions */
@@ -137,7 +140,10 @@ AL_FUNC(int, detect_digi_driver, (int driver_id));
 
 AL_FUNC(SAMPLE *, load_sample, (AL_CONST char *filename));
 AL_FUNC(SAMPLE *, load_wav, (AL_CONST char *filename));
+AL_FUNC(SAMPLE *, load_wav_pf, (struct PACKFILE *f));
 AL_FUNC(SAMPLE *, load_voc, (AL_CONST char *filename));
+AL_FUNC(SAMPLE *, load_voc_pf, (struct PACKFILE *f));
+AL_FUNC(int, save_sample, (AL_CONST char *filename, SAMPLE *spl));
 AL_FUNC(SAMPLE *, create_sample, (int bits, int stereo, int freq, int len));
 AL_FUNC(void, destroy_sample, (SAMPLE *spl));
 
@@ -167,17 +173,17 @@ AL_FUNC(void, voice_set_position, (int voice, int position));
 
 AL_FUNC(int, voice_get_volume, (int voice));
 AL_FUNC(void, voice_set_volume, (int voice, int volume));
-AL_FUNC(void, voice_ramp_volume, (int voice, int time, int endvol));
+AL_FUNC(void, voice_ramp_volume, (int voice, int tyme, int endvol));
 AL_FUNC(void, voice_stop_volumeramp, (int voice));
 
 AL_FUNC(int, voice_get_frequency, (int voice));
 AL_FUNC(void, voice_set_frequency, (int voice, int frequency));
-AL_FUNC(void, voice_sweep_frequency, (int voice, int time, int endfreq));
+AL_FUNC(void, voice_sweep_frequency, (int voice, int tyme, int endfreq));
 AL_FUNC(void, voice_stop_frequency_sweep, (int voice));
 
 AL_FUNC(int, voice_get_pan, (int voice));
 AL_FUNC(void, voice_set_pan, (int voice, int pan));
-AL_FUNC(void, voice_sweep_pan, (int voice, int time, int endpan));
+AL_FUNC(void, voice_sweep_pan, (int voice, int tyme, int endpan));
 AL_FUNC(void, voice_stop_pan_sweep, (int voice));
 
 AL_FUNC(void, voice_set_echo, (int voice, int strength, int delay));
@@ -200,6 +206,8 @@ AL_FUNC(int, read_sound_input, (void *buffer));
 AL_FUNCPTR(void, digi_recorder, (void));
 
 AL_FUNC(void, lock_sample, (struct SAMPLE *spl));
+
+AL_FUNC(void, register_sample_file_type, (AL_CONST char *ext, AL_METHOD(struct SAMPLE *, load, (AL_CONST char *filename)), AL_METHOD(int, save, (AL_CONST char *filename, struct SAMPLE *spl))));
 
 #ifdef __cplusplus
    }

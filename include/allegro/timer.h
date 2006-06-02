@@ -19,18 +19,17 @@
 #ifndef ALLEGRO_TIMER_H
 #define ALLEGRO_TIMER_H
 
+#include "base.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
-
-#include "base.h"
 
 #define TIMERS_PER_SECOND     1193181L
 #define SECS_TO_TIMER(x)      ((long)(x) * TIMERS_PER_SECOND)
 #define MSEC_TO_TIMER(x)      ((long)(x) * (TIMERS_PER_SECOND / 1000))
 #define BPS_TO_TIMER(x)       (TIMERS_PER_SECOND / (long)(x))
 #define BPM_TO_TIMER(x)       ((60 * TIMERS_PER_SECOND) / (long)(x))
-
 
 typedef struct TIMER_DRIVER
 {
@@ -46,7 +45,7 @@ typedef struct TIMER_DRIVER
    AL_METHOD(void, remove_param_int, (AL_METHOD(void, proc, (void *param)), void *param));
    AL_METHOD(int,  can_simulate_retrace, (void));
    AL_METHOD(void, simulate_retrace, (int enable));
-   AL_METHOD(void, rest, (long time, AL_METHOD(void, callback, (void))));
+   AL_METHOD(void, rest, (unsigned int tyme, AL_METHOD(void, callback, (void))));
 } TIMER_DRIVER;
 
 
@@ -65,14 +64,9 @@ AL_FUNC(int, install_param_int, (AL_METHOD(void, proc, (void *param)), void *par
 AL_FUNC(void, remove_param_int, (AL_METHOD(void, proc, (void *param)), void *param));
 
 AL_VAR(volatile int, retrace_count);
-AL_FUNCPTR(void, retrace_proc, (void));
 
-AL_FUNC(int,  timer_can_simulate_retrace, (void));
-AL_FUNC(void, timer_simulate_retrace, (int enable));
-AL_FUNC(int,  timer_is_using_retrace, (void));
-
-AL_FUNC(void, rest, (long time));
-AL_FUNC(void, rest_callback, (long time, AL_METHOD(void, callback, (void))));
+AL_FUNC(void, rest, (unsigned int tyme));
+AL_FUNC(void, rest_callback, (unsigned int tyme, AL_METHOD(void, callback, (void))));
 
 #ifdef __cplusplus
    }

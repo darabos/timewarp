@@ -23,6 +23,13 @@
 #define ALLEGRO_COLOR32
 
 
+/* for backward compatibility */
+#ifdef USE_CONSOLE
+   #define ALLEGRO_NO_MAGIC_MAIN
+   #define ALLEGRO_USE_CONSOLE
+#endif
+
+
 /* include platform-specific stuff */
 #ifndef SCAN_EXPORT
    #ifndef SCAN_DEPEND
@@ -43,12 +50,18 @@
       #include "allegro/platform/albecfg.h"
    #elif defined ALLEGRO_MPW
       #include "allegro/platform/almaccfg.h"
+   #elif defined ALLEGRO_MACOSX
+      #include "allegro/platform/alosxcfg.h"
    #elif defined ALLEGRO_QNX
       #include "allegro/platform/alqnxcfg.h"
    #elif defined ALLEGRO_UNIX
       #include "allegro/platform/alucfg.h"
    #else
       #error platform not supported
+   #endif
+
+   #ifndef SCAN_DEPEND
+      #include "allegro/platform/astdint.h"
    #endif
 #endif
 
@@ -59,9 +72,13 @@
 
    #ifndef AL_INLINE
       #ifdef __cplusplus
-         #define AL_INLINE(type, name, args, code)    static inline type name args code
+         #define AL_INLINE(type, name, args, code)    \
+            static inline type name args;             \
+            static inline type name args code
       #else
-         #define AL_INLINE(type, name, args, code)    extern __inline__ type name args code
+         #define AL_INLINE(type, name, args, code)    \
+            extern __inline__ type name args;         \
+            extern __inline__ type name args code
       #endif
    #endif
 
@@ -96,12 +113,41 @@
 
    #ifdef __i386__
       #define ALLEGRO_I386
+      #define _AL_SINCOS(x, s, c)  __asm__ ("fsincos" : "=t" (c), "=u" (s) : "0" (x))
+   #endif
+
+   #ifdef __amd64__
+      #define ALLEGRO_AMD64
+      #define _AL_SINCOS(x, s, c)  __asm__ ("fsincos" : "=t" (c), "=u" (s) : "0" (x))
    #endif
 
    #ifndef AL_CONST
       #define AL_CONST     const
    #endif
 
+   #ifndef AL_FUNC_DEPRECATED
+      #if (__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1))
+         #define AL_FUNC_DEPRECATED(type, name, args)              AL_FUNC(__attribute__ ((deprecated)) type, name, args)
+         #define AL_PRINTFUNC_DEPRECATED(type, name, args, a, b)   AL_PRINTFUNC(__attribute__ ((deprecated)) type, name, args, a, b)
+         #define AL_INLINE_DEPRECATED(type, name, args, code)      AL_INLINE(__attribute__ ((deprecated)) type, name, args, code)
+      #endif
+   #endif
+
+   #ifndef AL_ALIAS
+      #define AL_ALIAS(DECL, CALL)                      \
+      static __attribute__((unused)) __inline__ DECL    \
+      {                                                 \
+         return CALL;                                   \
+      }
+   #endif
+
+   #ifndef AL_ALIAS_VOID_RET
+      #define AL_ALIAS_VOID_RET(DECL, CALL)                  \
+      static __attribute__((unused)) __inline__ void DECL    \
+      {                                                      \
+         CALL;                                               \
+      }
+   #endif
 #endif
 
 
@@ -116,6 +162,10 @@
  * features and helper functions, which are conditionalised so they will
  * only be included if none of the above headers defined custom versions.
  */
+
+#ifndef _AL_SINCOS
+   #define _AL_SINCOS(x, s, c)  do { (c) = cos(x); (s) = sin(x); } while (0)
+#endif
 
 #ifndef INLINE
    #define INLINE
@@ -157,8 +207,34 @@
    #define AL_FUNCPTR(type, name, args)            extern type (*name) args
 #endif
 
+#ifndef AL_FUNCPTRARRAY
+   #define AL_FUNCPTRARRAY(type, name, args)       extern type (*name[]) args
+#endif
+
 #ifndef AL_INLINE
    #define AL_INLINE(type, name, args, code)       type name args;
+#endif
+
+#ifndef AL_FUNC_DEPRECATED
+   #define AL_FUNC_DEPRECATED(type, name, args)              AL_FUNC(type, name, args)
+   #define AL_PRINTFUNC_DEPRECATED(type, name, args, a, b)   AL_PRINTFUNC(type, name, args, a, b)
+   #define AL_INLINE_DEPRECATED(type, name, args, code)      AL_INLINE(type, name, args, code)
+#endif
+
+#ifndef AL_ALIAS
+   #define AL_ALIAS(DECL, CALL)              \
+   static INLINE DECL                        \
+   {                                         \
+      return CALL;                           \
+   }
+#endif
+
+#ifndef AL_ALIAS_VOID_RET
+   #define AL_ALIAS_VOID_RET(DECL, CALL)     \
+   static INLINE void DECL                   \
+   {                                         \
+      CALL;                                  \
+   }
 #endif
 
 #ifndef END_OF_MAIN
@@ -201,7 +277,13 @@
    #define FA_DIREC        16
    #define FA_ARCH         32
 #endif
+   #define FA_NONE         0
+   #define FA_ALL          (~FA_NONE)
 
+
+#ifdef __cplusplus
+   extern "C" {
+#endif
 
 /* emulate missing library functions */
 #ifdef ALLEGRO_NO_STRICMP
@@ -234,35 +316,35 @@
 /* not many places actually use these, but still worth emulating */
 #ifndef ALLEGRO_DJGPP
    #define _farsetsel(seg)
-   #define _farnspokeb(addr, val)   (*((unsigned char  *)(addr)) = (val))
-   #define _farnspokew(addr, val)   (*((unsigned short *)(addr)) = (val))
-   #define _farnspokel(addr, val)   (*((unsigned long  *)(addr)) = (val))
-   #define _farnspeekb(addr)        (*((unsigned char  *)(addr)))
-   #define _farnspeekw(addr)        (*((unsigned short *)(addr)))
-   #define _farnspeekl(addr)        (*((unsigned long  *)(addr)))
+   #define _farnspokeb(addr, val)   (*((uint8_t  *)(addr)) = (val))
+   #define _farnspokew(addr, val)   (*((uint16_t *)(addr)) = (val))
+   #define _farnspokel(addr, val)   (*((uint32_t *)(addr)) = (val))
+   #define _farnspeekb(addr)        (*((uint8_t  *)(addr)))
+   #define _farnspeekw(addr)        (*((uint16_t *)(addr)))
+   #define _farnspeekl(addr)        (*((uint32_t *)(addr)))
 #endif
 
 
 /* endian-independent 3-byte accessor macros */
 #ifdef ALLEGRO_LITTLE_ENDIAN
 
-   #define READ3BYTES(p)  (((int) *(p))               \
-                           | ((int) *((p) + 1) << 8)  \
-                           | ((int) *((p) + 2) << 16))
+   #define READ3BYTES(p)  ((*(unsigned char *)(p))               \
+                           | (*((unsigned char *)(p) + 1) << 8)  \
+                           | (*((unsigned char *)(p) + 2) << 16))
 
-   #define WRITE3BYTES(p,c)  ((*(p) = (c)),             \
-                              (*((p) + 1) = (c) >> 8),  \
-                              (*((p) + 2) = (c) >> 16))
+   #define WRITE3BYTES(p,c)  ((*(unsigned char *)(p) = (c)),             \
+                              (*((unsigned char *)(p) + 1) = (c) >> 8),  \
+                              (*((unsigned char *)(p) + 2) = (c) >> 16))
 
 #elif defined ALLEGRO_BIG_ENDIAN
 
-   #define READ3BYTES(p)  (((int) *(p) << 16)         \
-                           | ((int) *((p) + 1) << 8)  \
-                           | ((int) *((p) + 2)))
+   #define READ3BYTES(p)  ((*(unsigned char *)(p) << 16)         \
+                           | (*((unsigned char *)(p) + 1) << 8)  \
+                           | (*((unsigned char *)(p) + 2)))
 
-   #define WRITE3BYTES(p,c)  ((*(p) = (c) >> 16),       \
-                              (*((p) + 1) = (c) >> 8),  \
-                              (*((p) + 2) = (c)))
+   #define WRITE3BYTES(p,c)  ((*(unsigned char *)(p) = (c) >> 16),       \
+                              (*((unsigned char *)(p) + 1) = (c) >> 8),  \
+                              (*((unsigned char *)(p) + 2) = (c)))
 
 #else
    #error endianess not defined
@@ -275,33 +357,43 @@
 #endif
 
 #ifndef bmp_write8
-   #define bmp_write8(addr, c)         (*((unsigned char  *)(addr)) = (c))
-   #define bmp_write15(addr, c)        (*((unsigned short *)(addr)) = (c))
-   #define bmp_write16(addr, c)        (*((unsigned short *)(addr)) = (c))
-   #define bmp_write32(addr, c)        (*((unsigned long  *)(addr)) = (c))
+   #define bmp_write8(addr, c)         (*((uint8_t  *)(addr)) = (c))
+   #define bmp_write15(addr, c)        (*((uint16_t *)(addr)) = (c))
+   #define bmp_write16(addr, c)        (*((uint16_t *)(addr)) = (c))
+   #define bmp_write32(addr, c)        (*((uint32_t *)(addr)) = (c))
 
-   #define bmp_read8(addr)             (*((unsigned char  *)(addr)))
-   #define bmp_read15(addr)            (*((unsigned short *)(addr)))
-   #define bmp_read16(addr)            (*((unsigned short *)(addr)))
-   #define bmp_read32(addr)            (*((unsigned long  *)(addr)))
+   #define bmp_read8(addr)             (*((uint8_t  *)(addr)))
+   #define bmp_read15(addr)            (*((uint16_t *)(addr)))
+   #define bmp_read16(addr)            (*((uint16_t *)(addr)))
+   #define bmp_read32(addr)            (*((uint32_t *)(addr)))
 
-      AL_INLINE(int, bmp_read24, (unsigned long addr),
-      {
-	 unsigned char *p = (unsigned char *)addr;
-	 int c;
+   AL_INLINE(int, bmp_read24, (uintptr_t addr),
+   {
+      unsigned char *p = (unsigned char *)addr;
+      int c;
 
       c = READ3BYTES(p);
 
-	 return c;
-      })
+      return c;
+   })
 
-      AL_INLINE(void, bmp_write24, (unsigned long addr, int c),
-      {
-	 unsigned char *p = (unsigned char *)addr;
+   AL_INLINE(void, bmp_write24, (uintptr_t addr, int c),
+   {
+      unsigned char *p = (unsigned char *)addr;
 
       WRITE3BYTES(p, c);
-      })
+   })
 
+#endif
+
+
+/* default random function definition */
+#ifndef AL_RAND
+   #define AL_RAND()       (rand())
+#endif
+
+#ifdef __cplusplus
+   }
 #endif
 
 

@@ -22,7 +22,13 @@
 extern "C" {
 #endif
 
-#ifndef HAVE_LIBPTHREAD
+#ifdef HAVE_LIBPTHREAD
+   /* Synchronization routines using POSIX threads */
+   AL_FUNC(void *, _unix_create_mutex, (void));
+   AL_FUNC(void, _unix_destroy_mutex, (void *handle));
+   AL_FUNC(void, _unix_lock_mutex, (void *handle));
+   AL_FUNC(void, _unix_unlock_mutex, (void *handle));
+#else
    /* Asynchronous event processing with SIGALRM */
    AL_FUNC(void, _sigalrm_request_abort, (void));
    AL_FUNCPTR(void, _sigalrm_timer_interrupt_handler, (unsigned long interval));
@@ -42,15 +48,19 @@ extern "C" {
 
 
    /* Helper for setting os_type */
-   AL_FUNC(void, _read_os_type, (void));
+   AL_FUNC(void, _unix_read_os_type, (void));
 
 
    /* Helper for yield CPU */
    AL_FUNC(void, _unix_yield_timeslice, (void));
 
 
+   /* Unix rest function */
+   AL_FUNC(void, _unix_rest, (unsigned int, AL_METHOD(void, callback, (void))));
+
+
    /* Module support */
-   AL_FUNC(void, _unix_load_modules, (int system_driver));
+   AL_FUNC(void, _unix_load_modules, (int system_driver_id));
    AL_FUNC(void, _unix_unload_modules, (void));
 
 
@@ -77,33 +87,61 @@ extern "C" {
    AL_ARRAY(_DRIVER_INFO, _xwin_timer_driver_list);
 
    AL_FUNC(void, _xwin_handle_input, (void));
+   AL_FUNC(void, _xwin_private_handle_input, (void));
 
+#ifndef ALLEGRO_MULTITHREADED
+
+   AL_VAR(int, _xwin_missed_input);
 
    #define XLOCK()                              \
       do {                                      \
-         if (_unix_bg_man->multi_threaded) {    \
-            if (_xwin.display)                  \
-               XLockDisplay(_xwin.display);     \
-         }                                      \
          _xwin.lock_count++;                    \
       } while (0)
 
    #define XUNLOCK()                            \
       do {                                      \
-         if (_unix_bg_man->multi_threaded) {    \
-            if (_xwin.display)                  \
-               XUnlockDisplay(_xwin.display);   \
+         if (_xwin.lock_count == 1) {           \
+            while(_xwin_missed_input) {         \
+               if (_xwin_input_handler)         \
+                  _xwin_input_handler();        \
+               else                             \
+                  _xwin_private_handle_input(); \
+               --_xwin_missed_input;            \
+            }                                   \
          }                                      \
+         _xwin.lock_count--;                    \
+      } while (0)
+
+#else
+
+   #define XLOCK()                              \
+      do {                                      \
+         if (_xwin.mutex)                       \
+            _unix_lock_mutex (_xwin.mutex);     \
+         _xwin.lock_count++;                    \
+      } while (0)
+
+   #define XUNLOCK()                            \
+      do {                                      \
+         if (_xwin.mutex)                       \
+            _unix_unlock_mutex (_xwin.mutex);   \
          _xwin.lock_count--;                    \
       } while (0)
 
 #endif
 
+#endif
 
-#ifdef DIGI_OSS
+
+#ifdef ALLEGRO_WITH_OSSDIGI
    /* So the setup program can read what we detected */
    AL_VAR(int, _oss_fragsize);
    AL_VAR(int, _oss_numfrags);
+#endif
+
+
+#ifdef __cplusplus
+}
 #endif
 
 
@@ -111,6 +149,10 @@ extern "C" {
    #include "aintlnx.h"
 #endif
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Typedef for background functions, called frequently in the background.
  * `threaded' is nonzero if the function is being called from a thread.
@@ -142,4 +184,3 @@ extern struct bg_manager *_unix_bg_man;
 #endif
 
 #endif /* ifndef AINTUNIX_H */
-

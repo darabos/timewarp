@@ -19,11 +19,11 @@
 #ifndef ALLEGRO_GUI_H
 #define ALLEGRO_GUI_H
 
+#include "base.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
-
-#include "base.h"
 
 struct BITMAP;
 struct DIALOG;
@@ -69,6 +69,32 @@ typedef struct DIALOG_PLAYER
 } DIALOG_PLAYER;
 
 
+/* stored information about the state of an active GUI menu */
+typedef struct MENU_PLAYER
+{
+   MENU *menu;                      /* the menu itself */
+   int bar;                         /* set if it is a top level menu bar */
+   int size;                        /* number of items in the menu */
+   int sel;                         /* selected item */
+   int x, y, w, h;                  /* screen position of the menu */
+   int (*proc)(void);               /* callback function */
+   BITMAP *saved;                   /* saved what was underneath it */
+   
+   int mouse_button_was_pressed;    /* set if mouse button pressed on last iteration */
+   int back_from_child;             /* set if a child was activated on last iteration */    
+   int timestamp;                   /* timestamp for gui_timer events */
+   int mouse_sel;                   /* item the mouse is currently over */
+   int redraw;                      /* set if redrawing is required */
+   int auto_open;                   /* set if menu auto-opening is activated */
+   int ret;                         /* return value */
+   
+   DIALOG *dialog;                  /* d_menu_proc() parent dialog (if any) */
+   
+   struct MENU_PLAYER *parent;      /* the parent menu, or NULL for root */
+   struct MENU_PLAYER *child;       /* the child menu, or NULL for none */
+} MENU_PLAYER;
+
+
 /* bits for the flags field */
 #define D_EXIT          1        /* object makes the dialog exit */
 #define D_SELECTED      2        /* object is selected */
@@ -89,6 +115,7 @@ typedef struct DIALOG_PLAYER
 #define D_WANTFOCUS     8        /* this object wants the input focus */
 #define D_USED_CHAR     16       /* object has used the keypress */
 #define D_REDRAW_ALL    32       /* request to redraw all active dialogs */
+#define D_DONTWANTMOUSE 64       /* this object does not want mouse focus */
 
 
 /* messages for the dialog procedures */
@@ -115,7 +142,8 @@ typedef struct DIALOG_PLAYER
 #define MSG_MRELEASE    21       /* mouse middle button released */
 #define MSG_RPRESS      22       /* mouse right button pressed */
 #define MSG_RRELEASE    23       /* mouse right button released */
-#define MSG_USER        24       /* from here on are free... */
+#define MSG_WANTMOUSE   24       /* does object want the mouse? */
+#define MSG_USER        25       /* from here on are free... */
 
 
 /* some dialog procedures */
@@ -165,13 +193,16 @@ AL_FUNCPTR(int, gui_mouse_y, (void));
 AL_FUNCPTR(int, gui_mouse_z, (void));
 AL_FUNCPTR(int, gui_mouse_b, (void));
 
-AL_FUNC(int, gui_textout, (struct BITMAP *bmp, AL_CONST char *s, int x, int y, int color, int centre));
+AL_FUNC(void, gui_set_screen, (BITMAP *bmp));
+AL_FUNC(BITMAP *, gui_get_screen, (void));
+AL_FUNC(int, gui_textout_ex, (struct BITMAP *bmp, AL_CONST char *s, int x, int y, int color, int bg, int centre));
 AL_FUNC(int, gui_strlen, (AL_CONST char *s));
 AL_FUNC(void, position_dialog, (DIALOG *dialog, int x, int y));
 AL_FUNC(void, centre_dialog, (DIALOG *dialog));
 AL_FUNC(void, set_dialog_color, (DIALOG *dialog, int fg, int bg));
 AL_FUNC(int, find_dialog_focus, (DIALOG *dialog));
-AL_FUNC(int, offer_focus, (DIALOG *d, int obj, int *focus_obj, int force));
+AL_FUNC(int, offer_focus, (DIALOG *dialog, int obj, int *focus_obj, int force));
+AL_FUNC(int, object_message, (DIALOG *dialog, int msg, int c));
 AL_FUNC(int, dialog_message, (DIALOG *dialog, int msg, int c, int *obj));
 AL_FUNC(int, broadcast_dialog_message, (int msg, int c));
 AL_FUNC(int, do_dialog, (DIALOG *dialog, int focus_obj));
@@ -180,19 +211,16 @@ AL_FUNC(DIALOG_PLAYER *, init_dialog, (DIALOG *dialog, int focus_obj));
 AL_FUNC(int, update_dialog, (DIALOG_PLAYER *player));
 AL_FUNC(int, shutdown_dialog, (DIALOG_PLAYER *player));
 AL_FUNC(int, do_menu, (MENU *menu, int x, int y));
+AL_FUNC(MENU_PLAYER *, init_menu, (MENU *menu, int x, int y));
+AL_FUNC(int, update_menu, (MENU_PLAYER *player));
+AL_FUNC(int, shutdown_menu, (MENU_PLAYER *player));
 AL_FUNC(int, alert, (AL_CONST char *s1, AL_CONST char *s2, AL_CONST char *s3, AL_CONST char *b1, AL_CONST char *b2, int c1, int c2));
 AL_FUNC(int, alert3, (AL_CONST char *s1, AL_CONST char *s2, AL_CONST char *s3, AL_CONST char *b1, AL_CONST char *b2, AL_CONST char *b3, int c1, int c2, int c3));
-
-#define OLD_FILESEL_WIDTH   -1
-#define OLD_FILESEL_HEIGHT  -1
-
-AL_FUNC(int, file_select, (AL_CONST char *message, char *path, AL_CONST char *ext));
 AL_FUNC(int, file_select_ex, (AL_CONST char *message, char *path, AL_CONST char *ext, int size, int w, int h));
 
 AL_FUNC(int, gfx_mode_select, (int *card, int *w, int *h));
 AL_FUNC(int, gfx_mode_select_ex, (int *card, int *w, int *h, int *color_depth));
-
-#include "inline/gui.inl"
+AL_FUNC(int, gfx_mode_select_filter, (int *card, int *w, int *h, int *color_depth, int (*filter)(int, int, int, int)));
 
 #ifdef __cplusplus
    }

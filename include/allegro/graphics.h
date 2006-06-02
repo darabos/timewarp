@@ -1,6 +1,6 @@
-/*         ______   ___    ___ 
- *        /\  _  \ /\_ \  /\_ \ 
- *        \ \ \L\ \\//\ \ \//\ \      __     __   _ __   ___ 
+/*         ______   ___    ___
+ *        /\  _  \ /\_ \  /\_ \
+ *        \ \ \L\ \\//\ \ \//\ \      __     __   _ __   ___
  *         \ \  __ \ \ \ \  \ \ \   /'__`\ /'_ `\/\`'__\/ __`\
  *          \ \ \/\ \ \_\ \_ \_\ \_/\  __//\ \L\ \ \ \//\ \L\ \
  *           \ \_\ \_\/\____\/\____\ \____\ \____ \ \_\\ \____/
@@ -8,7 +8,7 @@
  *                                           /\____/
  *                                           \_/__/
  *
- *      Inline functions (generic C).
+ *      Container for all graphics related routines.
  *
  *      By Shawn Hargreaves.
  *
@@ -16,19 +16,18 @@
  */
 
 
-#include "inline/system.inl"
+#ifndef ALLEGRO_GRAPHICS_H
+#define ALLEGRO_GRAPHICS_H
 
-#include "inline/gfx.inl"
+#include "base.h"
+#include "gfx.h"
+#include "text.h"
+#include "3d.h"
+#include "draw.h"
+#include "color.h"
+#include "palette.h"
+#include "rle.h"
+#include "compiled.h"
 
-#include "inline/color.inl"
+#endif          /* ifndef ALLEGRO_GRAPHICS_H */
 
-#include "inline/draw.inl"
-
-#include "inline/fmaths.inl"
-
-#include "inline/3dmaths.inl"
-
-#include "inline/matrix.inl"
-
-/* alcompat.h includes some inline functions */
-#include "alcompat.h"

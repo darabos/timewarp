@@ -19,16 +19,15 @@
 #ifndef ALLEGRO_GFX_INL
 #define ALLEGRO_GFX_INL
 
-#ifdef __cplusplus
-   extern "C" {
-#endif
-
 #include "allegro/debug.h"
-
 
 #define ALLEGRO_IMPORT_GFX_ASM
 #include "asm.inl"
 #undef ALLEGRO_IMPORT_GFX_ASM
+
+#ifdef __cplusplus
+   extern "C" {
+#endif
 
 
 #ifdef ALLEGRO_NO_ASM
@@ -50,27 +49,27 @@ AL_INLINE(int, _default_ds, (void),
     * the same calling convention on both sides.
     */
 
-AL_FUNC(unsigned long, bmp_write_line, (BITMAP *bmp, int line));
-AL_FUNC(unsigned long, bmp_read_line, (BITMAP *bmp, int line));
+AL_FUNC(uintptr_t, bmp_write_line, (BITMAP *bmp, int lyne));
+AL_FUNC(uintptr_t, bmp_read_line, (BITMAP *bmp, int lyne));
 AL_FUNC(void, bmp_unwrite_line, (BITMAP *bmp));
 
 #else
 
-typedef AL_METHOD(unsigned long, _BMP_BANK_SWITCHER, (BITMAP *bmp, int line));
+typedef AL_METHOD(uintptr_t, _BMP_BANK_SWITCHER, (BITMAP *bmp, int lyne));
 typedef AL_METHOD(void, _BMP_UNBANK_SWITCHER, (BITMAP *bmp));
 
 
-AL_INLINE(unsigned long, bmp_write_line, (BITMAP *bmp, int line),
+AL_INLINE(uintptr_t, bmp_write_line, (BITMAP *bmp, int lyne),
 {
    _BMP_BANK_SWITCHER switcher = (_BMP_BANK_SWITCHER)bmp->write_bank;
-   return switcher(bmp, line);
+   return switcher(bmp, lyne);
 })
 
 
-AL_INLINE(unsigned long, bmp_read_line, (BITMAP *bmp, int line),
+AL_INLINE(uintptr_t, bmp_read_line, (BITMAP *bmp, int lyne),
 {
    _BMP_BANK_SWITCHER switcher = (_BMP_BANK_SWITCHER)bmp->read_bank;
-   return switcher(bmp, line);
+   return switcher(bmp, lyne);
 })
 
 
@@ -83,6 +82,15 @@ AL_INLINE(void, bmp_unwrite_line, (BITMAP *bmp),
 #endif      /* defined ALLEGRO_BCC32 */
 
 #endif      /* C vs. inline asm */
+
+
+AL_INLINE(int, is_windowed_mode, (void),
+{
+   ASSERT (gfx_driver);
+
+   return gfx_driver->windowed;
+})
+
 
 
 AL_INLINE(void, clear_to_color, (BITMAP *bitmap, int color),
@@ -183,7 +191,6 @@ AL_INLINE(int, is_sub_bitmap, (BITMAP *bmp),
 })
 
 
-
 #ifdef ALLEGRO_MPW
 
    #define acquire_bitmap(bmp)
@@ -223,6 +230,50 @@ AL_INLINE(void, release_screen, (void),
 })
 
 #endif
+
+
+AL_INLINE(int, is_inside_bitmap, (BITMAP *bmp, int x, int y, int clip),
+{
+   ASSERT(bmp);
+
+   if (clip) {
+      if (bmp->clip)
+         /* internal clipping is inclusive-exclusive */
+         return (x >= bmp->cl) && (y >= bmp->ct) && (x < bmp->cr) && (y < bmp->cb);
+      else
+         return TRUE;
+   }
+   else
+      /* bitmap dimensions are always non-negative */
+      return (unsigned int)x < (unsigned int)bmp->w && (unsigned int)y < (unsigned int)bmp->h;
+})
+
+
+AL_INLINE(void, get_clip_rect, (BITMAP *bitmap, int *x1, int *y_1, int *x2, int *y2),
+{
+   ASSERT(bitmap);
+
+   /* internal clipping is inclusive-exclusive */
+   *x1 = bitmap->cl;
+   *y_1 = bitmap->ct;
+   *x2 = bitmap->cr-1;
+   *y2 = bitmap->cb-1;
+})
+
+AL_INLINE(void, set_clip_state, (BITMAP *bitmap, int state),
+{
+   ASSERT(bitmap);
+
+   bitmap->clip = state;
+})
+
+AL_INLINE(int, get_clip_state, (BITMAP *bitmap),
+{
+   ASSERT(bitmap);
+
+   return bitmap->clip;
+})
+
 
 #ifdef __cplusplus
    }

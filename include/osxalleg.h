@@ -8,22 +8,31 @@
  *                                           /\____/
  *                                           \_/__/
  *
- *      Linux header file for the Allegro library.
+ *      Main header file for the MacOS X Allegro library port.
+ *      Any OS X Allegro specific function is declared here. 
  *
- *      This file no longer contains anything.  At the moment,
- *      it exists only for backwards compatibility.
+ *      By Angelo Mottola.
  *
  *      See readme.txt for copyright information.
  */
 
 
-#ifndef LIN_ALLEGRO_H
-#define LIN_ALLEGRO_H
+#ifndef OSX_ALLEGRO_H
+#define OSX_ALLEGRO_H
 
-/*
- * THIS IS AN EX-PARROT!!
- */
+#ifndef ALLEGRO_H
+#error Please include allegro.h before osxalleg.h!
+#endif
 
-#endif          /* ifndef LIN_ALLEGRO_H */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
 

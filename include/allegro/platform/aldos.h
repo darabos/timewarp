@@ -71,6 +71,7 @@ AL_VAR(MOUSE_DRIVER, mousedrv_win2k);
 #define JOY_TYPE_WINGEX          AL_ID('W','I','N','G')
 #define JOY_TYPE_SIDEWINDER      AL_ID('S','W',' ',' ')
 #define JOY_TYPE_SIDEWINDER_AG   AL_ID('S','W','A','G')
+#define JOY_TYPE_SIDEWINDER_PP   AL_ID('S','W','P','P')
 #define JOY_TYPE_GAMEPAD_PRO     AL_ID('G','P','R','O')
 #define JOY_TYPE_GRIP            AL_ID('G','R','I','P')
 #define JOY_TYPE_GRIP4           AL_ID('G','R','I','4')
@@ -104,6 +105,7 @@ AL_VAR(JOYSTICK_DRIVER, joystick_fspro);
 AL_VAR(JOYSTICK_DRIVER, joystick_wingex);
 AL_VAR(JOYSTICK_DRIVER, joystick_sw);
 AL_VAR(JOYSTICK_DRIVER, joystick_sw_ag);
+AL_VAR(JOYSTICK_DRIVER, joystick_sw_pp);
 AL_VAR(JOYSTICK_DRIVER, joystick_gpro);
 AL_VAR(JOYSTICK_DRIVER, joystick_grip);
 AL_VAR(JOYSTICK_DRIVER, joystick_grip4);
@@ -139,7 +141,8 @@ AL_VAR(JOYSTICK_DRIVER, joystick_ww);
 
 #define JOYSTICK_DRIVER_SIDEWINDER                                \
       { JOY_TYPE_SIDEWINDER,     &joystick_sw,        TRUE  },    \
-      { JOY_TYPE_SIDEWINDER_AG,  &joystick_sw_ag,     TRUE  },
+      { JOY_TYPE_SIDEWINDER_AG,  &joystick_sw_ag,     TRUE  },    \
+      { JOY_TYPE_SIDEWINDER_PP,  &joystick_sw_pp,     TRUE  },
 
 #define JOYSTICK_DRIVER_GAMEPAD_PRO                               \
       { JOY_TYPE_GAMEPAD_PRO,    &joystick_gpro,      TRUE  },
@@ -209,6 +212,9 @@ AL_FUNC(int, calibrate_joystick_hat, (int direction));
 /************ Graphics routines ************/
 /*******************************************/
 
+#define GFX_HAS_VGA
+#define GFX_HAS_VBEAF
+
 #define GFX_VGA                  AL_ID('V','G','A',' ')
 #define GFX_MODEX                AL_ID('M','O','D','X')
 #define GFX_VESA1                AL_ID('V','B','E','1')
@@ -217,12 +223,6 @@ AL_FUNC(int, calibrate_joystick_hat, (int direction));
 #define GFX_VESA3                AL_ID('V','B','E','3')
 #define GFX_VBEAF                AL_ID('V','B','A','F')
 #define GFX_XTENDED              AL_ID('X','T','N','D')
-
-#define GFX_SAFE_ID              GFX_VGA
-#define GFX_SAFE_DEPTH           8
-#define GFX_SAFE_W               320
-#define GFX_SAFE_H               200
-
 
 AL_VAR(GFX_DRIVER, gfx_vga);
 AL_VAR(GFX_DRIVER, gfx_modex);
@@ -259,10 +259,7 @@ AL_VAR(GFX_DRIVER, gfx_xtended);
    {  GFX_VESA1,        &gfx_vesa_1,         TRUE   },
 
 
-AL_VAR(GFX_VTABLE, __modex_vtable);
-
-
-AL_FUNC(void, split_modex_screen, (int line));
+AL_FUNC_DEPRECATED(void, split_modex_screen, (int lyne));
 
 
 AL_INLINE(void, _set_color, (int index, AL_CONST RGB *p),
@@ -346,5 +343,12 @@ AL_VAR(MIDI_DRIVER, midi_awe32);
       {  MIDI_MPU,         &midi_mpu401,        FALSE  },
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 AL_FUNC(int, load_ibk, (AL_CONST char *filename, int drums));
 
+#ifdef __cplusplus
+}
+#endif

@@ -19,13 +19,13 @@
 #ifndef ALLEGRO_DEBUG_H
 #define ALLEGRO_DEBUG_H
 
+#include "base.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
 
-#include "base.h"
-
-AL_FUNC(void, al_assert, (AL_CONST char *file, int line));
+AL_FUNC(void, al_assert, (AL_CONST char *file, int linenr));
 AL_PRINTFUNC(void, al_trace, (AL_CONST char *msg, ...), 1, 2);
 
 AL_FUNC(void, register_assert_handler, (AL_METHOD(int, handler, (AL_CONST char *msg))));

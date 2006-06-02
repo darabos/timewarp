@@ -59,51 +59,37 @@ int __al_linux_unmap_memory (struct MAPPED_MEMORY *info);
 /************ Standard drivers ************/ /* (src/linux/lstddrv.c) */
 /******************************************/
 
-#define PRIVATE_SIZE   1
+/* This "standard drivers" business is mostly a historical artifact.
+ * It was highly over-engineered, now simplified.  It has been mostly
+ * superseded by the newer, shinier, better bg_man.  But hey, at least
+ * it didn't suffer the fate of its cousin lasyncio.c, now dead,
+ * buried, and without a tombstone to show for it. --pw
+ */
 
 typedef struct STD_DRIVER {
-   unsigned    type; /* One of the above STD_ constants */
+   unsigned    type; /* One of the below STD_ constants */
 
    int (*update) (void);
    void (*resume) (void);
    void (*suspend) (void);
 
    int         fd;   /* Descriptor of the opened device */
-
-#ifndef __cplusplus
-   unsigned    private[PRIVATE_SIZE];
-#else
-   unsigned    priv[PRIVATE_SIZE];
-#endif
 } STD_DRIVER;
 
-#define STD_RTC              0
-#define STD_MOUSE            1
-#define STD_KBD              2
+#define STD_MOUSE            0
+#define STD_KBD              1
 
-#define N_STD_DRIVERS        3
+#define N_STD_DRIVERS        2
 
 /* List of standard drivers */
 extern STD_DRIVER *__al_linux_std_drivers[];
 
-/* Indices of the fields in the STD_DRIVER.private array */
-#define PRIV_ENABLED       0
-
 /* Exported functions */
 int  __al_linux_add_standard_driver (STD_DRIVER *spec);
 int  __al_linux_remove_standard_driver (STD_DRIVER *spec);
-int  __al_linux_update_standard_driver (int type);
-void __al_linux_update_standard_drivers (void);
-void __al_linux_async_set_drivers (int which, int on_off);
-void __al_linux_disable_standard_driver (int type);
-void __al_linux_enable_standard_driver (int type);
-
-
-/******************************************/
-/************ Asynchronous I/O ************/ /* (src/linux/lasyncio.c) */
-/******************************************/
-
-extern unsigned __al_linux_async_io_mode;
+void __al_linux_update_standard_drivers (int threaded);
+void __al_linux_suspend_standard_drivers (void);
+void __al_linux_resume_standard_drivers (void);
 
 
 /******************************************/
@@ -209,9 +195,6 @@ void __al_linux_acquire_bitmap (BITMAP *bmp);
 void __al_linux_release_bitmap (BITMAP *bmp);
 
 int __al_linux_set_display_switch_mode (int mode);
-int __al_linux_set_display_switch_callback (int dir, void (*cb) (void));
-void __al_linux_remove_display_switch_callback (void (*cb) (void));
-
 void __al_linux_display_switch_lock (int lock, int foreground);
 
 extern volatile int __al_linux_switching_blocked;
@@ -239,33 +222,30 @@ BITMAP *__al_linux_gfx_mode_set_helper (
 /************ Mouse ************/ /* (src/linux/lmouse.c) */
 /*******************************/
 
-struct mouse_info {
-   int x, y, z, l, r, m;
-   int updated;
-};
-
 typedef struct INTERNAL_MOUSE_DRIVER {
    int device;
-   int (*process) (unsigned char *buf, int buf_size, struct mouse_info *info);
+   int (*process) (unsigned char *buf, int buf_size);
    int num_buttons;
 } INTERNAL_MOUSE_DRIVER;
 
 int  __al_linux_mouse_init (INTERNAL_MOUSE_DRIVER *drv);
 void __al_linux_mouse_exit (void);
 void __al_linux_mouse_position (int x, int y);
-void __al_linux_mouse_set_range (int x1, int y1, int x2, int y2);
+void __al_linux_mouse_set_range (int x1, int y_1, int x2, int y2);
 void __al_linux_mouse_set_speed (int xspeed, int yspeed);
 void __al_linux_mouse_get_mickeys (int *mickeyx, int *mickeyy);
-
-
-/* VGA register access helpers */
-#include "allegro/internal/aintern.h"
-#include "allegro/internal/aintvga.h"
-
+void __al_linux_mouse_handler (int x, int y, int z, int b);
 
 
 #ifdef __cplusplus
 }
+#endif
+
+/* VGA register access helpers */
+/* This is conditional because configure may have disabled VGA support */
+#ifdef ALLEGRO_LINUX_VGA
+   #include "allegro/internal/aintern.h"
+   #include "allegro/internal/aintvga.h"
 #endif
 
 #endif /* ifndef AINTLNX_H */

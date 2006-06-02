@@ -19,12 +19,12 @@
 #ifndef ALLEGRO_COLOR_H
 #define ALLEGRO_COLOR_H
 
+#include "base.h"
+#include "palette.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
-
-#include "base.h"
-#include "palette.h"
 
 struct BITMAP;
 
@@ -70,11 +70,11 @@ AL_ARRAY(int, _rgb_scale_6);
 
 AL_VAR(int *, palette_color);
 
-AL_FUNC(void, set_color, (int index, AL_CONST RGB *p));
+AL_FUNC(void, set_color, (int idx, AL_CONST RGB *p));
 AL_FUNC(void, set_palette, (AL_CONST PALETTE p));
 AL_FUNC(void, set_palette_range, (AL_CONST PALETTE p, int from, int to, int retracesync));
 
-AL_FUNC(void, get_color, (int index, RGB *p));
+AL_FUNC(void, get_color, (int idx, RGB *p));
 AL_FUNC(void, get_palette, (PALETTE p));
 AL_FUNC(void, get_palette_range, (PALETTE p, int from, int to));
 
@@ -144,11 +144,11 @@ AL_FUNC(int, getg_depth, (int color_depth, int c));
 AL_FUNC(int, getb_depth, (int color_depth, int c));
 AL_FUNC(int, geta_depth, (int color_depth, int c));
 
-#include "inline/color.inl"
-
 #ifdef __cplusplus
    }
 #endif
+
+#include "inline/color.inl"
 
 #endif          /* ifndef ALLEGRO_COLOR_H */
 

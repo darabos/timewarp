@@ -26,6 +26,12 @@
 #endif
 
 
+/* a static auto config */
+/* older mingw's don't seem to have inttypes.h */
+/* #define HAVE_INTTYPES_H */
+#define HAVE_STDINT_H
+
+
 /* describe this platform */
 #ifdef ALLEGRO_STATICLINK
    #define ALLEGRO_PLATFORM_STR  "MinGW32.s"
@@ -37,8 +43,9 @@
 #define ALLEGRO_I386
 #define ALLEGRO_LITTLE_ENDIAN
 #define ALLEGRO_USE_CONSTRUCTOR
+#define ALLEGRO_MULTITHREADED
 
-#ifdef USE_CONSOLE
+#ifdef ALLEGRO_USE_CONSOLE
    #define ALLEGRO_CONSOLE_OK
    #define ALLEGRO_NO_MAGIC_MAIN
 #endif

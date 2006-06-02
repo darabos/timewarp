@@ -22,10 +22,6 @@
 #ifndef ALLEGRO_H
 #define ALLEGRO_H
 
-#ifdef __cplusplus
-   extern "C" {
-#endif
-
 #include "allegro/base.h"
 
 #include "allegro/system.h"
@@ -45,6 +41,7 @@
 #include "allegro/rle.h"
 #include "allegro/compiled.h"
 #include "allegro/text.h"
+#include "allegro/font.h"
 
 #include "allegro/fli.h"
 #include "allegro/config.h"
@@ -53,6 +50,7 @@
 #include "allegro/sound.h"
 
 #include "allegro/file.h"
+#include "allegro/lzss.h"
 #include "allegro/datafile.h"
 
 #include "allegro/fixed.h"
@@ -63,22 +61,20 @@
 #include "allegro/3d.h"
 #include "allegro/3dmaths.h"
 
-#ifndef ALLEGRO_LIB_BUILD
+
+#ifndef ALLEGRO_NO_COMPATIBILITY
    #include "allegro/alcompat.h"
+#endif
+
+#ifndef ALLEGRO_NO_FIX_CLASS
+   #ifdef __cplusplus
+      #include "allegro/fix.h"
+   #endif
 #endif
 
 
 #ifdef ALLEGRO_EXTRA_HEADER
    #include ALLEGRO_EXTRA_HEADER
-#endif
-
-
-#ifdef __cplusplus
-   }
-#endif
-
-#ifdef __cplusplus
-#include "allegro/fix.h"
 #endif
 
 #endif          /* ifndef ALLEGRO_H */

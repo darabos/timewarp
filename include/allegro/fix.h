@@ -19,24 +19,24 @@
 #ifndef ALLEGRO_FIX_H
 #define ALLEGRO_FIX_H
 
-#ifdef __cplusplus
-
 #include "fixed.h"
 #include "fmaths.h"
+
+#ifdef __cplusplus
 
 class fix      /* C++ wrapper for the fixed point routines */
 {
 public:
    fixed v;
 
-   fix() : v(0)                              { }
-   fix(const fix &x) : v(x.v)                { }
-   fix(const int x) : v(itofix(x))           { }
-   fix(const long x) : v(itofix(x))          { }
-   fix(const unsigned int x) : v(itofix(x))  { }
-   fix(const unsigned long x) : v(itofix(x)) { }
-   fix(const float x) : v(ftofix(x))         { }
-   fix(const double x) : v(ftofix(x))        { }
+   fix() : v(0)                                       {}
+   fix(const fix &x) : v(x.v)                         {}
+   explicit fix(const int x) : v(itofix(x))           {}
+   explicit fix(const long x) : v(itofix(x))          {}
+   explicit fix(const unsigned int x) : v(itofix(x))  {}
+   explicit fix(const unsigned long x) : v(itofix(x)) {}
+   explicit fix(const float x) : v(ftofix(x))         {}
+   explicit fix(const double x) : v(ftofix(x))        {}
 
    operator int() const                      { return fixtoi(v); }
    operator long() const                     { return fixtoi(v); }
@@ -201,9 +201,9 @@ public:
    inline friend fix atan2(fix x, fix y);
 };
 
-#include "inline/fix.inl"
-
 #endif          /* ifdef __cplusplus */
+
+#include "inline/fix.inl"
 
 #endif          /* ifndef ALLEGRO_FIX_H */
 

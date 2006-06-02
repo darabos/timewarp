@@ -15,9 +15,6 @@
  *      See readme.txt for copyright information.
  */
 
-#ifdef __cplusplus
-   extern "C" {
-#endif
 
 /*******************************************/
 /************* system drivers **************/
@@ -54,10 +51,6 @@ AL_VAR(MOUSE_DRIVER, mouse_adb);
 #define GFX_DRAWSPROCKET     AL_ID('D','S','P',' ')
 AL_VAR(GFX_DRIVER,gfx_drawsprocket);
 
-#define GFX_SAFE_ID              GFX_DRAWSPROCKET
-#define GFX_SAFE_DEPTH           8
-#define GFX_SAFE_W               640
-#define GFX_SAFE_H               480
 
 /********************************************/
 /*************** sound drivers **************/
@@ -73,6 +66,3 @@ AL_VAR(MIDI_DRIVER, midi_quicktime);
 /*******************************************/
 /*no yet */
 
-#ifdef __cplusplus
-   }
-#endif

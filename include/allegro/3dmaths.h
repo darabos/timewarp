@@ -19,12 +19,12 @@
 #ifndef ALLEGRO_3DMATHS_H
 #define ALLEGRO_3DMATHS_H
 
+#include "base.h"
+#include "fixed.h"
+
 #ifdef __cplusplus
    extern "C" {
 #endif
-
-#include "base.h"
-#include "fixed.h"
 
 struct QUAT;
 struct MATRIX_f;
@@ -35,8 +35,8 @@ AL_FUNC(float, vector_length_f, (float x, float y, float z));
 AL_FUNC(void, normalize_vector, (fixed *x, fixed *y, fixed *z));
 AL_FUNC(void, normalize_vector_f, (float *x, float *y, float *z));
 
-AL_FUNC(void, cross_product, (fixed x1, fixed y1, fixed z1, fixed x2, fixed y2, fixed z2, fixed *xout, fixed *yout, fixed *zout));
-AL_FUNC(void, cross_product_f, (float x1, float y1, float z1, float x2, float y2, float z2, float *xout, float *yout, float *zout));
+AL_FUNC(void, cross_product, (fixed x1, fixed y_1, fixed z1, fixed x2, fixed y2, fixed z2, fixed *xout, fixed *yout, fixed *zout));
+AL_FUNC(void, cross_product_f, (float x1, float y_1, float z1, float x2, float y2, float z2, float *xout, float *yout, float *zout));
 
 AL_VAR(fixed, _persp_xscale);
 AL_VAR(fixed, _persp_yscale);
@@ -53,11 +53,11 @@ AL_FUNC(void, set_projection_viewport, (int x, int y, int w, int h));
 AL_FUNC(void, quat_to_matrix, (AL_CONST struct QUAT *q, struct MATRIX_f *m));
 AL_FUNC(void, matrix_to_quat, (AL_CONST struct MATRIX_f *m, struct QUAT *q));
 
-#include "inline/3dmaths.inl"
-
 #ifdef __cplusplus
    }
 #endif
+
+#include "inline/3dmaths.inl"
 
 #endif          /* ifndef ALLEGRO_3DMATHS_H */
 

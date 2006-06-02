@@ -25,7 +25,15 @@
 /*******************************************/
 /********** magic main emulation ***********/
 /*******************************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 AL_FUNC(int, _WinMain, (void *_main, void *hInst, void *hPrev, char *Cmd, int nShow));
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #if (!defined ALLEGRO_NO_MAGIC_MAIN) && (!defined ALLEGRO_SRC)
@@ -41,12 +49,12 @@ AL_FUNC(int, _WinMain, (void *_main, void *hInst, void *hPrev, char *Cmd, int nS
       extern "C" int __stdcall WinMain(void *hInst, void *hPrev, char *Cmd, int nShow);
    #endif
 
-      #define END_OF_MAIN()                                                  \
-									     \
+   #define END_OF_MAIN()                                                     \
+                                                                             \
       int __stdcall WinMain(void *hInst, void *hPrev, char *Cmd, int nShow)  \
-	 {                                                                   \
+      {                                                                      \
          return _WinMain((void *)_mangled_main, hInst, hPrev, Cmd, nShow);   \
-	 }
+      }
 
 #endif
 
@@ -67,9 +75,6 @@ AL_VAR(SYSTEM_DRIVER, system_directx);
 #define TIMER_WIN32_HIGH_PERF    AL_ID('W','3','2','H')
 #define TIMER_WIN32_LOW_PERF     AL_ID('W','3','2','L')
 
-AL_VAR(TIMER_DRIVER, timer_win32_high_perf);
-AL_VAR(TIMER_DRIVER, timer_win32_low_perf);
-
 
 
 /*******************************************/
@@ -77,16 +82,12 @@ AL_VAR(TIMER_DRIVER, timer_win32_low_perf);
 /*******************************************/
 #define KEYBOARD_DIRECTX         AL_ID('D','X',' ',' ')
 
-AL_VAR(KEYBOARD_DRIVER, keyboard_directx);
-
 
 
 /*******************************************/
 /************* mouse drivers ***************/
 /*******************************************/
 #define MOUSE_DIRECTX            AL_ID('D','X',' ',' ')
-
-AL_VAR(MOUSE_DRIVER, mouse_directx);
 
 
 
@@ -116,11 +117,6 @@ AL_VAR(GFX_DRIVER, gfx_gdi);
    {  GFX_DIRECTX_OVL,     &gfx_directx_ovl,       TRUE  },             \
    {  GFX_GDI,             &gfx_gdi,               FALSE },
 
-#define GFX_SAFE_ID              GFX_DIRECTX_SAFE
-#define GFX_SAFE_DEPTH           8
-#define GFX_SAFE_W               640
-#define GFX_SAFE_H               480
-
 
 
 /********************************************/
@@ -131,16 +127,21 @@ AL_VAR(GFX_DRIVER, gfx_gdi);
 #define DIGI_WAVOUTID(n)         AL_ID('W','O','A'+(n),' ')
 #define MIDI_WIN32MAPPER         AL_ID('W','3','2','M')
 #define MIDI_WIN32(n)            AL_ID('W','3','2','A'+(n))
+#define MIDI_WIN32_IN(n)         AL_ID('W','3','2','A'+(n))
 
 
 
 /*******************************************/
 /************ joystick drivers *************/
 /*******************************************/
+#define JOY_TYPE_DIRECTX         AL_ID('D','X',' ',' ')
 #define JOY_TYPE_WIN32           AL_ID('W','3','2',' ')
 
+AL_VAR(JOYSTICK_DRIVER, joystick_directx);
 AL_VAR(JOYSTICK_DRIVER, joystick_win32);
+
+#define JOYSTICK_DRIVER_DIRECTX                                   \
+      { JOY_TYPE_DIRECTX,        &joystick_directx,  TRUE  },
 
 #define JOYSTICK_DRIVER_WIN32                                     \
       { JOY_TYPE_WIN32,          &joystick_win32,  TRUE  },
-

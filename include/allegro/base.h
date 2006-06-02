@@ -29,18 +29,26 @@
    #include <time.h>
 #endif
 
-#ifdef __cplusplus
-   extern "C" {
+#if (defined DEBUGMODE) && (defined FORTIFY)
+   #include <fortify/fortify.h>
+#endif
+
+#if (defined DEBUGMODE) && (defined DMALLOC)
+   #include <dmalloc.h>
 #endif
 
 #include "internal/alconfig.h"
 
+#ifdef __cplusplus
+   extern "C" {
+#endif
+
 #define ALLEGRO_VERSION          4
-#define ALLEGRO_SUB_VERSION      0
-#define ALLEGRO_WIP_VERSION      3
-#define ALLEGRO_VERSION_STR      "4.0.3"
-#define ALLEGRO_DATE_STR         "2003"
-#define ALLEGRO_DATE             20030419    /* yyyymmdd */
+#define ALLEGRO_SUB_VERSION      2
+#define ALLEGRO_WIP_VERSION      0
+#define ALLEGRO_VERSION_STR      "4.2.0"
+#define ALLEGRO_DATE_STR         "2005"
+#define ALLEGRO_DATE             20051105    /* yyyymmdd */
 
 /*******************************************/
 /************ Some global stuff ************/
