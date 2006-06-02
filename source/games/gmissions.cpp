@@ -495,7 +495,7 @@ public:
 	virtual Play *initgame(){return playgame = new P();};			// this returns the game info (pointer)
 };
 
-
+/*
 class mission_protect_official03 : public mission
 {
 public:
@@ -515,7 +515,7 @@ public:
 	virtual Briefing *initbriefing(){return new B();};	// this returns the briefing info (pointer)
 	virtual Play *initgame(){return playgame = new P();};			// this returns the game info (pointer)
 };
-
+*/
 
 class mission_protect_official04 : public mission
 {
@@ -740,7 +740,7 @@ void gmissions::init(Log *_log)
 	// well .. start adding missions, and manage them !!!
 	add2list( new mission_protect_official() );
 	add2list( new mission_protect_official02() );
-	add2list( new mission_protect_official03() );
+//	add2list( new mission_protect_official03() );
 	add2list( new mission_protect_official04() );
 	add2list( new mission_protect_official05() );
 	add2list( new mission_protect_official06() );
@@ -2231,7 +2231,7 @@ void mission_protect_official02::P::calculate()
 
 
 
-
+/*
 mission_protect_official03::B::B()
 {
 	define_title("Destroy the enemy base.");
@@ -2311,7 +2311,7 @@ void mission_protect_official03::P::calculate()
 	Play::calculate();
 
 }
-
+*/
 
 
 

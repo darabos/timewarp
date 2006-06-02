@@ -252,8 +252,8 @@ public:
 
 RadarMap::RadarMap(int MapSize)
 {
-	wx = 75;
-	wy = 75;
+	wx = (75 * screen->w) / 800;
+	wy = wx;
 	MSize = MapSize;
 	radarscreen = create_bitmap(wx, wy);
 
@@ -327,8 +327,8 @@ void RadarMap::animate(Frame *frame)
 
 
 	// add the radar screen to the draw list:
-	int sx = 720;
-	int sy = 400;
+	int sx = screen->w - wx;
+	int sy = screen->h - wy;
 	draw_sprite(screen, radarscreen, sx, sy);
 	//frame->add_box(sx, sy, wx, wy);
 
