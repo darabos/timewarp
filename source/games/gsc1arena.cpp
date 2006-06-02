@@ -388,6 +388,7 @@ void SC1Arena::start_menu(int *select, char *titletext)
 //	view->frame->prepare();
 
 
+	clear_to_color(screen, 0);
 
 //	AreaReserve *A;
 	TWindow *A;
@@ -397,6 +398,7 @@ void SC1Arena::start_menu(int *select, char *titletext)
 	temp_screen = create_video_bitmap(screen->w, screen->h);
 	if (!temp_screen)
 		temp_screen = create_bitmap(screen->w, screen->h);
+	clear_to_color(temp_screen, 0);
 
 	// this uses a log_file as well ... to determine the ref screen size.
 	A = new TWindow("interfaces/sc1arena", 0, 0, temp_screen);

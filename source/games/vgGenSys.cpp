@@ -815,6 +815,8 @@ void VGenSystem::init_objects()
 		popupl->tree_setscreen(screen);
 		popupl->center();
 
+		clear_to_color(screen, 0);
+
 		show_mouse(screen);
 		unscare_mouse();
 		
