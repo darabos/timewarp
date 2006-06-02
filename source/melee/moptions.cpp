@@ -60,8 +60,7 @@ enum {
 	DIALOG_OPTIONS_VIDEO,
 	DIALOG_OPTIONS_AUDIO,
 	DIALOG_OPTIONS_CONFIG,
-	DIALOG_OPTIONS_PHYSICS,
-	DIALOG_OPTIONS_DEFAULT
+	DIALOG_OPTIONS_KEYJAMTEST
 	};
 DIALOG options_dialog[] = {
   // (dialog proc)     (x)   (y)   (w)   (h)   (fg) (bg) (key) (flags)  (d1)  (d2)  (dp)
@@ -70,8 +69,7 @@ DIALOG options_dialog[] = {
   { my_d_button_proc,  50,    90,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Video Mode", NULL, NULL },
   { my_d_button_proc,  50,   130,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Audio Settings", NULL, NULL },
   { my_d_button_proc,  50,   170,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Game && Rendering", NULL, NULL },
-//  { my_d_button_proc,  50,   210,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Physics Settings", NULL, NULL },
-//  { my_d_button_proc,  50,   250,  170,   40,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Restore Defaults", NULL, NULL },
+  { my_d_button_proc,  50,   210,  170,   30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Keyjam test", NULL, NULL },
   { d_tw_yield_proc,        0,    0,    0,    0,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
   { NULL,              0,    0,     0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 	};
@@ -98,14 +96,13 @@ void options_menu (Game *game) {STACKTRACE
 				config_menu(game);
 				}
 			break;
-			case DIALOG_OPTIONS_PHYSICS: {
-				physics_menu(game);
-				}
-			break;
-			case DIALOG_OPTIONS_DEFAULT: {
-				}
-			break;
+
+			case DIALOG_OPTIONS_KEYJAMTEST:
+				keyjamming_tester();
+				break;
+
 			}
+
 		}
 	return;
 	}

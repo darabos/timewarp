@@ -136,7 +136,7 @@ enum {
 	SELECT_DIALOG_SHIP,
 	SELECT_DIALOG_RANDOM,
 	SELECT_DIALOG_ARANDOM,
-	SELECT_DIALOG_INFO,
+//	SELECT_DIALOG_INFO,
 	SELECT_DIALOG_PIC
 };
 char selectPlayer[18] = "";
@@ -162,7 +162,7 @@ static DIALOG selectDialog[] = {
 	{ my_d_button_proc,  330, 110,   180,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Select ship", NULL, NULL },
 	{ my_d_button_proc,  330, 165,   180,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Random selection", NULL, NULL },
 	{ my_d_button_proc,  330, 220,   180,  35,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Always random", NULL, NULL },
-	{ my_d_button_proc,  330, 275,   180,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Ship Info", NULL, NULL },
+//	{ my_d_button_proc,  330, 275,   180,  30,   255,  0,    0,    D_EXIT,  0,    0,    (void *)"Ship Info", NULL, NULL },
 	{ my_bitmap_proc,    388, 330,   64,   100,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
 	{ d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
 	{ NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
@@ -243,6 +243,8 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
 
 
 		ret = tw_do_dialog(window, selectDialog, SELECT_DIALOG_LIST);
+
+		/*
 		if (ret == SELECT_DIALOG_INFO) {
 			ship_view_dialog(
 				selectDialog[SELECT_DIALOG_LIST].d1, 
@@ -250,6 +252,8 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
 			);
 			continue;
 		}
+		*/
+
 		break;
 	}
 	if ((ret == SELECT_DIALOG_SHIP) || (ret == SELECT_DIALOG_LIST))
