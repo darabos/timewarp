@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 ./lib/alleg.lib user32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/lua.lib ./lib/libfreetype.lib /nologo /subsystem:windows /incremental:yes /map /debug /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin.exe"
+# ADD LINK32 ./lib/alleg.lib user32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/libfreetype.lib /nologo /subsystem:windows /incremental:yes /map /debug /machine:I386 /out:"twwin.exe"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "twwin - Win32 Debug"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ./lib/libfreetype.lib ./lib/alld.lib user32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib ./lib/luad.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin_DEBUG.exe" /pdbtype:sept
+# ADD LINK32 ./lib/libfreetype.lib ./lib/alld.lib user32.lib winmm.lib wsock32.lib ./lib/libjgmod.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"LIBCMT" /out:"twwin_DEBUG.exe" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -1122,6 +1122,58 @@ SOURCE=.\source\menu\menugeneral.cpp
 # Begin Source File
 
 SOURCE=.\source\menu\menugeneral.h
+# End Source File
+# End Group
+# Begin Group "jgmod"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\source\jgmod\file_io.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\file_io.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\jgmod.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\jshare.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\load_it.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\load_jgm.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\load_mod.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\load_s3m.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\load_xm.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\mod.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\port.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\jgmod\save_jgm.c
 # End Source File
 # End Group
 # Begin Source File
