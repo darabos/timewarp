@@ -155,13 +155,19 @@ void TW_Dialog_Player::deinit() {
 	destroy_bitmap(subscreen);
 	return;
 }
-int TW_Dialog_Player::update() {
+
+int TW_Dialog_Player::update()
+{
 	videosystem.poll_redraw();
-	BITMAP *old = screen;
-	screen = subscreen;
-	if (!player) player = init_dialog(dialog, ifocus);
+	BITMAP *old = gui_get_screen();//screen;
+	gui_set_screen(subscreen);//screen = subscreen;
+	
+	if (!player)
+		player = init_dialog(dialog, ifocus);
 	int i = update_dialog ( player );
-	screen = old;
+	
+	gui_set_screen(old);//screen = old;
+	
 	if (!i) {
 		return player->obj;
 	}

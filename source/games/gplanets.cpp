@@ -1114,15 +1114,16 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 
 			// also, force the dialog(s) to redraw itself, otherwise this big image
 			// would overwrite all the buttons:
-			BITMAP *truescreen = screen;
-			screen = tmpscreen;		// very dirty, but necessary to re-direct dialog output
+			BITMAP *truescreen = gui_get_screen();//screen;
+			gui_set_screen(tmpscreen);//screen = tmpscreen;		// very dirty, but necessary to re-direct dialog output
 			i = 0;
 			while (Dialog_star[i].proc)
 			{
 				object_message(&Dialog_star[i], MSG_DRAW, 0);
 				++i;
 			}
-			screen = truescreen;
+			gui_set_screen(screen);//screen = truescreen;
+			
 
 			// also, show the moons .. orbiting, for niceness.
 			for ( i = 0; i < NumMoons; ++i )

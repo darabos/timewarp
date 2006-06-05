@@ -1608,13 +1608,19 @@ int main(int argc, char *argv[]) { STACKTRACE
 }
 END_OF_MAIN();
 
-int tw_main(int argc, char *argv[]) { STACKTRACE
+void test_applic();
+
+int tw_main(int argc, char *argv[])
+{
+	//test_applic();
+
 #ifdef WIN32
 	char szPath[MAX_PATH];
 	GetModuleFileName(NULL, szPath, sizeof(szPath));
 	if (strrchr(szPath, '\\')) *strrchr(szPath, '\\') = '\0';
 	SetCurrentDirectory(szPath);
 #endif
+
 
 	update_check(argc, argv);
 
@@ -2214,6 +2220,3 @@ void keyjamming_tester() {STACKTRACE
 	clear_keybuf();
 	return;
 }
-
-
-

@@ -33,11 +33,8 @@ enum {
     FLEET_DIALOG_AVAILABLE_SHIPS_TEXT=0,
     FLEET_DIALOG_SHIP_CATAGORIES_TEXT,
     //TEMP,
-    FLEET_DIALOG_SC1_TOGGLE,
-    FLEET_DIALOG_SC2_TOGGLE,
-    FLEET_DIALOG_SC3_TOGGLE,
+    FLEET_DIALOG_SC_TOGGLE,
     FLEET_DIALOG_TW_OFFICIAL_TOGGLE,
-    FLEET_DIALOG_TW_EXP_TOGGLE,
     FLEET_DIALOG_TW_SPECIAL_TOGGLE,
     FLEET_DIALOG_SORTBY_TEXT1,
     FLEET_DIALOG_SORTBY_BUTTON1,
@@ -124,20 +121,11 @@ DIALOG fleetDialog[] = {
   { d_textbox_proc,     10,  35,   128,  17,   255,  0,    0,     0,       0,    0,    (void *)"Ship Catagories:", NULL, NULL },//FLEET_DIALOG_SHIP_CATAGORIES_TEXT
   
   { d_check_proc_fleeteditor,	// x=30-->x=10
-                        10,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC1", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
+                        10,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"Star Control", NULL, NULL },//FLEET_DIALOG_SC1_TOGGLE
   { d_check_proc_fleeteditor,		
-                        10,  66,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC2", NULL, NULL },//FLEET_DIALOG_SC2_TOGGLE
-  { d_check_proc_fleeteditor,		
-                        10,  79,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"SC3", NULL, NULL },//FLEET_DIALOG_SC3_TOGGLE
-  { d_check_proc_fleeteditor,		
-//                      30,  93,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
-                        80,  52,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
+                        10,  67,   128,  14,   255,  0,    0,D_EXIT | D_SELECTED,       0,    0,    (void *)"TW (Official)", NULL, NULL },//FLEET_DIALOG_TW_OFFICIAL_TOGGLE
   { d_check_proc_fleeteditor,       
-//                      30, 107,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
-                        80,  66,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Experimental)", NULL, NULL },//FLEET_DIALOG_TW_EXP_TOGGLE
-  { d_check_proc_fleeteditor,       
-//                      30, 107,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Special)", NULL, NULL },//FLEET_DIALOG_TW_SPECIAL_TOGGLE
-                        80,  79,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Special)", NULL, NULL },//FLEET_DIALOG_TW_SPECIAL_TOGGLE
+                        10,  82,   128,  14,   255,  0,    0,D_EXIT,       0,    0,    (void *)"TW (Special)", NULL, NULL },//FLEET_DIALOG_TW_SPECIAL_TOGGLE
 
   { d_textbox_proc,     10, 121,    64,  17,   255,  0,    0,     0,       0,    0,    (void *)"Sort By:", NULL, NULL },//FLEET_DIALOG_SORTBY_TEXT1
   { d_button_proc,      69, 121,   128,  17,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON1
@@ -146,11 +134,8 @@ DIALOG fleetDialog[] = {
   { scp_fleet_dialog_text_list_proc,
                        10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
 
-  //{ d_text_list_proc,
-    //                   10,  141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)shippointsListboxGetter, NULL, NULL },//FLEET_DIALOG_AVAILABLE_SHIPS_LIST
   { d_list_proc2,      390, 141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEET_SHIPS_LIST
 
-  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
   { my_d_button_proc,  390,  10,   8,    20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"+", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON_INC
   { my_d_button_proc,  602,  10,   8,    20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"-", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON_DEC
   { my_d_button_proc,  400,  10,   200,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Player 1 Fleet", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON
@@ -166,15 +151,12 @@ DIALOG fleetDialog[] = {
   { d_button_proc,     454, 120,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Cost\0             ", NULL, NULL },//FLEET_DIALOG_SORTBY_BUTTON2
   { d_button_proc,     582, 120,    16,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"^", NULL, NULL },//FLEET_DIALOG_SORTBY_ASCENDING2
 
-  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)  
   { my_d_button_proc,  270, 210,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add", NULL, NULL },//FLEET_DIALOG_ADD_BUTTON
   { my_d_button_proc,  270, 235,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Add All", NULL, NULL },//FLEET_DIALOG_ADD_ALL_BUTTON
   { my_d_button_proc,  270, 265,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove", NULL, NULL },//FLEET_DIALOG_CLEAR
   { my_d_button_proc,  270, 290,  100,   25,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Remove All", NULL, NULL },//FLEET_DIALOG_CLEARALL
   { scp_fleet_dialog_bitmap_proc,
                         10, 372,   85,   85,   255,  0,    0,    0,       0,    0,    (void *)NULL, NULL, NULL },//FLEET_DIALOG_SHIP_PICTURE_BITMAP
-
-  //{ d_textbox_proc,     10, 372,  310,   85,   255,  0,    0,     0,       0,    0,    (void *)"SHIP PICTURE TODO", NULL, NULL },//FLEET_DIALOG_SHIP_STATS_BITMAP
 
 
   { d_textbox_proc,    325, 372,  305,   85,   255,  0,    0,     0,       0,    0,    (void *)"Summary Text\0                                                                  ", NULL, NULL },//FLEET_DIALOG_SHIP_SUMMARY_TEXT
@@ -300,29 +282,15 @@ void edit_fleet(int player) {STACKTRACE
             reference_fleet->reset();
 
             for (int c=0; c<num_shiptypes; c++) {
-                switch (shiptypes[c].origin) {
-                case SHIP_ORIGIN_SC1:
-                    if (fleetDialog[FLEET_DIALOG_SC1_TOGGLE].flags & D_SELECTED)
+                switch (shiptypes[c].origin)
+				{
+                case SHIP_ORIGIN_SC:
+                    if (fleetDialog[FLEET_DIALOG_SC_TOGGLE].flags & D_SELECTED)
                         reference_fleet->addShipType(&shiptypes[c]);
                     break;
-                
-                case SHIP_ORIGIN_SC2:
-                    if (fleetDialog[FLEET_DIALOG_SC2_TOGGLE].flags & D_SELECTED)
-                        reference_fleet->addShipType(&shiptypes[c]);
-                    break;
-                
-                case SHIP_ORIGIN_SC3:
-                    if (fleetDialog[FLEET_DIALOG_SC3_TOGGLE].flags & D_SELECTED)
-                        reference_fleet->addShipType(&shiptypes[c]);
-                    break;
-                
+
                 case SHIP_ORIGIN_TW_ALPHA:
                     if (fleetDialog[FLEET_DIALOG_TW_OFFICIAL_TOGGLE].flags & D_SELECTED)
-                        reference_fleet->addShipType(&shiptypes[c]);
-                    break;
-                
-                case SHIP_ORIGIN_TW_BETA:
-                    if (fleetDialog[FLEET_DIALOG_TW_EXP_TOGGLE].flags & D_SELECTED)
                         reference_fleet->addShipType(&shiptypes[c]);
                     break;
 
@@ -342,11 +310,8 @@ void edit_fleet(int player) {STACKTRACE
            case FLEET_DIALOG_AVAILABLE_SHIPS_TEXT: break;
            case FLEET_DIALOG_SHIP_CATAGORIES_TEXT: break;
 
-           case FLEET_DIALOG_SC1_TOGGLE:
-           case FLEET_DIALOG_SC2_TOGGLE:
-           case FLEET_DIALOG_SC3_TOGGLE:
+           case FLEET_DIALOG_SC_TOGGLE:
            case FLEET_DIALOG_TW_OFFICIAL_TOGGLE:
-           case FLEET_DIALOG_TW_EXP_TOGGLE:
            case FLEET_DIALOG_TW_SPECIAL_TOGGLE:
                availableFleetDirty = true;
 			   break;

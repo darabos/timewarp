@@ -164,6 +164,7 @@ void MainMenu::doit() {STACKTRACE
 
 	int mainRet;
 	do {
+
 		//mainRet = popup_dialog(mainDialog, MAIN_DIALOG_MELEE);
 		mainRet = tw_do_dialog(window, mainDialog, MAIN_DIALOG_MELEE);
 		switch (mainRet)

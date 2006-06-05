@@ -114,8 +114,8 @@ int RaalrithMenacer::activate_weapon()
 	  damage(grabbed, kickDamage);
     latched = FALSE;
     suckStart = TRUE;
-    accelerate (this, angle + PI, 15, MAX_SPEED);
-    target->accelerate (this, angle, 30, MAX_SPEED);
+    accelerate (this, angle + PI, scale_velocity(40.0), MAX_SPEED);
+    target->accelerate (this, angle, scale_velocity(20.0), MAX_SPEED);
     return(TRUE);
   }
   return(FALSE);

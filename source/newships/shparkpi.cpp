@@ -649,6 +649,7 @@ void ArkanoidPincer::inflict_damage(SpaceObject *other) {
 	STACKTRACE
   int i;
 	i = iround(damage_factor / 2);
+	if (i >= BOOM_SAMPLES) i = BOOM_SAMPLES - 1;
   //double oldMass;
   //oldMass = mass;
   //message.print(1500,15,"ArkanoidPincerInflictDamage1");

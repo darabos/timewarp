@@ -172,7 +172,9 @@ void IlwrathSpiderMine::inflict_damage(SpaceObject *other)
     }else{
         freq = 2000 - 80*(int)other->mass;
     }
-    play_sound2( data->sampleExtra[0], 512, freq<500?500:freq );
+	if (data->num_extra_samples > 0)
+		play_sound2( data->sampleExtra[0]);//, 512, freq<500?500:freq );
+
     game->add( new FixedAnimation( this, other, data->spriteExtra, 0, data->spriteExtra->frames(), time_ratio, LAYER_EXPLOSIONS ));
 
     if( other->vel != 0 )

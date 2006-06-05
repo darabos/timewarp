@@ -357,7 +357,7 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 	video_screen = create_video_bitmap(width, height);
 	show_video_bitmap(video_screen);
 
-	screen = video_screen;
+//	screen = video_screen; NOTE: this makes the game unpredictable, and crash on exit ...
 	show_mouse(screen);
 
 	surface = screen;
@@ -716,3 +716,4 @@ void show_text(const char *text) {
 	tw_popup_dialog(&videosystem.window, help_dialog, 1);
 	return;
 }
+
