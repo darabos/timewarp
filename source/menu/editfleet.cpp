@@ -136,9 +136,9 @@ DIALOG fleetDialog[] = {
 
   { d_list_proc2,      390, 141,   240, 227,   255,  0,    0,D_EXIT,       0,    0,    (void *)fleetpointsListboxGetter, NULL, NULL },//FLEET_DIALOG_FLEET_SHIPS_LIST
 
-  { my_d_button_proc,  390,  10,   8,    20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"+", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON_INC
-  { my_d_button_proc,  602,  10,   8,    20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"-", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON_DEC
-  { my_d_button_proc,  400,  10,   200,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Player 1 Fleet", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON
+  { my_d_button_proc,  390,  10,   16,   20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"+", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON_INC
+  { my_d_button_proc,  610,  10,   16,   20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"-", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON_DEC
+  { my_d_button_proc,  408,  10,   200,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Player 1 Fleet", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_BUTTON
 
   { my_d_button_proc,  390,  40,   128,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Fleet Title", NULL, NULL },//FLEET_DIALOG_PLAYER_FLEET_TITLE
   { my_d_button_proc,  518,  40,    56,  20,   255,  0,    0,D_EXIT,       0,    0,    (void *)"Save", NULL, NULL },//FLEET_DIALOG_SAVE_BUTTON

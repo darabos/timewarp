@@ -504,31 +504,7 @@ SOURCE=.\source\sc2ships\shpzfpst.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\source\sc3ships\shpclapi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpdakvi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpdooco.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpexqen.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\sc3ships\shpharra.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpherex.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpktacr.cpp
 # End Source File
 # Begin Source File
 
@@ -537,18 +513,6 @@ SOURCE=.\source\sc3ships\shplk_sa.cpp
 # Begin Source File
 
 SOURCE=.\source\sc3ships\shpowavo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpplopl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpvyrin.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\sc3ships\shpxchex.cpp
 # End Source File
 # End Group
 # Begin Group "TW_Ships"
@@ -572,19 +536,11 @@ SOURCE=.\source\newships\shpalhdr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shparitr.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shparkpi.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\source\newships\shpartem.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpastba.cpp
 # End Source File
 # Begin Source File
 
@@ -605,10 +561,6 @@ SOURCE=.\source\newships\shpbogce.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpbubbo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpbubex.cpp
 # End Source File
 # Begin Source File
 
@@ -633,14 +585,6 @@ SOURCE=.\source\newships\shpcrore.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpdajem.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpdeees.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpdjila.cpp
 # End Source File
 # Begin Source File
 
@@ -716,14 +660,6 @@ SOURCE=.\source\newships\shpilwsp.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpimpka.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpjurcu.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpjygst.cpp
 # End Source File
 # Begin Source File
@@ -748,23 +684,11 @@ SOURCE=.\source\newships\shpkorsi.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpktesa.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpleimu.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\source\newships\shplyrwa.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpmekpi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpmoisp.cpp
 # End Source File
 # Begin Source File
 
@@ -780,10 +704,6 @@ SOURCE=.\source\newships\shpneodr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpnisha.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpoliha.cpp
 # End Source File
 # Begin Source File
@@ -792,15 +712,7 @@ SOURCE=.\source\newships\shpplala.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shpqlore.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shpquasi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpquawr.cpp
 # End Source File
 # Begin Source File
 
@@ -848,27 +760,11 @@ SOURCE=.\source\newships\shptaumc.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\source\newships\shptaume.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptausl.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\source\newships\shptaust.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\source\newships\shptauto.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shptautu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpterbi.cpp
 # End Source File
 # Begin Source File
 
@@ -885,14 +781,6 @@ SOURCE=.\source\newships\shpvezba.cpp
 # Begin Source File
 
 SOURCE=.\source\newships\shpvioge.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpvuvji.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\source\newships\shpwassu.cpp
 # End Source File
 # Begin Source File
 
