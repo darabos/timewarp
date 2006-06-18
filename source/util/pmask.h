@@ -50,7 +50,12 @@ confusing.
 //e.g. 4 for 16-bit ints, 5 for 32-bit ints, 6 for 64-bit ints
 //don't worry about setting it incorrectly
 //you'll get a compile error if you do, not a run-time error
+
+#if ULONG_MAX == 0xFFFFFFFFUL
 #define MASK_WORD_BITBITS 5
+#else
+#define MASK_WORD_BITBITS 6
+#endif
 
 
 //if SINGLE_MEMORY_BLOCK is defined

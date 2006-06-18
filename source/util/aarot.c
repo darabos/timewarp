@@ -29,8 +29,8 @@ might come up again.  */
  * Engine of anti-aliased rotation.
  */
 void
-_aa_rotate_bitmap (BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
-		fixed _scalex, fixed _scaley, int _mode)
+_aa_rotate_bitmap (BITMAP *_src, BITMAP *_dst, int _x, int _y, long _angle,
+		long _scalex, long _scaley, int _mode)
 {
 	int sw, sh, dw, dh;
 	fixed fx0, fy0, fux, fuy, fvx, fvy;

@@ -7,7 +7,7 @@ Twgui: GPL license - Rob Devilee, 2004.
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <math.h>
 
 
 #include "twbutton.h"

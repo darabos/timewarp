@@ -1,5 +1,5 @@
 ##############################################################################
-# Compiling TimeWarp: make {win32=1} {debug=1} {NO_JGMOD=1}                  #
+# Compiling TimeWarp: make {win32=1} {debug=1}                               #
 #                                                                            #
 # Define win32=1    when compiling with Mingw32 gcc compiler for windows     #
 # Define debug=1    when you want to build debug version of TimeWarp         #
@@ -14,17 +14,19 @@
 #                                                                            #
 ##############################################################################
 
-CC = g++
+CXX = g++
+CC = gcc
 LD = g++
 CFLAGS = -fsigned-char -Wall -Wno-deprecated-declarations
 OBJDIR = obj
 NAME = TimeWarp
 
 VPATH = source source/ais source/games source/games/triggers source/melee \
-        source/newships source/other source/sc1ships source/sc2ships \
+        source/newships source/other source/ppiships source/sc1ships source/sc2ships \
         source/sc3ships source/twgui source/util source/gamex \
         source/gamex/edit source/gamex/general source/gamex/stuff \
-        source/gamex/dialogs source/jpgalleg
+        source/gamex/dialogs source/jpgalleg source/jgmod source/menu \
+        source/alfont 
 
 FILELIST= ${shell find source -type f "(" -name "*.c" -o -name "*.cpp" ")"}
 BASE_NAMES = $(basename $(notdir $(FILELIST)))
@@ -32,9 +34,16 @@ BASE_NAMES = $(basename $(notdir $(FILELIST)))
 POBJS = $(addsuffix .o,$(BASE_NAMES))
 PDEPS = $(addsuffix .d,$(BASE_NAMES))
 
-ARCH = $(shell echo `arch`)
-ifeq ($(ARCH),ppc)
-ARCH    = powerpc
+ifndef win32
+	ARCH := $(shell echo `arch`)
+	ifeq ($(ARCH),ppc)
+		ARCH    = powerpc
+	endif
+	ifeq ($(ARCH),x86_64)
+		ARCH	= k8
+	endif
+else
+	ARCH := i586
 endif
 
 #FILELIST = source /s.cpp
@@ -44,13 +53,7 @@ ifdef debug
 	OBJDIR := ${addsuffix -debug,$(OBJDIR)}
 	NAME := ${addsuffix -debug,$(NAME)}
 else
-	CFLAGS += -O -mcpu=$(ARCH) -s
-endif
-
-ifdef NO_JGMOD
-	CFLAGS += -DNO_JGMOD
-else
-	LIBS = -ljgmod
+	CFLAGS += -O -march=$(ARCH) -s
 endif
 
 ifdef NO_NET
@@ -69,7 +72,7 @@ else
 	LIBS += ${shell allegro-config --libs} ${shell freetype-config --libs}
 endif
 
-CFLAGS += -I./source 
+CFLAGS += -I./source -I./source/jgmod -I./source/alfont
 
 #CFLAGS += ${addprefix -I./, $(VPATH)}
 
@@ -98,7 +101,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o: %.cpp
-	$(CC) -MMD $(CFLAGS) -c $< -o $@
+	$(CXX) -MMD $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: %.c
 	$(CC) -MMD $(CFLAGS) -c $< -o $@

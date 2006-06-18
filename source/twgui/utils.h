@@ -163,7 +163,9 @@ public:
 	bool key_hold, key_press;
 };
 
+#ifdef WIN32
 int round(double x);
+#endif
 
 
 bool check_mask(BITMAP *b);

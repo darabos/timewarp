@@ -18,6 +18,8 @@
  *  Also used by me for testing MODs. */
 
 
+#if 0
+
 #include <stdio.h>
 #include <time.h>
 //#include <conio.h>
@@ -321,3 +323,4 @@ void print_header (void)
     textprintf (screen, font, 0,12, font_color, "No Channels : %2d  Period Type : %s  No Inst : %2d ", the_mod->no_chn, (the_mod->flag & LINEAR_MODE) ? "Linear" : "Amiga", the_mod->no_instrument);
     textprintf (screen, font, 0,24, font_color, "No Tracks   : %2d  No Patterns : %2d  No Sample : %2d ", the_mod->no_trk, the_mod->no_pat, the_mod->no_sample);
 }
+#endif

@@ -297,7 +297,8 @@ int tw_random( int a )
 		tw_error("random: needing to convert a negative integer to an unsigned integer: should not happen");
 	}
 
-	int k = int( tw_random_unsigned() % unsigned int(a) );
+	//	int k = int( tw_random_unsigned() % unsigned int(a) );
+	int k = int( tw_random_unsigned() % int(a) );
 
 	if (k < 0 || k >= a)
 	{

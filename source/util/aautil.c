@@ -1,4 +1,3 @@
-/* $Id$ */ 
 /* modified by orz for Star Control: TimeWarp 
 Lots of features added, large code re-organization, etc.
 */
@@ -17,6 +16,9 @@ Lots of features added, large code re-organization, etc.
  *
  * Copyright (C) 1998, 1999  Michael Bukin
  */
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "types.h"
 #include "aautil.h"
@@ -52,7 +54,7 @@ static void _aa_prepare_for_24bpp (void)
  * Some macros for making our put-pixel functions
  */
 
-#define bit(a)   (1 << a)
+#define bit(a)   (1 << (a))
 #define bitn(a)  (bit(a)-1)
 
 //bpp is output size
@@ -93,9 +95,10 @@ static void _aa_prepare_for_24bpp (void)
 #define BLENDER32_WITH_N(bpp,bpp2)    {int c2;c=makecol24(r,g,b);c2=bmp_read##bpp(_addr+_x*((bpp+7)/8));c=_blender_func_24(makecol24(getr##bpp2(c2),getg##bpp2(c2),getb##bpp2(c2)), c, (_aa.trans * _aa.blender_n) >> 8);r=getr24(c);g=getg24(c);b=getb32(c);
 #define BLENDER32_WITH_A(bpp,bpp2)    {int c2;c=makecol24(r,g,b);c2=bmp_read##bpp(_addr+_x*((bpp+7)/8));c=_blender_func_24(makecol24(getr##bpp2(c2),getg##bpp2(c2),getb##bpp2(c2)), c, (_aa.trans * _aa.trans) >> 8);r=getr24(c);g=getg24(c);b=getb32(c);
 
+
 //these macros output the color to the screen
 #define PUT(bpp,bpp2)             bmp_write##bpp(_addr+_x*((bpp+7)/8), c);
-#define PUT_8X(bpp,bpp2)          outportw(0x3C4, (0x100<<(_x&3))|2); bmp_write8(_addr + (_x>>2), c);
+//#define PUT_8X(bpp,bpp2)          outportw(0x3C4, (0x100<<(_x&3))|2); bmp_write8(_addr + (_x>>2), c);
 #define PUT_N(bpp,bpp2)           putpixel(_aa.destination, _x, _aa.y, c);
 //parameters ignored for 8X & N
 
@@ -184,19 +187,7 @@ MAKE_PUTFUNC( _aa_put_alpha_dither_8   ,8,8,   ALPHA  ,DITHER    ,NONE   ,PUT)
 //no dither-notrans
 //no alpha-dither-notrans
 
-#ifdef GFX_MODEX
-//macro       name                         bpp/2 ALPHA  DITHER     NOTRANS PUT
-MAKE_PUTFUNC( _aa_put_modex_8              ,8,8, NONE,  NO_DITHER, NONE,   PUT_8X)
-MAKE_PUTFUNC( _aa_put_modex_dither_8       ,8,8, NONE,  DITHER,    NONE,   PUT_8X)
-MAKE_PUTFUNC( _aa_put_modex_alpha_8        ,8,8, ALPHA, NO_DITHER, NONE,   PUT_8X)
-MAKE_PUTFUNC( _aa_put_modex_alpha_dither_8 ,8,8, ALPHA, DITHER,    NONE,   PUT_8X)
-PUT_TYPE *put_array_modex[4] = {
-	_aa_put_modex_8,
-	_aa_put_modex_dither_8,
-	_aa_put_modex_alpha_8,
-	_aa_put_modex_alpha_dither_8
-};
-#endif
+
 
 #ifdef ALLEGRO_COLOR16
 MAKE_PUTFUNC( _aa_put_15                       ,16,15, NONE   ,NO_DITHER ,NONE   ,PUT)
@@ -365,12 +356,14 @@ PUT_TYPE *get_aa_put_function(BITMAP *destination, int options) {
 	if (options & AA_DITHER)  j += 2;
 	if (options & AA_MASKED_DEST) j += 4;
 
+#if 0
 #	ifdef GFX_MODEX
 		if (is_planar_bitmap(destination)) {
 			if (bpp != 8) return NULL;
 			return put_array_modex[j & 3];
 		}
 #	endif
+#endif
 
 	if (options & AA_RAW_ALPHA) {
 		if (bpp == 32) return &_aa_put_raw_32a;

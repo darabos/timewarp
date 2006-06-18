@@ -60,7 +60,7 @@ void set_pmask_pixel(struct PMASK *mask, int x, int y, int value)
 
 #define COMPILE_TIME_ASSERT(condition) typedef char _compile_time_assert__[(condition) ? 1 : -1];
 void install_pmask() {
-	COMPILE_TIME_ASSERT((1 << MASK_WORD_BITBITS) == MASK_WORD_BITS);
+  	COMPILE_TIME_ASSERT((1 << MASK_WORD_BITBITS) == MASK_WORD_BITS);
 	return;
 }
 

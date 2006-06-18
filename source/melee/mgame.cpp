@@ -1369,7 +1369,7 @@ void Game::play()
 
 	int check_game_time = get_time();
 
-	static av_frame_time = 0;
+	static int av_frame_time = 0;
 
 
 	// if you increase lag, iterations can be skipped...

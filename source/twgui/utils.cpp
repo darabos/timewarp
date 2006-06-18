@@ -46,7 +46,7 @@ void twgui_init(twgui_time_handler_type t, twgui_err_handler_type f)
 }
 
 
-
+#ifdef WIN32
 int round(double x)
 {
 	if (x > 0)
@@ -54,7 +54,7 @@ int round(double x)
 	else
 		return int(x - 0.5);
 }
-
+#endif
 
 
 

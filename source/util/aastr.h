@@ -201,15 +201,15 @@ void aa_stretch_sprite (BITMAP* dst, BITMAP* src,
 
   // Rotation.  
 void aa_rotate_scaled_bitmap (BITMAP* src, BITMAP* dst,
-		int x, int y, long angle,
-		long scalex, long scaley);
+		int x, int y, fixed angle,
+		fixed scalex, fixed scaley);
 void aa_rotate_scaled_sprite (BITMAP* dst, BITMAP* src,
-		int x, int y, long angle,
-		long scalex, long scaley);
+		int x, int y, fixed angle,
+		fixed scalex, fixed scaley);
 void aa_rotate_bitmap (BITMAP* src, BITMAP* dst,
-		int x, int y, long angle);
+		int x, int y, fixed angle);
 void aa_rotate_sprite (BITMAP* dst, BITMAP* src,
-		int x, int y, long angle);
+		int x, int y, fixed angle);
 
 
 

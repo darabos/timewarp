@@ -207,7 +207,7 @@ int NetTCP::listen(int port, int (*cancel_callback)()) {
 #	elif defined NETWORK_BSD
 #		if defined NETWORK_WEIRD_SIGNEDNESS
 			//WTF!?! 
-			size_t tmp; 
+			socklen_t tmp; 
 			//some linuxes (but not the version superdave uses (slackware of some 
 			//kind)) require this, even though some linux documentation contradicts 
 			//it and it differs from the BSD standard, and it's incompatible with some 

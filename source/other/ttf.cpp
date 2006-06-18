@@ -87,7 +87,7 @@ static void cleanup (FT_Library engine, FT_Face face)
 
 
 // for debugging (copied from allegro)
-static void color_destroy_font(FONT* f)
+void color_destroy_font(FONT* f)
 {
     FONT_COLOR_DATA* cf;
 
@@ -429,7 +429,7 @@ void set_color_props(char *newprops)
  *  the specified colors. If fg == -1, render as color, else render as
  *  mono; if bg == -1, render as transparent, else render as opaque.
  */
-static void color_render_props(AL_CONST FONT* f, AL_CONST char* text, int fg, int bg, BITMAP* bmp, int x, int y)
+void color_render_props(AL_CONST FONT* f, AL_CONST char* text, int fg, int bg, BITMAP* bmp, int x, int y)
 {
 	if (!color_props)
 	{
