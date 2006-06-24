@@ -1,0 +1,6 @@
+2006-06-24  Yura Semashko  <yurand2@gmail.com>
+
+ * source/games/gmissions.cpp: Fixed crash when ambasador dies
+
+
+

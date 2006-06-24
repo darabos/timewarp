@@ -1219,6 +1219,11 @@ void Play::order_move(Ship *shp, Vector2 loc, double pspeed)
 	if (!(shp && shp->exists()))
 		return;
 
+	if (!shp->control)
+	  {
+	    shp->die();
+	    return;
+	  }
 	// reset the keys for this ship
 	shp->control->keys = 0;
 
