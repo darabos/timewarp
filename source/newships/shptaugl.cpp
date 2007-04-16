@@ -52,7 +52,7 @@ IDENTITY(TauGladiusShot);
   int		r,g,b;
 
 public:	
-	TauGladiusShot::TauGladiusShot (SpaceLocation *creator, Vector2 opos, double oangle, double ov, double orange, double odamage, double olength);
+	TauGladiusShot (SpaceLocation *creator, Vector2 opos, double oangle, double ov, double orange, double odamage, double olength);
 	virtual void calculate();
 	virtual void inflict_damage(SpaceObject *other);
 	virtual int  handle_damage(SpaceLocation *source, double normal, double direct = 0);

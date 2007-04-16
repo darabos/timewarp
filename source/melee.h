@@ -454,7 +454,7 @@ public:
 	//sprite_count * rotation new images based upon sprite_count RLE_SPRITES, with gamma correction
 	//xxx spacesprite test
 	SpaceSprite(const DATAFILE *sprites, int sprite_count, int attributes = -1, int rotations = 1);
-	SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, int rotations);
+	SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, int rotations);
 	SpaceSprite(BITMAP *image, int _attributes = -1);
 	SpaceSprite(SpaceSprite &old);
 

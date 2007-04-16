@@ -40,7 +40,7 @@ class AimSys {
   double X2[9]; double Y2[9];
   double gamma;
   
-  void AimSys::SetupDefaults(void);
+  void SetupDefaults(void);
   AimSys(SpaceLocation* sourceP, 
 			   SpaceLocation* targetP, 
 			   double weaponSpeed, double Relativity,

@@ -15,11 +15,11 @@
 #endif
 
 #ifndef ushort
-#define ushort  unsigned short
+typedef unsigned short ushort;
 #endif
 
 #ifndef uint
-#define uint    unsigned int
+typedef unsigned int uint;
 #endif
 
 #ifndef NULL

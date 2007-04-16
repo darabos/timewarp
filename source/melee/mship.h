@@ -43,7 +43,7 @@ class Phaser : public SpaceObject {
 	int count_delay_iterations;	// for debug/error testing
 
 	public:
-	Phaser::Phaser(SpaceLocation *creator, Vector2 pos, Vector2 rel_pos, 
+	Phaser(SpaceLocation *creator, Vector2 pos, Vector2 rel_pos, 
 		Ship *ship, SpaceSprite *sprite, int osprite_index, int *ocolors, 
 		int onum_colors, int ofsize, int steps, int step_time) ;
 
@@ -63,6 +63,7 @@ enum ShipOrigin {
 class OverrideControl
 {
 public:
+	virtual ~OverrideControl() {}
 	static void add(Ship *s, OverrideControl *newcontrol);
 	static void del(Ship *s, OverrideControl *oldcontrol);
 

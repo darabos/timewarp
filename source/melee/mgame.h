@@ -116,7 +116,7 @@ bool hostcomputer();
 class NPI : public PlayerInformation
 {
 public:
-	NPI::NPI();
+	NPI();
 	virtual ~NPI();
 	Fleet *fleet;
 };
@@ -133,6 +133,7 @@ void init_channels();
 class GameEvent2
 {
 public:
+	virtual ~GameEvent2(){}
 	virtual void calculate(int iplayer){};
 };
 
@@ -142,6 +143,7 @@ class GE : public GameEvent2
 {
 public:
 	typedef void (G::* reffunc) (int iplayer);	// store the class-function pointer
+	virtual ~GE(){}
 	G *game;						// store pointer to the class in memory
 
 	reffunc ref;

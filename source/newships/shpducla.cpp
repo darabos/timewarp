@@ -138,7 +138,7 @@ public:
 	virtual void inflict_damage(SpaceObject *other);
 	virtual bool die();
 
-	virtual void ShipPart::collide(SpaceObject *other);	// add minor detection part
+	virtual void collide(SpaceObject *other);	// add minor detection part
 	int collide_SpaceObject(SpaceObject *other);
 
 	void calculate_manager(Vector2 refpos, Vector2 refvel);

@@ -21,7 +21,7 @@ IDENTITY(UmgahCone);
 	virtual bool change_owner(SpaceLocation *new_owner);
   virtual void calculate();
   virtual void inflict_damage(SpaceObject *other);
-  virtual void UmgahCone::animate(Frame* space);
+  virtual void animate(Frame* space);
   virtual int canCollide(SpaceLocation* other);
 
 };

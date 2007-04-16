@@ -34,7 +34,7 @@ public:
 };
 
 template <class G>
-BEvent<G>::BEvent<G>(G *gg, ftest m1, ftest m2)
+BEvent<G>::BEvent(G *gg, ftest m1, ftest m2)
 {
 	g = gg;
 	mainpress = m1;
@@ -42,7 +42,7 @@ BEvent<G>::BEvent<G>(G *gg, ftest m1, ftest m2)
 }
 
 template <class G>
-BEvent<G>::BEvent<G>(G *gg, ftest m1, ftest m2, ftest s1, ftest s2)
+BEvent<G>::BEvent(G *gg, ftest m1, ftest m2, ftest s1, ftest s2)
 {
 	g = gg;
 	mainpress = m1;

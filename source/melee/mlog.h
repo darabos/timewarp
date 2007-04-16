@@ -105,7 +105,7 @@ class Log { //Logging system, usefull for networking & demo recording/playback
 
 	void lint(int *val, int ch = channel_current);
 	void ldata(char *data, int N, int ch = channel_current);
-	char *Log::create_buffer(int *size, int ch = channel_current);
+	char *create_buffer(int *size, int ch = channel_current);
 
 	virtual void force_update() {};
 

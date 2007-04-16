@@ -52,7 +52,7 @@ IDENTITY(GlathrielSpot);
 	int		life_counter, lifetime;
 
 public:
-	GlathrielSpot::GlathrielSpot(SpaceLocation *creator, double oangle, SpaceSprite *osprite,
+	GlathrielSpot(SpaceLocation *creator, double oangle, SpaceSprite *osprite,
 		int olasernum, int olaserdamage, int olasercolor, double olaserRange, double olasersweep);
 
 	virtual void calculate();

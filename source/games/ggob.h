@@ -83,7 +83,7 @@ class GobGame : public Game {
 	virtual int get_enemy_index(SpaceLocation *what);
 
 	int difficulty;
-	virtual bool GobGame::handle_key(int k);
+	virtual bool handle_key(int k);
 
 
 //	protected:

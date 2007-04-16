@@ -2340,7 +2340,7 @@ double Game::get_turbo() {
 }
 
 void Game::play_music() {STACKTRACE
-	if (-1 == (int)music) return;
+	if ((Music*)-1 == music) return;
 	if (!music) {
 		set_config_file("client.ini");
 		const char *f = get_config_string("Sound", "Music", "melee.dat#MELEEMUS_MOD");

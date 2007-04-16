@@ -80,7 +80,7 @@ public:
 	ImIndicator(SpaceLocation *o);
 	~ImIndicator();
 	void newtarget(SpaceLocation *o);
-	int ImIndicator::colortype(SpaceLocation *o);
+	int colortype(SpaceLocation *o);
 	void animate(Frame *frame);
 	virtual void calculate();
 };

@@ -96,7 +96,7 @@ public:
   virtual void calculate(void);
   virtual void inflict_damage(SpaceObject *other);
   virtual int handle_damage(SpaceLocation *source, double normal, double direct);
-	virtual bool DajielkaTendril::die();
+  virtual bool die();
 };
 
 
