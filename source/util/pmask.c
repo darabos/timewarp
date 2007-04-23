@@ -451,7 +451,7 @@ void draw_allegro_pmask_stretch(CONST PMASK *mask, BITMAP *destination, int x, i
 			bmp_select(destination);
 			while (_y < _h) {
 				int ty, tx;
-				unsigned long addr = bmp_write_line(destination, y + _y) + x * sizeof(long);
+				unsigned long addr = bmp_write_line(destination, y + _y) + x * 4;
 				ty = _y * mask->h / h;
 				//unsigned long *dat = mask->mask + ty;
 				_x = _xmin;
@@ -459,7 +459,7 @@ void draw_allegro_pmask_stretch(CONST PMASK *mask, BITMAP *destination, int x, i
 				while (_x < _w) {
 					//if ( (dat[(tx>>21)] << ((tx>>16) & 31)) & 0x80000000UL )
 					if ( _get_pmask_pixel(mask,tx>>16,ty) )
-						bmp_write32(addr+_x*sizeof(long), color);
+						bmp_write32(addr+_x*4, color);
 					tx += scale;
 					_x += 1;
 					}
