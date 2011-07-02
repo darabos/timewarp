@@ -2,7 +2,7 @@
 #ifndef __MFRAME_H__
 #define __MFRAME_H__
 
-#include "melee.h"
+#include "../melee.h"
 
 
 //debuging purposes only:

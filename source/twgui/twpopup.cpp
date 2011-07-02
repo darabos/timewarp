@@ -345,7 +345,7 @@ void PopupT::check_end()
 {
 //	if (!hidden && !hasfocus && close_on_defocus)	// to prevent this from being called twice, due to recursive call to handle_focus() in hide()
 //	{
-		//tw_error("PopupList : Losing focus !!");
+		//throw("PopupList : Losing focus !!");
 
 //		close(-1);		// nothing ;)
 //	}

@@ -150,7 +150,7 @@ GarashTyrant::GarashTyrant(Vector2 opos, double shipAngle,
 
 void GarashTyrant::calculate()
 {
-	STACKTRACE
+	 
 
 if (!fire_weapon  &&
 		!fire_special &&
@@ -230,7 +230,7 @@ if (repulse)
 }
 
 void GarashTyrant::stun_ship(SpaceObject *other){
-	STACKTRACE
+	 
   GarashRepulsarStun* GRS;
   if (other->state==0) return;
 	if (other->isShip()) {
@@ -247,7 +247,7 @@ void GarashTyrant::stun_ship(SpaceObject *other){
 
 void GarashTyrant::calculate_fire_weapon()
 	{
-	STACKTRACE
+	 
 	weapon_low = FALSE;
 
 	if (fire_weapon) {
@@ -273,7 +273,7 @@ void GarashTyrant::calculate_fire_weapon()
 
 int GarashTyrant::activate_weapon()
 {
-	STACKTRACE
+	 
   if(weaponObject)
     return(FALSE);
 
@@ -322,7 +322,7 @@ frame_step(0), frame_size(ofsize), frame_count(ofcount)
 
 void GarashRepulsarStun::calculate()
 {
-	STACKTRACE;
+	 
 
 	if(!targetship)
 	{
@@ -425,7 +425,7 @@ GarashShot::GarashShot(Vector2 opos, double oangle, double ov,
 }
 
 void GarashShot::calculate() {
-	STACKTRACE
+	 
 
 	if(released)
 		Shot::calculate();
@@ -507,7 +507,7 @@ void GarashShot::animateExplosion()
 
 void GarashShot::inflict_damage(SpaceObject *other)
 	{
-	STACKTRACE
+	 
 
 	int Distance_Travelled = iround(distance_from(StartC, other->normal_pos()));
 	int AddDamage = iround((Distance_Travelled / CD) * CDD);
@@ -552,7 +552,7 @@ void GarashShot::inflict_damage(SpaceObject *other)
 
 int GarashShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	armour += damage_factor + direct ; // nullify damage
 	if (((!ship_hit && !source->isShip()) ||
 			(ship_hit && source->isShip())) && !released)

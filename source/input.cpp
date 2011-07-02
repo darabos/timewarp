@@ -141,10 +141,10 @@ int enable_input (int which) {
 	if (which & 1) {
 		if (install_keyboard() < 0) {
 			failed |= 1;
-			log_debug("keyboard failed initialization\n");
+
 			allegro_message("Can't find keyboard.\nStart with the -nokeyboard option to avoid this message");
 		}	else {
-			log_debug("keyboard initialized\n");
+
 			poll_keyboard();
 			set_keyboard_rate(0,0);
 		}
@@ -153,10 +153,10 @@ int enable_input (int which) {
 	if (which & 2) {
 		if (install_mouse() < 0) {
 			failed |= 2;
-			log_debug("mouse failed initialization\n");
+
 			allegro_message("Can't find mouse.\nStart with the -nomouse option to avoid this message");
 		}	else {
-			log_debug("mouse initialized\n");
+
 			poll_mouse();
 		}
 	}
@@ -164,9 +164,9 @@ int enable_input (int which) {
 	if (which & 4) {
 		if (install_joystick(JOY_TYPE_AUTODETECT) < 0) {
 			failed |= 4;
-			log_debug("joystick failed initialization\n");
+
 		}	else {
-			log_debug("joystick initialized (%d joysticks)\n", num_joysticks);
+
 			poll_joystick();
 		}
 	}
@@ -181,15 +181,15 @@ int disable_input(int which) {
 	which &= enabled_input_devices;
 	if (which & 1) {
 		remove_keyboard();
-		log_debug("keyboard disabled\n");
+
 	}
 	if (which & 2) {
 		remove_mouse();
-		log_debug("mouse disabled\n");
+
 	}
 	if (which & 4) {
 		remove_joystick();
-		log_debug("joystick disabled\n");
+
 	}
 	enabled_input_devices &= ~which;
 	failed_input_devices |= failed;
@@ -414,7 +414,7 @@ Key get_key() {
 
 int key_pressed(Key which_key) {
 	if (which_key & 0x8000) {
-		error ("key_pressed - bad key");
+		throw("key_pressed - bad key");
 		return 0;
 	}
 
@@ -446,7 +446,7 @@ int key_pressed(Key which_key) {
 			case 3: return joy[joy_num].stick[joy_stick].axis[joy_axi].pos;
 			default: return 0;
 		}
-		error ("key_pressed - bad key???");
+
 		return 0;
 	}
 

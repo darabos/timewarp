@@ -98,7 +98,7 @@ double  KatPoly::isInvisible() const{
 
 int KatPoly::handle_damage( SpaceLocation* other, double normal, double direct )
 {
-	STACKTRACE;
+	 
   if( !morph )
   {
 	  Ship::handle_damage( other, normal, direct );
@@ -117,7 +117,7 @@ int KatPoly::handle_damage( SpaceLocation* other, double normal, double direct )
   return 0;
 }
 void KatPoly::animate( Frame* space ){
-	STACKTRACE
+	 
   if( !morph ) Ship::animate( space );
 }
 
@@ -130,7 +130,7 @@ void OverrideControlMorph::calculate(short *key)
 
 void KatPoly::calculate()
 {
-	STACKTRACE;
+	 
 
 	if( morph )
 	{
@@ -160,7 +160,7 @@ void KatPoly::calculate_fire_weapon(){ if( !morph ) Ship::calculate_fire_weapon(
 
 int KatPoly::activate_weapon()
 {
-	STACKTRACE;
+	 
 
 	game->add( new KatAnimatedShot( this, Vector2(0, -size.y/2), angle+PI, weaponVelocity, weaponDamage,
 		weaponRange, weaponArmour, this, data->spriteWeapon, data->spriteWeapon->frames(), time_ratio ));
@@ -169,7 +169,7 @@ int KatPoly::activate_weapon()
 }
 
 void KatPoly::calculate_fire_special(){
-	STACKTRACE
+	 
   if( morph ){
     if( morph->type != type ){
       // if in alien form use lower cost
@@ -183,20 +183,20 @@ void KatPoly::calculate_fire_special(){
 }
 
 RGB KatPoly::crewPanelColor(int k){
-	STACKTRACE
+	 
   if( morph ) return morph->crewPanelColor(k);
   return Ship::crewPanelColor(k);
 }
 
 RGB KatPoly::battPanelColor(int k){
-	STACKTRACE
+	 
   if( morph ) return morph->battPanelColor(k);
   return Ship::battPanelColor(k);
 }
 
 int KatPoly::activate_special()
 {
-	STACKTRACE
+	 
 	if( !(target && target->exists()) ) return false;               // we need a target
 	if( !target->isShip()) return false;
 
@@ -243,7 +243,7 @@ int KatPoly::activate_special()
 	// create the new ship
 	if (!morph_target)
 	{
-		tw_error("Kat Poly: morph target == 0.");
+		throw("Kat Poly: morph target == 0.");
 	}
 	morph = game->create_ship( morph_target->id, control, pos, angle, get_team() );
 	game->add( morph );              // add the ship
@@ -274,7 +274,7 @@ AnimatedShot(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite,
 
 void KatAnimatedShot::calculate()
 {
-	STACKTRACE
+	 
 	if (!(mother && mother->exists()))
 	{
 		mother = 0;
@@ -287,7 +287,7 @@ void KatAnimatedShot::calculate()
 
 int KatAnimatedShot::handle_damage( SpaceLocation* other, double normal, double direct )
 {
-	STACKTRACE
+	 
 	if (other != mother->morph)
 		return AnimatedShot::handle_damage(other, normal, direct);
 	else
@@ -299,7 +299,7 @@ int KatAnimatedShot::handle_damage( SpaceLocation* other, double normal, double 
 
 void KatAnimatedShot::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	if (other != mother->morph)
 		AnimatedShot::inflict_damage(other);
 }

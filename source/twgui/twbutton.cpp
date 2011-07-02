@@ -664,7 +664,7 @@ void GraphicButton::locate_by_backgr(char *strid)
 	tmp = load_bitmap(check_char, 0);
 	if (!tmp)
 	{
-		twgui_error("Could not find the comparison bmp in the datafile");
+		throw("Could not find the comparison bmp in the datafile");
 	}
 	
 	// first, load the last known position from the ini file
@@ -694,7 +694,7 @@ void GraphicButton::locate_by_backgr(char *strid)
 
 	if (!k && mainwindow->autoplace)
 	{
-		twgui_error("Could not find the bmp on the background image");
+		throw("Could not find the bmp on the background image");
 	}
 }
 
@@ -756,7 +756,7 @@ void GraphicButton::init_pos_size(RLE_SPRITE **bmp_default, char *idstr)
 		size.x = (*bmp_default)->w;		// note: it's already scaled on initialization.
 		size.y = (*bmp_default)->h;
 	} else {
-		//tw_error("Could not initialize Button bitmap");
+		//throw("Could not initialize Button bitmap");
 		size = 0;
 	}
 
@@ -765,7 +765,7 @@ void GraphicButton::init_pos_size(RLE_SPRITE **bmp_default, char *idstr)
 		locate_by_backgr(idstr);
 //	else
 //	{
-//		tw_error("No default Button defined!");
+//		throw("No default Button defined!");
 //	}
 }
 
@@ -779,7 +779,7 @@ void GraphicButton::init_pos_size(BITMAP **bmp_default, char *idstr)
 		size.x = (*bmp_default)->w;		// note: it's already scaled on initialization.
 		size.y = (*bmp_default)->h;
 	} else {
-		//tw_error("Could not initialize Button bitmap");
+		//throw("Could not initialize Button bitmap");
 		size = 0;
 	}
 
@@ -788,7 +788,7 @@ void GraphicButton::init_pos_size(BITMAP **bmp_default, char *idstr)
 		locate_by_backgr(idstr);
 //	else
 //	{
-//		tw_error("No default Button defined!");
+//		throw("No default Button defined!");
 //	}
 }
 

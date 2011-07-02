@@ -47,7 +47,7 @@ REGISTER_FILE
 
 #include "../melee/mlog.h"
 
-#include "twgui/twgui.h"
+#include "../twgui/twgui.h"
 
 
 
@@ -57,8 +57,7 @@ REGISTER_FILE
 
 void copy_sprite2bmp(SpaceSprite* src, BITMAP *bmp)
 {
-	STACKTRACE;
-
+	
 	src->lock();
 	
 	BITMAP *tmp = src->get_bitmap(0);
@@ -246,8 +245,7 @@ public:
 
 SpaceSprite *FlMelee::GetSprite(char *fileName, char *spriteName, int attribs)
 {
-	STACKTRACE;
-
+	
 
 	DATAFILE *tmpdata;
 	tmpdata= load_datafile_object(fileName,spriteName);
@@ -275,8 +273,7 @@ SpaceSprite *FlMelee::GetSprite(char *fileName, char *spriteName, int attribs)
 bool FlMelee::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, 
 int numSprites, int attribs)
 {
-	STACKTRACE;
-
+	
 
 	SpaceSprite *spr;
 	char dataStr[100];
@@ -346,8 +343,7 @@ NPI *FlMelee::new_player()	// should return a pointer to a new player-class
 
 void FlMelee::init(Log *_log)
 {
-	STACKTRACE;
-
+	
 	// disable "bots", cause it's humans first, bots are the rest of the ships by default
 	num_players -= num_bots;
 	num_bots = 0;
@@ -367,7 +363,7 @@ void FlMelee::init(Log *_log)
 	// load the sprite, but set the anti-alias to 0 for them - they're _big_:
 	if(GetSprites(HugePics,"plhuge.dat","Station_Planet%03d",Num_Planet_Pics,
 		SpaceSprite::MASKED | SpaceSprite::NO_AA)==FALSE)
-		error("File error, planet pics.  Bailing out...");
+		throw("File error, planet pics.  Bailing out...");
 
 
 	//opening your .ini file.
@@ -538,7 +534,7 @@ void FlMelee::init(Log *_log)
 		iMessage("Nships = %i", Nships);
 
 		if (Nships > max_fleet_ships)
-			tw_error("Too many ships in this fleet");
+			throw("Too many ships in this fleet");
 
 		strcpy(alliancename[ifleet], get_config_string(ident, "Name", 0) );
 
@@ -631,17 +627,17 @@ void FlMelee::init(Log *_log)
 		++iship[ifleet];
 
 		if (iship[ifleet] == 0)
-			tw_error("No ships left for this player !!");
+			throw("No ships left for this player !!");
 	}
 	
 	//if(	takeovership == NULL )		
-	//	tw_error("takeovership is used without initialization");
+	//	throw("takeovership is used without initialization");
 	
 
 	healthbartoggle = 1;	// show health bars for the ships.
 
 
-	//if (num_targets != 14 ) {tw_error("Oh man ...");} OK this works fine !
+	//if (num_targets != 14 ) {throw("Oh man ...");} OK this works fine !
 
 //	if (playercontrols[0]->target)
 //	{
@@ -673,7 +669,7 @@ void FlMelee::init(Log *_log)
 //	blankRadar = GetBitmap(VanDat,"Scope");		//Load blank RADAR image
 //	blankRadar = create_bitmap(200, 200);
 //	clear_to_color(blankRadar, makecol(100,100,100));
-//	if (!blankRadar) error("Can't load scope image.");
+//	if (!blankRadar)throw("Can't load scope image.");
 
 	radar_sizes[0] = size.x/8;		// is toggled off, then
 	radar_sizes[1] = size.x/4;
@@ -720,8 +716,7 @@ void FlMelee::init(Log *_log)
 
 void FlMelee::quit(const char *message)
 {
-	STACKTRACE;
-
+	
 	// save the game settings.
 	set_config_file("gflmelee.ini");
 	set_config_int("GameSetting", "RadarLayout", radarlayout);
@@ -737,8 +732,7 @@ void FlMelee::quit(const char *message)
 
 int FlMelee::is_in_team(SpaceLocation *o, TeamCode team)
 {
-	STACKTRACE;
-
+	
 	if (!(o && o->exists() ))
 		return 0;
 
@@ -749,8 +743,7 @@ int FlMelee::is_in_team(SpaceLocation *o, TeamCode team)
 
 void FlMelee::animate_onscreen_shiplist( Frame* frame )
 {
-	STACKTRACE;
-
+	
 	// info about the fleets
 
 	
@@ -918,8 +911,7 @@ void FlMelee::animate_onscreen_shiplist( Frame* frame )
 
 void FlMelee::animate_predict(Frame *frame, int time)
 {
-	STACKTRACE;
-
+	
 	Game::animate_predict(frame, time);
 
 	animate_onscreen_shiplist( frame );
@@ -929,8 +921,7 @@ void FlMelee::animate_predict(Frame *frame, int time)
 
 void FlMelee::animate( Frame* frame )
 {
-	STACKTRACE;
-
+	
 	
 	Game::animate( frame );
 
@@ -941,8 +932,7 @@ void FlMelee::animate( Frame* frame )
 
 void FlMelee::calculate()
 {
-	STACKTRACE;
-
+	
 	Game::calculate();
 
 	Control *c;
@@ -1066,7 +1056,7 @@ void FlMelee::calculate()
 		/*
 		if ( !c->target)
 		{
-			//		{tw_error("what the ...?! We won! Hurray !");}
+			//		{throw("what the ...?! We won! Hurray !");}
 			// I guess you win ;)
 			// but only if you're the local player
 			if (iplayer == localplayer)
@@ -1292,8 +1282,7 @@ void FlMelee::calculate()
 
 void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 {
-	STACKTRACE;
-
+	
 	Game::ship_died(who, source);
 
 	//updatestats(Ship *killer, Ship *victim)
@@ -1322,8 +1311,7 @@ void FlMelee::ship_died(Ship *who, SpaceLocation *source)
 
 void FlMelee::show_ending(int didwewin)
 {
-	STACKTRACE;
-
+	
 	// show some bmp
 
 	BITMAP *dest = view->frame->surface;
@@ -1395,8 +1383,7 @@ StatsManager::StatsManager()
 
 void StatsManager::addship ( Ship *statship, int ofordisplay )
 {
-	STACKTRACE;
-
+	
 	SpaceSprite *spr = statship->data->spriteShip;
 	BITMAP *tmp = create_bitmap(40, 40);
 
@@ -1412,7 +1399,7 @@ void StatsManager::addship ( Ship *statship, int ofordisplay )
 	if ( Nlist >= StatsMax_Nships )
 	{
 		Nlist = StatsMax_Nships-1;
-		//tw_error("Too many ships in the gamelist for the stats manager");
+		//throw("Too many ships in the gamelist for the stats manager");
 	}
 
 	// only add a stats thingy if the ships needs monitoring (eg. has weapons, belongs to a team)
@@ -1425,15 +1412,14 @@ void StatsManager::addship ( Ship *statship, int ofordisplay )
 		if ( Nships >= StatsMax_Nships )
 		{
 			Nships = StatsMax_Nships-1;
-			//tw_error("Too many ships in the game for the stats manager");
+			//throw("Too many ships in the game for the stats manager");
 		}
 	}
 }
 
 void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 {
-	STACKTRACE;
-
+	
 
 	if ( !(killer && victim) )
 		return;
@@ -1482,7 +1468,7 @@ void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 			if ( stats[i].Nkilled >= StatsMax_Nkilled )
 			{
 				stats[i].Nkilled = StatsMax_Nkilled - 1;
-				//tw_error("Too many ships killed in the game for the stats manager");
+				//throw("Too many ships killed in the game for the stats manager");
 			}
 
 		}
@@ -1491,8 +1477,7 @@ void StatsManager::updatestats(SpaceLocation *killer, Ship *victim)
 
 void StatsManager::showstats(Frame *frame)
 {
-	STACKTRACE;
-
+	
 	// well ... show the graphics of all the victims ?
 	int i;
 
@@ -1547,8 +1532,7 @@ void StatsManager::showstats(Frame *frame)
 
 int StatsManager::list_item(unsigned int flag)
 {
-	STACKTRACE;
-
+	
 	int i;
 
 	for ( i = 0; i < Nlist; ++i )
@@ -1587,16 +1571,14 @@ StatsManager::~StatsManager()
 
 Vector2 YRadar::shiftscale(Vector2 r_center, Vector2 v_center, double scale, Vector2 n)
 {
-	STACKTRACE;
-
+	
 	//Used to scale game coordinates onto RADAR screen coordinates
 	return  scale * min_delta(n - r_center, map_size) + v_center;
 }
 
 void YRadar::PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale)
 {
-	STACKTRACE;
-
+	
 	Vector2 pos;
 
 	pos = shiftscale(T, Vector2(Slate->w/2,Slate->h/2), Scale, o->pos);
@@ -1652,8 +1634,7 @@ void YRadar::PaintItem(BITMAP *Slate, Vector2 T, SpaceLocation *o, double Scale)
 
 void YRadar::Paint(BITMAP *Slate, Vector2 T)
 {
-	STACKTRACE;
-
+	
 	double Scale = Slate->w/(2.*size);
 
 	for(int num=0; num<physics->num_items; num++)
@@ -1668,8 +1649,7 @@ void YRadar::Paint(BITMAP *Slate, Vector2 T)
 
 void YRadar::initbmp(char *datafilename)
 {
-	STACKTRACE;
-
+	
 	DATAFILE *dat;
 	dat = load_datafile(datafilename);
 
@@ -1700,7 +1680,7 @@ void YRadar::initbmp(char *datafilename)
 	if ( !(ship_f_icon && ship_e_icon && cbody_icon && planet_icon &&
 		target_icon1 && target_icon2 && backgr_bmp && foregr_bmp ) )
 	{
-		tw_error("Failed to load one of the radar icons");
+		throw("Failed to load one of the radar icons");
 	}
 
 }
@@ -1737,8 +1717,7 @@ YRadar::YRadar(Control *ocontroller, double Size, TeamCode hteam, char *datafile
 
 void YRadar::animate(Frame *space)
 {
-	STACKTRACE;
-
+	
 	//If the radar is disabled, don't do anything.
 	if(active==FALSE) return;
 
@@ -1801,7 +1780,7 @@ Same as mshppan.cpp, except the panel is NOT drawn onto a new window
 (gives me more control), but only the (panel) bitmap is being updated.
 */
 
-ShipPanelBmp::ShipPanelBmp(Ship *_ship) {STACKTRACE;
+ShipPanelBmp::ShipPanelBmp(Ship *_ship) {
 	id |= ID_SHIP_PANEL;
 
 	panel   = create_bitmap_ex(bitmap_color_depth(screen), 64, 100);
@@ -1828,14 +1807,14 @@ ShipPanelBmp::ShipPanelBmp(Ship *_ship) {STACKTRACE;
 	}
 
 ShipPanelBmp::~ShipPanelBmp()
-{STACKTRACE;
+{ 
   destroy_bitmap(captain);
   destroy_bitmap(panel);
 }
 
 
 void ShipPanelBmp::animate_panel() {
-	STACKTRACE;
+	 
 	if (!ship) {
 		double w, h;
 
@@ -1915,7 +1894,7 @@ void ShipPanelBmp::animate_panel() {
 	}
 
 void ShipPanelBmp::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int color, int bcolor) {
-	STACKTRACE;
+	 
 	int i;
 	w -= 1;
 	h -= 1;
@@ -1954,7 +1933,7 @@ ImIndicator::~ImIndicator()
 
 int ImIndicator::colortype(SpaceLocation *o)
 {
-	STACKTRACE;
+	 
 
 	if (o && o->isPlanet())
 		return makecol(150,100,25);
@@ -1968,7 +1947,7 @@ int ImIndicator::colortype(SpaceLocation *o)
 
 void ImIndicator::newtarget(SpaceLocation *o)
 {
-	STACKTRACE;
+	 
 
 	showme = o;
 
@@ -1985,7 +1964,7 @@ void ImIndicator::newtarget(SpaceLocation *o)
 
 void ImIndicator::animate(Frame *frame)
 {
-	STACKTRACE;
+	 
 
 	if (!showme)
 		return;
@@ -2071,7 +2050,7 @@ void ImIndicator::calculate()
 
 void FlMelee::start_menu(int *select)
 {
-	STACKTRACE;;
+	 ;
 ///*
 
 	unscare_mouse();
@@ -2111,7 +2090,7 @@ void FlMelee::start_menu(int *select)
 
 	if ( Nfleets == 0 )
 	{
-		tw_error("No fleets defined");
+		throw("No fleets defined");
 	}
 
 	// check all the fleet names

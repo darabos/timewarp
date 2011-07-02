@@ -90,7 +90,7 @@ DraxGryphon::DraxGryphon(Vector2 opos, double shipAngle,
 
 int DraxGryphon::activate_weapon()
 {
-	STACKTRACE;
+	 
   weaponoffset++;
 
   if (weaponoffset > 3)
@@ -108,7 +108,7 @@ int DraxGryphon::activate_weapon()
 int DraxGryphon::activate_special()
 {
 
-	STACKTRACE;
+	 
 
 	if (numMines == maxMines) {
 	  weaponObject[0]->state = 0;
@@ -128,7 +128,7 @@ int DraxGryphon::activate_special()
 
 void DraxGryphon::calculate()
 {
-STACKTRACE;
+ 
 
    int j = 0;
    for (int i = 0; i < numMines; i += 1) {
@@ -161,7 +161,7 @@ DraxMine::DraxMine(double ox,double oy,double ov, double oangle, int odamage, in
 
 void DraxMine::calculate() {
 
-	STACKTRACE;
+	 
 
 	AnimatedShot::calculate();
 
@@ -230,7 +230,7 @@ void DraxMine::calculate() {
 
 void DraxMine::inflict_damage(SpaceObject *other) {
 
-	STACKTRACE;
+	 
   if (other->isShip())
      damage_factor = 0;
 

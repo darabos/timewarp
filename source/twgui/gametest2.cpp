@@ -183,7 +183,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 				bmp = (BITMAP*) data->dat;
 			} else
 			{
-				tw_error("Unknown data type");
+				throw("Unknown data type");
 			}
 
 			fleet_bmp[i] = create_bitmap_ex(32, W, W);
@@ -208,7 +208,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 			int ires = save_bmp(fname, fleet_bmp[i], ptest);
 			if (ires)
 			{
-				tw_error("Could not cache bmp data");
+				throw("Could not cache bmp data");
 			}
 
 			if (data->type == DAT_RLE_SPRITE)
@@ -219,7 +219,7 @@ BITMAP ** load_fleet_bmps(Fleet *fleet, int W)
 				fleet_bmp[i] = 0;
 			else
 				fleet_bmp[i] = fleet_bmp[i-1];
-			tw_error("could not load ship data");
+			throw("could not load ship data");
 		}
 
 		if (alldata)
@@ -382,7 +382,7 @@ void TWgui::init(Log *_log)
 
 	if (!reference_fleet)
 	{
-		tw_error("reference fleet is not available !!");
+		throw("reference fleet is not available !!");
 	}
 	BITMAP **bmplist;
 	//bmplist = load_fleet_bmps(reference_fleet, 100);

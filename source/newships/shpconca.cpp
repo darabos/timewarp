@@ -113,7 +113,7 @@ public:
 
 void CargoLink::do_area_damage()
 {
-	STACKTRACE
+	 
 	Query q;
 	for (q.begin(this, OBJECT_LAYERS, explosionRange, QUERY_OBJECT); q.currento; q.next())
 	{
@@ -129,7 +129,7 @@ void CargoLink::do_area_damage()
 
 int CargoLink::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	int  totalDamage = int( normal+direct + 0.5);
 
 	if (totalDamage == 0) return 0;
@@ -170,7 +170,7 @@ int CargoLink::handle_damage(SpaceLocation *source, double normal, double direct
 
 void CargoLink::calculate()
 {
-	STACKTRACE
+	 
 	Link::calculate();
 	sprite_index = get_index(angle);
 	if (Prev_Link && !Prev_Link->exists()) Prev_Link = NULL;
@@ -200,7 +200,7 @@ Link(creator,opos,oangle,osprite,Prev_Object,Next_Object)
 
 void Chain::Pull_Last_Link()
 {
-	STACKTRACE
+	 
 	Link *l=this;
 
 	//Seek to the end of the list
@@ -212,13 +212,13 @@ void Chain::Pull_Last_Link()
 
 int Chain::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	return damage(Prev_Link, 0, normal+direct);
 }
 
 void Chain::Uncouple()
 {
-	STACKTRACE
+	 
 
 	for(Link *l=this->Next_Link ; l!=NULL; l=l->Next_Link)
 	{
@@ -302,7 +302,7 @@ Link(creator,opos, oangle,osprite,NULL,NULL)
 
 void Chain::addlink(SpaceLocation *creator, double oangle, SpaceSprite *osprite, double ospacing, double omass)
 {
-	STACKTRACE
+	 
 	// first, find the last link in the list:
 	
 	Link *Cur_Link = this;					// Chain is also of type Link.
@@ -347,7 +347,7 @@ void Chain::addlink(SpaceLocation *creator, double oangle, SpaceSprite *osprite,
 //backwards.
 void Chain::ChainRecur(Link *other,int num)
 {
-	STACKTRACE
+	 
 	//Call ChainRecur for the next link UNLESS you're at the last link
 	if(other->Next_Link!=NULL) ChainRecur(other->Next_Link,num+1);
 
@@ -358,7 +358,7 @@ void Chain::ChainRecur(Link *other,int num)
 
 void Chain::calculate()
 {
-	STACKTRACE
+	 
 	if( !(ship && ship->exists()) )
 	{	//If the mothership is killed, the chain dies.
 		Uncouple();		//Shatters chain, links become independent
@@ -377,7 +377,7 @@ void Chain::calculate()
 
 void Chain::ChainPhysics(SpaceObject *first, SpaceObject *second)
 {
-	STACKTRACE
+	 
 
 
 	// first = towards the head, second = towards the tail
@@ -514,7 +514,7 @@ ConfedCargotran::ConfedCargotran(Vector2 opos, double angle, ShipData *data, uns
 
 int ConfedCargotran::activate_weapon()
 {
-	STACKTRACE
+	 
 	if(fire_special) return(FALSE);
 
 	//Add weapon code here
@@ -527,7 +527,7 @@ int ConfedCargotran::activate_weapon()
 
 int ConfedCargotran::activate_special()
 {
-	STACKTRACE
+	 
 	//Cuts loose all links and remembers that it did so.
 	if(Head==NULL)
 		return(FALSE);
@@ -549,7 +549,7 @@ int ConfedCargotran::activate_special()
 
 void ConfedCargotran::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	double back_x=size.x/3.60, back_y=-size.y/2.33,
 	       frnt_x=size.x/5.55, frnt_y=+size.y/17.01,
 	       back_y_1=-size.y/2.06;
@@ -586,7 +586,7 @@ void ConfedCargotran::animate(Frame *space)
 
 void ConfedCargotran::calculate()
 {
-	STACKTRACE
+	 
 	Ship::calculate();
 
 }
@@ -594,7 +594,7 @@ void ConfedCargotran::calculate()
 
 void ConfedCargotran::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	if (!(other && other->exists()))
 		return;
 

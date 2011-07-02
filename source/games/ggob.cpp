@@ -151,25 +151,25 @@ void GobGame::init(Log *_log) {
 
 	DATAFILE *tmpdata; 
 	tmpdata = load_datafile_object("gob.dat", "station0sprite");
-	if (!tmpdata) error( "couldn't find gob.dat#station0sprite");
+	if (!tmpdata)throw( "couldn't find gob.dat#station0sprite");
 	stationSprite[0] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED, 64);
 	unload_datafile_object(tmpdata);
 //	stationSprite[0]->permanent_phase_shift(8);
 
 	tmpdata = load_datafile_object("gob.dat", "station1sprite");
-	if (!tmpdata) error ("couldn't find gob.dat#station1sprite");
+	if (!tmpdata) throw ("couldn't find gob.dat#station1sprite");
 	stationSprite[1] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED, 64);
 	unload_datafile_object(tmpdata);
 //	stationSprite[1]->permanent_phase_shift(8);
 
 	tmpdata = load_datafile_object("gob.dat", "station2sprite");
-	if (!tmpdata) error ("couldn't find gob.dat#station2sprite");
+	if (!tmpdata) throw ("couldn't find gob.dat#station2sprite");
 	stationSprite[2] = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED, 64);
 	unload_datafile_object(tmpdata);
 //	stationSprite[2]->permanent_phase_shift(8);
 
 	tmpdata = load_datafile_object("gob.dat", "defender");
-	if (!tmpdata) error ("couldn't find gob.dat#defender");
+	if (!tmpdata) throw ("couldn't find gob.dat#defender");
 	defenderSprite = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED);
 	unload_datafile_object(tmpdata);
 
@@ -435,7 +435,7 @@ base	time	low		high
 		e = random(e + 3);
 		if (e < pow(2.5*base,0.4) - 1) 
 			e = random(num_enemy_types);
-		if (e > sqrt(3*base) + 2) 
+		if (e > sqrt(3.0*base) + 2) 
 			e = random(e + 1);
 		e = e;
 		}
@@ -521,7 +521,7 @@ GobPlayer::pair *GobPlayer::_get_pair(const char *id) {
 }
 void GobPlayer::_add_pair(const char *id, int value) {
 	if (_get_pair(id)) {
-		error("GobPlayer::_add_pair - \"%s\" already exists", id);
+		throw("GobPlayer::_add_pair - \"%s\" already exists", id);
 		return;
 	}
 	pair_list = (pair*)realloc(pair_list, sizeof(pair) * (num_pairs+1));
@@ -682,7 +682,7 @@ void GobStation::station_screen(GobPlayer *s) {
 	BITMAP *background = load_bitmap(background_pic, NULL);
 	if (!background) {
 		message.print(1000, 15, "%s", background_pic);
-		error ("couldn't load station background");
+		throw ("couldn't load station background");
 		}
 	game->window->lock();
 	aa_set_mode(AA_DITHER);

@@ -225,14 +225,14 @@ ShipPartManager::ShipPartManager(Ship *creator)
 
 void ShipPartManager::add_part(ShipPart *newpart)
 {
-	STACKTRACE
+	 
 	partlist[Nparts] = newpart;
 	++Nparts;
 }
 
 void ShipPartManager::calculate_manager()
 {
-	STACKTRACE
+	 
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -250,7 +250,7 @@ void ShipPartManager::calculate_manager()
 	{
 		if (!partlist[i]->exists())
 		{
-			tw_error("A ship part should not die!");
+			throw("A ship part should not die!");
 		}
 		
 		partlist[i]->calculate_manager(oldpos, oldvel);
@@ -282,7 +282,7 @@ void ShipPartManager::calculate_manager()
 
 void ShipPart::calc_angle()
 {
-	STACKTRACE
+	 
 	angle = mother->angle + offset_angle;
 	while (angle < 0  )	angle += PI2;
 	while (angle > PI2)	angle -= PI2;
@@ -291,7 +291,7 @@ void ShipPart::calc_angle()
 
 void ShipPart::calc_pos(Vector2 refpos)
 {
-	STACKTRACE
+	 
 	pos = refpos + rotate(offset_pos, mother->angle) - rotate(pivot_point, angle);
 }
 
@@ -342,7 +342,7 @@ mother(creator)
 
 void ShipPart::calculate()
 {
-	STACKTRACE
+	 
 	// this should be checked here, too, cause the manager can die as well; if the
 	// parts aren't dead by then, the check will never be made otherwise !!
 	if (!(mother && mother->exists()))
@@ -355,7 +355,7 @@ void ShipPart::calculate()
 
 void ShipPart::calculate_manager(Vector2 refpos, Vector2 refvel)
 {
-	STACKTRACE
+	 
 
 	if (!(mother && mother->exists()))
 	{
@@ -382,14 +382,14 @@ bool ShipPart::die()
 
 void ShipPart::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 
 	damage(other, damage_normal);
 }
 
 int ShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 
 	if (mother && mother->exists())
 	{
@@ -406,7 +406,7 @@ int ShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 
 void ShipPart::animate(Frame *space)
 {
-	STACKTRACE
+	 
 
 	SpaceObject::animate(space);
 }
@@ -415,7 +415,7 @@ void ShipPart::animate(Frame *space)
 // an exact copy, with a small modification: it also return a boolean value
 int ShipPart::collide_SpaceObject(SpaceObject *other)
 {
-	STACKTRACE
+	 
 //	double dx, dy;
 //	double dvx, dvy;
 	double tmp;
@@ -423,7 +423,7 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 //	int x1, y1;
 //	int x2, y2;
 
-	if (this == other) {tw_error("SpaceObject::collide - self!");}
+	if (this == other) {throw("SpaceObject::collide - self!");}
 	if((!canCollide(other)) || (!other->canCollide(this))) return 0;
 	if (!exists() || !other->exists()) return 0;
 
@@ -518,7 +518,7 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 		int a1 = c1->canCollide(c2);
 		int a2 = c2->canCollide(c1);
 		bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
-		tw_error("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+		throw("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
 	}
 #endif
 
@@ -527,7 +527,7 @@ int ShipPart::collide_SpaceObject(SpaceObject *other)
 
 void ShipPart::collide(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	Vector2 oldpos, oldvel;
 
 	oldpos = pos;
@@ -639,7 +639,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int DuclyLanternjaws::activate_special()
 {
-	STACKTRACE
+	 
 
 	if ( lantern->intensity < 0.9 )
 		lantern->intensity += 0.1;
@@ -657,7 +657,7 @@ Vector2 pos_laser_left()
 
 int DuclyLanternjaws::activate_weapon()
 {
-	STACKTRACE
+	 
 
 	if ( arm_movement )
 		return TRUE;	// always use some fuel !
@@ -683,7 +683,7 @@ int DuclyLanternjaws::activate_weapon()
 
 void DuclyLanternjaws::calculate()
 {
-	STACKTRACE
+	 
 	ManageParts->oldpos = pos;
 	ManageParts->oldvel = vel;
 
@@ -838,7 +838,7 @@ LaserArc::~LaserArc()
 
 void LaserArc::update_lasersegs()
 {
-	STACKTRACE
+	 
 	int i;
 	double angle_step;
 
@@ -851,7 +851,7 @@ void LaserArc::update_lasersegs()
 
 		if (!laser_o[i])
 		{
-			tw_error("LaserArc: laser segment has died.");
+			throw("LaserArc: laser segment has died.");
 		}
 
 		double a, a1, a2, L;
@@ -878,7 +878,7 @@ void LaserArc::update_lasersegs()
 
 void LaserArc::calculate()
 {
-	STACKTRACE;
+	 
 	
 	SpaceLocation::calculate();
 
@@ -930,7 +930,7 @@ void SpaceLineArc::calculate()
 
 void SpaceLineArc::set_props(Vector2 opos, double oangle, double olength)
 {
-	STACKTRACE
+	 
 	pos = opos;
 	angle = oangle;
 	length = olength;
@@ -943,7 +943,7 @@ int SpaceLineArc::handle_damage(SpaceLocation *source, double normal, double dir
 
 void SpaceLineArc::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 
 	// copied from space_line:
 	int i;
@@ -996,7 +996,7 @@ SpaceLocation(creator, creator->pos, langle)
 
 void Lantern::calculate()
 {
-	STACKTRACE
+	 
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -1104,7 +1104,7 @@ PulseLaser2::PulseLaser2(SpaceLocation *creator, double langle, int lcolor, doub
 
 void PulseLaser2::calculate()
 {
-	STACKTRACE
+	 
 	if (!lpos && lpos->exists())
 	{
 		lpos = 0;
@@ -1124,7 +1124,7 @@ void PulseLaser2::calculate()
 
 void PulseLaser2::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	// copied from space_line:
 	int i;
 	i = iround_down(damage_factor / 2);

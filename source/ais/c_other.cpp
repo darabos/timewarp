@@ -36,8 +36,7 @@ const char *ControlMoron::getTypeName()
   \param ship with this stupid AI
 */
 int stupid_bot(Ship *ship) {
-	STACKTRACE
-
+	
 	int r = 0;
 	double a;
 	if (!ship->target) return 0;

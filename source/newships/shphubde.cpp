@@ -90,7 +90,7 @@ Ship(opos,  shipAngle, shipData, code)
 
 int Hellenian::activate_weapon()
 {	
-	STACKTRACE;
+	 
 	Vector2 rpos;
 	rpos = 0;
 
@@ -108,7 +108,7 @@ int Hellenian::activate_weapon()
 int Hellenian::activate_special()
 {
 
-	STACKTRACE;
+	 
 	
 	double a, a0;
 
@@ -156,7 +156,7 @@ Missile(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite)
 
 void HellenianShot::calculate()
 {
-	STACKTRACE;
+	 
 	t += frame_time * 1E-3;
 	if (t > trepeat)
 	{
@@ -206,7 +206,7 @@ Shot(creator, rpos, 0, 0, odamage, 1E9, 0, creator, explsprite)
 
 void MortarFire::calculate()
 {
-	STACKTRACE;
+	 
 	if (t > t_exist || !(ship && ship->exists()))
 	{
 		state = 0;
@@ -232,7 +232,7 @@ void MortarFire::calculate()
 
 void MortarFire::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	Shot::inflict_damage(other);
 	state = 0;
 }

@@ -52,7 +52,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 	twscreen = outputscreen;
 	if (!twscreen)
 	{
-		twgui_error("Something is wrong with the screen!!");
+		throw("Something is wrong with the screen!!");
 	}
 
 	strcpy(ident, identbase);
@@ -72,7 +72,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 //	datafile = load_datafile(datafilename);
 //	if (!datafile)
 //	{
-//		twgui_error("TWindow: Could not load datafile");
+//		throw("TWindow: Could not load datafile");
 //	}
 
 	// read the default resolution from the info.txt file :
@@ -175,7 +175,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 		W = backgr_rle->w;	// background is already scaled !!
 		H = backgr_rle->h;
 	} else {
-		twgui_error("TWindow: No background defined !!");
+		throw("TWindow: No background defined !!");
 	}
 
 
@@ -201,7 +201,7 @@ TWindow::TWindow(char *identbase, int dx, int dy, BITMAP *outputscreen, bool vid
 
 	if (is_same_bitmap(backgr, drawarea) || !(backgr || backgr_rle) || (!drawarea) || !twscreen)
 	{
-		twgui_error("oh my!");
+		throw("oh my!");
 	}
 
 	//Nareas = 0;
@@ -495,7 +495,7 @@ BITMAP* TWindow::bmp(char *bmpname, bool vidmem)
 
 	if (strlen(ident) > 120)
 	{
-		twgui_error("string exceeds max length");
+		throw("string exceeds max length");
 	}
 
 	strcpy(objname, bmpname);
@@ -536,7 +536,7 @@ RLE_SPRITE* TWindow::load_rle_data(char *filename)
 	fread(data, 1, size, f);				// the header info (size)
 
 	if (size != sizeof(RLE_SPRITE) + data->size)
-		tw_error("Error restoring in load_rle_data: data corrupt.");
+		throw("Error restoring in load_rle_data: data corrupt.");
 
 	fclose(f);
 
@@ -649,7 +649,7 @@ void TWindow::add(EmptyButton *newbutton)
 	button_last = newbutton;
 
 	if (button_last->next != 0)
-		tw_error("unknow button list error (already added?)");
+		throw("unknow button list error (already added?)");
 }
 
 
@@ -933,7 +933,7 @@ void TWindow::handle_unbufferedarea()
 
 		if (!drawarea)
 		{
-			tw_error("Error in reassigning menu subscreen");
+			throw("Error in reassigning menu subscreen");
 		}
 	}
 }
@@ -959,7 +959,7 @@ void TWindow::animate()
 
 	if (!drawarea)
 	{
-		tw_error("No menu drawing area");
+		throw("No menu drawing area");
 	}
 
 
@@ -1000,7 +1000,7 @@ void TWindow::animate()
 
 			++error_count;
 			if (error_count > 50)
-				tw_error("Infinite loop?");
+				throw("Infinite loop?");
 		}
 
 

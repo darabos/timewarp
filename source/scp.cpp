@@ -62,7 +62,7 @@ REGISTER_FILE
 #include "frame.h"
 
 #include "util/get_time.h"
-#include "util/profile2.h"
+//#include "util/profile2.h"
 
 #include "melee/mview.h"
 #include "melee/mcontrol.h"
@@ -108,7 +108,7 @@ bool optimize4latency = true;
 
 
 
-Log *new_log (int logtype) { STACKTRACE
+Log *new_log (int logtype) {  
 	union { Log *log; NetLog *netlog; };
 	log = NULL;
 
@@ -125,7 +125,7 @@ Log *new_log (int logtype) { STACKTRACE
 			return netlog;
 		}
 		default: {
-			tw_error("that is not a valid log type");
+			throw("that is not a valid log type");
 		}
 	}
 	return NULL;
@@ -134,7 +134,7 @@ Log *new_log (int logtype) { STACKTRACE
 
 // it's probably dangerous if this is declared inside this subroutine...
 static char buffy[1024];
-char *detect_gametype( Log *_log ) { STACKTRACE
+char *detect_gametype( Log *_log ) {  
 	int ltype;
 	_log->unbuffer(channel_init, &ltype, sizeof(int));
 	ltype = intel_ordering(ltype);
@@ -142,7 +142,7 @@ char *detect_gametype( Log *_log ) { STACKTRACE
 	_log->unbuffer(channel_init, &gnamelength, sizeof(int));
 	gnamelength = intel_ordering(gnamelength);
 	if (gnamelength > 1000) {
-		tw_error("Game name too long");
+		throw("Game name too long");
 		gnamelength = 1000;
 	}
 	//_log->unbuffer(channel_init, &buffy, gnamelength);
@@ -164,7 +164,7 @@ void share_array(int netnum, char *buffer, int *N)
 
 void share_string(char *str)
 {
-	STACKTRACE;
+	 
 
 	int Lstr;
 	Lstr = strlen(str) + 1;
@@ -180,7 +180,7 @@ void share_string(char *str)
 
 void share_string(int netnum, char *str)
 {
-	STACKTRACE;
+	 
 
 	int Lstr;
 	Lstr = strlen(str) + 1;
@@ -275,7 +275,7 @@ static DIALOG connect_dialog[] = {
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 };
 
-int connect_menu(VideoWindow *window, char **address, int *port) { STACKTRACE
+int connect_menu(VideoWindow *window, char **address, int *port) {  
 	int i = 0;
 
 	if (*address)
@@ -310,7 +310,7 @@ static DIALOG listen_dialog[] =
   { NULL,              0,    0,    0,    0,    255,  0,    0,    0,          0,    0,    NULL, NULL, NULL }
 };
 
-static int listen_menu(VideoWindow *window, int port) { STACKTRACE
+static int listen_menu(VideoWindow *window, int port) {  
 	dialog_string[1][0] = '\0';
 	int p = -1;
 	sprintf(dialog_string[1], "%d", port);
@@ -473,7 +473,7 @@ void play_address_server()
 	// note that you can manage at most max_connections connections at once.
 
 	if (!log->add_listen(port))
-		tw_error("listener failed");
+		throw("listener failed");
 
 }
 
@@ -688,7 +688,7 @@ void game_host_menu(int &Nhumans, int &Nbots, char *gname, int &CCstatus)
 //void play_net ( const char *_address, int _port )
 void play_net( bool ishost )
 {
-	STACKTRACE;
+	 
 
 	game_networked = true;
 
@@ -795,7 +795,7 @@ void play_net( bool ishost )
 		log_int(w, channel_server);
 		if (w != 99)
 		{
-			tw_error("unexpected value");
+			throw("unexpected value");
 		}
 
 		net_conn[0] = -1;	// local
@@ -810,14 +810,14 @@ void play_net( bool ishost )
 			
 			// listening for another client.
 			if (!log->add_listen(port))
-				tw_error("listener failed");
+				throw("listener failed");
 
 			// the index of the connection that was just added :
 			net_conn[n] = log->num_connections - 1;
 			
 			if (net_conn[n] != n-1)
 			{
-				tw_error("Adding connection with wrong index");
+				throw("Adding connection with wrong index");
 			}
 
 			// you should share data about the new player with all existing players ; include
@@ -915,7 +915,7 @@ void play_net( bool ishost )
 		net_conn[0] = log->num_connections - 1;
 		if (net_conn[0] != 0)
 		{
-			tw_error("First connection should have index 0");
+			throw("First connection should have index 0");
 		}
 
 //		free(tmp);
@@ -958,7 +958,7 @@ void play_net( bool ishost )
 				for ( idone = 1; idone < p_local; ++ idone )	// exclude one, because that's yourself...
 				{
 					if (!log->add_listen(port))
-						tw_error("listener failed");
+						throw("listener failed");
 
 					net_conn[idone] = log->num_connections - 1;
 				}
@@ -980,7 +980,7 @@ void play_net( bool ishost )
 
 
 		if (!p_local)
-			tw_error("Failed to initialize player number on startup");
+			throw("Failed to initialize player number on startup");
 
 		// the local player is always read/write
 		// no need to do this earlier, cause we've only used channel_init so-far.
@@ -1106,10 +1106,10 @@ void play_net( bool ishost )
 [22:47] Megagun: It works on 1v1 though
 
 				if (k == 0)
-					tw_error("Finding the host another time... should not happen");
+					throw("Finding the host another time... should not happen");
 
 				if (k < 0 || k >= log->num_connections)
-					tw_error("The address of one of the players was not found");
+					throw("The address of one of the players was not found");
 				
 				net_conn[i] = k;	// player i uses connection k.
 				
@@ -1261,7 +1261,7 @@ void play_net( bool ishost )
 
 	if (get_share_num() != 0)
 	{
-		tw_error("Share error??");
+		throw("Share error??");
 	}
 
 	play_game(gname, log);
@@ -1271,7 +1271,7 @@ void play_net( bool ishost )
 
 void play_net1client ( const char *_address, int _port )
 {
-	STACKTRACE;
+	 
 
 	NetLog *log = new NetLog();
 	log->init();
@@ -1304,7 +1304,7 @@ void play_net1client ( const char *_address, int _port )
 		if (i) {
 //						while (is_escape_pressed());
 			while (keypressed()) readkey();
-			tw_error("connection failed");
+			throw("connection failed");
 		}
 	}
 
@@ -1320,7 +1320,7 @@ void play_net1client ( const char *_address, int _port )
 	return;
 }
 
-void play_net1server(const char *_gametype_name, int _port) {STACKTRACE
+void play_net1server(const char *_gametype_name, int _port) { 
 	NetLog *log = new NetLog();
 	log->init();
 
@@ -1357,7 +1357,7 @@ void play_net1server(const char *_gametype_name, int _port) {STACKTRACE
 	return;
 }
 
-void play_demo ( const char * file_name ) {STACKTRACE
+void play_demo ( const char * file_name ) { 
 	Log *log = new PlaybackLog();
 	log->init();
 	log->load(file_name);
@@ -1447,7 +1447,7 @@ void reset_network(Log *log)
 
 void play_game(const char *_gametype_name, Log *_log)
 {
-	STACKTRACE
+	 
 	bool gui_stuff = false;
 	char gametype_name[1024];
 	char *c;
@@ -1476,7 +1476,7 @@ void play_game(const char *_gametype_name, Log *_log)
 		scp = NULL;
 	}
 
-	try {
+	//try {
 		if (old_game) {
 			delete old_game;
 			old_game = NULL;
@@ -1486,7 +1486,7 @@ void play_game(const char *_gametype_name, Log *_log)
 		if (type)
 			new_game = type->new_game();
 		else
-			tw_error("wait a sec... I can't find that game type");
+			throw("wait a sec... I can't find that game type");
 
 		reset_network(_log);
 
@@ -1508,24 +1508,24 @@ void play_game(const char *_gametype_name, Log *_log)
 		old_game = new_game;
 
 		remove_players();
-	}
+	//}
 
-	catch (int i) {
-		if (i == -1) throw;
-		if (__error_flag & 1) throw;
-		if (i != 0) caught_error ("%s %s caught int %d", __FILE__, __LINE__, i);
-		if (__error_flag & 1) throw;
-	}
-	catch (const char *str) {
-		if (__error_flag & 1) throw;
-		caught_error("message: \"%s\"", str);
-		if (__error_flag & 1) throw;
-	}
-	catch (...) {
-		if (__error_flag & 1) throw;
-		caught_error("Ack(2)!!!\nAn error occured!\nBut I don't know what error!");
-		if (__error_flag & 1) throw;
-	}
+	//catch (int i) {
+	//	if (i == -1) throw;
+	//	if (__error_flag & 1) throw;
+	//	if (i != 0) caught_error ("%s %s caught int %d", __FILE__, __LINE__, i);
+	//	if (__error_flag & 1) throw;
+	//}
+	//catch (const char *str) {
+	//	if (__error_flag & 1) throw;
+	//	caught_error("message: \"%s\"", str);
+	//	if (__error_flag & 1) throw;
+	//}
+	//catch (...) {
+	//	if (__error_flag & 1) throw;
+	//	caught_error("Ack(2)!!!\nAn error occured!\nBut I don't know what error!");
+	//	if (__error_flag & 1) throw;
+	//}
 
 	if (gui_stuff) {
         prepareTitleScreenAssets();
@@ -1599,9 +1599,145 @@ static void update_check(int argc, char *argv[])
 		
 
 
+
+void tw_exit(int errorcode) {
+	allegro_exit();
+
+	exit(1);
+}
+
+
+
+
+
+static DIALOG tw_alert_dialog1[] = {
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
+  { d_box_proc,        180,  170,  280,  140,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_textbox_proc,    185,  175,  270,  95,   255,  0,    0,    0,       80,   0,    NULL, NULL, NULL },
+  { d_button_proc,     250,  280,  160,  20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
+};
+static DIALOG tw_alert_dialog2[] = {
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
+  { d_box_proc,        180,  170,  280,  140,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_textbox_proc,    185,  175,  270,  95,   255,  0,    0,    0,       80,   0,    NULL, NULL, NULL },
+  { d_button_proc,     190,  275,  125,  30,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_button_proc,     325,  275,  125,  30,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
+};
+static DIALOG tw_alert_dialog3[] = {
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
+  { d_box_proc,        180,  170,  280,  140,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_textbox_proc,    185,  175,  270,  95,   255,  0,    0,    0,       80,   0,    NULL, NULL, NULL },
+  { d_button_proc,     230,  280,  50,   20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_button_proc,     290,  280,  50,   20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_button_proc,     350,  280,  50,   20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
+};
+static DIALOG tw_alert_dialog4[] = {
+  // (dialog proc)     (x)   (y)   (w)   (h)   (fg)  (bg)  (key) (flags)  (d1)  (d2)  (dp)
+  { d_box_proc,        180,  170,  280,  140,  255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { d_textbox_proc,    185,  175,  270,  95,   255,  0,    0,    0,       80,   0,    NULL, NULL, NULL },
+  { d_button_proc,     190,  280,  55,   20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_button_proc,     255,  280,  55,   20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_button_proc,     320,  280,  55,   20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_button_proc,     385,  280,  55,   20,   255,  0,    0,    D_EXIT,  0,    0,    NULL, NULL, NULL },
+  { d_tw_yield_proc,   0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL },
+  { NULL,              0,    0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
+};
+
+static DIALOG *tw_alert_dialogs[4] = { 
+	tw_alert_dialog1, 
+	tw_alert_dialog2, 
+	tw_alert_dialog3, 
+	tw_alert_dialog4
+};
+
+char find_shortcut_key(const char *s) {
+	while (true) {
+		s = strchr(s, '&');
+		if (s && (s[1] != '&')) {
+			s++;
+			break;
+		}
+		if (!s) return 0;
+	}
+	return *s;
+}
+
+
+int _tw_alert ( 
+	bool popup, 
+	char *message, 
+	const char *b1, 
+	const char *b2 = NULL, 
+	const char *b3 = NULL, 
+	const char *b4 = NULL
+) 
+{
+	char *s1 = message;
+	char *s2 = NULL, *s3 = NULL;
+
+	s2 = strchr(s1, '\n');
+	if (s2) {
+		s2[0] = 0;
+		s2 += 1;
+		s3 = strchr(s2, '\n');
+		if (s3) {
+			s3[0]= 0;
+			s3 += 1;
+		}
+	}
+
+	int l = 1;
+	if (b2) l = 2;
+	if (b3) l = 3;
+	if (b4) l = 4;
+	DIALOG *dialog = tw_alert_dialogs[l-1];
+	dialog[1].dp = (void*)message;
+	if (b1) {
+		dialog[2].dp = (void*)b1;
+		dialog[2].key = find_shortcut_key(b1);
+	}
+	if (b2) {
+		dialog[3].dp = (void*)b2;
+		dialog[3].key = find_shortcut_key(b2);
+	}
+	if (b3) {
+		dialog[4].dp = (void*)b3;
+		dialog[4].key = find_shortcut_key(b3);
+	}
+	if (b4) {
+		dialog[5].dp = (void*)b4;
+		dialog[5].key = find_shortcut_key(b4);
+	}
+
+	int i;
+
+	if (popup) i = tw_popup_dialog(&videosystem.window, dialog, 2) - 2;
+	else       i = tw_do_dialog   (&videosystem.window, dialog, 2) - 2;
+	return i + 1;
+	//return alert3(s1, s2, s3, b1, b2, b3, 0, 0, 0);
+}
+
+
+
+int tw_alert(const char *message, const char *b1, const char *b2, const char *b3, const char *b4) {
+	char *s1 = strdup(message);
+	int r = _tw_alert( true, s1, b1, b2, b3, b4 );
+	free(s1);
+	return r;
+}
+
+
+
+
 int tw_main(int argc, char *argv[]);
 
-int main(int argc, char *argv[]) { STACKTRACE
+int main(int argc, char *argv[]) {  
 	int r;
 	r = tw_main(argc, argv);
 	return r;
@@ -1615,9 +1751,9 @@ int tw_main(int argc, char *argv[])
 	//test_applic();
 
 #ifdef WIN32
-	char szPath[MAX_PATH];
+	WCHAR szPath[MAX_PATH];
 	GetModuleFileName(NULL, szPath, sizeof(szPath));
-	if (strrchr(szPath, '\\')) *strrchr(szPath, '\\') = '\0';
+	//if (strrchr(szPath, '\\')) *strrchr(szPath, '\\') = '\0';
 	SetCurrentDirectory(szPath);
 #endif
 
@@ -1641,17 +1777,15 @@ int tw_main(int argc, char *argv[])
 		_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG|_CRTDBG_LEAK_CHECK_DF);
 	#endif
 
-	log_debug(NULL);
 	time_t start_time = time(NULL);
-	log_debug("Log started at %s\n", asctime(localtime(&start_time)));
+
 	if (allegro_init() < 0)
-		tw_error_exit("Allegro initialization failed");
+		throw("Allegro initialization failed");
 	videosystem.preinit();
 
-	try {
 		init_time();
-		init_error();
-		init_profiling();
+		//init_error();
+		//init_profiling();
 
 		set_window_title("Star Control : TimeWarp");
 		set_config_file("client.ini");
@@ -1686,46 +1820,46 @@ int tw_main(int argc, char *argv[])
 		for (i = 1; i < argc; i += 1) {
 			if (false) ;
 			else if (!strcmp(argv[i], "-res") && (argc > i + 2)) {
-				log_debug("command-line argument -res\n");
+
 				screen_width = atoi(argv[i+1]);
 				screen_height = atoi(argv[i+2]);
 				i += 2;
 			}
 			else if (!strcmp(argv[i], "-bpp") && (argc > i + 1)) {
-				log_debug("command-line argument -bpp\n");
+
 				screen_bpp = atoi(argv[i+1]);
 				i += 1;
 			}
 			else if (!strcmp(argv[i], "-fullscreen") && (argc > i + 0)) {
-				log_debug("command-line argument -fullscreen\n");
+
 				fullscreen = true;
 			}
 			else if (!strcmp(argv[i], "-window") && (argc > i + 0)) {
-				log_debug("command-line argument -window\n");
+
 				fullscreen = false;
 			}
 			else if (!strcmp(argv[i], "-nosound") && (argc > i + 0)) {
-				log_debug("command-line argument -nosound\n");
+
 				sound.disable();
 			}
 			else if (!strcmp(argv[i], "-nokeyboard") && (argc > i + 0)) {
-				log_debug("command-line argument -nokeyboard\n");
+
 				inputs &= ~1;
 			}
 			else if (!strcmp(argv[i], "-nomouse") && (argc > i + 0)) {
-				log_debug("command-line argument -nomouse\n");
+
 				inputs &= ~2;
 			}
 			else if (!strcmp(argv[i], "-nojoystick") && (argc > i + 0)) {
-				log_debug("command-line argument -nojoystick\n");
+
 				inputs &= ~4;
 			}
 			else if (!strcmp(argv[i], "-noidle") && (argc > i + 0)) {
-				log_debug("command-line argument -noidle\n");
+
 				_no_idle = 1;
 			}
 			else if (!strcmp(argv[i], "-play") && (argc > i + 2)) {
-				log_debug("command-line argument -play\n");
+
 				auto_play = argv[i+1];
 				auto_param = argv[i+2];
 				i += 2;
@@ -1735,11 +1869,11 @@ int tw_main(int argc, char *argv[])
 				}
 			}
 			else {
-				log_debug("unrecognized command-line argument\n");
+
 			}
 		}
 
-		log_debug("command-line arguments parsed\n");
+
 
 		srand(time(NULL));
 		set_color_conversion(COLORCONV_NONE);
@@ -1761,7 +1895,7 @@ int tw_main(int argc, char *argv[])
 		set_view(v);
         
 
-		twgui_init(get_time, tw_error);
+		twgui_init(get_time);
 
 
 		init_ships();
@@ -1796,24 +1930,6 @@ int tw_main(int argc, char *argv[])
 			destroy_bitmap(video_screen);
 			video_screen = 0;
 		}
-	}
-
-	catch (int i) {
-		if (i == -1) throw;
-		if (__error_flag & 1) throw;
-		if (i != 0) caught_error("%s %s caught int %d", __FILE__, __LINE__, i);
-		if (__error_flag & 1) throw;
-	}
-	catch (const char *str) {
-		if (__error_flag & 1) throw;
-		caught_error("message: \"%s\"", str);
-		if (__error_flag & 1) throw;
-	}
-	catch (...) {
-		if (__error_flag & 1) throw;
-		caught_error("Ack!!!\nAn error occured on startup!\nBut I don't know what error!");
-		if (__error_flag & 1) throw;
-	}
 
 	tw_exit(0);
 	return 0;
@@ -1915,7 +2031,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 				ShipType *type = reference_fleet->getShipType(si);
 
 				if (!type)
-					tw_error("Unrecognized ship item[%i]", si);
+					throw("Unrecognized ship item[%i]", si);
 
 				PACKFILE *f;
 				//DATAFILE *d;
@@ -1937,7 +2053,7 @@ void ship_view_dialog(int si, Fleet *fleet) {
 				type->data->unlock();
 
 				if (!sprite)
-					tw_error("Failed to initialize sprite");
+					throw("Failed to initialize sprite");
                 
 
 //				d = load_datafile_object(type->data->file, "SHIP_P00_PCX");
@@ -2120,16 +2236,16 @@ int get_diagnostics_string ( char *dest ) {//returns length of string
 	} else {
 		tmp += sprintf(tmp, "JGMOD (music) Disabled\n");
 	}
-#	if defined DO_STACKTRACE
-		tmp += sprintf(tmp, "DO_STACKTRACE enabled\n");
+#	if defined DO_ 
+		tmp += sprintf(tmp, "DO_  enabled\n");
 #	else
-		tmp += sprintf(tmp, "DO_STACKTRACE disabled\n");
+		tmp += sprintf(tmp, "DO_  disabled\n");
 #	endif
 	return tmp - dest;
 }
 
 // DIAGNOSTICS - dialog function
-void show_diagnostics() {STACKTRACE
+void show_diagnostics() { 
 	int i;
 	char buffy [16000];//fix sometime
 	char buffy2[100000];//fix sometime
@@ -2176,7 +2292,7 @@ void show_diagnostics() {STACKTRACE
  */
 
 
-void keyjamming_tester() {STACKTRACE
+void keyjamming_tester() { 
 	int i, j = 0;
 	char blah[256];
 

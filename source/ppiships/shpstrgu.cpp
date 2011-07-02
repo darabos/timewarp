@@ -74,7 +74,7 @@ IDENTITY(StrivanarPlatform);
 	};
 
 int StrivanarPlatform::handle_damage (SpaceLocation *source, double normal, double direct) {
-	STACKTRACE;
+	 
 	health -= normal + direct;
 	if (health < 0){
 		state = 0;
@@ -88,7 +88,7 @@ int StrivanarPlatform::handle_damage (SpaceLocation *source, double normal, doub
 	return iround(normal + 2 * direct);
 	}
 void StrivanarPlatform::ship_died() {
-	STACKTRACE
+	 
 	// display explosion graphics [cyhawk]
 	game->add(new Animation(this, normal_pos(),
 			explosionSprite, 0, explosionFrameCount,
@@ -96,7 +96,7 @@ void StrivanarPlatform::ship_died() {
 	state = 0;
 	}
 void StrivanarPlatform::calculate() {
-	STACKTRACE
+	 
 	SpaceObject::calculate();
 	rotate_time -= frame_time;
 	while (rotate_time < 0) {
@@ -119,7 +119,7 @@ void StrivanarPlatform::calculate() {
 	return;
 	}
 void StrivanarPlatform::death() {
-	STACKTRACE
+	 
 	if (!(ship && ship->exists())) return; //ship is already dead; don't remove platform from list
 	if (ship->data != data) return; //ship is somehow not an Strivanar; perhaps we've been stolen
 	for (int i = 0; i < ((StrivanarGunner*)ship)->num_platforms; i += 1) {
@@ -166,7 +166,7 @@ StrivanarGunner::StrivanarGunner(Vector2 opos, double shipAngle,
 	{
 	// modified check [cyhawk]
 	if (!data->spriteSpecial || (data->spriteSpecial->frames() != 64))
-		error("you have the wrong\n version of shpestgu.dat");
+		throw("you have the wrong\n version of shpestgu.dat");
 
 	weaponDamage = get_config_int("Weapon", "Damage", 0);
 	weaponArmour = get_config_int("Weapon", "Armour", 0);
@@ -205,7 +205,7 @@ StrivanarShot::StrivanarShot(Vector2 opos, double angle, double velocity,
 	}
 
 void StrivanarShot::inflict_damage(SpaceObject *other) {
-	STACKTRACE;
+	 
 	if (other == last_shooter) return;
 	if (!sameShip(other) || other == mother_ship) {
 		// don't explode on contact, just damage [cyhawk]
@@ -273,7 +273,7 @@ void StrivanarShot::inflict_damage(SpaceObject *other) {
 	}
 
 int StrivanarGunner::activate_weapon() {
-	STACKTRACE
+	 
 	// cycle weapon graphics [cyhawk]
 	weaponGraphics++;
 	if (weaponGraphics == data->spriteWeapon->frames()) {
@@ -289,7 +289,7 @@ int StrivanarGunner::activate_weapon() {
 	}
 
 int StrivanarGunner::activate_special() {
-	STACKTRACE
+	 
 	if (num_platforms == max_platforms) {
 		num_platforms -= 1;
 		platform[0]->state = 0;

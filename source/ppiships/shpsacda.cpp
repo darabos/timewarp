@@ -78,14 +78,14 @@ SacreeDagger::SacreeDagger(Vector2 opos, double shipAngle, ShipData *shipData, u
 
 int SacreeDagger::activate_weapon()
 {
-	STACKTRACE
+	 
 	game->add(new SacreeDaggerBeam(this, Vector2(0,30), weaponRange, weaponDamage, iround(weaponFrameCount), angle));
 	return true;
 }
 
 int SacreeDagger::activate_special()
 {
-	STACKTRACE
+	 
 
 	game->add(new SacreeDaggerShot(this, Vector2(0,55), angle, specialVelocity,
 			specialDamage, specialRange, specialArmour, data->spriteSpecial));
@@ -123,7 +123,7 @@ SacreeDaggerBeam::SacreeDaggerBeam(SpaceLocation *creator, Vector2 rpos, double 
 
 void SacreeDaggerBeam::calculate()
 {
-	STACKTRACE
+	 
 	if((frame < frame_count) && (lpos->exists())) {
 		length = base_length;
 		pos = lpos->normal_pos() + rotate(rel_pos, lpos->get_angle() - PI/2);
@@ -142,7 +142,7 @@ void SacreeDaggerBeam::calculate()
 
 void SacreeDaggerBeam::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	damage(other, damage_factor*frame_time/frame_count);
 
 	int aa = get_tw_aa_mode();
@@ -157,7 +157,7 @@ void SacreeDaggerBeam::inflict_damage(SpaceObject *other)
 
 void SacreeDaggerBeam::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	int aa = get_tw_aa_mode();
 	SpaceLine::animate(space);
 	if ((aa & AA_BLEND) && (aa & AA_ALPHA) && !(aa & AA_NO_AA) && (length < base_length*0.9999) && (target)) {
@@ -186,14 +186,14 @@ SacreeDaggerShot::SacreeDaggerShot(SpaceLocation *creator, Vector2 opos, double 
 
 void SacreeDaggerShot::animate(Frame *space)
 {
-	STACKTRACE;
+	 
 
 	int k;
 	k = sprite_index + 64 * s_ind;
 	int n = sprite->frames();
 	if ( k >= n)
 	{
-		tw_error("sprite index error in %s", get_identity() );
+		throw(  "sprite index error in %s", get_identity() );
 	}
 
 	sprite->animate(pos, k, space);

@@ -5,7 +5,6 @@
 #include <allegro.h> //only used for endianness
 
 #include "base.h"
-#include "errors.h"
 #include "types.h"
 #include "random.h"
 
@@ -229,7 +228,7 @@ void test_random()
 		int w;
 		w = tw_random(maxval);
 		if (w < 0 || w >= maxval)
-			tw_error("unsigned int value out of bounds");
+			throw("unsigned int value out of bounds");
 
 	}
 
@@ -277,7 +276,7 @@ double tw_random(double a)
 
 	if ((a != 0) && (val < 0 || val >= a))
 	{
-		tw_error("random (double), out of bounds!");
+		throw("random (double), out of bounds!");
 	}
 
 
@@ -294,7 +293,7 @@ int tw_random( int a )
 {
 	if (a < 0)
 	{
-		tw_error("random: needing to convert a negative integer to an unsigned integer: should not happen");
+		throw("random: needing to convert a negative integer to an unsigned integer: should not happen");
 	}
 
 	//	int k = int( tw_random_unsigned() % unsigned int(a) );
@@ -302,7 +301,7 @@ int tw_random( int a )
 
 	if (k < 0 || k >= a)
 	{
-		tw_error("random (int), out of bounds!");
+		throw("random (int), out of bounds!");
 	}
 
 	return k;

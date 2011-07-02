@@ -42,7 +42,7 @@ char **control_name = gcc_sucks_dick;
 
 
 void animate_target(Frame *frame, SpaceLocation *t, int dx, int dy, int r, int c) {
-	STACKTRACE;
+	 
 /*	double x, y;
 	r = int( r * space_zoom/2);
 	x = t->normal_x() - space_x;
@@ -71,7 +71,7 @@ void animate_target(Frame *frame, SpaceLocation *t, int dx, int dy, int r, int c
 
 
 
-int control2number(const char *name) {STACKTRACE;
+int control2number(const char *name) { 
 	if (!name) return 0;
 	for (int i = 0; i < num_controls+1; i += 1) {
 		if (!strcmp(name, control_name[i])) return i;
@@ -79,9 +79,9 @@ int control2number(const char *name) {STACKTRACE;
 	return 0;
 	}
 
-Control *getController(const char *type, const char *name, int channel) {STACKTRACE;
+Control *getController(const char *type, const char *name, int channel) { 
 	if ((channel != -1) && (channel & _channel_buffered)) {
-		error("getController - invalid channel # %d", channel);
+		throw("getController - invalid channel # %d", channel);
 	}
 	switch (control2number(type)) {
 		case  ai_index_human:     return new ControlHuman(name, channel);
@@ -104,12 +104,12 @@ int Control::rand()
 	}
 	*/
 
-void Control::select_ship(Ship* ship_pointer, const char* ship_name) {STACKTRACE;
+void Control::select_ship(Ship* ship_pointer, const char* ship_name) { 
 	ship = ship_pointer;
 	if (ship) {
 		ship->control = this;
 		if (temporary && (channel != channel_none) && (already != 0) && (already != game->lag_frames)) 
-			{tw_error ("Control::select_ship - bad operation (incompatible with networking)");}
+			{throw ("Control::select_ship - bad operation (incompatible with networking)");}
 		}
 	target_stuff() ;
 
@@ -124,7 +124,7 @@ void Control::load(const char* inifile, const char* inisection) {
 void Control::save(const char* inifile, const char* inisection) {
 	return;
 	}
-SpaceLocation *Control::get_focus() {STACKTRACE;
+SpaceLocation *Control::get_focus() { 
 	if (ship) return ship->get_focus();
 	else return NULL;
 	}
@@ -229,9 +229,9 @@ int my_list_proc( int msg, DIALOG* d, int c ){
 	return ret;
 }
 int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
-	STACKTRACE;;
+	 ;
 	int ret = -1, slot = 0;
-	if (fleet->getSize() == 0) {tw_error ("Empty fleet! (prompt:%s)", prompt);}
+	if (fleet->getSize() == 0) {throw ("Empty fleet! (prompt:%s)", prompt);}
 	selectDialog[SELECT_DIALOG_LIST].dp3 = fleet;
 
     strcpy(selectShipPrompt,prompt);
@@ -262,19 +262,19 @@ int Control::choose_ship(VideoWindow *window, char * prompt, Fleet *fleet) {
 	return(slot);
 }
 void Control::set_target(int i) {
-	STACKTRACE;;
-	if (i >= targets->N) {tw_error("oscar hamburger!!!!!!!!!");}
+	 ;
+	if (i >= targets->N) {throw("oscar hamburger!!!!!!!!!");}
 	if (i == -1) {
 		index = i;
 		target = NULL;
 		return;
 		}
-	if (!valid_target(targets->item[i])) {tw_error("oscer hambuger");}
+	if (!valid_target(targets->item[i])) {throw("oscer hambuger");}
 	index = i;
 	target = targets->item[index];
 	return;
 	}
-void Control::target_stuff() {STACKTRACE;
+void Control::target_stuff() { 
 	if (index == -1) {
 		if (targets->N) {
 			index = tw_random(targets->N);
@@ -332,7 +332,7 @@ done:
 	{
 		if (index < 0 || index > targets->N)
 		{
-			tw_error("Target index is out of range.");
+			throw("Target index is out of range.");
 		}
 	}
 	return;
@@ -368,14 +368,14 @@ void Control::gen_buffered_data()
 
 void Control::calculate()
 {
-	STACKTRACE;
+	 
 
 	if (!exists())
 		return;
 
 	if (ship && ship->control != this)
 	{
-		tw_error("error in control reference...");
+		throw("error in control reference...");
 	} else
 		++ lifetime;
 
@@ -398,7 +398,7 @@ void Control::calculate()
 
 			if (ship != 0)
 			{
-				tw_error("control: ship should be zero now.");
+				throw("control: ship should be zero now.");
 			}
 		}
 		//else keys = think();		// <--- goes into the gen_buffered_data !!
@@ -454,7 +454,7 @@ void Control::calculate()
 			//message.print(1500, 14, "SHARE(send) key: %i", int(keys));
 			}
 		else if (already > lf) {//stupid error check
-			tw_error("Control::calculate() - inconcievable!");
+			throw("Control::calculate() - inconcievable!");
 			}
 		else {//stable, perform no action
 			//message.print(1500, 14, "SHARE(send/rec) key: %i", int(keys));
@@ -471,13 +471,13 @@ void Control::calculate()
 	}
 int Control::think()
 {
-	STACKTRACE;
+	 
 	return 0;
 	}
-//char *Control::getDescription() {STACKTRACE;
+//char *Control::getDescription() { 
 //	return iname;
 //	}
-void Control::_event(Event *e) {STACKTRACE;
+void Control::_event(Event *e) { 
 	//add code for lag increase / decrease here
 	return;
 }
@@ -495,7 +495,7 @@ index(-1),
 always_random(0),
 _prediction_keys(NULL)
 {
-	STACKTRACE;
+	 
 
 	id |= ID_CONTROL;
 	attributes |= ATTRIB_SYNCHED;
@@ -504,7 +504,7 @@ _prediction_keys(NULL)
 		_prediction_keys = new KeyCode[_prediction_keys_size];
 		_prediction_keys_index = 0;
 		if (channel & _channel_buffered) {
-			error("Control::Control - invalid channel!");
+			throw("Control::Control - invalid channel!");
 		}
 	}
 //	iname = strdup(name);
@@ -521,7 +521,7 @@ _prediction_keys(NULL)
 
 Control::~Control()
 {
-	STACKTRACE;
+	 
 	if (_prediction_keys) delete[] _prediction_keys;
 }
 
@@ -545,12 +545,12 @@ bool Control::valid_target(SpaceObject *t) {
 	// and since it shared control, and didn't check for a dead mother before the
 	// ship::calculate function, it may've crashed.
 	// This kinda thing may occur more often in case control is shared among objects
-	if (!ship) {tw_error("Control::valid_target - !ship");}
+	if (!ship) {throw("Control::valid_target - !ship");}
 	if (t->sameTeam(ship)) return false;
 	if (!t->exists()) return false;
 	return true;
 	}
-void Control::animate(Frame *space) {STACKTRACE;
+void Control::animate(Frame *space) { 
 	if (!ship) return;
 	if (!target || target->isInvisible()) return;
 	if (!(attributes & ATTRIB_ACTIVE_FOCUS)) return;

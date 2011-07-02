@@ -22,7 +22,7 @@ HealthBar::HealthBar(Ship *creator, int *toggle)
 
 void HealthBar::calculate()
 {
-	STACKTRACE
+	 
 
 	if ( !(mother && mother->exists()) )
 	{
@@ -35,7 +35,7 @@ void HealthBar::calculate()
 
 void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fraction, int col1, int col2, Frame *space)
 {
-	STACKTRACE
+	 
 
 	Vector2 center;
 	int d;
@@ -84,7 +84,7 @@ void HealthBar::draw_bar(Ship *s, double yoffs, int len, double H, double fracti
 
 void HealthBar::animate(Frame *space)
 {
-	STACKTRACE
+	 
 
 	if (!*bartoggle)
 		return;
@@ -109,10 +109,10 @@ void HealthBar::animate(Frame *space)
 
 
 
-Indicator::Indicator() : Presence() {STACKTRACE
+Indicator::Indicator() : Presence() { 
 	}
 
-bool Indicator::coords(Frame *space, SpaceLocation *l, Vector2 *pos, Vector2 *a_pos) {STACKTRACE
+bool Indicator::coords(Frame *space, SpaceLocation *l, Vector2 *pos, Vector2 *a_pos) { 
 	Vector2 p = corner(l->normal_pos());
 	Vector2 op = p;
 
@@ -143,7 +143,7 @@ bool Indicator::coords(Frame *space, SpaceLocation *l, Vector2 *pos, Vector2 *a_
 	return true;
 	}
 
-BlinkyIndicator::BlinkyIndicator(SpaceObject *target, int color) : Indicator() {STACKTRACE
+BlinkyIndicator::BlinkyIndicator(SpaceObject *target, int color) : Indicator() { 
 	this->target = target;
 	this->color = color;
 	}
@@ -173,11 +173,11 @@ void BlinkyIndicator::animate(Frame *space) {
 	}
 	return;
 	}
-void BlinkyIndicator::calculate() {STACKTRACE
+void BlinkyIndicator::calculate() { 
 	if (!target->exists()) die();
 	}
 
-WedgeIndicator::WedgeIndicator(SpaceLocation *target, int length, int color) : Indicator() {STACKTRACE
+WedgeIndicator::WedgeIndicator(SpaceLocation *target, int length, int color) : Indicator() { 
 	this->target = target;
 	this->length = length;
 	this->color = color;
@@ -225,7 +225,7 @@ Orbiter::Orbiter ( SpaceSprite *pic, SpaceLocation *orbit_me, double distance) :
 	accelerate(this, angle + PI/2 + PI*(random()&1), 0.15, MAX_SPEED);
 	}
 
-void Orbiter::calculate() {STACKTRACE
+void Orbiter::calculate() { 
 	angle = trajectory_angle(center) + PI;
 	sprite_index = get_index(angle);
 	double r = distance(center) / radius;

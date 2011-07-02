@@ -136,7 +136,7 @@ bool log_nextmode()
 bool log_show_data = false;	// for inspecting values
 
 
-void Log::init() {STACKTRACE
+void Log::init() { 
 	log_len  = NULL;
 	log_size = NULL;
 	log_pos  = NULL;
@@ -153,7 +153,7 @@ void Log::init() {STACKTRACE
 
 void Log::deinit()
 {
-	STACKTRACE;
+	 
 
 	if (log_data)
 	{
@@ -184,7 +184,7 @@ void Log::deinit()
 
 Log::~Log()
 {
-	STACKTRACE;
+	 
 
 	deinit();
 }
@@ -202,8 +202,8 @@ void Log::set_rw(int ch)
 }
 
 void Log::set_direction ( int channel, char direction ) {
-	STACKTRACE;
-	if (channel < 0) { tw_error("set_direction - channel < 0"); }
+	 
+	if (channel < 0) { throw("set_direction - channel < 0"); }
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
@@ -212,15 +212,15 @@ void Log::set_direction ( int channel, char direction ) {
 }
 
 char Log::get_direction ( int channel ) {
-	STACKTRACE;
-	if (channel < 0) {tw_error("get_direction - channel < 0");}
+	 
+	if (channel < 0) {throw("get_direction - channel < 0");}
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
 	return (log_dir[channel]);
 }
 
-void Log::set_all_directions ( char direction ) {STACKTRACE
+void Log::set_all_directions ( char direction ) { 
 	default_direction = direction;
 	int i;
 	for (i = 0; i < log_num; i += 1) {
@@ -232,13 +232,13 @@ void Log::set_all_directions ( char direction ) {STACKTRACE
 
 void Log::log ( int channel, void *data, int size)
 {
-	STACKTRACE;
+	 
 
 	if (channel == 0)
-		tw_error("attempting to write to a forbidden channel");
+		throw("attempting to write to a forbidden channel");
 
 	if (!size) return;
-	if (channel < 0) {tw_error ("Log::log - negative channel!");}
+	if (channel < 0) {throw ("Log::log - negative channel!");}
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
@@ -258,7 +258,7 @@ void Log::_null_log(int channel, void *data, int size)
 
 void Log::_log(int channel, const void *data, int size)
 {
-	STACKTRACE;
+	 
 
 	log_len[channel] += size;
 	while (log_len[channel] > log_size[channel]) {
@@ -270,14 +270,14 @@ void Log::_log(int channel, const void *data, int size)
 	return;
 }
 void Log::_unlog(int channel, void *data, int size) {
-	STACKTRACE;
-	if (log_len[channel] < log_pos[channel] + size) {tw_error ("Game::_unlog - went past end (%d+%d/%d on %d)", log_pos[channel], size, log_len[channel], channel);}
+	 
+	if (log_len[channel] < log_pos[channel] + size) {throw ("Game::_unlog - went past end (%d+%d/%d on %d)", log_pos[channel], size, log_len[channel], channel);}
 	memcpy(data, log_data[channel]+log_pos[channel], size);
 	log_pos[channel] += size;
 	return;
 }
 
-void Log::save (const char *fname) {STACKTRACE
+void Log::save (const char *fname) { 
 	PACKFILE *f;
 	int i, j;
 	f = pack_fopen ( fname, F_WRITE_PACKED);
@@ -296,7 +296,7 @@ void Log::save (const char *fname) {STACKTRACE
 	pack_fclose (f);
 	return;
 }
-void Log::load (const char *fname) {STACKTRACE
+void Log::load (const char *fname) { 
 	PACKFILE *f;
 	char buffy[1024];
 	int i, oi, j, mj;
@@ -307,14 +307,14 @@ void Log::load (const char *fname) {STACKTRACE
 	for (j = 0; j < mj; j += 1) {
 		f = pack_fopen_chunk(f, 0);
 		i = pack_igetl ( f);
-		if (i <= oi) { tw_error("invalid log file"); }
+		if (i <= oi) { throw("invalid log file"); }
 		if (i >= log_num) expand_logs(i+1);
 		int l = pack_igetl ( f);
 		while ( l > 0) {
 			int tl = 1024;
 			if (tl > l) tl = l;
 			int k = pack_fread(buffy, tl, f);
-			if (k == 0) { tw_error("invalid log file"); }
+			if (k == 0) { throw("invalid log file"); }
 			l -= k;
 			_log(i, buffy, tl);
 		}
@@ -324,9 +324,9 @@ void Log::load (const char *fname) {STACKTRACE
 	return;
 }
 void Log::expand_logs(int num_channels) {
-	STACKTRACE;
+	 
 	int old_log_num = log_num;
-	if (num_channels <= log_num) { tw_error ("Log::expand_logs - shrinking logs?"); }
+	if (num_channels <= log_num) { throw ("Log::expand_logs - shrinking logs?"); }
 	log_num = num_channels;
 	log_data = (unsigned char**) realloc(log_data, sizeof(char*) * log_num);
 	log_size    = (int*) realloc(log_size, sizeof(int) * log_num);
@@ -343,7 +343,7 @@ void Log::expand_logs(int num_channels) {
 	return;
 }
 int Log::ready(int channel) {
-	if (channel < 0) { tw_error ("log_ready - negative channel!"); }
+	if (channel < 0) { throw ("log_ready - negative channel!"); }
 	if (channel >= log_num) return 0;
 	return log_len[channel] - log_pos[channel];
 }
@@ -351,16 +351,16 @@ int Log::ready(int channel) {
 
 
 
-bool Log::buffer ( int channel, void *data, int size ) {STACKTRACE
+bool Log::buffer ( int channel, void *data, int size ) { 
 	char zeros[128];
 	if (!size) return false;//return true?  error?  
-	if (channel < 0) { tw_error ("Log::log - negative channel!"); }
+	if (channel < 0) { throw ("Log::log - negative channel!"); }
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
 	if (data == NULL) {
 		data = zeros;
-		if (size > 128) { tw_error("Log::buffer - overflow"); }
+		if (size > 128) { throw("Log::buffer - overflow"); }
 		memset(zeros, 0, size);
 	}
 	if ((log_dir[channel] & direction_write) && (!log_write_disable) ) {
@@ -372,16 +372,16 @@ bool Log::buffer ( int channel, void *data, int size ) {STACKTRACE
 	return false;
 }
 
-bool Log::unbuffer ( int channel, void *data, int size ) {STACKTRACE
+bool Log::unbuffer ( int channel, void *data, int size ) { 
 	char zeros[128];
 	if (!size) return false;//return true?  error?  
-	if (channel < 0) { tw_error ("Log::unbuffer - negative channel!"); }
+	if (channel < 0) { throw ("Log::unbuffer - negative channel!"); }
 	if (channel >= log_num) {
 		expand_logs(channel+1);
 	}
 	if (data == NULL) {
 		data = zeros;
-		if (size > 128) { tw_error("Log::buffer - overflow"); }
+		if (size > 128) { throw("Log::buffer - overflow"); }
 	}
 
 //	if (log_dir[channel] & direction_write) _log ( channel, data, size);
@@ -424,7 +424,7 @@ void Log::reset()
 		// added GEO:
 		if (log_len[i] - log_pos[i] > 0)
 		{
-	//		tw_error("Resetting a non-empty log  channel[%i] pos[%i] len[%i] !!",
+	//		throw("Resetting a non-empty log  channel[%i] pos[%i] len[%i] !!",
 	//			i, log_pos[i], log_len[i]);
 			// actually, the line above doesn't adress a real error, but it can be
 			// caused by a remote computer, who's executing actions slightly earlier than
@@ -465,7 +465,7 @@ void Log::clear()
 
 
 
-void PlaybackLog::init() {STACKTRACE
+void PlaybackLog::init() { 
 	Log::init();
 	playback = true;
 	default_direction = Log::direction_read;
@@ -475,14 +475,14 @@ void PlaybackLog::init() {STACKTRACE
 }
 
 void PlaybackLog::set_direction (int channel, char direction) {
-	STACKTRACE;
-	tw_error("set_direction - your not supposed to do that in a demo playback!");
+	 
+	throw("set_direction - your not supposed to do that in a demo playback!");
 	return;
 }
 
 void PlaybackLog::set_all_directions( char direction ) {
-	STACKTRACE;
-	tw_error("set_all_directions - your not supposed to do that in a demo playback!");
+	 
+	throw("set_all_directions - your not supposed to do that in a demo playback!");
 	return;
 }
 
@@ -543,7 +543,7 @@ static int chann(int iplayer)
 	else
 	{
 		if (!player[iplayer])
-			tw_error("Player does not exist - no channel available");
+			throw("Player does not exist - no channel available");
 		return player[iplayer]->channel;
 	}
 }
@@ -553,7 +553,7 @@ void share_buffer(int player, void *value, int num, int size, share_types st)
 	if (chann(player) == channel_none)
 		return;
 	if (player > num_players)
-		tw_error("player [%i] exceeds max allowed value [%i] -- perhaps you use share(channel) instead of share(player)", player, num_players);
+		throw("player [%i] exceeds max allowed value [%i] -- perhaps you use share(channel) instead of share(player)", player, num_players);
 
 
 	share_channel[Nshare] = chann(player);
@@ -743,16 +743,16 @@ char *Log::create_buffer(int *size, int ch)
 
 void Log::log_file(const char *fname)
 {
-	STACKTRACE;
+	 
 
 	int chold = channel_current;
 	channel_current = channel_file_data;
 
 	if (log_read_disable || log_write_disable || log_fake)
-		tw_error("Faking sharing a file ? Unlikely !");
+		throw("Faking sharing a file ? Unlikely !");
 
 	if (writeable() && !(log_dir[channel_current] & direction_immediate))
-		tw_error("You should use an immediate connection to share file-data");
+		throw("You should use an immediate connection to share file-data");
 
 	int L = 0;
 	if (writeable())
@@ -766,10 +766,10 @@ void Log::log_file(const char *fname)
 		
 		int i;
 		f = pack_fopen(fname, F_READ);
-		if (!f) { tw_error("tw_log_file - bad file name %s", fname); }
+		if (!f) { throw("tw_log_file - bad file name %s", fname); }
 		
 		i = pack_fread(buffy, L, f);
-		if ( i != L ) { tw_error("tw_log_file - bad filesize"); };
+		if ( i != L ) { throw("tw_log_file - bad filesize"); };
 	}
 
 	ldata(buffy, L, sizeof(char));	// woops, I used sizeof(int) by mistake --> caused some unpred.behav.
@@ -797,7 +797,7 @@ void Log::log_file(const char *fname)
 	// but this only makes sense for the host, cause remotes who are on the receiving end,
 	// can receive >1 file due to the lag, if the game is paused.
 	if (log_size_ch(channel_current) != 0)
-		tw_error("The file channel should be empty. Contains %i chars", log_size_ch(channel_current));
+		throw("The file channel should be empty. Contains %i chars", log_size_ch(channel_current));
 	so ... in principle this test makes sense, but only in places where it's safe to test. Like,
 	after all ships have been initialized.
 	*/

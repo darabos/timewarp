@@ -3,12 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "base.h"
-#include "errors.h"
-
-COMPILE_TIME_ASSERT(sizeof(char)==1);
-COMPILE_TIME_ASSERT(sizeof(short)==2);
-COMPILE_TIME_ASSERT(sizeof(int)==4);
-//COMPILE_TIME_ASSERT(sizeof(long)==4);
 
 __call_before_main::__call_before_main ( void (*func)() ) {
 	func();

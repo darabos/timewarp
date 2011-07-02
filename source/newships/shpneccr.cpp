@@ -173,7 +173,7 @@ unsigned int code)
   isDead = FALSE;
 }
 void NechanziCruiser::death(void) {
-	STACKTRACE
+	 
   isDead = TRUE;
   if(deathTimer<100) {
     state = 1;
@@ -183,7 +183,7 @@ void NechanziCruiser::death(void) {
 }
 
 int NechanziCruiser::activate_weapon() {
-	STACKTRACE
+	 
   game->add(new Missile(this, Vector2(size.y*(0.26), (size.y * -0.15)),
     angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
     this, data->spriteWeapon));
@@ -194,7 +194,7 @@ int NechanziCruiser::activate_weapon() {
 }
 
 int NechanziCruiser::activate_special() {
-	STACKTRACE
+	 
   if(specialFired)
     return(FALSE);
 
@@ -349,7 +349,7 @@ scale_range(1000), specialArmour3,
 }
 
 void NechanziCruiser::calculate(void) {
-	STACKTRACE
+	 
   if(isDead) deathTimer += frame_time;
   if(deathTimer>100) state=0;
   Ship::calculate();
@@ -376,7 +376,7 @@ NechanziMissile::NechanziMissile(double ox, double oy, double oangle, double ov,
 	}
 
 void NechanziMissile::calculate(void) {
-	STACKTRACE
+	 
   if(creator==NULL)
     isActivated=1;
   else if(creator->state==0)
@@ -427,7 +427,7 @@ void NechanziMissile::calculate(void) {
 }
 
 void NechanziMissile::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	 
   Shot::inflict_damage(other);
 //  if(missileType==2 && other->isShip() && isActivated) {
 //    game->add(new NechanziStun((Ship*)other, data->spriteExtra, 64, 50, 
@@ -455,7 +455,7 @@ NechanziStun::NechanziStun(Ship *oship, SpaceSprite *osprite,
 }
 
 void NechanziStun::calculate() {
-	STACKTRACE
+	 
 	pos = ship->pos;
 	vel = ship->vel;
 	frame_step+= frame_time;

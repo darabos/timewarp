@@ -256,7 +256,7 @@ void Frame::add_old_line(int x, int y, int a, int b)
 /*! \brief Clear screen, copy items to old items, destroy items */
 void Frame::erase()
 {
-	STACKTRACE
+	 
 
 	int c;
 	if (!surface) return;
@@ -304,7 +304,7 @@ void Frame::erase()
 
 /*! \brief Clear surface and set width and heigth to window w, h */
 void Frame::prepare () {
-	STACKTRACE
+	 
 
 	int w = 0, h = 0;
 	if (surface) {
@@ -328,7 +328,7 @@ void Frame::prepare () {
 /*! \brief Draw frame */
 void Frame::draw()
 {
-	STACKTRACE
+	 
 
 	int c;
 	BACKGROUND_COLOR = tw_color ( background_red, background_green, background_blue );

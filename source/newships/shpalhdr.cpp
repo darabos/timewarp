@@ -171,7 +171,7 @@ Ship(opos, angle, data, code)
 
 void AlhordianDreadnought::calculate()
 {
-	STACKTRACE;
+	 
 	if(this->batt<1 || !fire_special) {
 		//currentSweepTime = 0; //pulling up on
 		sweepIsOn = FALSE;
@@ -201,7 +201,7 @@ void AlhordianDreadnought::calculate()
 
 int AlhordianDreadnought::activate_weapon()
 {
-	STACKTRACE;
+	 
 
 	if (fire_special)
 	{
@@ -227,7 +227,7 @@ int AlhordianDreadnought::activate_weapon()
 
 
 int AlhordianDreadnought::activate_special() {
-	STACKTRACE;
+	 
 	
 	sweepIsOn = TRUE;
 	
@@ -237,7 +237,7 @@ int AlhordianDreadnought::activate_special() {
 }
 
 void AlhordianDreadnought::weapon_flash() {
-	STACKTRACE
+	 
 		game->add(new Laser(this, angle+flashAngle1, pallete_color[flashColor],
 		flashRange1, flashDamage1, 50, this, Vector2(size.y *0.0, size.y*0.5)));
 	game->add(new Laser(this, angle-flashAngle1, pallete_color[flashColor],
@@ -277,7 +277,7 @@ void AlhordianDreadnought::weapon_flash() {
 
 void AlhordianDreadnought::calculate_laser_sweep(void)
 {
-	STACKTRACE;
+	 
 	
 	double fractionDone;
 	//double X, Y, 
@@ -347,7 +347,7 @@ Shot(ocreator, rpos, oangle, oStartVelocity, oStartDamage, orange,
 
 void AlhordianTorpedo::calculate(void)
 {
-	STACKTRACE;
+	 
 	double fractionDone = 0.0;
 	int spriteToUse = 0;
 	Shot::calculate();
@@ -374,7 +374,7 @@ void AlhordianTorpedo::calculate(void)
 
 void AlhordianTorpedo::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	
 	int x = this->sprite_index;
 	

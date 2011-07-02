@@ -89,7 +89,7 @@ IlwrathSpider::IlwrathSpider(Vector2 opos, double shipAngle,
 
 int IlwrathSpider::activate_weapon()
 {
-	STACKTRACE
+	 
   game->add( new AnimatedShot( this, Vector2(size.x*0.12, size.y*0.35),
     angle + weaponAngle, weaponVelocity, weaponDamage, weaponRange, weaponArmour, this,
     data->spriteWeapon, data->spriteWeapon->frames(), ILWRATH_FIRE_ANIM_RATE, 1 ));
@@ -102,7 +102,7 @@ int IlwrathSpider::activate_weapon()
 
 int IlwrathSpider::activate_special()
 {
-	STACKTRACE;
+	 
     double alpha = specialSpread / specialNumber;
     double beta = normalize( angle + PI - 0.5 * specialSpread + tw_random(alpha), PI2 );
     double tx = cos( angle );
@@ -121,13 +121,13 @@ int IlwrathSpider::activate_special()
 
 void IlwrathSpider::calculate()
 {
-	STACKTRACE
+	 
     Ship::calculate();
 }
 
 void IlwrathSpiderMine::calculate()
 {
-	STACKTRACE;
+	 
 
 	SpaceObject::calculate();
 
@@ -163,7 +163,7 @@ void IlwrathSpiderMine::calculate()
 
 void IlwrathSpiderMine::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
     state = 0;
 
     int freq;
@@ -224,7 +224,7 @@ victim( ovictim ), life( olife )
 
 void IlwrathStop::calculate()
 {
-	STACKTRACE;
+	 
 	SpaceLocation::calculate();
 	
 	if( !(victim && victim->exists()) )

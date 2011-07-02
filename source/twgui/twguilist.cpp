@@ -646,7 +646,7 @@ void TextInfoArea::subanimate()
 			L = 127;
 
 		if (L < 0)
-			tw_error("Negative length, should not occur.");
+			throw("Negative length, should not occur.");
 
 		strncpy(txt, &(textinfo->textinfo[n]), L);
 		txt[L] = 0;
@@ -825,7 +825,7 @@ void TextEditBox::set_props(int i, char val)
 // this is, where text is detected and entered ... I think ....
 void TextEditBox::calculate()
 {
-	if (textinfo->textinfo != text) {twgui_error("text mismatch");}
+	if (textinfo->textinfo != text) {throw("text mismatch");}
 
 	TextInfoArea::calculate();
 
@@ -1208,7 +1208,7 @@ AreaTabletScrolled(menu, identbranch, akey)
 	overlay = getrle("overlay");
 	if (!overlay)
 	{
-		twgui_error("MatrixIcons : overlay is missing");
+		throw("MatrixIcons : overlay is missing");
 	}
 
 	tmp = create_bitmap(overlay->w, overlay->h);
@@ -1259,7 +1259,7 @@ void MatrixIcons::set_iconinfo(BITMAP **alistIcon, double ascale)
 
 	if ( Nx == 0 || Ny == 0 )
 	{
-		twgui_error("PopupFleetSelection : no bitmap data");
+		throw("PopupFleetSelection : no bitmap data");
 	}
 
 	scroll.set(0, 0, Nx, Ny, Nxshow, Nyshow);

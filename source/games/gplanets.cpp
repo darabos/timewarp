@@ -56,9 +56,7 @@ inline double sqr(double x)
 
 void OrbitHandler_PLSY::update_xyv()
 {
-	STACKTRACE
-
-
+	
 	// this is a linear increase in the angle
 	angle_linear += angvel * frame_time;
 
@@ -139,7 +137,7 @@ OrbitHandler_PLSY::OrbitHandler_PLSY(SpaceLocation *creator,
 
 void OrbitHandler_PLSY::calculate()
 {
-	STACKTRACE
+	 
 
 	if((center==NULL)||(orbiter==NULL))
 		return;
@@ -196,7 +194,7 @@ BigBackgr::BigBackgr(SpaceSprite *lpic, int lx, int ly, double lapplyscale)
 
 void BigBackgr::animate(Frame *frame)
 {
-	STACKTRACE
+	 
 
 	int aa_old = get_tw_aa_mode();
 	set_tw_aa_mode(0);
@@ -262,7 +260,7 @@ RadarMap::RadarMap(int MapSize)
 
 void RadarMap::animate(Frame *frame)
 {
-	STACKTRACE
+	 
 
 
 
@@ -430,7 +428,7 @@ int max(int i, int j)
  */
 int d_icon_proc_PLSY(int msg, DIALOG *d, int c)
 {
-	STACKTRACE
+	 
 
 	 BITMAP *butimage = (BITMAP *)d->dp;
 	 int butx;
@@ -541,14 +539,14 @@ static char		PlanetSystemText[512];
 
 BITMAP* get_data_bmp(DATAFILE *data, char *objname, double scale)
 {
-	STACKTRACE
+	 
 
 	DATAFILE *dataobj;
 	BITMAP *r, *old, *tmp;
 
 	dataobj = find_datafile_object(data, objname);
 	if (!dataobj)
-		tw_error( "couldn't find data object [%s]!", objname);
+		throw( "couldn't find data object [%s]!", objname);
 	
 	// copied from mshipdata.cpp:
 	old = (BITMAP*)dataobj->dat;
@@ -568,7 +566,7 @@ BITMAP* get_data_bmp(DATAFILE *data, char *objname, double scale)
 void add_dialog_icon_proc( DIALOG *Dialog_star, int *k, DATAFILE *tmpdata,
 						      char *name, int x, int y, double scale )
 {
-	STACKTRACE
+	 
 
 	BITMAP *bmps[3];
 
@@ -593,7 +591,7 @@ void add_dialog_icon_proc( DIALOG *Dialog_star, int *k, DATAFILE *tmpdata,
 
 void init_dialog_PLSY (double dialog_scale)
 {
-	STACKTRACE;
+	 
 
 	
 	// read the graphics:
@@ -697,7 +695,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 						double *PlanetStarbaseEllipsOrientation,
 						char *PlanetSystemText)
 {
-	STACKTRACE
+	 
 
 	int	i, j;
 	
@@ -721,7 +719,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 			&PlanetPlGrav, &PlanetPlGravRange);
 
 	} else {
-		error("Could not initialize the planet !");
+		throw("Could not initialize the planet !");
 	}
 
 	if ( iplanetpic == -1 )
@@ -822,7 +820,7 @@ void Planets::ReadPlanetSystem(int iPlanetSystem,
 		}
 
 		if ( PlanetMoonPic[i] < 0 || PlanetMoonPic[i] > Num_Moon_Pics-1 )
-			error("illegal moon pic");
+			throw("illegal moon pic");
 		
 	}
 
@@ -974,7 +972,7 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 					double *PlanetStarbaseEllipsAngvel,
 					double *PlanetStarbaseEllipsOrientation)
 {
-	STACKTRACE;
+	 
 
 	int iupdate = 1;
 	int iredraw = 0;
@@ -1289,7 +1287,7 @@ void Planets::ChoosePlanetSystem(int iPlanetSystem, int NPlanetSystem,
 
 SpaceSprite *Planets::GetSprite(DATAFILE *datafile, char *spriteName)
 {
-	STACKTRACE
+	 
 
 
 	DATAFILE *tmpdata;
@@ -1318,7 +1316,7 @@ SpaceSprite *Planets::GetSprite(DATAFILE *datafile, char *spriteName)
 bool Planets::GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char 
 *cmdStr, int numSprites)
 {
-	STACKTRACE
+	 
 
 
 	SpaceSprite *spr;
@@ -1343,7 +1341,7 @@ bool Planets::GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char
 
 SpaceSprite *general_GetSprite(DATAFILE *datafile, char *spriteName)
 {
-	STACKTRACE
+	 
 
 
 	DATAFILE *tmpdata;
@@ -1373,7 +1371,7 @@ bool general_GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char
 *cmdStr, int numSprites)
 {
 
-	STACKTRACE
+	 
 
 	SpaceSprite *spr;
 	char dataStr[100];
@@ -1398,7 +1396,7 @@ bool general_GetSprites(SpaceSprite *Pics[], DATAFILE *datafile, char
 
 void Planets::init_objects()
 {
-	STACKTRACE;
+	 
 
 	int		i;
 
@@ -1408,10 +1406,10 @@ void Planets::init_objects()
 
 	char *filename = "planets.dat";
 	DATAFILE *data = load_datafile(filename);
-	if(!data) error("Error loading '%s'", filename);
+	if(!data)throw("Error loading '%s'", filename);
 
 	DATAFILE *initdata = find_datafile_object(data, "gplanets_txt");
-	if (!initdata) error("Error finding gplanet_txt");
+	if (!initdata)throw("Error finding gplanet_txt");
 	set_config_data((char *)(initdata->dat), initdata->size);
 
 	Num_Moon_Pics = get_config_int(NULL,"NumMoonPics",0);
@@ -1432,7 +1430,7 @@ void Planets::init_objects()
 		if ( result )
 			sscanf(result, "%lf %i", &PlanetGrav[i], &PlanetType[i]);
 		else
-			error("Error in reading datafile planet");
+			throw("Error in reading datafile planet");
 	}
 
 	MoonGrav = new double [Num_Moon_Pics];
@@ -1447,7 +1445,7 @@ void Planets::init_objects()
 		if ( result )
 			sscanf(result, "%lf %i", &MoonGrav[i], &MoonType[i]);
 		else
-			error("Error in reading datafile moons");
+			throw("Error in reading datafile moons");
 	}
 
 
@@ -1456,10 +1454,10 @@ void Planets::init_objects()
 
 
 	if(GetSprites(PlanetPics, data,"Planet%03d",Num_Planet_Pics)==FALSE)
-		error("File error, planet pics.  Bailing out...");
+		throw("File error, planet pics.  Bailing out...");
 
 	if(GetSprites(MoonPics, data,"Moon%03d",Num_Moon_Pics)==FALSE)
-		error("File error, moon pics.  Bailing out...");
+		throw("File error, moon pics.  Bailing out...");
 
 	unload_datafile(data);
 
@@ -1741,7 +1739,7 @@ void Planets::init_objects()
 	backgrimages = new SpaceSprite* [Npics];
 
 	if(general_GetSprites(backgrimages, data,"backgr_%03d", Npics)==FALSE)
-		error("File error, nebula pics.  Bailing out...");
+		throw("File error, nebula pics.  Bailing out...");
 
 	unload_datafile(data);
 

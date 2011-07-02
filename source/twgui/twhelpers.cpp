@@ -531,7 +531,7 @@ int TextInfo::getcharpos(int x, int y)
 
 	if (iline < 0)
 	{
-		twgui_error("getcharpos : Nlines < 0 should not happen");
+		throw("getcharpos : Nlines < 0 should not happen");
 	}
 
 	// the last line should be handled with care ... (you don't know it's length, only that it stops)

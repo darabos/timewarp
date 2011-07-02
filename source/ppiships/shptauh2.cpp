@@ -129,7 +129,7 @@ TauHunterPPI::TauHunterPPI (Vector2 opos, double shipAngle, ShipData *shipData, 
 
 int TauHunterPPI::activate_weapon()
 {
-	STACKTRACE
+	 
 #define R1 27.5
 #define R2 5.0
 	
@@ -179,7 +179,7 @@ int TauHunterPPI::activate_weapon()
 
 void TauHunterPPI::calculate_fire_special()
 {
-	STACKTRACE;
+	 
 
 
 	special_low = false;
@@ -237,7 +237,7 @@ void TauHunterPPI::calculate_fire_special()
 
 void TauHunterPPI::calculate()
 {
-	STACKTRACE
+	 
 	just_exited = false;
                         
 	Ship::calculate();
@@ -289,7 +289,7 @@ void TauHunterPPI::calculate()
 
 int TauHunterPPI::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	if ( in_jump )
 		return 0;
 	if ( just_exited && source->isPlanet() )
@@ -298,14 +298,14 @@ int TauHunterPPI::handle_damage(SpaceLocation *source, double normal, double dir
 }
 
 int TauHunterPPI::handle_fuel_sap(SpaceLocation *source, double normal) {
-	STACKTRACE
+	 
 	if ( in_jump )
 		return 0;
 	return Ship::handle_fuel_sap(source, normal);
 }
 
 double TauHunterPPI::handle_speed_loss(SpaceLocation *source, double normal) {
-	STACKTRACE
+	 
 	if ( in_jump )
 		return 0;
 	return Ship::handle_speed_loss(source, normal);
@@ -313,7 +313,7 @@ double TauHunterPPI::handle_speed_loss(SpaceLocation *source, double normal) {
 
 int TauHunterPPI::canCollide(SpaceLocation *other)
 {
-	STACKTRACE
+	 
 	if ( in_jump )
 		return false;
 	else
@@ -322,27 +322,27 @@ int TauHunterPPI::canCollide(SpaceLocation *other)
 
 int TauHunterPPI::translate(Vector2 rel_pos)
 {
-	STACKTRACE
+	 
 	if ( !in_jump ) return Ship::translate(rel_pos);
 	return false;
 }
 
 int TauHunterPPI::accelerate(SpaceLocation *source, double oangle, double vel, double omax_speed)
 {
-	STACKTRACE
+	 
 	if ( !in_jump ) return Ship::accelerate(source, oangle, vel, omax_speed);
 	return false;
 }
 
 void TauHunterPPI::animate(Frame* space)
 {
-	STACKTRACE
+	 
 	if ( !in_jump ) Ship::animate(space);
 }
 
 double TauHunterPPI::isProtected() const
 {
-	STACKTRACE
+	 
 	if ( in_jump )
 		return 1.0;
 	else   
@@ -351,7 +351,7 @@ double TauHunterPPI::isProtected() const
 
 double TauHunterPPI::isInvisible() const
 {
-	STACKTRACE
+	 
 	if ( in_jump )
 		return 1.0;
 	else    
@@ -360,20 +360,20 @@ double TauHunterPPI::isInvisible() const
 
 void TauHunterPPI::calculate_hotspots()
 {
-	STACKTRACE
+	 
 	if ( !in_jump ) Ship::calculate_hotspots();
 }
 
 void TauHunterPPI::calculate_turn_left()
 {
-	STACKTRACE
+	 
 	//if ( exit_countdown <= 0 )
 	if ( !in_jump ) Ship::calculate_turn_left();
 }
 
 void TauHunterPPI::calculate_turn_right()
 {
-	STACKTRACE
+	 
 	//if ( exit_countdown <= 0 )
 	if ( !in_jump ) Ship::calculate_turn_right();
 }
@@ -399,7 +399,7 @@ TauHunterPPILaser::TauHunterPPILaser (double ox, double oy, double oangle, doubl
 
 void TauHunterPPILaser::calculate()
 {
-	STACKTRACE
+	 
 	double r = (d) / range;
 	double r2 = r*r;
 	double r3 = r2*r;
@@ -415,7 +415,7 @@ void TauHunterPPILaser::calculate()
 
 void TauHunterPPILaser::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	if (d >= range) return;
 	damage_factor *= pow((1-d/range), 0.2);
 	SpaceLine::inflict_damage(other);

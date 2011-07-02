@@ -31,8 +31,7 @@ class HyperMelee : public NormalGame {
 	};
 
 void HyperMelee::init_objects() {
-	STACKTRACE
-
+	
 	Planet *p;
 	int i, m;
 	add(new Stars());
@@ -57,8 +56,7 @@ void HyperMelee::init_objects() {
 	}
 
 void HyperMelee::init(Log *_log) {
-	STACKTRACE
-
+	
 	NormalGame::init(_log);
 	normal_turbo *= 1.414;
 	shot_relativity /= 2;
@@ -84,7 +82,7 @@ void HyperMelee::set_resolution (int screen_x, int screen_y) {
 
 void HyperMelee::calculate()
 {
-	STACKTRACE;
+	 
 
 	int time = frame_time;
 

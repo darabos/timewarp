@@ -923,7 +923,7 @@ int VPlanet::handle_damage(SpaceLocation *source, double normal, double direct)
 	  }
   }
   //twenty tries, can't find a valid damage recipient, give up now.
-  tw_error("about to try to VPlanet::handle damage #3 -- this should never ever happen!");
+  throw("about to try to VPlanet::handle damage #3 -- this should never ever happen!");
   return(0);
 }
 
@@ -1234,10 +1234,10 @@ void VMetalShard::death(void) {
 
 void VMetalShard::compareSprites(void) {
   if(this->sprite==this->mySprite) {
-    tw_error("Identical sprites");
+    throw("Identical sprites");
   }
   else {
-    tw_error("non-identical sprites!");
+    throw("non-identical sprites!");
   }
 }
 
@@ -1253,9 +1253,9 @@ Asteroid()
   this->willRespawn = TRUE;
 }
 
-int VMetalAsteroid::handle_damage(SpaceLocation *source, double normal, double direct) {STACKTRACE
+int VMetalAsteroid::handle_damage(SpaceLocation *source, double normal, double direct) { 
   Vector2 V;
-  //tw_error("about to handle damage");
+  //throw("about to handle damage");
 	if (!exists()) return 0;
 	if ((normal > 0) || (direct > 0)) {
 		armour -= normal;
@@ -1278,8 +1278,8 @@ int VMetalAsteroid::handle_damage(SpaceLocation *source, double normal, double d
 	return 1;
 }
 
-void VMetalAsteroid::inflict_damage(SpaceObject *other) {STACKTRACE
-  //tw_error("about to inflict damage");
+void VMetalAsteroid::inflict_damage(SpaceObject *other) { 
+  //throw("about to inflict damage");
 	if (!other->exists()) return;
 	damage(other, 0, damage_factor);
   if(other->isShip()) ((Ship*)other)->update_panel=1;
@@ -1799,7 +1799,7 @@ Missile(source, source->pos, angle, initialVelocity,
   finalVelocity = ofinalVelocity;
   if(finalVelocity<0.0) {
     finalVelocity = originalVelocity;
-    tw_error("encountered a default final velocity!");
+    throw("encountered a default final velocity!");
   }
 }
 

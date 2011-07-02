@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "melee.h"
+#include "../melee.h"
 
-#include "ais.h"
-#include "melee/mship.h"
-#include "gui.h"
-
+#include "../ais.h"
+#include "../melee/mship.h"
+#include "../gui.h"
+#include "../scp.h"
 
 
 #define JOY_DIALOG_BOX          0

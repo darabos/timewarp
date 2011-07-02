@@ -112,7 +112,7 @@ TauEMP::TauEMP(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int 
 
 int TauEMP::activate_weapon()
 {
-	STACKTRACE
+	 
 	int rx;
 	if (slot<2)	rx = 8;
 	else
@@ -130,7 +130,7 @@ int TauEMP::activate_weapon()
 
 void TauEMP::calculate_fire_special()
 {
-	STACKTRACE
+	 
 	if (wave_radius > 0.1) {
 		wave_radius += specialVelocity * frame_time;	//propagate the wave
 		if (wave_radius > specialRange)
@@ -190,7 +190,7 @@ void TauEMP::calculate_fire_special()
 
 void TauEMP::animate(Frame *space)
 {
-	STACKTRACE
+	 
 //	animate wave effect
 
 	if (wave_radius > 0.1) {
@@ -231,7 +231,7 @@ void TauEMP::animate(Frame *space)
 
 void TauEMP::calculate_hotspots()
 {
-	STACKTRACE
+	 
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation(this,
 				normal_pos() - unit_vector(angle) * size.x / 4,
@@ -249,7 +249,7 @@ TauEMPVirtualTarget::TauEMPVirtualTarget(SpaceLocation *creator, SpaceSprite *os
 
 void TauEMPVirtualTarget::calculate()
 {
-	STACKTRACE;
+	 
 
 	if (ship && !ship->exists())
 	{
@@ -291,7 +291,7 @@ TauEMPJammer::TauEMPJammer(SpaceLocation *creator, Ship *tgt, int jtime) :
 
 void TauEMPJammer::calculate()
 {
-	STACKTRACE;
+	 
 
 	SpaceLocation::calculate();
 	if (jamtarget && jamtarget->exists())

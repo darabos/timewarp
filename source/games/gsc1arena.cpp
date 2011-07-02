@@ -24,7 +24,7 @@ REGISTER_FILE
 
 #include "../melee/mlog.h"
 
-#include "twgui/twgui.h"
+#include "../twgui/twgui.h"
 
 #include "../melee/mfleet.h"
 
@@ -84,7 +84,7 @@ public:
 
 void SC1Arena::init(Log *_log)
 {
-	STACKTRACE;
+	 
 
 	// this also initializes the players
 	Game::init(_log);
@@ -185,7 +185,7 @@ void SC1Arena::init(Log *_log)
 		Nships = get_config_int(ident, "Nships", 0);
 
 		if (Nships > max_fleet_ships)
-			tw_error("Too many ships in this fleet");
+			throw("Too many ships in this fleet");
 
 		int iship;
 		for ( iship = 0; iship < Nships; ++iship )
@@ -258,7 +258,7 @@ void SC1Arena::quit(const char *message)
 
 void SC1Arena::animate_predict(Frame *frame, int time)
 {
-	STACKTRACE;
+	 
 
 	Game::animate_predict(frame, time);
 
@@ -271,7 +271,7 @@ void SC1Arena::menu_data_init(NPI *player)
 
 	if (player->fleet->getSize() > 32)
 	{
-		tw_error("There are too many ships in this fleet for display");
+		throw("There are too many ships in this fleet for display");
 	}
 
 	for ( i = 0; i < player->fleet->getSize(); ++i )
@@ -311,7 +311,7 @@ void SC1Arena::menu_data_cleanup(NPI *player)
 
 void SC1Arena::animate( Frame* frame )
 {
-	STACKTRACE;
+	 
 
 	
 	Game::animate( frame );
@@ -366,7 +366,7 @@ void SC1Arena::animate( Frame* frame )
 
 void SC1Arena::start_menu(int *select, char *titletext)
 {
-	STACKTRACE;;
+	 ;
 ///*
 
 //	*select = 0;
@@ -413,7 +413,7 @@ void SC1Arena::start_menu(int *select, char *titletext)
 
 	if ( Nfleets == 0 )
 	{
-		tw_error("No fleets defined");
+		throw("No fleets defined");
 	}
 
 	// check all the fleet names
@@ -517,13 +517,13 @@ void SC1Arena::spawn_a_ship2(int iplayer, int iship)
 	int N = player[iplayer]->fleet->getSize();
 	if ( iship < 0 || iship >= N )
 	{
-		tw_error("Error in fleet choice");
+		throw("Error in fleet choice");
 	}
 
 	ShipType *t = player[iplayer]->fleet->getShipType(iship);
 	if (!t)
 	{
-		tw_error("Mistake in transmitting fleet number");
+		throw("Mistake in transmitting fleet number");
 	}
 	Ship *s;
 	s = create_ship(t->id, player[iplayer]->control,
@@ -553,7 +553,7 @@ void SC1Arena::spawn_a_ship(int iplayer)
 		log_int(spawn_ship_fleetindex);
 
 		if (spawn_ship_playernum != iplayer)
-			tw_error("Player index mismatch in spawn_a_ship (write)");
+			throw("Player index mismatch in spawn_a_ship (write)");
 		
 		// disable spawning the ship again.
 		ready2spawn[spawn_ship_playernum] = false;
@@ -567,7 +567,7 @@ void SC1Arena::spawn_a_ship(int iplayer)
 		log_int(k);
 
 		if (i != iplayer)
-			tw_error("Player index mismatch in spawn_a_ship (read)");
+			throw("Player index mismatch in spawn_a_ship (read)");
 
 		// this happens in read-mode only
 		spawn_a_ship2(i, k);
@@ -605,7 +605,7 @@ bool SC1Arena::handle_key(int k)
 
 void SC1Arena::calculate()
 {
-	STACKTRACE;
+	 
 
 	Game::calculate();
 
@@ -641,11 +641,11 @@ void SC1Arena::calculate()
 				spawn_ship_fleetindex = k;
 				if ( i < 0 || i > num_players)
 				{
-					tw_error("Shouldn't happen");
+					throw("Shouldn't happen");
 				}
 				if ( k < 0 || k >= player[i]->fleet->getSize() )
 				{
-					tw_error("Error in fleet choice");
+					throw("Error in fleet choice");
 				}
 
 				// do NOT use a CALL for this ... cause it's local, really ...
@@ -718,7 +718,7 @@ void SC1Arena::calculate()
 					
 					if ( p < 0 || p >= num_network)
 					{
-						tw_error("Shouldn't happen");
+						throw("Shouldn't happen");
 					}
 					CALL(spawn_a_ship, p);
 					

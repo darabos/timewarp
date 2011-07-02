@@ -41,7 +41,7 @@ Compile-Time Option for Stack Trace Debugging:
 If enabled, TW code will manually keep track of a stack trace similar 
 to that which debuggers produce.  This can be a substancial help for 
 debugging without an good debugger, or for debugging in release  mode.  
-To enable, uncomment the 4th line of util/errors.h (DO_STACKTRACE)
+To enable, uncomment the 4th line of util/errors.h (DO_ )
 */
 
 

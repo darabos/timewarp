@@ -55,18 +55,6 @@
 //#include "util/aastr.h"
 
 
-
-
-/*
-	error displays an error message, and prompts the user to
-	"Abort", "Retry", or "Debug"
-	on "Abort", it throws 0, which will be silently caught at the closest catch (int)
-	on "Retry" it returns
-	on "Debug" it throws -1, which will be rethrown all the way out. or something roughly equivalent
-*/
-#include "util/errors.h"
-
-
 //some random space for stings to use for GUIs & whatnot that need short term storage
 extern char dialog_string[20][128];
 

@@ -50,7 +50,7 @@ void Lightning::init(BITMAP *ashpbmp, Vector2 alightningrelpos, int amaxsparktim
 
 void Lightning::draw(Frame *space, Vector2 plot_pos, Vector2 plot_size)
 {
-	STACKTRACE;
+	 
 
 	Vector2 P, S;
 

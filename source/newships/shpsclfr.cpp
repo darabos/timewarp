@@ -107,7 +107,7 @@ ScloreFrigate::ScloreFrigate(Vector2 opos, double angle, ShipData *data, unsigne
 
 
 void ScloreFrigate::fireSting(void) {
-	STACKTRACE
+	 
   Vector2 v, vr;
   if(Sting!=NULL) {
     Sting->range = specialRange;
@@ -131,7 +131,7 @@ void ScloreFrigate::fireSting(void) {
 
 
 int ScloreFrigate::addPowerToSting(void) {
-	STACKTRACE
+	 
   if(!Sting) return(FALSE);
   if(!Sting->exists())
   {
@@ -147,13 +147,13 @@ int ScloreFrigate::addPowerToSting(void) {
 
 void ScloreFrigate::death()
 {
-	STACKTRACE;
+	 
 	Ship::death();
   if(Sting!=NULL && Sting->exists()) Sting->state = 0; // possible crash problem.
 }
 
 void ScloreFrigate::calculate() {
-	STACKTRACE
+	 
   if(fire_special && fire_weapon) fireSting();
   if(Sting!=NULL)
   {
@@ -167,7 +167,7 @@ void ScloreFrigate::calculate() {
 }
 
 int ScloreFrigate::activate_weapon() {
-	STACKTRACE
+	 
   double deflection, deflectionRad;
   int i;
   if(fire_weapon && fire_special && this->batt>=1) {
@@ -185,7 +185,7 @@ int ScloreFrigate::activate_weapon() {
 }
 
 int ScloreFrigate::activate_special() {
-	STACKTRACE
+	 
   if(fire_weapon && fire_special) {
     return(FALSE); //handeled in the calculate routine
   }
@@ -200,7 +200,7 @@ int ScloreFrigate::activate_special() {
 }
 
 void ScloreFrigate::createSting(void) {
-	STACKTRACE
+	 
   if(Sting!=NULL) return;
   Sting = new ScloreSting(this->pos.x, this->pos.y, this->angle,
     specialVelocity, 1, specialRange, 1, this, data->spriteSpecial, 0);
@@ -211,7 +211,7 @@ void ScloreFrigate::createSting(void) {
 }
 
 void ScloreSting::setPowerLevel(int powerLevel) {
-	STACKTRACE
+	 
   if(powerLevel<0) powerLevel = 0;
   if(powerLevel>9) powerLevel = 9;
   this->damage_factor = powerLevel;
@@ -240,7 +240,7 @@ ScloreSting::ScloreSting(double ox, double oy, double oangle, double ov,
 
 void ScloreSting::calculate(void)
 {
-	STACKTRACE;
+	 
 
 	if (!(creator && creator->exists()))
 	{
@@ -271,13 +271,13 @@ void ScloreSting::calculate(void)
 }
 
 void ScloreSting::resetRange(void) {
-	STACKTRACE
+	 
   this->d = 0;
   return;
 }
 
 bool ScloreSting::die(void) {
-	STACKTRACE
+	 
   if(this->powerLevel<=1)
     return(Shot::die());
   state = 1;
@@ -288,7 +288,7 @@ bool ScloreSting::die(void) {
 }
 
 int ScloreSting::handle_damage(SpaceLocation* source, double normal, double direct) {
-	STACKTRACE
+	 
   int x;
   x = Shot::handle_damage(source, normal, direct);
   if(state==0 && powerLevel > 1) {
@@ -301,7 +301,7 @@ int ScloreSting::handle_damage(SpaceLocation* source, double normal, double dire
 }
 
 void ScloreSting::inflict_damage(SpaceObject* other) {
-	STACKTRACE
+	 
   Shot::inflict_damage(other);
   if(other->isShip() || powerLevel <=1) {
     powerLevel = 0;
@@ -316,7 +316,7 @@ void ScloreSting::inflict_damage(SpaceObject* other) {
 
 void ScloreSting::death()
 {
-	STACKTRACE;
+	 
 
 	Missile::death();
 
@@ -328,7 +328,7 @@ void ScloreSting::death()
 
 void ScloreShot::calculate()
 {
-	STACKTRACE
+	 
 	Missile::calculate();
 
 }

@@ -51,7 +51,7 @@ SpaceSprite::SpaceSprite(BITMAP *image, int _attributes)
 
 	if (!sbitmap[0])
 	{
-		tw_error("Basic sprite shape expected, but doesn't exist");
+		throw("Basic sprite shape expected, but doesn't exist");
 	}
 }
 
@@ -113,11 +113,11 @@ void Vector3D::normalize()
 
 // something extra is needed ...
 
-// call this in void NormalGame::init_objects() {STACKTRACE
+// call this in void NormalGame::init_objects() { 
 // instead of the creation of a 2D planet.
 Planet *create_planet( Vector2 position )
 {
-	STACKTRACE;
+	 
 
 	// first, check the server.ini settings to see which type of planet you want
 	// to create: a 2D planet, or a 3D planet ?!
@@ -154,7 +154,7 @@ Planet *create_planet( Vector2 position )
 		SpaceSprite *color_map, *spec_map, *dummy;
 		DATAFILE *rawdata = load_datafile("planet3d.dat");
 		
-		if(!rawdata) error("Error loading planet3D data");
+		if(!rawdata) throw("Error loading planet3D data");
 		
 		
 		// select one of the planets (at random) ...
@@ -185,7 +185,7 @@ Planet *create_planet( Vector2 position )
 		}
 
 		if (Nplanets == 0)
-			tw_error("No planet data !!");
+			throw("No planet data !!");
 		
 		k = planetlist[tw_random(Nplanets)];
 		
@@ -202,7 +202,7 @@ Planet *create_planet( Vector2 position )
 		datapart = find_datafile_object(rawdata, name);
 		if (!(datapart && datapart->type == DAT_BITMAP))
 		{
-			tw_error("Cannot find the specular map of the planet, or not a bmp");
+			throw("Cannot find the specular map of the planet, or not a bmp");
 		}
 		// create a sprite
 		spec_map = new SpaceSprite(datapart, 1);
@@ -214,7 +214,7 @@ Planet *create_planet( Vector2 position )
 
 		if (spec_map->size().x != mapW || spec_map->size().y != mapH )
 		{
-			tw_error("color map and spec map have different sizes !!");
+			throw("color map and spec map have different sizes !!");
 		}
 		
 		
@@ -244,7 +244,7 @@ Planet *create_planet( Vector2 position )
 		return planet;
 
 	} else {
-		tw_error("Unknown planet dimension in create_planet()");
+		throw("Unknown planet dimension in create_planet()");
 	}
 
 	return 0;
@@ -695,7 +695,7 @@ filter instead.
 
 void Planet3D::calculate()
 {
-	STACKTRACE
+	 
 
 	Planet::calculate();
 
@@ -711,7 +711,7 @@ void Planet3D::calculate()
 
 void Planet3D::animate_pre()
 {
-	STACKTRACE;
+	 
 
 
 //	if (!space_view->in_view(pos, size)) return;
@@ -1134,7 +1134,7 @@ ignore3:
 
 void Planet3D::animate( Frame* space )
 {
-	STACKTRACE;
+	 
 
 	animate_pre();
 

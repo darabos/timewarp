@@ -7,6 +7,7 @@
 
 const char *tw_version();
 
+
 void change_teams();
 void edit_fleet(int player) ;
 //void change_options() ;
@@ -85,6 +86,8 @@ void show_diagnostics();
 void keyjamming_tester();
 
 extern DATAFILE *scp;
+
+int tw_alert(const char *message, const char *b1 = 0, const char *b2 = 0, const char *b3 = 0, const char *b4 = 0) ;
 
 
 //deprecated - should be replaced with something that doesn't depend on data file-content-ordering

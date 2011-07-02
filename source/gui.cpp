@@ -137,7 +137,7 @@ void TW_Dialog_Player::deinit() {
 	window->remove_callback(this);
 	dialog[length].d2 -= 1;
 	if (dialog[length].d2 != level) {
-		tw_error("TW_Dialog_Player::deinit - inconsistent GUI order");
+		throw("TW_Dialog_Player::deinit - inconsistent GUI order");
 	}
 	dialog[length].dp = prev_level;
 	font = (FONT*) dialog[length].dp2;
@@ -198,9 +198,9 @@ int tw_popup_dialog ( VideoWindow *window, DIALOG *d, int index ) {
 	int n, i, return_value;
 	if (!window) window = &videosystem.window;
 	for (n = 0; d[n].proc; n += 1) ;
-	if (!window->surface) error ("tw_dialog_pre - no drawing surface");
+	if (!window->surface) throw ("tw_dialog_pre - no drawing surface");
 	if ((index >= n) || (index < 0)) 
-		error("tw_dialog - index invalid");
+		throw("tw_dialog - index invalid");
 
 	TW_Dialog_Player bob;
 	bob.init( window, d, index);
@@ -246,17 +246,17 @@ const char *_get_ini_string ( const char *name ) {
 	char *item;
 	char *section;
 	char file[1024];
-	if (strlen(name) > 1000) error("_get_ini_string - name too long");
+	if (strlen(name) > 1000) throw("_get_ini_string - name too long");
 	strncpy (file, name, 1000);
 	char *_slash[2];
 	_slash[0] = strchr(file, '/');
 	if (!_slash[0]) {
-		tw_error("_get_ini_string - bad name (%s)", name);
+		throw("_get_ini_string - bad name (%s)", name);
 		return NULL;
 	}
 	_slash[1] = strchr(_slash[0] + 1, '/');
 	if (!_slash[1]) {
-		tw_error("_get_ini_string - bad name (%s)", name);
+		throw("_get_ini_string - bad name (%s)", name);
 		return NULL;
 	}
 	
@@ -281,17 +281,17 @@ void _set_ini_string ( const char *name, const char *value ) {
 	char *item;
 	char *section;
 	char file[1024];
-	if (strlen(name) > 1000) error("_set_ini_string - name too long");
+	if (strlen(name) > 1000) throw("_set_ini_string - name too long");
 	strncpy (file, name, 1000);
 	char *_slash[2];
 	_slash[0] = strchr(file, '/');
 	if (!_slash[0]) {
-		tw_error("_set_ini_string - bad name (%s)", name);
+		throw("_set_ini_string - bad name (%s)", name);
 		return;
 	}
 	_slash[1] = strchr(_slash[0]+1, '/');
 	if (!_slash[1] ) {
-		tw_error("_set_ini_string - bad name (%s)", name);
+		throw("_set_ini_string - bad name (%s)", name);
 		return;
 	}
 	
@@ -322,7 +322,7 @@ const char * twconfig_get_string (const char *item) {
 		//else if (!strncmp(item, "/dev/", 5)) type = DEV;
 		else if (!strncmp(item, "/ini/", 5)) type = INI;
 		else if (!strncmp(item, "/cfg/", 5)) type = CFG;
-		else error("twconfig_get_string - unknown prefix");
+		else throw("twconfig_get_string - unknown prefix");
 	}
 	else type = NORMAL;
 	ConfigEvent ce;
@@ -367,7 +367,7 @@ void twconfig_set_string (const char *item, const char *value){
 		//else if (!strncmp(item, "/dev/", 5)) type = DEV;
 		else if (!strncmp(item, "/ini/", 5)) type = INI;
 		else if (!strncmp(item, "/cfg/", 5)) type = CFG;
-		else error("twconfig_get_string - unknown prefix");
+		else throw("twconfig_get_string - unknown prefix");
 	}
 	else type = NORMAL;
 	ConfigEvent ce;

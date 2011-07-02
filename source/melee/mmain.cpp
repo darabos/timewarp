@@ -37,7 +37,7 @@ PlayerInformation *NormalGame::new_player()
 */
 
 /*void Game::player_said(int who, const char *what) {
-	if ((who < 0) || (who >= num_players)) tw_error ("Who said that?!?");
+	if ((who < 0) || (who >= num_players)) throw ("Who said that?!?");
 	message.print(8000, 15, "%s: %s", name[who], what);
 	return;
 	}*/
@@ -46,7 +46,7 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 							const char *fleet_file)
 {
 	
-	STACKTRACE;
+	 
 
 	NPI *p = (NPI*) new_player();
 	player[num] = p;
@@ -92,7 +92,7 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 	sprintf(sect, "Player%d", num+1);
 	if (c->channel == channel_none)
 	{
-	//	tw_error("channel_none not allowed here");
+	//	throw("channel_none not allowed here");
 		//log_file(fleet_file);
 		//::fleet->load(NULL, fleet_section);
 
@@ -130,7 +130,7 @@ int NormalGame::add_player (int num, Control *c, int team_index, const char *nam
 
 void NormalGame::init_objects()
 {
-	STACKTRACE;
+	 
 
 	int i;
 	//add(new Stars2());
@@ -148,12 +148,12 @@ void NormalGame::init_objects()
 
 void share_fleet(int iplayer)
 {
-	STACKTRACE;
+	 
 
 	NPI *p = player[iplayer];
 
 	if (!p)
-		tw_error("Share fleet failed: player does not exist");
+		throw("Share fleet failed: player does not exist");
 
 
 	int N;
@@ -166,7 +166,7 @@ void share_fleet(int iplayer)
 	{
 		void *tmpdata = p->fleet->serialize(&N);
 		
-		if (N > 16000)	{tw_error("fleet data exceed limit");}
+		if (N > 16000)	{throw("fleet data exceed limit");}
 		memcpy(buffer, tmpdata, N);
 		free(tmpdata);
 
@@ -188,7 +188,7 @@ void share_fleet(int iplayer)
 
 void NormalGame::init_players()
 {
-	STACKTRACE;
+	 
 
 	Game::init_players();
 
@@ -372,7 +372,7 @@ void NormalGame::init_players()
 
 			// so, the total number of controls in use by human or bot players is ...
 			if (num_players != count)
-				tw_error("count mismatch, should not occur");
+				throw("count mismatch, should not occur");
 			
 
 
@@ -415,12 +415,11 @@ void NormalGame::preinit() {
 
 void NormalGame::init(Log *_log)
 {
-	STACKTRACE;
+	 
 	
 //	display_channel_info();
 
 
-	log_debug("normalgame::init calling game::init\n");
 	Game::init(_log);
 
 	team_table_size = 0;
@@ -467,7 +466,6 @@ void NormalGame::init(Log *_log)
 	}
 	*/
 
-	log_debug("normalgame::init prepare\n");
 	prepare();
 	init_objects();
 
@@ -478,14 +476,14 @@ void NormalGame::init(Log *_log)
 	indteamtoggle = 0;
 	indhealthtoggle = 0;
 
-	log_debug("normalgame::init done\n");
+
 
 	return;
 	}
 
 NormalGame::~NormalGame()
 {
-	STACKTRACE;
+	 
 
 	//if (player_control) free (player_control);
 //	int i;
@@ -504,7 +502,7 @@ NormalGame::~NormalGame()
 static int kill_all_delay_counter = 0;
 void NormalGame::calculate()
 {
-	STACKTRACE;
+	 
 
 	Game::calculate();
 
@@ -555,7 +553,7 @@ void NormalGame::calculate()
 	return;
 	}
 
-void NormalGame::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
+void NormalGame::ship_died(Ship *who, SpaceLocation *source) { 
 	int n = game_time + 4000;
 	if (next_choose_new_ships_time > n) next_choose_new_ships_time = n;
 	Game::ship_died(who, source);
@@ -597,7 +595,7 @@ void NormalGame::ship_died(Ship *who, SpaceLocation *source) {STACKTRACE
 void NormalGame::display_stats()
 {
 #ifdef _DEBUG
-	STACKTRACE;
+	 
 
 	pause();
 	int i;
@@ -628,7 +626,7 @@ void NormalGame::display_stats()
 }
 bool NormalGame::handle_key(int k)
 {
-	STACKTRACE;
+	 
 	switch (k >> 8) {
 		default: {
 			return Game::handle_key(k);
@@ -816,7 +814,7 @@ void DirectConnection::send(void *data, int N)
 {
 	NetTCP *n = &((NetLog*)glog)->net[conn_remote];
 
-	if (!n->isConnected()) { tw_error("NetLog::send_packet() - no connection!"); }
+	if (!n->isConnected()) { throw("NetLog::send_packet() - no connection!"); }
 	int remain;
 
 	n->add2buffer((char*)data, N);
@@ -837,7 +835,7 @@ void DirectConnection::get(void *data, int N)
 			len += n->recv(N-len, N-len, (char*)data);
 	}
 	if (len != N)
-		tw_error("unexpected rcv difference");
+		throw("unexpected rcv difference");
 	//message.print(1500, 12, "get[%i] len[%i]", N, len);
 	//message.animate(0);
 }
@@ -942,7 +940,7 @@ void NormalGame::check_file(const char *id, int iplayer)
 
 			if ( i == 2)
 			{
-				tw_error("DAT files have different size! This may cause a desynch");
+				throw("DAT files have different size! This may cause a desynch");
 			} else {
 				download_file(type->data->file);
 			}
@@ -964,7 +962,7 @@ void NormalGame::check_file(const char *id, int iplayer)
 
 void NormalGame::choose_new_ships()
 {
-	STACKTRACE;
+	 
 
 	char tmp[40];
 	int i;
@@ -993,7 +991,7 @@ void NormalGame::choose_new_ships()
 		{
 			if (!p->control->ship->exists())
 			{
-				tw_error("Ship under control does not exist !?!?");
+				throw("Ship under control does not exist !?!?");
 			}
 			}
 		else {*/
@@ -1069,7 +1067,7 @@ void NormalGame::choose_new_ships()
 
 		if (slot[i] < 0 || slot[i] >= fleet->getSize())
 		{
-			tw_error("trying to load invalid ship");
+			throw("trying to load invalid ship");
 		}
 
 
@@ -1082,7 +1080,7 @@ void NormalGame::choose_new_ships()
 		
 
 		Ship *s = create_ship(fleet->getShipType(slot[i])->id, p->control, random(size), random(PI2), p->team);
-		if (!s) {tw_error("unable to create ship");}
+		if (!s) {throw("unable to create ship");}
 		fleet->clear_slot(slot[i]);
 		fleet->Sort();
 		//fleet->save("./fleets.tmp", tmp);
@@ -1115,7 +1113,7 @@ void NormalGame::choose_new_ships()
 		if (crc_test1 != crc_test2)
 		{
 			// this is only useful for a local game.
-			tw_error("CRC test goes wrong!!");
+			throw("CRC test goes wrong!!");
 		}
 	}
 #endif
@@ -1128,7 +1126,7 @@ void NormalGame::choose_new_ships()
 
 	// check if the file-share-channel is still "ök"
 	if (log_size_ch(channel_file_data) != 0)
-		tw_error("The file channel should be empty. Contains %i chars", log_size_ch(channel_current));
+		throw("The file channel should be empty. Contains %i chars", log_size_ch(channel_current));
 
 	delete[] slot;
 
@@ -1195,7 +1193,7 @@ bool NormalGame::player_isalive(int i)
 	NPI* p = (NPI*)player[i];
 
 	if (!(p && p->control) )
-		tw_error("Checking live state of a player who does not exist.");
+		throw("Checking live state of a player who does not exist.");
 
 	return (p->control->ship || p->fleet->getSize() > 0);
 }
@@ -1311,7 +1309,7 @@ void NormalGame::handle_end()
 			continue;
 
 		if (!choices[i])
-			tw_error("an invalid choice was encountered at end of the game");
+			throw("an invalid choice was encountered at end of the game");
 	}
 
 
@@ -1399,13 +1397,13 @@ void log_test(char *comment)
 	{
 		log_int(k, channel_network[i]);
 		if ( k != m )
-			tw_error("[%s] log stack is probably mixed up on computer [%i] channel [%i]",
+			throw("[%s] log stack is probably mixed up on computer [%i] channel [%i]",
 						comment, i, channel_network[i]);
 	}
 
 	// check if the "log stack" of data is empty
 //	if (log_totalsize() > 0)
-//		tw_error("Log isn't empty  %i %i", log_size_pl(0), log_size_pl(1));
+//		throw("Log isn't empty  %i %i", log_size_pl(0), log_size_pl(1));
 // this is not necessarily an error, is it ? Namely, remote computer can still add
 // data while this one is waiting?
 #endif

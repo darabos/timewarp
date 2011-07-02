@@ -44,7 +44,7 @@ void register_shipclass (
 {
 	num_shipclasses += 1;
 	if (num_shipclasses >= max_shipclasses)
-		tw_error("Too many ship classes ; increase the array size...");
+		throw("Too many ship classes ; increase the array size...");
 
 	//shipclasses = (ShipClass*)realloc(shipclasses, num_shipclasses * sizeof(ShipClass));
 
@@ -131,7 +131,7 @@ static void register_shiptype ( const char *file ) {
 	char buffy[1024];
 	strncpy(buffy, file, 1000);
 	char *tmp = strchr(buffy, '.');
-	if (!tmp || (tmp - buffy < 5)) tw_error("bad ship file name (%s)", file);
+	if (!tmp || (tmp - buffy < 5)) throw("bad ship file name (%s)", file);
 	*tmp = 0;
 	shiptypes[i].id = strdup(tmp - 5);
 
@@ -159,7 +159,7 @@ static void register_shiptype ( const char *file ) {
 		}
 		tmp = get_config_string("Info", "Name1", NULL);
 		if (!tmp)
-			tw_error("init_ships - error initializing name (%s)", file);
+			throw("init_ships - error initializing name (%s)", file);
 		l += sprintf(buffy + l, "%s", tmp);
 		int n = 1;
 		while (true) {
@@ -204,7 +204,7 @@ static void register_shiptype ( const char *file ) {
 
 	if (!shiptypes[i].code)
 	{
-		tw_error("A ship without code? No way! [%s]", code);
+		throw("A ship without code? No way! [%s]", code);
 	}
 	
 	if (!shiptypes[i].data || !shiptypes[i].code) {
@@ -216,7 +216,7 @@ static void register_shiptype ( const char *file ) {
 			shiptypes[i].name, shiptypes[i].file);
 		if (!shiptypes[i].data) tmp += sprintf(tmp, "Data not found (%s)\n", data);
 		if (!shiptypes[i].code) tmp += sprintf(tmp, "Code not found (%s)\n", code);
-		error("%s", buffy);
+		throw("%s", buffy);
 		num_shiptypes -= 1;
 		return;
 	}
@@ -253,7 +253,7 @@ void _register_shiptype_dir ( const char *fn, int attrib, int param ) {
 	for_each_file ( buffy, FA_ARCH|FA_RDONLY, _register_shiptype, 0 );
 }
 
-void init_ships() {STACKTRACE
+void init_ships() { 
 	_register_shiptype_dir ( "ships", FA_DIREC|FA_RDONLY|FA_ARCH, 3 );
 
 	return;
@@ -274,7 +274,7 @@ Ship::Ship(SpaceLocation *creator, Vector2 opos, double oangle, SpaceSprite *osp
 	update_panel(false),
 	target_pressed(false),
 	control(NULL)
-{STACKTRACE
+{ 
 	attributes |= ATTRIB_SHIP;
 	layer = LAYER_SHIPS;
 	set_depth(DEPTH_SHIPS);
@@ -317,7 +317,7 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	update_panel(false),
 	target_pressed(false),
 	control(NULL)
-{STACKTRACE
+{ 
 	attributes |= ATTRIB_SHIP;
 	layer = LAYER_SHIPS;
 	set_depth(DEPTH_SHIPS);
@@ -333,12 +333,12 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 
 	if (data)
 	{
-		tw_error("ship with data out of nowhere? Shouldn't be possible.");
+		throw("ship with data out of nowhere? Shouldn't be possible.");
 	}
 	data = shipData;
 	if (!data)
 	{
-		tw_error("A ship without data.");
+		throw("A ship without data.");
 	}
 	data->lock();
 
@@ -421,7 +421,7 @@ Ship::Ship(Vector2 opos, double shipAngle, ShipData *shipData, unsigned int ally
 	hashotspots = true;
 }
 
-void Ship::death() {STACKTRACE
+void Ship::death() { 
 	if (attributes & ATTRIB_NOTIFY_ON_DEATH) {
 		game->ship_died(this, NULL);
 		attributes &= ~ATTRIB_NOTIFY_ON_DEATH;
@@ -431,7 +431,7 @@ void Ship::death() {STACKTRACE
 
 Ship::~Ship()
 {
-	STACKTRACE;
+	 
 
 	delete spritePanel;
 	spritePanel = 0;
@@ -440,7 +440,7 @@ Ship::~Ship()
 //delete override_control;
 	if (first_override_control)
 	{
-		//tw_error("Ship deleted before all control overrides are removed...");
+		//throw("Ship deleted before all control overrides are removed...");
 		// if you interrupt a game while some ship is under someones control, this can happen...
 
 		OverrideControl *c, *cnext;
@@ -482,7 +482,7 @@ RGB Ship::battPanelColor(int k)
 
 
 
-void Ship::locate() {STACKTRACE
+void Ship::locate() { 
 	int tries = 0;
 	double mindist = 1000;
 	while (tries < 15) {
@@ -499,7 +499,7 @@ void Ship::locate() {STACKTRACE
 }
 
 void Ship::calculate()
-{STACKTRACE
+{ 
 
 
 //added by Tau - start
@@ -577,7 +577,7 @@ void Ship::calculate()
 		#ifdef _DEBUG
 		if (exists() && (control->ship != this) && (control->ship != ship))
 		{
-			tw_error("Control has the wrong ship...");
+			throw("Control has the wrong ship...");
 		}
 		#endif
 		*/
@@ -799,7 +799,7 @@ void Ship::calculate()
 	SpaceObject::calculate();
 }
 
-int Ship::handle_fuel_sap(SpaceLocation *source, double normal) {STACKTRACE
+int Ship::handle_fuel_sap(SpaceLocation *source, double normal) { 
 
 	if (death_counter >= 0) return 0; //added by Tau
 
@@ -818,7 +818,7 @@ int Ship::handle_fuel_sap(SpaceLocation *source, double normal) {STACKTRACE
 	return 1;
 }
 
-double Ship::handle_speed_loss(SpaceLocation *source, double normal) {STACKTRACE
+double Ship::handle_speed_loss(SpaceLocation *source, double normal) { 
 	double speed_loss = normal;
 	if(speed_loss > 0.0) {
 
@@ -832,7 +832,7 @@ double Ship::handle_speed_loss(SpaceLocation *source, double normal) {STACKTRACE
 
 		double sl = (30/(mass+30)) * speed_loss;
 		if (sl > 1)
-			tw_error("Speed loss too large\n(%f)", sl);
+			throw("Speed loss too large\n(%f)", sl);
 
 		accel_rate *= 1 - sl * accel_rate / (accel_rate + scale_acceleration(2,4));
 		hotspot_rate = (int)(hotspot_rate / (1 - sl * accel_rate / (accel_rate + scale_acceleration(2,4)) ) );
@@ -843,7 +843,7 @@ double Ship::handle_speed_loss(SpaceLocation *source, double normal) {STACKTRACE
 	return 1;
 }
 
-int Ship::handle_damage(SpaceLocation *source, double normal, double direct) {STACKTRACE
+int Ship::handle_damage(SpaceLocation *source, double normal, double direct) { 
 
 	if (death_counter >= 0) return 0; //added by Tau
 
@@ -920,25 +920,25 @@ void Ship::assigntarget(SpaceObject *otarget)
 }
 
 
-void Ship::calculate_thrust() {STACKTRACE
+void Ship::calculate_thrust() { 
 	if (thrust)
 		accelerate_gravwhip(this, angle, accel_rate * frame_time, speed_max);
 	return;
 }
 
 void Ship::calculate_turn_left()
-{STACKTRACE
+{ 
   if(turn_left)
 		turn_step -= turn_rate * frame_time;
 }
 
 void Ship::calculate_turn_right()
-{STACKTRACE
+{ 
   if(turn_right)
 		turn_step += turn_rate * frame_time;
 }
 
-void Ship::calculate_fire_weapon() {STACKTRACE
+void Ship::calculate_fire_weapon() { 
 	weapon_low = FALSE;
 
 	if (fire_weapon) {
@@ -965,7 +965,7 @@ void Ship::calculate_fire_weapon() {STACKTRACE
 }
 
 void Ship::calculate_fire_special()
-{STACKTRACE
+{ 
   special_low = FALSE;
 
   if(fire_special)
@@ -989,7 +989,7 @@ void Ship::calculate_fire_special()
   }
 }
 
-void Ship::calculate_hotspots() {STACKTRACE
+void Ship::calculate_hotspots() { 
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation(this,
 			normal_pos() - unit_vector(angle) * size.x / 2.5,
@@ -1101,7 +1101,7 @@ SpaceObject(creator, opos, 0.0, sprite),
 	phaser_step_position(0),
 	phaser_steps(steps),
 	phaser_step_size(step_size)
-{STACKTRACE
+{ 
 	layer = LAYER_HOTSPOTS;
 	set_depth(DEPTH_HOTSPOTS);
 	collide_flag_anyone = 0;
@@ -1131,7 +1131,7 @@ void Phaser::animate(Frame *space)
 
 void Phaser::calculate()
 {
-	STACKTRACE;
+	 
 
 	++count_delay_iterations;
 	if (count_delay_iterations >= DEATH_FRAMES-3)	// I'm not sure, how many you need.
@@ -1140,7 +1140,7 @@ void Phaser::calculate()
 		// these are vulnerable, and can die. Then, ship-specific pointers get invalid (objects
 		// are removed from memory). Thus, we need need (hackish) some time before objects are removed.
 		// notice that this can be avoided by the ... "materialize" function.
-		tw_error("Phasing takes too long; need more time for pointer-checks!");
+		throw("Phasing takes too long; need more time for pointer-checks!");
 	}
 
 	if (!exists())
@@ -1166,7 +1166,7 @@ void Phaser::calculate()
 
 	if (exists() && (color_index < 0 || color_index >= num_colors))
 	{
-		tw_error("phaser index mismatch: should not occur");
+		throw("phaser index mismatch: should not occur");
 	}
 
 	if (phaser_step_position < phaser_step_size) {
@@ -1196,7 +1196,7 @@ void Phaser::calculate()
 	SpaceObject::calculate();
 }
 
-SpaceLocation *Ship::get_ship_phaser() {STACKTRACE
+SpaceLocation *Ship::get_ship_phaser() { 
 	return new Phaser(this,
 		pos - unit_vector(angle ) * PHASE_MAX * size.x,
 		unit_vector(angle ) * PHASE_MAX * size.x,
@@ -1236,7 +1236,7 @@ void OverrideControl::del(Ship *s, OverrideControl *oldcontrol)
 
 	if (!c)
 	{
-		//tw_error("Error: trying to remove a control override that is not present in the list");
+		//throw("Error: trying to remove a control override that is not present in the list");
 		// this is possible, if you interrupt a game while someones ship is under control... so, don't
 		// worry about it. Enable it for debugging.
 	} else {

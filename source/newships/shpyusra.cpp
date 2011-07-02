@@ -69,7 +69,7 @@ YushRanger::YushRanger( Vector2 opos, double shipAngle,
 }
 
 int YushRanger::activate_weapon(){
-	STACKTRACE
+	 
   if( weaponObject ) return FALSE;
   game->add( weaponObject = new YushSpear( this, Vector2(0, 0.5*get_size().y), angle, weaponVelocity,
     weaponDamage, weaponRange, weaponArmour, weaponControl, this, data->spriteWeapon ));
@@ -78,7 +78,7 @@ int YushRanger::activate_weapon(){
 
 int YushRanger::activate_special()
 {
-	STACKTRACE;
+	 
 	double alpha = atan3(vel.y, vel.x);
 	alpha = normalize(alpha, PI2);
 	double v = vel.length();		//sqrt( vx*vx + vy*vy );
@@ -100,17 +100,17 @@ int YushRanger::activate_special()
 }
 
 void YushRanger::calculate_turn_left(){
-	STACKTRACE;
+	 
 	if( !fire_weapon ) Ship::calculate_turn_left();
 }
 
 void YushRanger::calculate_turn_right(){
-	STACKTRACE;
+	 
   if( !fire_weapon ) Ship::calculate_turn_right();
 }
 
 void YushRanger::calculate(){
-	STACKTRACE;
+	 
   Ship::calculate();
   if( weaponObject ){
     if( !weaponObject->exists() || weaponObject->released ){
@@ -135,7 +135,7 @@ released( false )
 
 void YushSpear::calculate()
 {
-	STACKTRACE;
+	 
 
 	Missile::calculate();
 
@@ -191,7 +191,7 @@ void YushSpear::release(){
 
 void YushSpear::inflict_damage( SpaceObject* other )
 {
-	STACKTRACE;
+	 
 	if( latched || other->isShot() ) return;
 	if( !other->isAsteroid() ) Shot::inflict_damage( other );
 	state = 1;                   // don't want to die on contact
@@ -206,7 +206,7 @@ void YushSpear::inflict_damage( SpaceObject* other )
 }
 
 int YushSpear::handle_damage( SpaceLocation* other, double normal, double direct ){
-	STACKTRACE;
+	 
 	if( latched ){
 		latched->handle_damage( other, normal, direct );
 		// commenting out the following two lines makes the spears vulnerable to damage

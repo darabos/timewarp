@@ -137,7 +137,7 @@ void gamma_color_effects (RGB *c) {
 		g = (c->g << 8) / alpha;
 		b = (c->b << 8) / alpha;
 		if ((r | g | b) > 255) {
-			tw_error("gamma_color_effects : premultiplied alpha color invalid");
+			throw("gamma_color_effects : premultiplied alpha color invalid");
 		}
 		*/
 		r = c->r;
@@ -172,7 +172,7 @@ int VideoSystem::poll_redraw() {
 	}
 	return 0;
 }
-void VideoSystem::preinit() {STACKTRACE
+void VideoSystem::preinit() { 
 	int i;
 	surface = NULL;
 	width = -1;
@@ -201,7 +201,7 @@ void VideoSystem::preinit() {STACKTRACE
 			b_levels = 6,
 			total_levels = r_levels * g_levels * b_levels
 		};
-		COMPILE_TIME_ASSERT(total_levels < 256);
+
 		for (i = 0; i < 256; i += 1) {
 			if (i < total_levels) {
 				int j = 1;
@@ -231,11 +231,11 @@ void VideoSystem::preinit() {STACKTRACE
 	window.init( &window );
 	window.locate(0,0,0,0,  0,1,0,1);
 }
-FONT *VideoSystem::get_font(int s) {STACKTRACE
+FONT *VideoSystem::get_font(int s) { 
 	if (!font_data) {
 		if (basic_font) return basic_font;
 		if (!font) {
-			tw_error_exit("VideoSystem::get_font - something horribly wrong!");
+			throw("VideoSystem::get_font - something horribly wrong!");
 			return font;
 		}
 	}
@@ -243,12 +243,12 @@ FONT *VideoSystem::get_font(int s) {STACKTRACE
 	if (s > 7) s = 7;
 	return (FONT*) font_data[s].dat;
 }
-void VideoSystem::set_palette(RGB *new_palette) {STACKTRACE
+void VideoSystem::set_palette(RGB *new_palette) { 
 	memcpy(palette, new_palette, sizeof(RGB) * 256);
 	update_colors();
 	return;
 }
-void VideoSystem::update_colors() {STACKTRACE
+void VideoSystem::update_colors() { 
 	RGB tmp[256];
 	if (!palette) return;
 	memcpy(tmp, palette, sizeof(RGB) * 256);
@@ -277,7 +277,7 @@ BITMAP *allegro_screen = 0;
 
 int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 {
-	STACKTRACE;
+	 
 
 	VideoEvent ve;
 	ve.type = Event::VIDEO;
@@ -292,7 +292,7 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 		char buffy[512];
 		sprintf(buffy, "Error switching to graphics mode\n(%dx%d @ %d bit)\nresolution too low", width, height, bpp);
 		if (this->bpp == -1) {
-			tw_error_exit(buffy);
+			throw(buffy);
 		}
 		tw_alert (buffy, "Continue");
 		return false;
@@ -337,7 +337,7 @@ int VideoSystem::set_resolution (int width, int height, int bpp, int fullscreen)
 			if (this->bpp == -1) {
 				char buffy[1024];
 				sprintf(buffy, "%s\n%s\n%s", part1, part2, part3);
-				tw_error_exit(buffy);
+				throw_exit(buffy);
 			}
 			set_color_depth(this->bpp);
 			set_gfx_mode((this->fullscreen ? GFX_TIMEWARP_FULLSCREEN : GFX_TIMEWARP_WINDOW), this->width, this->height, 0, 0);
@@ -438,7 +438,7 @@ void VideoWindow::lock ( ) {
 void VideoWindow::unlock ( ) {
 	//int i = lock_level - 1;
 	if (lock_level == 0) {
-		tw_error("VideoWindow unlocked too many times");
+		throw("VideoWindow unlocked too many times");
 		return;
 	}
 	lock_level -= 1;
@@ -456,7 +456,7 @@ void VideoWindow::unlock ( ) {
 }
 #define VideoWindow_callbacklist_units 4
 void VideoWindow::match ( VideoWindow *old ) {
-	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
+	if (lock_level) {throw("VideoWindow - illegal while locked");}
 	if (!parent && old->parent) init( old->parent );
 	locate ( 
 		old->const_x, old->propr_x, 
@@ -473,7 +473,7 @@ void VideoWindow::hide() {
 void VideoWindow::add_callback( BaseClass *callee ) {
 	int i;
 	for (i = 0; i < num_callbacks; i += 1) {
-		if (callback_list[i] == callee) {tw_error("adding VideoWindow callback twice");}
+		if (callback_list[i] == callee) {throw("adding VideoWindow callback twice");}
 	}
 	if (!(num_callbacks & (VideoWindow_callbacklist_units-1))) {
 		callback_list = (BaseClass**) realloc(callback_list, sizeof(BaseClass*) * 
@@ -497,7 +497,7 @@ void VideoWindow::remove_callback( BaseClass *callee ) {
 	return;
 }
 void VideoWindow::event(int subtype) {
-	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
+	if (lock_level) {throw("VideoWindow - illegal while locked");}
 	VideoEvent ve;
 	ve.type = Event::VIDEO;
 	ve.subtype = subtype;
@@ -506,7 +506,7 @@ void VideoWindow::event(int subtype) {
 	return;
 }
 void VideoWindow::update_pos() {
-	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
+	if (lock_level) {throw("VideoWindow - illegal while locked");}
 	int nx = 0, ny = 0, nw = 0, nh = 0;
 	if (parent == this) {
 		surface = videosystem.surface;
@@ -540,7 +540,7 @@ void VideoWindow::update_pos() {
 void VideoWindow::_event( Event *e ) {
 	if (e->type == Event::VIDEO) {
 		const VideoEvent *ve = (const VideoEvent *) e;
-		if (ve->window != parent) {tw_error ("VideoWindow event not from parent?");}
+		if (ve->window != parent) {throw ("VideoWindow event not from parent?");}
 		VideoEvent nve;
 		nve.type = Event::VIDEO;
 		nve.window = this;
@@ -562,7 +562,7 @@ void VideoWindow::_event( Event *e ) {
 		}
 		issue_event( num_callbacks, callback_list, &nve);
 	}
-	else {tw_error ( "VideoWindow got non-video event" );}
+	else {throw ( "VideoWindow got non-video event" );}
 	return;
 }
 
@@ -582,10 +582,10 @@ void VideoWindow::preinit () {
 	return;
 }
 void VideoWindow::init ( VideoWindow *parent_window) {
-	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
+	if (lock_level) {throw("VideoWindow - illegal while locked");}
 	if (parent) parent->remove_callback( this );
 	parent = parent_window;
-	//if (parent == this) {tw_error("VideoWindow - incest");}
+	//if (parent == this) {throw("VideoWindow - incest");}
 	if (parent && (parent != this)) parent->add_callback ( this );
 	update_pos();
 
@@ -594,7 +594,7 @@ void VideoWindow::init ( VideoWindow *parent_window) {
 	return;
 }
 void VideoWindow::locate ( double x1, double x2, double y1, double y2, double w1, double w2, double h1, double h2) {
-	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
+	if (lock_level) {throw("VideoWindow - illegal while locked");}
 	const_x = x1;
 	propr_x = x2;
 	const_y = y1;
@@ -609,13 +609,13 @@ void VideoWindow::locate ( double x1, double x2, double y1, double y2, double w1
 	return;
 }
 void VideoWindow::deinit() {
-	if (lock_level) {tw_error("VideoWindow - illegal while locked");}
+	if (lock_level) {throw("VideoWindow - illegal while locked");}
 	if (parent) {
 		parent->remove_callback( this );
 		parent = NULL;
 	}
 	if (num_callbacks) 
-		{tw_error("VideowWindow - deinit illegal while child windows remain");}
+		{throw("VideowWindow - deinit illegal while child windows remain");}
 	/*for (int i = 0; i < num_callbacks; i += 1) {
 		Event e;
 		e.type = 
@@ -649,7 +649,7 @@ double scale_turning (double turn_rate) {
 
 	double tr = (PI2 / 16) / (turn_rate + 1.0) / time_ratio;
 	if (fabs(tr) > 1.0)
-		tw_error("Turn rate error");
+		throw("Turn rate error");
 	return tr;
 	}
 double scale_velocity (double velocity) {

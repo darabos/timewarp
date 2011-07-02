@@ -175,7 +175,7 @@ int PkunkFury::handle_damage(SpaceLocation *source, double normal, double direct
 
 	if (s->ship != s || parent != 0)
 	{
-		tw_error("Reincarnation mistake.");
+		throw("Reincarnation mistake.");
 	}
 
 	return r;

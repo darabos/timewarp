@@ -92,7 +92,7 @@ public:
 
 void distribute_time_ran(double *x, int N, double xmax)
 {
-	STACKTRACE;
+	 
 
 	int i;
 	int imax = 1000;
@@ -143,7 +143,7 @@ Missile( oship,opos, oangle, ov, odamage, orange, 0, oship,
 
 void CometPlasma::calculate()
 {
-	STACKTRACE;
+	 
 
 	
 	
@@ -184,7 +184,7 @@ void CometPlasma::calculate()
 
 void CometPlasma::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 
 	
 	SpaceObject::inflict_damage(other);
@@ -195,7 +195,7 @@ void CometPlasma::inflict_damage(SpaceObject *other)
 
 int CometPlasma::handle_damage(SpaceLocation *source, int normal, int direct)
 {
-	STACKTRACE;
+	 
 
 	
 	int total = normal + direct;
@@ -234,7 +234,7 @@ SpaceObject(NULL, p, 0.0, sprite_comet)
 
 
 void Comet::inflict_damage(SpaceObject *other) {
-	STACKTRACE;
+	 
 
 	int i = 1;
 	if (other->isShip()) {
@@ -252,7 +252,7 @@ void Comet::inflict_damage(SpaceObject *other) {
 
 
 void Comet::calculate() {
-	STACKTRACE;
+	 
 
 	SpaceObject::calculate();
 	
@@ -315,7 +315,7 @@ void Comet::calculate() {
 
 void Solar::init_comets ()
 {
-	STACKTRACE;
+	 
 
 	
 
@@ -331,11 +331,11 @@ void Solar::init_comets ()
 	
 	
 	CometPic = GetSprite("solar_comet.dat","Comet000");
-	if(CometPic==NULL)	error("File error, comet pic.  Bailing out...");
+	if(CometPic==NULL)	throw("File error, comet pic.  Bailing out...");
 	
 	TailPic = new SpaceSprite* [Num_Tail_Pics];	// the subroutine does not do this for us ...
 	if(GetSprites(TailPic,"solar_comet.dat","Tail%03d",Num_Tail_Pics)==FALSE)
-		error("File error, comet pics.  Bailing out...");
+		throw("File error, comet pics.  Bailing out...");
 	
 	
 	Comet	*Cometbody;
@@ -365,7 +365,7 @@ void Solar::init_comets ()
 
 SpaceSprite *Solar::GetSprite(char *fileName, char *spriteName)
 {
-	STACKTRACE;
+	 
 
 	char msgStr[100];
 	DATAFILE *tmpdata;
@@ -394,7 +394,7 @@ SpaceSprite *Solar::GetSprite(char *fileName, char *spriteName)
 
 bool Solar::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites)
 {
-	STACKTRACE;
+	 
 
 	SpaceSprite *spr;
 	char dataStr[100];
@@ -417,24 +417,24 @@ bool Solar::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int nu
 
 void Solar::init_objects()
 {
-	STACKTRACE;
+	 
 
 	add(new Stars());
 	char starName[100];
 
 	if(GetSprites(PlanetPics,"solar.dat","Station_Planet%03d",Num_Planet_Pics)==FALSE)
-		error("File error, planet pics.  Bailing out...");
+		throw("File error, planet pics.  Bailing out...");
 
 	if(GetSprites(GiantPics,"solar.dat","Station_Giant%03d",Num_Giant_Pics)==FALSE)
-		error("File error, giant pics.  Bailing out...");
+		throw("File error, giant pics.  Bailing out...");
 
 	if(GetSprites(MoonPics,"solar.dat","Station_Moon%03d",Num_Moon_Pics)==FALSE)
-		error("File error, moon pics.  Bailing out...");
+		throw("File error, moon pics.  Bailing out...");
 
 	sprintf(starName,"Star%03d",random(Num_Star_Pics));
 
 	StarPic=GetSprite("solar.dat",starName);
-	if(StarPic==NULL)	error("File error, star pic.  Bailing out...");
+	if(StarPic==NULL)	throw("File error, star pic.  Bailing out...");
 
 	Sun *Centre;
 	Planet *Satellite;

@@ -169,7 +169,7 @@ FreinBoomerang::FreinBoomerang(Vector2 opos, double shipAngle,
 
 int FreinBoomerang::activate_weapon()
 {
-	STACKTRACE
+	 
   int chance;
   int answer = FALSE;
   if (weaponChoice == SMALL_BOOMERANG) {
@@ -204,7 +204,7 @@ int FreinBoomerang::activate_weapon()
 
 int FreinBoomerang::activate_special()
 {
-	STACKTRACE
+	 
   int answer;
   if (weaponChoice == SMALL_BOOMERANG) {
     weapon_drain = weapon2Drain;
@@ -227,7 +227,7 @@ int FreinBoomerang::activate_special()
 
 void FreinBoomerang::calculate()
 {
-	STACKTRACE
+	 
   if ((boomerangL != NULL) && (!boomerangL->exists()))
     boomerangL=NULL;
   Ship::calculate();
@@ -243,7 +243,7 @@ void FreinBoomerang::calculate()
 
 void FreinBoomerang::calculate_fire_special()
 {
-	STACKTRACE
+	 
   if (weaponChoice == SMALL_BOOMERANG) {
     blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(1), 36, 0, 36, 0, 19, 30);
     blit(this->spritePanel->get_bitmap(7), this->spritePanel->get_bitmap(2), 36, 0, 36, 0, 19, 30);
@@ -288,7 +288,7 @@ FreinSmall::FreinSmall(double ox,double oy,double oangle, double ov,
 
 void FreinSmall::calculate()
 {
-	STACKTRACE
+	 
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -329,7 +329,7 @@ void FreinSmall::calculate()
 
 void FreinSmall::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	if (other == ship) {
 		state = 0;
 		mass = 0;
@@ -363,13 +363,13 @@ FreinMedium::FreinMedium(double ox,double oy,double oangle, double ov,
 }
 
 void FreinMedium::death() {
-	STACKTRACE;
+	 
 	if (Freinship) (Freinship)->num_medium_boomerangs -= 1;
 	Shot::death();
 	}
 
 void FreinMedium::calculate() {
-	STACKTRACE
+	 
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -413,7 +413,7 @@ void FreinMedium::calculate() {
 
 void FreinMedium::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	if (other == ship) {
 		state = 0;
 		mass = 0;
@@ -446,7 +446,7 @@ FreinLarge::FreinLarge(double ox,double oy,double oangle, double ov,
 
 void FreinLarge::calculate()
 {
-	STACKTRACE
+	 
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -485,7 +485,7 @@ void FreinLarge::calculate()
 
 void FreinLarge::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	if (other == ship) {
 		state = 0;
 		mass = 0;
@@ -500,7 +500,7 @@ void FreinLarge::inflict_damage(SpaceObject *other)
 
 int FreinLarge::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
   return Shot::handle_damage(source, 0, 0);
 }
 

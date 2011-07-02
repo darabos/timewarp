@@ -17,8 +17,8 @@ REGISTER_FILE
 #include "mcbodies.h"
 
 
-#include "scp.h"
-#include "melee/mnet1.h"
+#include "../scp.h"
+#include "mnet1.h"
 
 
 bool physics_allowed = true;
@@ -69,13 +69,13 @@ void check_physics_correctness_item(int i)
 		{
 			if ( (l->attributes & ATTRIB_INGAME) == 0)
 			{
-				tw_error("a object that is not ingame? impossible.");
+				throw("a object that is not ingame? impossible.");
 			}
 		}
 
 		if (fabs(l->pos.x) > 1E6 || fabs(l->pos.y) > 1E6 || fabs(l->vel.x) > 1E6 || fabs(l->vel.y) > 1E6)
 		{
-			tw_error("error in item [%i] [%s]", i, l->get_identity());
+			throw("error in item [%i] [%s]", i, l->get_identity());
 		}
 	}
 #endif
@@ -107,14 +107,14 @@ void check_physics_presence(Presence *p)
 	{
 		if (physics->item[i] == p)
 		{
-			tw_error("Physics location deleted, but is still in the list.");
+			throw("Physics location deleted, but is still in the list.");
 		}
 	}
 	for ( i = 0; i < physics->num_presences; ++i )
 	{
 		if (physics->presence[i] == p)
 		{
-			tw_error("Physics presence deleted, but is still in the list.");
+			throw("Physics presence deleted, but is still in the list.");
 		}
 	}
 #endif
@@ -125,7 +125,7 @@ int get_index(double angle, double o, int n)
 {
 	if (angle < -100 || angle > 100)
 	{
-		tw_error("index: excessive angle");
+		throw("index: excessive angle");
 	}
 
 	int i = iround((o + angle) * n / PI2);
@@ -164,7 +164,7 @@ bool Query::current_invalid()
 		}
 	case QUERY_LINE:
 		{
-			tw_error("query_line, is this ever used?");
+			throw("query_line, is this ever used?");
 			if (!current->isLine())
 				return true;
 			break;
@@ -175,13 +175,13 @@ bool Query::current_invalid()
 }
 
 
-void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange, query_type qqtype) {STACKTRACE
+void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange, query_type qqtype) { 
 
 	bool old_physics_allows = physics_allowed;
 	physics_allowed = true;
 	qtype = qqtype;
 	
-	if (qrange < 0) {tw_error("Query::begin - negative range");}
+	if (qrange < 0) {throw("Query::begin - negative range");}
 	layers = qlayers;
 	range_sqr = qrange * qrange;
 	target = qtarget;
@@ -220,7 +220,7 @@ void Query::begin (SpaceLocation *qtarget, int qlayers, double qrange, query_typ
 
 void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double qrange, query_type qqtype)
 {
-	STACKTRACE;
+	 
 
 	bool old_physics_allows = physics_allowed;
 	physics_allowed = true;
@@ -253,7 +253,7 @@ void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double q
 	int k;
 	k = qx + qy * QUADS_Y;
 	if (k < 0 || k >= QUADS_X*QUADS_Y)
-		tw_error("Quad error");
+		throw("Quad error");
 
 	current = physics->quadrant[qy * QUADS_X + qx];
 	if (!current) next_quadrant();
@@ -269,7 +269,7 @@ void Query::begin (SpaceLocation *qtarget, Vector2 center, int qlayers, double q
 
 
 void Query::next_quadrant () {
-	STACKTRACE
+	 
 
 tail_recurse4:
 	qx += 1;
@@ -286,8 +286,8 @@ tail_recurse4:
 		qx = qx_min;
 		}
 	int tmp = qy * QUADS_X + qx;
-	if (tmp < 0) {tw_error ("tmp was less than 0");}
-	if (tmp > QUADS_TOTAL) {tw_error ("tmp was too large");}
+	if (tmp < 0) {throw ("tmp was less than 0");}
+	if (tmp > QUADS_TOTAL) {throw ("tmp was too large");}
 	current = physics->quadrant[tmp];
 	if (!current) goto tail_recurse4;
 
@@ -296,13 +296,13 @@ tail_recurse4:
 
 void Query::next ()
 {
-	STACKTRACE;
+	 
 	bool old_physics_allows = physics_allowed;
 	physics_allowed = true;
 
 tail_recurse3:
 
-	if (current == current->qnext) {tw_error ("Query::next - current = next");}
+	if (current == current->qnext) {throw ("Query::next - current = next");}
 	current = current->qnext;
 	if (!current) {
 		next_quadrant();
@@ -315,7 +315,7 @@ tail_recurse3:
 	return;
 	}
 
-void Query::end() {STACKTRACE
+void Query::end() { 
 	}
 
 
@@ -327,10 +327,10 @@ void Query::end() {STACKTRACE
 
 
 void Query2::begin (SpaceLocation *qtarget, Uint64 attribute_filter, double qrange) {
-	STACKTRACE;
-	if (qrange < 0) {tw_error("Query::begin - negative range");}
+	 
+	if (qrange < 0) {throw("Query::begin - negative range");}
 	if (Uint32(attribute_filter) & ~Uint32(attribute_filter >> 32)) {
-		tw_error("incorrect Query attributes");
+		throw("incorrect Query attributes");
 	}
 	attributes_mask = attribute_filter >> 32;
 	attributes_desired = attribute_filter;
@@ -363,9 +363,9 @@ void Query2::begin (SpaceLocation *qtarget, Uint64 attribute_filter, double qran
 	return;
 	}
 
-void Query2::begin (SpaceLocation *qtarget, Vector2 center, Uint64 attribute_filter, double qrange) {STACKTRACE
+void Query2::begin (SpaceLocation *qtarget, Vector2 center, Uint64 attribute_filter, double qrange) { 
 	if (Uint32(attribute_filter) & ~Uint32(attribute_filter >> 32)) {
-		tw_error("incorrect Query attributes");
+		throw("incorrect Query attributes");
 	}
 	attributes_mask = attribute_filter >> 32;
 	attributes_desired = attribute_filter;
@@ -415,17 +415,17 @@ tail_recurse4:
 		qx = qx_min;
 		}
 	int tmp = qy * QUADS_X + qx;
-	if (tmp < 0) {tw_error ("tmp was less than 0");}
-	if (tmp > QUADS_TOTAL) {tw_error ("tmp was too large");}
+	if (tmp < 0) {throw ("tmp was less than 0");}
+	if (tmp > QUADS_TOTAL) {throw ("tmp was too large");}
 	current = physics->quadrant[tmp];
 	if (!current) goto tail_recurse4;
 	return;
 	}
 
 void Query2::next () {
-	STACKTRACE;
+	 
 tail_recurse3:
-	if (current == current->qnext) {tw_error ("Query::next - current = next");}
+	if (current == current->qnext) {throw ("Query::next - current = next");}
 	current = current->qnext;
 	if (!current) {
 		next_quadrant();
@@ -435,11 +435,11 @@ tail_recurse3:
 	return;
 	}
 
-void Query2::end() {STACKTRACE
+void Query2::end() { 
 	}
 
 
-Presence::Presence() {STACKTRACE
+Presence::Presence() { 
 	total_presences += 1;
 	attributes = 0;
 	state = 1;
@@ -449,34 +449,34 @@ Presence::Presence() {STACKTRACE
 	set_depth(DEPTH_PRESENCE);
 	}
 
-void Presence::animate(Frame *space) {STACKTRACE
+void Presence::animate(Frame *space) { 
 	return;
 	}
-void Presence::animate_predict(Frame *space, int time) {STACKTRACE
+void Presence::animate_predict(Frame *space, int time) { 
 	animate(space);
 	}
-void Presence::calculate() {STACKTRACE
+void Presence::calculate() { 
 	}
 bool Presence::exists()
 {
 #ifdef _DEBUG
 	if (!physics_allowed)
-		tw_error("Accessing exists() in [%s] but animations are not allowed to mess with physics!!",
+		throw("Accessing exists() in [%s] but animations are not allowed to mess with physics!!",
 		get_identity());
 #endif
 	//returns 0 if dead or dying, non-zero if alive
 	return state > 0;
 };
 
-bool Presence::die() {STACKTRACE
+bool Presence::die() { 
 	if (!exists())
-		return true;	//tw_error("Presence::die - already dead"); [note: this is not an error]
+		return true;	//throw("Presence::die - already dead"); [note: this is not an error]
 	state = 0;
 	return true;
 	}
 Presence::~Presence()
 {
-	STACKTRACE;
+	 
 
 	total_presences -= 1;
 
@@ -519,10 +519,10 @@ bool Presence::isSynched() const {
 	return ((attributes & ATTRIB_SYNCHED) != 0);
 	}
 
-SpaceLocation *Presence::get_focus() {STACKTRACE
+SpaceLocation *Presence::get_focus() { 
 	return NULL;
 	}
-SpaceLocation *SpaceLocation::get_focus() {STACKTRACE
+SpaceLocation *SpaceLocation::get_focus() { 
 	return this;
 	}
 
@@ -538,7 +538,7 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 	collide_flag_sameteam(0),
 	collide_flag_sameship(0)
 
-{STACKTRACE
+{ 
 	id |= SPACE_LOCATION;
 	attributes |= ATTRIB_SYNCHED;
 	attributes |= ATTRIB_LOCATION;
@@ -571,13 +571,13 @@ SpaceLocation::SpaceLocation(SpaceLocation *creator, Vector2 lpos, double langle
 
 SpaceLocation::~SpaceLocation()
 {
-	STACKTRACE
+	 
 	if (data)
 		data->unlock();
 
 }
 
-bool SpaceLocation::change_owner(SpaceLocation *new_owner) {STACKTRACE
+bool SpaceLocation::change_owner(SpaceLocation *new_owner) { 
 	if (new_owner) {
 		ally_flag = new_owner->ally_flag;
 		ship = new_owner->ship;
@@ -592,7 +592,7 @@ bool SpaceLocation::change_owner(SpaceLocation *new_owner) {STACKTRACE
 	return true;
 	}
 
-void SpaceLocation::death() {STACKTRACE
+void SpaceLocation::death() { 
 }
 
 double SpaceLocation::get_angle_ex() const
@@ -610,12 +610,12 @@ int SpaceLocation::getID() const
 }
 
 Vector2 SpaceLocation::normal_pos() const
-{STACKTRACE
+{ 
   return(normalize(pos, map_size));
 }
 
 Vector2 SpaceLocation::nearest_pos(SpaceLocation *l) const 
-{STACKTRACE
+{ 
 	Vector2 p1, p2;
 	p1 = normal_pos();
 	p2 = l->normal_pos();
@@ -626,19 +626,19 @@ Vector2 SpaceLocation::nearest_pos(SpaceLocation *l) const
 }
 
 double SpaceLocation::distance(SpaceLocation *l)
-{STACKTRACE
+{ 
   return(distance_from(normal_pos(), l->normal_pos()));
 }
 
-int SpaceLocation::handle_damage (SpaceLocation *source, double normal, double direct) {STACKTRACE
+int SpaceLocation::handle_damage (SpaceLocation *source, double normal, double direct) { 
 	return 0;
 }
 
-int SpaceLocation::handle_fuel_sap (SpaceLocation *source, double normal) {STACKTRACE
+int SpaceLocation::handle_fuel_sap (SpaceLocation *source, double normal) { 
 	return 0;
 }
 
-double SpaceLocation::handle_speed_loss (SpaceLocation *source, double normal) {STACKTRACE
+double SpaceLocation::handle_speed_loss (SpaceLocation *source, double normal) { 
 	return 0;
 }
 
@@ -647,7 +647,7 @@ static void check_vector_sanity(Vector2 &v)
 #ifdef _DEBUG
 	if (fabs(v.x) > 1E6 || fabs(v.y) > 1E6 )
 	{
-		tw_error("invalid velocity change");
+		throw("invalid velocity change");
 	}
 #endif
 }
@@ -695,7 +695,7 @@ void SpaceLocation::target_died()
 	target = 0;
 }
 
-double SpaceLocation::trajectory_angle(SpaceLocation *l) {STACKTRACE
+double SpaceLocation::trajectory_angle(SpaceLocation *l) { 
 	return ::trajectory_angle(pos, l->normal_pos());
 }
 
@@ -812,7 +812,7 @@ double Presence::get_depth() {
 	return ldexp((double)_depth, -8);
 }
 
-Planet *SpaceLocation::nearest_planet() {STACKTRACE
+Planet *SpaceLocation::nearest_planet() { 
 	Planet *p = NULL;
 	double r = 99999999;
 	Query q;
@@ -829,34 +829,34 @@ Planet *SpaceLocation::nearest_planet() {STACKTRACE
 	}
 	return p;
 }
-void SpaceLocation::play_sound (SAMPLE *sample, int vol, int freq) {STACKTRACE
+void SpaceLocation::play_sound (SAMPLE *sample, int vol, int freq) { 
 	physics->play_sound(sample, this, vol, freq);
 	return;
 }
-void SpaceLocation::play_sound2 (SAMPLE *sample, int vol, int freq, bool noerrorcheck) {STACKTRACE
+void SpaceLocation::play_sound2 (SAMPLE *sample, int vol, int freq, bool noerrorcheck) { 
 	physics->play_sound2(sample, this, vol, freq, noerrorcheck);
 	return;
 }
-int SpaceLocation::translate( Vector2 delta) {STACKTRACE
+int SpaceLocation::translate( Vector2 delta) { 
 	pos = normalize ( pos + delta, map_size );
 #ifdef _DEBUG
 	if (fabs(pos.x) > 1E9 || fabs(pos.y) > 1E9)
 	{
-		tw_error("translate: position overflow...");
+		throw("translate: position overflow...");
 	}
 #endif
 	return true;
 }
 
-int SpaceLocation::accelerate(SpaceLocation *source, double angle, double velocity, double max_speed) {STACKTRACE
+int SpaceLocation::accelerate(SpaceLocation *source, double angle, double velocity, double max_speed) { 
 	_accelerate(angle, velocity, max_speed);
 	return true;
 }
-int SpaceLocation::accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed) {STACKTRACE
+int SpaceLocation::accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed) { 
 	_accelerate(delta_v, max_speed);
 	return true;
 }
-void SpaceLocation::_accelerate(double angle, double velocity, double max_speed) {STACKTRACE
+void SpaceLocation::_accelerate(double angle, double velocity, double max_speed) { 
 	double ovm, nvm;
 	Vector2 nv;
 
@@ -873,7 +873,7 @@ void SpaceLocation::_accelerate(double angle, double velocity, double max_speed)
 	}
 	return;
 }
-void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {STACKTRACE
+void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) { 
 	double ovm, nvm;
 	Vector2 nv;
 
@@ -897,7 +897,7 @@ void SpaceLocation::_accelerate(Vector2 delta_v, double max_speed) {STACKTRACE
 
 int SpaceLocation::accelerate_gravwhip(SpaceLocation *source, double angle, double velocity, double max_speed)
 {
-	STACKTRACE;
+	 
 
 	Planet *p = nearest_planet();
 	if (!p) return SpaceLocation::accelerate(source, angle, velocity, max_speed);
@@ -907,11 +907,11 @@ int SpaceLocation::accelerate_gravwhip(SpaceLocation *source, double angle, doub
 	return SpaceLocation::accelerate(source, angle, velocity, max_speed * (p->gravity_whip * tmp + 1) + tmp * p->gravity_whip2);
 }
 
-void SpaceLocation::animate(Frame *space) {STACKTRACE
+void SpaceLocation::animate(Frame *space) { 
 	return;
 }
 
-void SpaceLocation::animate_predict(Frame *space, int time) {STACKTRACE
+void SpaceLocation::animate_predict(Frame *space, int time) { 
 	Vector2 opos = pos;
 	pos += vel * time;
 	animate(space);
@@ -921,7 +921,7 @@ void SpaceLocation::animate_predict(Frame *space, int time) {STACKTRACE
 
 void SpaceLocation::calculate()
 {
-	STACKTRACE;
+	 
 	
 	if (target && !target->exists()) {
 		target_died();
@@ -935,14 +935,14 @@ void SpaceLocation::calculate()
 	return;
 }
 
-void SpaceObject::set_sprite(SpaceSprite *new_sprite) {STACKTRACE
+void SpaceObject::set_sprite(SpaceSprite *new_sprite) { 
 	sprite = new_sprite;
 	size = new_sprite->size();
 }
 
 void SpaceObject::calculate()
 {
-	STACKTRACE;
+	 
 
 	SpaceLocation::calculate();
 
@@ -959,7 +959,7 @@ void SpaceObject::calculate()
 		{
 			int N = sprite->frames();
 			double a = angle;
-			tw_error("sprite index overflow in %s", get_identity());
+			throw("sprite index overflow in %s", get_identity());
 		}
 	}
 
@@ -982,7 +982,7 @@ SpaceObject::SpaceObject(SpaceLocation *creator, Vector2 opos,
 	mass(0),
 	sprite(osprite),
 	sprite_index(0)
-	{STACKTRACE
+	{ 
 	attributes |= ATTRIB_OBJECT;
 	//if (game && game->friendly_fire)
 	collide_flag_sameteam = ALL_LAYERS;
@@ -1002,15 +1002,15 @@ SpaceObject::~SpaceObject()
 //	destroy_external_ai();
 }
 
-void SpaceObject::animate(Frame *space) {STACKTRACE
+void SpaceObject::animate(Frame *space) { 
 	sprite->animate(pos, sprite_index, space);
 	return;
 	}
 
-void SpaceObject::collide(SpaceObject *other) {STACKTRACE
+void SpaceObject::collide(SpaceObject *other) { 
 	double tmp;
 
-	if (this == other) {tw_error("SpaceObject::collide - self!");}
+	if (this == other) {throw("SpaceObject::collide - self!");}
 
 	// BOTH need to be able to collide to each other
 	// in order to get a well-defined result. If one of them can't collide, and its code
@@ -1102,7 +1102,7 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 		int a1 = c1->canCollide(c2);
 		int a2 = c2->canCollide(c1);
 		bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
-		tw_error("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+		throw("velocity error in collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
 	}
 #endif
 
@@ -1110,7 +1110,7 @@ void SpaceObject::collide(SpaceObject *other) {STACKTRACE
 }
 
 double SpaceObject::collide_ray(Vector2 lp1, Vector2 lp2, double llength)
-{STACKTRACE
+{ 
 
 	double old_length = llength;
 	double magn = 0;
@@ -1145,7 +1145,7 @@ double SpaceObject::collide_ray(Vector2 lp1, Vector2 lp2, double llength)
 	{
 		if (llength < -2)
 		{
-			tw_error("negative length!");
+			throw("negative length!");
 		}
 		llength = 0;
 	}
@@ -1153,7 +1153,7 @@ double SpaceObject::collide_ray(Vector2 lp1, Vector2 lp2, double llength)
 	return(llength);
 }
 
-void SpaceObject::inflict_damage(SpaceObject *other) {STACKTRACE
+void SpaceObject::inflict_damage(SpaceObject *other) { 
 	int i;
 	if (damage_factor > 0) {
 		i = iround_down(damage_factor / 2);
@@ -1165,7 +1165,7 @@ void SpaceObject::inflict_damage(SpaceObject *other) {STACKTRACE
 	return;
 	}
 
-void SpaceObject::death() {STACKTRACE
+void SpaceObject::death() { 
 	if (attributes & ATTRIB_NOTIFY_ON_DEATH) {
 		physics->object_died(this, NULL);
 		attributes &= ~ ATTRIB_NOTIFY_ON_DEATH;
@@ -1198,7 +1198,7 @@ SpaceLocation(creator, lpos, langle),
 length(llength),
 color(lcolor)
 {
-	STACKTRACE;
+	 
 	id = SPACE_LINE;
 	attributes |= ATTRIB_LINE;// | ATTRIB_COLLIDE_STATIC;
 	layer = LAYER_LINES;
@@ -1209,7 +1209,7 @@ color(lcolor)
 
 	if (length < 0)
 	{
-		tw_error("error in length !");
+		throw("error in length !");
 	}
 
 }
@@ -1220,7 +1220,7 @@ void SpaceLine::calculate()
 
 	if (length < 0)
 	{
-		tw_error("error in length !");
+		throw("error in length !");
 	}
 }
 
@@ -1243,7 +1243,7 @@ double SpaceLine::get_length() const
 {
 	if (length < 0)
 	{
-		tw_error("error in length !");
+		throw("error in length !");
 	}
 
   return(length);
@@ -1255,11 +1255,11 @@ void SpaceLine::set_length(double d)
 
 	if (length < 0)
 	{
-		tw_error("error in length !");
+		throw("error in length !");
 	}
 }
 
-void SpaceLine::inflict_damage(SpaceObject *other) {STACKTRACE
+void SpaceLine::inflict_damage(SpaceObject *other) { 
 	int i;
 	i = iround_down(damage_factor / 2);
 	if(i >= BOOM_SAMPLES)
@@ -1273,7 +1273,7 @@ void SpaceLine::inflict_damage(SpaceObject *other) {STACKTRACE
 	return;
 	}
 
-void SpaceLine::animate(Frame *space) {STACKTRACE
+void SpaceLine::animate(Frame *space) { 
 
 	Vector2 p1 = corner( pos );
 	Vector2 p2 = p1 + edge() * space_zoom;
@@ -1283,7 +1283,7 @@ void SpaceLine::animate(Frame *space) {STACKTRACE
 
 double SpaceLine::collide_testdistance(SpaceObject *o)
 {
-	STACKTRACE;
+	 
 	//double testlength;
   
 	if((!canCollide(o)) || (!o->canCollide(this)))
@@ -1299,7 +1299,7 @@ double SpaceLine::collide_testdistance(SpaceObject *o)
 /*
 void SpaceLine::collide(SpaceObject *o)
 {
-	STACKTRACE;
+	 
 	double old_length = length;
 
 	set_length(collide_testdistance(o));
@@ -1310,7 +1310,7 @@ void SpaceLine::collide(SpaceObject *o)
 */
 
 void Physics::destroy_all() {
-	STACKTRACE
+	 
 	int i;
 	for (i = 0; i < num_presences; i += 1) {
 		Presence *tmp = presence[i];
@@ -1343,13 +1343,13 @@ void Physics::destroy_all() {
 	max_dead_presences = 0;
 }
 
-Physics::~Physics() {STACKTRACE
+Physics::~Physics() { 
 	destroy_all();
 	if (quadrant) delete[] quadrant;
 	quadrant = NULL;
 }
 
-void Physics::preinit() {STACKTRACE
+void Physics::preinit() { 
 	quadrant = NULL;
 
 	// spacelocations listing
@@ -1372,7 +1372,7 @@ void Physics::preinit() {STACKTRACE
 	return;
 	}
 
-unsigned int Physics::get_code(unsigned int ship, TeamCode team) {STACKTRACE
+unsigned int Physics::get_code(unsigned int ship, TeamCode team) { 
 	return (ship << SpaceLocation::ship_shift) | (team << SpaceLocation::team_shift);
 	}
 
@@ -1384,7 +1384,7 @@ TeamCode Physics::new_team() {
 	last_team += 1;
 	return last_team;
 	}
-void Physics::switch_team(unsigned int ship, TeamCode team) {STACKTRACE
+void Physics::switch_team(unsigned int ship, TeamCode team) { 
 	int i, j;
 	j = (ship & SpaceLocation::ship_mask) | (team << SpaceLocation::team_shift);
 	for (i = 0; i < num_items; i += 1) {
@@ -1392,7 +1392,7 @@ void Physics::switch_team(unsigned int ship, TeamCode team) {STACKTRACE
 		}
 	return;
 	}
-void Physics::merge_teams(TeamCode team1, TeamCode team2) {STACKTRACE
+void Physics::merge_teams(TeamCode team1, TeamCode team2) { 
 	int i;
 	for (i = 0; i < num_items; i += 1) {
 		if ((item[i]->ally_flag & SpaceLocation::team_mask) == (team2 << SpaceLocation::team_shift)) 
@@ -1401,7 +1401,7 @@ void Physics::merge_teams(TeamCode team1, TeamCode team2) {STACKTRACE
 	return;
 	}
 
-void Physics::init() {STACKTRACE
+void Physics::init() { 
 	int i;
 	size = Vector2(3840.0, 3840.0);
 	frame_time = 25;
@@ -1419,9 +1419,9 @@ void Physics::init() {STACKTRACE
 	}
 
 void Physics::add(SpaceLocation *o) {
-	STACKTRACE;
-	if (o->attributes & ATTRIB_INGAME) {tw_error("addItem - already added");}
-	if (!o->isLocation()) {tw_error("addItem - catastrophic");}
+	 
+	if (o->attributes & ATTRIB_INGAME) {throw("addItem - already added");}
+	if (!o->isLocation()) {throw("addItem - catastrophic");}
 	//if (!o->_serial) _list(o);
 
 	o->attributes |= ATTRIB_INGAME;
@@ -1435,7 +1435,7 @@ void Physics::add(SpaceLocation *o) {
 
 	if (num_items > max_items)
 	{
-		tw_error("physics array overflow, should not happen.");
+		throw("physics array overflow, should not happen.");
 	}
 
 	if (o->detectable())
@@ -1443,7 +1443,7 @@ void Physics::add(SpaceLocation *o) {
 		Vector2 n = o->normal_pos();
 		int q = int(n.x * QUADI_X) + 
 			int(n.y * QUADI_Y) * QUADS_X;
-		if ((q < 0) || (q > QUADS_TOTAL)) {tw_error("bad quadrant");}
+		if ((q < 0) || (q > QUADS_TOTAL)) {throw("bad quadrant");}
 		o->qnext = quadrant[q];
 		quadrant[q] = o;
 	}
@@ -1453,14 +1453,14 @@ void Physics::add(SpaceLocation *o) {
 
 /*
 bool Physics::remove(SpaceLocation *o) {
-	STACKTRACE;
+	 
 	
-	tw_error("Better leave *remove* to normal physics...");
+	throw("Better leave *remove* to normal physics...");
 
 	int i;
-	if (!(o->attributes & ATTRIB_INGAME)) {tw_error("removeItem - not added");}
+	if (!(o->attributes & ATTRIB_INGAME)) {throw("removeItem - not added");}
 	o->attributes &= ~ATTRIB_INGAME;
-	if (!o->isLocation()) {tw_error("removeItem - catastrophic");}
+	if (!o->isLocation()) {throw("removeItem - catastrophic");}
 	for (i = 0; i < num_items; i += 1) {
 		if (item[i] == o) {
 			num_items -= 1;
@@ -1475,8 +1475,8 @@ bool Physics::remove(SpaceLocation *o) {
 	*/
 
 void Physics::add(Presence *p) {
-	STACKTRACE;
-	if (p->attributes & ATTRIB_INGAME) {tw_error("addPresence - already added");}
+	 
+	if (p->attributes & ATTRIB_INGAME) {throw("addPresence - already added");}
 	if (p->isLocation()) {
 		add((SpaceLocation*)p);
 		return;
@@ -1492,9 +1492,9 @@ void Physics::add(Presence *p) {
 	}
 /*
 bool Physics::remove(Presence *o) {
-	STACKTRACE;
+	 
 	int i;
-	if (!(o->attributes & ATTRIB_INGAME)) {tw_error("removePresence - not added");}
+	if (!(o->attributes & ATTRIB_INGAME)) {throw("removePresence - not added");}
 	if (o->isLocation()) return remove((SpaceLocation*)o);
 	o->attributes &= ~ATTRIB_INGAME;
 	for (i = 0; i < num_presences; i += 1) {
@@ -1545,7 +1545,7 @@ void Physics::check_deathlist()
 		if (dead_presences[i]->exists())
 		{
 			//xxx test
-//			tw_error("Reviving a dead object is illegal.");
+//			throw("Reviving a dead object is illegal.");
 
 			physics->add(dead_presences[i]);
 			dead_presences[i] = dead_presences[num_dead_presences-1];
@@ -1557,7 +1557,7 @@ void Physics::check_deathlist()
 }
 
 
-void Physics::calculate() {_STACKTRACE("Physics::calculate()")
+void Physics::calculate() {
 	int i;
 
 	//adjust time
@@ -1580,10 +1580,10 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 			continue;
 
 #ifdef _DEBUG
-		//if (i == 1 && game_time == 100) tw_error("debug me!");
+		//if (i == 1 && game_time == 100) throw("debug me!");
 		if (fabs(item[i]->vel.x) > 1E6 || fabs(item[i]->vel.y) > 1E6)
 		{
-			tw_error("velocity error in %s", item[i]->get_identity());
+			throw("velocity error in %s", item[i]->get_identity());
 		}
 #endif
 
@@ -1613,7 +1613,7 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 		{
 			if (item[i]->ship && item[i]->ship < (void*)0x01000)
 			{
-				tw_error("Pointer error, overwritten data ??");
+				throw("Pointer error, overwritten data ??");
 			}
 
 			time = get_time();
@@ -1631,20 +1631,20 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 			// try to intercept a couple of errors that are possible here ...
 			if (item[i]->ship && item[i]->ship < (void*)0x01000)
 			{
-				tw_error("Pointer error, overwritten data ??");
+				throw("Pointer error, overwritten data ??");
 			}
 			if (item[i]->target && (item[i]->target->state < -2))	// if it's dead for too long...
 			{
-				tw_error("Target pointer isn't cleaned up in [%s]", item[i]->get_identity());
+				throw("Target pointer isn't cleaned up in [%s]", item[i]->get_identity());
 			}
 			if (item[i]->ship && item[i]->ship->state < -2)
 			{
-				tw_error("Ship pointer isn't cleaned up in [%s]", item[i]->get_identity());
+				throw("Ship pointer isn't cleaned up in [%s]", item[i]->get_identity());
 			}
 
 			if (!(item[i]->attributes & ATTRIB_INGAME))
 			{
-				tw_error("This item [%s] is not in-game", item[i]->get_identity());
+				throw("This item [%s] is not in-game", item[i]->get_identity());
 			}
 
 			//xxx this is an expensive test !!
@@ -1655,10 +1655,10 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 				if (!item[k]->exists())
 					continue;
 				
-				//if (i == 1 && game_time == 100) tw_error("debug me!");
+				//if (i == 1 && game_time == 100) throw("debug me!");
 				if (fabs(item[k]->vel.x) > 1E6 || fabs(item[k]->vel.y) > 1E6)
 				{
-					tw_error("velocity error involving %s and %s", item[k]->get_identity(), item[i]->get_identity());
+					throw("velocity error involving %s and %s", item[k]->get_identity(), item[i]->get_identity());
 				}
 			}
 #endif
@@ -1683,7 +1683,7 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 			Vector2 n = item[i]->normal_pos();
 			int q = iround_down(n.x * QUADI_X) + 
 					iround_down(n.y * QUADI_Y) * QUADS_X;
-			if ((q < 0) || (q > QUADS_TOTAL)) {tw_error("bad quadrant");}
+			if ((q < 0) || (q > QUADS_TOTAL)) {throw("bad quadrant");}
 			item[i]->qnext = quadrant[q];
 			quadrant[q] = item[i];
 
@@ -1832,7 +1832,7 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 	{
 		// checking if this can happen? (curious ; GEO)
 		if (item[i]->state < -DEATH_FRAMES)
-		{tw_error("too many death-frames - should not happen !!");}
+		{throw("too many death-frames - should not happen !!");}
 	}
 
 	for(i = 0; i < num_items; i ++) {
@@ -1845,7 +1845,7 @@ void Physics::calculate() {_STACKTRACE("Physics::calculate()")
 
 		if (item[i]->state > 1)
 		{
-			tw_error("State is higher than 1");
+			throw("State is higher than 1");
 		}
 	}
 	*/
@@ -1867,7 +1867,7 @@ static Presence *animate_buffer[ANIMATE_BUFFER_SIZE];
 static double game_frame_rate = 0.0;
 static double game_animation_time = 0.0;
 
-void Physics::animate (Frame *frame) {STACKTRACE
+void Physics::animate (Frame *frame) { 
 	int i, j;
 
 
@@ -1928,7 +1928,7 @@ void Physics::animate (Frame *frame) {STACKTRACE
 
 	if (j >= ANIMATE_BUFFER_SIZE)
 	{
-		tw_error("reaching animation buffer ... should not happen");
+		throw("reaching animation buffer ... should not happen");
 	}
 
 	int animate_buffersize = j;
@@ -1957,7 +1957,7 @@ void Physics::animate (Frame *frame) {STACKTRACE
 
 			if (!animate_buffer[i]->exists())
 			{
-				tw_error("Objects are not allowed to die during animation()");
+				throw("Objects are not allowed to die during animation()");
 			}
 			physics_allowed = false;
 
@@ -1972,7 +1972,7 @@ void Physics::animate (Frame *frame) {STACKTRACE
 			if (index != o->get_sprite_index())
 			{
 				// in this case, the physics is affected, unsynchronized.
-				tw_error("Physics (sprite_index) must not be changed outside physics routines.");
+				throw("Physics (sprite_index) must not be changed outside physics routines.");
 			}
 		}
 
@@ -2001,7 +2001,7 @@ void Physics::animate (Frame *frame) {STACKTRACE
 	return;
 }
 
-void Physics::animate_predict(Frame *frame, int time) {STACKTRACE
+void Physics::animate_predict(Frame *frame, int time) { 
 	int i, j;
 
 	if (time == 0) {
@@ -2085,8 +2085,7 @@ void Physics::check_linecollision(SpaceLine *l)
 #include "../util/pmask.h"
 void Physics::collide()
 {
-	_STACKTRACE("Physics::collide()");
-
+	
 	int tmp_size = 0;
 	PMASKDATA_FLOAT *tmp = new PMASKDATA_FLOAT [num_items];
 
@@ -2130,7 +2129,7 @@ void Physics::collide()
 		SpaceObject *c2 = col[i*2+1];
 		if (fabs(c1->vel.x) > 1E6 || fabs(c1->vel.y) > 1E6 || fabs(c2->vel.x) > 1E6 || fabs(c2->vel.y) > 1E6 )
 		{
-			tw_error("velocity error prior to collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+			throw("velocity error prior to collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
 		}
 #endif
 	}
@@ -2148,7 +2147,7 @@ void Physics::collide()
 			int a1 = c1->canCollide(c2);
 			int a2 = c2->canCollide(c1);
 			bool b = ((c1->canCollide(c2) & c2->canCollide(c1)) == 0 );
-			tw_error("velocity error after collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
+			throw("velocity error after collision involving objects [%s] and [%s]", c1->get_identity(), c2->get_identity());
 		}
 #endif
 	}//*/
@@ -2189,7 +2188,7 @@ void Physics::collide()
 //*/
 	return;
 }
-void Physics::prepare() {STACKTRACE
+void Physics::prepare() { 
 	::physics_time = this->game_time;
 	::render_time = this->game_time;
 	::frame_time = this->frame_time;
@@ -2197,7 +2196,7 @@ void Physics::prepare() {STACKTRACE
 	::MAX_SPEED  = this->max_speed;
 	return;
 }
-int Physics::checksum() {_STACKTRACE("Physics::checksum")
+int Physics::checksum() {
 	int i;
 	Uint32 g = 0;
 	//prepare();
@@ -2215,14 +2214,14 @@ int Physics::checksum() {_STACKTRACE("Physics::checksum")
 //	return (((unsigned int)(fmod(floor(g * 1024), 0xFFffFFffUL))) & 255);
 	return g;// + (tw_random_state_checksum()) & 255));
 }
-void Physics::dump_state ( const char *file_name ) {STACKTRACE
+void Physics::dump_state ( const char *file_name ) { 
 	//unimplemented
 }
-void Physics::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq, bool noerrorcheck) {STACKTRACE
+void Physics::play_sound (SAMPLE *sample, SpaceLocation *source, int vol, int freq, bool noerrorcheck) { 
 	sound.play(sample, vol, 128, iround(freq * turbo), false, noerrorcheck);
 	return;
 }
-void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int freq, bool noerrorcheck) {STACKTRACE
+void Physics::play_sound2 (SAMPLE *sample, SpaceLocation *source, int vol, int freq, bool noerrorcheck) { 
 	sound.stop(sample);
 	play_sound(sample, source, vol, freq, noerrorcheck);
 	return;

@@ -31,7 +31,7 @@ Ship(opos, shipAngle, shipData, code)
 
 void BigShip::calculate()
 {
-	STACKTRACE;
+	 
 
 	Ship::calculate();
 
@@ -58,7 +58,7 @@ static void check_vector_sanity(Vector2 &v)
 #ifdef _DEBUG
 	if (fabs(v.x) > 1E6 || fabs(v.y) > 1E6 )
 	{
-		tw_error("invalid velocity change");
+		throw("invalid velocity change");
 	}
 #endif
 }
@@ -66,7 +66,7 @@ static void check_vector_sanity(Vector2 &v)
 // change velocities of the ship and all its parts
 void BigShip::change_vel(Vector2 dvel)
 {
-	STACKTRACE;
+	 
 
 	int i;
 
@@ -87,7 +87,7 @@ void BigShip::change_vel(Vector2 dvel)
 // change positions of the ship and all its parts
 void BigShip::change_pos(Vector2 dpos)
 {
-	STACKTRACE
+	 
 
 	int i;
 
@@ -154,7 +154,7 @@ Ship(aowner, 0, 0, spr)
 
 void BigShipPart::syncpos()
 {
-	STACKTRACE
+	 
 
 	// maintain (relative) position wrt the ship
 	angle = owner->angle + relangle;	// this is the discrete angle (64 values).
@@ -177,7 +177,7 @@ void BigShipPart::syncpos()
 
 void BigShipPart::calculate()
 {
-	STACKTRACE
+	 
 
 	Ship::calculate();
 
@@ -229,7 +229,7 @@ void BigShipPart::calculate()
 
 int BigShipPart::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 
 	// by default, transmit damage to the ship owner ...
 	return owner->handle_damage(source, normal, direct);
@@ -239,7 +239,7 @@ int BigShipPart::handle_damage(SpaceLocation *source, double normal, double dire
 
 void BigShipPart::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 
 	Ship::inflict_damage(other);
 
@@ -265,7 +265,7 @@ bool BigShipPart::isdisabled()
 // change velocities of the ship and all its parts
 void BigShipPart::change_vel(Vector2 dvel)
 {
-	STACKTRACE
+	 
 
 	owner->change_vel(dvel);
 	
@@ -275,7 +275,7 @@ void BigShipPart::change_vel(Vector2 dvel)
 // change positions of the ship and all its parts
 void BigShipPart::change_pos(Vector2 dpos)
 {
-	STACKTRACE
+	 
 
 	owner->change_pos(dpos);
 
@@ -308,7 +308,7 @@ SpaceObject(aownerpart, aownerpart->pos, aownerpart->angle, ospr)
 
 void BigShipPartDevice::calculate()
 {
-	STACKTRACE;
+	 
 
 	SpaceObject::calculate();
 
@@ -333,7 +333,7 @@ void BigShipPartDevice::calculate()
 
 void BigShipPartDevice::animate(Frame *space)
 {
-	STACKTRACE
+	 
 
 	if (ownerpart->isdisabled())
 		return;
@@ -345,7 +345,7 @@ void BigShipPartDevice::animate(Frame *space)
 
 int BigShipPart::handle_fuel_sap(SpaceLocation *source, double normal)
 {
-	STACKTRACE
+	 
 
 	return owner->handle_fuel_sap(source, normal);
 }

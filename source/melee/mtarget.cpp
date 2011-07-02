@@ -27,7 +27,7 @@ void Targets::reset()
 }
 
 
-void Targets::add(SpaceObject *a) {STACKTRACE
+void Targets::add(SpaceObject *a) { 
 	N += 1;
 	item = (SpaceObject **) realloc(item, sizeof(SpaceObject *) * N);
 	item[N - 1] = a;
@@ -76,7 +76,7 @@ void Targets::calculate()
 	{
 		if (!item[i]->exists())
 		{
-			tw_error("target item does not exist, should not happen");
+			throw("target item does not exist, should not happen");
 		}
 	}
 #endif

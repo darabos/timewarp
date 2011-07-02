@@ -96,7 +96,7 @@ Missile(creator, orelpos, orelangle, ovel, odamage, orange, oarmour, creator, os
 	
 void QuaiShot::calculate()
 {
-	STACKTRACE
+	 
 	if (!(ship && ship->exists()))
 	{
 		state = 0;
@@ -122,7 +122,7 @@ void QuaiShot::calculate()
 
 void QuaiShot::animate(Frame *f)
 {
-	STACKTRACE
+	 
 	if (twait >= timedelay)
 		Missile::animate(f);
 }
@@ -149,7 +149,7 @@ SpaceObject(creator, opos, oangle, osprite)
 
 void QuaiEngine::calculate()
 {
-	STACKTRACE
+	 
 	if (!(mother && mother->exists()))
 	{
 		mother = 0;
@@ -188,7 +188,7 @@ void QuaiEngine::calculate()
 
 int QuaiEngine::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	armour -= normal + direct;
 
 	if ( armour < 0 || source->isShip() )
@@ -225,7 +225,7 @@ Ship(opos, angle, data, code)
 
 int Quai::activate_weapon()
 {
-	STACKTRACE
+	 
 
 //	QuaiShot(SpaceLocation *creator, Vector2 orelpos, double orelangle,
 //		double ovel, double odamage, double orange, double oarmour,
@@ -241,7 +241,7 @@ int Quai::activate_weapon()
 int Quai::activate_special()
 {
 
-	STACKTRACE
+	 
 	if (!enginereleased)
 	{
 		QuaiEngine *tmp;
@@ -282,7 +282,7 @@ int Quai::activate_special()
 
 void Quai::calculate()
 {
-	STACKTRACE
+	 
 	Ship::calculate();
 
 	if (!exists())
@@ -296,7 +296,7 @@ void Quai::calculate()
 
 void Quai::calculate_thrust()
 {
-	STACKTRACE
+	 
 	if (!enginereleased)
 		Ship::calculate_thrust();
 }

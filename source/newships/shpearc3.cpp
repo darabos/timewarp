@@ -93,7 +93,7 @@ EarthlingCruiserMk3::EarthlingCruiserMk3(Vector2 opos, double shipAngle,
 
 void EarthlingCruiserMk3::calculate()
 {
-	STACKTRACE;
+	 
 	Ship::calculate();
 
 	double track_angle = 0;
@@ -140,7 +140,7 @@ void EarthlingCruiserMk3::calculate()
 
 int EarthlingCruiserMk3::activate_weapon()
 {
-	STACKTRACE;
+	 
 	add(new EarthlingCruiserMk3Shot(this, Vector2(0.0, 28.0),
 		normalize(angle + launch_angle + turn_step + tw_random(-weaponSpread, +weaponSpread), PI2),
 		weaponVelocity,	weaponDamage, weaponRange, weaponArmour, data->spriteWeapon));
@@ -149,7 +149,7 @@ int EarthlingCruiserMk3::activate_weapon()
 
 int EarthlingCruiserMk3::activate_special()
 {
-	STACKTRACE;
+	 
 	bool fire = false;;
 	SpaceObject *o;
 	double rng = 1e40;
@@ -197,7 +197,7 @@ EarthlingCruiserMk3Shot::EarthlingCruiserMk3Shot(SpaceLocation *creator, Vector2
 
 void EarthlingCruiserMk3Shot::calculate()
 {
-	STACKTRACE;
+	 
 
 	Shot::calculate();
 	sprite_index = (int)(31.99 * d / range);
@@ -205,13 +205,13 @@ void EarthlingCruiserMk3Shot::calculate()
 
 void EarthlingCruiserMk3Shot::animate(Frame *space)
 {
-	STACKTRACE;
+	 
 	sprite->animate(pos, sprite_index, space);
 }
 
 void EarthlingCruiserMk3Shot::soundExplosion()
 {
-	STACKTRACE;
+	 
 	play_sound(explosionSample);
 	return;
 }
@@ -248,7 +248,7 @@ EarthlingCruiserMk3Beam::EarthlingCruiserMk3Beam(SpaceLocation *creator, Vector2
 
 void EarthlingCruiserMk3Beam::calculate()
 {
-	STACKTRACE;
+	 
 	if(!(lpos && lpos->exists()))
 	{
 		lpos = 0;
@@ -303,7 +303,7 @@ void EarthlingCruiserMk3Beam::calculate()
 
 void EarthlingCruiserMk3Beam::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	if (other->isShot())
 		damage(other, damage_shots*frame_time/frame_count);
 	else
@@ -321,7 +321,7 @@ void EarthlingCruiserMk3Beam::inflict_damage(SpaceObject *other)
 
 void EarthlingCruiserMk3Beam::animate(Frame *space)
 {
-	STACKTRACE;
+	 
 	int aa = get_tw_aa_mode();
 	SpaceLine::animate(space);
 	if ((aa & AA_BLEND) && (aa & AA_ALPHA) && !(aa & AA_NO_AA) && (length < base_length*0.9999) && (target)) {

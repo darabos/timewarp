@@ -36,7 +36,7 @@ class Huge : public NormalGame
 
 SpaceSprite *Huge::GetSprite(char *fileName, char *spriteName, int attribs)
 {
-	STACKTRACE
+	 
 
 
 	DATAFILE *tmpdata;
@@ -64,7 +64,7 @@ SpaceSprite *Huge::GetSprite(char *fileName, char *spriteName, int attribs)
 
 bool Huge::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int numSprites, int attribs)
 {
-	STACKTRACE
+	 
 
 
 	SpaceSprite *spr;
@@ -87,7 +87,7 @@ bool Huge::GetSprites(SpaceSprite *Pics[], char *fileName, char *cmdStr, int num
 
 void Huge::init_objects()
 {
-	STACKTRACE
+	 
 
 	// set the anti-alias to 0:
 	int antia_on =  get_config_int(NULL, "Anti-AliasingOn",0);;
@@ -97,7 +97,7 @@ void Huge::init_objects()
 	// load the sprite, but set the anti-alias to 0 for them - they're _big_:
 	if(GetSprites(HugePics,"plhuge.dat","Station_Planet%03d",Num_Planet_Pics,
 		SpaceSprite::MASKED | SpaceSprite::NO_AA)==FALSE)
-		error("File error, planet pics.  Bailing out...");
+		throw("File error, planet pics.  Bailing out...");
 
 
 	//opening your .ini file.

@@ -12,7 +12,7 @@ REGISTER_FILE
 
 void TauArchonFreezeColorEffects (RGB *c)
 {
-STACKTRACE
+ 
 	int alpha = (c->filler ^ 255) + 1; 
 	c->r = (c->r << 8) / alpha;
 	c->r = ((c->r * 3) / 4) + 256/4;
@@ -176,7 +176,7 @@ bool TauArchon::ShotTakeBatt()
 
 void TauArchon::calculate()
 {
-STACKTRACE
+ 
 /* Removed by Jad at *Jumping Peppers*'s behest
 	recharge_rate = base_recharge_rate * (1 - batt / (double)batt_max);
 	if (recharge_rate <= frame_time)
@@ -216,7 +216,7 @@ STACKTRACE
 
 void TauArchon::calculate_fire_weapon()
 {
-STACKTRACE
+ 
 	weapon_low = FALSE;
 
 	if ((fire_weapon || fire_special) && (weapon_charge_counter >= weaponChargeTime))
@@ -265,7 +265,7 @@ STACKTRACE
 
 void TauArchon::calculate_fire_special()
 {
-STACKTRACE
+ 
 	special_low = false;
 	return;
 }
@@ -273,7 +273,7 @@ STACKTRACE
 
 void TauArchon::animate(Frame *space)
 {
-STACKTRACE
+ 
 	int aa = get_tw_aa_mode();
 	if ((weapon_charge_counter > 0) && (aa & AA_BLEND) && !(aa & AA_NO_AA)) 
 	{
@@ -312,7 +312,7 @@ RGB TauArchon::battPanelColor(int k)
 
 void TauArchon::calculate_hotspots()
 {
-STACKTRACE
+ 
 	if((thrust) && (hotspot_frame <= 0)) {
 		game->add(new Animation( this, 
 				normal_pos() - unit_vector(angle) * 15,
@@ -375,7 +375,7 @@ TauArchonShot::TauArchonShot(SpaceLocation *creator, Vector2 opos, double oangle
 
 void TauArchonShot::calculate()
 {
-STACKTRACE
+ 
 	Shot::calculate();
 
 	if (rotation_base) {
@@ -398,14 +398,14 @@ STACKTRACE
 
 void TauArchonShot::animate(Frame *space)
 {
-STACKTRACE;
+ 
 //xxx d<0 is possible..
 	sprite->animate(pos, index_base + (int)(19.89 * d / range), space);
 }
 
 void TauArchonShot::inflict_damage(SpaceObject *other)
 {
-STACKTRACE
+ 
 	double d_f = damage_factor;
 
 	if (other->isShip()) 
@@ -522,7 +522,7 @@ void TauArchonFrozen::inflict_damage(SpaceObject *other)
 
 void TauArchonFrozen::calculate()
 {
-STACKTRACE
+ 
 
 	Shot::calculate();
 	if (length(vel-old_vel) > scale_velocity(15+tw_random(20)))
@@ -535,7 +535,7 @@ STACKTRACE
 
 void TauArchonFrozen::animateExplosion()
 {
-	STACKTRACE
+	 
 	if (!exploded_already) {
 		exploded_already = true;	
 		game->add(new Animation(this, normal_pos(),

@@ -16,18 +16,18 @@ bool debug_net_block = false;
 static int log_show_num = 0;
 /*
 GameEventMessage::GameEventMessage (const char *text)
-{STACKTRACE
+{ 
 	int l = strlen(text);
 	if (l > max_message_length) l = max_message_length;
 	memcpy(message, text, l);
 	size = sizeof(GameEvent) + l;
 	type = Game::event_message;
 }
-void GameEventMessage::execute( int source ) {STACKTRACE
+void GameEventMessage::execute( int source ) { 
 	char buffy[64+max_message_length];
 	char *tmp = buffy;
 	int c = 15;
-	if ((unsigned short int)size > max_message_length + sizeof(GameEvent)) { tw_error("GameEventMessage - message overflow"); }
+	if ((unsigned short int)size > max_message_length + sizeof(GameEvent)) { throw("GameEventMessage - message overflow"); }
 	//if (source == Game::channel_server) tmp += sprintf(tmp, "Server says: ");
 	//else if (source == Game::channel_client) tmp += sprintf(tmp, "Client says: ");
 	if (source == channel_server) c = 13; else c = 9;
@@ -39,7 +39,7 @@ void GameEventMessage::execute( int source ) {STACKTRACE
 
 void GameEventChangeLag::execute( int source )
 {
-	STACKTRACE;
+	 
 
 	if (source != channel_server)
 		return;
@@ -54,7 +54,7 @@ void GameEventChangeLag::execute( int source )
 */
 
 
-int read_length_code (int max, int *clen, int *len, unsigned char *where) {STACKTRACE
+int read_length_code (int max, int *clen, int *len, unsigned char *where) { 
 	if (max < 1) return -1;
 	*clen = 1;
 	*len = where[0];
@@ -69,8 +69,8 @@ int read_length_code (int max, int *clen, int *len, unsigned char *where) {STACK
 	return 0;
 	}
 int write_length_code (int max, int *clen, int len, unsigned char *where) {
-	STACKTRACE;
-	if (len <= 0) { tw_error( "write_length_code -- bad length"); }
+	 
+	if (len <= 0) { throw( "write_length_code -- bad length"); }
 	if (max < 1) return -1;
 	if (len < 255) {
 		where[0] = len;
@@ -103,7 +103,7 @@ int write_length_code (int max, int *clen, int len, unsigned char *where) {
 
 void NetLog::init()
 {
-	STACKTRACE;
+	 
 
 	log_transmitted = NULL;
 	need_to_transmit = false;
@@ -132,7 +132,7 @@ void NetLog::init()
 
 void NetLog::deinit()
 {
-	STACKTRACE;
+	 
 	int i;
 
 	Log::deinit();
@@ -152,7 +152,7 @@ void NetLog::deinit()
 
 NetLog::~NetLog()
 {
-	STACKTRACE;
+	 
 
 	deinit();//free (log_transmitted);
 }
@@ -171,7 +171,7 @@ void NetLog::check_bufsize(int size)
 
 	if (buffy_size > oldsize)
 	{
-		tw_error("Warning: buffer size is too small [%i] needed [%i]", oldsize, buffy_size);
+		throw("Warning: buffer size is too small [%i] needed [%i]", oldsize, buffy_size);
 		buffy = (unsigned char *) realloc( buffy, buffy_size);
 	}
 
@@ -201,7 +201,7 @@ void NetLog::prepare_packet()
 			totsize += j;
 
 			check_bufsize(pos+1);
-			if (i > 255) { tw_error ("NetLog::send_packet - channel # exceeds 8 bits"); }
+			if (i > 255) { throw ("NetLog::send_packet - channel # exceeds 8 bits"); }
 			buffy[pos] = i & 255;
 			pos += 1;
 
@@ -216,7 +216,7 @@ void NetLog::prepare_packet()
 
 			if (log_transmitted[i] > log_len[i])
 			{
-				tw_error("Should not happen");
+				throw("Should not happen");
 			}
 		}
 	}
@@ -225,11 +225,11 @@ void NetLog::prepare_packet()
 		// check for error
 		if (log_transmitted[i] > log_len[i])
 		{
-			tw_error("Should not happen");
+			throw("Should not happen");
 		}
 	}
 //	if (pos <= 8) {
-//		tw_error ("NetLog::send_packet -- no data to send");
+//		throw ("NetLog::send_packet -- no data to send");
 //		return;
 //	}
 	buffy[0] = (pos >> 0) & 255;
@@ -269,10 +269,10 @@ void NetLog::prepare_packet()
 */
 void NetLog::send_packet_block(int conn)
 {
-	STACKTRACE;
+	 
 	if (!net_status[conn]) return;
 
-	if (!net[conn].isConnected()) { tw_error("NetLog::send_packet() - no connection!"); }
+	if (!net[conn].isConnected()) { throw("NetLog::send_packet() - no connection!"); }
 	net[conn].sendall();	// note, the data are buffered in prepare_packet()
 }
 
@@ -281,10 +281,10 @@ If it doesn't succeed, it'll keep data in a memory buffer until the next attempt
 */
 void NetLog::send_packet_noblock(int conn)
 {
-	STACKTRACE;
+	 
 	if (!net_status[conn]) return;
 
-	if (!net[conn].isConnected()) { tw_error("NetLog::send_packet() - no connection!"); }
+	if (!net[conn].isConnected()) { throw("NetLog::send_packet() - no connection!"); }
 	net[conn].sendattempt();	// note, the data are buffered in prepare_packet()
 }
 
@@ -297,7 +297,7 @@ the game is halted for a while ...
 
 void NetLog::send_packets()
 {
-	STACKTRACE;
+	 
 
 	prepare_packet();
 
@@ -318,7 +318,7 @@ void NetLog::send_packets()
 
 void NetLog::recv_packet(int conn)
 {
-	STACKTRACE;
+	 
 
 	if (!net_status[conn]) return;
 
@@ -336,14 +336,14 @@ void NetLog::recv_packet(int conn)
 	{
 		message.print(1500, 15, "netlog error: conn[%i] recv-len[%i]", conn, len);
 		message.animate(0);
-		tw_error ("NetLog::recv_packet -- net.recv error (1)");
+		throw ("NetLog::recv_packet -- net.recv error (1)");
 	}
 
 	len = buffy[0] + (buffy[1] << 8) + (buffy[2] << 16) + (buffy[3] << 24);
 	
 	if (len & 0x80000000) {
 		//handle_code(len);
-		tw_error("NetLog::recv_packet - this shouldn't happen");
+		throw("NetLog::recv_packet - this shouldn't happen");
 		return;
 	}
 	
@@ -355,13 +355,13 @@ void NetLog::recv_packet(int conn)
 	len -= 8;
 
 	if (len == 0)
-		tw_error("Unexpected: receiving packet with overhead, but zero content!");
+		throw("Unexpected: receiving packet with overhead, but zero content!");
 
 	check_bufsize(len);
 	int nrecv = net[conn].recv(len, len, buffy);
 
 	if (len != nrecv)
-		tw_error( "NetLog::recv_packet -- net.recv error (2)");
+		throw( "NetLog::recv_packet -- net.recv error (2)");
 	
 	// data've been received, now put them into the log structure.
 	// you just analyze the buffer here.
@@ -371,14 +371,14 @@ void NetLog::recv_packet(int conn)
 	{
 		// the channel identifier
 		i = buffy[pos];
-		if (i < 0) { tw_error("NegLog::recv_packet - data came in on a negative channel %d", i); }
+		if (i < 0) { throw("NegLog::recv_packet - data came in on a negative channel %d", i); }
 		if (i >= log_num) expand_logs(i+1);
-		if (!(log_dir[i] & direction_read)) { tw_error("NetLog::recv_packet -- data on wrong channel %d", i); }
+		if (!(log_dir[i] & direction_read)) { throw("NetLog::recv_packet -- data on wrong channel %d", i); }
 		pos += 1;
 		
 		// the #data for this channel, stored in a temporary buffer
 		l = read_length_code(len-pos, &j, &k, &buffy[pos]);
-		if (l < 0) { tw_error ("NetLog::recv_packet -- read_length_code failed"); }
+		if (l < 0) { throw ("NetLog::recv_packet -- read_length_code failed"); }
 		pos += j;
 		if (i >= log_num) expand_logs(i+1);
 
@@ -391,7 +391,7 @@ void NetLog::recv_packet(int conn)
 	}
 	if (pos != len)
 	{
-		tw_error ("NetLog::recv_packet -- missaligned packet!!!");
+		throw ("NetLog::recv_packet -- missaligned packet!!!");
 	}
 	
 	return;
@@ -400,7 +400,7 @@ void NetLog::recv_packet(int conn)
 
 
 
-void NetLog::expand_logs(int num_channels) {STACKTRACE
+void NetLog::expand_logs(int num_channels) { 
 	int old_log_num = log_num;
 	Log::expand_logs(num_channels);
 	if (log_num) {
@@ -418,7 +418,7 @@ void NetLog::expand_logs(int num_channels) {STACKTRACE
 
 void NetLog::_log(int channel, const void *data, int size)
 {
-	STACKTRACE;
+	 
 
 	if (log_show_data)
 	{
@@ -429,7 +429,7 @@ void NetLog::_log(int channel, const void *data, int size)
 
 	if (log_transmitted[channel] > log_len[channel])
 	{
-		tw_error("Should not happen");
+		throw("Should not happen");
 	}
 		
 	if (channel >= log_num) expand_logs(channel+1);
@@ -471,7 +471,7 @@ void NetLog::_unlog(int channel, void *data, int size)
 
 void NetLog::log_file(const char *fname)
 {
-	STACKTRACE;
+	 
 
 	/*
 	if (!(log_dir[channel_file_data] & direction_write)) {
@@ -496,7 +496,7 @@ blocks program flow.
 
 void NetLog::flush_block()
 {
-	STACKTRACE;
+	 
 
 	if (log_show_data)
 	{
@@ -534,7 +534,7 @@ in the buffer until the next call to this subroutine. This does not block progra
 */
 void NetLog::flush_noblock()
 {
-	STACKTRACE;
+	 
 
 #ifdef _DEBUG
 					if (key[KEY_SPACE] != 0)
@@ -566,7 +566,7 @@ void NetLog::flush_noblock()
 
 bool NetLog::listen()
 {
-	STACKTRACE;
+	 
 	bool b = false;
 
 	if (log_show_data)
@@ -610,7 +610,7 @@ void NetLog::recv_noblock()
 
 int NetLog::ready(int channel)
 {
-	STACKTRACE;
+	 
 
 
 	recv_noblock();
@@ -765,7 +765,7 @@ void NetLog::reset()
 	for ( i = 0; i < log_num; ++i )
 	{
 		if (writeable(i) && log_transmitted[i] != log_len[i])
-			tw_error("NetLog::reset - resetting before all data could be sent in channel [%i] , pos[%i] transm[%i] len[%i]",
+			throw("NetLog::reset - resetting before all data could be sent in channel [%i] , pos[%i] transm[%i] len[%i]",
 			i, log_pos[i], log_transmitted[i], log_len[i]);
 
 		log_transmitted[i] = 0;	// no problem, when calling a reset, all data IS sent.

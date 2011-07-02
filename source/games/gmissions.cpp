@@ -21,7 +21,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 
 #include "gamehierarchy.h"
 
-#include "twgui/twgui.h"
+#include "../twgui/twgui.h"
 
 #include "gflmelee.h"
 #include "gmissions_objects.h"
@@ -79,8 +79,7 @@ MissionObject(opos, datafilename, "OBJUPGRADE_DAT")
 
 int MSupgrade::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
-
+	
 	if (source->isShip())
 	{
 		Ship *s = (Ship*) source;
@@ -108,8 +107,7 @@ int MSupgrade::handle_damage(SpaceLocation *source, double normal, double direct
 
 void MSupgrade::calculate()
 {
-	STACKTRACE
-
+	
 	if (waittimer > 0)
 	{
 		waittimer -= frame_time * 1E-3;
@@ -123,8 +121,7 @@ void MSupgrade::calculate()
 
 void MSupgrade::animate(Frame *space)
 {
-	STACKTRACE
-
+	
 	if (waittimer <= 0)			// disable drawing
 		SpaceObject::animate(space);
 }
@@ -155,10 +152,7 @@ MissionShip(opos, datafilename, "SHPFACTORY_DAT", ininame, "shpfactory", team)
 
 void MSFactory::missioncontrol()
 {
-	STACKTRACE
-
-
-	// simple, always turn around
+		// simple, always turn around
 	turn_left = TRUE;
 	thrust = TRUE;		// thus it'll slow down itself when it's hit by something, I think that's useful...
 
@@ -176,8 +170,7 @@ void MSFactory::missioncontrol()
 
 int MSFactory::activate_weapon()
 {
-	STACKTRACE
-
+	
 	double A;
 	Vector2 P;
 
@@ -699,7 +692,7 @@ void gmissions::removesubgame(int k)
 		set_info_buttons();
 
 	} else {
-		tw_error("unexpected number of games are active (only 2 expected)");
+		throw("unexpected number of games are active (only 2 expected)");
 	}
 
 	MainGame::removesubgame(k);
@@ -1337,7 +1330,7 @@ Planet *Play::nearest_planet(SpaceLocation *s)
 
 	if (oclosest && !oclosest->isPlanet())
 	{
-		tw_error("Found a weird gravwell");
+		throw("Found a weird gravwell");
 	}
 
 	return (Planet*) oclosest;

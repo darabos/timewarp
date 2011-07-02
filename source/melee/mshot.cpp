@@ -300,7 +300,7 @@ Laser::Laser(SpaceLocation *creator, double langle, int lcolor, double lrange, d
 
 	if (relative_angle < -2*PI2 || relative_angle > 2*PI2)
 	{
-		tw_error("Laser: relative angle is out of bounds");
+		throw("Laser: relative angle is out of bounds");
 	}
 	while (relative_angle < -PI)
 		relative_angle += PI2;
@@ -414,7 +414,7 @@ maxtime(otime)
 
 void TimedShot::calculate()
 {
-	STACKTRACE
+	 
 	SpaceObject::calculate();
 
 	if (!(ship && ship->exists()))
@@ -438,7 +438,7 @@ void TimedShot::calculate()
 
 void TimedShot::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	// copied from Shot::infli...
 
 	if (!other->exists()) return;
@@ -458,7 +458,7 @@ void TimedShot::inflict_damage(SpaceObject *other)
 
 int TimedShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	armour -= (normal + direct);
 
 	if (armour <= 0)

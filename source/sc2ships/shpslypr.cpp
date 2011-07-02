@@ -429,7 +429,7 @@ void SlylandroLaserNew::calculate()
 				{
 					if (!q.currento->isObject())
 					{
-						tw_error("wrong grid search ...");
+						throw("wrong grid search ...");
 					}
 
 					tsprite = q.currento->get_sprite();

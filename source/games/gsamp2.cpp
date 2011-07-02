@@ -26,6 +26,7 @@ Samples 5 and 6 have not yet been started
 #include <stdio.h>   //standard io libary (needed for sprintf)
 #include <allegro.h> //allegro library header
 
+#include "../scp.h"
 #include "../melee.h"          //used by all TW source files.  well, mostly.  
 REGISTER_FILE                  //done immediately after #including melee.h, just because I said so
 #include "../melee/mgame.h"    //Game stuff
@@ -215,7 +216,7 @@ void DefenderGame::init( Log * _log) {
 
 	DATAFILE *tmpdata; 
 	tmpdata = load_datafile_object("gob.dat", "station0sprite");
-	if (!tmpdata) error( "couldn't find gob.dat#station0sprite");
+	if (!tmpdata)throw( "couldn't find gob.dat#station0sprite");
 	stationsprite = new SpaceSprite(tmpdata, 1, SpaceSprite::MASKED, 64);
 //	stationsprite->permanent_phase_shift(8);
 	unload_datafile_object(tmpdata);

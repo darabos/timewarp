@@ -68,7 +68,7 @@ static void my_draw_bitmap( FT_Bitmap *src, BITMAP *dest, int dx, int dy )
 		}
 		
 	} else {
-		return;//tw_error("unsupported bitmap format");
+		return;//throw("unsupported bitmap format");
 	}
 
 

@@ -56,7 +56,6 @@ Three sections:
 #endif
 #include "get_time.h"
 #include "base.h"
-#include "errors.h"
 
 
 
@@ -156,7 +155,7 @@ int _no_idle = 0;
 			if (QueryPerformanceCounter(&bob)) {
 				return bob.QuadPart - winmm_qpc_base;
 			}
-			tw_error("QueryPerformanceCounter return 0");
+			//throw("QueryPerformanceCounter return 0");
 			return 0;
 		}
 		static double winmm_qpc_get_freq() {
@@ -186,7 +185,7 @@ int _no_idle = 0;
 		LOCK_FUNCTION(global_timer);
 		LOCK_FUNCTION(allegro_get_time);
 		LOCK_VARIABLE(allegro_time);
-		if (install_timer() < 0) tw_error("Allegro timer installation failed");
+		//if (install_timer() < 0) throw("Allegro timer installation failed");
 		install_int(&global_timer, allegro_period);
 	}
 	void deinit_allegro_time() {

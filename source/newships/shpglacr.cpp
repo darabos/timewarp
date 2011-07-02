@@ -91,7 +91,7 @@ GlavriaCruiser::GlavriaCruiser(Vector2 opos, double angle, ShipData *data, unsig
 
 int GlavriaCruiser::activate_special()
 {
-	STACKTRACE;
+	 
 
 	SpaceSprite *spr;
 	spr = data->spriteWeapon;
@@ -149,7 +149,7 @@ int GlavriaCruiser::activate_special()
 
 int GlavriaCruiser::activate_weapon()
 {
-	STACKTRACE
+	 
 
 	int i;
 
@@ -171,7 +171,7 @@ int GlavriaCruiser::activate_weapon()
 
 void GlavriaCruiser::calculate()
 {
-	STACKTRACE
+	 
 	Ship::calculate();
 
 	// check the state of yer weapons in space
@@ -204,7 +204,7 @@ GlavriaCrTorpedo::GlavriaCrTorpedo(Vector2 opos, double oangle, double ov,
 
 void GlavriaCrTorpedo::calculate()
   {
-	STACKTRACE
+	 
 	AnimatedShot::calculate();
 	//d += v * frame_time;
 	//if(d >= oorange) state = 0;

@@ -94,7 +94,7 @@ GlathrielDestroyer::GlathrielDestroyer(Vector2 opos, double angle, ShipData *shi
 
 int GlathrielDestroyer::activate_weapon()
 {
-	STACKTRACE
+	 
 	add(new GlathrielMissile(this, 0.0, 14, angle, weaponVelocity, weaponDamage, weaponRange,
 		weaponArmour, data->spriteWeapon, laserNumber, weaponInactive,
 		laserDamage,laserColor,laserRange,laserSweep));
@@ -103,7 +103,7 @@ int GlathrielDestroyer::activate_weapon()
 
 int GlathrielDestroyer::activate_special()
 {
-	STACKTRACE
+	 
 	int i;
 	for (i=0; i<specialNumber; i++)
 		add(new GlathrielMiniMissile(
@@ -124,7 +124,7 @@ GlathrielMissile::GlathrielMissile(SpaceLocation *creator, double ox, double oy,
 
 void GlathrielMissile::calculate()
 {
-	STACKTRACE
+	 
 	Missile::calculate();
 	if (!exists()) return;
 	if (d > inactive_range) {
@@ -165,7 +165,7 @@ GlathrielSpot::GlathrielSpot(SpaceLocation *creator, double oangle, SpaceSprite 
 
 void GlathrielSpot::calculate()
 {
-	STACKTRACE
+	 
 	SpaceLocation::calculate();
 	life_counter += frame_time;
 	if (life_counter >= lifetime)
@@ -174,7 +174,7 @@ void GlathrielSpot::calculate()
 
 void GlathrielSpot::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	if (state == 0) return;
 	double r = life_counter/(double)lifetime;
 	int rr = iround(80 * r * space_zoom);

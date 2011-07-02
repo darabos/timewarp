@@ -104,7 +104,7 @@ AlaryBomber::AlaryBomber(Vector2 opos, double shipAngle, ShipData *shipData, uns
 
 int AlaryBomber::activate_weapon()
 {
-	STACKTRACE
+	 
 	if (!can_launch_bomb) return false;
 	add(new AlaryBomberBomb(this, 0, 0, angle, bombDamageMin, bombDamageMax, bombArmour, data->spriteWeapon,
 		bombBlastRange, bombProximity, bombLifetime, bombKick, bombDrag));
@@ -114,7 +114,7 @@ int AlaryBomber::activate_weapon()
 
 int AlaryBomber::activate_special()
 {
-	STACKTRACE;
+	 
 
 	if (!gun_use)
 	{
@@ -149,7 +149,7 @@ void AlaryBomber::calculate_hotspots()
 
 void AlaryBomber::calculate()
 {
-	STACKTRACE;
+	 
 	
 	if (!fire_weapon)
 		can_launch_bomb = true;
@@ -191,7 +191,7 @@ drag_factor(drag)
 
 void AlaryBomberBomb::calculate()
 {
-	STACKTRACE;
+	 
 
 	SpaceLocation::calculate();	// to clean up pointers
 
@@ -257,7 +257,7 @@ void AlaryBomberBomb::calculate()
 
 void AlaryBomberBomb::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	sprite->animate(pos, sprite_index,space);
 }
 
@@ -265,7 +265,7 @@ void AlaryBomberBomb::animate(Frame *space)
 void AlaryBomberBomb::animateExplosion()
 {
 	
-	STACKTRACE;
+	 
 
 	if (active)
 	{
@@ -327,7 +327,7 @@ AlaryBomberBombExplosion::AlaryBomberBombExplosion(Vector2 opos, double ov, int 
 
 void AlaryBomberBombExplosion::calculate()
 {
-	STACKTRACE
+	 
 	life_counter += frame_time;
 	if (life_counter >= lifetime) {
 		state = 0; return; }
@@ -338,7 +338,7 @@ void AlaryBomberBombExplosion::calculate()
 
 void AlaryBomberBombExplosion::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	if (state == 0)
 		return;
 	int i, j;

@@ -148,7 +148,7 @@ void save_spacesprite2(SpaceSprite *ss, const char *spritename, const char *dest
 	char buf[512];
 
 	if (ss->frames() != 64)
-		tw_error("save_spacesprite2 - error");
+		throw("save_spacesprite2 - error");
 
 	BITMAP *tmp = create_bitmap(int(ss->width(0) * 8), int(ss->height(0) * 8));
 	for (i = 0; i < ss->frames(); i += 1) {
@@ -231,7 +231,7 @@ void ShipData::unlock()
 
 	if (references < 0)
 	{
-		tw_error("Too few references.");
+		throw("Too few references.");
 	}
 
 	if (!islocked() && auto_unload) {
@@ -408,7 +408,7 @@ SpaceSprite *load_sprite(const char *string, DATAFILE *data, int *index)
 			cp += sprintf(cp, "%s ", argv[i]);
 		}
 		else if (argv[i][0] == 'r') tp = argv[i];
-		else {tw_error("load_sprite - unrecognized modifiers '%s'", argv[i]);}
+		else {throw("load_sprite - unrecognized modifiers '%s'", argv[i]);}
 	}
 	if (tp) {
 		rotations = atoi(tp+1);
@@ -491,7 +491,7 @@ SpaceSprite *load_sprite(const char *ini_string, char *dirname, int default_attr
 			cp += sprintf(cp, "%s ", argv[i]);
 		} else
 		{
-			tw_error("Unrecognized command %s in %s", argv[i], base_filename);
+			throw("Unrecognized command %s in %s", argv[i], base_filename);
 		}
 	}
 
@@ -517,10 +517,10 @@ SpaceSprite *load_sprite(const char *ini_string, char *dirname, int default_attr
 
 				if (count_base > 1)
 				{
-					tw_error("Count base too high for sprite image %s", filename);
+					throw("Count base too high for sprite image %s", filename);
 				}
 			} else {
-				tw_error("Failed to load sprite image file %s", filename);
+				throw("Failed to load sprite image file %s", filename);
 			}
 		}
 	}
@@ -574,7 +574,7 @@ void load_sample(char *ini_string, char *dirname, int *num_weapon_samples, Sound
 
 		if (!sample[i])
 		{
-			tw_error("Failed to initialize sample %s", filename);
+			throw("Failed to initialize sample %s", filename);
 		}
 
 	}
@@ -590,12 +590,12 @@ void *copy_data(void *data, int N)
 {
 	if (!data)
 	{
-		tw_error("Unable to copy data.");
+		throw("Unable to copy data.");
 	}
 
 	if (N < 0 || N > 1E7)
 	{
-		tw_error("Invalid data size");
+		throw("Invalid data size");
 	}
 
 	void *d;
@@ -614,10 +614,14 @@ void *copy_data(void *data, int N)
 
 SAMPLE *copy_sample(SAMPLE *source)
 {
+	SAMPLE *dest = null;
+
+	if (source) {
 	SAMPLE *dest = (SAMPLE*) malloc(sizeof(SAMPLE));
 
 	// copy the sample info
 	memcpy(dest, source, sizeof(SAMPLE));
+
 
 	// copy the sample data (and set the pointer to the sample data)
 	int mult;
@@ -627,7 +631,10 @@ SAMPLE *copy_sample(SAMPLE *source)
 		mult = 1;
 
 	dest->data = copy_data(source->data, (source->len * (source->bits/8) * mult));
-
+	} else {
+	dest = null;
+	}
+	
 	return dest;
 }
 
@@ -710,7 +717,7 @@ void ShipData::load_datafile(DATAFILE *data)
 
 	// load ship panel
 	if (num_panel_bitmaps < 2)
-		tw_error("Too few ship panel bitmaps");
+		throw("Too few ship panel bitmaps");
 	spritePanel = new SpaceSprite(&data[index], num_panel_bitmaps);
 	index += num_panel_bitmaps;
 
@@ -762,6 +769,7 @@ void ShipData::load_datafile(DATAFILE *data)
 		for(i = 0; i < count; i++) {
 			//sampleWeapon[i] = (SAMPLE *)copy_data(data[index].dat, data[index].size + min_sample_amount);//(data[index].dat);
 			//sampleWeapon[i] = (SAMPLE *)(data[index].dat);
+
 			sampleWeapon[i] = copy_sample( (SAMPLE *)data[index].dat );
 			index++;
 		}
@@ -900,7 +908,7 @@ void ShipData::load()
 	if(data)
 	{
 		load_datafile(data);
-		//tw_error("Error loading '%s'", file);
+		//throw("Error loading '%s'", file);
 	} else {
 		char tmp[512];
 		strcpy(tmp, file);

@@ -147,7 +147,7 @@ Ship(opos, angle, data, code)
 
 int UtwigDefender::activate_weapon()
 {
-	STACKTRACE
+	 
 	double tmpR = (batt-weapon_drain)/(double)batt_max; //get power level
 	batt = weapon_drain;
 
@@ -170,7 +170,7 @@ int UtwigDefender::activate_weapon()
 
 RGB UtwigDefender::crewPanelColor(int k)
 {
-	STACKTRACE
+	 
   	// change the crew color, if needed
 	if ( energizepersonalarmour )
 	{
@@ -196,7 +196,7 @@ int UtwigDefender::activate_special()
 /*
 void UtwigDefender::calculate_turn_left()
 {
-	STACKTRACE
+	 
 	if(turn_left) {
 		if (batt >= minBattForThrust)
 			turn_step -= (turn_rate) * frame_time;
@@ -207,7 +207,7 @@ void UtwigDefender::calculate_turn_left()
 
 void UtwigDefender::calculate_turn_right()
 {
-	STACKTRACE
+	 
 	if(turn_right) {
 		if (batt >= minBattForThrust)
 			turn_step += (turn_rate) * frame_time;
@@ -218,20 +218,20 @@ void UtwigDefender::calculate_turn_right()
 
 void UtwigDefender::calculate_thrust()
 {
-	STACKTRACE
+	 
 	if (batt >= minBattForThrust) Ship::calculate_thrust();
 }
 */
 
 void UtwigDefender::calculate_hotspots()
 {
-	STACKTRACE
+	 
 	if (batt >= minBattForThrust) Ship::calculate_hotspots();
 }
 
 void UtwigDefender::calculate()
 {
-	STACKTRACE
+	 
 	Ship::calculate();
 	if(batt < minBattForThrust) {
 		if (inverseLights)
@@ -260,7 +260,7 @@ void UtwigDefender::calculate()
 
 int UtwigDefender::handle_damage(SpaceLocation *src, double normal, double direct)
 {
-	STACKTRACE;
+	 
 
 	double totdam = normal + direct;
 	// you also have to deal with negative damage, i.e., crew increase - that's
@@ -351,7 +351,7 @@ creator, osprite, relativity),
 
 void UtwigDefenderBolt::calculate()
 {
-	STACKTRACE
+	 
 	Shot::calculate();
 	if (!exists()) return;	//to avoid (d > r)
 
@@ -378,7 +378,7 @@ void UtwigDefenderBolt::calculate()
 
 int UtwigDefenderBolt::handle_damage(SpaceLocation* source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	if (normal+direct > 0) {
 		relative_damage += (normal + direct) / (double)armour;
 		if (relative_damage >= 1)
@@ -391,7 +391,7 @@ int UtwigDefenderBolt::handle_damage(SpaceLocation* source, double normal, doubl
 
 void UtwigDefenderBolt::animateExplosion()
 {
-	STACKTRACE
+	 
 	if (damage_factor <= 0) return; // just in case
 
 	int start_frame = (int)(sprite_index / 1.7);
@@ -442,13 +442,13 @@ lifetime(oLifeTime)
 
 int UtwigDefenderCrewPodPP::sameTeam(SpaceLocation *other)
 {
-	STACKTRACE
+	 
 	return true;
 }
 
 void UtwigDefenderCrewPodPP::calculate()
 {
-	STACKTRACE;
+	 
 	frame_step += frame_time;
 	while (frame_step >= frame_size)
 	{
@@ -489,7 +489,7 @@ void UtwigDefenderCrewPodPP::calculate()
 
 void UtwigDefenderCrewPodPP::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	if (other->isShip() && other->damage_factor == 0) {
 //		sound.stop(data->sampleExtra[0]);
 //		sound.play(data->sampleExtra[0]);
@@ -500,7 +500,7 @@ void UtwigDefenderCrewPodPP::inflict_damage(SpaceObject *other)
 
 int UtwigDefenderCrewPodPP::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE;
+	 
 	state = 0;	// this is extra; eg. if hit by a asteroid or so.
 	return 0;
 }

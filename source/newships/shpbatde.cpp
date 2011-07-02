@@ -181,7 +181,7 @@ Ship(opos, angle, data, code)
 
 int BathaDeviant::activate_weapon()
 {
-	STACKTRACE
+	 
 	BathaMissile *bm;
 	bm = new BathaMissile(
 		this, Vector2(0.0, 0.5*get_size().y), angle, weaponVelocity, weaponDamage,
@@ -195,7 +195,7 @@ int BathaDeviant::activate_weapon()
 
 int BathaDeviant::activate_special()
 {
-	STACKTRACE
+	 
 
 	// come slowly a halt.
 	vel *= (1 - 5*frame_time*1E-3);
@@ -217,7 +217,7 @@ int BathaDeviant::activate_special()
 
 void BathaDeviant::calculate ()
 {
-	STACKTRACE
+	 
 
 
 	Ship::calculate();
@@ -326,7 +326,7 @@ void BathaDeviant::calculate ()
 
 int BathaDeviant::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 
 	// hitting a planet with its enormous mass is fatal
 	// also creates an extra asteroid ;)
@@ -347,7 +347,7 @@ int BathaDeviant::handle_damage(SpaceLocation *source, double normal, double dir
 
 void BathaDeviant::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	// the main body of the ship hits the enemy and does damage ....
 	if (other->isShip())
 	{
@@ -369,7 +369,7 @@ void BathaDeviant::inflict_damage(SpaceObject *other)
 
 void BathaDeviant::animate(Frame *frame)
 {
-	STACKTRACE
+	 
 	Ship::animate(frame);
 
 }
@@ -378,7 +378,7 @@ void BathaDeviant::animate(Frame *frame)
 
 int BathaDeviant::accelerate_gravwhip( SpaceLocation *source, double angle, double velocity, double max_speed )
 {
-	STACKTRACE
+	 
 		
 	//Planet *p = nearest_other_planet();
 	//if( !p )
@@ -408,7 +408,7 @@ HomingMissile(creator, rpos, oangle, ov, odamage, orange, oarmour, otrate, opos,
 
 void BathaMissile::animate(Frame *frame)
 {
-	STACKTRACE
+	 
 	// animate the sphere.
 	HomingMissile::animate(frame);
 }
@@ -432,7 +432,7 @@ SpriteDrawListItem::SpriteDrawListItem(SpriteDrawListItem *s, SpaceSprite **ospr
 
 void SpriteDrawListItem::init(int oindex, Vector2 opos)
 {
-	STACKTRACE
+	 
 	sprite_index = oindex;
 	pos = opos;
 
@@ -442,7 +442,7 @@ void SpriteDrawListItem::init(int oindex, Vector2 opos)
 
 void SpriteDrawListItem::animate(Frame *frame)
 {
-	STACKTRACE
+	 
 	SpaceSprite *spr;
 	spr = sprites[sprite_array_index];
 
@@ -456,7 +456,7 @@ void SpriteDrawListItem::animate(Frame *frame)
 
 SpriteDrawList::SpriteDrawList(SpaceObject *creator, int N, SpaceSprite **osprites, double odelaytime)
 {
-	STACKTRACE
+	 
 	mother = creator;
 
 	SpriteDrawListItem *s;
@@ -499,7 +499,7 @@ SpriteDrawList::~SpriteDrawList()
 
 void SpriteDrawList::calculate()
 {
-	STACKTRACE
+	 
 	if ( !(mother && mother->exists()) )
 	{
 		mother = 0;
@@ -538,7 +538,7 @@ void SpriteDrawList::calculate()
 
 void SpriteDrawList::animate(Frame *frame)
 {
-	STACKTRACE
+	 
 	SpriteDrawListItem *s;
 	for ( s = lastitem; s != 0; s = s->prev)
 		s->animate(frame);
@@ -588,7 +588,7 @@ SpaceObject(creator, opos, oangle, osprite)
 
 void BathaCloud::calculate()
 {
-	STACKTRACE
+	 
 	SpaceObject::calculate();
 
 	existtime += frame_time * 1E-3;

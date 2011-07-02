@@ -15,7 +15,7 @@ int *player_team = NULL;
 
 void showTitle(VideoWindow *window) {
 	if (!scp) {
-		tw_error ("showTitle - gui stuff not loaded");
+		throw ("showTitle - gui stuff not loaded");
 		return;
 	}
 
@@ -50,7 +50,7 @@ char *playerListboxGetter(int index, int *list_size) {
 		tmp += sprintf(tmp, "Player%d", index + 1);
 		if (index + 1 < 10) tmp += sprintf(tmp, " ");
 		tmp += sprintf(tmp, "   %d   %d   %s", player_team[index], player_config[index], player_type[index]);
-		if ((strlen(buf) >= 80)) tw_error("playerListboxGetter string too long");
+		if ((strlen(buf) >= 80)) throw("playerListboxGetter string too long");
 		return buf;
 	}
 }

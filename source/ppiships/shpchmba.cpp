@@ -114,7 +114,7 @@ Ship(opos, angle, data, code)
 
 int ChmmrBattleship::activate_weapon()
 {
-	STACKTRACE;
+	 
 
 	add(new ChmmrBattleshipMissile(this, -6.0, 45.0, angle , weaponVelocity,
 		weaponDamage, weaponRange, weaponArmour, data->spriteWeapon));
@@ -125,13 +125,13 @@ int ChmmrBattleship::activate_weapon()
 
 void ChmmrBattleship::calculate_fire_special()
 {
-	STACKTRACE;
+	 
 
 	if ((!fire_special) || (batt >= special_drain)) special_low = false;
 }
 
 void ChmmrBattleship::materialize() {
-	STACKTRACE;
+	 
 	Ship::materialize();
 	for (int i = 0; i <4; i++) {
 		crystal[i]=new ChmmrBattleshipCrystal(this,-16.0, 1+(i-1.5)*12, -PI/2);
@@ -155,7 +155,7 @@ ChmmrBattleshipCrystal::ChmmrBattleshipCrystal (ChmmrBattleship *oship, double o
 
 void ChmmrBattleshipCrystal::calculate()
 {
-	STACKTRACE;
+	 
 	
 	if (state == 0) return;	//shouldn't happen
 
@@ -226,7 +226,7 @@ void ChmmrBattleshipCrystal::calculate()
 }
 
 int ChmmrBattleship::handle_damage (SpaceLocation *source, double normal, double direct) {
-	STACKTRACE;
+	 
 
 	int d = Ship::handle_damage(source, normal, direct);
 
@@ -240,7 +240,7 @@ int ChmmrBattleship::handle_damage (SpaceLocation *source, double normal, double
 
 void ChmmrBattleship::calculate()
 {
-	STACKTRACE;
+	 
 
 	Ship::calculate();
 
@@ -250,7 +250,7 @@ void ChmmrBattleship::calculate()
 	{
 		if (!crystal[i]->exists())
 		{
-			tw_error("A crystal died - should not happen !!");
+			throw("A crystal died - should not happen !!");
 		}
 	}
 }
@@ -267,7 +267,7 @@ ChmmrBattleshipMissile::ChmmrBattleshipMissile(SpaceLocation *creator, double ox
 }
 
 void ChmmrBattleshipMissile::inflict_damage(SpaceObject *other) {
-	STACKTRACE;
+	 
 	
 	Missile::inflict_damage(other);
 
@@ -286,7 +286,7 @@ ChmmrBattleshipMarker::ChmmrBattleshipMarker(SpaceLocation *creator, SpaceObject
 }
 
 void ChmmrBattleshipMarker::calculate() {
-	STACKTRACE;
+	 
 
 	if (state == 0)
 		return;
@@ -324,7 +324,7 @@ Laser(creator, langle, lcolor, lrange, 1, lfcount/ldamage, opos, 0, 0) {
 }
 
 void ChmmrBattleshipLaser::calculate() {
-	STACKTRACE;
+	 
 
 	if (!(lpos && lpos->exists()))
 	{
@@ -382,7 +382,7 @@ void ChmmrBattleshipLaser::calculate() {
 }
 
 void ChmmrBattleshipLaser::inflict_damage(SpaceObject *other) {
-	STACKTRACE;
+	 
 
 //  return;
 

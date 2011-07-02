@@ -6,7 +6,7 @@ REGISTER_FILE
 #include "mview.h"
 
 #include "../util/vector2.h"
-double atan3(double y, double x) {STACKTRACE
+double atan3(double y, double x) { 
 	if (y == 0) {
 		if (x >= 0) return 0;
 		else return PI;
@@ -24,7 +24,7 @@ int sign (double n) {
 	else return 0;
 	}
 
-double trajectory_angle(double x1, double y1, double x2, double y2) {STACKTRACE
+double trajectory_angle(double x1, double y1, double x2, double y2) { 
 	double dx = min_delta(x2, x1, map_size.x);
 	double dy = min_delta(y2, y1, map_size.y);
 	double alpha = atan3(dy, dx);
@@ -34,12 +34,12 @@ double trajectory_angle(double x1, double y1, double x2, double y2) {STACKTRACE
 
 	if (alpha < 0 || alpha > PI2)
 	{
-		tw_error("The trajectory angle makes no sense");
+		throw("The trajectory angle makes no sense");
 	}
 	return(alpha);
 	}
 
-double trajectory_angle(Vector2 pos1, Vector2 pos2) {STACKTRACE
+double trajectory_angle(Vector2 pos1, Vector2 pos2) { 
 	double dx = min_delta(pos2.x, pos1.x, map_size.x);
 	double dy = min_delta(pos2.y, pos1.y, map_size.y);
 	double alpha = atan3(dy, dx);
@@ -49,13 +49,13 @@ double trajectory_angle(Vector2 pos1, Vector2 pos2) {STACKTRACE
 
 	if (alpha < 0 || alpha > PI2)
 	{
-		tw_error("The trajectory angle makes no sense");
+		throw("The trajectory angle makes no sense");
 	}
 	return(alpha);
 	}
 
 double intercept_angle (Vector2 pos, Vector2 vel, double v, Vector2 tpos, Vector2 tvel) {
-	STACKTRACE
+	 
 	Vector2 d, dv;
 	double dist, time;
 	d = min_delta(tpos, pos);
@@ -67,7 +67,7 @@ double intercept_angle (Vector2 pos, Vector2 vel, double v, Vector2 tpos, Vector
 	}
 
 double intercept_angle2(Vector2 pos, Vector2 vel, double v, Vector2 tpos, Vector2 tvel) {
-	STACKTRACE
+	 
 	Vector2 d, dv;
 	double dist, time;
 	d = min_delta(tpos, pos);
@@ -82,8 +82,8 @@ double intercept_angle2(Vector2 pos, Vector2 vel, double v, Vector2 tpos, Vector
 
 double normalize(double value, double max)
 {
-	STACKTRACE;
-	//if (isnan(value) || isnan(max)) tw_error("normalize - not finite");
+	 
+	//if (isnan(value) || isnan(max)) throw("normalize - not finite");
 
 /*
 	__asm fld b;
@@ -99,11 +99,11 @@ double normalize(double value, double max)
 	__asm fstp b;
 */
 	if (max <= 0) {
-		tw_error ("normalize - bad \n%f\n %% %f", value, max);
+		throw ("normalize - bad \n%f\n %% %f", value, max);
 		return normalize2(value, max);
 	}
 	if ((value > 999.0 * max) || (value < -999.0 * max)) {
-		tw_error ("normalize - bad \n%f\n modulo %f", value, max);
+		throw ("normalize - bad \n%f\n modulo %f", value, max);
 		return normalize2(value, max);
 	}
 	while(value < 0.0)
@@ -114,14 +114,14 @@ double normalize(double value, double max)
 }
 
 double normalize2(double value, double max)
-{STACKTRACE
-	//if (isnan(value) || isnan(max)) tw_error("normalize - not finite");
+{ 
+	//if (isnan(value) || isnan(max)) throw("normalize - not finite");
 	value = fmod(value, max);
 	if (value < 0) value += max;
 	return(value);
 }
 
-Vector2 corner ( Vector2 pos, Vector2 size ) {STACKTRACE
+Vector2 corner ( Vector2 pos, Vector2 size ) { 
 	pos -= space_center;
 	while (pos.x < -map_size.x/2) pos.x += map_size.x;
 	while (pos.x >  map_size.x/2) pos.x -= map_size.x;
@@ -136,14 +136,14 @@ Vector2 corner ( Vector2 pos ) {
 }
 
 double min_delta(double from, double to, double max)
-{STACKTRACE
+{ 
   double d1 = from - to;
 //  if (fabs(d1) * 2 < max) return d1;
   return normalize(d1 + max/2, max) - max/2;
 }
 
 Vector2 min_delta(Vector2 from, Vector2 to, Vector2 max)
-{STACKTRACE
+{ 
 	return Vector2 ( 
 		min_delta(from.x,to.x,max.x),
 		min_delta(from.y,to.y,max.y)
@@ -151,12 +151,12 @@ Vector2 min_delta(Vector2 from, Vector2 to, Vector2 max)
 }
 
 double nearest_coord(double from, double to, double max)
-{STACKTRACE
+{ 
   return(from - min_delta(from, to, max));
 }
 
 double distance_from(double x, double y, double to_x, double to_y)
-{STACKTRACE
+{ 
   double dx = min_delta(x, to_x, map_size.x);
   double dy = min_delta(y, to_y, map_size.y);
 
@@ -164,7 +164,7 @@ double distance_from(double x, double y, double to_x, double to_y)
 }
 
 double distance_from(Vector2 from, Vector2 to)
-{STACKTRACE
+{ 
   double dx = min_delta(from.x, to.x, map_size.x);
   double dy = min_delta(from.y, to.y, map_size.y);
 

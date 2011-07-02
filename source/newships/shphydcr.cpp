@@ -229,7 +229,7 @@ HydrovarCruiser::HydrovarCruiser(Vector2 opos, double angle, ShipData *data, uns
 
 int HydrovarCruiser::activate_weapon()
 {
-	STACKTRACE
+	 
 	game->add(new HydrovarBeam(this, angle, palette_color[weaponColor],
 		weaponRange0, weaponDamage0, weaponFrames0, 0, 36,
 		weaponRangeAttenuation, weaponTimeAttenuation));
@@ -253,7 +253,7 @@ int HydrovarCruiser::activate_weapon()
 
 int HydrovarCruiser::activate_special()
 {
-	STACKTRACE
+	 
     if((fightersOut>=maxFightersOut) || (crew<=specialCrewCost))
 		return(FALSE);
 
@@ -333,11 +333,11 @@ HydrovarEsFighter::HydrovarEsFighter (double ox, double oy, double oangle, doubl
 	retreat_frames=0;
 	layer = LAYER_SPECIAL;
 	set_depth(DEPTH_SPECIAL);
-//	if(oship==NULL)tw_error("oship==NULL"); //debugging code
-//	if(oTarget==NULL)tw_error("otarget==NULL"); //debugging code
+//	if(oship==NULL)throw("oship==NULL"); //debugging code
+//	if(oTarget==NULL)throw("otarget==NULL"); //debugging code
 	target = oTarget;
 	creator = (HydrovarCruiser*) oship;
-//	if(creator==NULL)tw_error("creator==NULL"); //debugging code
+//	if(creator==NULL)throw("creator==NULL"); //debugging code
 
 	if (!(creator && creator->exists()))
 		creator = 0;
@@ -347,7 +347,7 @@ HydrovarEsFighter::HydrovarEsFighter (double ox, double oy, double oangle, doubl
 
 void HydrovarEsFighter::calculate()
 {
-	STACKTRACE;
+	 
 	if(!(creator && creator->exists()))
 	{
 		creator = 0;
@@ -423,7 +423,7 @@ void HydrovarEsFighter::calculate()
 
 int HydrovarEsFighter::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
   if(this->bouncesOffShips && source->isShip() && source->damage_factor < 1.0 && source!=this->creator) {
     this->state = 1;
     if(this->armour < 1) this->armour = 1;
@@ -448,7 +448,7 @@ int HydrovarEsFighter::handle_damage(SpaceLocation *source, double normal, doubl
 
 void HydrovarEsFighter::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	int df = iround(damage_factor);
 	damage_factor = 0;
   if(this->bouncesOffAsteroids && other->isAsteroid()) 
@@ -477,10 +477,10 @@ int HydrovarEsFighter::isShot(void)
 
 void HydrovarEsFighter::getTarget(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	double a1, a2;
 	if(other==NULL)
-		{tw_error("Error: other==NULL -- not good.");return;}
+		{throw("Error: other==NULL -- not good.");return;}
 	if(other->isPlanet())
 		return;
 	a1 = angle; a2 = trajectory_angle(other);
@@ -494,7 +494,7 @@ void HydrovarEsFighter::getTarget(SpaceObject *other)
 
 void HydrovarEsFighter::tryToFire()
 {
-	STACKTRACE
+	 
 	if (fuel > 0)
 		if (fuel < fuel_critical + shot_fuel_cost)
 			return; //do not shot if there's not enough fuel
@@ -529,7 +529,7 @@ void HydrovarEsFighter::tryToFire()
 
 void HydrovarEsFighter::UTurn(int m, int r)
 {
-	STACKTRACE
+	 
 	angle = angle + PI;
 	vel *= -1;
 	retreat_frames = random(r) + m;
@@ -537,7 +537,7 @@ void HydrovarEsFighter::UTurn(int m, int r)
 
 void HydrovarEsFighter::RetreatFrom(SpaceLocation* L, int r, int m)
 {
-	STACKTRACE
+	 
   if(L==NULL || (!L->exists())) return;
   this->changeDirection(L->trajectory_angle(this));
 	retreat_frames = random(r) + m;
@@ -545,7 +545,7 @@ void HydrovarEsFighter::RetreatFrom(SpaceLocation* L, int r, int m)
 
 void HydrovarEsFighter::searchForTarget(void)
 {
-	STACKTRACE
+	 
   long int searchLayers = 0;
 	SpaceObject *o;
 	if(creator)
@@ -559,7 +559,7 @@ void HydrovarEsFighter::searchForTarget(void)
   if(this->targetsSpecial) searchLayers += bit(LAYER_SPECIAL);
 	for (a.begin(this, searchLayers, trackingRange, QUERY_OBJECT); a.current; a.next()) {
 //		if(a.currento==NULL)
-//			tw_error("Null object during search loop.");
+//			throw("Null object during search loop.");
 		o = a.currento;
 		if( (!o->isInvisible()) && !o->sameTeam(this) && (o->collide_flag_anyone & bit(LAYER_LINES)))
 			getTarget(o);
@@ -571,7 +571,7 @@ void HydrovarEsFighter::searchForTarget(void)
 
 HydrovarEsFighter::~HydrovarEsFighter()
 {
-	STACKTRACE;
+	 
 	/* this is rather illegal here !! --> move to the death() function [geo]
 	if(creator)
 	{
@@ -614,7 +614,7 @@ HydrovarBeam::HydrovarBeam (SpaceLocation *creator, double langle, int lcolor,
 
 void HydrovarBeam::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	double rr;
 	double rdamage;
 	rr = exp(range_attenuation_factor * log(1.01 - length/startingLength));
@@ -642,7 +642,7 @@ without it
 
 void HydrovarBeam::calculate()
 {
-	STACKTRACE
+	 
 	length = startingLength;
 
 	double tt;

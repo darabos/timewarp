@@ -73,7 +73,7 @@ TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
 	
 void FweiksCrystal::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	if (!state)
 		return;
 
@@ -102,7 +102,7 @@ TimedShot(creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage)
 
 void FweiksFeather::calculate()
 {
-	STACKTRACE
+	 
 	// the velocity of a falling feather is ... somewhat weird.
 
 	/*
@@ -163,7 +163,7 @@ Ship(opos, angle, data, code)
 
 int FweiksAvian::activate_weapon()
 {
-	STACKTRACE
+	 
 	//creator, orelpos, orelangle, osprite, ovel, otime, oarmour, odamage
 	TimedShot *tmp = new FweiksCrystal( this, 
 		Vector2(0.0, size.y / 1.5), 0.0, data->spriteWeapon,
@@ -181,7 +181,7 @@ int FweiksAvian::activate_weapon()
 
 int FweiksAvian::activate_special()
 {
-	STACKTRACE
+	 
 	int i;
 
 	for ( i = -1; i < 2; ++i )

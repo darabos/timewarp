@@ -78,7 +78,7 @@ DIALOG options_dialog[] = {
   { NULL,              0,    0,     0,    0,    255,  0,    0,    0,       1,    0,    NULL, NULL, NULL }
 	};
 
-void options_menu (Game *game) {STACKTRACE
+void options_menu (Game *game) { 
 	int a;
 	while (true) {
 		a = tw_popup_dialog(NULL, options_dialog, 0);
@@ -202,7 +202,7 @@ int handleGammaSliderChange(void *dp3, int d2) {
 }
 
 
-void video_menu (Game *game) {STACKTRACE
+void video_menu (Game *game) { 
 	int choice = -1;
     bool done = false;
     
@@ -219,13 +219,13 @@ void video_menu (Game *game) {STACKTRACE
             y = strtol(strchr(resolution[i], 'x') + 1, NULL, 10);
             if ((x == x2) && (y == y2)) break;
         }
-        if(!resolution[0]) { tw_error("Resolution error"); }
+        if(!resolution[0]) { throw("Resolution error"); }
         	
         video_dialog[DIALOG_VIDEO_RESLIST].d1 = i;
         //set index for bpp
         bpp = videosystem.bpp;
         for (i = 0; true; i += 1) {
-            if (!color_depth[i]) { tw_error("video_menu - current bpp invalid?"); }
+            if (!color_depth[i]) { throw("video_menu - current bpp invalid?"); }
             if (strtol(color_depth[i], NULL, 10) == bpp) break;
         }
         video_dialog[DIALOG_VIDEO_BPPLIST].d1 = i;
@@ -272,7 +272,7 @@ void video_menu (Game *game) {STACKTRACE
            
              case DIALOG_VIDEO_SET_DEFAULT:
                  if ((bpp2 != bpp) && game) {
-                     tw_alert ("Color depths cannot be changed in\nthe middle of a game\nin this version", "Okay");
+                     throw ("Color depths cannot be changed in\nthe middle of a game\nin this version", "Okay");
                  }
                  else {
                      done = true;
@@ -359,7 +359,7 @@ DIALOG audio_dialog[] = {
   { NULL,              0,   0,    0,    0,    255,  0,    0,    0,       0,    0,    NULL, NULL, NULL }
 	};
 
-void audio_menu (Game *game) {STACKTRACE
+void audio_menu (Game *game) { 
 	int i;
 
 	//set dialog values
@@ -492,7 +492,7 @@ DIALOG old_optionsDialog[] =
    { NULL,            0,   0,   0,   0,   0,   0,   0,    0,      0,   0,   NULL,                       NULL, NULL          }
 };
 
-void change_options() {STACKTRACE
+void change_options() { 
 	int optionsRet, i;
 
 	set_config_file("client.ini");
@@ -640,10 +640,10 @@ void change_options() {STACKTRACE
 	return;
 	}
 
-void config_menu (Game *game) {STACKTRACE
+void config_menu (Game *game) { 
 	change_options();
 	};
-void physics_menu (Game *game) {STACKTRACE
+void physics_menu (Game *game) { 
 	};
 
 

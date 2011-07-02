@@ -33,16 +33,12 @@ static volatile int twgui_timer_dummy()
 	return 0;
 }
 
-
-twgui_err_handler_type *twgui_error = error_handler_dummy;
-
 twgui_time_handler_type *twgui_time = twgui_timer_dummy;
 
 
-void twgui_init(twgui_time_handler_type t, twgui_err_handler_type f)
+void twgui_init(twgui_time_handler_type t)
 {
 	twgui_time = t;
-	twgui_error = f;
 }
 
 
@@ -95,7 +91,7 @@ BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif)
 
 	if (strlen(identif) > 120)
 	{
-		twgui_error("string exceeds max length");
+		throw("string exceeds max length");
 	}
 
 	strcpy(objname, identif);
@@ -107,7 +103,7 @@ BITMAP *find_datafile_bmp(DATAFILE *datafile, char *identif)
 	{
 		//char txt[512];
 		//sprintf(txt, "Could not find %s", objname);
-		//twgui_error(txt);
+		//throw(txt);
 		return 0;
 	}
 

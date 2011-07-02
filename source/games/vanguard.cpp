@@ -109,7 +109,7 @@ HyperJammer::HyperJammer(Ship *target, int rate)
 
 void HyperJammer::calculate()
 {
-	STACKTRACE;
+	 
 
 	if(Target==NULL) return;
 	if(!Target->exists())
@@ -171,7 +171,7 @@ public:
 
 void VanRadar::addTeam(TeamCode team, int color)
 {
-	STACKTRACE;
+	 
 
 	if(Coded_Teams<(MAX_TEAMS-1))
 	{
@@ -190,7 +190,7 @@ VanRadar::VanRadar(BITMAP *BlankSlate, SpaceLocation *target, double size):ZRada
 //I have overriden ZRadar::Paint() with a more complicated radar painter.
 void VanRadar::Paint(BITMAP *Slate, double Tx, double Ty)
 {
-	STACKTRACE;
+	 
 
 	for(int num=0; num<physics->num_items; num++)
 	{
@@ -309,7 +309,7 @@ public:
 
 int Vanguard::search_key(int key)
 {
-	STACKTRACE;
+	 
 
 	for(int num=0; num<Num_Van_Keys; num++)
 			if(key==Van_Keys[num]) return num;
@@ -330,7 +330,7 @@ Vanguard::~Vanguard()
 
 DATAFILE *Vanguard::FindDat(DATAFILE *datarray, char *name)
 {
-	STACKTRACE;
+	 
 
 	for(int num=0; num<NUM_ENTRIES; num++)
 		if(strcmp(name,datarray[num].prop[1].dat)==0) return &datarray[num];
@@ -340,7 +340,7 @@ DATAFILE *Vanguard::FindDat(DATAFILE *datarray, char *name)
 
 bool Vanguard::handle_key(int k)
 {
-	STACKTRACE;
+	 
 
 	//message.print(1000,12,"Key:  %s",key_to_name(k>>8, buffy));
 	switch(search_key(k>>8))
@@ -392,7 +392,7 @@ bool Vanguard::handle_key(int k)
 
 BITMAP *Vanguard::GetBitmap(DATAFILE *datArray, char *bitmapName)
 {
-	STACKTRACE;
+	 
 
 	DATAFILE *tmpdata;		//The object that the data gets tossed into
 	BITMAP *src,*bmp;		//Two bitmaps:  One direct from tmpdata, and the copy of it that will be returned.
@@ -424,7 +424,7 @@ BITMAP *Vanguard::GetBitmap(DATAFILE *datArray, char *bitmapName)
 
 SpaceSprite *Vanguard::GetSprite(DATAFILE *datArray, char *spriteName)
 {
-	STACKTRACE;
+	 
 
 	DATAFILE *tmpdata;		//Temporary holder for data
 
@@ -440,7 +440,7 @@ SpaceSprite *Vanguard::GetSprite(DATAFILE *datArray, char *spriteName)
 
 bool Vanguard::GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr, int numSprites)
 {
-	STACKTRACE;
+	 
 
 
 	//Example to load 10 sprites into an empty array, do:
@@ -467,7 +467,7 @@ bool Vanguard::GetSprites(SpaceSprite *Pics[], DATAFILE *datArray, char *cmdStr,
 void Vanguard::calculate()
 {
 
-	STACKTRACE;
+	 
 
 	Game::calculate();	// NOTE: skip normalgame calculate, is that ok ?
 //	if (human_panel[0] && !human_panel[0]->exists()) human_panel[0] = NULL;
@@ -551,7 +551,7 @@ void Vanguard::set_resolution(int screen_x, int screen_y) {
 
 void Vanguard::pick_new_ships()
 {
-	STACKTRACE;
+	 
 
 	int i;
 	acquire_screen();
@@ -651,7 +651,7 @@ void Vanguard::pick_new_ships()
 				w2 = (int)Centre[i]->pos.x;
 				h2 = (int)Centre[i]->pos.y;
 
-				if(pow(pow(w-w2,2)+pow(h-h2,2),.5)<MinDistance) ok=0;
+				if(pow(pow(double(w-w2),2)+pow(double(h-h2),2),.5)<MinDistance) ok=0;
 			}
 
 			n++;
@@ -752,7 +752,7 @@ done:
 
 
 void Vanguard::init(Log *_log) {
-	STACKTRACE;
+	 
 
 	int minbots = 4;		// bots are the enemy, so ...
 	if (num_bots < minbots)		// require a minimum number of bots
@@ -788,7 +788,7 @@ void Vanguard::init(Log *_log) {
 	//The normal size is 3840x3840
 
 	blankRadar=GetBitmap(VanDat,"Scope");		//Load blank RADAR image
-	if(!blankRadar) error("Can't load scope image.");
+	if(!blankRadar)throw("Can't load scope image.");
 
 	// create a jammer for each player (to enter hyperspace)
 	int i;
@@ -818,16 +818,16 @@ void Vanguard::init(Log *_log) {
 	fclose(fp);
 
 	if(GetSprites(PlanetPics,VanDat,"Station_Planet%03d",Num_Planet_Pics)==FALSE)
-		error("File error, planet pics.  Bailing out...");
+		throw("File error, planet pics.  Bailing out...");
 
 	if(GetSprites(GiantPics,VanDat,"Station_Giant%03d",Num_Giant_Pics)==FALSE)
-		error("File error, giant pics.  Bailing out...");
+		throw("File error, giant pics.  Bailing out...");
 
 	if(GetSprites(MoonPics,VanDat,"Station_Moon%03d",Num_Moon_Pics)==FALSE)
-		error("File error, moon pics.  Bailing out...");
+		throw("File error, moon pics.  Bailing out...");
 
 	if(GetSprites(StarPics,VanDat,"Star%03d",Num_Star_Pics)==FALSE)
-		error("File error, star pics.  Bailing out...");
+		throw("File error, star pics.  Bailing out...");
 
 //End Solar System Melee code
 

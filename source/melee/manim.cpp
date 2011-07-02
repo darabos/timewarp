@@ -20,9 +20,9 @@ frame_step(frame_length),
 scale(_scale),
 transparency(0)
 {
-	STACKTRACE;
+	 
 	if (frame_size <= 0) {
-		tw_error("Animation::Animation - frame_size == %d in %s", frame_size, get_identity());
+		throw("Animation::Animation - frame_size == %d in %s", frame_size, get_identity());
 		frame_size = 1;
 	}
 
@@ -31,7 +31,7 @@ transparency(0)
 		// debug info...
 		SpaceLocation *l = ship;
 		int N = sprite->frames();
-		tw_error("Animation: frame count error in %s.", get_identity());
+		throw("Animation: frame count error in %s.", get_identity());
 	}
 	sprite_index = first_frame;
 	layer = LAYER_HOTSPOTS;
@@ -47,7 +47,7 @@ transparency(0)
 }
 
 void Animation::calculate() {
-	STACKTRACE;
+	 
 
 	frame_step -= frame_time;
 	
@@ -66,13 +66,13 @@ void Animation::calculate() {
 
 	if (sprite_index < 0 || sprite_index >= sprite->frames())
 	{
-		tw_error("Animation: sprite index overflow.");
+		throw("Animation: sprite index overflow.");
 	}
 	
 	SpaceObject::calculate();
 }
 
-void Animation::animate(Frame *space) {STACKTRACE
+void Animation::animate(Frame *space) { 
 	if (transparency != 0) {
 		int old = aa_get_trans();
 		aa_set_trans( iround(old * (1 - transparency) + 255 * transparency) );
@@ -86,7 +86,7 @@ void Animation::animate(Frame *space) {STACKTRACE
 		{
 			if (sprite_index >= sprite->frames())
 			{
-				tw_error("SpaceSprite::animate - index %d in %s >= count %d", sprite_index, get_identity(), sprite->frames());
+				throw("SpaceSprite::animate - index %d in %s >= count %d", sprite_index, get_identity(), sprite->frames());
 				return;
 			}
 			
@@ -101,7 +101,7 @@ FixedAnimation::FixedAnimation(SpaceLocation *creator, SpaceLocation *opos,
 	:
 	Animation(creator, opos->normal_pos(), osprite, first_frame, num_frames, frame_length, depth),
 	follow(opos)
-	{STACKTRACE
+	{ 
 	if(!follow->exists()) {
 		state = 0;
 		follow = NULL;
@@ -110,7 +110,7 @@ FixedAnimation::FixedAnimation(SpaceLocation *creator, SpaceLocation *opos,
 
 void FixedAnimation::calculate()
 {
-	STACKTRACE;
+	 
 
 	if (follow->exists())
 	{
@@ -131,7 +131,7 @@ PositionedAnimation::PositionedAnimation(SpaceLocation *creator,
 	:
 	FixedAnimation(creator, opos, osprite, first_frame, num_frames, frame_length, depth),
 	relative_pos(rel_pos)
-	{STACKTRACE
+	{ 
 	if (!follow || !follow->exists()) {
 		state = 0;
 		return;
@@ -139,7 +139,7 @@ PositionedAnimation::PositionedAnimation(SpaceLocation *creator,
 	pos += rotate(relative_pos, follow->get_angle());
 	}
 
-void PositionedAnimation::calculate() {STACKTRACE
+void PositionedAnimation::calculate() { 
 	FixedAnimation::calculate();
 	if (!exists()) return;
 	pos += rotate(relative_pos, follow->get_angle());

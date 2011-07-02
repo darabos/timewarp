@@ -169,7 +169,7 @@ DIALOG fleetDialog[] = {
 
 bool safeToDrawPreview = false;
 
-static ShipType* showing_shipimage_type = 0;
+static ShipType* showing_shipimage_type = null;
 
 static int rotationFrame = 0;
 
@@ -212,7 +212,7 @@ void remove_ship_image()
 
 
 // FLEET - dialog function
-void edit_fleet(int player) {STACKTRACE
+void edit_fleet(int player) { 
 	char tmp[40];
 	char path[80];
     char fleetCostString[80] = "";
@@ -339,7 +339,7 @@ void edit_fleet(int player) {STACKTRACE
            case FLEET_DIALOG_ADD_BUTTON: 
 			   int k;
 			   k = fleetDialog[FLEET_DIALOG_AVAILABLE_SHIPS_LIST].d1;
-			   if (k < 0 || k >= reference_fleet->getSize()) {tw_error("invalid ship choice - bug");}
+			   if (k < 0 || k >= reference_fleet->getSize()) {throw("invalid ship choice - bug");}
 
                selectedSlot = fleet->addShipType(reference_fleet->getShipType(k));
                if (selectedSlot != -1)
@@ -521,7 +521,7 @@ int scp_fleet_dialog_text_list_proc(int msg, DIALOG* d, int c) {
                                            fleetDialog[FLEET_DIALOG_SHIP_PICTURE_BITMAP].h);
 
 	if (!sprite || !panel)
-		tw_error("bitmap error");
+		throw("bitmap error");
 
 	//selection has changed
 	// (or nothing is shown, yet)

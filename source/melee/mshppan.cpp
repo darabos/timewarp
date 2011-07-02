@@ -22,7 +22,7 @@ const int batt_x = 56;
 const int batt_y = 53;
 
 
-ShipPanel::ShipPanel(Ship *_ship) {STACKTRACE
+ShipPanel::ShipPanel(Ship *_ship) { 
 	id |= ID_SHIP_PANEL;
 
 	panel   = create_bitmap(64, 100);
@@ -59,14 +59,14 @@ ShipPanel::ShipPanel(Ship *_ship) {STACKTRACE
 	}
 
 ShipPanel::~ShipPanel()
-{STACKTRACE
+{ 
   destroy_bitmap(captain);
   destroy_bitmap(panel);
   window->deinit();
   delete window;
 }
 
-void ShipPanel::refresh() {STACKTRACE
+void ShipPanel::refresh() { 
 	panel_needs_update = 1;
 	captain_needs_update = 1;
 	return;
@@ -74,11 +74,11 @@ void ShipPanel::refresh() {STACKTRACE
 
 void ShipPanel::calculate()
 {
-	STACKTRACE;
+	 
 
 	if (!exists())
 	{
-		tw_error("should not occur");
+		throw("should not occur");
 	}
 
 	if (!ship) {
@@ -109,11 +109,11 @@ void ShipPanel::calculate()
 	}
 
 void ShipPanel::animate(Frame *space) {
-	STACKTRACE;
+	 
 
 	if (!(state > 0))
 	{
-		tw_error("should not occur");
+		throw("should not occur");
 	}
 
 	BITMAP *screen = window->surface;
@@ -245,7 +245,7 @@ void ShipPanel::animate(Frame *space) {
 
 void ShipPanel::draw_stuff (int x, int y, int w, int h, int dx, int dy, int m, int value, int max, int display_type, int bcolor)
 {
-	STACKTRACE;
+	 
 
 	// custom update by the ship ...
 	if (ship->custom_panel_update(panel, display_type))

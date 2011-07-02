@@ -79,7 +79,7 @@ ForevianShocker::ForevianShocker(Vector2 opos, double shipAngle, ShipData *shipD
 
 int ForevianShocker::activate_weapon()
 {
-	STACKTRACE
+	 
 
 	SpaceSprite *tmp_s = data->spriteWeapon;
 	if (weapon_type==2)	tmp_s = data->spriteExtra;
@@ -96,7 +96,7 @@ int ForevianShocker::activate_weapon()
 
 int ForevianShocker::activate_special()
 {
-	STACKTRACE
+	 
 	if(shockingFrames == 0) {
 		play_sound2(data->sampleSpecial[0]);
 		shockingFrames = specialFrames;
@@ -107,7 +107,7 @@ int ForevianShocker::activate_special()
 
 void ForevianShocker::calculate()
 {
-	STACKTRACE
+	 
 	if(shockVar == 1)
 	{
 		if(shockingFrames > 0)
@@ -164,7 +164,7 @@ ForevianShockwave::ForevianShockwave(double ox, double oy, double oangle, double
 
 void ForevianShockwave::inflict_damage(SpaceObject *other)
 {	
-	STACKTRACE
+	 
 	if (other==last_hit)
 		return;
 	play_sound2(data->sampleSpecial[2]);

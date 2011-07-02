@@ -91,7 +91,7 @@ TauStorm::TauStorm(Vector2 opos, double shipAngle, ShipData *shipData, unsigned 
 
 int TauStorm::activate_weapon()
 {
-	STACKTRACE
+	 
 	int rx;
 	if (slot<2)	rx = 9;
 	else rx = 13;
@@ -108,7 +108,7 @@ int TauStorm::activate_weapon()
 
 int TauStorm::activate_special()
 {
-	STACKTRACE
+	 
 	int rx;
 	if (slot<2)	rx = 9;
 	else rx = 13;
@@ -126,7 +126,7 @@ int TauStorm::activate_special()
 
 void TauStorm::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	if (thrust)
 		sprite->animate(pos, sprite_index + 64, space);
 	else
@@ -164,7 +164,7 @@ TauStormMissile::TauStormMissile (SpaceLocation *creator, double ox, double oy, 
 
 void TauStormMissile::calculate()
 {
-	STACKTRACE
+	 
 	if (latched) {
 
 		if (!latched->exists())
@@ -221,7 +221,7 @@ void TauStormMissile::calculate()
 
 void TauStormMissile::inflict_damage (SpaceObject *other)
 {
-	STACKTRACE
+	 
 
 	if (latched || other->isShot()) return;
 	latched = other;
@@ -235,7 +235,7 @@ void TauStormMissile::inflict_damage (SpaceObject *other)
 
 void TauStormMissile::handle_damage (SpaceObject *other, double normal, double direct)
 {
-	STACKTRACE
+	 
 	Shot::handle_damage(other, normal, direct);
 	if ((state == 0) && (other->isShot()))
 		damage(other, 1);
@@ -243,7 +243,7 @@ void TauStormMissile::handle_damage (SpaceObject *other, double normal, double d
 
 int TauStormMissile::canCollide(SpaceLocation *other)
 {
-	STACKTRACE
+	 
 	if (other == latched) return false;
 	return Shot::canCollide(other);
 }

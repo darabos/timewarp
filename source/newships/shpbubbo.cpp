@@ -211,7 +211,7 @@ BubalosBomber::BubalosBomber  (Vector2 opos, double shipAngle, ShipData *shipDat
 
 int BubalosBomber::activate_weapon()
 {
-	STACKTRACE;
+	 
   if (fire_special && shipCanReverseThrusters) return false;
 
   BubalosMIRV* BMIRV;
@@ -258,7 +258,7 @@ int BubalosBomber::activate_weapon()
     case 1: dx = -8; break;
     case 2: dx = 8; break;
 	case 3: dx = 12;  break;
-	default: tw_error("Unexpected value of weapon_offset"); dx=0;break;
+	default: throw("Unexpected value of weapon_offset"); dx=0;break;
 	}
 */
   double dx;
@@ -303,7 +303,7 @@ BubalosMIRV::BubalosMIRV(double ox,double oy,double oangle, double ov,
 
 
 void BubalosMIRV::calculate() {
-	STACKTRACE
+	 
   double SplitRad = 0;
 	Missile::calculate();
 
@@ -334,7 +334,7 @@ void BubalosMIRV::calculate() {
 
 void BubalosBomber::death()
 {
-	STACKTRACE;
+	 
 	
 	int lastHurrah;
 	double radInc;
@@ -376,7 +376,7 @@ void BubalosBomber::death()
 }
 
 int BubalosBomber::handle_damage(SpaceLocation *source, double normal, double direct) {
-	STACKTRACE;
+	 
 	
 	if (normal > 0) {
 		//normal = int(normal * EAS);
@@ -421,7 +421,7 @@ HomingMissile(opos, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, otrate
 
 int BubalosBomber::activate_special()
 {
-	STACKTRACE;
+	 
 	
 	if ( (!fire_weapon) && shipCanReverseThrusters) return false;
 	
@@ -456,7 +456,7 @@ int BubalosBomber::activate_special()
 
 void BubalosEMPSlug::inflict_damage (SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	
 	if (other->mass) 
 	{
@@ -500,7 +500,7 @@ void BubalosEMPSlug::inflict_damage (SpaceObject *other)
 
 void BubalosBomber::calculate_hotspots()
 {
-	STACKTRACE;
+	 
 	
 	Ship::calculate_hotspots();
 	
@@ -524,7 +524,7 @@ PositionedAnimation(creator, creator, Vector2(ox,oy), osprite, 0, 1, 100, LAYER_
 
 void BubalosBomberFlame::calculate()
 {
-	STACKTRACE;
+	 
 	PositionedAnimation::calculate();
 	if (exists())
 		sprite_index = base_frame + get_index(follow->get_angle());
@@ -532,7 +532,7 @@ void BubalosBomberFlame::calculate()
 
 void BubalosBomber::calculate()
 {
-	STACKTRACE;
+	 
 	if(shipCanReverseThrusters)
 	{
 		if (fire_special && thrust)
@@ -574,7 +574,7 @@ BubalosAccelLimiter::BubalosAccelLimiter(Ship *otarget, double oduration, double
 
 void BubalosAccelLimiter::calculate()
 {
-	STACKTRACE;
+	 
 	timer += frame_time * 1E-3;
 
 	if ( !(mother && mother->exists()) || ( timer > duration ) )

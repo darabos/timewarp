@@ -185,7 +185,7 @@ RGB XXXMangler::crewPanelColor(int k)
 
 int XXXMangler::activate_weapon()
 { 
-	STACKTRACE
+	 
     if (!latched)
 		accelerate(this, angle, weaponDartThrust, weaponSuperSpeed);
 
@@ -199,7 +199,7 @@ int XXXMangler::activate_weapon()
 
 int XXXMangler::activate_special()
 {
-	STACKTRACE;
+	 
 
 	/*
 	if (numSeeds == maxSeeds) {
@@ -237,7 +237,7 @@ int XXXMangler::activate_special()
 
 void XXXMangler::calculate()
 {
-	STACKTRACE;
+	 
 	
 	if(tentacleFrames > 0) {
 		
@@ -315,7 +315,7 @@ void XXXMangler::calculate()
 }
 int XXXMangler::canCollide(SpaceObject *other)
 {
-	STACKTRACE;
+	 
   if ((latched) && (grabbed!=NULL) && (grabbed->exists())) {
     if (grabbed == other)
       return (FALSE);
@@ -325,7 +325,7 @@ int XXXMangler::canCollide(SpaceObject *other)
  
 void XXXMangler::animate(Frame *space)
 {
-	STACKTRACE;
+	 
   BodyFrames -= frame_time * 5;
 
   if ((tentacleFrames > 0) && (latched)) {
@@ -360,7 +360,7 @@ void XXXMangler::animate(Frame *space)
 
 void XXXMangler::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	if (tentacleFrames > 0)
 	{
 		if (!latched)
@@ -425,7 +425,7 @@ XXXManglerMine::XXXManglerMine(Vector2 opos, double ov, double oangle, int odama
 
 void XXXManglerMine::calculate()
 {
-	STACKTRACE
+	 
   AnimatedShot::calculate();
   if (!mineactive) {
     mineArming -= frame_time;
@@ -470,7 +470,7 @@ XXXWebMissile::XXXWebMissile(Vector2 opos, double oangle, double ov,
 }
 
 void XXXWebMissile::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	 
 	if (other->isShip()) add(new XXXWebEffect(
 			(Ship *)(other), data->spriteExtraExplosion, 4, 50, webFrames) );
         Shot::inflict_damage(other);
@@ -497,7 +497,7 @@ XXXWebEffect::XXXWebEffect(Ship *oship,
 }
 
 void XXXWebEffect::calculate() {
-	STACKTRACE
+	 
 
 	frame_step+= frame_time;
 	while (frame_step >= frame_size) {

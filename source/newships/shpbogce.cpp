@@ -300,7 +300,7 @@ void BoggCenturion::animate(Frame* space)
 			k = 40 + sprite_index + 64*flame_frame;
 			if (k >= n)
 			{
-				tw_error("Sprite index overflow in %s", get_identity());
+				throw("Sprite index overflow in %s", get_identity());
 			}
 			
 			tx = sin((sprite_index+3) * 2 * PI / 64.0);
@@ -319,7 +319,7 @@ void BoggCenturion::animate(Frame* space)
 		n = data->spriteWeaponExplosion->frames();
 		if (k >= n)
 		{
-			tw_error("Sprite index overflow in %s", get_identity());
+			throw("Sprite index overflow in %s", get_identity());
 		}
 
         data->spriteWeaponExplosion->draw(ix1, iy1, k, bmp);

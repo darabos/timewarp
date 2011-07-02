@@ -105,7 +105,7 @@ RaalrithMenacer::RaalrithMenacer(Vector2 opos, double shipAngle,
 
 int RaalrithMenacer::activate_weapon()
 {
-	STACKTRACE
+	 
   if (drillFrames <= 0 && !(latched)) {
     drillFrames = weaponFrames;
        return(TRUE);
@@ -123,7 +123,7 @@ int RaalrithMenacer::activate_weapon()
 
 int RaalrithMenacer::activate_special()
 {
-	STACKTRACE
+	 
   if(lockTimer <= 0) {
     lockTimer = lockFrames;
     lock = phase;
@@ -133,7 +133,7 @@ int RaalrithMenacer::activate_special()
 }
 
 void RaalrithMenacer::calculate() {
-	STACKTRACE
+	 
 
   if(drillFrames > 0) {
      drillFrames-= frame_time;
@@ -223,7 +223,7 @@ void RaalrithMenacer::calculate() {
 
 int RaalrithMenacer::canCollide(SpaceObject *other)
 {
-	STACKTRACE
+	 
   if ((latched) && (grabbed!=NULL) && (grabbed->exists())) {
     if (grabbed == other)
       return (FALSE);
@@ -233,7 +233,7 @@ int RaalrithMenacer::canCollide(SpaceObject *other)
  
 void RaalrithMenacer::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	int a;
 	// 0 = not transparent; 255 = fully transparent
 	a = aa_get_trans();
@@ -253,7 +253,7 @@ void RaalrithMenacer::animate(Frame *space)
 
 void RaalrithMenacer::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
   if (drillFrames > 0)
     if (!latched)
       if ((!(sameTeam(other))) && (other->isShip())) {
@@ -315,7 +315,7 @@ RaalrithPoison::RaalrithPoison(RaalrithMenacer *creator, int nduration, Ship *ns
 }
 
 void RaalrithPoison::calculate() {
-	STACKTRACE
+	 
 
   int chance;
 

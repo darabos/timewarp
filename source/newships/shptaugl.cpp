@@ -86,7 +86,7 @@ TauGladius::TauGladius(Vector2 opos, double shipAngle, ShipData *shipData, unsig
 
 void TauGladius::calculate()
 {
-	STACKTRACE
+	 
 	Ship::calculate();
 	if (flash_counter > 0)
 		flash_counter -= frame_time;
@@ -94,7 +94,7 @@ void TauGladius::calculate()
 
 int TauGladius::activate_weapon()
 {
-	STACKTRACE
+	 
 	double s = tw_random(-1.0, 1);
 	s *= fabs(s) * weaponSpread;
 	flash_counter = 25;
@@ -106,7 +106,7 @@ int TauGladius::activate_weapon()
 
 int TauGladius::activate_special()
 {
-	STACKTRACE
+	 
 	game->add(new TauGladiusMissile (this, Vector2(13*side,0), angle,
 			specialVelocity, specialRange, specialDamage,
 			specialTurnRate, specialProxyAngle, specialArmour, 
@@ -118,7 +118,7 @@ int TauGladius::activate_special()
 
 void TauGladius::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	if ((flash_counter > 0) || !flashed) {
 		flashed = true;
 		data->more_sprites[0]->animate(pos, sprite_index, space); }
@@ -147,7 +147,7 @@ TauGladiusMissile::TauGladiusMissile(SpaceLocation *creator, Vector2 opos, doubl
 
 void TauGladiusMissile::calculate()
 {
-	STACKTRACE
+	 
 	if (smoke_frame > 0) smoke_frame -= frame_time;
 	else {
 		while (smoke_frame <= 0)
@@ -192,7 +192,7 @@ TauGladiusShot::TauGladiusShot (SpaceLocation *creator, Vector2 opos, double oan
 
 void TauGladiusShot::calculate()
 {
-	STACKTRACE
+	 
 	SpaceLine::calculate();
 	double rr = (d) / range;
 	r = 255 - int(rr*150);
@@ -207,7 +207,7 @@ void TauGladiusShot::calculate()
 
 void TauGladiusShot::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	damage(other, damage_factor, 0);
 	state = 0;
 	int i = iround_down(damage_factor / 2);
@@ -220,7 +220,7 @@ void TauGladiusShot::inflict_damage(SpaceObject *other)
 
 int TauGladiusShot::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	if((normal > 0) || (direct > 0))
 		state = 0;
 	return 1;
@@ -228,7 +228,7 @@ int TauGladiusShot::handle_damage(SpaceLocation *source, double normal, double d
 
 void TauGladiusShot::animate(Frame *space)
 {
-	STACKTRACE
+	 
 	Vector2 position_base = pos;
 	double length_base = length;
 	double ic;

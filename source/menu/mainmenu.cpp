@@ -30,14 +30,14 @@ SAMPLE * menuSpecial = NULL;
 void prepareTitleScreenAssets() {
   scp = load_datafile("scpgui.dat");
   if (!scp)
-      tw_error("Couldnt load title music");
+      throw("Couldnt load title music");
   
   Music * mymusic = sound.load_music("TitleScreen.dat#TITLEMUSIC");
 
   //Music * mymusic = load_mod("scpgui.dat#SCPMUSIC");
 
   if (!mymusic && sound.is_music_supported())
-     tw_error("Couldnt load title music");
+     throw("Couldnt load title music");
 
   if (mymusic) sound.play_music( mymusic, TRUE);
 
@@ -105,12 +105,12 @@ void MainMenu::_event(Event *e) {
 	}
 }
 
-void MainMenu::enable() {STACKTRACE
+void MainMenu::enable() { 
 	if (!(state & 2)) window->add_callback(this);
 	state |= 3;
 }
 
-void MainMenu::disable() {STACKTRACE
+void MainMenu::disable() { 
 	state &=~ 1;
 }
 
@@ -129,7 +129,7 @@ void MainMenu::init(VideoWindow *parent) {
 }
 
 void MainMenu::deinit() {
-	STACKTRACE
+	 
 	if (state & 2) {
 		window->remove_callback(this);
 		window->deinit();
@@ -138,7 +138,7 @@ void MainMenu::deinit() {
 	}
 }
 
-void MainMenu::doit() {STACKTRACE
+void MainMenu::doit() { 
 	int i;
 	char tmp[32];
 

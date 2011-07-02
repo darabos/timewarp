@@ -10,7 +10,7 @@ REGISTER_FILE
 #include "../melee/mcbodies.h"
 #include "../melee/mview.h"
 
-#include "twgui/twgui.h"
+#include "../twgui/twgui.h"
 
 #include "../melee/mlog.h"
 #include "../scp.h"
@@ -489,21 +489,21 @@ void VGenSystem::setupBinary(SpaceObject* S1, SpaceObject* S2, double radius1, d
 void VGenSystem::setupSprites(void) {
   //GasCloudSpr = new(**SpaceSprite);
 	if(GetSpriteTo64Rot(AstSpr1,"vobject.dat","Asteroid000",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(AstSpr2,"vobject.dat","Asteroid001",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(AstSpr3,"vobject.dat","Asteroid002",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(AstSpr4,"vobject.dat","Asteroid003",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(Flare1,"vobject.dat","Flare000",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(Flare2,"vobject.dat","Flare001",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(Flare3,"vobject.dat","Flare002",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(Flare4,"vobject.dat","Flare003",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 
   DefSatSpr = GetSprite("vobject.dat", "DefSat001", -1);
   SpaceOutpostSpr = GetSprite("vobject.dat", "SpaceOutpost001", -1);
@@ -533,9 +533,9 @@ void VGenSystem::setupSprites(void) {
   BlueGiantSpr = GetSprite("vobject.dat", "Star008", -1);
 
 	if(GetSpriteTo64Rot(NeutronStarSpr,"vobject.dat","Star009",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 	if(GetSpriteTo64Rot(BlackHoleSpr,"vobject.dat","Star010",1,-1)==FALSE)
-		error("File error, things pictures.  Bailing out...");
+		throw("File error, things pictures.  Bailing out...");
 
   VMetalShard::SetMySprite(AstSpr1);
   VMetalAsteroid::SetMySprite(AstSpr2);
@@ -584,7 +584,7 @@ int numSprites, int attribs)
 //		sprintf(dataStr,cmdStr,num);
 	if (numSprites != 1)
 	{
-		tw_error("Vgensystem: trying to initialize >1 sprites, only 1 allowed");
+		throw("Vgensystem: trying to initialize >1 sprites, only 1 allowed");
 	}
 
 		strcpy(dataStr, cmdStr);
@@ -842,7 +842,7 @@ void VGenSystem::init_objects()
 	int ichoice = i;
 
 	if (i == -1)
-		tw_error("Vgensys: map type choice (-1) error");
+		throw("Vgensys: map type choice (-1) error");
 
 	/*
 	int k1 = random(1000);

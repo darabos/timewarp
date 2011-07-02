@@ -57,15 +57,14 @@ enum {OPTION_UNKNOWN = 0, OPTION_FRONT, OPTION_NO_FRONT, OPTION_SIDES,
 #define TACTIC_RANGE 4
 
 // for testing (graphics):
-#include "scp.h"
+#include "../scp.h"
 
 /*! \brief Check danger
   \return Max damage ship can get from his enemies
 */
 double ControlWussie::check_danger ()
 {
-	STACKTRACE;
-
+	
 	double d = 0;
 	Query q;
 	q.begin (ship, OBJECT_LAYERS, ship->size.x + ship->size.y + 200, QUERY_OBJECT);
@@ -106,8 +105,7 @@ const char *ControlWussie::getTypeName ()
 
 double ControlWussie::evasion (Ship * ship)
 {
-	STACKTRACE;
-
+	
 	double check_range;
 
 	double frac = ship->turn_rate*1E3 / PI2; // turning-arc-fraction in 1 second.
@@ -262,16 +260,15 @@ double ControlWussie::evasion (Ship * ship)
 
 int ControlWussie::think ()
 {
-	STACKTRACE;
-
+	
 	if (channel != channel_none)
 	{
-		tw_error("WussieBot is not on a local channel. It should be, though.");
+		throw("WussieBot is not on a local channel. It should be, though.");
 	}
 
 	if ((ship) && (ship->control != this) && (ship->control && ship->control->cyborg != this) )
 	{
-		tw_error("error in control reference...");
+		throw("error in control reference...");
 	}
 
 	if (!(ship && ship->exists()))
@@ -280,7 +277,7 @@ int ControlWussie::think ()
 		// calculate function or so. It shouldn't be possible, but I'll place it here anyway
 		if (ship && temporary)
 		{
-			tw_error("think() ship=0, shouldn't be possible");
+			throw("think() ship=0, shouldn't be possible");
 			state = 0;				// this control dies
 			ship->control = 0;		// the ship should know.
 		}
@@ -303,7 +300,7 @@ int ControlWussie::think ()
 
 	if (ship->target && ship->target->state < -1 )
 	{
-		tw_error("Ship should clean up its target pointer");
+		throw("Ship should clean up its target pointer");
 	}
 	
 	if (ship->target && !ship->target->isInvisible ())
@@ -682,7 +679,7 @@ int ControlWussie::think ()
 		else
 			field_fire = TRUE;
 
-		bool weapon_in_range;
+		bool weapon_in_range = false;
 
 		if (fabs (angle_fire) < sweep[j])// && distance < option_range[state][j])
 		{
@@ -1046,15 +1043,14 @@ ControlWussie::ControlWussie (const char *name, int channel):Control (name,
 
 void ControlWussie::select_ship (Ship * ship_pointer, const char *ship_name)
 {
-	STACKTRACE;;
-
+	
 	//char tmp[20];
 	int i, j, k;
 	Control::select_ship (ship_pointer, ship_name);
 
 	if (ship && ship->control != this)
 	{
-		tw_error("error in control reference...");
+		throw("error in control reference...");
 	}
 	
 	if (ship_name)

@@ -18,7 +18,7 @@ extern twgui_err_handler_type *twgui_error;
 
 
 
-void twgui_init(twgui_time_handler_type t, twgui_err_handler_type f);
+void twgui_init(twgui_time_handler_type t);
 
 int mapkey(int scancode_key, int scancode_ctrl = 0);
 int unmapkey1(int k);

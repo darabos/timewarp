@@ -83,7 +83,7 @@ Ship(opos, shipAngle, shipData, code) {
 
 int Viogen::activate_weapon()
 {
-	STACKTRACE
+	 
 	add(new ViogenMissile(
 		Vector2( 20.0, 0.5*get_size().y), -0.5*PI, angle, weaponVelocity, weaponDamage, weaponRange,
 		weaponArmour, this, data->spriteWeapon));
@@ -99,7 +99,7 @@ int Viogen::activate_weapon()
 
 int Viogen::activate_special()
 {
-	STACKTRACE
+	 
 
 	/*
 	old special: addition of fuel at the cost of speed... that's a bit lame.
@@ -153,7 +153,7 @@ Missile(oship, opos, oangle, ov, odamage, orange, oarmour, oship, osprite)
 
 void ViogenMissile::calculate()
 {
-	STACKTRACE
+	 
 	Missile::calculate();
 
 	if (!state)
@@ -208,7 +208,7 @@ Shot(creator, rpos, oangle, ov, odamage, orange, oarmour, opos, osprite, relativ
 
 int ViogenPlasma::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE;
+	 
 
 	armour += normal + direct;
 
@@ -217,7 +217,7 @@ int ViogenPlasma::handle_damage(SpaceLocation *source, double normal, double dir
 
 void ViogenPlasma::calculate()
 {
-	STACKTRACE;
+	 
 	
 	Shot::calculate();
 

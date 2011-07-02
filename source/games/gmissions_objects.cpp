@@ -18,7 +18,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 #include "../util/aastr.h"
 
 
-#include "twgui/twgui.h"
+#include "../twgui/twgui.h"
 
 #include "gmissions_objects.h"
 
@@ -32,8 +32,7 @@ REGISTER_FILE                  //done immediately after #including melee.h, just
 // point to a data-file (inside a data file).
 SpaceSprite *gensprite(char *datafilename, char *dataobjectname, char *ident)
 {
-	STACKTRACE
-
+	
 	DATAFILE *d_raw, *d, *config, *bmpdata;
 
 	d_raw = load_datafile_object(datafilename, dataobjectname);
@@ -47,7 +46,7 @@ SpaceSprite *gensprite(char *datafilename, char *dataobjectname, char *ident)
 	config = find_datafile_object(d, "INFO_TXT");
 	if (!config)
 	{
-		tw_error("could not find object/ship info for the mission sprite");
+		throw("could not find object/ship info for the mission sprite");
 	}
 	set_config_data((char*) config->dat, config->size);
 
@@ -136,8 +135,7 @@ Ship(0, opos, random(PI2),
 
 void MissionShip::calculate()
 {
-	STACKTRACE
-
+	
 	Ship::calculate();
 
 	missioncontrol();
@@ -167,8 +165,7 @@ SpaceLine(creator, lpos, langle, llength, lcolor)
 
 void SpaceLineVoid::setline(Vector2 p1, Vector2 p2)
 {
-	STACKTRACE
-
+	
 	Vector2 seg;
 	
 	seg = p2 - p1;
@@ -201,8 +198,7 @@ SpaceLocation(0, apos, 0)
 
 bool SpecialArea::inreach(SpaceLocation *s)
 {
-	STACKTRACE
-
+	
 	if (distance(s) <= R)
 		return true;
 	else
@@ -212,8 +208,7 @@ bool SpecialArea::inreach(SpaceLocation *s)
 
 void SpecialArea::animate(Frame *space)
 {
-	STACKTRACE
-
+	
 	// create a ring of line segments, growing outward in 1 second:
 	rping += R * frame_time * 1E-3;
 	if (rping > R)
@@ -279,9 +274,7 @@ Asteroid()
 
 void AsteroidBelt::death()
 {
-	STACKTRACE
-
-
+	
 	Animation *a = new Animation(this, pos,
 			explosion, 0, explosion->frames(), time_ratio, get_depth());
 	a->match_velocity(this);
@@ -294,8 +287,7 @@ void AsteroidBelt::death()
 
 Vector2 AsteroidBelt::correction()
 {
-	STACKTRACE
-
+	
 	if (frame_time == 0)
 		return 0;
 
@@ -315,8 +307,6 @@ Vector2 AsteroidBelt::correction()
 
 void AsteroidBelt::calculate()
 {
-	STACKTRACE
-
 	
 	// at a distance R, and vel v, you need the following correction towards the center to maintain orbit:
 
@@ -336,8 +326,7 @@ void AsteroidBelt::calculate()
 //	virtual int accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed=MAX_SPEED); //changes an objects velocity by delta_v, to a maximum of max_speed
 int AsteroidBelt::accelerate(SpaceLocation *source, double angle, double vel, double max_speed)
 {
-	STACKTRACE
-
+	
 	if (source->isPlanet())
 		return 0;	// do nothing.
 	else
@@ -346,8 +335,7 @@ int AsteroidBelt::accelerate(SpaceLocation *source, double angle, double vel, do
 
 int AsteroidBelt::accelerate(SpaceLocation *source, Vector2 delta_v, double max_speed)
 {
-	STACKTRACE
-
+	
 	if (source->isPlanet())
 		return 0;	// do nothing.
 	else
@@ -377,9 +365,7 @@ Asteroid()
 
 void AsteroidZone::death()
 {
-	STACKTRACE
-
-
+	
 	Animation *a = new Animation(this, pos,
 			explosion, 0, explosion->frames(), time_ratio, get_depth());
 	a->match_velocity(this);
@@ -393,8 +379,7 @@ void AsteroidZone::death()
 void AsteroidZone::calculate()
 {
 	
-	STACKTRACE
-
+	
 	Asteroid::calculate();
 
 	double rtest;

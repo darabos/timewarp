@@ -148,7 +148,7 @@ Ship(opos, shipAngle, shipData, code)
 
 int TauMC::activate_weapon()
 {
-	STACKTRACE
+	 
         if ((fire_special) || (!torpedo_ready[current_torpedo]) || (lock_count < lock_ticks))
                 return false;
         add(new TauMCTorpedo(Vector2(20*(2*current_torpedo-1), 25), angle,
@@ -163,7 +163,7 @@ int TauMC::activate_weapon()
 
 int TauMC::activate_special()
 {
-	STACKTRACE
+	 
         if ((!fire_weapon) || (ammo == 0))
 			return false;
 
@@ -185,7 +185,7 @@ int TauMC::activate_special()
 
 void TauMC::animate(Frame *space)
 {
-	STACKTRACE
+	 
 
 		double ra;
         int turret_index;
@@ -249,7 +249,7 @@ void TauMC::animate(Frame *space)
 
 void TauMC::calculate_turn_left()
 {
-	STACKTRACE
+	 
         if (turn_left) {
                 if (fire_special)
                         turret_angle -= turretTurnRate * frame_time;
@@ -259,7 +259,7 @@ void TauMC::calculate_turn_left()
 
 void TauMC::calculate_turn_right()
 {
-	STACKTRACE
+	 
         if (turn_right) {
                 if (fire_special)
                         turret_angle += turretTurnRate * frame_time;
@@ -268,7 +268,7 @@ void TauMC::calculate_turn_right()
 
 void TauMC::calculate()
 {
-	STACKTRACE
+	 
         Ship::calculate();
 
         if (target?(!target->isInvisible()):false) {
@@ -312,7 +312,7 @@ void TauMC::calculate()
 
 void TauMC::calculate_hotspots()
 {
-	STACKTRACE
+	 
         if((thrust) && (hotspot_frame <= 0)) {
                 add(new Animation(this,
                                   //normal_x() - (cos(angle * ANGLE_RATIO) * w / 2.0),
@@ -332,7 +332,7 @@ RGB TauMC::battPanelColor(int k)
 
 int TauMC::handle_damage(SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	double d;
 
 	d = normal + direct;
@@ -370,7 +370,7 @@ TauMCMissile::TauMCMissile(Vector2 opos, double oangle, double ov, int odamage,
 }
 
 double TauMCMissile::get_aim(SpaceObject *tgt) {
-	STACKTRACE
+	 
         Vector2 tv = tgt->get_vel();
         //double tvy = tgt->get_vy();
         //double rx  = min_delta(tgt->normal_x(), normal_x(), X_MAX);
@@ -401,7 +401,7 @@ double TauMCMissile::get_aim(SpaceObject *tgt) {
 
 void TauMCMissile::calculate()
 {
-	STACKTRACE
+	 
 	Missile::calculate();
         if (state == 0) return;
         if (target)
@@ -472,7 +472,7 @@ HomingMissile(creator, opos, oangle, ov, odamage, orange, oarmour, otrate, creat
 
 void TauMCTorpedo::calculate()
 {
-	STACKTRACE
+	 
         HomingMissile::calculate();
         if (target) {
                 double r = distance(target);
@@ -485,7 +485,7 @@ void TauMCTorpedo::calculate()
 
 void TauMCTorpedo::soundExplosion()
 {
-	STACKTRACE
+	 
         if (old_range < blast_range)
                 damage_factor = blast_damage;
         HomingMissile::soundExplosion();
@@ -493,7 +493,7 @@ void TauMCTorpedo::soundExplosion()
 
 void TauMCTorpedo::animateExplosion()
 {
-	STACKTRACE
+	 
         if (exploded) return;
         exploded = true;
         if (old_range < blast_range) {

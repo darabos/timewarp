@@ -112,7 +112,7 @@ BigShip(opos,  shipAngle, shipData, code)
 
 int Olidandee::activate_weapon()
 {	
-	STACKTRACE
+	 
 
 	if (parts[0])
 	{
@@ -143,7 +143,7 @@ int Olidandee::activate_weapon()
 
 int Olidandee::activate_special()
 {
-	STACKTRACE
+	 
 
 	if (crew > specialCrewuse && Nspecial < 5)
 	{
@@ -165,7 +165,7 @@ int Olidandee::activate_special()
 
 void Olidandee::calculate()
 {
-	STACKTRACE
+	 
 	BigShip::calculate();
 
 	if (!state)
@@ -195,7 +195,7 @@ BigShipPart(omother, orelpos, orelangle, osprite, 0)
 
 void OlidandeeArm::calculate()
 {
-	STACKTRACE;
+	 
 	if (!(owner && owner->exists()))
 	{
 		owner = 0;
@@ -278,7 +278,7 @@ SpaceObject(omother, opos, oangle, osprite)
 
 void OlidandeeHabitat::calculate()
 {
-	STACKTRACE
+	 
 
 	if (!(mother && mother->exists()))
 	{
@@ -368,7 +368,7 @@ void OlidandeeHabitat::calculate()
 // handle damage ?
 void OlidandeeHabitat::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
 	if (!state)
 		return;
 
@@ -393,7 +393,7 @@ void OlidandeeHabitat::inflict_damage(SpaceObject *other)
 
 int OlidandeeHabitat::handle_damage (SpaceLocation *source, double normal, double direct)
 {
-	STACKTRACE
+	 
 	if (!state)
 		return false;
 

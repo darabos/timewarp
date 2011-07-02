@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <string.h>
 //#include <allegro.h>
-#include "melee.h"
+#include "../melee.h"
 REGISTER_FILE
-#include "ais.h"
-#include "melee/mship.h"
-#include "gui.h"
+#include "../ais.h"
+#include "../melee/mship.h"
+#include "../gui.h"
 
 bool cruise_control = false;
 
@@ -66,7 +66,7 @@ void ControlHuman::load(const char* inifile, const char* inisection)
 
 void ControlHuman::save(const char* inifile, const char* inisection)
 {
-	tw_error("should not be used?");
+	throw("should not be used?");
 	player_keys_load_write(&userkeys, inifile, inisection, key_write);
 }
 

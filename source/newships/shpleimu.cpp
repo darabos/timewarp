@@ -133,7 +133,7 @@ void LeiMule::engage_backward(double dweight)
 
 int LeiMule::activate_weapon()
 {	
-	STACKTRACE;
+	 
 	
 	engage_forward(1);
 
@@ -145,7 +145,7 @@ int LeiMule::activate_weapon()
 
 int LeiMule::activate_special()
 {
-	STACKTRACE;
+	 
 
 	// do something else, but what
 	// fire a dummy shot to confuse/irritate the enemy; this costs no energy.

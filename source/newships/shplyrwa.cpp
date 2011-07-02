@@ -110,7 +110,7 @@ LyrmristuWarDestroyer::LyrmristuWarDestroyer(Vector2 opos, double angle, ShipDat
 }
 
 int LyrmristuWarDestroyer::activate_weapon() {
-	STACKTRACE
+	 
   game->add(new LyrmristuWaBolt2(size.y*(0.0), (size.y * 0.6),
     angle, weaponVelocity2, weaponDamage2, weaponRange2, weaponArmour2,
     this, data->spriteWeapon, weaponRelativity2));
@@ -125,7 +125,7 @@ int LyrmristuWarDestroyer::activate_weapon() {
 }
 
 int LyrmristuWarDestroyer::activate_special() {
-	STACKTRACE
+	 
 if(weaponObject==NULL)
 		{weaponObject = (new LyrmristuWaSphere(
 			0.0, 0.0, angle, specialVelocity, specialDamage, specialRange,
@@ -142,7 +142,7 @@ if(weaponObject==NULL)
 	return(TRUE);	}
 
 int LyrmristuWarDestroyer::handle_damage(SpaceLocation *source, double normal, double direct) {
-	STACKTRACE
+	 
 	if(weaponObject==NULL)
 	  return Ship::handle_damage(source, normal, direct);
 	else if(weaponObject->state==0)
@@ -214,7 +214,7 @@ if(powerLevel<1) state=0; //should be the only gateway to kill it!
 }
 
 int LyrmristuWaSphere::handle_damage(SpaceLocation *source, double normal, double direct) {
-	STACKTRACE
+	 
 	int x;
 	x = Shot::handle_damage(source, normal, direct);
 	if(source->isShot()){
@@ -227,7 +227,7 @@ int LyrmristuWaSphere::handle_damage(SpaceLocation *source, double normal, doubl
 	}
 
 void LyrmristuWaSphere::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	 
   int startingTargetArmour=0, endingTargetArmour=0;
 	int originalCrew=-1;
 	int originalStrength;
@@ -258,7 +258,7 @@ void LyrmristuWaSphere::inflict_damage(SpaceObject *other) {
 
 bool LyrmristuWaSphere::die(void)
 {
-	STACKTRACE
+	 
   if(powerLevel>0) {
     state = 1;
     damage_factor = powerLevel;
@@ -274,13 +274,13 @@ bool LyrmristuWaSphere::die(void)
 
 void LyrmristuWaSphere::destroy(void)
 {
-	STACKTRACE;
+	 
 	*PP=NULL;
 	Shot::destroy();
 }
 
 void LyrmristuWaSphere::death(){
-	STACKTRACE;
+	 
 	*PP=NULL;
 }
 

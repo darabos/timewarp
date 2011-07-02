@@ -1,5 +1,5 @@
 
-#include "ship.h"
+#include "../ship.h"
 REGISTER_FILE
 
 static int MAX_TARGETS=3;
@@ -66,7 +66,7 @@ public:
 //invisible ships.  Note that these missiles are not fired unless a GlutaSensorMarker
 //has attached to something.
 void GlutaSensorMissile::calculate() {
-	STACKTRACE;
+	 
 
 	//This used to be if(target&&!invisible()), or something like that.
 	if (target) {
@@ -157,7 +157,7 @@ GlutaSensorHilight::GlutaSensorHilight(GlutaSensorMarked *otarget, Ship *ocreato
 
 void GlutaSensorHilight::calculate()
 {
-	STACKTRACE;
+	 
 	frame_count+=1;
 	if(frame_count>=frame_max)	frame_count=frame_min;
 	sprite_index=frame_count;
@@ -260,7 +260,7 @@ GlutaSensorMarker::GlutaSensorMarker(Vector2 opos, double ov, double s_angle, Gl
 
 void GlutaSensorMarker::calculate()
 {
-	STACKTRACE;
+	 
 	state=1;
 
 	//If the mothership is destroyed, any loose beacons also die.
@@ -276,7 +276,7 @@ void GlutaSensorMarker::calculate()
 
 void GlutaSensorMarker::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	//If the target isn't the right type, don't latch on.
 
 	int IsType=0;
@@ -378,7 +378,7 @@ GlutaSensor::GlutaSensor(Vector2 opos, double shipAngle,
 
 void GlutaSensor::calculate()
 {
-	STACKTRACE;
+	 
 	/*My code*/
 	static int prev_time[16]={0};
 
@@ -409,7 +409,7 @@ void GlutaSensor::calculate()
 
 int GlutaSensor::activate_weapon()
 {
-	STACKTRACE;
+	 
 	int flag=0;
 	for(int Cur_Target=0; Cur_Target<MAX_TARGETS; Cur_Target++)
 	{
@@ -446,7 +446,7 @@ int GlutaSensor::activate_weapon()
 
 int GlutaSensor::activate_special()
 {
-	STACKTRACE;
+	 
 	float min=angle-(specialFan/2);
 	float max=angle+(specialFan/2);
 	float step=(max-min)/specialGlutaSensorMarkernum;

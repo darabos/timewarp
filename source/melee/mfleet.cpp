@@ -63,7 +63,7 @@ Fleet* reference_fleet = NULL;
 //global function to initialize reference_fleet
 //TODO remove this global function and use proper Object-oriented techinques.
 
-void init_fleet() {STACKTRACE
+void init_fleet() { 
 	if(reference_fleet)
 		return;
 	reference_fleet = new Fleet();
@@ -74,20 +74,20 @@ void init_fleet() {STACKTRACE
 	reference_fleet->Sort();
 }
 
-    Fleet::Fleet() {STACKTRACE
+    Fleet::Fleet() { 
         cost = 0;
         maxFleetCost = (FleetCost)FLEET_COST_DEFAULT;
         memset(title, '\0', MAX_TITLE_LENGTH);
     };
 
     void Fleet::reset() {
-		STACKTRACE;
+		 
         ships.clear();
         this->cost = 0;
         memset(title, '\0', MAX_TITLE_LENGTH);
     }
 
-    void * Fleet::serialize (int *psize) {STACKTRACE
+    void * Fleet::serialize (int *psize) { 
         unsigned char buffy[65536];
         int s = 0;
         int j;
@@ -100,7 +100,7 @@ void init_fleet() {STACKTRACE
         for (iter = ships.begin(); iter != ships.end(); iter++) {
             char k = strlen((*iter)->id);
             if (k > 64)
-				{tw_error("serialize_fleet - that's a hell of a long ship id");}
+				{throw("serialize_fleet - that's a hell of a long ship id");}
             memcpy(&buffy[s], &k, sizeof(k)); s += sizeof(k);
         }
 
@@ -116,10 +116,10 @@ void init_fleet() {STACKTRACE
 
 
 
-#define READ(a) if (int(s+sizeof(a))>psize) {delete k;tw_error ("deserialize_fleet - bad!");}memcpy(&a, &buffy[s], sizeof(a)); s += sizeof(a);
-#define READ2(a,b) if (b+s>psize) {delete k;tw_error ("deserialize_fleet - bad!");}memcpy(&a, &buffy[s], b); s += b;
+#define READ(a) if (int(s+sizeof(a))>psize) {delete k;throw ("deserialize_fleet - bad!");}memcpy(&a, &buffy[s], sizeof(a)); s += sizeof(a);
+#define READ2(a,b) if (b+s>psize) {delete k;throw ("deserialize_fleet - bad!");}memcpy(&a, &buffy[s], b); s += b;
 
-    void Fleet::deserialize(void *data, int psize) {STACKTRACE        
+    void Fleet::deserialize(void *data, int psize) {         
         unsigned char *buffy = (unsigned char *) data;
         int s = 0;
         int j;
@@ -130,12 +130,12 @@ void init_fleet() {STACKTRACE
         
         int _fleet_size = intel_ordering(j);
         if (_fleet_size > MAX_FLEET_SIZE) 
-        {tw_error("fleet too large! (%d ships)", _fleet_size);}
+        {throw("fleet too large! (%d ships)", _fleet_size);}
         k = new unsigned char[_fleet_size];
         for (j = 0; j < _fleet_size; j += 1) {
             READ(k[j]);
             if (k[j] > MAX_SHIP_ID) {
-                tw_error ("deserialize_fleet - that's a long shipid! (%d)", k[j]);
+                throw ("deserialize_fleet - that's a long shipid! (%d)", k[j]);
             }
         }
 		int s1 = s;
@@ -161,11 +161,11 @@ void init_fleet() {STACKTRACE
 				}
 
 				fclose(f);
-                tw_error("deserialize fleet - bad shiptype (%s)", sname);
+                throw("deserialize fleet - bad shiptype (%s)", sname);
             }
             else addShipType(t);
         }
-        if (s != psize)	{tw_error("deserialize_fleet - didn't use all the data...");}
+        if (s != psize)	{throw("deserialize_fleet - didn't use all the data...");}
         if (k)
             delete k;
         return;
@@ -189,7 +189,7 @@ void init_fleet() {STACKTRACE
             addShipType(fleetToAdd->getShipType(i));
     }
 
-    void Fleet::clear_slot (int slot) {STACKTRACE
+    void Fleet::clear_slot (int slot) { 
         if ( (slot >= getSize()) || (slot<0) )
             return;
         cost -= ships[slot]->cost;
@@ -197,14 +197,14 @@ void init_fleet() {STACKTRACE
     
     }
 
-    ShipType * Fleet::getShipType(int slot) {STACKTRACE
+    ShipType * Fleet::getShipType(int slot) { 
         if ( (slot<0) || (slot>=(int)ships.size()))
             return NULL;
 
         return ships[slot];
     }
 
-    void Fleet::save(const char *filename, const char *section) {STACKTRACE
+    void Fleet::save(const char *filename, const char *section) { 
         int count = 0;
         char slot_str[8];
     
@@ -215,7 +215,7 @@ void init_fleet() {STACKTRACE
             set_config_file(filename);
 
         for (MyFleetListType::iterator iter = ships.begin(); iter != ships.end(); iter++) {
-			if (!(*iter)) {tw_error("trying to save invalid ship type in fleet");}
+			if (!(*iter)) {throw("trying to save invalid ship type in fleet");}
             sprintf(slot_str, "Slot%d", count);
             set_config_string(section, slot_str, (*iter)->id);
             count ++;
@@ -226,7 +226,7 @@ void init_fleet() {STACKTRACE
         set_config_int(section, "MaxFleetCost", getMaxCost());
     }
 
-    void Fleet::load(const char *filename, const char *section) {STACKTRACE
+    void Fleet::load(const char *filename, const char *section) { 
         int i, count;
         ShipType *type;
         char slot_str[8];

@@ -22,13 +22,13 @@ Animation( creator, opos, osprite, first_frame, num_frames, frame_size, depth ),
 	int k = sprite_index >>= 6;
 	if (k >= remember_num_frames || k < 0)
 	{
-		tw_error("Object Animation error in animation frame !! Should have died.");
+		throw("Object Animation error in animation frame !! Should have died.");
 	}
 }
 
 void ObjectAnimation::calculate()
 {
-	STACKTRACE;
+	 
 	
 	// divide by 64 (yields the animation frame)
 	sprite_index >>= 6;
@@ -45,7 +45,7 @@ void ObjectAnimation::calculate()
 		int k = sprite_index;
 		if (k >= remember_num_frames || k < 0)
 		{
-			tw_error("Object Animation error in animation frame !! Should have died.");
+			throw("Object Animation error in animation frame !! Should have died.");
 		}
 		
 		// this is the same as multiplying by 64
@@ -59,7 +59,7 @@ void ObjectAnimation::calculate()
 		
 		if (sprite_index >= sprite->frames())
 		{
-			tw_error("SpaceSprite::animate - index %d in %s >= count %d", sprite_index, get_identity(), sprite->frames());
+			throw("SpaceSprite::animate - index %d in %s >= count %d", sprite_index, get_identity(), sprite->frames());
 			return;
 		}
 

@@ -75,7 +75,7 @@ void AsteroidDebris::calculate()
 
 	SpaceObject::calculate();
 
-	STACKTRACE;
+	 
 	step-= frame_time;
 	while(step <= 0) {
 		step += speed * time_ratio;
@@ -97,7 +97,7 @@ void AsteroidDebris::calculate()
 
 int AsteroidDebris::canCollide(SpaceLocation *other) 
 {
-	STACKTRACE;
+	 
 
 	if (collide_flag)
     {
@@ -146,7 +146,7 @@ bool AsteroidCenter::die()
 void AsteroidCenter::calculate()
 {
 
-	STACKTRACE;
+	 
 	AsteroidDebris::calculate();
 	
 
@@ -164,7 +164,7 @@ void AsteroidCenter::calculate()
 
 int AsteroidCenter::canCollide(SpaceLocation *other) 
 {
-	STACKTRACE;
+	 
 
 	if (!other)
 		return 0;
@@ -216,7 +216,7 @@ Laser(creator1, langle, lcolor, lrange,
 
 void ChoraliTractorBeam::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE;
+	 
 	// SpaceObject::inflict_damage(other);
 	if(other != NULL)
 	{
@@ -339,7 +339,7 @@ AsteroidMissile::AsteroidMissile(double ox, double oy, double oangle,
 
 void AsteroidMissile::calculate()
 {
-	STACKTRACE
+	 
 
   HomingMissile::calculate();
   if(sprite_index_count<63)
@@ -362,7 +362,7 @@ void AsteroidMissile::calculate()
 
 void AsteroidMissile::inflict_damage(SpaceObject *other)
 {
-	STACKTRACE
+	 
   SpaceObject::inflict_damage(other);
   add(new Animation(this, pos, explosion, 0, explosion->frames(), time_ratio, LAYER_CBODIES));
   state=0;
@@ -370,7 +370,7 @@ void AsteroidMissile::inflict_damage(SpaceObject *other)
 
 int AsteroidMissile::handle_damage(SpaceLocation *source, double normal, double direct) 
 {
-	STACKTRACE
+	 
   if (!exists()) return 0;
   if (!normal && !direct) return 0;
   
@@ -382,7 +382,7 @@ int AsteroidMissile::handle_damage(SpaceLocation *source, double normal, double 
 }
 void AsteroidMissile::death()
 {
-	STACKTRACE
+	 
   HomingMissile::death();
   add(new Animation(this, pos, explosion, 0, explosion->frames(), time_ratio, LAYER_CBODIES));
 }
@@ -515,7 +515,7 @@ ChoraliExtractor::ChoraliExtractor(Vector2 opos, double shipAngle,
 
 void ChoraliExtractor::death()
 {
-	STACKTRACE
+	 
   Ship::death();
 
   // dangerous, this is a memory leak:
@@ -525,13 +525,13 @@ void ChoraliExtractor::death()
 }
 void ChoraliExtractor::materialize()
 {
-	STACKTRACE;
+	 
 	Ship::materialize();
 
 	
 	if (asteroid_center)
 	{
-		tw_error("asteroid center already present.");
+		throw("asteroid center already present.");
 	}
 	asteroid_center = new AsteroidCenter(this, this->normal_pos());
 	add(asteroid_center);
@@ -539,19 +539,19 @@ void ChoraliExtractor::materialize()
 
 void ChoraliExtractor::calculate_turn_left()
 {
-	STACKTRACE
+	 
   Ship::calculate_turn_left();
 }
 
 void ChoraliExtractor::calculate_turn_right()
 {
-	STACKTRACE
+	 
   Ship::calculate_turn_right();
 }
 
 int ChoraliExtractor::activate_weapon()
 {
-	STACKTRACE;
+	 
 
 	if (drillFrames > 0)
     {
@@ -587,7 +587,7 @@ int ChoraliExtractor::activate_weapon()
 
 int ChoraliExtractor::activate_special()
 {
-	STACKTRACE;
+	 
 	
 	if(this->nearest_planet() != NULL)
     {
@@ -630,7 +630,7 @@ int ChoraliExtractor::activate_special()
 
 void ChoraliExtractor::calculate()
 {
-	STACKTRACE;
+	 
 
 	if(drillFrames > 0) 
 	{
@@ -751,7 +751,7 @@ void ChoraliExtractor::calculate()
 
 int ChoraliExtractor::canCollide(SpaceObject *other)
 {
-	STACKTRACE
+	 
   if ((latched) && (grabbed!=NULL) && (grabbed->exists()))
     {
       if (grabbed == other)
@@ -762,7 +762,7 @@ int ChoraliExtractor::canCollide(SpaceObject *other)
  
 void ChoraliExtractor::animate(Frame *space)
 {
-	STACKTRACE
+	 
     sprite->animate( pos, sprite_index, space);
 }
 
@@ -770,7 +770,7 @@ void ChoraliExtractor::animate(Frame *space)
 void ChoraliExtractor::inflict_damage(SpaceObject *other)
 {
 
-	STACKTRACE;
+	 
 	if (drillFrames > 0)
     {
 		if (!latched)

@@ -26,7 +26,7 @@ int get_tw_aa_mode () {
 	return tw_aa_mode;
 }
 
-int string_to_sprite_attributes ( const char *s, int recommended ) {STACKTRACE
+int string_to_sprite_attributes ( const char *s, int recommended ) { 
 	int a = recommended;
 	if (!s) return a;
 
@@ -115,12 +115,12 @@ inline int find_aa_mode(int general_options) {
 
 
 
-void convert_bitmap(BITMAP *src, BITMAP *dest, int aa_mode) {STACKTRACE
+void convert_bitmap(BITMAP *src, BITMAP *dest, int aa_mode) { 
 	//requires that both be memory bitmaps
 	int obpp = bitmap_color_depth(src);
 	int bpp = bitmap_color_depth(dest);
-	if ((src->w != dest->w) || (src->h != dest->h)) {tw_error("convert_bitmap - wrong size");}
-	//if (obpp == bpp) {tw_error("convert_bitmap - color depths match");}
+	if ((src->w != dest->w) || (src->h != dest->h)) {throw("convert_bitmap - wrong size");}
+	//if (obpp == bpp) {throw("convert_bitmap - color depths match");}
 	//if ((obpp == bpp)) || !(aa_mode & AA_MASKED)) {	//xxx Geo: they are the same size, hence, color-depth conversion is best done by a BLIT.
 	{
 		blit(src, dest, 0, 0, 0, 0, src->w, src->h);
@@ -162,7 +162,7 @@ void convert_bitmap(BITMAP *src, BITMAP *dest, int aa_mode) {STACKTRACE
 	return;
 	}
 /*
-void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
+void color_correct_bitmap(BITMAP *bmp, int masked) { 
 	//return;//remove me!!!
 	int x, y, w, h;
 	w = bmp->w;
@@ -218,13 +218,13 @@ void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 	return;
 	}
 */
-void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
+void color_correct_bitmap(BITMAP *bmp, int masked) { 
 	//return;//remove me!!!
 
 	int bpp = bitmap_color_depth(bmp);
 	if (bpp != 16 && bpp != 32 && bpp != 24)
 	{
-		tw_error("invalid target bitmap depth in color-correct");
+		throw("invalid target bitmap depth in color-correct");
 	}
 
 	int x, y, w, h;
@@ -284,7 +284,7 @@ void color_correct_bitmap(BITMAP *bmp, int masked) {STACKTRACE
 	}
 
 
-void SpaceSprite::change_color_depth(int newbpp) {STACKTRACE
+void SpaceSprite::change_color_depth(int newbpp) { 
 	int i;
 
 	for (i = 0; i < count; i += 1)
@@ -303,7 +303,7 @@ void SpaceSprite::change_color_depth(int newbpp) {STACKTRACE
 
 
 /*
-void SpaceSprite::permanent_phase_shift ( int phase ) {STACKTRACE
+void SpaceSprite::permanent_phase_shift ( int phase ) { 
 	int i, mip;
 	Surface **tmp = new Surface*[count];
 	while (phase < 0) phase += count;
@@ -380,7 +380,7 @@ PMASK *SpaceSprite::get_pmask(int index)
 // file will be deleted.
 SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attributes, int rotations)
 {
-	STACKTRACE
+	 
 	int i, j;
 	BITMAP *bmp;//, *tmp = 0;
 
@@ -389,7 +389,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 	count_base = sprite_count;		// real different images
 	count_rotations = rotations;	// derived rotations from each image.
 	count = sprite_count * rotations;
-	if ((rotations < 1) || (count < 1)) {tw_error("SpaceSprite::SpaceSprite - bad parameters");}
+	if ((rotations < 1) || (count < 1)) {throw("SpaceSprite::SpaceSprite - bad parameters");}
 
 	references = 0;
 	sbitmap = 0;
@@ -416,7 +416,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 		// error intercept? perhaps if memory is overwritten or so?
 		if (bpp != 16 && bpp != 32 && bpp != 24)
 		{
-			tw_error("invalid target bitmap depth");
+			throw("invalid target bitmap depth");
 		}
 
 		// determine the size of this bitmap
@@ -530,7 +530,7 @@ SpaceSprite::SpaceSprite(const DATAFILE *images, int sprite_count, int _attribut
 
 	if (!sbitmap[0])
 	{
-		tw_error("Basic sprite shape expected, but doesn't exist");
+		throw("Basic sprite shape expected, but doesn't exist");
 	}
 
 }
@@ -544,7 +544,7 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 	count_base = sprite_count;		// real different images
 	count_rotations = rotations;	// derived rotations from each image.
 	count = sprite_count * rotations;
-	if ((rotations < 1) || (count < 1)) {tw_error("SpaceSprite::SpaceSprite - bad parameters");}
+	if ((rotations < 1) || (count < 1)) {throw("SpaceSprite::SpaceSprite - bad parameters");}
 
 	int i, j, obpp;
 
@@ -618,7 +618,7 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 
 	if (!sbitmap[0])
 	{
-		tw_error("Basic sprite shape expected, but doesn't exist");
+		throw("Basic sprite shape expected, but doesn't exist");
 	}
 }
 
@@ -626,7 +626,7 @@ SpaceSprite::SpaceSprite(BITMAP **bmplist, int sprite_count, int _attributes, in
 
 
 SpaceSprite::SpaceSprite(SpaceSprite &old) {
-	STACKTRACE
+	 
 	int i;
 	BITMAP *bmp;
 	count = old.count;
@@ -661,24 +661,24 @@ SpaceSprite::SpaceSprite(SpaceSprite &old) {
 
 	if (!sbitmap[0])
 	{
-		tw_error("Basic sprite shape expected, but doesn't exist");
+		throw("Basic sprite shape expected, but doesn't exist");
 	}
 }
 
 void SpaceSprite::lock() {
-	STACKTRACE
+	 
 	return;
 }
 
 void SpaceSprite::unlock()
 {
-	STACKTRACE
+	 
 	return;
 }
 
 
 SpaceSprite::~SpaceSprite() {
-	STACKTRACE
+	 
 	int i;
 
 	for(i = 0; i < count; i++) {
@@ -715,13 +715,13 @@ SpaceSprite::~SpaceSprite() {
 
 
 void SpaceSprite::animate_character(Vector2 pos, int index, int color, Frame *space, double scale) {
-	STACKTRACE
+	 
 	if (index >= count) {
-		tw_error("SpaceSprite::animate_character - index %d >= count %d", index, count);
+		throw("SpaceSprite::animate_character - index %d >= count %d", index, count);
 		index = 0;
 	}
 	if (index < 0) {
-		tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);
+		throw("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);
 		index = 0;
 	}
 	pos = corner(pos, size());
@@ -736,17 +736,17 @@ void SpaceSprite::animate_character(Vector2 pos, int index, int color, Frame *sp
 }
 
 void SpaceSprite::overlay (int index1, int index2, BITMAP *dest) {
-	STACKTRACE
+	 
 	int x, y;
-	if (index1 > count) {tw_error("SpaceSprite::overlay - index1 %d > count %d", index1, count);}
-	if (index2 > count) {tw_error("SpaceSprite::overlay - index2 %d > count %d", index2, count);}
+	if (index1 > count) {throw("SpaceSprite::overlay - index1 %d > count %d", index1, count);}
+	if (index2 > count) {throw("SpaceSprite::overlay - index2 %d > count %d", index2, count);}
 
 	BITMAP *bmp1, *bmp2;
 	bmp1 = get_bitmap(index1);
 	bmp2 = get_bitmap(index2);
 	if ((bmp1->w != bmp2->w) || (bmp1->h != bmp2->h))
 	{
-		tw_error("Overlay: trying to match bitmaps of different sizes.");
+		throw("Overlay: trying to match bitmaps of different sizes.");
 	}
 	for(y = 0; y < bmp1->h; y += 1) {
 		for(x = 0; x < bmp1->w; x += 1) {
@@ -790,9 +790,9 @@ void animate_bmp(BITMAP *bmp, Vector2 pos, Frame *space)
 
 
 void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, BITMAP *surface) {
-	STACKTRACE
-	if (index >= count) {tw_error("SpaceSprite::draw - index %d > count %d", index, count); index = 0;}
-	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
+	 
+	if (index >= count) {throw("SpaceSprite::draw - index %d > count %d", index, count); index = 0;}
+	if (index < 0) {throw("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
 	int ix, iy, iw, ih;
 
 	BITMAP *bmp = get_bitmap(index);
@@ -821,9 +821,9 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, BITMAP *surface) {
 #include "mgame.h"
 
 void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
-	STACKTRACE
-	if (index >= count) {tw_error("SpaceSprite::draw - index %d > count %d", index, count); index = 0;}
-	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
+	 
+	if (index >= count) {throw("SpaceSprite::draw - index %d > count %d", index, count); index = 0;}
+	if (index < 0) {throw("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
 	if (pos.x + size.x < 0) return;
 	if (pos.x >= frame->surface->w) return;
 	if (pos.y + size.y < 0) return;
@@ -867,20 +867,20 @@ void SpaceSprite::draw(Vector2 pos, Vector2 size, int index, Frame *frame) {
 }
 
 void SpaceSprite::draw(int x, int y, int index, BITMAP *surface) {
-	STACKTRACE;
+	 
 	BITMAP *bmp = get_bitmap(index);
 	draw(Vector2(x,y), Vector2(bmp->w, bmp->h), index, surface);
 	return;
 }
 
 void SpaceSprite::animate(Vector2 pos, int index, Frame *space, double scale) 
-{STACKTRACE
+{ 
 	if (index >= count) {
-		tw_error("SpaceSprite::animate - index %d >= count %d", index, count);
+		throw("SpaceSprite::animate - index %d >= count %d", index, count);
 		return;
 		}
 	if (index < 0) {
-		tw_error("SpaceSprite::animate - index %d < 0 (count %d)", index, count);
+		throw("SpaceSprite::animate - index %d < 0 (count %d)", index, count);
 		return;
 	}
 	Vector2 s = size(index) * scale;
@@ -889,30 +889,30 @@ void SpaceSprite::animate(Vector2 pos, int index, Frame *space, double scale)
 }
 
 void SpaceSprite::draw_character(int x, int y, int index, int color, BITMAP *bmp) 
-{STACKTRACE
-	if (index >= count) {tw_error("SpaceSprite::draw_character - index %d >= count %d", index, count); index = 0;}
-	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
+{ 
+	if (index >= count) {throw("SpaceSprite::draw_character - index %d >= count %d", index, count); index = 0;}
+	if (index < 0) {throw("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
 	draw_allegro_pmask ( get_pmask(index), bmp, x, y, color );
 	return;
 }
 
 void SpaceSprite::draw_character(int x, int y, int index, int color, Frame *space) 
-{STACKTRACE
+{ 
 	draw_character(x, y, index, color, space->surface);
 	space->add_box(x, y, width(index), height(index));
 }
 
 void SpaceSprite::draw_character(int x, int y, int w, int h, int index, int color, Frame *space) 
 {
-	STACKTRACE;
+	 
 	draw_character(x, y, w, h, index, color, space->surface);
 	space->add_box(x, y, w, h);
 }
 
 void SpaceSprite::draw_character(int x, int y, int w, int h, int index, int color, BITMAP *bmp) 
-{STACKTRACE
-	if (index >= count) {tw_error("SpaceSprite::draw_character_stretch - index %d >= count %d", index, count); index = 0;}
-	if (index < 0) {tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
+{ 
+	if (index >= count) {throw("SpaceSprite::draw_character_stretch - index %d >= count %d", index, count); index = 0;}
+	if (index < 0) {throw("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count); index = 0;}
 	draw_allegro_pmask_stretch(get_pmask(index), bmp, x, y, w, h, color) ;
 	return;
 }
@@ -920,11 +920,11 @@ void SpaceSprite::draw_character(int x, int y, int w, int h, int index, int colo
 int SpaceSprite::collide(int x, int y, int i, int ox, int oy, int oi,
 		SpaceSprite *other)
 {
-	STACKTRACE;
-	if (i >= count) { tw_error("SpaceSprite::collide - index1 %d >= count1 %d", i, count); }
-	if (oi >= other->count) { tw_error("SpaceSprite::collide - index2 %d >= count2 %d", oi, other->count); }
-	if (i < 0) { tw_error("SpaceSprite::collide - index1 %d < count1 %d", i, count); }
-	if (oi < 0) { tw_error("SpaceSprite::collide - index2 %d < count2 %d", oi, other->count); }
+	 
+	if (i >= count) { throw("SpaceSprite::collide - index1 %d >= count1 %d", i, count); }
+	if (oi >= other->count) { throw("SpaceSprite::collide - index2 %d >= count2 %d", oi, other->count); }
+	if (i < 0) { throw("SpaceSprite::collide - index1 %d < count1 %d", i, count); }
+	if (oi < 0) { throw("SpaceSprite::collide - index2 %d < count2 %d", oi, other->count); }
 	return (check_pmask_collision(get_pmask(i), other->get_pmask(oi), x, y, ox, oy));
 }
 
@@ -940,7 +940,7 @@ PMASK *rect_mask;
 
 void check_line_collision(BITMAP *bmp, int x, int y, int d)
 {
-	STACKTRACE;
+	 
 	int row, col;
 
 	if(line_collide)
@@ -962,7 +962,7 @@ void check_line_collision(BITMAP *bmp, int x, int y, int d)
 int SpaceSprite::collide_ray(int lx1, int ly1, int *lx2, int *ly2,
   int sx, int sy, int sindex)
 {
-	STACKTRACE;
+	 
 
 	BITMAP *bmp;
 	bmp = get_bitmap(sindex);
@@ -1059,16 +1059,16 @@ void destroy_sprite(SpaceSprite **sprite)
 
 
 BITMAP *SpaceSprite::get_bitmap(int index)
-{STACKTRACE
+{ 
 
 	if (index >= count)
 	{
-		tw_error("SpaceSprite::get_bitmap - index %d > count %d", index, count);
+		throw("SpaceSprite::get_bitmap - index %d > count %d", index, count);
 	}
 
 	if (index < 0)
 	{
-		tw_error("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);
+		throw("SpaceSprite::get_bitmap - index %d < 0 (count %d)", index, count);
 	}
 	// changed ROB
 	//highest_mip = 0;
@@ -1076,7 +1076,7 @@ BITMAP *SpaceSprite::get_bitmap(int index)
 
 	if (!sbitmap)
 	{
-		tw_error("The pointer array for the mipmapped bitmaps hasn't been defined for this level!");
+		throw("The pointer array for the mipmapped bitmaps hasn't been defined for this level!");
 	}
 	
 	// generate a derived image...
@@ -1088,13 +1088,13 @@ BITMAP *SpaceSprite::get_bitmap(int index)
 		
 		if (ipic < 0 || ipic >= count || irot < 0 || irot >= count_rotations)
 		{
-			tw_error("Accessing invalid base picture");
+			throw("Accessing invalid base picture");
 		}
 		
 		BITMAP *bmp = sbitmap[ipic];
 		if (!bmp)
 		{
-			tw_error("Basic sprite shape doesn't exist, cannot rotate");
+			throw("Basic sprite shape doesn't exist, cannot rotate");
 		}
 		BITMAP *tmp = create_bitmap_ex(bpp, bmp->w, bmp->h);
 		clear_to_color(tmp, bitmap_mask_color(tmp));
@@ -1119,7 +1119,7 @@ BITMAP *SpaceSprite::get_bitmap(int index)
 
 BITMAP* copybmp( BITMAP* src )
 {
-	STACKTRACE;
+	 
 
 	BITMAP *dest;
 

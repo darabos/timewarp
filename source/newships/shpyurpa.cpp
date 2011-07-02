@@ -140,7 +140,7 @@ Ship(opos, angle, data, code)
 
 
 void YuryulPatriot::death(void) {
-	STACKTRACE
+	 
 	Ship::death();
 
 	if(Ram1!=NULL)
@@ -150,7 +150,7 @@ void YuryulPatriot::death(void) {
 }
 
 int YuryulPatriot::activate_weapon() {
-	STACKTRACE
+	 
 		game->add(new Missile(this, Vector2(size.y*(0.00), (size.y * +0.00)),
 		angle, weaponVelocity, weaponDamage, weaponRange, weaponArmour,
 		this, data->spriteWeapon));
@@ -158,7 +158,7 @@ int YuryulPatriot::activate_weapon() {
 }
 
 int YuryulPatriot::activate_special() {
-	STACKTRACE
+	 
 		if(Ram1!=NULL) Ram1->state = 0;
 		if(Ram2!=NULL) Ram2->state = 0;
 		Ram1 = new YuryulRam(this, Vector2(this->size.x * (ramrelpos.x), this->size.x * (ramrelpos.y)), this->angle, -1.0 * this->specialReleaseAngleRad,
@@ -175,7 +175,7 @@ int YuryulPatriot::activate_special() {
 }
 
 void YuryulPatriot::calculate(void) {
-	STACKTRACE
+	 
 		if(Ram1!=NULL) {
 			Ram1->decayCount += frame_time;
 			if(Ram1->decayCount > this->specialDecayFrames) {
@@ -194,21 +194,21 @@ void YuryulPatriot::calculate(void) {
 }
 
 void YuryulPatriot::calculate_turn_left(void) {
-	STACKTRACE
+	 
 		Ship::calculate_turn_left();
 	//if(turn_left)accelerate_gravwhip(this, angle, shipTurnAccelRate * frame_time, shipTurnSpeedMax);
 	
 }
 
 void YuryulPatriot::calculate_turn_right(void) {
-	STACKTRACE
+	 
 		Ship::calculate_turn_right();
 	//if(turn_right)accelerate_gravwhip(this, angle, shipTurnAccelRate * frame_time, shipTurnSpeedMax);
 	
 }
 
 void YuryulPatriot::calculate_thrust(void) {
-	STACKTRACE
+	 
 		Ship::calculate_thrust();
 }
 
@@ -252,7 +252,7 @@ void YuryulRam::death()
 
 
 void YuryulRam::calculate(void) {
-	STACKTRACE
+	 
 		// changed GEO
 		if(!(creator && creator->exists()) )
 		{
@@ -282,12 +282,12 @@ HomingMissile(ocreator, Vector2(ox,oy), oangle, ov, odamage, orange, oarmour, ot
 }
 
 void YuryulMissile::calculate(void) {
-	STACKTRACE
+	 
 		Missile::calculate();
 }
 
 void YuryulMissile::inflict_damage(SpaceObject *other) {
-	STACKTRACE
+	 
 		Shot::inflict_damage(other);
 }
 

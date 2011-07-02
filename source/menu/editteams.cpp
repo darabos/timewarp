@@ -14,7 +14,7 @@
 #include "editkeys.h"
 
 /*
-Control *load_player(int i) {STACKTRACE
+Control *load_player(int i) { 
 	char tmp[32];
 	Control *r = NULL;
 
@@ -63,7 +63,7 @@ DIALOG teamsDialog[] = {
 
 
 // TEAMS - dialog function
-void change_teams() {STACKTRACE
+void change_teams() { 
 	int a, i;
 
 	set_config_file("scp.ini");

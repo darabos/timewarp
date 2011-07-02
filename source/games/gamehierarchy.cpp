@@ -22,8 +22,7 @@ REGISTER_FILE
 
 void IterGame::play_iteration(unsigned int time)
 {
-	STACKTRACE
-
+	
 	// re-initialize screens and game pointers ... very important ...
 	prepare();
 
@@ -35,9 +34,8 @@ void IterGame::play_iteration(unsigned int time)
 	if ((next_tic_time <= time) && (next_render_time > game_time) &&
 		(game_ready() || game_time == 0))	// note that game_time==0 is also needed, cause otherwise it'll wait for data, while no data've been generated yet.
 	{		
-		_STACKTRACE("Game::play - Game physics");
-		
-//		gen_buffered_data();
+
+		//		gen_buffered_data();
 		glog->flush_noblock();
 		glog->listen();
 		
@@ -77,8 +75,7 @@ void IterGame::play_iteration(unsigned int time)
 
 void MainGame::addsubgame(SubGame *asubgame)
 {
-	STACKTRACE
-
+	
 	asubgame->maingame = this;
 
 	// clear the log ...
@@ -109,8 +106,7 @@ void MainGame::addsubgame(SubGame *asubgame)
 
 void MainGame::removesubgame(int k)
 {
-	STACKTRACE
-
+	
 	glog->deinit();	// this is empty, dunno why
 
 //	DATAFILE *d = melee;	// remember this important pointer.
@@ -133,8 +129,7 @@ void MainGame::removesubgame(int k)
 
 void MainGame::play()
 {
-	STACKTRACE
-
+	
 	set_resolution(window->w, window->h);
 
 	prepare();
@@ -231,8 +226,7 @@ SubGame::~SubGame()
 
 void SubGame::init(Log *_log)
 {
-	STACKTRACE
-
+	
 
 	game_done = false;
 	//log = _log;
@@ -279,7 +273,7 @@ void SubGame::init(Log *_log)
 	msecs_per_fps		= maingame->msecs_per_fps;
 	msecs_per_render	= maingame->msecs_per_render;
 	prediction			= maingame->prediction;
-	if ((prediction < 0) || (prediction > 100)) tw_error ("Prediction out of bounds (0 < %d < 100)", prediction);
+	if ((prediction < 0) || (prediction > 100)) throw ("Prediction out of bounds (0 < %d < 100)", prediction);
 
 //	camera_hides_cloakers	= maingame->camera_hides_cloakers;	// this is a global variable
 //	time_ratio				= maingame->time_ratio;			// this is a global variable

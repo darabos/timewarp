@@ -135,7 +135,7 @@ ShipData *data, unsigned int code)
 }
 
 int KoanuaPatrolShip::activate_special() {
-	STACKTRACE
+	 
 
   turboTimeLeft=iround(specialFramesPerBattery * batt);
 	framesToRestartSound = iround(specialFramesPerBattery * batt - 4500);
@@ -149,7 +149,7 @@ int KoanuaPatrolShip::activate_special() {
 	}
 
 int KoanuaPatrolShip::activate_weapon() {
-	STACKTRACE
+	 
   KoanuaMissile* K;
   if(weaponGroupOneActive) {
   K = new KoanuaMissile(0,
@@ -205,7 +205,7 @@ int KoanuaPatrolShip::activate_weapon() {
 }
 
 void KoanuaPatrolShip::calculate() {
-	STACKTRACE
+	 
 
 	if(turboTimeLeft>0) {
 		turboTimeLeft -= frame_time;
@@ -231,13 +231,13 @@ void KoanuaPatrolShip::calculate() {
 }
 
 double KoanuaPatrolShip::handle_speed_loss(SpaceLocation *source, double normal) {
-	STACKTRACE
+	 
   //vux limpets affect both normal speed and turbocharge speed,
   //turbo is not immune to slowdown!
 	double speed_loss = normal;
 	if(speed_loss > 0.0) {
 		double sl = (30/(mass+30)) * speed_loss;
-		if (sl > 1) error ("Speed loss too large\n(%f)", sl);
+		if (sl > 1) throw ("Speed loss too large\n(%f)", sl);
 		shipAccelRate *= 1 - sl * shipAccelRate / (shipAccelRate + scale_acceleration(2,4));
 		shipSpeedMax *= 1 - sl * shipSpeedMax / (shipSpeedMax + scale_velocity(10));
 		shipTurnRate *=  1 - sl * shipTurnRate / (shipTurnRate + scale_turning(4));
@@ -250,17 +250,17 @@ double KoanuaPatrolShip::handle_speed_loss(SpaceLocation *source, double normal)
 }
 
 void KoanuaPatrolShip::calculate_turn_left() {
-	STACKTRACE
+	 
   Ship::calculate_turn_left();
 }
 
 void KoanuaPatrolShip::calculate_turn_right() {
-	STACKTRACE
+	 
   Ship::calculate_turn_right();
 }
 
 void KoanuaPatrolShip::calculate_thrust() {
-	STACKTRACE
+	 
   Ship::calculate_thrust();
 }
 
@@ -278,7 +278,7 @@ KoanuaMissile::KoanuaMissile(Vector2 opos, double oangle, double ov,
 	}
 
 void KoanuaMissile::calculate(void) {
-	STACKTRACE
+	 
 	if(isBurning==FALSE && isCoasting==FALSE)
 		if(framesToIgnition>=0) {
       framesToIgnition -= frame_time;
