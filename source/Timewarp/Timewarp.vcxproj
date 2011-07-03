@@ -1,0 +1,401 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{046DD318-C91C-469D-925B-C1FB42F4BC09}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Timewarp</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>twwin</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level2</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>winmm.lib;Ws2_32.lib;libfreetype.lib;libjgmod.lib;alleg.lib;libfreetype.lib;libjgmod.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ais\c_input.cpp" />
+    <ClCompile Include="..\ais\c_other.cpp" />
+    <ClCompile Include="..\ais\c_wussie.cpp" />
+    <ClCompile Include="..\alfont\alfont.c" />
+    <ClCompile Include="..\frame.cpp" />
+    <ClCompile Include="..\games\gamehierarchy.cpp" />
+    <ClCompile Include="..\games\gastroid.cpp" />
+    <ClCompile Include="..\games\gdebugonly.cpp" />
+    <ClCompile Include="..\games\gflmelee.cpp" />
+    <ClCompile Include="..\games\ggob.cpp" />
+    <ClCompile Include="..\games\ghyper.cpp" />
+    <ClCompile Include="..\games\gmissions.cpp" />
+    <ClCompile Include="..\games\gmissions_objects.cpp" />
+    <ClCompile Include="..\games\gplanets.cpp" />
+    <ClCompile Include="..\games\gplhuge.cpp" />
+    <ClCompile Include="..\games\gsamp2.cpp" />
+    <ClCompile Include="..\games\gsample.cpp" />
+    <ClCompile Include="..\games\gsc1arena.cpp" />
+    <ClCompile Include="..\games\gsolar.cpp" />
+    <ClCompile Include="..\games\vanguard.cpp" />
+    <ClCompile Include="..\games\vgGenSys.cpp" />
+    <ClCompile Include="..\gui.cpp" />
+    <ClCompile Include="..\input.cpp" />
+    <ClCompile Include="..\jgmod\file_io.c" />
+    <ClCompile Include="..\jgmod\jgmod.c" />
+    <ClCompile Include="..\jgmod\load_it.c" />
+    <ClCompile Include="..\jgmod\load_jgm.c" />
+    <ClCompile Include="..\jgmod\load_mod.c" />
+    <ClCompile Include="..\jgmod\load_s3m.c" />
+    <ClCompile Include="..\jgmod\load_xm.c" />
+    <ClCompile Include="..\jgmod\mod.c" />
+    <ClCompile Include="..\jgmod\player.c" />
+    <ClCompile Include="..\jgmod\player2.c" />
+    <ClCompile Include="..\jgmod\player3.c" />
+    <ClCompile Include="..\jgmod\player4.c" />
+    <ClCompile Include="..\jgmod\save_jgm.c" />
+    <ClCompile Include="..\jpgalleg\decode.c" />
+    <ClCompile Include="..\jpgalleg\encode.c" />
+    <ClCompile Include="..\jpgalleg\io.c" />
+    <ClCompile Include="..\jpgalleg\jpgalleg.c" />
+    <ClCompile Include="..\melee\manim.cpp" />
+    <ClCompile Include="..\melee\mcbodies.cpp" />
+    <ClCompile Include="..\melee\mcontrol.cpp" />
+    <ClCompile Include="..\melee\mfleet.cpp" />
+    <ClCompile Include="..\melee\mframe.cpp" />
+    <ClCompile Include="..\melee\mgame.cpp" />
+    <ClCompile Include="..\melee\mhelpers.cpp" />
+    <ClCompile Include="..\melee\mitems.cpp" />
+    <ClCompile Include="..\melee\mlog.cpp" />
+    <ClCompile Include="..\melee\mmain.cpp" />
+    <ClCompile Include="..\melee\mmath.cpp" />
+    <ClCompile Include="..\melee\mnet1.cpp" />
+    <ClCompile Include="..\melee\moptions.cpp" />
+    <ClCompile Include="..\melee\mship.cpp" />
+    <ClCompile Include="..\melee\mshot.cpp" />
+    <ClCompile Include="..\melee\mshpdata.cpp" />
+    <ClCompile Include="..\melee\mshppan.cpp" />
+    <ClCompile Include="..\melee\msprite.cpp" />
+    <ClCompile Include="..\melee\mtarget.cpp" />
+    <ClCompile Include="..\melee\mview.cpp" />
+    <ClCompile Include="..\menu\config_keys.cpp" />
+    <ClCompile Include="..\menu\editfleet.cpp" />
+    <ClCompile Include="..\menu\editkeys.cpp" />
+    <ClCompile Include="..\menu\editteams.cpp" />
+    <ClCompile Include="..\menu\empty.cpp" />
+    <ClCompile Include="..\menu\mainmenu.cpp" />
+    <ClCompile Include="..\menu\menuextended.cpp" />
+    <ClCompile Include="..\menu\menugeneral.cpp" />
+    <ClCompile Include="..\newships\shpaktgu.cpp" />
+    <ClCompile Include="..\newships\shpalabc.cpp" />
+    <ClCompile Include="..\newships\shpalckr.cpp" />
+    <ClCompile Include="..\newships\shpalhdr.cpp" />
+    <ClCompile Include="..\newships\shparkpi.cpp" />
+    <ClCompile Include="..\newships\shpartem.cpp" />
+    <ClCompile Include="..\newships\shpayrbs.cpp" />
+    <ClCompile Include="..\newships\shpbatde.cpp" />
+    <ClCompile Include="..\newships\shpbipka.cpp" />
+    <ClCompile Include="..\newships\shpbogce.cpp" />
+    <ClCompile Include="..\newships\shpbubbo.cpp" />
+    <ClCompile Include="..\newships\shpchoex.cpp" />
+    <ClCompile Include="..\newships\shpclofl.cpp" />
+    <ClCompile Include="..\newships\shpconca.cpp" />
+    <ClCompile Include="..\newships\shpcrapl.cpp" />
+    <ClCompile Include="..\newships\shpcrore.cpp" />
+    <ClCompile Include="..\newships\shpdajem.cpp" />
+    <ClCompile Include="..\newships\shpdragr.cpp" />
+    <ClCompile Include="..\newships\shpducla.cpp" />
+    <ClCompile Include="..\newships\shpdyzha.cpp" />
+    <ClCompile Include="..\newships\shpearc3.cpp" />
+    <ClCompile Include="..\newships\shpfiear.cpp" />
+    <ClCompile Include="..\newships\shpfopsl.cpp" />
+    <ClCompile Include="..\newships\shpforsh.cpp" />
+    <ClCompile Include="..\newships\shpfresc.cpp" />
+    <ClCompile Include="..\newships\shpgahmo.cpp" />
+    <ClCompile Include="..\newships\shpgarty.cpp" />
+    <ClCompile Include="..\newships\shpglacr.cpp" />
+    <ClCompile Include="..\newships\shpglads.cpp" />
+    <ClCompile Include="..\newships\shphotsp.cpp" />
+    <ClCompile Include="..\newships\shphubde.cpp" />
+    <ClCompile Include="..\newships\shphydcr.cpp" />
+    <ClCompile Include="..\newships\shpiceco.cpp" />
+    <ClCompile Include="..\newships\shpilwsp.cpp" />
+    <ClCompile Include="..\newships\shpjygst.cpp" />
+    <ClCompile Include="..\newships\shpkabwe.cpp" />
+    <ClCompile Include="..\newships\shpkatpo.cpp" />
+    <ClCompile Include="..\newships\shpkoapa.cpp" />
+    <ClCompile Include="..\newships\shpkolfl.cpp" />
+    <ClCompile Include="..\newships\shpkorsi.cpp" />
+    <ClCompile Include="..\newships\shpleimu.cpp" />
+    <ClCompile Include="..\newships\shplyrwa.cpp" />
+    <ClCompile Include="..\newships\shpmontr.cpp" />
+    <ClCompile Include="..\newships\shpneccr.cpp" />
+    <ClCompile Include="..\newships\shpneodr.cpp" />
+    <ClCompile Include="..\newships\shpoliha.cpp" />
+    <ClCompile Include="..\newships\shpplala.cpp" />
+    <ClCompile Include="..\newships\shpquasi.cpp" />
+    <ClCompile Include="..\newships\shpraame.cpp" />
+    <ClCompile Include="..\newships\shprogsq.cpp" />
+    <ClCompile Include="..\newships\shpsamat.cpp" />
+    <ClCompile Include="..\newships\shpsclfr.cpp" />
+    <ClCompile Include="..\newships\shpstaba.cpp" />
+    <ClCompile Include="..\newships\shptauar.cpp" />
+    <ClCompile Include="..\newships\shptauem.cpp" />
+    <ClCompile Include="..\newships\shptaufi.cpp" />
+    <ClCompile Include="..\newships\shptaugl.cpp" />
+    <ClCompile Include="..\newships\shptaule.cpp" />
+    <ClCompile Include="..\newships\shptaumc.cpp" />
+    <ClCompile Include="..\newships\shptaust.cpp" />
+    <ClCompile Include="..\newships\shptauto.cpp" />
+    <ClCompile Include="..\newships\shpulzin.cpp" />
+    <ClCompile Include="..\newships\shpuxjba.cpp" />
+    <ClCompile Include="..\newships\shpvezba.cpp" />
+    <ClCompile Include="..\newships\shpvioge.cpp" />
+    <ClCompile Include="..\newships\shpwistr.cpp" />
+    <ClCompile Include="..\newships\shpxxxma.cpp" />
+    <ClCompile Include="..\newships\shpyurpa.cpp" />
+    <ClCompile Include="..\newships\shpyusra.cpp" />
+    <ClCompile Include="..\other\configrw.cpp" />
+    <ClCompile Include="..\other\fontmorph.cpp" />
+    <ClCompile Include="..\other\gup.cpp" />
+    <ClCompile Include="..\other\lightning.cpp" />
+    <ClCompile Include="..\other\nullphas.cpp" />
+    <ClCompile Include="..\other\objanim.cpp" />
+    <ClCompile Include="..\other\orbit.cpp" />
+    <ClCompile Include="..\other\planet3d.cpp" />
+    <ClCompile Include="..\other\radar.cpp" />
+    <ClCompile Include="..\other\shippart.cpp" />
+    <ClCompile Include="..\other\ttf.cpp" />
+    <ClCompile Include="..\other\vbodies.cpp" />
+    <ClCompile Include="..\other\vtarget.cpp" />
+    <ClCompile Include="..\ppiships\shpalabo.cpp" />
+    <ClCompile Include="..\ppiships\shpchmba.cpp" />
+    <ClCompile Include="..\ppiships\shpfrebo.cpp" />
+    <ClCompile Include="..\ppiships\shpfweav.cpp" />
+    <ClCompile Include="..\ppiships\shpgluse.cpp" />
+    <ClCompile Include="..\ppiships\shpostor.cpp" />
+    <ClCompile Include="..\ppiships\shpsacda.cpp" />
+    <ClCompile Include="..\ppiships\shpscain.cpp" />
+    <ClCompile Include="..\ppiships\shpsefna.cpp" />
+    <ClCompile Include="..\ppiships\shpstrgu.cpp" />
+    <ClCompile Include="..\ppiships\shptauh2.cpp" />
+    <ClCompile Include="..\ppiships\shputwde.cpp" />
+    <ClCompile Include="..\sc1ships\shpandgu.cpp" />
+    <ClCompile Include="..\sc1ships\shparisk.cpp" />
+    <ClCompile Include="..\sc1ships\shpchebr.cpp" />
+    <ClCompile Include="..\sc1ships\shpearcr.cpp" />
+    <ClCompile Include="..\sc1ships\shpilwav.cpp" />
+    <ClCompile Include="..\sc1ships\shpkzedr.cpp" />
+    <ClCompile Include="..\sc1ships\shpmmrxf.cpp" />
+    <ClCompile Include="..\sc1ships\shpmycpo.cpp" />
+    <ClCompile Include="..\sc1ships\shpshosc.cpp" />
+    <ClCompile Include="..\sc1ships\shpspael.cpp" />
+    <ClCompile Include="..\sc1ships\shpsyrpe.cpp" />
+    <ClCompile Include="..\sc1ships\shpumgdr.cpp" />
+    <ClCompile Include="..\sc1ships\shpvuxin.cpp" />
+    <ClCompile Include="..\sc1ships\shpyehte.cpp" />
+    <ClCompile Include="..\sc2ships\shpchmav.cpp" />
+    <ClCompile Include="..\sc2ships\shpdruma.cpp" />
+    <ClCompile Include="..\sc2ships\shpkohma.cpp" />
+    <ClCompile Include="..\sc2ships\shpmeltr.cpp" />
+    <ClCompile Include="..\sc2ships\shporzne.cpp" />
+    <ClCompile Include="..\sc2ships\shppkufu.cpp" />
+    <ClCompile Include="..\sc2ships\shpslypr.cpp" />
+    <ClCompile Include="..\sc2ships\shpsupbl.cpp" />
+    <ClCompile Include="..\sc2ships\shpthrto.cpp" />
+    <ClCompile Include="..\sc2ships\shputwju.cpp" />
+    <ClCompile Include="..\sc2ships\shpzfpst.cpp" />
+    <ClCompile Include="..\sc3ships\shpharra.cpp" />
+    <ClCompile Include="..\sc3ships\shplk_sa.cpp" />
+    <ClCompile Include="..\sc3ships\shpowavo.cpp" />
+    <ClCompile Include="..\scp.cpp" />
+    <ClCompile Include="..\twgui\gametest2.cpp" />
+    <ClCompile Include="..\twgui\twbutton.cpp" />
+    <ClCompile Include="..\twgui\twbuttontypes.cpp" />
+    <ClCompile Include="..\twgui\twguilist.cpp" />
+    <ClCompile Include="..\twgui\twhelpers.cpp" />
+    <ClCompile Include="..\twgui\twmenuexamples.cpp" />
+    <ClCompile Include="..\twgui\twpopup.cpp" />
+    <ClCompile Include="..\twgui\twwindow.cpp" />
+    <ClCompile Include="..\twgui\utils.cpp" />
+    <ClCompile Include="..\util\aarot.c" />
+    <ClCompile Include="..\util\aastr.c" />
+    <ClCompile Include="..\util\aautil.c" />
+    <ClCompile Include="..\util\base.cpp" />
+    <ClCompile Include="..\util\endian.cpp" />
+    <ClCompile Include="..\util\get_time.c" />
+    <ClCompile Include="..\util\history.cpp" />
+    <ClCompile Include="..\util\net_tcp.cpp" />
+    <ClCompile Include="..\util\pmask.c" />
+    <ClCompile Include="..\util\random.cpp" />
+    <ClCompile Include="..\util\round.c" />
+    <ClCompile Include="..\util\sounds.cpp" />
+    <ClCompile Include="..\util\types.cpp" />
+    <ClCompile Include="..\util\vector2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ais.h" />
+    <ClInclude Include="..\alfont\alfont.h" />
+    <ClInclude Include="..\alfont\alfontdll.h" />
+    <ClInclude Include="..\frame.h" />
+    <ClInclude Include="..\games\gamehierarchy.h" />
+    <ClInclude Include="..\games\gflmelee.h" />
+    <ClInclude Include="..\games\ggob.h" />
+    <ClInclude Include="..\games\gmissions_objects.h" />
+    <ClInclude Include="..\gui.h" />
+    <ClInclude Include="..\id.h" />
+    <ClInclude Include="..\input.h" />
+    <ClInclude Include="..\jgmod\file_io.h" />
+    <ClInclude Include="..\jgmod\jgmod.h" />
+    <ClInclude Include="..\jgmod\jshare.h" />
+    <ClInclude Include="..\jgmod\port.h" />
+    <ClInclude Include="..\jpgalleg\internal.h" />
+    <ClInclude Include="..\jpgalleg\jpgalleg.h" />
+    <ClInclude Include="..\libs.h" />
+    <ClInclude Include="..\melee.h" />
+    <ClInclude Include="..\melee\manim.h" />
+    <ClInclude Include="..\melee\mcbodies.h" />
+    <ClInclude Include="..\melee\mcontrol.h" />
+    <ClInclude Include="..\melee\mfleet.h" />
+    <ClInclude Include="..\melee\mframe.h" />
+    <ClInclude Include="..\melee\mgame.h" />
+    <ClInclude Include="..\melee\mitems.h" />
+    <ClInclude Include="..\melee\mlog.h" />
+    <ClInclude Include="..\melee\mmain.h" />
+    <ClInclude Include="..\melee\mnet1.h" />
+    <ClInclude Include="..\melee\mship.h" />
+    <ClInclude Include="..\melee\mshot.h" />
+    <ClInclude Include="..\melee\mshppan.h" />
+    <ClInclude Include="..\melee\mtarget.h" />
+    <ClInclude Include="..\melee\mview.h" />
+    <ClInclude Include="..\menu\config_keys.h" />
+    <ClInclude Include="..\menu\editfleet.h" />
+    <ClInclude Include="..\menu\editkeys.h" />
+    <ClInclude Include="..\menu\editteams.h" />
+    <ClInclude Include="..\menu\empty.h" />
+    <ClInclude Include="..\menu\mainmenu.h" />
+    <ClInclude Include="..\menu\menuextended.h" />
+    <ClInclude Include="..\menu\menugeneral.h" />
+    <ClInclude Include="..\newships\shpilwsp.h" />
+    <ClInclude Include="..\other\configrw.h" />
+    <ClInclude Include="..\other\fontmorph.h" />
+    <ClInclude Include="..\other\gup.h" />
+    <ClInclude Include="..\other\lightning.h" />
+    <ClInclude Include="..\other\nullphas.h" />
+    <ClInclude Include="..\other\objanim.h" />
+    <ClInclude Include="..\other\orbit.h" />
+    <ClInclude Include="..\other\planet3d.h" />
+    <ClInclude Include="..\other\radar.h" />
+    <ClInclude Include="..\other\shippart.h" />
+    <ClInclude Include="..\other\ttf.h" />
+    <ClInclude Include="..\other\vbodies.h" />
+    <ClInclude Include="..\other\vtarget.h" />
+    <ClInclude Include="..\sc1ships.h" />
+    <ClInclude Include="..\sc2ships.h" />
+    <ClInclude Include="..\scp.h" />
+    <ClInclude Include="..\ship.h" />
+    <ClInclude Include="..\twgui\gamebuttonevent.h" />
+    <ClInclude Include="..\twgui\gametest2.h" />
+    <ClInclude Include="..\twgui\twbutton.h" />
+    <ClInclude Include="..\twgui\twbuttontypes.h" />
+    <ClInclude Include="..\twgui\twgui.h" />
+    <ClInclude Include="..\twgui\twguilist.h" />
+    <ClInclude Include="..\twgui\twhelpers.h" />
+    <ClInclude Include="..\twgui\twmenuexamples.h" />
+    <ClInclude Include="..\twgui\twpopup.h" />
+    <ClInclude Include="..\twgui\twwindow.h" />
+    <ClInclude Include="..\twgui\utils.h" />
+    <ClInclude Include="..\util\aastr.h" />
+    <ClInclude Include="..\util\aautil.h" />
+    <ClInclude Include="..\util\base.h" />
+    <ClInclude Include="..\util\endian.h" />
+    <ClInclude Include="..\util\get_time.h" />
+    <ClInclude Include="..\util\history.h" />
+    <ClInclude Include="..\util\net_tcp.h" />
+    <ClInclude Include="..\util\pmask.h" />
+    <ClInclude Include="..\util\random.h" />
+    <ClInclude Include="..\util\round.h" />
+    <ClInclude Include="..\util\sounds.h" />
+    <ClInclude Include="..\util\types.h" />
+    <ClInclude Include="..\util\vector2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\jgmod\effectx.txt" />
+    <None Include="..\jgmod\history.txt" />
+    <None Include="..\jgmod\jgmod.txt" />
+    <None Include="..\jgmod\makefile" />
+    <None Include="..\jgmod\makefile.be" />
+    <None Include="..\jgmod\makefile.dj" />
+    <None Include="..\jgmod\makefile.lnx" />
+    <None Include="..\jgmod\makefile.lst" />
+    <None Include="..\jgmod\makefile.mgw" />
+    <None Include="..\jgmod\makefile.vc" />
+    <None Include="..\jgmod\tips.txt" />
+    <None Include="..\jgmod\unreal.txt" />
+    <None Include="..\jpgalleg\fix8bit.patch" />
+    <None Include="..\jpgalleg\readme.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

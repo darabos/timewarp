@@ -1,0 +1,1004 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{74417df4-9787-42c9-9aa5-100ef6b2de8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\melee">
+      <UniqueIdentifier>{c8b62150-0274-4981-9c71-7f306f6e4a0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\games">
+      <UniqueIdentifier>{b5f9c213-dd5b-48a9-a42a-52f3dcfbb868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\other">
+      <UniqueIdentifier>{79facdfc-6db2-4d95-a804-3bc18748c2ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\jpgalleg">
+      <UniqueIdentifier>{ef5ede65-8237-47cd-8d5e-7efdb14d2227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\menu">
+      <UniqueIdentifier>{bd668ff6-7f03-4b21-bd0b-8e27f30675ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\twgui">
+      <UniqueIdentifier>{e1baae90-6bbb-40ee-b41a-5999a5c00837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ais">
+      <UniqueIdentifier>{88d21f31-5173-4262-894f-a98603a4cabb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\jgmod">
+      <UniqueIdentifier>{1f16269b-4a70-413c-8da5-d3f8d0b4ccfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ppiships">
+      <UniqueIdentifier>{89cfb208-8e6e-4493-b327-dfbac3fa95eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sc1ships">
+      <UniqueIdentifier>{0dd47c6e-2503-45d4-b9cb-5d8dd4bbc33e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sc2ships">
+      <UniqueIdentifier>{7ac77f85-90fd-44e3-b385-5d689fa4f592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sc3ships">
+      <UniqueIdentifier>{a5ea1ea1-7ec0-4b7a-879c-4fedc01d0464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\newships">
+      <UniqueIdentifier>{1790f5e9-a6d1-4788-b312-2b6760e4c2bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\alfont">
+      <UniqueIdentifier>{edfbbe1c-eb2f-487d-980e-e93cc8ea2a54}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\aarot.c">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\aastr.c">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\aautil.c">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\base.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\endian.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\get_time.c">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\history.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\net_tcp.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\pmask.c">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\random.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\round.c">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\sounds.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\types.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\vector2.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\manim.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mcbodies.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mcontrol.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mfleet.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mframe.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mgame.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mhelpers.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mitems.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mlog.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mmain.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mmath.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mnet1.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\moptions.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mship.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mshot.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mshpdata.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mshppan.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\msprite.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mtarget.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\melee\mview.cpp">
+      <Filter>Source Files\melee</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gamehierarchy.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gastroid.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gdebugonly.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gflmelee.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\ggob.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\ghyper.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gmissions.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gmissions_objects.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gplanets.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gplhuge.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gsamp2.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gsample.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gsc1arena.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\gsolar.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\vanguard.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\games\vgGenSys.cpp">
+      <Filter>Source Files\games</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\configrw.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\fontmorph.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\gup.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\lightning.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\nullphas.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\objanim.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\orbit.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\planet3d.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\radar.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\shippart.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\ttf.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\vbodies.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\other\vtarget.cpp">
+      <Filter>Source Files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpgalleg\decode.c">
+      <Filter>Source Files\jpgalleg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpgalleg\encode.c">
+      <Filter>Source Files\jpgalleg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpgalleg\io.c">
+      <Filter>Source Files\jpgalleg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpgalleg\jpgalleg.c">
+      <Filter>Source Files\jpgalleg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\config_keys.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\editfleet.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\editkeys.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\editteams.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\empty.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\mainmenu.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\menuextended.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\menu\menugeneral.cpp">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\gametest2.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\twbutton.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\twbuttontypes.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\twguilist.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\twhelpers.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\twmenuexamples.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\twpopup.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\twwindow.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\twgui\utils.cpp">
+      <Filter>Source Files\twgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ais\c_input.cpp">
+      <Filter>Source Files\ais</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ais\c_other.cpp">
+      <Filter>Source Files\ais</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ais\c_wussie.cpp">
+      <Filter>Source Files\ais</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\file_io.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\jgmod.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\load_it.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\load_jgm.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\load_mod.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\load_s3m.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\load_xm.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\mod.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\player.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\player2.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\player3.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\player4.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jgmod\save_jgm.c">
+      <Filter>Source Files\jgmod</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpaktgu.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpalabc.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpalckr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpalhdr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shparkpi.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpartem.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpayrbs.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpbatde.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpbipka.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpbogce.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpbubbo.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpchoex.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpclofl.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpconca.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpcrapl.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpcrore.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpdajem.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpdragr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpducla.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpdyzha.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpearc3.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpfiear.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpfopsl.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpforsh.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpfresc.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpgahmo.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpgarty.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpglacr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpglads.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shphotsp.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shphubde.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shphydcr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpiceco.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpilwsp.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpjygst.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpkabwe.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpkatpo.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpkoapa.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpkolfl.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpkorsi.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpleimu.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shplyrwa.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpmontr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpneccr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpneodr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpoliha.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpplala.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpquasi.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpraame.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shprogsq.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpsamat.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpsclfr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpstaba.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptauar.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptauem.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptaufi.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptaugl.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptaule.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptaumc.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptaust.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shptauto.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpulzin.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpuxjba.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpvezba.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpvioge.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpwistr.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpxxxma.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpyurpa.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\newships\shpyusra.cpp">
+      <Filter>Source Files\newships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc3ships\shpharra.cpp">
+      <Filter>Source Files\sc3ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc3ships\shplk_sa.cpp">
+      <Filter>Source Files\sc3ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc3ships\shpowavo.cpp">
+      <Filter>Source Files\sc3ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpchmav.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpdruma.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpkohma.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpmeltr.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shporzne.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shppkufu.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpslypr.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpsupbl.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpthrto.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shputwju.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc2ships\shpzfpst.cpp">
+      <Filter>Source Files\sc2ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpandgu.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shparisk.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpchebr.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpearcr.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpilwav.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpkzedr.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpmmrxf.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpmycpo.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpshosc.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpspael.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpsyrpe.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpumgdr.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpvuxin.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sc1ships\shpyehte.cpp">
+      <Filter>Source Files\sc1ships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpalabo.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpchmba.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpfrebo.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpfweav.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpgluse.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpostor.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpsacda.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpscain.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpsefna.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shpstrgu.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shptauh2.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ppiships\shputwde.cpp">
+      <Filter>Source Files\ppiships</Filter>
+    </ClCompile>
+    <ClCompile Include="..\alfont\alfont.c">
+      <Filter>Source Files\alfont</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\input.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\aastr.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\aautil.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\base.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\endian.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\get_time.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\history.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\net_tcp.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\pmask.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\random.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\round.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\sounds.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\types.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\vector2.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\manim.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mcbodies.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mcontrol.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mfleet.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mframe.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mgame.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mitems.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mlog.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mmain.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mnet1.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mship.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mshot.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mshppan.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mtarget.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee\mview.h">
+      <Filter>Source Files\melee</Filter>
+    </ClInclude>
+    <ClInclude Include="..\melee.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frame.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\id.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ais.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gui.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sc1ships.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sc2ships.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ship.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\games\gamehierarchy.h">
+      <Filter>Source Files\games</Filter>
+    </ClInclude>
+    <ClInclude Include="..\games\gflmelee.h">
+      <Filter>Source Files\games</Filter>
+    </ClInclude>
+    <ClInclude Include="..\games\ggob.h">
+      <Filter>Source Files\games</Filter>
+    </ClInclude>
+    <ClInclude Include="..\games\gmissions_objects.h">
+      <Filter>Source Files\games</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\configrw.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\fontmorph.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\gup.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\lightning.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\nullphas.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\objanim.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\orbit.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\planet3d.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\radar.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\shippart.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\ttf.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\vbodies.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\other\vtarget.h">
+      <Filter>Source Files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpgalleg\internal.h">
+      <Filter>Source Files\jpgalleg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpgalleg\jpgalleg.h">
+      <Filter>Source Files\jpgalleg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\config_keys.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\editfleet.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\editkeys.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\editteams.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\empty.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\mainmenu.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\menuextended.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\menu\menugeneral.h">
+      <Filter>Source Files\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\gamebuttonevent.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\gametest2.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twbutton.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twbuttontypes.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twgui.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twguilist.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twhelpers.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twmenuexamples.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twpopup.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\twwindow.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\twgui\utils.h">
+      <Filter>Source Files\twgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jgmod\file_io.h">
+      <Filter>Source Files\jgmod</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jgmod\jgmod.h">
+      <Filter>Source Files\jgmod</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jgmod\jshare.h">
+      <Filter>Source Files\jgmod</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jgmod\port.h">
+      <Filter>Source Files\jgmod</Filter>
+    </ClInclude>
+    <ClInclude Include="..\newships\shpilwsp.h">
+      <Filter>Source Files\newships</Filter>
+    </ClInclude>
+    <ClInclude Include="..\alfont\alfont.h">
+      <Filter>Source Files\alfont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\alfont\alfontdll.h">
+      <Filter>Source Files\alfont</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\jpgalleg\fix8bit.patch">
+      <Filter>Source Files\jpgalleg</Filter>
+    </None>
+    <None Include="..\jpgalleg\readme.txt">
+      <Filter>Source Files\jpgalleg</Filter>
+    </None>
+    <None Include="..\jgmod\effectx.txt">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\history.txt">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\jgmod.txt">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\makefile">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\makefile.be">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\makefile.dj">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\makefile.lnx">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\makefile.lst">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\makefile.mgw">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\makefile.vc">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\tips.txt">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+    <None Include="..\jgmod\unreal.txt">
+      <Filter>Source Files\jgmod</Filter>
+    </None>
+  </ItemGroup>
+</Project>
